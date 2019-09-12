@@ -30,6 +30,8 @@ import viewmodels.AnswerRow
 
 class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
+  private val companyName = "the company"
+
   "cya" when {
     
     val onwardUrl = "onwardUrl"
@@ -42,8 +44,8 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         IsCompanyDormantId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__dormant",List("site.yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__dormant"))))
+          AnswerRow(messages("messages__company__cya__dormant"),List("site.yes"),true,
+            Some(Link("site.change",onwardUrl,Some(messages("messages__visuallyhidden__dynamic_company__dormant", companyName)))))
         ))
       }
     }

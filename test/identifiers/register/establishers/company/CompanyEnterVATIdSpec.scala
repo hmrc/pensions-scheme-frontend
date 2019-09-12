@@ -29,21 +29,26 @@ import viewmodels.AnswerRow
 
 class CompanyEnterVATIdSpec extends SpecBase {
 
+  private val companyName = "test company"
+  private def answers(isEditable: Boolean): UserAnswers = UserAnswers()
+    .set(CompanyDetailsId(0))(CompanyDetails(companyName))
+    .flatMap(
+      _.set(CompanyEnterVATId(0))(ReferenceValue("vat", isEditable))
+    ).asOpt.value
+
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyVat"))))
+      Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))
   )
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.get
-
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyEnterVATId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -51,7 +56,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
     "in update mode for new establisher - company vat" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers(isEditable = false).set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -63,7 +68,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
     "in update mode for existing establisher - company vat" must {
 
       "return answers rows without change links if vat is available and not editable" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
@@ -72,8 +77,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if vat is available and editable" in {
-        val answers = UserAnswers().set(CompanyEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
@@ -85,7 +89,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyVat"))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))))
       }
     }
   }
