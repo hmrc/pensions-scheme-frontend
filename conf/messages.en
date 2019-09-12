@@ -517,7 +517,7 @@ messages__directorDetails__heading = Company director
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
 messages__directorName__cya = Director’s name
-messages__visuallyhidden__directorName = Change name of director
+messages__visuallyhidden__directorName = the name of the director
 
 messages__companyPreviousAddressPostcodeLookup__title = What was the company’s previous postcode?
 messages__companyPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
