@@ -33,7 +33,8 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.{FakeNavigator, SectionComplete}
-import views.html.register.trustees.individual.trusteeDOB
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.Future
 
@@ -57,14 +58,16 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase {
 
   private val postCall = routes.TrusteeDOBController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = trusteeDOB(
+  def viewAsString(form: Form[_] = form): String = DOB(
     frontendAppConfig,
     form,
     NormalMode,
     None,
     postCall(NormalMode, index, None),
     None,
-    "Test Name")(fakeRequest, messages).toString
+    "Test Name",
+    Message("messages__theTrustee").resolve
+  )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest
     .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))

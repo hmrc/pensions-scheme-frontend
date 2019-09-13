@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.DOBFormProvider
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -31,7 +31,8 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, UserAnswers}
-import views.html.register.establishers.company.director.directorDOB
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,46 +58,32 @@ class DirectorDOBController @Inject()(
       implicit request =>
         val preparedForm = request.userAnswers.get[LocalDate](DirectorDOBId(establisherIndex, directorIndex)) match {
           case Some(value) => form.fill(value)
-          case None        => form
+          case None => form
         }
 
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(personName =>
-          Future.successful(Ok(directorDOB(
-            appConfig,
-            preparedForm,
-            mode,
-            establisherIndex,
-            directorIndex,
-            existingSchemeName,
-            postCall(mode, establisherIndex, directorIndex, srn),
-            srn,
-            personName.fullName))))
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(
+          personName =>
+            Future.successful(Ok(
+              DOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn, personName.fullName, Message("messages__theDirector").resolve))
+            ))
     }
 
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(
+              personName =>
+                Future.successful(BadRequest(
+                  DOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn, personName.fullName, Message("messages__theDirector").resolve))
+                )),
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index,
-               srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(personName =>
-            Future.successful(BadRequest(directorDOB(
-              appConfig,
-              formWithErrors,
-              mode,
-              establisherIndex,
-              directorIndex,
-              existingSchemeName,
-              postCall(mode, establisherIndex, directorIndex, srn),
-              srn,
-              personName.fullName
-            )))),
-
-        value =>
-          userAnswersService.save(mode, srn, DirectorDOBId(establisherIndex, directorIndex), value).map {
-            cacheMap =>
-              Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
-          }
-      )
-  }
+          value =>
+            userAnswersService.save(mode, srn, DirectorDOBId(establisherIndex, directorIndex), value).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(DirectorDOBId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
+            }
+        )
+    }
 }

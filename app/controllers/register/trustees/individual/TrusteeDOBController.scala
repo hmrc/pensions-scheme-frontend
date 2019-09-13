@@ -29,23 +29,22 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.TrusteesIndividual
 import utils.{Enumerable, UserAnswers}
-import views.html.register.trustees.individual.trusteeDOB
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrusteeDOBController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       userAnswersService: UserAnswersService,
-                                       navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: DOBFormProvider
-                                     )(implicit val ec: ExecutionContext)
+class TrusteeDOBController @Inject()(appConfig: FrontendAppConfig,
+                                     override val messagesApi: MessagesApi,
+                                     userAnswersService: UserAnswersService,
+                                     navigator: Navigator,
+                                     authenticate: AuthAction,
+                                     getData: DataRetrievalAction,
+                                     allowAccess: AllowAccessActionProvider,
+                                     requireData: DataRequiredAction,
+                                     formProvider: DOBFormProvider
+                                    )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -57,51 +56,33 @@ class TrusteeDOBController @Inject()(
       implicit request =>
         val preparedForm = request.userAnswers.get[LocalDate](TrusteeDOBId(index)) match {
           case Some(value) => form.fill(value)
-          case None        => form
+          case None => form
         }
 
-        TrusteeNameId(index).retrieve.right.map(personName =>
-          Future.successful(
-            Ok(
-               trusteeDOB(appConfig,
-                         preparedForm,
-                         mode,
-                         existingSchemeName,
-                         postCall(mode, index, srn),
-                         srn,
-                         personName.fullName
-               )
-            )
-          )
-        )
+        TrusteeNameId(index).retrieve.right.map(
+          personName =>
+            Future.successful(Ok(
+              DOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theTrustee").resolve))
+            ))
     }
 
 
-  def onSubmit(mode: Mode, index: Index,
-               srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          TrusteeNameId(index).retrieve.right.map(personName =>
-            Future.successful(
-              BadRequest(
-                trusteeDOB(appConfig,
-                           formWithErrors,
-                           mode,
-                           existingSchemeName,
-                           postCall(mode, index, srn),
-                           srn,
-                           personName.fullName
-                )
-              )
-            )
-          ),
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            TrusteeNameId(index).retrieve.right.map(
+              personName =>
+                Future.successful(BadRequest(
+                  DOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theTrustee").resolve))
+                )),
 
-        value =>
-          userAnswersService.save(mode, srn, TrusteeDOBId(index), value).map {
-            cacheMap =>
-              Redirect(navigator.nextPage(TrusteeDOBId(index), mode, UserAnswers(cacheMap), srn))
-          }
-      )
-  }
+          value =>
+            userAnswersService.save(mode, srn, TrusteeDOBId(index), value).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(TrusteeDOBId(index), mode, UserAnswers(cacheMap), srn))
+            }
+        )
+    }
 }

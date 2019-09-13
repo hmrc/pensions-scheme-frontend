@@ -33,7 +33,8 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.FakeNavigator
-import views.html.register.establishers.individual.establisherDOB
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.Future
 
@@ -55,14 +56,16 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase {
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = establisherDOB(
+  def viewAsString(form: Form[_] = form): String = DOB(
     frontendAppConfig,
     form,
     NormalMode,
     None,
     postCall(NormalMode, index, None),
     None,
-    "test first name test last name")(fakeRequest, messages).toString
+    "test first name test last name",
+    Message("messages__theEstablisher").resolve
+  )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest
     .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))

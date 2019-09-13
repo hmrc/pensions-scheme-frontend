@@ -30,7 +30,8 @@ import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, UserAnswers}
-import views.html.register.establishers.individual.establisherDOB
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,10 +45,7 @@ class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: DOBFormProvider
                                         )(implicit val ec: ExecutionContext)
-  extends FrontendController
-    with Retrievals
-    with I18nSupport
-    with Enumerable.Implicits {
+  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -61,12 +59,11 @@ class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
           case None => form
         }
 
-        EstablisherNameId(index).retrieve.right.map {
-          establisherName =>
+        EstablisherNameId(index).retrieve.right.map(
+          personName =>
             Future.successful(Ok(
-              establisherDOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, index, srn), srn, establisherName.fullName)
+              DOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theEstablisher").resolve))
             ))
-        }
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -74,14 +71,13 @@ class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
         form.bindFromRequest().fold(
           formWithErrors =>
-            EstablisherNameId(index).retrieve.right.map {
-              establisherName =>
+            EstablisherNameId(index).retrieve.right.map(
+              personName =>
                 Future.successful(
                   BadRequest(
-                    establisherDOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, index, srn), srn, establisherName.fullName)
-                  )
+                    DOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theEstablisher").resolve))
                 )
-            },
+            ),
           value =>
             userAnswersService.save(mode, srn, EstablisherDOBId(index), value).map {
               cacheMap =>

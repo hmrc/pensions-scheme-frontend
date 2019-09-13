@@ -19,13 +19,11 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.DOBFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId, IsNewDirectorId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
-import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -33,8 +31,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
-import views.html.register.establishers.company.director.directorDOB
+import utils.{FakeNavigator, SectionComplete}
+import viewmodels.Message
+import views.html.register.DOB
 
 import scala.concurrent.Future
 
@@ -58,16 +57,16 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
 
   private val postCall = routes.DirectorDOBController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = directorDOB(
+  def viewAsString(form: Form[_] = form): String = DOB(
     frontendAppConfig,
     form,
     NormalMode,
-    firstEstablisherIndex,
-    firstDirectorIndex,
     None,
     postCall(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
     None,
-    "first last")(fakeRequest, messages).toString
+    "first last",
+    Message("messages__theDirector").resolve
+  )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest
     .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
