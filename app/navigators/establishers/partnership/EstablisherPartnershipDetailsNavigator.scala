@@ -29,24 +29,18 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
 
   import EstablisherPartnershipDetailsNavigator._
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_) => {
-      println("\n\n\nin new nav")
-      addEstablisherPage(mode, srn)
-    }
+  private def normalModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
   }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
-    println("\n\n route map")
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
-  }
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateTo(normalModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)

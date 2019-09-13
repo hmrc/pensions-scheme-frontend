@@ -34,11 +34,11 @@ import utils.{Toggles, UserAnswers}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherPartnershipFeatureSwitchNavigator @Inject() (
-                                                        featureSwitchService: FeatureSwitchManagementService,
-                                                        oldNavigator: EstablishersPartnershipNavigatorOld,
-                                                        detailsNavigator: EstablisherPartnershipDetailsNavigator
-                                                      ) extends Navigator {
+class EstablisherPartnershipFeatureSwitchNavigator @Inject()(
+                                                              featureSwitchService: FeatureSwitchManagementService,
+                                                              oldNavigator: EstablishersPartnershipNavigatorOld,
+                                                              detailsNavigator: EstablisherPartnershipDetailsNavigator
+                                                            ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
                                 mode: Mode,
@@ -48,7 +48,6 @@ class EstablisherPartnershipFeatureSwitchNavigator @Inject() (
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier): Option[Call] =
     if (featureSwitchService.get(Toggles.isHnSEnabled)) {
-      println("\n\n\n 4636")
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
@@ -133,8 +132,8 @@ class EstablishersPartnershipNavigatorOld @Inject()(val dataCacheConnector: User
       if (isNew || mode == CheckMode) {
         checkYourAnswers(index, journeyMode(mode), srn)
       } else if (!from.userAnswers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
-          NavigateTo.dontSave(PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
-        } else {
+        NavigateTo.dontSave(PartnershipConfirmPreviousAddressController.onPageLoad(index, srn))
+      } else {
         NavigateTo.dontSave(PartnershipAddressYearsController.onPageLoad(mode, index, srn))
       }
     case PartnershipAddressYearsId(index) =>
