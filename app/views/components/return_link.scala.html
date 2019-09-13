@@ -15,24 +15,27 @@
  *@
 
 @(
-messageKey: String,
-schemename: Option[String] = None,
-anotherReturn: Option[Call] = None,
-srn: Option[String] = None
+        messageKey: String,
+        schemename: Option[String] = None,
+        anotherReturn: Option[Call] = None,
+        srn: Option[String] = None
 )(implicit messages: Messages)
 
-@returnMessage=@{
- schemename.fold(messages(messageKey))(name=>if(anotherReturn.isEmpty) messages("messages__psaSchemeDetails__return_link", name) else messages(messageKey))
+@returnMessage = @{
+    schemename.fold(messages(messageKey))(name =>
+        if(anotherReturn.isEmpty) messages("messages__psaSchemeDetails__return_link", name) else messages(messageKey)
+    )
 }
-@correctMode=@{
- srn.fold[Mode](NormalMode)(_=> UpdateMode)
+
+@correctMode = @{
+    srn.fold[Mode](NormalMode)(_ => UpdateMode)
 }
 
 
 <div class="grid-row">
- <div class="column-two-thirds">
-  <p class="govuk-margin-top-5">
-   <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad(correctMode, srn))(call=>call)">@returnMessage</a>
-  </p>
- </div>
+    <div class="column-two-thirds">
+        <p class="govuk-margin-top-5">
+            <a id="return-link" href="@anotherReturn.fold(controllers.routes.SchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">@returnMessage</a>
+        </p>
+    </div>
 </div>
