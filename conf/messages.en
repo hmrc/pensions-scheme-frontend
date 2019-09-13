@@ -607,7 +607,7 @@ messages__directorAddressPostcodeLookup__lede = This is usually the director’s
 messages__directorDOB__title = What is the director’s date of birth?
 messages__directorDOB__heading = What is {0}’s date of birth?
 
-messages__individualDOB__heading = What is date of birth for {0}?
+messages__individualDOB__heading = What is the date of birth for {0}?
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
