@@ -18,15 +18,17 @@ package identifiers.register.establishers.individual
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.person.PersonName
-import play.api.libs.json.JsPath
+import models.ReferenceValue
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
-case class EstablisherNameId(index: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = EstablishersId(index).path \ EstablisherNameId.toString
+case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ EstablisherUTRId.toString
+
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(EstablisherNoUTRReasonId(index))
 }
 
-object EstablisherNameId {
-  def collectionPath(index: Int): JsPath = EstablishersId(index).path \ EstablisherNameId.toString
-
-  override lazy val toString: String = "establisherDetails"
+object EstablisherUTRId {
+  override def toString: String = "utr"
 }

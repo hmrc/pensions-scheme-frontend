@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.trustees.individual.WhatYouWillNeedIndividualAddressController
 import models.NormalMode
 import play.api.mvc.Call
 import play.api.test.Helpers._

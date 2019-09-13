@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import utils.annotations.TrusteesIndividual
+import utils.annotations.{NoSuspendedCheck, TrusteesIndividual}
 import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
 import views.html.checkYourAnswers
@@ -43,7 +43,7 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             val navigator: Navigator,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
-                                                            allowAccess: AllowAccessActionProvider,
+                                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                             allowChangeHelper: AllowChangeHelper,
                                                             requireData: DataRequiredAction,
                                                             implicit val countryOptions: CountryOptions,
