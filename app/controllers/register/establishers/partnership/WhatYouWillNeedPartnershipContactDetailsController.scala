@@ -32,7 +32,7 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(appConfig: Fr
                                                                    requireData: DataRequiredAction
                                                                   ) extends FrontendController with I18nSupport {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = Action {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
     implicit request =>
       Ok(">>>>>>Not Implemented>>>>>>")
   }

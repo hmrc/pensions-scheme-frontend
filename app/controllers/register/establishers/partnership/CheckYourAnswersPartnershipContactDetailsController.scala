@@ -23,12 +23,13 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.NoSuspendedCheck
 
 class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                                     override val messagesApi: MessagesApi,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
-                                                                    allowAccess: AllowAccessActionProvider,
+                                                                    @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction
                                                                    ) extends FrontendController with I18nSupport {
 

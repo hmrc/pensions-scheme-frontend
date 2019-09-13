@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.individual
+package identifiers.register.establishers.partnership
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.person.PersonName
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.ReferenceValue
 import play.api.libs.json.JsPath
 
-case class TrusteeNameId(trusteeIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
+case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipUTRId.toString
 }
 
-object TrusteeNameId {
-  def collectionPath(trusteeIndex: Int): JsPath = TrusteesId(trusteeIndex).path \ TrusteeNameId.toString
-
-  override def toString: String = "trusteeDetails"
+object PartnershipUTRId {
+  override def toString: String = "utr"
 }
+
+
+
+
+
+
+
+
+
+
+
