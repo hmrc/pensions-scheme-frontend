@@ -19,26 +19,25 @@
 @import models.Mode
 @import play.api.mvc.Call
 
+@import viewmodels.dateOfBirth.DateOfBirthViewModel
 @(
         appConfig: FrontendAppConfig,
         form: Form[_],
         mode: Mode,
         schemeName: Option[String],
-        postCall: Call,
-        srn: Option[String],
         fullName: String,
-        token: String
+        viewModel: DateOfBirthViewModel
 )(implicit
         request: Request[_],
         messages: Messages
 )
 
 @main_template(
-    title = messages("messages__DOB__title", token),
+    title = messages("messages__DOB__title", viewModel.token),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @helpers.form(action = viewModel.postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
@@ -54,6 +53,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }

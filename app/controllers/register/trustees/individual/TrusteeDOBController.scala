@@ -17,53 +17,52 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import org.joda.time.LocalDate
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Enumerable, UserAnswers}
+import utils.UserAnswers
 import viewmodels.Message
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrusteeDOBController @Inject()(appConfig: FrontendAppConfig,
+class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
-                                     userAnswersService: UserAnswersService,
-                                     navigator: Navigator,
+                                     val userAnswersService: UserAnswersService,
+                                     val navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      allowAccess: AllowAccessActionProvider,
                                      requireData: DataRequiredAction,
-                                     formProvider: DOBFormProvider
-                                    )(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     val formProvider: DOBFormProvider
+                                    )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
-  private val form = formProvider()
+  private val form: Form[LocalDate] = formProvider()
 
   private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, index, srn),
+      srn = srn,
+      token = token
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get[LocalDate](TrusteeDOBId(index)) match {
-          case Some(value) => form.fill(value)
-          case None => form
-        }
-
-        TrusteeNameId(index).retrieve.right.map(
-          personName =>
-            Future.successful(Ok(
-              DOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theTrustee").resolve))
-            ))
+        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theTrustee").resolve), mode)
     }
 
 
@@ -85,4 +84,5 @@ class TrusteeDOBController @Inject()(appConfig: FrontendAppConfig,
             }
         )
     }
+
 }

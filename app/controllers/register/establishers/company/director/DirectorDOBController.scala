@@ -19,12 +19,14 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
@@ -32,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, UserAnswers}
 import viewmodels.Message
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,26 +49,24 @@ class DirectorDOBController @Inject()(
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
                                        formProvider: DOBFormProvider
-                                     )(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
-  private val form = formProvider()
+  private val form: Form[LocalDate] = formProvider()
 
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      srn = srn,
+      token = token
+    )
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get[LocalDate](DirectorDOBId(establisherIndex, directorIndex)) match {
-          case Some(value) => form.fill(value)
-          case None => form
-        }
-
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(
-          personName =>
-            Future.successful(Ok(
-              DOB(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn, personName.fullName, Message("messages__theDirector").resolve))
-            ))
+        get(DirectorDOBId(establisherIndex, directorIndex), DirectorNameId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, Message("messages__theDirector").resolve), mode)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
