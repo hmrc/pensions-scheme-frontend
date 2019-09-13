@@ -16,17 +16,21 @@
 
 package controllers.register.trustees.individual
 
+import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId, TrusteePhoneId}
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import navigators.Navigator
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers
 
@@ -76,16 +80,24 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
         }
 
         "Update Mode" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).overrides(
-            bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true))
-          ).build()
+          running(_.overrides(
+            bind[Navigator].toInstance(FakeNavigator),
+            bind[AuthAction].toInstance(FakeAuthAction),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
+            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(true)),
+            bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+          )) {
+            app =>
 
-          val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
+              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true)
-          app.stop()
+              status(result) mustBe OK
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true)
+              app.stop()
+          }
         }
       }
     }
