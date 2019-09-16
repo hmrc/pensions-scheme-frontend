@@ -29,12 +29,10 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import utils.UserAnswers
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
-import views.html.register.DOB
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -47,7 +45,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      val formProvider: DOBFormProvider
                                     )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
-  private val form: Form[LocalDate] = formProvider()
+  val form: Form[LocalDate] = formProvider()
 
   private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
 
@@ -69,20 +67,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            TrusteeNameId(index).retrieve.right.map(
-              personName =>
-                Future.successful(BadRequest(
-                  DOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theTrustee").resolve))
-                )),
-
-          value =>
-            userAnswersService.save(mode, srn, TrusteeDOBId(index), value).map {
-              cacheMap =>
-                Redirect(navigator.nextPage(TrusteeDOBId(index), mode, UserAnswers(cacheMap), srn))
-            }
-        )
+        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theTrustee").resolve), mode)
     }
 
 }

@@ -18,31 +18,26 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode}
 import org.joda.time.LocalDate
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import services.UserAnswersService
 import utils.FakeNavigator
 import viewmodels.Message
-import views.html.register.DOB
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 
-import scala.concurrent.Future
-
-class EstablisherDOBControllerSpec extends ControllerSpecBase {
+class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import EstablisherDOBControllerSpec._
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherDOBController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): EstablisherDOBController =
     new EstablisherDOBController(
       frontendAppConfig,
       messagesApi,
@@ -56,70 +51,23 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase {
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = DOB(
-    frontendAppConfig,
-    form,
-    NormalMode,
-    None,
-    postCall(NormalMode, index, None),
-    None,
-    "test first name test last name",
-    Message("messages__theEstablisher").resolve
-  )(fakeRequest, messages).toString
-
-  private val postRequest = fakeRequest
-    .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+    DateOfBirthViewModel(
+      postCall = postCall(mode, index, srn),
+      srn = srn,
+      token = token
+    )
 
   "EstablisherDOB Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller()
-        .onPageLoad(NormalMode, index, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)))
-    }
-
-    "redirect to the next page when valid data is submitted" in {
-
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
+    behave like dateOfBirthController(
+      get = data => controller(data).onPageLoad(NormalMode, 0, None),
+      post = data => controller(data).onSubmit(NormalMode, 0, None),
+      viewModel = viewModel(NormalMode, index, None, Message("messages__theEstablisher").resolve),
+      mode = NormalMode,
+      requiredData = getMandatoryEstablisherHns,
+      validData = validData
+    )
   }
 }
 
@@ -130,18 +78,15 @@ object EstablisherDOBControllerSpec extends MockitoSugar {
   val form: Form[LocalDate] = formProvider()
 
   val index: Index = Index(0)
-  val invalidIndex: Index = Index(10)
-
-  val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
   val day: Int = LocalDate.now().getDayOfMonth
   val month: Int = LocalDate.now().getMonthOfYear
   val year: Int = LocalDate.now().getYear - 20
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        EstablisherNameId.toString -> PersonName("test first name", "test last name"),
+        EstablisherNameId.toString -> PersonName("Test", "Name"),
         EstablisherDOBId.toString -> new LocalDate(year, month, day)
       )
     )

@@ -47,7 +47,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,

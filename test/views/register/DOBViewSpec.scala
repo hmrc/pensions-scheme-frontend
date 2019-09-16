@@ -17,10 +17,11 @@
 package views.register
 
 import forms.DOBFormProvider
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.DOB
 
@@ -32,19 +33,45 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
   val personName = "John Doe"
   private val postCall = controllers.routes.IndexController.onPageLoad()
 
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall,
+      srn = srn,
+      token = token
+    )
+  }
+
   override val form = new DOBFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    DOB(frontendAppConfig, form, NormalMode, None,
-      postCall, None, personName, "user token")(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      None,
+      personName,
+      viewModel(NormalMode, 0, None, "user token")
+    )(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    DOB(frontendAppConfig, form, NormalMode, None,
-      postCall, Some("srn"), personName, "user token")(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      UpdateMode,
+      Some("srn"),
+      personName,
+      viewModel(UpdateMode, 0, Some("srn"), "user token")
+    )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    DOB(frontendAppConfig, form, NormalMode, None,
-      postCall, None, personName, "user token")(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      None,
+      personName,
+      viewModel(NormalMode, 0, None, "user token")
+    )(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear

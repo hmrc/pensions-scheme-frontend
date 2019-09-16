@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
@@ -27,21 +26,18 @@ import models.{Index, Mode}
 import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Enumerable, UserAnswers}
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
-import views.html.register.DOB
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
+class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         userAnswersService: UserAnswersService,
-                                         navigator: Navigator,
+                                         val userAnswersService: UserAnswersService,
+                                         val navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
@@ -49,7 +45,7 @@ class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
                                          formProvider: DOBFormProvider
                                         )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
-  private val form: Form[LocalDate] = formProvider()
+  val form: Form[LocalDate] = formProvider()
 
   private def postCall: (Mode, Index, Option[String]) => Call = routes.EstablisherDOBController.onSubmit
 
@@ -70,20 +66,6 @@ class EstablisherDOBController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            EstablisherNameId(index).retrieve.right.map(
-              personName =>
-                Future.successful(
-                  BadRequest(
-                    DOB(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, index, srn), srn, personName.fullName, Message("messages__theEstablisher").resolve))
-                )
-            ),
-          value =>
-            userAnswersService.save(mode, srn, EstablisherDOBId(index), value).map {
-              cacheMap =>
-                Redirect(navigator.nextPage(EstablisherDOBId(index), mode, UserAnswers(cacheMap), srn))
-            }
-        )
+        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theEstablisher").resolve), mode)
     }
 }

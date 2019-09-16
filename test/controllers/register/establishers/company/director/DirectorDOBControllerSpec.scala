@@ -18,32 +18,27 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, Index, Mode, NormalMode}
 import org.joda.time.LocalDate
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import services.UserAnswersService
 import utils.{FakeNavigator, SectionComplete}
 import viewmodels.Message
-import views.html.register.DOB
-
-import scala.concurrent.Future
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 
 //scalastyle:off magic.number
 
-class DirectorDOBControllerSpec extends ControllerSpecBase {
+class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import DirectorDOBControllerSpec._
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorDOBController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorDOBController =
     new DirectorDOBController(
       frontendAppConfig,
       messagesApi,
@@ -55,72 +50,86 @@ class DirectorDOBControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider)
 
-  private val postCall = routes.DirectorDOBController.onSubmit _
+  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
 
-  def viewAsString(form: Form[_] = form): String = DOB(
-    frontendAppConfig,
-    form,
-    NormalMode,
-    None,
-    postCall(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-    None,
-    "first last",
-    Message("messages__theDirector").resolve
-  )(fakeRequest, messages).toString
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      srn = srn,
+      token = token
+    )
 
-  private val postRequest = fakeRequest
-    .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+//  def viewAsString(form: Form[_] = form): String = DOB(
+//    frontendAppConfig,
+//    form,
+//    NormalMode,
+//    None,
+//    "first last",
+//    viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector").resolve)
+//  )(fakeRequest, messages).toString
+
+//  private val postRequest = fakeRequest
+//    .withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
   "DirectorDOB Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller()
-        .onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+    behave like dateOfBirthController(
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector").resolve),
+      mode = NormalMode,
+      requiredData = getMandatoryEstablisherCompany,
+      validData = validData
+    )
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)))
-    }
-
-    "redirect to the next page when valid data is submitted" in {
-
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
+//    "return OK and the correct view for a GET" in {
+//      val result = controller()
+//        .onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+//
+//      status(result) mustBe OK
+//      contentAsString(result) mustBe viewAsString()
+//    }
+//
+//    "populate the view correctly on a GET when the question has previously been answered" in {
+//
+//      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+//      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+//
+//      contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)))
+//    }
+//
+//    "redirect to the next page when valid data is submitted" in {
+//
+//      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
+//      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+//
+//      status(result) mustBe SEE_OTHER
+//      redirectLocation(result) mustBe Some(onwardRoute.url)
+//    }
+//
+//    "return a Bad Request and errors when invalid data is submitted" in {
+//      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+//      val boundForm = form.bind(Map("value" -> "invalid value"))
+//
+//      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+//
+//      status(result) mustBe BAD_REQUEST
+//      contentAsString(result) mustBe viewAsString(boundForm)
+//    }
+//
+//    "redirect to Session Expired for a GET if no existing data is found" in {
+//      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+//
+//      status(result) mustBe SEE_OTHER
+//      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+//    }
+//
+//    "redirect to Session Expired for a POST if no existing data is found" in {
+//      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+//
+//      status(result) mustBe SEE_OTHER
+//      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+//    }
   }
 }
 
@@ -132,10 +141,8 @@ object DirectorDOBControllerSpec extends MockitoSugar {
 
   val firstEstablisherIndex: Index = Index(0)
   val firstDirectorIndex: Index = Index(0)
-  val invalidIndex: Index = Index(10)
 
   val companyName: String = "test company name"
-  val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   val mockSectionComplete: SectionComplete = mock[SectionComplete]
 
   val day: Int = LocalDate.now().getDayOfMonth
