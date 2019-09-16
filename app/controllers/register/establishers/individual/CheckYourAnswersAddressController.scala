@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.NotImplemented
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import utils.annotations.{EstablishersIndividual, NoSuspendedCheck}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,7 +36,7 @@ class CheckYourAnswersAddressController @Inject()(
                                                             @EstablishersIndividual val navigator: Navigator,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
-                                                            allowAccess: AllowAccessActionProvider,
+                                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                             requireData: DataRequiredAction
                                                           )(implicit val ec: ExecutionContext) extends I18nSupport {
 
