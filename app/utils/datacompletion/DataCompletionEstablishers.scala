@@ -22,7 +22,7 @@ import identifiers.register.establishers.individual._
 import models.{Mode, NormalMode}
 import utils.UserAnswers
 
-trait DataCompletionEstablishers {
+trait DataCompletionEstablishers extends DataCompletion {
 
   self: UserAnswers =>
 

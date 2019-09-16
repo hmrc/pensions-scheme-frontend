@@ -19,7 +19,7 @@ package utils
 import identifiers._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -46,7 +46,6 @@ import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
 final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits
-                                                          with DataCompletion
                                                           with DataCompletionEstablishers
                                                           with DataCompletionTrustees {
 
@@ -168,15 +167,22 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case _ => 0
     }
 
+    private def readsIndividualNonHnS(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, isNew) =>
+      EstablisherIndividualEntityNonHnS(
+        EstablisherDetailsId(index), details.fullName, details.isDeleted,
+        isEstablisherIndividualComplete(false, index), isNew.fold(false)(identity), noOfRecords)
+    )
 
     private def readsIndividual(index: Int): Reads[Establisher[_]] = (
-      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+      (JsPath \ EstablisherNameId.toString).read[PersonName] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+      ) ((details, isNew) =>
       EstablisherIndividualEntity(
-        EstablisherDetailsId(index), details.fullName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        EstablisherNameId(index), details.fullName, details.isDeleted,
+        isEstablisherIndividualComplete(true, index), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsCompany(index: Int): Reads[Establisher[_]] = (
@@ -209,7 +215,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         case JsDefined(JsArray(establishers)) =>
           readEntities(
             establishers,
-            index => readsIndividual(index)
+            index => (if(isHnSEnabled) readsIndividual(index) else readsIndividualNonHnS(index))
               orElse readsCompany(index)
               orElse readsPartnership(index)
               orElse readsSkeleton(index)

@@ -20,7 +20,7 @@ import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -586,7 +586,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[_] = {
     establisherKind match {
       case Indivdual =>
-        EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
+        EstablisherIndividualEntity(EstablisherNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
       case Company =>
         EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
       case _ =>

@@ -1314,9 +1314,17 @@ messages__schemeTaskList__sectionEstablishers_no_establishers = No establishers
 messages__schemeTaskList__sectionEstablishersCompany_add_details = Add company details for {0}
 messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add directors for {0}
 
-messages__schemeTaskList__sectionIndividual_add_details = Add details for {0}
+messages__schemeTaskList__add_details = Add details for {0}
 messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
+
+messages__schemeTaskList__change_details = Change details for {0}
+messages__schemeTaskList__change_address = Change address for {0}
+messages__schemeTaskList__change_contact = Change contact details for {0}
+
+messages__schemeTaskList__continue_details = Continue adding details for {0}
+messages__schemeTaskList__continue_address = Continue adding address for {0}
+messages__schemeTaskList__continue_contact = Continue adding contact details for {0}
 
 messages__schemeTaskList__sectionPartnership_add_details = Add {0}’s partnership’s details
 messages__schemeTaskList__sectionPartnership_add_address = Add {0}’s partnership’s address
