@@ -16,7 +16,7 @@
 
 package utils.behaviours
 
-import base.SpecBase
+import base.{JsonFileReader, SpecBase}
 import config.FeatureSwitchManagementService
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
@@ -35,12 +35,11 @@ import models.register.SchemeType.SingleTrust
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.JsResult
-import utils.DataCompletionSpec.readJsonFromFile
 import utils.hstasklisthelper.HsTaskListHelper
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
 
-trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper {
+trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
 
   protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text")
   protected lazy val schemeInfoLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")

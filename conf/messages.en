@@ -1322,6 +1322,18 @@ messages__schemeTaskList__sectionPartnership_add_details = Add {0}’s partnersh
 messages__schemeTaskList__sectionPartnership_add_address = Add {0}’s partnership’s address
 messages__schemeTaskList__sectionPartnership_add_contact = Add {0}’s partnership’s contact details
 
+
+messages__schemeTaskList__add_details = Add details for {0}
+messages__schemeTaskList__add_address = Add address for {0}
+messages__schemeTaskList__add_contact_details = Add contact details for {0}
+messages__schemeTaskList__add_directors = Add directors for {0}
+messages__schemeTaskList__add_partners = Add partners for {0}
+
+messages__schemeTaskList__change_details = Change details for {0}
+messages__schemeTaskList__change_address = Change address for {0}
+messages__schemeTaskList__change_contact_details = Change contact details for {0}
+messages__schemeTaskList__change_directors = Change directors for {0}
+
 messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
 messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
 

@@ -17,28 +17,35 @@
 package utils.datacompletion
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.company._
+import identifiers.register.trustees.{company => tc}
+import identifiers.register.trustees.{partnership => tp}
+import identifiers.register.establishers.company.director._
+import identifiers.register.trustees.individual._
+import identifiers.register.trustees.partnership.PartnershipHasBeenTradingId
 import models.address.Address
-import models.{AddressYears, ReferenceValue}
+import models.{AddressYears, Mode, NormalMode, ReferenceValue}
 import play.api.libs.json.Reads
 import utils.UserAnswers
 
 trait DataCompletion {
 
+
   self: UserAnswers =>
 
   //GENERIC METHODS
   def isComplete(list: Seq[Option[Boolean]]): Option[Boolean] =
-    if (list.flatten.isEmpty) None
+    if(list.flatten.isEmpty) None
     else
       Some(list.foldLeft(true)({
-        case (acc, Some(true)) => acc
+        case (acc , Some(true)) => acc
         case (_, Some(false)) => false
         case (_, None) => false
       }))
 
   def isListComplete(list: Seq[Boolean]): Boolean =
     list.nonEmpty & list.foldLeft(true)({
-      case (acc, true) => acc
+      case (acc , true) => acc
       case (_, false) => false
     })
 
@@ -68,8 +75,8 @@ trait DataCompletion {
     }
 
   def isAnswerComplete(yesNoQuestionId: TypedIdentifier[Boolean],
-                       yesValueId: TypedIdentifier[ReferenceValue],
-                       noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
+                              yesValueId: TypedIdentifier[ReferenceValue],
+                              noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
       case (None, None, _) => None
       case (_, Some(_), _) => Some(true)
@@ -83,4 +90,9 @@ trait DataCompletion {
       case None => None
       case Some(_) => Some(true)
     }
+
+
+
+
+
 }

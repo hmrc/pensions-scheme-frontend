@@ -18,14 +18,14 @@ package utils.hstasklisthelper
 
 
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
+import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
+import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.register.Entity
 import play.api.i18n.Messages
@@ -37,138 +37,31 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
   implicit val messages: Messages
   protected val isHnSEnabled: Boolean
 
-  sealed trait Spoke
-
-  case object EstablisherCompanyDetails extends Spoke
-
-  case object EstablisherCompanyAddress extends Spoke
-
-  case object EstablisherCompanyContactDetails extends Spoke
-
-  case object EstablisherCompanyDirectors extends Spoke
-
-  case object TrusteeCompanyAddress extends Spoke
-
-  case object TrusteeCompanyContactDetails extends Spoke
-
-  case object TrusteeCompanyDetails extends Spoke
-
-  case object TrusteeIndividualAddress extends Spoke
-
-  case object TrusteeIndividualContactDetails extends Spoke
-
-  case object TrusteeIndividualDetails extends Spoke
-
-  case object TrusteePartnershipAddress extends Spoke
-
-  case object TrusteePartnershipContactDetails extends Spoke
-
-  case object TrusteePartnershipDetails extends Spoke
-
-
   def createSpoke(answers: UserAnswers,
-                  spokeName: Spoke,
+                  spoke: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
 
-    val isChangeLink = getCompleteFlag(answers, index, spokeName, mode)
+    val isChangeLink = spoke.completeFlag(answers, index, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
     (isChangeLink, isNew) match {
-      case (_, false) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), None)
-      case (Some(true), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-      case (Some(false), _) => EntitySpoke(Link(getChangeLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), isComplete)
-      case _ => EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+      case (_, false) => EntitySpoke(spoke.changeLink(name)(mode, srn, index))
+      case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
+      case (Some(false), _) => EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
+      case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index))
     }
   }
 
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
-                                 spokeName: Spoke,
+                                 spoke: Spoke,
                                  mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
 
     val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
 
     if (entityList.isEmpty)
-      EntitySpoke(Link(getAddLinkText(spokeName)(name), getAddLink(spokeName)(mode, srn, index).url), None)
+      EntitySpoke(spoke.addLink(name)(mode, srn, index), None)
     else
-      EntitySpoke(Link(getChangeLinkText(spokeName)(name), getChangeLink(spokeName)(mode, srn, index).url), isComplete)
-  }
-
-  private def getCompleteFlag(answers: UserAnswers, index: Int, spokeName: Spoke, mode: Mode): Option[Boolean] = spokeName match {
-    case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index, mode)
-    case EstablisherCompanyAddress => answers.isEstablisherCompanyAddressComplete(index)
-    case EstablisherCompanyContactDetails => answers.isEstablisherCompanyContactDetailsComplete(index)
-    case TrusteeCompanyDetails => answers.isTrusteeCompanyDetailsComplete(index)
-    case TrusteeCompanyAddress => answers.isTrusteeCompanyAddressComplete(index)
-    case TrusteeCompanyContactDetails => answers.isTrusteeCompanyContactDetailsComplete(index)
-    case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index)
-    case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)
-    case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index)
-    case TrusteePartnershipDetails => answers.isTrusteePartnershipDetailsComplete(index)
-    case TrusteePartnershipAddress => answers.isTrusteePartnershipAddressComplete(index)
-    case TrusteePartnershipContactDetails => answers.isTrusteePartnershipContactDetailsComplete(index)
-    case _ => None
-  }
-
-  private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionIndividual_change_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
-    case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_change_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_change_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
-    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_change_details",  _)
-    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_change_address",  _)
-    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_change_contact", _)
-    case _ => (_: String) => s"Not found link text for spoke $spokeName"
-  }
-
-  private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
-    case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__add_contact", _)
-    case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__add_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__add_contact", _)
-    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_add_details",  _)
-    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_add_address",  _)
-    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_add_contact",  _)
-    case _ => (_: String) => s"Not found link text for spoke $spokeName"
-  }
-
-  private def getChangeLink(spokeName: Spoke)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
-    case EstablisherCompanyDetails => establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyAddress => establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyContactDetails => establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
-    case TrusteeCompanyDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeCompanyAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
-    case TrusteeCompanyContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualAddress => trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualContactDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index, srn)
-    case TrusteePartnershipDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index, srn)
-    case TrusteePartnershipAddress => trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
-    case TrusteePartnershipContactDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index, srn)
-    case _ => controllers.routes.IndexController.onPageLoad()
-  }
-
-  private def getAddLink(spokeName: Spoke)(mode: Mode, srn: Option[String], index: Index): Call = spokeName match {
-    case EstablisherCompanyDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
-    case EstablisherCompanyDirectors => establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index)
-    case TrusteeCompanyDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn)
-    case TrusteeCompanyAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
-    case TrusteeCompanyContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
-    case TrusteeIndividualDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index,srn) //change the route
-    case TrusteeIndividualAddress => trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn) //change the route
-    case TrusteeIndividualContactDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn) //change the route
-    case TrusteePartnershipDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index,srn)
-    case TrusteePartnershipAddress => trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
-    case TrusteePartnershipContactDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index, srn)
-    case _ => controllers.routes.IndexController.onPageLoad()
+      EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
   }
 
   def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
@@ -178,6 +71,15 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
       createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
+    )
+  }
+
+  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, EstablisherPartnershipDetails, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherPartnershipAddress, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherPartnershipContactDetails, mode, srn, name, index, isEstablisherNew)
     )
   }
 
@@ -206,5 +108,239 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, TrusteePartnershipAddress, mode, srn, name, index, isTrusteeNew),
       createSpoke(answers, TrusteePartnershipContactDetails, mode, srn, name, index, isTrusteeNew)
     )
+  }
+
+  sealed trait Spoke {
+    def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
+    def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
+    def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
+    def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean]
+  }
+
+  sealed trait DetailsSpoke extends Spoke {
+    def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+    def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+
+    override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__add_details", name),
+      addLinkUrl(mode, srn, index).url
+    )
+
+    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_details", name),
+      changeLinkUrl(mode, srn, index).url
+    )
+
+    override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_details", name),
+      addLinkUrl(mode, srn, index).url
+    )
+  }
+
+  sealed trait AddressSpoke extends Spoke {
+    def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+    def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+
+    override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__add_address", name),
+      addLinkUrl(mode, srn, index).url
+    )
+
+    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_address", name),
+      changeLinkUrl(mode, srn, index).url
+    )
+
+    override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_address", name),
+      addLinkUrl(mode, srn, index).url
+    )
+  }
+
+  sealed trait ContactDetailsSpoke extends Spoke {
+    def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+    def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
+
+    override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__add_contact_details", name),
+      addLinkUrl(mode, srn, index).url
+    )
+
+    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_contact_details", name),
+      changeLinkUrl(mode, srn, index).url
+    )
+
+    override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_contact_details", name),
+      addLinkUrl(mode, srn, index).url
+    )
+  }
+
+  case object EstablisherCompanyDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyDetailsComplete(index, mode)
+  }
+
+  case object EstablisherCompanyAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyAddressComplete(index)
+  }
+
+  case object EstablisherCompanyContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyContactDetailsComplete(index)
+  }
+
+  case object EstablisherCompanyDirectors extends Spoke{
+
+    override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__add_directors", name),
+      establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index).url
+    )
+
+    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
+      messages("messages__schemeTaskList__change_directors", name),
+      establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index).url
+    )
+
+    override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = changeLink(name)(mode, srn, index)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = None
+  }
+
+  case object EstablisherPartnershipDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherPartnershipDetailsComplete(index)
+  }
+
+  case object EstablisherPartnershipAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, srn, index)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherPartnershipAddressComplete(index)
+  }
+
+  case object EstablisherPartnershipContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherPartnershipContactDetailsComplete(index)
+  }
+
+  case object TrusteeCompanyAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeCompanyAddressComplete(index)
+  }
+
+  case object TrusteeCompanyContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeCompanyContactDetailsComplete(index)
+  }
+
+  case object TrusteeCompanyDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeCompanyDetailsComplete(index)
+  }
+
+  case object TrusteeIndividualAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeIndividualAddressComplete(index)
+  }
+
+  case object TrusteeIndividualContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeIndividualContactDetailsComplete(index)
+  }
+
+  case object TrusteeIndividualDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteeIndividualDetailsComplete(index)
+  }
+
+  case object TrusteePartnershipAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteePartnershipAddressComplete(index)
+  }
+
+  case object TrusteePartnershipContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteePartnershipContactDetailsComplete(index)
+  }
+
+  case object TrusteePartnershipDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isTrusteePartnershipDetailsComplete(index)
   }
 }
