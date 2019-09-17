@@ -83,9 +83,7 @@ GET         /:index/individual/:mode/enter-national-insurance-number/:srn       
 POST        /:index/individual/:mode/enter-national-insurance-number/:srn                controllers.register.establishers.individual.EstablisherNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers                                        controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/check-your-answers                                        controllers.register.establishers.individual.CheckYourAnswersController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/:mode/check-your-answers/:srn                             controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/individual/:mode/check-your-answers/:srn                             controllers.register.establishers.individual.CheckYourAnswersController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/establisher-name                                          controllers.register.establishers.individual.EstablisherNameController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/individual/establisher-name                                          controllers.register.establishers.individual.EstablisherNameController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

@@ -38,9 +38,9 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       userAnswers.get(IsBeforeYouStartCompleteId),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      Some(userAnswers.allEstablishersCompleted(isHnSEnabled, UpdateMode)),
-      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted(isHnSEnabled)),
-      Some(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+      Some(userAnswers.allEstablishersCompleted(isHnSPhase1Enabled, isHnSPhase2Enabled, UpdateMode)),
+      Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted(isHnSPhase1Enabled)),
+      Some(userAnswers.allTrusteesAfterDelete(isHnSPhase1Enabled).size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
   }
 
@@ -101,7 +101,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
     if (userAnswers.isUserAnswerUpdated) {
       Some(Link(declarationLinkText,
-        if (userAnswers.areVariationChangesCompleted(isHnSEnabled))
+        if (userAnswers.areVariationChangesCompleted(isHnSPhase1Enabled, isHnSPhase2Enabled))
           controllers.routes.VariationDeclarationController.onPageLoad(srn).url
         else
           controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
@@ -112,23 +112,23 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
-    (userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode).isEmpty, viewOnly) match {
+    (userAnswers.allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
       case (true, false) => Some(SchemeDetailsTaskListHeader(link = typeOfEstablisherLink(addEstablisherLinkText,
-        userAnswers.allEstablishers(isHnSEnabled, mode).size, srn, mode)))
+        userAnswers.allEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).size, srn, mode)))
       case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(changeEstablisherLinkText, srn, mode)))
       case (false, true) => None
     }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
-    (userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty, viewOnly, isHnSEnabled) match {
+    (userAnswers.allTrusteesAfterDelete(isHnSPhase1Enabled).isEmpty, viewOnly, isHnSPhase1Enabled) match {
       case (true, true, _) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
       case (true, false, _) => Some(SchemeDetailsTaskListHeader(
-        link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
+        link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSPhase1Enabled).size, srn, mode)))
       case (false, false, false) => {
 
         val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size, userAnswers.get(SchemeTypeId))
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSPhase1Enabled).size, userAnswers.get(SchemeTypeId))
 
         Some(
           SchemeDetailsTaskListHeader(

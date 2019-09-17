@@ -19,7 +19,7 @@ package models.register
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteeKindId
@@ -151,13 +151,30 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def index: Int = id.index
 }
 
-case class EstablisherIndividualEntity(id: EstablisherDetailsId, name: String, isDeleted: Boolean,
-                                       isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherDetailsId] {
+case class EstablisherIndividualEntityNonHnS(id: EstablisherDetailsId, name: String, isDeleted: Boolean,
+                                             isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherDetailsId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
     case (_, true) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
     case (_, false) => Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, id.index, srn).url)
   }
+
+  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
+      case UpdateMode | CheckUpdateMode if (noOfRecords > 1) =>
+        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
+      case _ => None
+    }
+  }
+
+  override def index: Int = id.index
+}
+
+case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDeleted: Boolean,
+                                       isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherNameId] {
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
