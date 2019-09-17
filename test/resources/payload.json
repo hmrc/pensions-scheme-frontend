@@ -11,12 +11,16 @@
   "schemeEstablishedCountry": "GB",
   "membership": "opt2",
   "schemeStatus" : "Open",
+  "isBeforeYouStartComplete" : true,
   "membershipFuture": "opt3",
+  "isAboutMembersComplete" : true,
   "investmentRegulated": true,
   "occupationalPensionScheme": true,
   "benefits": "opt1",
   "securedBenefits": false,
+  "isAboutBenefitsAndInsuranceComplete" : true,
   "uKBankAccount": false,
+  "IsAboutBankDetailsComplete" : true,
   "isAboutSchemeComplete": true,
   "establishers": [
     {
