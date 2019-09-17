@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package toggles
+package identifiers.register.establishers.individual
 
-class TogglesSpec extends FeatureToggleBehaviours {
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-  "is-establisher-company-hns new feature toggle" should {
-    behave like featureToggle("is-establisher-company-hns", true)
-  }
+case class EstablisherNoUTRReasonId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = EstablishersId(index).path \ EstablisherNoUTRReasonId.toString
+}
 
-  "is-hns-enabled new feature toggle" should {
-    behave like featureToggle("is-hns-enabled", false)
-  }
-
+object EstablisherNoUTRReasonId {
+  override def toString: String = "noUtrReason"
 }
