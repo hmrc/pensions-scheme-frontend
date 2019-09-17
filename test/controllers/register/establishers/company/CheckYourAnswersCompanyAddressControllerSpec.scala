@@ -59,10 +59,6 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
 
-        writeToDesktop(contentAsString(result), "act.html")
-        writeToDesktop(viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode), "exp.html")
-
-
         contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
       }
 
@@ -136,7 +132,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
-      Some("messages__visuallyhidden__establisher__address_years")))
+      Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
   def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -152,7 +148,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
+      Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
@@ -168,6 +164,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAnswerRow(UpdateMode, srn))))
+
   def companyAddressUpdatePartial: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
