@@ -78,6 +78,7 @@ messages__error__postcode_no_results = There are no addresses for that postcode
 
 messages__error__trustees = trustee’s
 messages__error__director = director’s
+messages__error__establisher = establisher’s
 messages__error__first_name = Enter the {0} first name
 messages__error__last_name = Enter the {0} last name
 messages__error__date = Enter a valid date
@@ -1315,9 +1316,17 @@ messages__schemeTaskList__sectionEstablishers_no_establishers = No establishers
 messages__schemeTaskList__sectionEstablishersCompany_add_details = Add company details for {0}
 messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add directors for {0}
 
-messages__schemeTaskList__sectionIndividual_add_details = Add details for {0}
+messages__schemeTaskList__add_details = Add details for {0}
 messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
+
+messages__schemeTaskList__change_details = Change details for {0}
+messages__schemeTaskList__change_address = Change address for {0}
+messages__schemeTaskList__change_contact = Change contact details for {0}
+
+messages__schemeTaskList__continue_details = Continue adding details for {0}
+messages__schemeTaskList__continue_address = Continue adding address for {0}
+messages__schemeTaskList__continue_contact = Continue adding contact details for {0}
 
 messages__schemeTaskList__sectionPartnership_add_details = Add {0}’s partnership’s details
 messages__schemeTaskList__sectionPartnership_add_address = Add {0}’s partnership’s address
@@ -1847,3 +1856,6 @@ messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration num
 messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
 
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
+
+messages__establisherName__title = What is the establisher’s name?
+messages__establisherName__heading = What is the establisher’s name?

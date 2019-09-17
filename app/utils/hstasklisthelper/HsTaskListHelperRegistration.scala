@@ -96,10 +96,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete(isHnSEnabled).isEmpty, isHnSEnabled) match {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete(isHnSPhase1Enabled).isEmpty, isHnSPhase1Enabled) match {
       case (None | Some(true), false, false) =>
         val (linkText, additionalText): (String, Option[String]) =
-          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSEnabled).size, userAnswers.get(SchemeTypeId))
+          getTrusteeHeaderText(userAnswers.allTrusteesAfterDelete(isHnSPhase1Enabled).size, userAnswers.get(SchemeTypeId))
         Some(
           SchemeDetailsTaskListHeader(
             link = addTrusteeLink(linkText, srn, mode),
@@ -109,7 +109,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
         Some(
           SchemeDetailsTaskListHeader(
             None,
-            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSEnabled).size, srn, mode)))
+            typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees(isHnSPhase1Enabled).size, srn, mode)))
 
       case (None | Some(true), false, true) =>
         Some(
@@ -120,7 +120,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
         Some(
           SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode,
-              userAnswers.allTrustees(isHnSEnabled).size, srn).url)), None))
+              userAnswers.allTrustees(isHnSPhase1Enabled).size, srn).url)), None))
 
       case _ =>
         None
@@ -128,10 +128,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    if (userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode).isEmpty) {
+    if (userAnswers.allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).isEmpty) {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers(isHnSEnabled, mode).size, srn).url)), None))
+          userAnswers.allEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).size, srn).url)), None))
     } else {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
         controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))

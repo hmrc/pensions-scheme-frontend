@@ -19,7 +19,7 @@ package utils
 import identifiers._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
@@ -38,13 +38,16 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
+import utils.datacompletion.{DataCompletion, DataCompletionEstablishers, DataCompletionTrustees}
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
-final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits with DataCompletion {
+final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits
+                                                          with DataCompletionEstablishers
+                                                          with DataCompletionTrustees {
 
   def prettyPrint: String = Json.prettyPrint(json)
 
@@ -152,7 +155,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
   //scalastyle:off method.length
-  def readEstablishers(isHnSEnabled: Boolean, mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+  def readEstablishers(isHnSPhase1Enabled: Boolean, isHnSPhase2Enabled: Boolean, mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
     private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
       Reads.seq((__ \ 'establisherKind).read[String].flatMap {
@@ -164,15 +167,22 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case _ => 0
     }
 
+    private def readsIndividualNonHnS(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
+        (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
+      ) ((details, isNew) =>
+      EstablisherIndividualEntityNonHnS(
+        EstablisherDetailsId(index), details.fullName, details.isDeleted,
+        isEstablisherIndividualComplete(false, index), isNew.fold(false)(identity), noOfRecords)
+    )
 
     private def readsIndividual(index: Int): Reads[Establisher[_]] = (
-      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean] and
+      (JsPath \ EstablisherNameId.toString).read[PersonName] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
-      ) ((details, isComplete, isNew) =>
+      ) ((details, isNew) =>
       EstablisherIndividualEntity(
-        EstablisherDetailsId(index), details.fullName, details.isDeleted,
-        isComplete.getOrElse(false), isNew.fold(false)(identity), noOfRecords)
+        EstablisherNameId(index), details.fullName, details.isDeleted,
+        isEstablisherIndividualComplete(true, index), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsCompany(index: Int): Reads[Establisher[_]] = (
@@ -180,7 +190,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index),
-        details.companyName, details.isDeleted, isEstablisherCompanyAndDirectorsComplete(index, mode, isHnSEnabled), isNew.fold(false)(identity), noOfRecords)
+        details.companyName, details.isDeleted, isEstablisherCompanyAndDirectorsComplete(index, mode, isHnSPhase1Enabled), isNew.fold(false)(identity), noOfRecords)
     )
 
     private def readsPartnership(index: Int): Reads[Establisher[_]] = (
@@ -205,7 +215,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         case JsDefined(JsArray(establishers)) =>
           readEntities(
             establishers,
-            index => readsIndividual(index)
+            index => (if(isHnSPhase2Enabled) readsIndividual(index) else readsIndividualNonHnS(index))
               orElse readsCompany(index)
               orElse readsPartnership(index)
               orElse readsSkeleton(index)
@@ -215,8 +225,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishers(isHnSEnabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
-    json.validate[Seq[Establisher[_]]](readEstablishers(isHnSEnabled, mode)) match {
+  def allEstablishers(isHnSPhase1Enabled: Boolean, isHnSPhase2Enabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
+    json.validate[Seq[Establisher[_]]](readEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode)) match {
       case JsSuccess(establishers, _) =>
         establishers
       case JsError(errors) =>
@@ -225,8 +235,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishersAfterDelete(isHnSEnabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
-    allEstablishers(isHnSEnabled, mode).filterNot(_.isDeleted)
+  def allEstablishersAfterDelete(isHnSPhase1Enabled: Boolean, isHnSPhase2Enabled: Boolean, mode: Mode): Seq[Establisher[_]] = {
+    allEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).filterNot(_.isDeleted)
   }
 
   def allDirectorsOld(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
@@ -267,15 +277,15 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }.getOrElse(Seq.empty)
   }
 
-  def allDirectors(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
-    if(isHnSEnabled)
+  def allDirectors(establisherIndex: Int, isHnSPhase1Enabled: Boolean): Seq[Director[_]] = {
+    if(isHnSPhase1Enabled)
       allDirectorsHnS(establisherIndex)
     else
       allDirectorsOld(establisherIndex)
   }
 
-  def allDirectorsAfterDelete(establisherIndex: Int, isHnSEnabled: Boolean): Seq[Director[_]] = {
-      allDirectors(establisherIndex, isHnSEnabled).filterNot(_.isDeleted)
+  def allDirectorsAfterDelete(establisherIndex: Int, isHnSPhase1Enabled: Boolean): Seq[Director[_]] = {
+      allDirectors(establisherIndex, isHnSPhase1Enabled).filterNot(_.isDeleted)
   }
 
   def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
@@ -405,8 +415,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def hasCompanies(isHnSEnabled: Boolean, mode: Mode): Boolean = {
-    allEstablishersAfterDelete(isHnSEnabled, mode).exists {
+  def hasCompanies(isHnSPhase1Enabled: Boolean, isHnSPhase2Enabled: Boolean, mode: Mode): Boolean = {
+    allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).exists {
       _.id match {
         case EstablisherCompanyDetailsId(_) | PartnershipDetailsId(_) => true
         case _ => false
@@ -456,15 +466,15 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   }
 
-  def isDirectorPartnerCompleted(establisherIndex:Int, isHnSEnabled: Boolean) = get(EstablisherKindId(establisherIndex)) match {
-    case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex, isHnSEnabled).forall(_.isCompleted)
+  def isDirectorPartnerCompleted(establisherIndex:Int, isHnSPhase1Enabled: Boolean) = get(EstablisherKindId(establisherIndex)) match {
+    case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex, isHnSPhase1Enabled).forall(_.isCompleted)
     case Some(EstablisherKind.Partnership) => allPartnersAfterDelete(establisherIndex).forall(_.isCompleted)
     case _ => true
   }
 
-  def allEstablishersCompleted(isHnSEnabled: Boolean, mode: Mode) =
-    !allEstablishersAfterDelete(isHnSEnabled, mode).zipWithIndex.collect { case (item, establisherIndex) =>
-      item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSEnabled)
+  def allEstablishersCompleted(isHnSPhase1Enabled: Boolean, isHnSPhase2Enabled: Boolean, mode: Mode) =
+    !allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode).zipWithIndex.collect { case (item, establisherIndex) =>
+      item.isCompleted && isDirectorPartnerCompleted(establisherIndex, isHnSPhase1Enabled)
   }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
@@ -474,7 +484,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => false
   }
 
-  def areVariationChangesCompleted(isHnSEnabled: Boolean = false): Boolean =
-    isInsuranceCompleted && isAllTrusteesCompleted(isHnSEnabled) && allEstablishersCompleted(isHnSEnabled, UpdateMode)
+  def areVariationChangesCompleted(isHnSPhase1Enabled: Boolean = false, isHnSPhase2Enabled: Boolean = false): Boolean =
+    isInsuranceCompleted && isAllTrusteesCompleted(isHnSPhase1Enabled) &&
+      allEstablishersCompleted(isHnSPhase1Enabled, isHnSPhase2Enabled, UpdateMode)
 
 }

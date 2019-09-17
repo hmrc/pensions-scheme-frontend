@@ -78,6 +78,33 @@
           }
         }
       ]
+    },
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "individual",
+      "establisherDetails": {
+        "firstName": "Test",
+        "lastName": "Individual",
+        "isDeleted": false
+      },
+      "dateOfBirth": "2002-01-01",
+      "hasNino": true,
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890"
+      },
+      "address": {
+        "addressLine1": "2 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "addressYears": "under_a_year",
+      "contactDetails": {
+        "phoneNumber": "1234"
+      }
     }
   ],
   "trustees": [
