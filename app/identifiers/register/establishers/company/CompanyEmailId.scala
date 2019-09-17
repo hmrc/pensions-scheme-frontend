@@ -35,13 +35,11 @@ object CompanyEmailId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswersCompany[CompanyEmailId] {
 
-    private def label(index : Int, ua : UserAnswers) : String = {
+    private def label(index : Int, ua : UserAnswers) : String =
       dynamicMessage(index, ua, "messages__common_email__heading")
-    }
 
-    private def hiddenLabel(index:  Int, ua: UserAnswers) : String = {
+    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
       dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email")
-    }
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       StringCYA(Some(label(id.index, userAnswers)), Some(messages(hiddenLabel(id.index, userAnswers))))()

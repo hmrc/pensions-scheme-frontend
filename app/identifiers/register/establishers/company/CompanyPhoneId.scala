@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
@@ -33,15 +33,16 @@ object CompanyPhoneId {
   override def toString: String = "phoneNumber"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyPhoneId] = new
-      CheckYourAnswers[CompanyPhoneId] {
+      CheckYourAnswersCompany[CompanyPhoneId] {
 
+    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_phone")
 
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       val companyName = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
       val label       = "messages__common_phone__heading"
-      val hiddenLabel = "messages__visuallyhidden__dynamic_phone"
 
-      StringCYA(Some(messages(label, companyName)), Some(messages(hiddenLabel, companyName)))()
+      StringCYA(Some(messages(label, companyName)), Some(hiddenLabel(id.index, userAnswers)))()
         .row(id)(changeUrl, userAnswers)
     }
 

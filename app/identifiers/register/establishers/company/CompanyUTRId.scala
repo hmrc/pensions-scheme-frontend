@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -39,23 +39,21 @@ object CompanyUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
 
-    def companyName(index: Int) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
+    val label: String = "messages__utr__checkyouranswerslabel"
+
+    new CheckYourAnswersCompany[CompanyUTRId] {
+
+      private def hiddenLabel(index: Int, ua: UserAnswers): String = {
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_utr")
       }
 
-    val label: String = "messages__utr__checkyouranswerslabel"
-    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", companyName(index))
-
-    new CheckYourAnswers[CompanyUTRId] {
       override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA(label, hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA(label, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => ReferenceValueCYA(label, hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+          case _ => ReferenceValueCYA(label, hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

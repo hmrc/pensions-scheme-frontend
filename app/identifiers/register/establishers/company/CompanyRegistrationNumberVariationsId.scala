@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -37,25 +37,23 @@ object CompanyRegistrationNumberVariationsId {
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
 
-    def companyName(index: Int, userAnswers: UserAnswers) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
-      }
-
     val label: String = "messages__checkYourAnswers__establishers__company__number"
-    def changeCrn(index: Int, userAnswers: UserAnswers): String = messages("messages__visuallyhidden__dynamic_crn", companyName(index, userAnswers))
 
-    new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
+    new CheckYourAnswersCompany[CompanyRegistrationNumberVariationsId] {
+
+      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_crn")
+
       override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn(id.index, userAnswers: UserAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, hiddenLabel(id.index, userAnswers: UserAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn(id.index, userAnswers: UserAnswers))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, hiddenLabel(id.index, userAnswers: UserAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

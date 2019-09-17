@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
@@ -43,23 +43,21 @@ object HasCompanyPAYEId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyPAYEId] = {
 
-    def companyName(index: Int) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
-      }
+    new CheckYourAnswersCompany[HasCompanyPAYEId] {
 
-    def label(index: Int) = Some(messages("messages__hasPaye__h1", companyName(index)))
+      private def label(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__hasPaye__h1")
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasPaye", companyName(index)))
+      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasPaye")
 
-    new CheckYourAnswers[HasCompanyPAYEId] {
       override def row(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        BooleanCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label(id.index, userAnswers)),
+            Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

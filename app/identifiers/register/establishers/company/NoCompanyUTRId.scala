@@ -20,8 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -32,34 +32,32 @@ case class NoCompanyUTRId(index: Int) extends TypedIdentifier[String] {
 object NoCompanyUTRId {
   override def toString: String = "noUtrReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[NoCompanyUTRId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[NoCompanyUTRId] = {
 
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
+        case _                    => messages("messages__theCompany")
       }
 
     def label(index: Int) = Some(messages("messages__noCompanyUtr__heading", companyName(index)))
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", companyName(index)))
 
-    new CheckYourAnswers[NoCompanyUTRId] {
-      override def row(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswersCompany[NoCompanyUTRId] {
+      private def label(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__noCompanyUtr__heading")
 
+      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noUtrReason")
+      override def row(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: NoCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _ => Seq.empty[AnswerRow]
+          case Some(true) => StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
+          case _          => Seq.empty[AnswerRow]
         }
     }
   }
 }
-
-
-
-

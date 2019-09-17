@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -33,26 +33,22 @@ object CompanyPayeVariationsId {
   override def toString: String = "companyPaye"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
-    new CheckYourAnswers[CompanyPayeVariationsId] {
+    new CheckYourAnswersCompany[CompanyPayeVariationsId] {
 
-      def companyName(index: Int, userAnswers:UserAnswers) =
-        userAnswers.get(CompanyDetailsId(index)) match {
-          case Some(companyDetails) => companyDetails.companyName
-          case _ => messages("messages__theCompany")
-        }
+      private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_paye")
 
       private val payeLabel = "messages__common__cya__paye"
-      private def hiddenLabelPaye(index:Int, ua:UserAnswers) = messages("messages__visuallyhidden__dynamic_paye", companyName(index, ua))
 
       override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }
