@@ -32,13 +32,6 @@ import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
-  def writeToDesktop(content:String, fileName:String):Unit = {
-    import java.io._
-    val pw = new PrintWriter(new File( s"/home/grant/Desktop/$fileName" ))
-    pw.write(content)
-    pw.close()
-  }
-
   import CheckYourAnswersCompanyAddressControllerSpec._
 
   "Check Your Answers Company Address Controller " when {
