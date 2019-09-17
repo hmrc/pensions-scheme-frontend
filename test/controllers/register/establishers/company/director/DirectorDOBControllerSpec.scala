@@ -22,14 +22,15 @@ import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorId
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorId, DirectorNameId}
+import models.person.PersonName
 import models.{CompanyDetails, Index, Mode, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import utils.{FakeNavigator, SectionComplete}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 
@@ -69,7 +70,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       mode = NormalMode,
       requiredData = getMandatoryEstablisherCompanyDirectorWithDirectorName,
       validData = validData,
-      fullName = "first last"
+      fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )
   }
 }
@@ -93,11 +94,8 @@ object DirectorDOBControllerSpec extends MockitoSugar {
         CompanyDetailsId.toString -> CompanyDetails("test company name"),
         DirectorId.toString -> Json.arr(
           Json.obj(
-            "directorDetails" -> Json.obj(
-              "firstName" -> "first",
-              "lastName" -> "last"
-            ),
-            "dateOfBirth" -> s"$year-$month-$day"
+            DirectorNameId.toString -> PersonName("first", "last"),
+            DirectorDOBId.toString  -> new LocalDate(year, month, day)
           )
         )
       )

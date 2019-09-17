@@ -70,7 +70,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       mode = NormalMode,
       requiredData = getMandatoryTrustee,
       validData = validData,
-      fullName = "Test Name"
+      fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )
   }
 }

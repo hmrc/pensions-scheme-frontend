@@ -53,14 +53,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
     fakeRequest.withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
   def viewAsString(form: Form[LocalDate], mode: Mode, fullName: String, viewModel: DateOfBirthViewModel): String =
-    DOB(
-      frontendAppConfig,
-      form,
-      mode,
-      None,
-      fullName,
-      viewModel
-    )(fakeRequest, messages).toString
+    DOB(frontendAppConfig, form, mode, None, fullName, viewModel)(fakeRequest, messages).toString
 
   def dateOfBirthController(get: DataRetrievalAction => Action[AnyContent],
                             post: DataRetrievalAction => Action[AnyContent],

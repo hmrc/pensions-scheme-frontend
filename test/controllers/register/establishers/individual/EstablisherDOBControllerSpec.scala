@@ -67,7 +67,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       mode = NormalMode,
       requiredData = getMandatoryEstablisherHns,
       validData = validData,
-      fullName = "Test Name"
+      fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )
   }
 }
