@@ -17,16 +17,40 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
+import identifiers.Identifier
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablisherNewId}
 import models.Mode.journeyMode
 import models._
-import utils.UserAnswers
+import models.requests.IdentifiedRequest
+import navigators.establishers.individual.EstablishersIndividualDetailsNavigator
+import play.api.mvc.Call
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{Toggles, UserAnswers}
+
+import scala.concurrent.ExecutionContext
+
+class EstablishersIndividualFeatureSwitchNavigator @Inject()(
+                                                          featureSwitchService: FeatureSwitchManagementService,
+                                                          oldNavigator: EstablishersIndividualNavigatorOld,
+                                                          detailsNavigator: EstablishersIndividualDetailsNavigator
+                                                        ) extends Navigator {
+
+  override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])(implicit ex: IdentifiedRequest,
+                                                                                                           ec: ExecutionContext,
+                                                                                                           hc: HeaderCarrier): Option[Call] = {
+    if (featureSwitchService.get(Toggles.isHnSEnabled)) {
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    } else {
+      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+  }
+}
 
 @Singleton
-class EstablishersIndividualNavigator @Inject()(
+class EstablishersIndividualNavigatorOld @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  val dataCacheConnector: UserAnswersCacheConnector
                                                ) extends AbstractNavigator {
