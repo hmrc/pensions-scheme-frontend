@@ -203,7 +203,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
   }
 
   "EstablisherIndividualEntity" must {
-    val individualEntity = EstablisherIndividualEntity(
+    val individualEntity = EstablisherIndividualEntityNonHnS(
       EstablisherDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
@@ -222,7 +222,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have cya link when individual is complete and new" in {
-      val completeIndividualEntity = EstablisherIndividualEntity(
+      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
         EstablisherDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
@@ -236,7 +236,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have reviw when individual is complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntity(
+      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
         EstablisherDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
@@ -250,7 +250,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have cya when individual is complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntity(
+      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
         EstablisherDetailsId(index = 1),
         name = "test name",
         isDeleted = false,
@@ -264,7 +264,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have cya when individual is not complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntity(
+      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
         EstablisherDetailsId(index = 1),
         name = "test name",
         isDeleted = false,

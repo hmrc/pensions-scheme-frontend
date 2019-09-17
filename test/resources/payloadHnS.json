@@ -144,7 +144,7 @@
       },
       "dateOfBirth": "2002-01-01",
       "hasNino": true,
-      "nino": {
+      "establisherNino": {
         "value": "AB123456C",
         "isEditable": true
       },

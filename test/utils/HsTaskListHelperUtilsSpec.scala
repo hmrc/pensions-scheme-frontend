@@ -271,7 +271,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test company"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_directors", "test company"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
@@ -282,7 +282,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
       establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test company"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
       establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_directors", "test company"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true)))
@@ -293,7 +293,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact_details", "test company"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), None)
   )
 
@@ -302,7 +302,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), None)
   )
 
@@ -311,7 +311,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 0, srn).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test partnership"),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact_details", "test partnership"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test partnership"),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 0, srn).url), None)
   )
 
@@ -320,7 +320,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test company"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
@@ -329,7 +329,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test individual"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
@@ -338,7 +338,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test partnership"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
@@ -347,7 +347,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test company"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
     )
 
@@ -356,7 +356,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test individual"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test individual"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test individual"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 
@@ -365,7 +365,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact_details", "test partnership"),
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 }

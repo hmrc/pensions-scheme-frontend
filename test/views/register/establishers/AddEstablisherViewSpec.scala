@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.person.PersonDetails
-import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntityNonHnS, EstablisherPartnershipEntity}
 import models.{CompanyDetails, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -57,7 +57,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       .asOpt
       .value
 
-  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false, true, 3)
+  private val johnDoe = EstablisherIndividualEntityNonHnS(EstablisherDetailsId(0), "John Doe", false, false, true, 3)
   private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true, 3)
   private val testPartnership = EstablisherPartnershipEntity(PartnershipDetailsId(2), "Establisher Partnership", false, true, true, 3)
 

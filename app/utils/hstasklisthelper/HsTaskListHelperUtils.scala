@@ -20,6 +20,7 @@ package utils.hstasklisthelper
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.individual.{routes => establisherIndividualRoutes}
 import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
@@ -35,7 +36,8 @@ import utils.{Enumerable, UserAnswers}
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
-  protected val isHnSEnabled: Boolean
+  protected val isHnSPhase1Enabled: Boolean
+  protected val isHnSPhase2Enabled: Boolean
 
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,
@@ -70,7 +72,16 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSPhase1Enabled), EstablisherCompanyDirectors, mode, srn, name, index)
+    )
+  }
+
+  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, EstablisherIndividualDetails, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherIndividualAddress, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherIndividualContactDetails, mode, srn, name, index, isEstablisherNew)
     )
   }
 
@@ -162,17 +173,17 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call
 
     override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__add_contact_details", name),
+      messages("messages__schemeTaskList__add_contact", name),
       addLinkUrl(mode, srn, index).url
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_contact_details", name),
+      messages("messages__schemeTaskList__change_contact", name),
       changeLinkUrl(mode, srn, index).url
     )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_contact_details", name),
+      messages("messages__schemeTaskList__change_contact", name),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -223,6 +234,37 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
     override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = None
   }
+
+  case object EstablisherIndividualDetails extends DetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyDetailsComplete(index, mode)
+  }
+
+  case object EstablisherIndividualAddress extends AddressSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.CheckYourAnswersAddressController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyAddressComplete(index)
+  }
+
+  case object EstablisherIndividualContactDetails extends ContactDetailsSpoke {
+    override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
+      establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index, srn)
+
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyContactDetailsComplete(index)
+  }
+
 
   case object EstablisherPartnershipDetails extends DetailsSpoke {
     override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =

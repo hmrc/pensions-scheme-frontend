@@ -244,25 +244,25 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
     s"have incomplete link when about benefits and insurance section not completed with toggle set to $toggled" in {
       val userAnswers = answersData(isCompleteAboutBenefits = false, toggled = toggled).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
+      mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
     s"have incomplete link when establishers section not completed with toggle set to $toggled" in {
       val userAnswers = answersData(isCompleteEstablishers = false, toggled = toggled).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
+      mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
     s"have incomplete link when trustees section not completed with toggle set to $toggled" in {
       val userAnswers = answersData(isCompleteTrustees = false, toggled = toggled).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
+      mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
     s"have link when all the sections are completed with toggle set to $toggled" in {
-      val userAnswers = answersData(toggled = toggled).asOpt.value
-      mustHaveLink(createTaskListHelper(userAnswers, fsm), userAnswers,
+      val userAnswers = (if(toggled) allAnswersHnS else allAnswers).set(EstablishersOrTrusteesChangedId)(true).asOpt.value
+      mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.routes.VariationDeclarationController.onPageLoad(srn).url))
     }
 
@@ -270,7 +270,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val userAnswers = answersData(isChangedInsuranceDetails = false, toggled = toggled).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.declarationSection(userAnswers).isDefined mustBe true
-      mustHaveNoLink(helper, userAnswers)
+      mustNotHaveDeclarationLink(helper, userAnswers)
     }
   }
 
@@ -352,27 +352,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
 
-    "return the seq of trustees sub sections for non deleted individual trustees which are all completed with toggle ON" in {
-      val userAnswers = allTrusteesIndividual(toggled = true)
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
-
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(
-            isCompleted = None,
-            entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
-            ),
-            Some("firstName lastName")
-          )
-        )
-    }
-
     "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle OFF" in {
       val userAnswers = allAnswersIncomplete
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
@@ -386,6 +365,27 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
 
+    "return the seq of trustees sub sections for non deleted individual trustees which are all completed with toggle ON" in {
+      val userAnswers = allTrusteesIndividual(toggled = true)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
+
+      helper.trustees(userAnswers, UpdateMode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(
+            isCompleted = None,
+            entities = List(
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
+                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
+            ),
+            Some("firstName lastName")
+          )
+        )
+    }
+
     "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle ON" in {
       val userAnswers = allTrusteesIndividual(isCompleteTrustees = false, toggled = true)
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
@@ -394,11 +394,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
           SchemeDetailsTaskListEntitySection(
             isCompleted = None,
             entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_details", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_address", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__sectionIndividual_change_contact", "firstName lastName"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
                 controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
             ),
             Some("firstName lastName")
