@@ -18,6 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.trustees.individual.routes.TrusteeNameController
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
@@ -34,9 +35,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
 import utils.{FakeNavigator, SectionComplete, UserAnswers}
-import views.html.register.trustees.individual.trusteeName
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.personName
 
 import scala.concurrent.Future
 
@@ -44,15 +45,10 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
   import TrusteeNameControllerSpec._
 
-  private val postCall = routes.TrusteeNameController.onSubmit _
-
-  def viewAsString(form: Form[_] = form): String = trusteeName(
+  def viewAsString(form: Form[_] = form): String = personName(
     frontendAppConfig,
     form,
-    NormalMode,
-    firstTrusteeIndex,
-    None,
-    postCall(NormalMode, firstTrusteeIndex, None),
+    viewmodel,
     None
   )(fakeRequest, messages).toString
 
@@ -96,7 +92,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
         )
       )
 
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
       val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true)
         .overrides(
@@ -139,33 +135,6 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       app.stop()
     }
-
-    "save the IsTrusteeNewId flag and when the new trustee is being added" in {
-      reset(mockSectionComplete, mockUserAnswersService)
-
-      val validData =
-        UserAnswers().set(TrusteeNameId(firstTrusteeIndex))(PersonName("Test", "Name")).flatMap(
-          _.set(IsTrusteeNewId(firstTrusteeIndex))(true)).asOpt.value.json
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-
-      val app = applicationBuilder(getRelevantData, featureSwitchEnabled = true)
-        .overrides(
-            bind[UserAnswersService].toInstance(mockUserAnswersService)
-        ).build()
-
-      val controller = app.injector.instanceOf[TrusteeNameController]
-
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-
-      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
-
-      app.stop()
-    }
   }
 }
 
@@ -177,4 +146,11 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private val mockSectionComplete: SectionComplete = mock[SectionComplete]
   private def onwardRoute: Call = Call("GET", "/foward-url")
+
+
+  private val viewmodel = CommonFormWithHintViewModel(
+    TrusteeNameController.onSubmit(NormalMode, firstTrusteeIndex, None),
+    Message("messages__trusteeName__title"),
+    Message("messages__trusteeName__heading")
+  )
 }
