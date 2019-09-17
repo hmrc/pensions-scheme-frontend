@@ -14,38 +14,40 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company.director
+package views
 
 import controllers.register.establishers.company.director.routes
-import forms.register.{PersonDetailsFormProvider, PersonNameFormProvider}
-import models.person.{PersonDetails, PersonName}
-import models.{Index, NormalMode}
-import org.joda.time.LocalDate
-import play.api.data.{Form, FormError}
+import forms.register.PersonNameFormProvider
+import models.person.PersonName
+import models.{Index, Mode, NormalMode, UpdateMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.director.directorName
+import views.html.personName
 
-class DirectorNameViewSpec extends QuestionViewBehaviours[PersonName] {
+class PersonNameViewSpec extends QuestionViewBehaviours[PersonName] {
 
   val messageKeyPrefix = "directorName"
 
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
-  private val postCall = routes.DirectorNameController.onSubmit _
+  private def viewmodel(mode: Mode = NormalMode, srn: Option[String] = None) = CommonFormWithHintViewModel(
+    routes.DirectorNameController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+    title = Message("messages__directorName__title"),
+    heading = Message("messages__directorName__heading"),
+    srn = srn
+  )
 
   override val form = new PersonNameFormProvider()("messages__error__director")
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+    personName(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"))(fakeRequest, messages)
+    personName(frontendAppConfig, form, viewmodel(UpdateMode, Some("srn")), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorName(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None)(fakeRequest, messages)
+    personName(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

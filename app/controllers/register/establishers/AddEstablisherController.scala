@@ -49,25 +49,26 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode)
+        val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode)
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-          establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSEnabled)))
+          establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSPhase1Enabled)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSEnabled, mode)
+      val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSEnabled))),
+            establishers, existingSchemeName, srn, enableSubmission(establishers), isHnSPhase1Enabled))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
   }
 
   private def enableSubmission(establishers: Seq[Establisher[_]]) =
-    isHnSEnabled || establishers.forall(_.isCompleted)
+    isHnSPhase1Enabled || establishers.forall(_.isCompleted)
 
-  private def isHnSEnabled = fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isHnSPhase1Enabled = fsms.get(Toggles.isEstablisherCompanyHnSEnabled)
+  private def isHnSPhase2Enabled = fsms.get(Toggles.isHnSEnabled)
 }

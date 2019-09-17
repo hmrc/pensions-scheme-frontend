@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.establishers.EstablisherNewNinoId
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNewNinoId}
 import javax.inject.Inject
 import models.person.PersonDetails
 import models.{Index, Mode}

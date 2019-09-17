@@ -16,25 +16,24 @@
 
 package controllers.register.establishers.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherCompleteId, IsEstablisherNewId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
-import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{EstablishersIndividual, NoSuspendedCheck, TaskList}
-import utils.checkyouranswers.Ops._
 import utils._
+import utils.annotations.{EstablishersIndividual, NoSuspendedCheck}
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -85,8 +84,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       Future.successful(
         Ok(
-          check_your_answers_old(
-            appConfig, sections, routes.CheckYourAnswersController.onSubmit(mode, index, srn),
+          checkYourAnswers(
+            appConfig, sections,
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn),
             existingSchemeName,
             mode = mode,
             hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
@@ -95,13 +95,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           )
         )
       )
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requiredData).async {
-    implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn))
-      }
   }
 
 }

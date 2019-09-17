@@ -20,10 +20,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonDetails
-import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherIndividualEntityNonHnS}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -61,11 +61,11 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = individualEstablisherDataRetrieval
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS))
     }
 
     "populate the view with establishers when they exist and continue button should be disabled" in {
-      val establishersAsEntities = Seq(johnDoe, testLtd)
+      val establishersAsEntities = Seq(johnDoeNonHnS, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -76,7 +76,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS, testLtd))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -165,6 +165,15 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
   private val johnDoe = EstablisherIndividualEntity(
+    EstablisherNameId(0),
+    "John Doe",
+    false,
+    false,
+    true,
+    1
+  )
+
+  private val johnDoeNonHnS = EstablisherIndividualEntityNonHnS(
     EstablisherDetailsId(0),
     "John Doe",
     false,

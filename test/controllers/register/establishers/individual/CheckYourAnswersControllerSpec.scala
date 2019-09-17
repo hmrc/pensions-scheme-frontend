@@ -19,9 +19,10 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.individual.CheckYourAnswersControllerSpec.firstIndex
 import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{EstablisherNewNinoId, IsEstablisherCompleteId, IsEstablisherNewId, individual}
+import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -34,7 +35,7 @@ import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import views.html.{checkYourAnswers, check_your_answers_old}
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -126,40 +127,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         )
     )
 
-    def establishersSectionUpdate(ninoRow: AnswerRow) = AnswerSection(None,
-      Seq(
-        AnswerRow(
-          "messages__common__cya__name",
-          Seq("Test Trustee Name"),
-          answerIsMessageKey = false,
-          None
-        ),
-        AnswerRow(
-          "messages__common__dob",
-          Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
-          answerIsMessageKey = false,
-          None
-        ),
-        ninoRow
-      )
-    )
-
-    "onSubmit" must {
-      "mark the section as complete and redirect to the next page" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(request)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(desiredRoute.url)
-
-        FakeUserAnswersService.verify(IsEstablisherCompleteId(firstIndex), true)
-      }
-    }
   }
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
-  def postUrl(mode: Mode, srn: Option[String]): Call = routes.CheckYourAnswersController.onSubmit(mode, firstIndex, srn)
+  def postUrl(mode: Mode, srn: Option[String]): Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = check_your_answers_old(
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = checkYourAnswers(
     frontendAppConfig,
     answerSections,
     postUrl(mode, srn),
@@ -171,8 +145,6 @@ object CheckYourAnswersControllerSpec extends OptionValues {
   )(fakeRequest, messages).toString
 
   private val firstIndex = Index(0)
-  private val desiredRoute: Call = controllers.routes.IndexController.onPageLoad()
-
 
   private def commonJsResultAnswers(f: UserAnswers => JsResult[UserAnswers]): JsResult[UserAnswers] = UserAnswers()
     .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
@@ -192,7 +164,4 @@ object CheckYourAnswersControllerSpec extends OptionValues {
     _.set(EstablisherNinoId(firstIndex))(Nino.Yes("CS121212C"))
   ).asOpt.value
 
-  private val individualAnswersWithNewlyAddedEstablisher: UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A")))
-    .flatMap(_.set(IsEstablisherNewId(firstIndex))(value = true))
-    .asOpt.value
 }

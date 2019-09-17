@@ -23,7 +23,7 @@ import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedTrusteeIndividual"
+  val messageKeyPrefix = "whatYouWillNeedIndividual"
   val personName = "wibble"
 
   lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
@@ -33,7 +33,7 @@ class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
   "whatYouWillNeedTrusteeIndividualDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", personName),
-      "_p1", "_item1", "_item2", "_item3")
+      "_item1", "_item2", "_item3")
 
     behave like pageWithSubmitButton(createView)
 

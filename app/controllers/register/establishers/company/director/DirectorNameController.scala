@@ -27,12 +27,13 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, SectionComplete, UserAnswers}
-import views.html.register.establishers.company.director.directorName
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,7 +52,12 @@ class DirectorNameController @Inject()(
 
   private val form = formProvider("messages__error__director")
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorNameController.onSubmit _
+  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+    postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
+    title = Message("messages__directorName__title"),
+    heading = Message("messages__directorName__heading"),
+    srn = srn
+  )
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -60,8 +66,8 @@ class DirectorNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(directorName(
-          appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
+        Future.successful(Ok(personName(
+          appConfig, preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -69,8 +75,8 @@ class DirectorNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorName(
-              appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
+            Future.successful(BadRequest(personName(
+              appConfig, formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(

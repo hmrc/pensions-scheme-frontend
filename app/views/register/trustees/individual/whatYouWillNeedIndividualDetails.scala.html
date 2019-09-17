@@ -21,19 +21,19 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], trusteeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedTrusteeIndividual__title"),
+    title = messages("messages__whatYouWillNeedIndividual__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
 
-    @components.heading(headingKey = messages("messages__whatYouWillNeedTrusteeIndividual__h1", trusteeName))
+    @components.heading(headingKey = messages("messages__whatYouWillNeedIndividual__h1", trusteeName))
 
-    <p>@messages("messages__whatYouWillNeedTrusteeIndividual__p1")</p>
+    <p>@messages("messages__whatYouWillNeedIndividual__p1", trusteeName)</p>
 
     <ul class="list list-bullet">
-        <li>@messages("messages__whatYouWillNeedTrusteeIndividual__item1")</li>
-        <li>@messages("messages__whatYouWillNeedTrusteeIndividual__item2")</li>
-        <li>@messages("messages__whatYouWillNeedTrusteeIndividual__item3")</li>
+        <li>@messages("messages__whatYouWillNeedIndividual__item1")</li>
+        <li>@messages("messages__whatYouWillNeedIndividual__item2")</li>
+        <li>@messages("messages__whatYouWillNeedIndividual__item3")</li>
     </ul>
 
     @components.button_link("site.continue", href.url, "submit")
