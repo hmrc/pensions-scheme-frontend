@@ -16,6 +16,7 @@
 
 package utils.checkyouranswers
 
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models.AddressYears.UnderAYear
@@ -42,6 +43,15 @@ trait CheckYourAnswersDirectors[I <: TypedIdentifier.PathDependent] extends Chec
 
   protected def dynamicMessage(establisherIndex: Int, directorIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
     messages(messageKey, directorName(establisherIndex, directorIndex, ua))
+
+}
+
+trait CheckYourAnswersCompany[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def companyName(establisherIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
+    ua.get(CompanyDetailsId(establisherIndex)).fold(messages("messages__theCompany"))(_.companyName)
+
+  protected def dynamicMessage(establisherIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
+    messages(messageKey, companyName(establisherIndex, ua))
 
 }
 

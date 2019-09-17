@@ -22,7 +22,7 @@ import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersCompany}
 import viewmodels.{AnswerRow, Message}
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -53,19 +53,21 @@ object CompanyAddressYearsId {
       case _ => messages("messages__theCompany")
     }
 
-    def label(ua: UserAnswers, index: Int): Message = ua.get(CompanyDetailsId(index)).map(details =>
-      Message("messages__company_address_years__h1", details.companyName)).getOrElse(Message("messages__company_address_years__title"))
+    new CheckYourAnswersCompany[CompanyAddressYearsId] {
 
-    def changeAddressYears(ua: UserAnswers, index: Int): String = messages("messages__visuallyhidden__dynamic_addressYears", companyName(index, ua))
+      private def label(establisherIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, ua, "messages__company_address_years__h1")
 
-    new CheckYourAnswers[CompanyAddressYearsId] {
+      private def hiddenLabel(establisherIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
+
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(userAnswers, id.index), changeAddressYears(userAnswers, id.index))().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label(userAnswers, id.index), changeAddressYears(userAnswers, id.index))().updateRow(id)(changeUrl, userAnswers)
+          case _ => AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }
