@@ -164,9 +164,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
     if (isHnSEnabled)
       isComplete(Seq(
-        isEstablisherCompanyDetailsComplete(index, mode),
-        isEstablisherCompanyAddressComplete(index),
-        isEstablisherCompanyContactDetailsComplete(index))).getOrElse(false)
+        isEstablisherPartnershipDetailsComplete(index),
+        isEstablisherPartnershipAddressComplete(index),
+        isEstablisherPartnershipContactDetailsComplete(index))).getOrElse(false)
     else
-      isEstablisherCompanyCompleteNonHns(index, mode)
+      isEstablisherPartnershipCompleteNonHns(index, mode)
 }
