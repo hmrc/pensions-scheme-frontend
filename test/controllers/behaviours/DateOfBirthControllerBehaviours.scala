@@ -52,12 +52,23 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     fakeRequest.withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
+  def viewAsString(form: Form[LocalDate], mode: Mode, fullName: String, viewModel: DateOfBirthViewModel): String =
+    DOB(
+      frontendAppConfig,
+      form,
+      mode,
+      None,
+      fullName,
+      viewModel
+    )(fakeRequest, messages).toString
+
   def dateOfBirthController(get: DataRetrievalAction => Action[AnyContent],
                             post: DataRetrievalAction => Action[AnyContent],
                             viewModel: DateOfBirthViewModel,
                             mode: Mode,
                             validData: JsObject,
-                            requiredData: FakeDataRetrievalAction): Unit = {
+                            requiredData: FakeDataRetrievalAction,
+                            fullName: String): Unit = {
 
     "DateOfBirthController" must {
 
@@ -66,14 +77,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe OK
 
-        contentAsString(result) mustEqual DOB(
-          frontendAppConfig,
-          form,
-          mode,
-          None,
-          "Test Name",
-          viewModel
-        )(fakeRequest, messages).toString
+        contentAsString(result) mustBe viewAsString(form, mode, fullName, viewModel)
       }
 
       "populate the view correctly on a GET when the question has previously been answered" in {
@@ -81,15 +85,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe DOB(
-          frontendAppConfig,
-          form.fill(new LocalDate(year, month, day)),
-          mode,
-          None,
-          "Test Name",
-          viewModel
-        )(fakeRequest, messages).toString
-
+        contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)), mode, fullName, viewModel)
       }
 
       "redirect to the next page when valid data is submitted" in {
@@ -98,6 +94,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
         val result: Future[Result] = post(requiredData)(postRequest)
 
         status(result) mustBe SEE_OTHER
+
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
@@ -108,20 +105,14 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe BAD_REQUEST
 
-        contentAsString(result) mustBe DOB(
-          frontendAppConfig,
-          boundForm,
-          mode,
-          None,
-          "Test Name",
-          viewModel
-        )(fakeRequest, messages).toString
+        contentAsString(result) mustBe viewAsString(boundForm, mode, fullName, viewModel)
       }
 
       "redirect to Session Expired for a GET if no existing data is found" in {
         val result: Future[Result] = get(dontGetAnyData)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
+
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
 
@@ -129,6 +120,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
         val result: Future[Result] = post(dontGetAnyData)(postRequest)
 
         status(result) mustBe SEE_OTHER
+
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }

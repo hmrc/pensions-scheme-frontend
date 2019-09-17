@@ -69,7 +69,8 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       viewModel = viewModel(NormalMode, index, None, Message("messages__theTrustee").resolve),
       mode = NormalMode,
       requiredData = getMandatoryTrustee,
-      validData = validData
+      validData = validData,
+      fullName = "Test Name"
     )
   }
 }

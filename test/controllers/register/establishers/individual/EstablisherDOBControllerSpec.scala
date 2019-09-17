@@ -66,7 +66,8 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       viewModel = viewModel(NormalMode, index, None, Message("messages__theEstablisher").resolve),
       mode = NormalMode,
       requiredData = getMandatoryEstablisherHns,
-      validData = validData
+      validData = validData,
+      fullName = "Test Name"
     )
   }
 }
