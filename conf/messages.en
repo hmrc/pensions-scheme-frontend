@@ -78,6 +78,7 @@ messages__error__postcode_no_results = There are no addresses for that postcode
 
 messages__error__trustees = trustee’s
 messages__error__director = director’s
+messages__error__establisher = establisher’s
 messages__error__first_name = Enter the {0} first name
 messages__error__last_name = Enter the {0} last name
 messages__error__date = Enter a valid date
@@ -1845,3 +1846,6 @@ messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration num
 messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
 
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
+
+messages__establisherName__title = What is the establisher’s name?
+messages__establisherName__heading = What is the establisher’s name?
