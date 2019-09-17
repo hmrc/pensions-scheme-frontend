@@ -48,6 +48,13 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
 
   private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case EstablisherNameId(_) => AddEstablisherController.onPageLoad(mode, srn)
+    case EstablisherDOBId(index)          => EstablisherHasNINOController.onPageLoad(mode, index, srn)
+    case id@EstablisherHasNINOId(index)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case EstablisherNewNinoId(index)      => EstablisherHasUTRController.onPageLoad(mode, index, srn)
+    case EstablisherNoNINOReasonId(index) => EstablisherHasUTRController.onPageLoad(mode, index, srn)
+    case id@EstablisherHasUTRId(index)    => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case EstablisherNoUTRReasonId(index)  => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherUTRId(index)          => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
