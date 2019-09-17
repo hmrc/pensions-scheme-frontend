@@ -19,21 +19,35 @@ package navigators.establishers.individual
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.routes._
+import controllers.register.establishers.individual.routes._
 import identifiers.Identifier
 import identifiers.register.establishers.individual._
 import models._
+import models.Mode._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
 class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
+  import EstablishersIndividualDetailsNavigator._
+
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case EstablisherNameId(_)                                   => AddEstablisherController.onPageLoad(mode, srn)
+    case EstablisherDOBId(index) if mode == NormalMode          => EstablisherHasNINOController.onPageLoad(mode, index, srn)
+    case EstablisherDOBId(index)                                => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case id@EstablisherHasNINOId(index)                         => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case EstablisherNewNinoId(index) if mode == NormalMode      => EstablisherHasUTRController.onPageLoad(mode, index, srn)
+    case EstablisherNewNinoId(index)                            => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherNoNINOReasonId(index) if mode == NormalMode => EstablisherHasUTRController.onPageLoad(mode, index, srn)
+    case EstablisherNoNINOReasonId(index)                       => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case id@EstablisherHasUTRId(index)                          => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case EstablisherNoUTRReasonId(index)                        => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherUTRId(index)                                => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
   }
 
   private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case EstablisherNameId(_)         => AddEstablisherController.onPageLoad(mode, srn)
+    case EstablisherNameId(_) => AddEstablisherController.onPageLoad(mode, srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -46,4 +60,14 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = ???
+}
+
+object EstablishersIndividualDetailsNavigator {
+  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNinoNewController.onPageLoad(mode, index, srn)
+
+  private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoNINOReasonController.onPageLoad(mode, index, srn)
+
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherUTRController.onPageLoad(mode, index, srn)
+
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoUTRReasonController.onPageLoad(mode, index, srn)
 }

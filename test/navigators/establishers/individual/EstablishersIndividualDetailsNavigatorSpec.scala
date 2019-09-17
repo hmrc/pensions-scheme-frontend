@@ -19,10 +19,14 @@ package navigators.establishers.individual
 import base.SpecBase
 import generators.Generators
 import identifiers.Identifier
+import controllers.register.establishers.routes._
+import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models._
+import models.Mode._
 import navigators.{Navigator, NavigatorBehaviour}
+import org.joda.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.mvc.Call
@@ -37,7 +41,16 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
     val navigationForNewEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(EstablisherNameId(index))(somePersonNameValue, addEstablisher(NormalMode, None))
+        row(EstablisherNameId(index))(somePersonNameValue, addEstablisher(NormalMode, None)),
+        row(EstablisherDOBId(index))(someDate, EstablisherHasNINOController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherHasNINOId(index))(true, EstablisherNinoNewController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherNewNinoId(index))(someRefValue, EstablisherHasUTRController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(NormalMode), index, None)),
+        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(NormalMode), index, None))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherIndividual, None)
@@ -60,6 +73,6 @@ object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatc
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val srn = Some("srn")
-
-  private def addEstablisher(mode: Mode, srn: Option[String]): Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+  private val someDate =  LocalDate.now()
+  private def addEstablisher(mode: Mode, srn: Option[String]): Call = AddEstablisherController.onPageLoad(mode, srn)
 }
