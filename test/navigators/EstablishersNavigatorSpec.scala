@@ -24,33 +24,38 @@ import models.register.establishers.EstablisherKind
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 
 class EstablishersNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersNavigatorSpec._
 
-  private def routes(mode: Mode) = Table(
+  private def routes(mode: Mode, toggled: Boolean) = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddEstablisherId(None), emptyAnswers, establisherKind(mode), true, None: Option[Call], false),
     (AddEstablisherId(Some(true)), addEstablishersTrue, establisherKind(mode), true, None: Option[Call], false),
     (AddEstablisherId(Some(false)), addEstablishersFalse, taskList(mode), false, None: Option[Call], false),
     (EstablisherKindId(0), company, companyDetails(mode), true, None: Option[Call], false),
-    (EstablisherKindId(0), individual, individualDetails(mode), true, None, false),
+    (EstablisherKindId(0), individual, if(toggled) individualName(mode) else individualDetails(mode), true, None, false),
     (EstablisherKindId(0), partnership, partnershipDetails(mode), true, None: Option[Call], false),
     (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
     (ConfirmDeleteEstablisherId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), true, None, false)
   )
 
-  private def normalRoutes = routes(NormalMode)
-  private def updateRoutes = routes(UpdateMode)
-
-  private val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-
-  s"${navigator.getClass.getSimpleName}" must {
+  "EstablishersNavigator with toggle off" must {
+    val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode, false), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, false), dataDescriber, UpdateMode)
+    behave like nonMatchingNavigator(navigator)
+    behave like nonMatchingNavigator(navigator, UpdateMode)
+  }
+
+  "EstablishersNavigator with toggle on" must {
+    val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+    appRunning()
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode, true), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, true), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
@@ -65,11 +70,12 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val partnership = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Partnership).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
-  private val addEstablishersFalseWithNoScheme = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
   private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, None, 0)
 
   private def individualDetails(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 0, None)
+
+  private def individualName(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, 0, None)
 
   private def partnershipDetails(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, None)
 
