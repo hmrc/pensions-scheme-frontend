@@ -41,7 +41,7 @@ class EstablishersIndividualFeatureSwitchNavigator @Inject()(
   override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])(implicit ex: IdentifiedRequest,
                                                                                                            ec: ExecutionContext,
                                                                                                            hc: HeaderCarrier): Option[Call] = {
-    if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
+    if (featureSwitchService.get(Toggles.isHnSEnabled)) {
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)

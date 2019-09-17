@@ -43,7 +43,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
   )
 
   "EstablishersNavigator with toggle off" must {
-    val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+    val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
     appRunning()
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode, false), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode, false), dataDescriber, UpdateMode)
