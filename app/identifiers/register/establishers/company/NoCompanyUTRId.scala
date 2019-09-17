@@ -34,16 +34,6 @@ object NoCompanyUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[NoCompanyUTRId] = {
 
-    def companyName(index: Int) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
-      }
-
-    def label(index: Int) = Some(messages("messages__noCompanyUtr__heading", companyName(index)))
-
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", companyName(index)))
-
     new CheckYourAnswersCompany[NoCompanyUTRId] {
       private def label(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__noCompanyUtr__heading")
