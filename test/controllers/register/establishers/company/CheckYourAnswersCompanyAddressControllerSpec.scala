@@ -32,6 +32,13 @@ import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
+  def writeToDesktop(content:String, fileName:String):Unit = {
+    import java.io._
+    val pw = new PrintWriter(new File( s"/home/grant/Desktop/$fileName" ))
+    pw.write(content)
+    pw.close()
+  }
+
   import CheckYourAnswersCompanyAddressControllerSpec._
 
   "Check Your Answers Company Address Controller " when {
@@ -51,6 +58,11 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
+
+        writeToDesktop(contentAsString(result), "act.html")
+        writeToDesktop(viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode), "exp.html")
+
+
         contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
       }
 
@@ -59,6 +71,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
+
         contentAsString(result) mustBe viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode)
       }
     }
@@ -116,7 +129,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
+      Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__company_address_years__h1", companyName),
@@ -146,7 +159,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"))))
+    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None), tradingTimeAnswerRow(NormalMode, None),
