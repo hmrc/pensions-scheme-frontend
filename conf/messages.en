@@ -1240,7 +1240,7 @@ messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
 messages__visuallyhidden__dynamic_crn = the company number for {0}
 
-messages__dynamic_whatIsUTR = What is {0}’s UTR?
+messages__dynamic_whatIsUTR = What is the UTR for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
