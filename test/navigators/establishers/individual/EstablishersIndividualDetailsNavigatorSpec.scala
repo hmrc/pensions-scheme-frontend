@@ -100,12 +100,12 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherDOBId(index))(someDate, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherHasNINOId(index))(true, EstablisherNinoNewController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNewNinoId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingEstablisherUserAnswers)),
+        row(EstablisherNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers))
       )
@@ -117,7 +117,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
 object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
-  private val exisitingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
+  private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
   private val srn = Some("srn")
   private val someDate =  LocalDate.now()
 }
