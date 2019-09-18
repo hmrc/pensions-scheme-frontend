@@ -245,6 +245,21 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     )
   }
 
+  protected def validEstablisherIndividualData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
+            "isDeleted" -> "false"
+          ),
+          jsValue
+        )
+      )
+    )
+  }
+
   protected def validTrusteePartnershipData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
     Json.obj(
       TrusteesId.toString -> Json.arr(
