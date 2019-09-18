@@ -38,7 +38,6 @@ class PODSModule extends AbstractModule {
     navigators.addBinding().to(classOf[EstablishersIndividualFeatureSwitchNavigator])
     navigators.addBinding().to(classOf[EstablishersNavigator])
     navigators.addBinding().to(classOf[EstablishersPartnerNavigator])
-    navigators.addBinding().to(classOf[EstablishersPartnershipNavigatorOld])
     navigators.addBinding().to(classOf[RegisterNavigator])
     navigators.addBinding().to(classOf[TrusteesIndividualFeatureSwitchNavigator])
     navigators.addBinding().to(classOf[TrusteesNavigator])

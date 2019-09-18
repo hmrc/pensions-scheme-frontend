@@ -35,7 +35,7 @@ class TrusteeDOBIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   val date = new LocalDate()
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__trusteeIndividualDOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__DOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_dob", "Test Name")))))
   )
 
@@ -70,7 +70,7 @@ class TrusteeDOBIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeDOBId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__trusteeIndividualDOB__heading", "Test Name"), List(DateHelper.formatDate(date)),false, None)
+          AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)),false, None)
         ))
       }
     }
