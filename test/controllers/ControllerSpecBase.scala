@@ -120,6 +120,17 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     ))
   )
 
+  def getMandatoryEstablisherIndividual: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString ->
+            person.PersonName("Test", "Name")
+        )
+      )
+    ))
+  )
+
   def getMandatoryEstablisherPartnership: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       EstablishersId.toString -> Json.arr(
@@ -226,6 +237,21 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             "firstName" -> "Test",
             "lastName" -> "Name",
             "date" -> "2001-01-01",
+            "isDeleted" -> "false"
+          ),
+          jsValue
+        )
+      )
+    )
+  }
+
+  protected def validEstablisherIndividualData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
             "isDeleted" -> "false"
           ),
           jsValue
