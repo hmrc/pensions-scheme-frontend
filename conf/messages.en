@@ -608,7 +608,8 @@ messages__directorAddressPostcodeLookup__lede = This is usually the director’s
 messages__directorDOB__title = What is the director’s date of birth?
 messages__directorDOB__heading = What is {0}’s date of birth?
 
-messages__trusteeIndividualDOB__heading = What is {0}’s date of birth?
+messages__DOB__title = What is the date of birth for {0}?
+messages__DOB__heading = What is the date of birth for {0}?
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
@@ -1658,6 +1659,7 @@ messages__changeHasBeen1Year = whether {0} has been at their address for at leas
 messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
+messages__theEstablisher = the establisher
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
