@@ -1022,7 +1022,7 @@ messages__error__has_nino_partner = Select yes if the partner has a National Ins
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
 messages__common_nino__title = What is the person’s National Insurance number?
-messages__common_nino__h1 = What is {0}’s National Insurance number?
+messages__common_nino__h1 = What is the National Insurance number for {0}?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?

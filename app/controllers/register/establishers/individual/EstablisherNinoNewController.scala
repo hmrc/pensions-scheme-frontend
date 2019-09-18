@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNewNinoId}
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId, EstablisherNewNinoId}
 import javax.inject.Inject
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +47,7 @@ class EstablisherNinoNewController @Inject()(
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit _
 
-  private def viewmodel(personDetails: PersonDetails, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(personDetails: PersonName, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
       title = Message("messages__common_nino__title"),
@@ -59,7 +59,7 @@ class EstablisherNinoNewController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.right.map {
         details =>
           get(EstablisherNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
@@ -67,7 +67,7 @@ class EstablisherNinoNewController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.right.map {
         details =>
           post(EstablisherNewNinoId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
