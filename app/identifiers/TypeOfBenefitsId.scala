@@ -19,11 +19,11 @@ package identifiers
 import models.{Link, TypeOfBenefits}
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import utils.{CountryOptions, UserAnswers}
+import utils.{CountryOptions, Enumerable, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.AnswerRow
 
-case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] {
+case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumerable.Implicits {
   self =>
   override def toString: String = "benefits"
 
