@@ -32,7 +32,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
   private def onwardRoute  = controllers.routes.IndexController.onPageLoad()
   private val formProvider = new HasUtrFormProvider()
-  private val form         = formProvider("messages__hasUTR__error__required", "test company name")
+  private val form         = formProvider("messages__genericHasNino__error__required", "test company name")
   private val index        = Index(0)
   private val srn          = None
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(NormalMode, index, srn)

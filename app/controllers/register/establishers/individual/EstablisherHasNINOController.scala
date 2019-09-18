@@ -53,7 +53,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
       srn = srn
     )
 
-  private def form(establisherName: String) = formProvider("messages__hasUTR__error__required", establisherName)
+  private def form(establisherName: String) = formProvider("messages__genericHasNino__error__required", establisherName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
