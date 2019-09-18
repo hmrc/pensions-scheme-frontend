@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
-import controllers.register.trustees.individual.routes.TrusteeNameController
 import forms.register.PersonNameFormProvider
-import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.data.Form
@@ -35,15 +33,20 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
+import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.Future
 
-class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
+class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
+  
+  import EstablisherNameControllerSpec._
 
-  import TrusteeNameControllerSpec._
+  private val viewmodel = CommonFormWithHintViewModel(
+    routes.EstablisherNameController.onSubmit(NormalMode, index, None),
+    title = Message("messages__establisherName__title"),
+    heading = Message("messages__establisherName__heading"))
 
   def viewAsString(form: Form[_] = form): String = personName(
     frontendAppConfig,
@@ -54,13 +57,13 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "Test"), ("lastName", "Name"))
 
-  "TrusteeNameController" must {
+  "EstablisherNameController" must {
     "return OK and the correct view for a GET" in {
       val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[TrusteeNameController]
+      val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -70,25 +73,25 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryEstablisher, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[TrusteeNameController]
+      val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe OK
 
-      contentAsString(result) mustBe viewAsString(form.fill(PersonName("Test", "Name")))
+      contentAsString(result) mustBe viewAsString(form.fill(PersonName("test first name", "test last name")))
 
       app.stop()
     }
 
     "redirect to the next page when valid data is submitted" in {
       val validData = Json.obj(
-        TrusteesId.toString -> Json.arr(
-          Json.obj("trustee" -> Json.obj(
-            TrusteeNameId.toString -> PersonName("Test", "Name")
-          ))
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherNameId.toString -> PersonName("Test", "Name")
+          )
         )
       )
 
@@ -100,9 +103,9 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
-      val controller = app.injector.instanceOf[TrusteeNameController]
+      val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -113,11 +116,11 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     "return a Bad Request and errors when invalid data is submitted" in {
       val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[TrusteeNameController]
+      val controller = app.injector.instanceOf[EstablisherNameController]
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -127,9 +130,9 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     "return a Bad Request and errors when no data is submitted" in {
       val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
 
-      val controller = app.injector.instanceOf[TrusteeNameController]
+      val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -138,19 +141,14 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
   }
 }
 
-object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
+
+object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
-  private val form: Form[PersonName] = formProvider("messages__error__trustees")
+  private val form: Form[PersonName] = formProvider("messages__error__establisher")
 
-  private val firstTrusteeIndex: Index = Index(0)
+  private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private val mockSectionComplete: SectionComplete = mock[SectionComplete]
-  private def onwardRoute: Call = Call("GET", "/foward-url")
-
-
-  private val viewmodel = CommonFormWithHintViewModel(
-    TrusteeNameController.onSubmit(NormalMode, firstTrusteeIndex, None),
-    Message("messages__trusteeName__title"),
-    Message("messages__trusteeName__heading")
-  )
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 }
+
+

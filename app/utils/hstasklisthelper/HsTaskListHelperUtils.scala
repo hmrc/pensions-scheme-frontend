@@ -19,13 +19,12 @@ package utils.hstasklisthelper
 
 import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.individual.{routes => establisherIndividualRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompany}
+import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.register.Entity
 import play.api.i18n.Messages
@@ -35,35 +34,31 @@ import utils.{Enumerable, UserAnswers}
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   implicit val messages: Messages
-  protected val isHnSEnabled: Boolean
+  protected val isHnSPhase1Enabled: Boolean
+  protected val isHnSPhase2Enabled: Boolean
 
   sealed trait Spoke
 
   case object EstablisherCompanyDetails extends Spoke
-
   case object EstablisherCompanyAddress extends Spoke
-
   case object EstablisherCompanyContactDetails extends Spoke
-
   case object EstablisherCompanyDirectors extends Spoke
 
-  case object TrusteeCompanyAddress extends Spoke
-
-  case object TrusteeCompanyContactDetails extends Spoke
+  case object EstablisherIndividualDetails extends Spoke
+  case object EstablisherIndividualAddress extends Spoke
+  case object EstablisherIndividualContactDetails extends Spoke
 
   case object TrusteeCompanyDetails extends Spoke
-
-  case object TrusteeIndividualAddress extends Spoke
-
-  case object TrusteeIndividualContactDetails extends Spoke
+  case object TrusteeCompanyAddress extends Spoke
+  case object TrusteeCompanyContactDetails extends Spoke
 
   case object TrusteeIndividualDetails extends Spoke
-
-  case object TrusteePartnershipAddress extends Spoke
-
-  case object TrusteePartnershipContactDetails extends Spoke
+  case object TrusteeIndividualAddress extends Spoke
+  case object TrusteeIndividualContactDetails extends Spoke
 
   case object TrusteePartnershipDetails extends Spoke
+  case object TrusteePartnershipAddress extends Spoke
+  case object TrusteePartnershipContactDetails extends Spoke
 
 
   def createSpoke(answers: UserAnswers,
@@ -97,12 +92,19 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyDetails => answers.isEstablisherCompanyDetailsComplete(index, mode)
     case EstablisherCompanyAddress => answers.isEstablisherCompanyAddressComplete(index)
     case EstablisherCompanyContactDetails => answers.isEstablisherCompanyContactDetailsComplete(index)
+      
+    case EstablisherIndividualDetails => answers.isEstablisherIndividualDetailsComplete(index)
+    case EstablisherIndividualAddress => answers.isEstablisherIndividualAddressComplete(index)
+    case EstablisherIndividualContactDetails => answers.isEstablisherIndividualContactDetailsComplete(index)
+      
     case TrusteeCompanyDetails => answers.isTrusteeCompanyDetailsComplete(index)
     case TrusteeCompanyAddress => answers.isTrusteeCompanyAddressComplete(index)
     case TrusteeCompanyContactDetails => answers.isTrusteeCompanyContactDetailsComplete(index)
+      
     case TrusteeIndividualDetails => answers.isTrusteeIndividualDetailsComplete(index)
     case TrusteeIndividualAddress => answers.isTrusteeIndividualAddressComplete(index)
     case TrusteeIndividualContactDetails => answers.isTrusteeIndividualContactDetailsComplete(index)
+      
     case TrusteePartnershipDetails => answers.isTrusteePartnershipDetailsComplete(index)
     case TrusteePartnershipAddress => answers.isTrusteePartnershipAddressComplete(index)
     case TrusteePartnershipContactDetails => answers.isTrusteePartnershipContactDetailsComplete(index)
@@ -111,29 +113,31 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   private def getChangeLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_change_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__sectionIndividual_change_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_change_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_change_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__sectionIndividual_change_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__sectionIndividual_change_contact", _)
-    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_change_details",  _)
-    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_change_address",  _)
-    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_change_contact", _)
+    case EstablisherIndividualDetails | TrusteeIndividualDetails | TrusteePartnershipDetails => messages("messages__schemeTaskList__change_details",  _)
+
+    case EstablisherCompanyAddress | EstablisherIndividualAddress | TrusteeCompanyAddress | TrusteeIndividualAddress | TrusteePartnershipAddress =>
+      messages("messages__schemeTaskList__change_address", _)
+
+    case EstablisherCompanyContactDetails | EstablisherIndividualContactDetails |
+         TrusteeCompanyContactDetails | TrusteeIndividualContactDetails | TrusteePartnershipContactDetails =>
+      messages("messages__schemeTaskList__change_contact", _)
+
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
   private def getAddLinkText(spokeName: Spoke): String => String = spokeName match {
     case EstablisherCompanyDetails | TrusteeCompanyDetails => messages("messages__schemeTaskList__sectionEstablishersCompany_add_details", _)
-    case EstablisherCompanyAddress | TrusteeCompanyAddress => messages("messages__schemeTaskList__add_address", _)
-    case EstablisherCompanyContactDetails | TrusteeCompanyContactDetails => messages("messages__schemeTaskList__add_contact", _)
     case EstablisherCompanyDirectors => messages("messages__schemeTaskList__sectionEstablishersCompany_add_directors", _)
-    case TrusteeIndividualDetails => messages("messages__schemeTaskList__sectionIndividual_add_details",  _)
-    case TrusteeIndividualAddress => messages("messages__schemeTaskList__add_address",  _)
-    case TrusteeIndividualContactDetails => messages("messages__schemeTaskList__add_contact", _)
-    case TrusteePartnershipDetails => messages("messages__schemeTaskList__sectionPartnership_add_details",  _)
-    case TrusteePartnershipAddress => messages("messages__schemeTaskList__sectionPartnership_add_address",  _)
-    case TrusteePartnershipContactDetails => messages("messages__schemeTaskList__sectionPartnership_add_contact",  _)
+    case EstablisherIndividualDetails | TrusteeIndividualDetails | TrusteePartnershipDetails => messages("messages__schemeTaskList__add_details",  _)
+
+    case EstablisherCompanyAddress | EstablisherIndividualAddress | TrusteeCompanyAddress | TrusteeIndividualAddress | TrusteePartnershipAddress =>
+      messages("messages__schemeTaskList__add_address", _)
+
+    case EstablisherCompanyContactDetails | EstablisherIndividualContactDetails |
+         TrusteeCompanyContactDetails | TrusteeIndividualContactDetails | TrusteePartnershipContactDetails =>
+      messages("messages__schemeTaskList__add_contact", _)
+
     case _ => (_: String) => s"Not found link text for spoke $spokeName"
   }
 
@@ -142,15 +146,23 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress => establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyDirectors => establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+
+    case EstablisherIndividualDetails => establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index, srn)
+    case EstablisherIndividualAddress => establisherIndividualRoutes.CheckYourAnswersAddressController.onPageLoad(mode, index, srn)
+    case EstablisherIndividualContactDetails => establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index, srn)
+
     case TrusteeCompanyDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index, srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index, srn)
+      
     case TrusteeIndividualDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index, srn)
     case TrusteeIndividualAddress => trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
     case TrusteeIndividualContactDetails => trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index, srn)
+      
     case TrusteePartnershipDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index, srn)
     case TrusteePartnershipAddress => trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
     case TrusteePartnershipContactDetails => trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index, srn)
+      
     case _ => controllers.routes.IndexController.onPageLoad()
   }
 
@@ -159,12 +171,19 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     case EstablisherCompanyAddress => establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index)
     case EstablisherCompanyContactDetails => establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index)
     case EstablisherCompanyDirectors => establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index)
+    
+    case EstablisherIndividualDetails => establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index,srn) //change the route
+    case EstablisherIndividualAddress => establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn) //change the route
+    case EstablisherIndividualContactDetails => establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn) //change the route
+    
     case TrusteeCompanyDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index,srn)
     case TrusteeCompanyAddress => trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index, srn)
     case TrusteeCompanyContactDetails => trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index, srn)
+    
     case TrusteeIndividualDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index,srn) //change the route
     case TrusteeIndividualAddress => trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index, srn) //change the route
     case TrusteeIndividualContactDetails => trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index, srn) //change the route
+    
     case TrusteePartnershipDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index,srn)
     case TrusteePartnershipAddress => trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
     case TrusteePartnershipContactDetails => trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index, srn)
@@ -177,7 +196,16 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSEnabled), EstablisherCompanyDirectors, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSPhase1Enabled), EstablisherCompanyDirectors, mode, srn, name, index)
+    )
+  }
+
+  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+    Seq(
+      createSpoke(answers, EstablisherIndividualDetails, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherIndividualAddress, mode, srn, name, index, isEstablisherNew),
+      createSpoke(answers, EstablisherIndividualContactDetails, mode, srn, name, index, isEstablisherNew)
     )
   }
 
