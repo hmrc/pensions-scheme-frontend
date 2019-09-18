@@ -47,13 +47,13 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasCompanyUtr__title"),
-      heading = Message("messages__hasCompanyUtr__h1", companyName),
+      title = Message("messages__hasPersonUTR__title"),
+      heading = Message("messages__hasUtr__h1", companyName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )
 
-  private def form(establisherName: String) = formProvider("messages__hasCompanyUtr__error__required", establisherName)
+  private def form(establisherName: String) = formProvider("messages__hasUTR__error__required", establisherName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>

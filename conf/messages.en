@@ -1642,10 +1642,14 @@ messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
 
+messages__hasUTR__error__required = Select yes if the person has a UTR
+
 messages__hasCompanyVat__title = Is the company registered for VAT?
 messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
+
+messages__hasPersonUTR__title = Does the person have a UTR?
 
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address

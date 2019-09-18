@@ -19,7 +19,6 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasUtrFormProvider
-import identifiers.register.establishers.company.HasCompanyUTRId
 import identifiers.register.establishers.individual.EstablisherHasUTRId
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -33,14 +32,14 @@ class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
   private def onwardRoute  = controllers.routes.IndexController.onPageLoad()
   private val formProvider = new HasUtrFormProvider()
-  private val form         = formProvider("messages__hasCompanyUtr__error__required", "test company name")
+  private val form         = formProvider("messages__hasUTR__error__required", "test company name")
   private val index        = Index(0)
   private val srn          = None
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyUtr__title"),
-    heading = Message("messages__hasCompanyUtr__h1", "Test Name"),
+    title = Message("messages__hasPersonUTR__title"),
+    heading = Message("messages__hasUtr__h1", "Test Name"),
     hint = Some(Message("messages__hasUtr__p1"))
   )
 
