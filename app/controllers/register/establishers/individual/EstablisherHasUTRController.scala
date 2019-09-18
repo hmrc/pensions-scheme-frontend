@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
                                             override val userAnswersService: UserAnswersService,
-                                            @EstablishersIndividual override val navigator: Navigator,
+                                            val navigator: Navigator,
                                             authenticate: AuthAction,
                                             allowAccess: AllowAccessActionProvider,
                                             getData: DataRetrievalAction,
