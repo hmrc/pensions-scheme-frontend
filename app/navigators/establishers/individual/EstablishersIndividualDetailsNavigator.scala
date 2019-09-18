@@ -21,6 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.routes._
 import controllers.register.establishers.individual.routes._
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models._
 import models.Mode._
@@ -47,7 +48,7 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
   }
 
   private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case EstablisherNameId(_) => AddEstablisherController.onPageLoad(mode, srn)
+    case EstablisherNameId(_)             => AddEstablisherController.onPageLoad(mode, srn)
     case EstablisherDOBId(index)          => EstablisherHasNINOController.onPageLoad(mode, index, srn)
     case id@EstablisherHasNINOId(index)   => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case EstablisherNewNinoId(index)      => EstablisherHasUTRController.onPageLoad(mode, index, srn)
@@ -55,6 +56,18 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
     case id@EstablisherHasUTRId(index)    => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case EstablisherNoUTRReasonId(index)  => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case EstablisherUTRId(index)          => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+  }
+
+  private def checkUpdateModeRoutes(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case EstablisherDOBId(index)                                                           => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherNewNinoId(index) if ua.get(IsEstablisherNewId(index)).getOrElse(false) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherNewNinoId(index)                                                       => anyMoreChangesPage(srn)
+    case EstablisherNoNINOReasonId(index)                                                  => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case id@EstablisherHasNINOId(index)                                                    => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
+    case id@EstablisherHasUTRId(index)                                                     => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case EstablisherNoUTRReasonId(index)                                                   => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherUTRId(index) if ua.get(IsEstablisherNewId(index)).getOrElse(false)     => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
+    case EstablisherUTRId(index)                                                           => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -66,7 +79,8 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = ???
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
 object EstablishersIndividualDetailsNavigator {

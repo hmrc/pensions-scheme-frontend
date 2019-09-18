@@ -38,7 +38,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
   val navigator: Navigator = injector.instanceOf[EstablishersIndividualDetailsNavigator]
 
   "NormalMode" must {
-    val navigationForNewEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
+    val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(NormalMode, None)),
@@ -53,7 +53,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(NormalMode), index, None))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherIndividual, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
   }
 
   "CheckMode" must {
@@ -75,7 +75,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
   }
 
   "UpdateMode" must {
-    val navigationForVarianceModeEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
+    val updateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
         row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(UpdateMode, srn), Some(newEstablisherUserAnswers)),
@@ -86,19 +86,38 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers))
+        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForVarianceModeEstablisherIndividual, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, srn)
   }
 
+  "CheckUpdateMode" must {
+    val checkUpdateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Expected next page"),
+        row(EstablisherDOBId(index))(someDate, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(true, EstablisherNinoNewController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherNewNinoId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherNewNinoId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers))
+      )
 
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, srn)
+  }
 }
 
 object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
+  private val exisitingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
   private val srn = Some("srn")
   private val someDate =  LocalDate.now()
 }
