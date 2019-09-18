@@ -1656,6 +1656,8 @@ messages__hasCompanyVat__error__required = Select yes if the {0} is registered 
 messages__hasPersonUTR__title = Does the person have a UTR?
 messages__personUTR__title = What is the person’s UTR?
 
+messages__hasPersonNINO__title = Does the person have a National Insurance number?
+
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address
 

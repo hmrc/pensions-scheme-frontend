@@ -38,7 +38,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__common_nino__title"),
+    title = Message("messages__hasPersonNINO__title"),
     heading = Message("messages__genericHasNino__h1", "Test Name"),
     hint = None
   )
