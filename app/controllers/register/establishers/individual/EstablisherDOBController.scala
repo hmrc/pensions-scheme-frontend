@@ -18,34 +18,54 @@ package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.dateOfBirth.DateOfBirthController
+import forms.DOBFormProvider
+import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
-import play.api.mvc.{Action, AnyContent}
+import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import viewmodels.Message
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherDOBController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction
-                                         )(implicit val ec: ExecutionContext) extends I18nSupport {
+class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
+                                         override val messagesApi: MessagesApi,
+                                         val userAnswersService: UserAnswersService,
+                                         val navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         allowAccess: AllowAccessActionProvider,
+                                         requireData: DataRequiredAction,
+                                         formProvider: DOBFormProvider
+                                        )(implicit val ec: ExecutionContext) extends DateOfBirthController {
+
+  val form: Form[LocalDate] = formProvider()
+
+  private def postCall: (Mode, Index, Option[String]) => Call = routes.EstablisherDOBController.onSubmit
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, index, srn),
+      srn = srn,
+      token = token
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theEstablisher").resolve), mode)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theEstablisher").resolve), mode)
+    }
 }

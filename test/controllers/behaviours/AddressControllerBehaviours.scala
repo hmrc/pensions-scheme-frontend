@@ -34,7 +34,7 @@ import utils.{CountryOptions, InputOption}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.{manualAddress => manualAddressView}
 
-trait ControllerBehaviours extends ControllerSpecBase
+trait AddressControllerBehaviours extends ControllerSpecBase
   with MockitoSugar
   with ScalaFutures
   with CSRFRequest

@@ -139,7 +139,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__trusteeIndividualDOB__heading", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(trusteeDob)),
         addLink(messages("messages__trustee__individual__nino__heading", name), nino(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_nino", name)),
         addLink(messages("messages__trusteeUtr__h1", name), utr(UpdateMode, srn),
@@ -150,7 +150,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringLink(messages("messages__trusteeIndividualDOB__heading", name), DateHelper.formatDate(trusteeDob)),
+        stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(trusteeDob)),
         stringLink(messages("messages__trustee__individual__nino__heading", name), nino),
         stringLink(messages("messages__trusteeUtr__h1", name), utr)
       )
@@ -161,7 +161,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__trusteeIndividualDOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_dob", name)),
         booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
@@ -181,7 +181,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__trusteeIndividualDOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_dob", name)),
         booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),

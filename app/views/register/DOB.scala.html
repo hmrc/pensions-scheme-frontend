@@ -16,23 +16,33 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.company.director.routes._
 @import models.Mode
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex:Index, directorIndex:Index, schemeName: Option[String], postCall: Call, srn:Option[String], fullName: String)(implicit request: Request[_], messages: Messages)
+@import viewmodels.dateOfBirth.DateOfBirthViewModel
+@(
+        appConfig: FrontendAppConfig,
+        form: Form[_],
+        mode: Mode,
+        schemeName: Option[String],
+        fullName: String,
+        viewModel: DateOfBirthViewModel
+)(implicit
+        request: Request[_],
+        messages: Messages
+)
 
 @main_template(
-    title = messages("messages__directorDOB__title"),
+    title = messages("messages__DOB__title", viewModel.token),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @helpers.form(action = viewModel.postCall, 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__directorDOB__heading", fullName)
+            headingKey = messages("messages__DOB__heading", fullName)
         )
 
         @components.input_date(
@@ -43,6 +53,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }

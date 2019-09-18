@@ -19,10 +19,9 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.individual.CheckYourAnswersControllerSpec.firstIndex
 import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages}
+import identifiers.register.establishers.individual
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId, individual}
 import models._
 import models.address.Address
 import models.person.PersonDetails
@@ -30,12 +29,12 @@ import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.{checkYourAnswers, check_your_answers_old}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -48,7 +47,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -131,12 +130,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends OptionValues {
-  def postUrl(mode: Mode, srn: Option[String]): Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+  val postUrl: Call = controllers.routes.IndexController.onPageLoad()
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = checkYourAnswers(
     frontendAppConfig,
     answerSections,
-    postUrl(mode, srn),
+    postUrl,
     None,
     hideEditLinks = false,
     hideSaveAndContinueButton = false,
