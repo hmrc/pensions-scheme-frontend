@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
-import controllers.behaviours.ControllerBehaviours
+import controllers.behaviours.AddressControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
 import models.address.Address
@@ -34,11 +34,10 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
 import viewmodels.address.ManualAddressViewModel
 
-class TrusteeAddressControllerSpec extends ControllerBehaviours {
+class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
 
   val firstIndex = Index(0)
 

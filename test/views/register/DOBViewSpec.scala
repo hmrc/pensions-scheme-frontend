@@ -14,39 +14,64 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company.director
+package views.register
 
-import controllers.register.establishers.company.director.routes
 import forms.DOBFormProvider
-import models.{Index, NormalMode}
+import models.{Index, Mode, NormalMode, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.director.directorDOB
+import views.html.register.DOB
 
-class DirectorDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
+class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
-  val messageKeyPrefix = "directorDOB"
+  val messageKeyPrefix = "DOB"
 
-  val establisherIndex = Index(1)
-  val directorIndex = Index(1)
+  val index = Index(1)
   val personName = "John Doe"
-  private val postCall = routes.DirectorDOBController.onSubmit _
+  private val postCall = controllers.routes.IndexController.onPageLoad()
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall,
+      srn = srn,
+      token = token
+    )
+  }
 
   override val form = new DOBFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None, personName)(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      None,
+      personName,
+      viewModel(NormalMode, 0, None, "user token")
+    )(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), Some("srn"), personName)(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      UpdateMode,
+      Some("srn"),
+      personName,
+      viewModel(UpdateMode, 0, Some("srn"), "user token")
+    )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorDOB(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None,
-      postCall(NormalMode, establisherIndex, directorIndex, None), None, personName)(fakeRequest, messages)
+    DOB(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      None,
+      personName,
+      viewModel(NormalMode, 0, None, "user token")
+    )(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
@@ -58,9 +83,10 @@ class DirectorDOBViewSpec extends QuestionViewBehaviours[LocalDate] {
     "date.year" -> s"$year"
   )
 
-  "DirectorDOB view" must {
+  "DOB view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", "John Doe"))
+    behave like normalPageWithTitle(createView(), messageKeyPrefix,
+      messages("messages__DOB__heading", "user token"), messages(s"messages__${messageKeyPrefix}__heading", personName))
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

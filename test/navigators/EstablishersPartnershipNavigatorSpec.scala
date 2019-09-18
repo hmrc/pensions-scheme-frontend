@@ -96,12 +96,12 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     routes(UpdateMode) ++ updateOnlyRoutes: _*
   )
 
-  private val navigator: EstablishersPartnershipNavigator =
-    new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private val navigator: EstablishersPartnershipNavigatorOld =
+    new EstablishersPartnershipNavigatorOld(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    val navigator = new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    val navigator = new EstablishersPartnershipNavigatorOld(FakeUserAnswersCacheConnector, frontendAppConfig)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
     behave like nonMatchingNavigator(navigator)
