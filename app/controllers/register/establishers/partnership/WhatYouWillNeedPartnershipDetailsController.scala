@@ -17,12 +17,17 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.register.establishers.partnership.whatYouWillNeedPartnershipDetails
+
+import scala.concurrent.Future
 
 class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,
@@ -30,10 +35,14 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,
                                                             requireData: DataRequiredAction
-                                                           ) extends FrontendController with I18nSupport {
+                                                           ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = Action {
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
+    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
+      val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode, index, srn)
+      PartnershipDetailsId(index).retrieve.right.map { details =>
+        Future.successful(Ok(whatYouWillNeedPartnershipDetails(appConfig, existingSchemeName, href, details.name, srn)))
+      }
   }
 }
