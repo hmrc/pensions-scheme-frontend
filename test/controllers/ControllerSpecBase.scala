@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
@@ -115,6 +115,17 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name")
+        )
+      )
+    ))
+  )
+
+  def getMandatoryEstablisherIndividual: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString ->
+            person.PersonName("Test", "Name")
         )
       )
     ))
