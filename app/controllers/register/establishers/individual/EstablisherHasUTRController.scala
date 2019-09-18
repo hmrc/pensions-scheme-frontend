@@ -48,7 +48,7 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasPersonUTR__title"),
-      heading = Message("messages__hasUtr__h1", companyName),
+      heading = Message("messages__dynamic_hasUtr", companyName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )

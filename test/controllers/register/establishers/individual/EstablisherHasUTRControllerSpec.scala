@@ -39,7 +39,7 @@ class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasPersonUTR__title"),
-    heading = Message("messages__hasUtr__h1", "Test Name"),
+    heading = Message("messages__dynamic_hasUtr", "Test Name"),
     hint = Some(Message("messages__hasUtr__p1"))
   )
 

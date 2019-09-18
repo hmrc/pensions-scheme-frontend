@@ -1239,6 +1239,9 @@ messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
 messages__visuallyhidden__dynamic_crn = the company number for {0}
 
+messages__dynamic_whatIsUTR = What is {0}’s UTR?
+messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
+
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
 messages__visuallyhidden__partner__nino = the partner’s National Insurance number
@@ -1650,6 +1653,7 @@ messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the 
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
 messages__hasPersonUTR__title = Does the person have a UTR?
+messages__personUTR__title = What is the person’s UTR?
 
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address
@@ -1824,7 +1828,6 @@ messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__hasUtr__title = Does the trustee have a UTR?
-messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
