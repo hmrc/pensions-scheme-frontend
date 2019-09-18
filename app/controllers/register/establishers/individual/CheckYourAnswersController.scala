@@ -86,7 +86,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Ok(
           checkYourAnswers(
             appConfig, sections,
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn),
+            navigator.nextPage(CheckYourAnswersId, mode, request.userAnswers, srn),
             existingSchemeName,
             mode = mode,
             hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
