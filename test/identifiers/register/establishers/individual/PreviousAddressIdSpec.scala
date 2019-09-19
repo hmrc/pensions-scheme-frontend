@@ -17,22 +17,27 @@
 package identifiers.register.establishers.individual
 
 import base.SpecBase
+import config.FeatureSwitchManagementService
 import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
+import models.person.PersonName
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import viewmodels.AnswerRow
 
 class PreviousAddressIdSpec extends SpecBase {
 
   "cya" when {
     implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
+
+    val name = "test name"
 
     val address = Address(
       "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
@@ -51,19 +56,22 @@ class PreviousAddressIdSpec extends SpecBase {
       ).flatten
     }
 
+    val answers = UserAnswers().set(EstablisherNameId(0))(PersonName("test", "name")).asOpt.value
+
     val onwardUrl = "onwardUrl"
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+          answers.set(PreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+        implicit val ua: UserAnswers = request.userAnswers
 
         PreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_previous_address_cya_label",
+            messages("messages__previousAddressFor", name),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
     }
@@ -71,39 +79,42 @@ class PreviousAddressIdSpec extends SpecBase {
     "in update mode" must {
       "return row with add links for existing establisher if address years is under a year and there is no previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(AddressYearsId(0))(UnderAYear).asOpt.value, PsaId("A0000000"))
+          answers.set(AddressYearsId(0))(UnderAYear).asOpt.value, PsaId("A0000000"))
+        implicit val ua: UserAnswers = request.userAnswers
 
         PreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__establisher_individual_previous_address_cya_label",
+          AnswerRow(messages("messages__previousAddressFor", name),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))))
         )
       }
 
       "return row with change links for existing establisher if there is a previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+          answers.set(PreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
+        implicit val ua: UserAnswers = request.userAnswers
 
         PreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_previous_address_cya_label",
+            messages("messages__previousAddressFor", name),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
 
       "return row with change links for new establisher if there is a previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
+          answers.set(PreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
+        implicit val ua: UserAnswers = request.userAnswers
 
         PreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_previous_address_cya_label",
+            messages("messages__previousAddressFor", name),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
     }
