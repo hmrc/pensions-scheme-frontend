@@ -18,13 +18,23 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
-case class PartnershipHasPayeId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipHasPayeId.toString
+case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipHasPAYEId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(PartnershipPayeVariationsId(this.index))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
-object PartnershipHasPayeId {
+object PartnershipHasPAYEId {
   override def toString: String = "hasPaye"
 }
 

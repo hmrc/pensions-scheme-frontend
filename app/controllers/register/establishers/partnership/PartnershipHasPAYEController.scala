@@ -17,29 +17,58 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import forms.HasPAYEFormProvider
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipHasPAYEId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import navigators.Navigator
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnershipHasPAYEController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
+                                             override val userAnswersService: UserAnswersService,
+                                             override val navigator: Navigator,
                                              authenticate: AuthAction,
-                                             getData: DataRetrievalAction,
                                              allowAccess: AllowAccessActionProvider,
-                                             requireData: DataRequiredAction
-                                            ) extends FrontendController with I18nSupport {
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             formProvider: HasPAYEFormProvider
+                                            )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = routes.PartnershipHasPAYEController.onSubmit(mode, index, srn),
+      title = Message("messages__partnershipHasPaye__title"),
+      heading = Message("messages__hasPaye__h1", partnershipName),
+      hint = Some(Message("messages__hasPaye__p1")),
+      srn = srn,
+      formFieldName = Some("hasPaye")
+    )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def form(partnershipName: String) = formProvider("messages__partnershipHasPaye__error__required", partnershipName)
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipHasPAYEId(index), form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            post(PartnershipHasPAYEId(index), mode, form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
 }
-
