@@ -44,80 +44,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData, toggle = true).onPageLoad(NormalMode, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form, establishersAsEntities, enableSubmission = true, isHnSEnabled = true)
-    }
-  }
-
-  "AddEstablisher Controller with HnS feature toggle set to false" must {
-
-    "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(enableSubmission = true)
-    }
-
-    "not populate the view on a GET when the question has previously been answered" in {
-      val getRelevantData = individualEstablisherDataRetrieval
-
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS))
-    }
-
-    "populate the view with establishers when they exist and continue button should be disabled" in {
-      val establishersAsEntities = Seq(johnDoeNonHnS, testLtd)
-      val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
-    }
-
-    "exclude the deleted establishers from the list" in {
-      val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS, testLtd))
-    }
-
-    "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "redirect to the next page when no establishers exist and the user submits" in {
-      val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, enableSubmission = true)
     }
   }
 }
@@ -146,17 +73,14 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       new FakeFeatureSwitchManagementService(toggle)
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false,
-                           isHnSEnabled: Boolean = false): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
     addEstablisher(
       frontendAppConfig,
       form,
       NormalMode,
       allEstablishers,
       None,
-      None,
-      enableSubmission,
-      isHnSEnabled
+      None
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth

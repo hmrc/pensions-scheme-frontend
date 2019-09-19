@@ -17,14 +17,13 @@
 package identifiers
 
 import identifiers.register.trustees.company._
-import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
 import models._
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
@@ -50,7 +49,7 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
         result.get(CompanyContactDetailsId(0)) mustNot be(defined)
         result.get(TrusteeKindId(1)) mustNot be(defined)
-        result.get(TrusteeDetailsId(1)) mustNot be(defined)
+        result.get(TrusteeNameId(1)) mustNot be(defined)
         result.get(TrusteeKindId(2)) mustNot be(defined)
         result.get(CompanyDetailsId(2)) mustNot be(defined)
         result.get(TrusteeKindId(3)) mustNot be(defined)
@@ -72,7 +71,7 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) must be(defined)
         result.get(CompanyPreviousAddressId(0)) must be(defined)
         result.get(CompanyContactDetailsId(0)) must be(defined)
-        result.get(TrusteeDetailsId(1)) must be(defined)
+        result.get(TrusteeNameId(1)) must be(defined)
         result.get(CompanyDetailsId(2)) must be(defined)
         result.get(MoreThanTenTrusteesId) must be(defined)
       }
@@ -95,7 +94,7 @@ object HaveAnyTrusteesIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
     .flatMap(_.set(TrusteeKindId(1))(TrusteeKind.Individual))
-    .flatMap(_.set(TrusteeDetailsId(1))(PersonDetails("", None, "", LocalDate.now)))
+    .flatMap(_.set(TrusteeNameId(1))(PersonName("", "")))
     .flatMap(_.set(TrusteeKindId(2))(TrusteeKind.Company))
     .flatMap(_.set(CompanyDetailsId(2))(CompanyDetails("second")))
     .flatMap(_.set(TrusteeKindId(3))(TrusteeKind.Partnership))

@@ -17,14 +17,14 @@
 package identifiers.register.establishers
 
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
-import models._
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.establishers.EstablisherKind
+import models.{person, _}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -42,11 +42,17 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
       "remove the data for `CompanyDetails`" in {
         result.get(CompanyDetailsId(0)) mustNot be(defined)
       }
-      "remove the data for `CompanyRegistrationNumber`" in {
-        result.get(CompanyRegistrationNumberId(0)) mustNot be(defined)
+      "remove the data for `HasCompanyNumberId`" in {
+        result.get(HasCompanyNumberId(0)) mustNot be(defined)
       }
-      "remove the data for `CompanyUniqueTaxReference`" in {
-        result.get(CompanyUniqueTaxReferenceId(0)) mustNot be(defined)
+      "remove the data for `CompanyRegistrationNumber`" in {
+        result.get(CompanyRegistrationNumberVariationsId(0)) mustNot be(defined)
+      }
+      "remove the data for `HasCompanyUTRId`" in {
+        result.get(HasCompanyUTRId(0)) mustNot be(defined)
+      }
+      "remove the data for `CompanyUTRId`" in {
+        result.get(CompanyUTRId(0)) mustNot be(defined)
       }
       "remove the data for `Company Address`" in {
         result.get(CompanyPostCodeLookupId(0)) mustNot be(defined)
@@ -61,12 +67,15 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
         result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
       }
-      "remove the data for `Contact Details`" in {
-        result.get(CompanyContactDetailsId(0)) mustNot be(defined)
+      "remove the data for `CompanyEmailId`" in {
+        result.get(CompanyEmailId(0)) mustNot be(defined)
+      }
+      "remove the data for `CompanyPhoneId`" in {
+        result.get(CompanyPhoneId(0)) mustNot be(defined)
       }
       "remove the data for `Directors`" in {
-        result.get(DirectorDetailsId(0, 0)) mustNot be(defined)
-        result.get(DirectorDetailsId(0, 1)) mustNot be(defined)
+        result.get(DirectorNameId(0, 0)) mustNot be(defined)
+        result.get(DirectorNameId(0, 1)) mustNot be(defined)
       }
 
       "not remove the data for `EstablisherDetails`" in {
@@ -187,17 +196,20 @@ object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
   val establisherCompany = UserAnswers(Json.obj())
     .set(EstablisherKindId(0))(EstablisherKind.Company)
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
-    .flatMap(_.set(CompanyRegistrationNumberId(0))(CompanyRegistrationNumber.No("")))
-    .flatMap(_.set(CompanyUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
+    .flatMap(_.set(HasCompanyNumberId(0))(false))
+    .flatMap(_.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("")))
+    .flatMap(_.set(HasCompanyUTRId(0))(false))
+    .flatMap(_.set(CompanyUTRId(0))(ReferenceValue("")))
     .flatMap(_.set(CompanyPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
-    .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
-    .flatMap(_.set(DirectorDetailsId(0, 0))(PersonDetails("dir1", None, "", LocalDate.now)))
-    .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("dir2", None, "", LocalDate.now)))
-    .flatMap(_.set(EstablisherDetailsId(0))(PersonDetails("", None, "", LocalDate.now)))
+    .flatMap(_.set(CompanyEmailId(0))(""))
+    .flatMap(_.set(CompanyPhoneId(0))(""))
+    .flatMap(_.set(DirectorNameId(0, 0))(PersonName("dir1",  "")))
+    .flatMap(_.set(DirectorNameId(0, 1))(PersonName("dir2",  "")))
+    .flatMap(_.set(EstablisherNameId(0))(person.PersonName("",  "")))
     .asOpt.value
 
   val establisherIndividual = UserAnswers(Json.obj())

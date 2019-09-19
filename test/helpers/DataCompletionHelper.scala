@@ -19,91 +19,88 @@ package helpers
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
-import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
 
 trait DataCompletionHelper extends OptionValues {
-  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val address     = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val stringValue = "value"
-  private val firstName = "firstName"
-  private val lastName = "lastName"
+  private val firstName   = "firstName"
+  private val lastName    = "lastName"
 
-  protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
-    setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, toggled, index, ua).asOpt.value
+  protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
-    setTrusteeCompletionStatusJsResultAddressDetails(isComplete, toggled, index, ua).asOpt.value
+  protected def setTrusteeCompletionStatusAddressDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setTrusteeCompletionStatusJsResultAddressDetails(isComplete, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusContactDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
-    setTrusteeCompletionStatusJsResultContactDetails(isComplete, toggled, index, ua).asOpt.value
+  protected def setTrusteeCompletionStatusContactDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setTrusteeCompletionStatusJsResultContactDetails(isComplete, index, ua).asOpt.value
 
-  protected def setTrusteeCompletionStatusJsResultIndividualDetails(isComplete: Boolean, toggled: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultIndividualDetails(isComplete: Boolean,
+                                                                    index: Int = 0,
+                                                                    ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
-      if (toggled) {
-        ua.
-          set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-          .set(TrusteeHasNINOId(index))(true).asOpt.value
-          .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue)).asOpt.value
-          .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
-      } else {
-        ua.
-          set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-          .set(TrusteeNinoId(index))(Nino.Yes(stringValue)).asOpt.value
-          .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue))
-      }
-    } else {
-      if (toggled) {
-        ua.
-          set(TrusteeDOBId(index))(LocalDate.now()).asOpt.value
-          .set(TrusteeHasNINOId(index))(true).asOpt.value
-          .set(TrusteeHasUTRId(index))(true).asOpt.value
-          .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
-      } else {
-        ua.
-          set(TrusteeDetailsId(index))(PersonDetails(firstName, None, lastName, LocalDate.now())).asOpt.value
-          .set(UniqueTaxReferenceId(index))(UniqueTaxReference.Yes(stringValue))
-      }
+      ua.set(TrusteeDOBId(index))(LocalDate.now())
+        .asOpt
+        .value
+        .set(TrusteeHasNINOId(index))(true)
+        .asOpt
+        .value
+        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue))
+        .asOpt
+        .value
+        .set(TrusteeHasUTRId(index))(true)
+        .asOpt
+        .value
+        .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
+    }
+    else {
+      ua.set(TrusteeDOBId(index))(LocalDate.now())
+        .asOpt
+        .value
+        .set(TrusteeHasNINOId(index))(true)
+        .asOpt
+        .value
+        .set(TrusteeHasUTRId(index))(true)
+        .asOpt
+        .value
+        .set(TrusteeUTRId(index))(ReferenceValue(stringValue))
     }
 
-  protected def setTrusteeCompletionStatusJsResultAddressDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultAddressDetails(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
-      ua
-        .set(TrusteeAddressId(index))(address).asOpt.value
+      ua.set(TrusteeAddressId(index))(address)
+        .asOpt
+        .value
         .set(TrusteeAddressYearsId(index))(AddressYears.OverAYear)
-    } else {
-      ua
-        .set(TrusteeAddressId(index))(address)
+    }
+    else {
+      ua.set(TrusteeAddressId(index))(address)
     }
 
-  protected def setTrusteeCompletionStatusJsResultContactDetails(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+  protected def setTrusteeCompletionStatusJsResultContactDetails(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
-      if (toggled) {
-        ua
-          .set(TrusteeEmailId(index))(stringValue).asOpt.value
-          .set(TrusteePhoneId(index))(stringValue)
-      } else {
-        ua
-          .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue))
-      }
-    } else {
-      if (toggled) {
-        ua
-          .set(TrusteePhoneId(index))(stringValue)
-      } else {
-        ua
-          .set(TrusteeContactDetailsId(index))(ContactDetails(stringValue, stringValue))
-      }
+      ua.set(TrusteeEmailId(index))(stringValue)
+        .asOpt
+        .value
+        .set(TrusteePhoneId(index))(stringValue)
+    }
+    else {
+      ua.set(TrusteePhoneId(index))(stringValue)
     }
 
-  protected def setTrusteeCompletionStatusJsResult(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
-    setTrusteeCompletionStatusJsResultContactDetails(isComplete, toggled, index,
-      setTrusteeCompletionStatusJsResultAddressDetails(isComplete, toggled, index,
-        setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, toggled, index, ua).asOpt.value).asOpt.value)
+  protected def setTrusteeCompletionStatusJsResult(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    setTrusteeCompletionStatusJsResultContactDetails(
+      isComplete,
+      index,
+      setTrusteeCompletionStatusJsResultAddressDetails(isComplete,
+                                                       index,
+                                                       setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value).asOpt.value
+    )
 
-  protected def setTrusteeCompletionStatus(isComplete: Boolean, toggled: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
-    setTrusteeCompletionStatusJsResult(isComplete, toggled, index, ua).asOpt.value
+  protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
 }

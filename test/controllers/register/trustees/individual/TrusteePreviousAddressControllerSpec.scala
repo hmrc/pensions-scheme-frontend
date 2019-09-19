@@ -20,28 +20,23 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
-import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteePreviousAddressId}
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
-import models.{Index, NormalMode}
+import models.person.PersonName
+import models.{Index, NormalMode, person}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -58,7 +53,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
   val firstIndex = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val trusteeDetails = PersonDetails("Test", None, "Name", LocalDate.now)
+  val trusteeDetails = person.PersonName("Test", "Name")
   val trusteeName = PersonName("Test", "Name")
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val fakeAuditService = new StubSuccessfulAuditService()
@@ -68,7 +63,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
     if(isHnsEnabled){
       UserAnswers().set(TrusteeNameId(0))(trusteeName).asOpt.value.dataRetrievalAction
     } else {
-      UserAnswers().set(TrusteeDetailsId(0))(trusteeDetails).asOpt.value.dataRetrievalAction
+      UserAnswers().set(TrusteeNameId(0))(trusteeDetails).asOpt.value.dataRetrievalAction
     }
   }
 

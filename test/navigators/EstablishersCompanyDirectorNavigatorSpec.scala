@@ -26,8 +26,7 @@ import identifiers.{AnyMoreChangesId, Identifier}
 import models.Mode.checkMode
 import models._
 import models.address.Address
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.Configuration
@@ -41,26 +40,20 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorDetailsId(0, 0), newDirector, directorNino(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNameId(0, 0), emptyAnswers, directorDOB(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorDOBId(0, 0), emptyAnswers, directorHasNINO(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorDOBId(0, 0), newDirector, directorHasNINO(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorNinoId(0, 0), newDirector, directorUtr(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorNewNinoId(0, 0), emptyAnswers, directorHasUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNoUTRReasonId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(directorNinoNew(checkMode(mode))), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(directorNinoReason(checkMode(mode))), true),
     (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = true), directorWhatIsDirectorUTR(mode), true, Some(directorWhatIsDirectorUTR(checkMode(mode))), true),
     (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = false), directorWhyNoUTR(mode), true, Some(directorWhyNoUTR(checkMode(mode))), true),
-    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorUniqueTaxReferenceId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
     (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
-    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorContactDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorEmail(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true,
       addressYearsLessThanTwelveEdit(mode, addressYearsUnderAYear), true),
     (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -69,8 +62,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorConfirmPreviousAddressId(0, 0), emptyAnswers, none, false, Some(sessionExpired), false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
     (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
-    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorPreviousAddressId(0, 0), newDirector, directorContactDetails(mode), true, Some(exitJourney(mode, newDirector)), true),
+    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorPreviousAddressId(0, 0), newDirector, directorEmail(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorPhoneNumberId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -157,15 +150,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
-
-  private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex, None)
-
-  private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex, None)
-
   private def directorPhone(mode: Mode) = routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex, None)
+  private def directorEmail(mode: Mode) = routes.DirectorEmailController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
@@ -213,9 +200,11 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   val directorNoExistingCurrentAddress: UserAnswers = UserAnswers(Json.obj())
     .set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
-    _.set(DirectorDetailsId(establisherIndex, directorIndex))(PersonDetails("Alan", None, "Allman", LocalDate.now(), false))).flatMap(
-    _.set(DirectorNinoId(establisherIndex, directorIndex))(Nino.No("a"))).flatMap(
-    _.set(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex))(UniqueTaxReference.No("a"))).flatMap(
+    _.set(DirectorNameId(establisherIndex, directorIndex))(PersonName("Alan", "Allman", false))).flatMap(
+    _.set(DirectorHasNINOId(establisherIndex, directorIndex))(true)).flatMap(
+    _.set(DirectorNewNinoId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
+    _.set(DirectorHasUTRId(establisherIndex, directorIndex))(true)).flatMap(
+    _.set(DirectorUTRId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
     _.set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.UnderAYear)).flatMap(
     _.set(DirectorAddressId(establisherIndex, directorIndex))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 

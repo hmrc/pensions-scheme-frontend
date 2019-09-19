@@ -28,7 +28,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
-import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours, YesNoViewBehaviours}
+import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EntityListBehaviours {
@@ -67,14 +67,14 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission, isHnSEnabled)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
   private def createViewUsingForm(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): Form[Boolean] => HtmlFormat.Appendable =
     (form: Form[Boolean]) =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission, isHnSEnabled)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
   private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"), enableSubmission, isHnSEnabled)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"))(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

@@ -50,8 +50,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
-                                               formProvider: ConfirmDeleteTrusteeFormProvider,
-                                               fsm: FeatureSwitchManagementService)(implicit val ec: ExecutionContext)
+                                               formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()

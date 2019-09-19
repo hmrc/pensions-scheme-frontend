@@ -20,17 +20,14 @@ import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.SchemeTypeId
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
-import models.person.{PersonDetails, PersonName}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.SchemeType.SingleTrust
+import models.register._
 import models.register.trustees.TrusteeKind
-import models.register.{SchemeType, Trustee, TrusteeCompanyEntity, TrusteeIndividualEntity, TrusteeIndividualEntityNonHns, TrusteePartnershipEntity}
-import models.{CompanyDetails, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import models.{CompanyDetails, NormalMode, UpdateMode, person}
 import play.api.data.Form
 import utils.{Enumerable, UserAnswers}
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
@@ -43,11 +40,9 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     "Trustee Company"
   )
 
-  private val trusteeDetails = PersonDetails(
+  private val trusteeDetails = person.PersonName(
     "John",
-    None,
-    "Doe",
-    LocalDate.now()
+    "Doe"
   )
   private val trusteeName = PersonName("John", "Doe")
 
@@ -57,15 +52,15 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       .flatMap(_.set(SchemeTypeId)(SchemeType.SingleTrust))
       .flatMap(_.set(IsTrusteeNewId(0))(true))
       .flatMap(_.set(TrusteeKindId(0))(TrusteeKind.Company))
-      .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
+      .flatMap(_.set(TrusteeNameId(1))(trusteeDetails))
       .flatMap(_.set(TrusteeKindId(1))(TrusteeKind.Individual))
       .flatMap(_.set(IsTrusteeNewId(1))(true))
       .asOpt
       .value
 
-  private def trustees(toggled:Boolean): Seq[Trustee[_]] = userAnswers.allTrustees(toggled)
-  private val fullTrustees: Seq[TrusteeIndividualEntityNonHns] = (0 to 9).map(index => TrusteeIndividualEntityNonHns(
-    TrusteeDetailsId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
+  private def trustees: Seq[Trustee[_]] = userAnswers.allTrustees
+  private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
+    TrusteeNameId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
   private val johnDoe = TrusteeIndividualEntity(TrusteeNameId(2), "John Doe", false, false, true, 3, Some("single"))
   private val testCompany = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company", false, true, true, 3, Some("single"))
@@ -76,13 +71,13 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   val form = new AddTrusteeFormProvider()()
 
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true, isHnsEnabled: Boolean = false) = () =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = enable, isHnsEnabled)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
   private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
-    addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"), enableSubmission = true, false)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, UpdateMode, trustees, None, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enableSubmission = true, false)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
   "AddTrustee view with toggle off" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -92,7 +87,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like yesNoPage(
-      createViewUsingForm(trustees(toggled = false)),
+      createViewUsingForm(trustees),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
       "_text",
@@ -134,31 +129,31 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       }
     }
 
-    behave like entityList(createView(), createView(trustees(toggled = false), false), trustees(toggled = false), frontendAppConfig)
+    behave like entityList(createView(), createView(trustees, false), trustees, frontendAppConfig)
 
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
-      val doc = asDocument(createView(trustees(toggled = false))())
+      val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
     }
 
     "display the status and edit link" in {
-      val doc = asDocument(createView(trustees(toggled = false))())
+      val doc = asDocument(createView(trustees)())
       doc must haveDynamicText("site.incomplete")
       assertRenderedById(doc,"person-0-edit")
     }
   }
 
-  "AddTrustee view with toggle on" must {
+  "AddTrustee view hns" must {
     behave like yesNoPage(
-      createViewUsingForm(trustees(toggled = true)),
+      createViewUsingForm(trustees),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
       "_text",
       expectedHintKey = Some("_lede")
     )
 
-    behave like entityList(createView(), createView(trustees(toggled = true), enable = false), trustees(toggled = true), frontendAppConfig, isToggleOn = true)
+    behave like entityList(createView(), createView(trustees, enable = false), trustees, frontendAppConfig)
 
     behave like addEntityList(createView(trusteesToggleOn, isHnsEnabled = true), trusteesToggleOn, "Trustee",
       Seq("Partnership", "Company", "Individual"))

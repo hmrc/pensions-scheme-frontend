@@ -122,24 +122,8 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
-    def establisherCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
-      answers.set(establishers.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
-    }
-
     def establisherCompanyDormant(index: Int, isDormant: DeclarationDormant): UserAnswers = {
       answers.set(establishers.company.IsCompanyDormantId(index))(isDormant).asOpt.value
-    }
-
-    def establisherUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
-      answers.set(establishers.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
-    }
-
-    def establisherVat(index: Int, vat: Vat): UserAnswers = {
-      answers.set(establishers.company.CompanyVatId(index))(vat).asOpt.value
-    }
-
-    def establisherPaye(index: Int, paye: Paye): UserAnswers = {
-      answers.set(establishers.company.CompanyPayeId(index))(paye).asOpt.value
     }
 
     def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
@@ -168,10 +152,6 @@ package object utils {
 
     def establishersCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
-    }
-
-    def establishersCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
-      answers.set(establishers.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
 
     def isEstablisherNew(index: Int, flag: Boolean): UserAnswers = {

@@ -47,7 +47,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
 
   import CompanyRegistrationNumberVariationsBaseControllerSpec._
 
-  val postCall = routes.CompanyRegistrationNumberController.onSubmit _
+  val postCall = routes.CompanyEmailController.onSubmit _
 
   "get" must {
 
@@ -66,7 +66,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestBaseController]
           val result = controller.onPageLoad(UserAnswers())
-          val postCall = routes.CompanyRegistrationNumberController.onSubmit _
+          val postCall = routes.CompanyEmailController.onSubmit _
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual companyRegistrationNumberVariations(
@@ -193,7 +193,7 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
                                   override val navigator: Navigator
                                 )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
 
-    def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberController.onSubmit _
+    def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEmailController.onSubmit _
 
     override def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
 

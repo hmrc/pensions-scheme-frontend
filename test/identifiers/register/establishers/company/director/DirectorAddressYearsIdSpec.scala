@@ -17,13 +17,11 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -106,12 +104,12 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
     val onwardUrl = "onwardUrl"
 
-    val directorDetails = PersonDetails("John", None, "One", LocalDate.now())
+    val directorDetails = PersonName("John",  "One")
     implicit val featureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
 
     def answers = UserAnswers()
       .set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value
-      .set(DirectorDetailsId(0, 0))(directorDetails).asOpt.value
+      .set(DirectorNameId(0, 0))(directorDetails).asOpt.value
 
     "in normal mode" must {
 
@@ -121,7 +119,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.firstAndLastName),
+            messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
@@ -141,7 +139,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.firstAndLastName),
+            messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,Some("messages__visuallyhidden__director__address_years")))

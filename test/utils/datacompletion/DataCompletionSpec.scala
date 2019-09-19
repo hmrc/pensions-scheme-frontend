@@ -170,43 +170,20 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       }
     }
 
-    "isEstablisherCompanyComplete with hns toggle on" must {
+    "isEstablisherCompanyComplete" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode, true) mustBe true
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, true) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode) mustBe false
       }
     }
 
-    "isEstablisherCompanyComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, mode, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, false) mustBe false
-      }
-    }
-
-    "isDirectorCompleteNonHnS" must {
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isDirectorCompleteNonHnS(0, 0) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isDirectorCompleteNonHnS(0, 0) mustBe false
-      }
-    }
 
     "isDirectorCompleteHnS" must {
       "return true when all answers are present" in {
@@ -262,53 +239,31 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       }
     }
 
-    "isTrusteeCompanyComplete with hns toggle on" must {
+    "isTrusteeCompanyComplete" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isTrusteeCompanyComplete(0, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isTrusteeCompanyComplete(0) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isTrusteeCompanyComplete(0, true) mustBe true
+        UserAnswers(userAnswersCompleted).isTrusteeCompanyComplete(0) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteeCompanyComplete(0, true) mustBe false
+        UserAnswers(userAnswersInProgress).isTrusteeCompanyComplete(0) mustBe false
       }
     }
 
-    "isTrusteeCompanyComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isTrusteeCompanyComplete(0, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isTrusteeCompanyComplete(0, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteeCompanyComplete(0, false) mustBe false
-      }
-    }
   }
 
   "Trustee Individual completion status should be returned correctly" when {
-    "isTrusteeIndividualComplete H&S disabled" must {
+
+    "isTrusteeIndividualComplete" must {
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isTrusteeIndividualComplete(isHnSEnabled = false, 1) mustBe true
+        UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(1) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = false, 1) mustBe false
-      }
-    }
-
-    "isTrusteeIndividualComplete H&S enabled" must {
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete(isHnSEnabled = true, 1) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(isHnSEnabled = true, 1) mustBe false
+        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete( 1) mustBe false
       }
     }
 
@@ -398,31 +353,17 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       }
     }
 
-    "isTrusteePartnershipComplete with hns toggle on" must {
+    "isTrusteePartnershipComplete " must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isTrusteePartnershipComplete(2, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isTrusteePartnershipComplete(2) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isTrusteePartnershipComplete(2, true) mustBe true
+        UserAnswers(userAnswersCompleted).isTrusteePartnershipComplete(2) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteePartnershipComplete(2, true) mustBe false
-      }
-    }
-
-    "isTrusteePartnershipComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isTrusteePartnershipComplete(2, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isTrusteePartnershipComplete(2, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteePartnershipComplete(2, false) mustBe false
+        UserAnswers(userAnswersInProgress).isTrusteePartnershipComplete(2) mustBe false
       }
     }
   }
@@ -436,14 +377,14 @@ object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
   private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
 
-  private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true, toggled = true)
-  private val userAnswersIndividualDetailsInProgress: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = false, toggled = true)
+  private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true)
+  private val userAnswersIndividualDetailsInProgress: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = false)
 
-  private val userAnswersAddressDetailsCompleted: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = true, toggled = true)
-  private val userAnswersAddressDetailsInProgress: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = false, toggled = true)
+  private val userAnswersAddressDetailsCompleted: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = true)
+  private val userAnswersAddressDetailsInProgress: UserAnswers = setTrusteeCompletionStatusAddressDetails(isComplete = false)
 
-  private val userAnswersContactDetailsCompleted: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = true, toggled = true)
-  private val userAnswersContactDetailsInProgress: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = false, toggled = true)
+  private val userAnswersContactDetailsCompleted: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = true)
+  private val userAnswersContactDetailsInProgress: UserAnswers = setTrusteeCompletionStatusContactDetails(isComplete = false)
 
   private val emptyAnswers = UserAnswers()
 }

@@ -19,12 +19,11 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.trustees._
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import models.{Mode, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import models.{Mode, NormalMode, UpdateMode, person}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.mvc.Call
@@ -36,17 +35,17 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  private def routes(mode: Mode, srn: Option[String], toggled: Boolean): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes(mode: Mode, srn: Option[String]): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1, mode, srn), true, None, true),
     (AddTrusteeId, emptyAnswers, trusteeKind(0, mode, srn), true, None, true),
     (AddTrusteeId, trustees(10), moreThanTenTrustees(mode, srn), true, None, true),
-    (AddTrusteeId, addTrusteeFalseWithChanges, if (!toggled && mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
+    (AddTrusteeId, addTrusteeFalseWithChanges, taskList(mode, srn), false, None, false),
     (MoreThanTenTrusteesId, emptyAnswers,
       if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else taskList(mode, srn), false, None, false),
     (TrusteeKindId(0), trusteeKindCompany, companyDetails(mode, srn), true, None, false),
-    (TrusteeKindId(0), trusteeKindIndividual, if(toggled) trusteeName(mode, srn) else trusteeDetails(mode, srn), true, None, false),
+    (TrusteeKindId(0), trusteeKindIndividual, trusteeName(mode, srn) , true, None, false),
     (TrusteeKindId(0), trusteeKindPartnership, partnershipDetails(mode, srn), true, None, false),
     (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
     (ConfirmDeleteTrusteeId, emptyAnswers, if (mode == UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(srn) else addTrustee(mode, srn), true, None, false)
@@ -61,32 +60,22 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false)
   )
 
-  private def normalRoutes(toggled: Boolean = false): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def normalRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    normalOnlyRoutes ++ routes(NormalMode, None, toggled): _*
+    normalOnlyRoutes ++ routes(NormalMode, None): _*
   )
 
-  private def updateRoutes(toggled: Boolean = false) = Table(
+  private def updateRoutes = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    routes(UpdateMode, srn, toggled): _*
+    routes(UpdateMode, srn): _*
   )
 
-  s"Trustees navigations with hns toggle off" must {
-    appRunning()
-    val navigator: TrusteesNavigator =
-      new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode, srn)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
-  }
-
-  s"Trustees navigations with hns toggle on" must {
+  s"Trustees navigations " must {
     appRunning()
     val navigator: TrusteesNavigator =
       new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(true), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(true), dataDescriber, UpdateMode, srn)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode, srn)
     behave like nonMatchingNavigator(navigator)
     behave like nonMatchingNavigator(navigator, UpdateMode)
   }
@@ -98,7 +87,6 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers()
   private val srnValue = "123"
   private val srn = Some(srnValue)
-  private val isHnSEnabled = false
 
   private def addTrusteeFalse = emptyAnswers.addTrustee(false)
 
@@ -110,7 +98,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
     .addTrustee(true).trustees(0)
 
   private def haveAnyTrusteesTrueWithOneDeletedTrustee = emptyAnswers
-    .set(TrusteeDetailsId(0))(PersonDetails("first", None, "last", LocalDate.now, isDeleted = true)).asOpt.value.
+    .set(TrusteeNameId(0))(PersonName("first", "last", isDeleted = true)).asOpt.value.
     haveAnyTrustees(true)
     .addTrustee(true).trustees(0)
 
@@ -135,9 +123,6 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def moreThanTenTrustees(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 
-  private def trusteeDetails(mode: Mode, srn: Option[String]) =
-    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn)
-
   private def trusteeName(mode: Mode, srn: Option[String]) =
     controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, srn)
 
@@ -160,7 +145,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       s"trusteeKind: $value"
     }
 
-    val trustees = answers.allTrustees(isHnSEnabled).length match {
+    val trustees = answers.allTrustees.length match {
       case n if n > 0 => Some(s"trustees: $n")
       case _ => None
     }
@@ -188,7 +173,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       }
       else {
         (0 until howMany).foldLeft(answers) { case (newAnswers, i) =>
-          newAnswers.set(TrusteeDetailsId(i))(PersonDetails("first", None, "last", LocalDate.now)).asOpt.value
+          newAnswers.set(TrusteeNameId(i))(person.PersonName("first", "last")).asOpt.value
         }
       }
     }

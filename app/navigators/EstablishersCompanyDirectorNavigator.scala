@@ -60,8 +60,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDOBId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorHasNINOController.onPageLoad(mode, establisherIndex, directorIndex, srn))
-      case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
-        NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
 
       case DirectorUTRId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
@@ -104,8 +102,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNewNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNoNINOReasonId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorUTRId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)

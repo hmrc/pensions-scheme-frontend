@@ -70,41 +70,17 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
       }
     }
 
-    "isEstablisherCompanyComplete with hns toggle on" must {
+    "isEstablisherCompanyComplete" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode, true) mustBe true
+        UserAnswers(userAnswersCompleted).isEstablisherCompanyComplete(0, mode) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, true) mustBe false
-      }
-    }
-
-    "isEstablisherCompanyComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherCompanyComplete(0, mode, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherCompanyComplete(0, mode, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode, false) mustBe false
-      }
-    }
-
-    "isDirectorCompleteNonHnS" must {
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isDirectorCompleteNonHnS(0, 0) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isDirectorCompleteNonHnS(0, 0) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherCompanyComplete(0, mode) mustBe false
       }
     }
 

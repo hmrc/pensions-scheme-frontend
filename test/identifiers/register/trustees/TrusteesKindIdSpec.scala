@@ -21,9 +21,8 @@ import identifiers.register.trustees.individual._
 import identifiers.register.trustees.partnership._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
@@ -85,7 +84,7 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
 
   val trusteeIndividual = UserAnswers(Json.obj())
     .set(TrusteeKindId(0))(TrusteeKind.Individual)
-    .flatMap(_.set(TrusteeDetailsId(0))(PersonDetails("", None, "", LocalDate.now)))
+    .flatMap(_.set(TrusteeNameId(0))(PersonName("", "")))
     .flatMap(_.set(TrusteeNinoId(0))(Nino.No("")))
     .flatMap(_.set(UniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
     .flatMap(_.set(IndividualPostCodeLookupId(0))(Seq.empty))
@@ -93,7 +92,8 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(TrusteePreviousAddressId(0))(Address("", "", None, None, None, "")))
-    .flatMap(_.set(TrusteeContactDetailsId(0))(ContactDetails("", "")))
+    .flatMap(_.set(TrusteeEmailId(0))(""))
+    .flatMap(_.set(TrusteePhoneId(0))(""))
     .asOpt.value
 
   val trusteePartnership = UserAnswers()

@@ -19,10 +19,9 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.trustees.individual.TrusteeAddressYearsId
-import models.person.PersonDetails
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNameId}
+import models.person.PersonName
 import models.{AddressYears, Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
@@ -109,11 +108,9 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
   private val mode = NormalMode
   private val index = Index(0)
 
-  private val trustee = PersonDetails(
+  private val trustee = PersonName(
     "Joe",
-    None,
-    "Bloggs",
-    LocalDate.now()
+    "Bloggs"
   )
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trustee.fullName))
@@ -152,7 +149,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
     )(fakeRequest, messages).toString()
 
   private def trusteeUserAnswers: UserAnswers = {
-    UserAnswers().set(TrusteeDetailsId(index))(trustee) match {
+    UserAnswers().set(TrusteeNameId(index))(trustee) match {
       case JsSuccess(userAnswers, _) => userAnswers
       case JsError(errors) => throw JsResultException(errors)
     }

@@ -16,13 +16,13 @@
 
 package views
 
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import models.{EntitySpoke, Link, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.behaviours.ViewBehaviours
 import views.html.schemeDetailsTaskList
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 
 class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
@@ -495,7 +495,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
       Some("test company")),
 
       SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
-        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url),
+        controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
   }
@@ -514,11 +514,11 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private def trustees: Seq[SchemeDetailsTaskListEntitySection] = {
     Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
-      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0, None).url),
+      controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url),
       Some(false))),
       Some("firstName lastName")),
       SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
-        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 0, None).url),
+        controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 0, None).url),
         Some(true))),
         Some("firstName lastName")))
   }

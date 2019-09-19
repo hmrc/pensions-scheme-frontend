@@ -107,8 +107,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
     "return view with button ENABLED when some trustees incomplete" in {
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = false, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = false, 1,
+          setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
               .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
@@ -127,8 +127,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
     "return view with button ENABLED when all trustees complete" in {
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = true, 1,
+          setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
               .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
@@ -147,8 +147,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     "return view with button ENABLED when at least one trustee is INCOMPLETE" in {
 
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = false, toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = true, 1,
+          setTrusteeCompletionStatus(isComplete = false, 0,
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
               .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value

@@ -25,7 +25,7 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{company => _, _}
 import models._
 import models.address.Address
@@ -53,7 +53,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
       )
 
-      userAnswers.allEstablishers(isHnSPhase1Enabled = true, isHnSPhase2Enabled = true, mode) mustEqual allEstablisherEntities
+      userAnswers.allEstablishers( isHnSPhase2Enabled = true, mode) mustEqual allEstablisherEntities
     }
 
     "return en empty sequence if there are no establishers" in {
@@ -62,7 +62,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustEqual Seq.empty
+      userAnswers.allEstablishers( isHnSPhase2Enabled, mode) mustEqual Seq.empty
     }
 
     "return en empty sequence if the json is invalid" in {
@@ -74,7 +74,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustEqual Seq.empty
+      userAnswers.allEstablishers( isHnSPhase2Enabled, mode) mustEqual Seq.empty
     }
   }
 
@@ -112,28 +112,12 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3),
           establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
 
-      userAnswers.allEstablishersAfterDelete(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustEqual allEstablisherEntities
+      userAnswers.allEstablishersAfterDelete( isHnSPhase2Enabled, mode) mustEqual allEstablisherEntities
     }
   }
 
   ".allTrustees" must {
-
-    "return a map of trustee names, edit links, delete links and isComplete flag and hub and spoke toggle OFF" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
-        trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
-        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
-        trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
-      )
-
-      val result = userAnswers.allTrustees(false)
-
-      result mustEqual allTrusteesEntities
-    }
-
-
-    "return a map of trustee names, edit links, delete links and isComplete flag and hub and spoke toggle ON" in {
+    "return a map of trustee names, edit links, delete links and isComplete flag" in {
       val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
@@ -142,31 +126,22 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
       )
 
-      val result = userAnswers.allTrustees(isHnSPhase1Enabled)
+      val result = userAnswers.allTrustees
 
       result mustEqual allTrusteesEntities
     }
 
-
-    "return en empty sequence if there are no trustees" in {
+    "return en empty sequence if there are no trustees " in {
       val json = Json.obj(
         TrusteesId.toString -> Json.arr(
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees(false) mustEqual Seq.empty
+      userAnswers.allTrustees mustEqual Seq.empty
     }
 
-    "return en empty sequence if there are no trustees when toggle is on" in {
-      val json = Json.obj(
-        TrusteesId.toString -> Json.arr(
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees(true) mustEqual Seq.empty
-    }
 
-    "return en empty sequence if the json is invalid when toggle is off" in {
+    "return en empty sequence if the json is invalid " in {
       val json = Json.obj(
         TrusteesId.toString -> Json.arr(
           Json.obj(
@@ -175,31 +150,18 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees(false) mustEqual Seq.empty
-    }
-
-    "return en empty sequence if the json is invalid when toggle is on" in {
-      val json = Json.obj(
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            "invalid" -> "invalid"
-          )
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees(true) mustEqual Seq.empty
+      userAnswers.allTrustees mustEqual Seq.empty
     }
   }
 
   ".allTrusteesAfterDelete" must {
-
-    "return a map of trustee names, edit links and delete links when one of the trustee is deleted when toggle is off" in {
+    "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
       val json = Json.obj(
         "schemeType"-> Json.obj("name"-> "single"),
         TrusteesId.toString -> Json.arr(
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true),
+            TrusteeNameId.toString -> PersonName("First", "Last", isDeleted = true),
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
@@ -209,7 +171,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           ),
           Json.obj(
             TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString -> PersonDetails("FName", None, "LName", LocalDate.now, isDeleted = true),
+            TrusteeNameId.toString -> PersonName("FName", "LName", isDeleted = true),
             IsTrusteeNewId.toString -> true
           ),
           Json.obj(
@@ -223,42 +185,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
 
-      val result = userAnswers.allTrusteesAfterDelete(false)
-
-      result mustEqual allTrusteesEntities
-    }
-
-    "return a map of trustee names, edit links and delete links when one of the trustee is deleted when toggle is on" in {
-      val json = Json.obj(
-        "schemeType"-> Json.obj("name"-> "single"),
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString -> PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company"),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeDetailsId.toString -> PersonDetails("FName", None, "LName", LocalDate.now, isDeleted = true),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            IsTrusteeNewId.toString -> true
-          )
-        )
-      )
-
-      val userAnswers = UserAnswers(json)
-
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
-
-      val result = userAnswers.allTrusteesAfterDelete(true)
+      val result = userAnswers.allTrusteesAfterDelete
 
       result mustEqual allTrusteesEntities
     }
@@ -266,33 +193,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allDirectors" must {
 
-    "return a map of director names, edit links, delete links and" +
-      "isComplete flag including deleted items where names are all the same when HnS toggle is off" in {
-      val userAnswers = UserAnswers()
-        .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now)).asOpt.value
-        .set(DirectorNinoId(0, 0))(Nino.No("reason")).asOpt.value
-        .set(DirectorUniqueTaxReferenceId(0, 0))(UniqueTaxReference.Yes("12345678")).asOpt.value
-        .set(DirectorAddressId(0, 0))(address).asOpt.value
-        .set(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear).asOpt.value
-        .set(DirectorContactDetailsId(0, 0))(ContactDetails("a@a.a", "123")).asOpt.value
-        .set(DirectorDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)).asOpt.value
-        .set(DirectorDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)).asOpt.value
-
-      val directorEntities = Seq(
-        DirectorEntityNonHnS(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = false, 2),
-        DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntityNonHnS(DirectorDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
-
-      val result = userAnswers.allDirectors(0, false)
-
-      result.size mustEqual 3
-      result mustBe directorEntities
-    }
-  }
-
-  ".allDirectors" must {
-
-    "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same when HnS toggle is on" in {
+    "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
       val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
         .set(DirectorNameId(0, 1))(PersonName("First", "Last", isDeleted = true)).asOpt.value
         .set(DirectorNameId(0, 2))(PersonName("First", "Last")).asOpt.value
@@ -302,7 +203,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         DirectorEntity(DirectorNameId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
         DirectorEntity(DirectorNameId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
-      val result = userAnswers.allDirectors(0, isHnSPhase1Enabled)
+      val result = userAnswers.allDirectors(0)
 
       result.size mustEqual 3
       result mustBe directorEntities
@@ -311,27 +212,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allDirectorsAfterDelete" must {
 
-    "return a map of director names, edit links and delete links after one of the directors is deleted when HnS toggle is off" in {
-      val userAnswers = UserAnswers()
-        .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true))
-        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
-
-      val directorEntities = Seq(
-        DirectorEntityNonHnS(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
-      val result = userAnswers.allDirectorsAfterDelete(0, false)
-
-      result.size mustEqual 1
-      result mustBe directorEntities
-    }
-
-    "return a map of director names, edit links and delete links after one of the directors is deleted when HnS toggle is on" in {
+    "return a map of director names, edit links and delete links after one of the directors is deleted" in {
       val userAnswers = UserAnswers()
         .set(DirectorNameId(0, 0))(PersonName("First", "Last", isDeleted = true))
         .flatMap(_.set(DirectorNameId(0, 1))(PersonName("First1", "Last1"))).get
 
       val directorEntities = Seq(
         DirectorEntity(DirectorNameId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
-      val result = userAnswers.allDirectorsAfterDelete(0, true)
+      val result = userAnswers.allDirectorsAfterDelete(0)
 
       result.size mustEqual 1
       result mustBe directorEntities
@@ -392,7 +280,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
     "return the count of all trustees irrespective of whether they are deleted or not" in {
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true))
+        .set(TrusteeNameId(0))(PersonName("First", "Last", isDeleted = true))
         .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company"))).get
 
       val result = userAnswers.trusteesCount
@@ -466,54 +354,54 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     "return true if an establisher is a company" in {
       val answers =
         UserAnswers()
-          .set(EstablisherDetailsId(0))(person)
+          .set(EstablisherNameId(0))(person)
           .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
     }
 
     "return true if an establisher is a partnership" in {
       val answers =
         UserAnswers()
-          .set(EstablisherDetailsId(0))(person)
+          .set(EstablisherNameId(0))(person)
           .flatMap(_.set(PartnershipDetailsId(1))(partnershipDetails))
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
     }
 
     "return true if both an establisher and a trustee are companies" in {
       val answers =
         UserAnswers()
-          .set(EstablisherDetailsId(0))(person)
+          .set(EstablisherNameId(0))(person)
           .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
-          .flatMap(_.set(TrusteeDetailsId(0))(person))
+          .flatMap(_.set(TrusteeNameId(0))(person))
           .flatMap(_.set(TrusteeCompanyDetailsId(1))(company))
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
     }
 
     "return false if no establishers or trustees are companies" in {
       val answers =
         UserAnswers()
-          .set(EstablisherDetailsId(0))(person)
-          .flatMap(_.set(TrusteeDetailsId(0))(person))
+          .set(EstablisherNameId(0))(person)
+          .flatMap(_.set(TrusteeNameId(0))(person))
           .asOpt
           .value
 
-      answers.hasCompanies(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustBe false
+      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe false
     }
 
     "return false if there are no establishers or trustees" in {
       val answers =
         UserAnswers()
 
-      answers.hasCompanies(isHnSPhase1Enabled, isHnSPhase2Enabled, mode) mustBe false
+      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe false
     }
   }
 
@@ -521,53 +409,53 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     "checking insurance company" must {
        "return false if scheme have insurance and details are missing" in {
          val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
-         insuranceCompanyDetails.areVariationChangesCompleted(false, false) mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
        }
 
        "return false if scheme have insurance is not defined" in {
          val insuranceCompanyDetails = UserAnswers()
-         insuranceCompanyDetails.areVariationChangesCompleted(false, false) mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
        }
 
        "return true if scheme does not have insurance" in {
          val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
-         insuranceCompanyDetails.areVariationChangesCompleted(false, false) mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
        }
 
        "return true if scheme have insurance and all the details are present" in {
-         insuranceCompanyDetails.areVariationChangesCompleted(false, false) mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
        }
      }
 
     "checking trustees" must {
       "return true if trustees are not defined" in {
-        insuranceCompanyDetails.areVariationChangesCompleted(false, false) mustBe true
+        insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
       }
 
       "return false if trustees are not completed" in {
-        trustee.areVariationChangesCompleted(false, false) mustBe false
+        trustee.areVariationChangesCompleted(false) mustBe false
       }
 
       "return true if trustees are completed" in {
         val trusteeCompleted = trustee.trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
-        trusteeCompleted.areVariationChangesCompleted(false, false) mustBe true
+        trusteeCompleted.areVariationChangesCompleted(false) mustBe true
       }
     }
 
     "checking establishers" must {
       "return false if establishers are not completed" in {
-        userAnswersHnS.areVariationChangesCompleted(false, false) mustBe false
+        userAnswersHnS.areVariationChangesCompleted(false) mustBe false
       }
 
       "return false if establishers are completed but directors are not completed" in {
         val establisherCompleted = userAnswersHnS.set(IsEstablisherCompleteId(0))(true).asOpt.get
-        establisherCompleted.areVariationChangesCompleted(false, false) mustBe false
+        establisherCompleted.areVariationChangesCompleted(false) mustBe false
       }
 
-      "return true if establishers company is completed for h&s toggle on" in {
+      "return true if establishers company is completed " in {
         val establisherCompleted = userAnswersHnS
 
-        establisherCompleted.areVariationChangesCompleted(true, true) mustBe true
+        establisherCompleted.areVariationChangesCompleted( true) mustBe true
       }
 
       "return true if establishers partnership is completed" in {
@@ -575,7 +463,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
           .set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
-        establisherCompleted.areVariationChangesCompleted(isHnSPhase1Enabled = false) mustBe true
+        establisherCompleted.areVariationChangesCompleted() mustBe true
       }
     }
   }
@@ -599,7 +487,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
       case TrusteeKind.Individual if isHnsEnabled =>
         TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntityNonHns(TrusteeDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+        TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
         TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case _ =>
@@ -618,12 +506,11 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     )
   )
 
-  private val isHnSPhase1Enabled = true
   private val isHnSPhase2Enabled = true
   private val mode = NormalMode
 
   private val company = CompanyDetails("test-company-name")
-  private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
+  private val person = PersonName("test-first-name",  "test-last-name")
   private val partnershipDetails = PartnershipDetails("test-first-name")
 
   private val policyNumber = "Test policy number"
