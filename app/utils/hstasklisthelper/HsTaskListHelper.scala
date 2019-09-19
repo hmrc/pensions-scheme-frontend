@@ -17,17 +17,17 @@
 package utils.hstasklisthelper
 
 import config.FeatureSwitchManagementService
-import identifiers.register.establishers.{company => establisherCompany}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.establishers.{company => establisherCompany}
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
+import models._
 import models.register.SchemeType.{MasterTrust, SingleTrust}
 import models.register.{Entity, SchemeType}
-import models._
 import play.api.i18n.Messages
 import utils.{Enumerable, Toggles, UserAnswers}
 import viewmodels._
@@ -144,7 +144,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
-    case EstablisherDetailsId(_) | TrusteeDetailsId(_) | TrusteeNameId(_) => individualLinkText
+    case EstablisherDetailsId(_) | TrusteeNameId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
@@ -209,21 +209,21 @@ abstract class HsTaskListHelper(answers: UserAnswers,
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
-          case TrusteeCompanyDetailsId(_) if isHnSPhase1Enabled => // Trustee companies
+          case TrusteeCompanyDetailsId(_) => // Trustee companies
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
 
-          case TrusteeNameId(_) if isHnSPhase1Enabled => // Trustee individuals
+          case TrusteeNameId(_) => // Trustee individuals
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
 
-          case TrusteePartnershipDetailsId(_) if isHnSPhase1Enabled => // Trustee partnership
+          case TrusteePartnershipDetailsId(_) => // Trustee partnership
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, section.index),

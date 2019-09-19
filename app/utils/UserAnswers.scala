@@ -17,14 +17,14 @@
 package utils
 
 import identifiers._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
@@ -38,7 +38,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import utils.datacompletion.{DataCompletion, DataCompletionEstablishers, DataCompletionTrustees}
+import utils.datacompletion.{DataCompletionEstablishers, DataCompletionTrustees}
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
@@ -239,25 +239,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     allEstablishers(isHnSPhase2Enabled, mode).filterNot(_.isDeleted)
   }
 
-  def allDirectorsOld(establisherIndex: Int): Seq[DirectorEntityNonHnS] = {
-
-    getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
-      details =>
-        for ((director, directorIndex) <- details.zipWithIndex) yield {
-          val isComplete = isDirectorCompleteNonHnS(establisherIndex, directorIndex)
-          val isNew = get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
-          DirectorEntityNonHnS(
-            DirectorDetailsId(establisherIndex, directorIndex),
-            director.fullName,
-            director.isDeleted,
-            isComplete,
-            isNew,
-            details.count(!_.isDeleted)
-          )
-        }
-    }.getOrElse(Seq.empty)
-  }
-
   def allDirectorsHnS(establisherIndex: Int): Seq[DirectorEntity] = {
 
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
@@ -323,16 +304,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
-
-    // Change this method
-    private def readsIndividualNonHns(index: Int): Reads[Trustee[_]] = (
-      (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
-        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isNew) =>
-      TrusteeIndividualEntityNonHns(
-        TrusteeDetailsId(index), details.fullName, details.isDeleted,
-        isTrusteeIndividualComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
-    )
 
     private def readsIndividual(index: Int): Reads[Trustee[_]] =
       (

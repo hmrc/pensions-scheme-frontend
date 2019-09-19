@@ -20,16 +20,13 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNewNinoId}
 import javax.inject.Inject
-import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Toggles
-import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}

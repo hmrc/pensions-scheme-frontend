@@ -49,9 +49,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
 
   protected def normalRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case DirectorDetailsId(establisherIndex, directorIndex) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
-          DirectorNinoController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorHasNINOId(establisherIndex, directorIndex) =>
         hasNinoRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>
@@ -96,8 +93,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   //scalastyle:off cyclomatic.complexity
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
-      case DirectorDetailsId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorHasNINOId(establisherIndex, directorIndex) =>
         hasNinoRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorNameId(establisherIndex, directorIndex) =>

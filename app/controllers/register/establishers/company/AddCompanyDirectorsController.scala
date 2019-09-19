@@ -22,14 +22,12 @@ import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.AddCompanyDirectorsId
 import javax.inject.Inject
-import models.register.{Director, DirectorEntityNonHnS}
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 

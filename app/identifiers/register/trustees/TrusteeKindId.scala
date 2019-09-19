@@ -66,15 +66,13 @@ object TrusteeKindId {
   )
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
-    TrusteeDetailsId(index),
     TrusteeNinoId(index),
     UniqueTaxReferenceId(index),
     IndividualPostCodeLookupId(index),
     TrusteeAddressId(index),
     TrusteeAddressYearsId(index),
     IndividualPreviousAddressPostCodeLookupId(index),
-    TrusteePreviousAddressId(index),
-    TrusteeContactDetailsId(index)
+    TrusteePreviousAddressId(index)
   )
 
   def collectionPath: JsPath = __ \ TrusteesId.toString \\ TrusteeKindId.toString

@@ -111,31 +111,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
       }
 
-      val companyDirectorDetails = AnswerSection(
-        Some("messages__director__cya__details_heading"),
-        Seq(
-          DirectorDetailsId(companyIndex, directorIndex)
-            .row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          directorNinoDetails,
-          DirectorUniqueTaxReferenceId(companyIndex, directorIndex)
-            .row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-        ).flatten
-      )
-
-      val companyDirectorContactDetails = AnswerSection(
-        Some("messages__director__cya__contact__details_heading"),
-        Seq(
-          DirectorAddressId(companyIndex, directorIndex).
-            row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url),
-          DirectorAddressYearsId(companyIndex, directorIndex).
-            row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          DirectorPreviousAddressId(companyIndex, directorIndex).
-            row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          DirectorContactDetailsId(companyIndex, directorIndex).
-            row(routes.DirectorContactDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url)
-        ).flatten
-      )
-
       val answerSections =
         Seq(directorAnswerSection)
 

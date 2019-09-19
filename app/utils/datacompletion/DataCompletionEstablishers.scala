@@ -44,18 +44,6 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isEstablisherCompanyCompleteNonHns(index: Int, mode: Mode): Boolean =
-    isListComplete(Seq(
-      get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
-      get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
-      get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
-      if(mode==NormalMode) get(IsCompanyDormantId(index)).isDefined else true,
-      isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
-      get(CompanyContactDetailsId(index)).isDefined
-    ))
-
   def isEstablisherCompanyComplete(index: Int, mode: Mode): Boolean =
       isComplete(Seq(
         isEstablisherCompanyDetailsComplete(index, mode),
@@ -84,16 +72,6 @@ trait DataCompletionEstablishers extends DataCompletion {
       isAddressComplete(DirectorAddressId(estIndex, dirIndex), DirectorPreviousAddressId(estIndex, dirIndex),
         DirectorAddressYearsId(estIndex, dirIndex), None),
       isContactDetailsComplete(DirectorEmailId(estIndex, dirIndex), DirectorPhoneNumberId(estIndex, dirIndex)))).getOrElse(false)
-
-  def isDirectorCompleteNonHnS(estIndex: Int, dirIndex: Int): Boolean =
-    isListComplete(Seq(
-      get(DirectorDetailsId(estIndex, dirIndex)).isDefined,
-      get(DirectorNinoId(estIndex, dirIndex)).isDefined | get(DirectorNewNinoId(estIndex, dirIndex)).isDefined,
-      get(DirectorUniqueTaxReferenceId(estIndex, dirIndex)).isDefined | get(DirectorUTRId(estIndex, dirIndex)).isDefined,
-      isAddressComplete(DirectorAddressId(estIndex, dirIndex), DirectorPreviousAddressId(estIndex, dirIndex),
-        DirectorAddressYearsId(estIndex, dirIndex), None).getOrElse(false),
-      get(DirectorContactDetailsId(estIndex, dirIndex)).isDefined
-    ))
 
   //ESTABLISHER INDIVIDUAL
 
@@ -148,22 +126,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneNumberId(index))
 
-  def isEstablisherPartnershipCompleteNonHns(index: Int, mode: Mode): Boolean =
-    isListComplete(Seq(
-      get(PartnershipDetailsId(index)).isDefined,
-      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
-      get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
-      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
-      isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
-      get(PartnershipContactDetailsId(index)).isDefined
-    ))
-
   def isEstablisherPartnershipComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
       isComplete(Seq(
         isEstablisherPartnershipDetailsComplete(index),
         isEstablisherPartnershipAddressComplete(index),
         isEstablisherPartnershipContactDetailsComplete(index))).getOrElse(false)
-    else
-      isEstablisherPartnershipCompleteNonHns(index, mode)
 }

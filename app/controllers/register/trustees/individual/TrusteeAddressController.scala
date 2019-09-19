@@ -22,7 +22,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{IndividualAddressListId, IndividualPostCodeLookupId, TrusteeAddressId, TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.{IndividualAddressListId, IndividualPostCodeLookupId, TrusteeAddressId, TrusteeNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -31,8 +31,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, Toggles}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 

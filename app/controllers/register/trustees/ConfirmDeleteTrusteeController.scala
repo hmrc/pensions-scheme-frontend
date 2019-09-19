@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
@@ -36,8 +36,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.Trustees
-import utils.{Toggles, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.{ExecutionContext, Future}

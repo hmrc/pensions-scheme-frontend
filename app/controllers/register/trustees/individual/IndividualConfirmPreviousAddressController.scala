@@ -21,14 +21,14 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteeNameId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId, TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.{CountryOptions, Toggles}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorNinoFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNinoId}
 import javax.inject.Inject
 import models.{Index, Mode, Nino}
 import navigators.Navigator
@@ -53,7 +53,7 @@ class DirectorNinoController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map { value =>
           Future.successful(Ok(directorNino(
             appConfig, form.fill(value), mode, establisherIndex, directorIndex, existingSchemeName, postCall(mode, establisherIndex, directorIndex, srn), srn)))
@@ -67,7 +67,7 @@ class DirectorNinoController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(directorNino(

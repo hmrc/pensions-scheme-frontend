@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -32,7 +32,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{SectionComplete, Toggles, UserAnswers}
+import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,15 +53,15 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval { implicit request =>
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval { implicit request =>
     DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director => (director.fullName, director.isDeleted)
     }
   }
 
-  def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
+  private def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
     )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
-      request.userAnswers.get(DirectorDetailsId(establisherIndex, directorIndex)).map { director =>
-        userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), director.copy(isDeleted = true))
+      request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
+        userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
       }
   }
 

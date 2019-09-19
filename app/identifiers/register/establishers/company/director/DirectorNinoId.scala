@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
 import play.api.i18n.Messages
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
 import viewmodels.AnswerRow
@@ -35,9 +35,9 @@ object DirectorNinoId {
   implicit def nino(implicit messages: Messages): CheckYourAnswers[DirectorNinoId] = {
 
     val directorNinoIdCYA = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
-      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+      val (label, reasonLabel) = ua.get(DirectorNameId(establisherIndex, directorIndex)) match {
         case Some(name) =>
-          (messages("messages__director__cya__nino", name.firstAndLastName), messages("messages__director__cya__nino_reason", name.firstAndLastName))
+          (messages("messages__director__cya__nino", name.fullName), messages("messages__director__cya__nino_reason", name.fullName))
 
         case None =>
           ("messages__director__cya__nino__fallback", "messages__director__cya__nino_reason__fallback")

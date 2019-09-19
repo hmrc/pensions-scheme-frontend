@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -66,7 +66,7 @@ class AlreadyDeletedController @Inject()(
                          (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
-      case Individual => TrusteeDetailsId(index).retrieve.right.map(_.fullName)
+      case Individual => TrusteeNameId(index).retrieve.right.map(_.fullName)
       case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
     }
   }

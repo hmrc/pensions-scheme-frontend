@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.UniqueTaxReference
 import play.api.i18n.Messages
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
 import viewmodels.AnswerRow
@@ -36,9 +36,9 @@ object DirectorUniqueTaxReferenceId {
   implicit def uniqueTaxReference(implicit messages: Messages): CheckYourAnswers[DirectorUniqueTaxReferenceId] = {
 
     val directorUtrCya = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => {
-      val (label, reasonLabel) = ua.get(DirectorDetailsId(establisherIndex, directorIndex)) match {
+      val (label, reasonLabel) = ua.get(DirectorNameId(establisherIndex, directorIndex)) match {
         case Some(name) =>
-          (messages("messages__director__cya__utr_yes_no", name.firstAndLastName), messages("messages__director__cya__utr_no_reason", name.firstAndLastName))
+          (messages("messages__director__cya__utr_yes_no", name.fullName), messages("messages__director__cya__utr_no_reason", name.fullName))
         case None   => ("messages__director__cya__utr_yes_no_fallback", "messages__director__cya__utr_no_reason__fallback")
       }
 

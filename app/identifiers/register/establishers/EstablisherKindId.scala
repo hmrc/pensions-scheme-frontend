@@ -18,7 +18,7 @@ package identifiers.register.establishers
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
+import identifiers.register.establishers.company.director.{DirectorId, DirectorNameId}
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerId}
@@ -49,7 +49,7 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
     }
 
   private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(index)) match {
+    userAnswers.getAllRecursive[PersonDetails](DirectorNameId.collectionPath(index)) match {
       case Some(allDirectors) if allDirectors.nonEmpty =>
         userAnswers.remove(DirectorId(index, 0)).flatMap(removeAllDirectors)
       case _ =>
