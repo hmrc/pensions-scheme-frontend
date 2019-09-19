@@ -32,11 +32,11 @@ import utils.FakeNavigator
 import viewmodels.NinoViewModel
 import views.html.nino
 
-class EstablisherEnterNinoControllerSpec extends ControllerSpecBase {
+class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 
-  import EstablisherEnterNinoControllerSpec._
+  import EstablisherEnterNINOControllerSpec._
 
-  "EstablisherNinoNew Controller" must {
+  "EstablisherEnterNINOController Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
       val result = controller().onPageLoad(UpdateMode, firstIndex, srn)(fakeRequest)
@@ -87,7 +87,7 @@ class EstablisherEnterNinoControllerSpec extends ControllerSpecBase {
   }
 }
 
-object EstablisherEnterNinoControllerSpec extends ControllerSpecBase {
+object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val establisherName = "test first name test last name"
@@ -122,8 +122,8 @@ object EstablisherEnterNinoControllerSpec extends ControllerSpecBase {
         SchemeNameId.toString -> schemeName
       )))
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = basicData): EstablisherEnterNinoController =
-    new EstablisherEnterNinoController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = basicData): EstablisherEnterNINOController =
+    new EstablisherEnterNINOController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -137,7 +137,7 @@ object EstablisherEnterNinoControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
     val vm = NinoViewModel(
-      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNinoController.onSubmit(mode, index, srn),
+      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, srn),
       title = messages("messages__common_nino__title"),
       heading = messages("messages__common_nino__h1", establisherName),
       hint = messages("messages__common__nino_hint"),
