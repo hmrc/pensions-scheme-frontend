@@ -100,17 +100,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-
-      val directorNinoDetails = (mode, userAnswers.get(IsNewDirectorId(companyIndex, directorIndex))) match {
-        case (_, Some(true)) | (NormalMode|CheckMode, _) =>
-          DirectorNinoId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-
-        case _ =>
-          DirectorNewNinoId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-      }
-
       val answerSections =
         Seq(directorAnswerSection)
 

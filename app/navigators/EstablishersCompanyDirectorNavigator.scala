@@ -25,7 +25,7 @@ import identifiers.register.establishers.company.director
 import identifiers.register.establishers.company.director._
 import models.Mode.journeyMode
 import models._
-import utils.{Toggles, UserAnswers}
+import utils.UserAnswers
 
 @Singleton
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -60,8 +60,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorDOBId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.director.routes.
           DirectorHasNINOController.onPageLoad(mode, establisherIndex, directorIndex, srn))
-      case DirectorNinoId(establisherIndex, directorIndex) =>
-        NavigateTo.dontSave(routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorUniqueTaxReferenceId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))
 
@@ -98,8 +96,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorNameId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorNoUTRReasonId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorNinoId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorHasUTRId(establisherIndex, directorIndex) =>
         hasUTRRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)

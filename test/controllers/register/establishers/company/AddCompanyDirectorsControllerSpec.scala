@@ -20,13 +20,12 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
-import models.person.{PersonDetails, PersonName}
-import models.register.{Director, DirectorEntity, DirectorEntityNonHnS}
+import models.person.PersonName
+import models.register.{Director, DirectorEntity}
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
@@ -70,28 +69,27 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       postCall(NormalMode, None, establisherIndex),
       false,
       NormalMode,
-      None,
-      enableSubmission
+      None
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0
   private val companyName = "MyCo Ltd"
 
   // scalastyle:off magic.number
-  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoe = PersonName("John","Doe")
+  private val joeBloggs = PersonName("Joe", "Bloggs")
   private val johnDoeToggleOn = PersonName("John", "Doe")
   private val joeBloggsToggleOn = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   private val maxDirectors = frontendAppConfig.maxDirectors
 
-  private def validData(directors: PersonDetails*) = {
+  private def validData(directors: PersonName*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails(companyName),
-          "director" -> directors.map(d => Json.obj(DirectorDetailsId.toString -> Json.toJson(d)))
+          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
         )
       )
     )
@@ -109,40 +107,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
   }
 
   "AddCompanyDirectors Controller" must {
-
-    "if hns toggle is off" when {
-      "return OK and the correct view for a GET" in {
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-        val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
-      }
-
-      "not populate the view on a GET when the question has previously been answered" in {
-        UserAnswers(validData(johnDoe))
-          .set(AddCompanyDirectorsId(firstIndex))(true)
-          .map { userAnswers =>
-            val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
-            val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
-
-            contentAsString(result) mustBe viewAsString(form,
-              Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
-          }
-      }
-
-      "populate the view with directors when they exist" in {
-        val directors = Seq(johnDoe, joeBloggs)
-        val directorsViewModel = Seq(
-          DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-          DirectorEntityNonHnS(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3))
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
-        val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(form, directorsViewModel)
-      }
-    }
 
     "if hns toggle is on" when {
       "return OK and the correct view for a GET" in {
@@ -211,7 +175,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
+        Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {
