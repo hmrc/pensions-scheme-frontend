@@ -1578,9 +1578,9 @@ messages__whatYouWillNeedTrusteeCompanyAddress__lede = You will need to tell us 
 messages__whatYouWillNeedTrusteeCompanyAddress__item1 = current address
 messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the company has been at the current address for less than 1 year
 
-messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trustee’s:
-messages__whatYouWillNeedTrusteeAddress__item1 = current address
-messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
+messages__whatYouWillNeedAddress__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedAddress__item1 = current address
+messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at the current address for less than 1 year
 
 messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -26,7 +26,7 @@ import views.html.register.whatYouWillNeedIndividualAddress
 
 class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeIndividual): WhatYouWillNeedIndividualAddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): WhatYouWillNeedIndividualAddressController =
     new WhatYouWillNeedIndividualAddressController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -35,9 +35,12 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
       new DataRequiredActionImpl
     )
 
-  private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, None)
+  private def href: Call = controllers.register.establishers.individual.routes.PostCodeLookupController.onSubmit(NormalMode, index = 0, None)
 
-  private def viewAsString(): String = whatYouWillNeedIndividualAddress(frontendAppConfig, None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
+  private def viewAsString(): String =
+    whatYouWillNeedIndividualAddress(
+      frontendAppConfig, None, href, None, "Test Name", Message("messages__theEstablisher")
+    )(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 
