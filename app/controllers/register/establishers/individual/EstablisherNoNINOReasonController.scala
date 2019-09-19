@@ -25,10 +25,8 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -36,13 +34,13 @@ import scala.concurrent.ExecutionContext
 class EstablisherNoNINOReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   override val userAnswersService: UserAnswersService,
-                                                  @EstablishersIndividual override val navigator: Navigator,
+                                                  val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: ReasonFormProvider
-                                                 )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+                                                  formProvider: ReasonFormProvider)
+                                                 (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
   private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
 
