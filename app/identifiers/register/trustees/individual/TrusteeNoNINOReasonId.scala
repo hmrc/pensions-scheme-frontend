@@ -39,7 +39,7 @@ object TrusteeNoNINOReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeNoNINOReasonId] = {
 
     def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__noNinoReason__heading", trusteeName(index)))
+    def label(index: Int) = Some(messages("messages__noGenericNino__heading", trusteeName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeNoNINOReasonId] {

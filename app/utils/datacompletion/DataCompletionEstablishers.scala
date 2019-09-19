@@ -140,7 +140,7 @@ trait DataCompletionEstablishers extends DataCompletion {
       Seq(
         isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPayeId(index), PartnershipPayeVariationsId(index), None)
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
       )
     )
 
