@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
-import controllers.register.trustees.partnership.routes.PartnershipHasVATController
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.trustees.partnership.PartnershipHasVATId
+import identifiers.register.establishers.partnership.PartnershipHasVATId
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import controllers.register.establishers.partnership.routes.PartnershipHasVATController
 import views.html.hasReferenceNumber
-import play.api.inject.bind
-import play.api.mvc.Call
 
 import scala.concurrent.Future
 
@@ -43,7 +43,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
   "PartnershipHasVatController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
@@ -57,7 +57,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     }
 
     "return OK and the correct view for a GET where question already answered" in {
-      val answered = new FakeDataRetrievalAction(Some(validTrusteePartnershipData("hasVat" -> false)))
+      val answered = new FakeDataRetrievalAction(Some(validEstablisherPartnershipData("hasVat" -> false)))
 
       val app = applicationBuilder(answered, featureSwitchEnabled = true).build()
 
@@ -73,7 +73,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true)
+      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -96,7 +96,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true).build()
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
@@ -131,9 +131,13 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
     srn = srn
   )
 
-  private val mockUserAnswersService: UserAnswersService =
-    mock[UserAnswersService]
+  private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
-  private def viewAsString(form: Form[_] = form) =
+  private def viewAsString(form: Form[_] = form): String =
     hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 }
+
+
+
+
+
