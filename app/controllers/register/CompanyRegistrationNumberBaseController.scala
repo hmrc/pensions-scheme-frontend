@@ -21,7 +21,6 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CompanyRegistrationNumber, Index, Mode}

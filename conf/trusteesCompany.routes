@@ -1,11 +1,4 @@
 
-GET         /:index/company/utr                                                       controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/utr                                                       controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/company/utr                                                controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/company/utr                                                controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/company/utr/:srn                                            controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/company/utr/:srn                                            controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
 GET         /:index/company/name                                                      controllers.register.trustees.company.CompanyDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/name                                                      controllers.register.trustees.company.CompanyDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/change/company/name                                               controllers.register.trustees.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -13,26 +6,12 @@ POST        /:index/change/company/name                                         
 GET         /:index/:mode/company/name/:srn                                           controllers.register.trustees.company.CompanyDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/:mode/company/name/:srn                                           controllers.register.trustees.company.CompanyDetailsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/vat-registered                                            controllers.register.trustees.company.CompanyVatController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/vat-registered                                            controllers.register.trustees.company.CompanyVatController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/company/vat-registered                                     controllers.register.trustees.company.CompanyVatController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/company/vat-registered                                     controllers.register.trustees.company.CompanyVatController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/company/vat-registered/:srn                                 controllers.register.trustees.company.CompanyVatController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/company/vat-registered/:srn                                 controllers.register.trustees.company.CompanyVatController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
 GET         /:index/company/vat-registration-number                                   controllers.register.trustees.company.CompanyEnterVATController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/vat-registration-number                                   controllers.register.trustees.company.CompanyEnterVATController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/change/company/vat-registration-number                            controllers.register.trustees.company.CompanyEnterVATController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 POST        /:index/change/company/vat-registration-number                            controllers.register.trustees.company.CompanyEnterVATController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/company/vat-registration-number/:srn                        controllers.register.trustees.company.CompanyEnterVATController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/:mode/company/vat-registration-number/:srn                        controllers.register.trustees.company.CompanyEnterVATController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/company/employer-paye-number                                      controllers.register.trustees.company.CompanyPayeController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/employer-paye-number                                      controllers.register.trustees.company.CompanyPayeController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/company/employer-paye-number                               controllers.register.trustees.company.CompanyPayeController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/company/employer-paye-number                               controllers.register.trustees.company.CompanyPayeController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/company/employer-paye-number/:srn                           controllers.register.trustees.company.CompanyPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/company/employer-paye-number/:srn                           controllers.register.trustees.company.CompanyPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/company/employer-paye-reference                                   controllers.register.trustees.company.CompanyPayeVariationsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String])
 POST        /:index/company/employer-paye-reference                                   controllers.register.trustees.company.CompanyPayeVariationsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String])
@@ -86,13 +65,6 @@ POST        /:index/change/company/select-address                               
 GET         /:index/:mode/company/select-address/:srn                                 controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/:mode/company/select-address/:srn                                 controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/company-contact-details                                   controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/company/company-contact-details                                   controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/company/company-contact-details                            controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/company/company-contact-details                            controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/company/company-contact-details/:srn                        controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/company/company-contact-details/:srn                        controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
 GET         /:index/company/time-at-address                                           controllers.register.trustees.company.CompanyAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/company/time-at-address                                           controllers.register.trustees.company.CompanyAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/change/company/time-at-address                                    controllers.register.trustees.company.CompanyAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -100,22 +72,12 @@ POST        /:index/change/company/time-at-address                              
 GET         /:index/:mode/company/time-at-address/:srn                                controllers.register.trustees.company.CompanyAddressYearsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/:mode/company/time-at-address/:srn                                controllers.register.trustees.company.CompanyAddressYearsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/company/company-registration-number                               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST        /:index/company/company-registration-number                               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-GET         /:index/change/company/company-registration-number                        controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
-POST        /:index/change/company/company-registration-number                        controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
-GET         /:index/:mode/company/company-registration-number/:srn                    controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
-POST        /:index/:mode/company/company-registration-number/:srn                    controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode, srn: Option[String], index: Index)
-
 GET         /:index/company/enter-company-number                                      controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 POST        /:index/company/enter-company-number                                      controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET         /:index/change/company/enter-company-number                               controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
 POST        /:index/change/company/enter-company-number                               controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None, index: Index)
 GET         /:index/:mode/company/enter-company-number/:srn                           controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 POST        /:index/:mode/company/enter-company-number/:srn                           controllers.register.trustees.company.CompanyRegistrationNumberVariationsController.onSubmit(mode: Mode, srn: Option[String], index: Index)
-
-GET         /:index/company/check-your-answers                                        controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/company/check-your-answers/:srn                             controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
 
 GET         /:index/company/details                                                   controllers.register.trustees.company.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/:mode/company/details/:srn                                        controllers.register.trustees.company.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode: Mode,index: Index, srn: Option[String])
