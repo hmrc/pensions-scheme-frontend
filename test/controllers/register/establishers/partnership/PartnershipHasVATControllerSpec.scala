@@ -17,127 +17,100 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasVATId
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import controllers.register.establishers.partnership.routes.PartnershipHasVATController
 import views.html.hasReferenceNumber
-
-import scala.concurrent.Future
 
 class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
-  import PartnershipHasVATControllerSpec._
-
-  "PartnershipHasVatController" must {
-    "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true).build()
-
-      val controller = app.injector.instanceOf[PartnershipHasVATController]
-
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
-
-      status(result) mustBe OK
-
-      contentAsString(result) mustBe viewAsString()
-
-      app.stop()
-    }
-
-    "return OK and the correct view for a GET where question already answered" in {
-      val answered = new FakeDataRetrievalAction(Some(validEstablisherPartnershipData("hasVat" -> false)))
-
-      val app = applicationBuilder(answered, featureSwitchEnabled = true).build()
-
-      val controller = app.injector.instanceOf[PartnershipHasVATController]
-
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
-
-      status(result) mustBe OK
-
-      contentAsString(result) mustBe viewAsString(form.fill(value = false))
-
-      app.stop()
-    }
-
-    "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true)
-        .overrides(
-          bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
-        )
-        .build()
-
-      val validData = UserAnswers().set(PartnershipHasVATId(index))(value = true).asOpt.value.json
-
-      when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
-
-      val controller = app.injector.instanceOf[PartnershipHasVATController]
-
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
-
-      status(result) mustBe SEE_OTHER
-
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-
-      app.stop()
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryEstablisherPartnership, featureSwitchEnabled = true).build()
-
-      val controller = app.injector.instanceOf[PartnershipHasVATController]
-
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
-
-      status(result) mustBe BAD_REQUEST
-
-      contentAsString(result) mustBe viewAsString(boundForm)
-
-      app.stop()
-    }
-  }
-}
-
-object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val schemeName = None
-  private val partnershipName = "test partnership name"
-  private val formProvider = new HasReferenceNumberFormProvider()
-  private val form = formProvider("error", partnershipName)
-  private val srn = None
-  private val index = Index(0)
-
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  private val partnershipDetails = PartnershipDetails("test partnership name")
+  private val formProvider = new HasReferenceNumberFormProvider()
+  private val form = formProvider("messages__vat__formError", partnershipDetails.name)
+  private val index = Index(0)
+  private val srn = None
+  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasVATController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
-    postCall = PartnershipHasVATController.onSubmit(NormalMode, index, srn),
+    postCall,
     title = Message("messages__vat__title", Message("messages__common__partnership").resolve),
-    heading = Message("messages__vat__heading", partnershipName),
+    heading = Message("messages__vat__heading", partnershipDetails.name),
     hint = None,
     srn = srn
   )
-
-  private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
   private def viewAsString(form: Form[_] = form): String =
     hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+
+  "PartnershipHasVATController" when {
+    "on a GET" must {
+      "return OK and the correct view" in {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+          app =>
+            val controller = app.injector.instanceOf[PartnershipHasVATController]
+            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+
+            status(result) mustBe OK
+            contentAsString(result) mustBe viewAsString()
+        }
+      }
+
+      "return OK and the correct view where question already answered" in {
+        running(_.overrides(modules(fullAnswers.set(PartnershipHasVATId(index))(value = false).asOpt.value.dataRetrievalAction,
+          featureSwitchEnabled = true): _*)) {
+          app =>
+            val controller = app.injector.instanceOf[PartnershipHasVATController]
+            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+
+            status(result) mustBe OK
+            contentAsString(result) mustBe viewAsString(form.fill(value = false))
+        }
+      }
+    }
+
+    "on a POST" must {
+      "redirect to relevant page when valid data is submitted" in {
+        running(_.overrides(
+          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+            Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[UserAnswersService].toInstance(FakeUserAnswersService)
+            ): _*)) {
+          app =>
+            val controller = app.injector.instanceOf[PartnershipHasVATController]
+            val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result) mustBe Some(onwardRoute.url)
+        }
+      }
+
+      "return a Bad Request and errors when invalid data is submitted" in {
+        running(_.overrides(
+          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+            Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[UserAnswersService].toInstance(FakeUserAnswersService)
+            ): _*)) {
+          app =>
+            val controller = app.injector.instanceOf[PartnershipHasVATController]
+            val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+            val boundForm = form.bind(Map("value" -> "invalid value"))
+            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+
+            status(result) mustBe BAD_REQUEST
+            contentAsString(result) mustBe viewAsString(boundForm)
+        }
+      }
+    }
+  }
 }
-
-
-
-
-
