@@ -44,7 +44,7 @@ object EstablisherHasUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasUTRId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
     def label(index: Int) = Some(messages("messages__dynamic_hasUtr", establisherName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", establisherName(index)))
 

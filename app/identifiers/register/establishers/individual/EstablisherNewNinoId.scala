@@ -36,7 +36,7 @@ object EstablisherNewNinoId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherNewNinoId] = {
 
     new CheckYourAnswers[EstablisherNewNinoId] {
-      def establisherName(index: Int): String = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+      def establisherName(index: Int): String = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
       def label(index: Int): String = messages("messages__common_nino__h1", establisherName(index))
       def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_nino", establisherName(index))
 

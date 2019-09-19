@@ -36,7 +36,7 @@ object EstablisherDOBId {
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherDOBId] = {
     new CheckYourAnswers[EstablisherDOBId] {
 
-      def establisherName(index: Int) = answers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+      def establisherName(index: Int) = answers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
       def label(index: Int): String = messages("messages__DOB__heading", establisherName(index))
       def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_dob", establisherName(index)))
 
