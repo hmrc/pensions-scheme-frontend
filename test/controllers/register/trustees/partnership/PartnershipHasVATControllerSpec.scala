@@ -125,7 +125,7 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
 
   private val viewModel = CommonFormWithHintViewModel(
     postCall = PartnershipHasVATController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__vat__title", Message("messages__common__address_years__partnership").resolve),
+    title = Message("messages__vat__title", Message("messages__common__partnership").resolve),
     heading = Message("messages__vat__heading", partnershipName),
     hint = None,
     srn = srn
