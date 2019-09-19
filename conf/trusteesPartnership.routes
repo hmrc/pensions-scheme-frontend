@@ -147,36 +147,3 @@ GET         /:index/:mode/partnership/check-your-answers-contact-details/:srn   
 
 GET         /:index/update/partnership/is-this-previous-address/:srn                                  controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 POST        /:index/update/partnership/is-this-previous-address/:srn                                  controllers.register.trustees.partnership.PartnershipConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
-
-
-GET        /:index/partnership/partnership-contact-details                                            controllers.register.trustees.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST       /:index/partnership/partnership-contact-details                                            controllers.register.trustees.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET        /:index/change/partnership/partnership-contact-details                                     controllers.register.trustees.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST       /:index/change/partnership/partnership-contact-details                                     controllers.register.trustees.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET        /:index/:mode/partnership/partnership-contact-details/:srn                                 controllers.register.trustees.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST       /:index/:mode/partnership/partnership-contact-details/:srn                                 controllers.register.trustees.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/partnership/unique-taxpayer-reference                                             controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/partnership/unique-taxpayer-reference                                             controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/partnership/unique-taxpayer-reference                                      controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/partnership/unique-taxpayer-reference                                      controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/partnership/unique-taxpayer-reference/:srn                                  controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/partnership/unique-taxpayer-reference/:srn                                  controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/partnership/paye-number                                                           controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/partnership/paye-number                                                           controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/partnership/paye-number                                                    controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/partnership/paye-number                                                    controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/partnership/paye-number/:srn                                                controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/partnership/paye-number/:srn                                                controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/partnership/vat-number                                                            controllers.register.trustees.partnership.PartnershipVatController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/partnership/vat-number                                                            controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/change/partnership/vat-number                                                     controllers.register.trustees.partnership.PartnershipVatController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-POST        /:index/change/partnership/vat-number                                                     controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/partnership/vat-number/:srn                                                 controllers.register.trustees.partnership.PartnershipVatController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/:mode/partnership/vat-number/:srn                                                 controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/partnership/check-your-answers                                                    controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/:mode/partnership/check-your-answers/:srn                                         controllers.register.trustees.partnership.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-

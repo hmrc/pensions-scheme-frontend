@@ -231,11 +231,7 @@ case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: B
 case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: String, isDeleted: Boolean,
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int,
                                     schemeType: Option[String]) extends Trustee[TrusteePartnershipDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
-    case (_, false) => Some(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, id.index, srn).url)
-  }
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
 
