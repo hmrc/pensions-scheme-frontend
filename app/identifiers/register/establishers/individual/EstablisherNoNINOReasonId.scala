@@ -17,8 +17,13 @@
 package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class EstablisherNoNINOReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherNoNINOReasonId.toString
@@ -26,4 +31,25 @@ case class EstablisherNoNINOReasonId(index: Int) extends TypedIdentifier[String]
 
 object EstablisherNoNINOReasonId {
   override def toString: String = "noNinoReason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoNINOReasonId] = {
+
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+    def label(index: Int) = Some(messages("messages__noGenericNino__heading", establisherName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", establisherName(index)))
+
+    new CheckYourAnswers[EstablisherNoNINOReasonId] {
+      override def row(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

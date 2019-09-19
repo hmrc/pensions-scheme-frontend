@@ -14,64 +14,63 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.individual
+package identifiers.register.establishers.individual
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
-import models._
+import identifiers.register.establishers.IsEstablisherNewId
+import models.{Link, NormalMode, UpdateMode}
 import models.person.PersonName
 import models.requests.DataRequest
-import org.joda.time.LocalDate
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.AnswerRow
 
-class TrusteeDOBIdSpec extends SpecBase {
+class EstablisherNoNINOReasonIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
-  val date = new LocalDate()
+  private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__DOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_dob", "Test Name")))))
+    AnswerRow(messages("messages__noGenericNino__heading", name),List("reason"),false,Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_noNinoReason", name)))))
   )
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(TrusteeDOBId(0))(date).flatMap(_.set(TrusteeNameId(0))(PersonName("Test", "Name"))).asOpt.get
+    def answers: UserAnswers = UserAnswers()
+      .set(EstablisherNameId(0))(PersonName("test", "name")).asOpt.value
+      .set(EstablisherNoNINOReasonId(0))("reason").asOpt.value
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TrusteeDOBId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        EstablisherNoNINOReasonId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new trustee" must {
+    "in update mode for new trustee -  nino reason" must {
 
-      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TrusteeDOBId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        EstablisherNoNINOReasonId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for existing trustee" must {
+    "in update mode for existing establisher - individual nino reason" must {
 
-      "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+      "not display an answer row for this answer" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteeDOBId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)),false, None)
-        ))
+        EstablisherNoNINOReasonId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }
     }
   }

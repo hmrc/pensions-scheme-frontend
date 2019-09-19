@@ -32,8 +32,8 @@ class EstablisherNewNinoIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__nino",List("nino"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__establisher__nino"))))
+    AnswerRow(messages("messages__common_nino__h1", messages("messages__theEstablisher")), List("nino"), false, Some(Link("site.change", onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_nino", messages("messages__theEstablisher"))))))
   )
 
   "cya" when {
@@ -67,7 +67,7 @@ class EstablisherNewNinoIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino",List("nino"),false, None)
+          AnswerRow(messages("messages__common_nino__h1", messages("messages__theEstablisher")), List("nino"), false, None)
         ))
       }
 
@@ -84,8 +84,8 @@ class EstablisherNewNinoIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__nino"))))))
+          AnswerRow(messages("messages__common_nino__h1", messages("messages__theEstablisher")), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", messages("messages__theEstablisher"))))))))
       }
     }
   }

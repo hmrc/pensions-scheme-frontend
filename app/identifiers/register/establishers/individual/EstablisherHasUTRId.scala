@@ -17,9 +17,13 @@
 package identifiers.register.establishers.individual
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class EstablisherHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherHasUTRId.toString
@@ -37,4 +41,22 @@ case class EstablisherHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 
 object EstablisherHasUTRId {
   override def toString: String = "hasUtr"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasUTRId] = {
+
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+    def label(index: Int) = Some(messages("messages__dynamic_hasUtr", establisherName(index)))
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", establisherName(index)))
+
+    new CheckYourAnswers[EstablisherHasUTRId] {
+      override def row(id: EstablisherHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: EstablisherHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case _          => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }

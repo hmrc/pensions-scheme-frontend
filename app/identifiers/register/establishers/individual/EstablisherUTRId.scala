@@ -17,10 +17,13 @@
 package identifiers.register.establishers.individual
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import viewmodels.AnswerRow
 
 case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherUTRId.toString
@@ -31,4 +34,27 @@ case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] 
 
 object EstablisherUTRId {
   override def toString: String = "utr"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherUTRId] = {
+
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theEstablisher"))(_.fullName)
+    def label(index: Int): String = messages("messages__dynamic_whatIsUTR", establisherName(index))
+    def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_utr", establisherName(index))
+
+    new CheckYourAnswers[EstablisherUTRId] {
+      override def row(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+
+      override def updateRow(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) =>
+            row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+        }
+      }
+    }
+  }
 }
