@@ -21,7 +21,7 @@
 @import models.register.Trustee
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String], enableSubmission: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__addTrustee__title"),
@@ -40,7 +40,7 @@
 
             @components.paragraph_text(messages("messages__addTrustee__lede"))
 
-            @components.submit_button("site.continue", enableSubmission)
+            @components.submit_button("site.continue", true)
 
         } else {
             @components.add_entity_list(trustees, mode, srn, "messages__addTrustee__header")
@@ -60,7 +60,7 @@
 
             }
 
-            @components.submit_button("site.save_and_continue", enableSubmission)
+            @components.submit_button("site.save_and_continue", true)
         }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
