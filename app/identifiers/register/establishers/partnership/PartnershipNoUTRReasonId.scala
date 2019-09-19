@@ -17,8 +17,13 @@
 package identifiers.register.establishers.partnership
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.CheckYourAnswers
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class PartnershipNoUTRReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipNoUTRReasonId.toString
@@ -26,6 +31,26 @@ case class PartnershipNoUTRReasonId(index: Int) extends TypedIdentifier[String] 
 
 object PartnershipNoUTRReasonId {
   override def toString: String = "noUtrReason"
+
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipNoUTRReasonId] = {
+
+    new CheckYourAnswers[PartnershipNoUTRReasonId] {
+      override def row(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val label = Some(messages("messages__noGenericUtr__heading", partnershipName))
+        val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", partnershipName))
+
+        StringCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

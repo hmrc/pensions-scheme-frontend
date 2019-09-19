@@ -76,8 +76,8 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
 
   val viewModel = EnterVATViewModel(
     routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__enterVAT__partnership_title"),
-    heading = Message("messages__enterVAT__heading", "test partnership name"),
+    title = Message("messages__common_partnershipVat__title"),
+    heading = Message("messages__dynamic_whatIsVAT", "test partnership name"),
     hint = Message("messages__enterVAT__hint", "test partnership name"),
     subHeading = None,
     srn = srn

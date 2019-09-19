@@ -32,22 +32,30 @@ case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterVATId {
   override def toString: String = "partnershipVat"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
     new CheckYourAnswers[PartnershipEnterVATId] {
 
-      private val vatLabel = "messages__common__cya__vat"
-      private val hiddenLabelVat = "messages__visuallyhidden__establisher__vat_number"
+      def getLabel(index: Int, ua: UserAnswers): (String, String) = {
+        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__theEstablisher"))(_.name)
+        (messages("messages__dynamic_whatIsVAT", partnershipName),
+          messages("messages__visuallyhidden__dynamic_vat", partnershipName))
+      }
 
-      override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[PartnershipEnterVATId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
-      override def updateRow(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().row(id)(changeUrl, userAnswers)
+            row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterVATId](vatLabel, hiddenLabelVat)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterVATId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }
