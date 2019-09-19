@@ -53,25 +53,13 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
-    implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map{ director =>
-          (director.fullName, director.isDeleted)
-        }
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
-          (director.fullName, director.isDeleted)
-        }
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval { implicit request =>
+    DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director => (director.fullName, director.isDeleted)
+    }
   }
 
   def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
     )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
-    if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
-      request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
-        userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
-      }
-    else
       request.userAnswers.get(DirectorDetailsId(establisherIndex, directorIndex)).map { director =>
         userAnswersService.save(mode, srn, DirectorDetailsId(establisherIndex, directorIndex), director.copy(isDeleted = true))
       }

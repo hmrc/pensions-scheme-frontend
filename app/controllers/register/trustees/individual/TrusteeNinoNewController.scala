@@ -61,10 +61,8 @@ class TrusteeNinoNewController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val fullNameOption: Either[Future[Result], String] = if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val fullNameOption: Either[Future[Result], String] =
         TrusteeNameId(index).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
 
       fullNameOption.right.map {
         fullName =>
@@ -74,10 +72,8 @@ class TrusteeNinoNewController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val fullNameOption: Either[Future[Result], String] = if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val fullNameOption: Either[Future[Result], String] =
         TrusteeNameId(index).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
 
       fullNameOption.right.map {
         fullName =>

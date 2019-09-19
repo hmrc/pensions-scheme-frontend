@@ -48,10 +48,7 @@ object DirectorAddressYearsId {
   implicit def cya(implicit messages: Messages, featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorAddressYearsId] = {
 
     val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)
-       else
-        ua.get(DirectorDetailsId(establisherIndex, directorIndex)).map(_.fullName)
 
     def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers)=
       name(establisherIndex, directorIndex, ua).fold("messages__director__cya__address_years__fallback")(name =>

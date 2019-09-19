@@ -96,9 +96,6 @@ class TrusteePreviousAddressController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 }

@@ -226,9 +226,4 @@ POST        /:index/:mode/company/unique-taxpayer-reference/:srn                
 GET         /:index/company/check-your-answers                                        controllers.register.establishers.company.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
 GET         /:index/:mode/company/check-your-answers/:srn                             controllers.register.establishers.company.CheckYourAnswersController.onPageLoad(mode: Mode, srn: Option[String], index: Index)
 
-GET         /:index/company/review                                                    controllers.register.establishers.company.CompanyReviewController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-POST        /:index/company/review                                                    controllers.register.establishers.company.CompanyReviewController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None, index: Index)
-GET         /:index/:mode/company/review/:srn                                         controllers.register.establishers.company.CompanyReviewController.onPageLoad(mode: Mode, srn: Option[String],index: Index)
-POST        /:index/:mode/company/review/:srn                                         controllers.register.establishers.company.CompanyReviewController.onSubmit(mode: Mode, srn: Option[String],index: Index)
-
 ->          /                                                                         establishersCompanyDirector.Routes

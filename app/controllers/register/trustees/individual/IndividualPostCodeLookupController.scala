@@ -70,10 +70,7 @@ class IndividualPostCodeLookupController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (index: Index) => Retrieval {
     implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(index).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

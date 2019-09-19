@@ -72,8 +72,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
 
     for {
       addresses <- IndividualPostCodeLookupId(index).retrieve.right.toOption
-      name      <- if (fs.get(Toggles.isEstablisherCompanyHnSEnabled)) TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
-                   else TrusteeDetailsId(index).retrieve.right.toOption.map(_.fullName)
+      name      <- TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
     } yield AddressListViewModel(
       postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
       manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),

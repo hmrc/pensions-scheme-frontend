@@ -36,10 +36,7 @@ object TrusteePreviousAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteePreviousAddressId] = {
     val name = (index: Int) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         ua.get(TrusteeNameId(index)).map(_.fullName)
-      else
-        ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
     def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
     def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))

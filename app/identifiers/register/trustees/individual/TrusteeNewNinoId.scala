@@ -45,10 +45,7 @@ object TrusteeNewNinoId {
     new CheckYourAnswers[TrusteeNewNinoId] {
 
       val name = (index: Int) =>
-        if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
           userAnswers.get(TrusteeNameId(index)).map(_.fullName)
-        else
-          userAnswers.get(TrusteeDetailsId(index)).map(_.fullName)
 
       def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
       def label(index: Int): String = messages("messages__trustee__individual__nino__heading", trusteeName(index))

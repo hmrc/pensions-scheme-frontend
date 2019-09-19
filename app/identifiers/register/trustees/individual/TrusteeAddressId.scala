@@ -38,10 +38,7 @@ object TrusteeAddressId {
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val name = (index: Int) =>
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
             ua.get(TrusteeNameId(index)).map(_.fullName)
-          else
-            ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
         val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 

@@ -56,19 +56,16 @@ trait DataCompletionEstablishers extends DataCompletion {
       get(CompanyContactDetailsId(index)).isDefined
     ))
 
-  def isEstablisherCompanyComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
+  def isEstablisherCompanyComplete(index: Int, mode: Mode): Boolean =
       isComplete(Seq(
         isEstablisherCompanyDetailsComplete(index, mode),
         isEstablisherCompanyAddressComplete(index),
         isEstablisherCompanyContactDetailsComplete(index))).getOrElse(false)
-    else
-      isEstablisherCompanyCompleteNonHns(index, mode)
 
-  def isEstablisherCompanyAndDirectorsComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean = {
-    val allDirectors = allDirectorsAfterDelete(index, isHnSEnabled)
+  def isEstablisherCompanyAndDirectorsComplete(index: Int, mode: Mode): Boolean = {
+    val allDirectors = allDirectorsAfterDelete(index)
     val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
-    val isCompanyComplete = isEstablisherCompanyComplete(index, mode, isHnSEnabled)
+    val isCompanyComplete = isEstablisherCompanyComplete(index, mode)
     allDirectorsCompleted & isCompanyComplete
   }
 

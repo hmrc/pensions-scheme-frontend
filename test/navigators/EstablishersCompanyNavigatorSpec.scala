@@ -135,18 +135,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     routes(UpdateMode, toggled) ++ updateOnlyRoutes(toggled): _*
   )
 
-  s"Establisher Company Navigator when toggle(is-establisher-company-hns) off" must {
+  s"Establisher Company Navigator" must {
     appRunning()
     val navigator: EstablishersCompanyNavigator =
-      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(), dataDescriber, UpdateMode)
-  }
-
-  s"Establisher Company Navigator when toggle(is-establisher-company-hns) on" must {
-    appRunning()
-    val navigator: EstablishersCompanyNavigator =
-      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes(true), dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes(true), dataDescriber, UpdateMode)
   }
@@ -311,23 +303,17 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode,
-                                             isEstablisherCompanyHnSEnabled: Boolean = false,
                                              userAnswers: UserAnswers) =
     (
       userAnswers.get(CompanyAddressYearsId(0)),
-      isEstablisherCompanyHnSEnabled,
       userAnswers.get(IsEstablisherNewId(0)).getOrElse(false)
     ) match {
-      case (Some(AddressYears.UnderAYear), _, false) =>
+      case (Some(AddressYears.UnderAYear), false) =>
         Some(confirmPreviousAddress)
-      case (Some(AddressYears.UnderAYear), true, _) =>
+      case (Some(AddressYears.UnderAYear), _) =>
         Some(hasBeenTrading(checkMode(mode)))
-      case (Some(AddressYears.UnderAYear), false, _) =>
-        Some(prevAddPostCodeLookup(checkMode(mode)))
-      case (Some(AddressYears.OverAYear), true, _) =>
+      case (Some(AddressYears.OverAYear), _) =>
         Some(exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode)))
-      case (Some(AddressYears.OverAYear), false, _) =>
-        Some(exitJourney(mode, userAnswers, 0, cya(mode)))
       case _ =>
         Some(sessionExpired)
     }

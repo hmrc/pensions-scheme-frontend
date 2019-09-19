@@ -29,12 +29,11 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Toggles, UserAnswers}
+import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels.SchemeDetailsTaskList
 import views.html.schemeDetailsTaskList
-import views.html.schemeDetailsTaskListNonHns
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,16 +51,13 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          minimalPsaConnector: MinimalPsaConnector
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  private def isHnsEnabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          val view = if(isHnsEnabled)
+          val view =
             schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers, featureSwitchManagementService).taskList)
-          else
-            schemeDetailsTaskListNonHns(appConfig, new HsTaskListHelperRegistration(userAnswers, featureSwitchManagementService).taskList)
 
           Future.successful(Ok(view))
         case (Some(srnValue), optionUserAnswers) =>
@@ -108,10 +104,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn), featureSwitchManagementService).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
-        val view = if(isHnsEnabled)
+        val view =
           schemeDetailsTaskList(appConfig, taskList)
-        else
-          schemeDetailsTaskListNonHns(appConfig, taskList)
         Future.successful(Ok(view))
       }
     }

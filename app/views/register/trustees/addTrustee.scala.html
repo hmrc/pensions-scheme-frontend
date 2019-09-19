@@ -21,16 +21,7 @@
 @import models.register.Trustee
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String], enableSubmission: Boolean = false, isHnsEnabled: Boolean)(implicit request: Request[_], messages: Messages)
-
-@addHint = @{
-    if(isHnsEnabled){
-        None
-    }
-    else{
-        Some(messages("messages__addTrustee__lede"))
-    }
-}
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String], enableSubmission: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__addTrustee__title"),
@@ -52,21 +43,14 @@
             @components.submit_button("site.continue", enableSubmission)
 
         } else {
-
-            @if(isHnsEnabled) {
-                @components.add_entity_list(trustees, mode, srn, "messages__addTrustee__header")
-
-            } else {
-                @components.entity_list(trustees, mode = mode, srn = srn)
-            }
-
+            @components.add_entity_list(trustees, mode, srn, "messages__addTrustee__header")
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(
                     field = form("value"),
                     label = messages("messages__addTrustee__text"),
                     labelClass = Some("bold-small"),
                     legendClass = Some("heading-medium"),
-                    hint = addHint
+                    hint = None
                 )
 
             } else {

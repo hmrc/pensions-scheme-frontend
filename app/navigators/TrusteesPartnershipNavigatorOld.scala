@@ -49,13 +49,9 @@ class TrusteesPartnershipFeatureSwitchNavigator @Inject() (
                                  implicit ex: IdentifiedRequest,
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier): Option[Call] =
-    if (featureSwitchService.get(Toggles.isEstablisherCompanyHnSEnabled)) {
       detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
         contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
         addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
-    } else {
-      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
-    }
 }
 
 class TrusteesPartnershipNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

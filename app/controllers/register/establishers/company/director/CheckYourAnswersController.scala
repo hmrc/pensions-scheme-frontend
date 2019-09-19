@@ -136,10 +136,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      val answerSections = if(fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val answerSections =
         Seq(directorAnswerSection)
-      else
-        Seq(companyDirectorDetails, companyDirectorContactDetails)
 
       Future.successful(Ok(checkYourAnswers(
         appConfig,

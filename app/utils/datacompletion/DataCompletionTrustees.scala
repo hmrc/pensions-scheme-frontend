@@ -54,14 +54,11 @@ trait DataCompletionTrustees {
       get(CompanyContactDetailsId(index)).isDefined
     ))
 
-  def isTrusteeCompanyComplete(index: Int, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
+  def isTrusteeCompanyComplete(index: Int): Boolean =
       isComplete(Seq(
         isTrusteeCompanyDetailsComplete(index),
         isTrusteeCompanyAddressComplete(index),
         isTrusteeCompanyContactDetailsComplete(index))).getOrElse(false)
-    else
-      isTrusteeCompanyCompleteNonHns(index)
 
   //TRUSTEE INDIVIDUAL
 
@@ -78,8 +75,7 @@ trait DataCompletionTrustees {
 
   def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
 
-  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index: Int): Boolean =
-    if (isHnSEnabled) {
+  def isTrusteeIndividualComplete(index: Int): Boolean =
       isComplete(
         Seq(
           isTrusteeIndividualDetailsComplete(index),
@@ -87,16 +83,6 @@ trait DataCompletionTrustees {
           isTrusteeIndividualContactDetailsComplete(index)
         )
       ).getOrElse(false)
-    } else {
-      isListComplete(Seq(
-        get(TrusteeDetailsId(index)).isDefined,
-        get(TrusteeNinoId(index)).isDefined | get(TrusteeNewNinoId(index)).isDefined,
-        get(UniqueTaxReferenceId(index)).isDefined | get(TrusteeUTRId(index)).isDefined,
-        isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index),
-          TrusteeAddressYearsId(index), None).getOrElse(false),
-        get(TrusteeContactDetailsId(index)).isDefined
-      ))
-    }
 
   //TRUSTEE PARTNERSHIP
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
@@ -125,12 +111,9 @@ trait DataCompletionTrustees {
       get(PartnershipContactDetailsId(index)).isDefined
     ))
 
-  def isTrusteePartnershipComplete(index: Int, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
+  def isTrusteePartnershipComplete(index: Int): Boolean =
       isComplete(Seq(
         isTrusteePartnershipDetailsComplete(index),
         isTrusteePartnershipAddressComplete(index),
         isTrusteePartnershipContactDetailsComplete(index))).getOrElse(false)
-    else
-      isTrusteePartnershipCompleteNonHns(index)
 }
