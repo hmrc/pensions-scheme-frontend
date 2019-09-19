@@ -34,7 +34,7 @@ class TrusteeNoNINOReasonIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__noNinoReason__heading", name),List("reason"),false,Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__noGenericNino__heading", name),List("reason"),false,Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_noNinoReason", name)))))
   )
 
