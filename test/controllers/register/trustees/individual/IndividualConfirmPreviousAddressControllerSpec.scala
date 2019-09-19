@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId}
 import models._
 import models.address.Address
 import models.person.{PersonDetails, PersonName}
@@ -91,7 +91,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
     )(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
-    .set(TrusteeDetailsId(index))(PersonDetails("John", None, "Doe", LocalDate.now())).flatMap(_.set(
+    .set(TrusteeNameId(index))(PersonName("John", "Doe")).flatMap(_.set(
     ExistingCurrentAddressId(index))(testAddress))
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))

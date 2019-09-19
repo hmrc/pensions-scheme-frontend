@@ -16,17 +16,17 @@
 
 package controllers.register.trustees.individual
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.TrusteeAddressYearsId
 import models.person.PersonDetails
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel

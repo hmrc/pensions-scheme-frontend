@@ -20,8 +20,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId, TrusteeNewNinoId}
-import models._
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNewNinoId}
+import models.{person, _}
 import models.person.{PersonDetails, PersonName}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -47,7 +47,7 @@ class TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" when {
       "toggle is off" in {
-        val getRelevantData = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)).flatMap(_.set(
+        val getRelevantData = UserAnswers().set(TrusteeNameId(0))(person.PersonName("Test", "Name")).flatMap(_.set(
           TrusteeNewNinoId(0))(ReferenceValue(ninoData))).flatMap(_.set(SchemeNameId)(schemeName)).asOpt.value.dataRetrievalAction
         val result = controller(getRelevantData, toggled = false).onPageLoad(UpdateMode, index, srn)(fakeRequest)
         contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, index, srn, trusteeFullName)
@@ -111,7 +111,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
   private val alreadySubmittedData: JsObject = Json.obj(
     "trustees" -> Json.arr(
       Json.obj(
-        TrusteeDetailsId.toString -> PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now, false),
+        TrusteeNameId.toString -> PersonName("Test", "Name", false),
         TrusteeNewNinoId.toString -> Json.obj(
           "value" -> ninoData
         )

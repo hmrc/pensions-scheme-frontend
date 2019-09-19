@@ -23,9 +23,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -40,7 +40,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.annotations.TrusteesIndividual
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -85,7 +84,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   val firstIndex = Index(0)
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
-  val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
+  val personDetails = PersonName("Firstname", "Last")
   val validPostcode = "ZZ1 1ZZ"
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
@@ -101,7 +100,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
     Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
-          TrusteeDetailsId.toString -> personDetails
+          TrusteeNameId.toString -> personDetails
         )
       )
     )
