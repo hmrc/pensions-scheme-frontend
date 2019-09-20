@@ -1849,21 +1849,20 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
-messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__title  = Contact details
 messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
 messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
-
-messages__whatYouWillNeedTrusteePartnershipDetails__title = Partnership details
-messages__whatYouWillNeedTrusteePartnershipDetails__h1 = Partnership details for {0}
-messages__whatYouWillNeedTrusteePartnershipDetails__p1 = You will need to tell us the partnership’s:
-messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
-messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
-messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
-messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+messages__whatYouWillNeedPartnershipDetails__title = Partnership details
+messages__whatYouWillNeedPartnershipDetails__h1 = Partnership details for {0}
+messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedPartnershipDetails__item2 = VAT registration number
+messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
 
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 

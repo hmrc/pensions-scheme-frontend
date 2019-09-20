@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -29,12 +29,12 @@ import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val index = 0
-  private val trusteePartnership = PartnershipDetails("partnership Name")
+  private val establisherPartnership = PartnershipDetails("partnership Name")
 
   def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
 
   def viewAsString(): String = whatYouWillNeedPartnershipDetails(
-    frontendAppConfig, None, onwardRoute, trusteePartnership.name, None)(fakeRequest, messages).toString
+    frontendAppConfig, None, onwardRoute, establisherPartnership.name, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipDetailsController" when {
 
@@ -43,10 +43,10 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

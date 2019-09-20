@@ -20,23 +20,23 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedTrusteePartnershipDetails__title"),
+    title = messages("messages__whatYouWillNeedPartnershipDetails__title"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__whatYouWillNeedTrusteePartnershipDetails__h1", partnershipName))
+    @components.heading(headingKey = messages("messages__whatYouWillNeedPartnershipDetails__h1", partnershipName))
 
-    <p>@messages("messages__whatYouWillNeedTrusteePartnershipDetails__p1")</p>
+    <p>@messages("messages__whatYouWillNeedPartnershipDetails__p1", partnershipName)</p>
 
     <ul class="list list-bullet">
-        <li>@messages("messages__whatYouWillNeedTrusteePartnershipDetails__item1")</li>
+        <li>@messages("messages__whatYouWillNeedPartnershipDetails__item1")</li>
     </ul>
 
-    <p>@messages("messages__whatYouWillNeedTrusteePartnershipDetails__p2", partnershipName)</p>
+    <p>@messages("messages__whatYouWillNeedPartnershipDetails__p2", partnershipName)</p>
 
     <ul class="list list-bullet">
-        <li>@messages("messages__whatYouWillNeedTrusteePartnershipDetails__item2")</li>
-        <li>@messages("messages__whatYouWillNeedTrusteePartnershipDetails__item3")</li>
+        <li>@messages("messages__whatYouWillNeedPartnershipDetails__item2")</li>
+        <li>@messages("messages__whatYouWillNeedPartnershipDetails__item3", partnershipName)</li>
     </ul>
 
     @components.button_link("site.continue", nextPageUrl.url, "submit")
