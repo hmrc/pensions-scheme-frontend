@@ -17,7 +17,7 @@
 package identifiers.register.establishers.partnership
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models._
 import models.requests.DataRequest
 import play.api.libs.json.Json
@@ -25,27 +25,21 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import viewmodels.AnswerRow
 
-class PartnershipHasPAYEIdSpec extends SpecBase {
+class PartnershipHasVATIdSpec extends SpecBase {
 
-  import PartnershipHasPAYEIdSpec._
+  import PartnershipHasVATIdSpec._
 
   "cleanup" when {
-    "`PartnershipHasPAYE` changed to false" must {
-      val result = ua(true).set(PartnershipHasPAYEId(0))(value = false).asOpt.value
+    "`PartnershipHasVAT` changed to false" must {
+      val result = ua
+        .set(PartnershipHasVATId(0))(value = false)
+        .asOpt.value
 
-      "remove the data for `PartnershipPayeVariationsId`" in {
-        result.get(PartnershipPayeVariationsId(0)) mustNot be(defined)
-      }
-    }
-
-    "`PartnershipHasPAYE` changed to true" must {
-      val result = ua(false).set(PartnershipHasPAYEId(0))(value = true).asOpt.value
-
-      "not remove the data for `PartnershipPayeVariationsId`" in {
-        result.get(PartnershipPayeVariationsId(0)) must be(defined)
+      "remove the data for `PartnershipEnterVATId`" in {
+        result.get(PartnershipEnterVATId(0)) mustNot be(defined)
       }
     }
   }
@@ -53,23 +47,23 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).flatMap(
-      _.set(PartnershipHasPAYEId(0))(true)).asOpt.get
+      _.set(PartnershipHasVATId(0))(value = true)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        PartnershipHasPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnershipHasVATId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for new establisher - partnership" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(value = true).asOpt.value
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnershipHasVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -78,26 +72,31 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       "not display any row" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
+        PartnershipHasVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }
     }
   }
 }
 
-object PartnershipHasPAYEIdSpec extends SpecBase {
+object PartnershipHasVATIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test partnership name"
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
+    AnswerRow(messages("messages__vat__heading", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_hasVat", name)))))
   )
 
-  private def ua(v:Boolean): UserAnswers = UserAnswers(Json.obj())
-    .set(PartnershipHasPAYEId(0))(v)
-    .flatMap(_.set(PartnershipPayeVariationsId(0))(ReferenceValue("value")))
-    .asOpt
-    .value
+  private val ua =
+    UserAnswers(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          PartnershipHasVATId.toString -> true,
+          PartnershipEnterVATId.toString -> "value"
+        )
+      )
+    ))
+
 }
 
