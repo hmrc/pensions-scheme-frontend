@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.individual
 
+import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -130,7 +131,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   }
 }
 
-object CheckYourAnswersControllerSpec extends OptionValues {
+object CheckYourAnswersControllerSpec extends SpecBase with OptionValues  {
   val postUrl: Call = controllers.routes.IndexController.onPageLoad()
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String =
