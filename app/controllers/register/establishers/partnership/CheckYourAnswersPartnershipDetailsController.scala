@@ -17,24 +17,59 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.partnership._
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, Enumerable}
+import viewmodels.AnswerSection
+import views.html.checkYourAnswers
 
-class CheckYourAnswersPartnershipDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                             override val messagesApi: MessagesApi,
-                                                             authenticate: AuthAction,
-                                                             getData: DataRetrievalAction,
-                                                             @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                                             requireData: DataRequiredAction
-                                                            ) extends FrontendController with I18nSupport {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+class CheckYourAnswersPartnershipDetailsController @Inject()(
+                                                              appConfig: FrontendAppConfig,
+                                                              override val messagesApi: MessagesApi,
+                                                              authenticate: AuthAction,
+                                                              getData: DataRetrievalAction,
+                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                              requireData: DataRequiredAction,
+                                                              implicit val countryOptions: CountryOptions,
+                                                              allowChangeHelper: AllowChangeHelper
+                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val partnershipDetails = Seq(AnswerSection(
+          None,
+          PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipUTRId(index).row(routes.PartnershipUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        ))
+
+        Future.successful(Ok(checkYourAnswers(
+          appConfig,
+          partnershipDetails,
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
+    }
 }

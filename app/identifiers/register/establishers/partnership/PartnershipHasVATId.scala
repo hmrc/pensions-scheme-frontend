@@ -17,9 +17,13 @@
 package identifiers.register.establishers.partnership
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import viewmodels.AnswerRow
 
 case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipHasVATId.toString
@@ -36,6 +40,25 @@ case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
 
 object PartnershipHasVATId {
   override def toString: String = "hasVat"
+
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
+
+    new CheckYourAnswers[PartnershipHasVATId] {
+      override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
+        val label = Some(messages("messages__vat__heading", partnershipName))
+        val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasVat", partnershipName))
+
+        BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

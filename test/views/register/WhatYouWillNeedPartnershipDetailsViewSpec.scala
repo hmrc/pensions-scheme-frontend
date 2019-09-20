@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package views.register.trustees.partnership
+package views.register
 
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipDetails
+import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "whatYouWillNeedTrusteePartnershipDetails"
+  private val messageKeyPrefix = "whatYouWillNeedPartnershipDetails"
   private val index = 0
   private val partnershipName = "test partnership"
   private val nextPageUrl = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
-  private val pageHeader = Message("messages__whatYouWillNeedTrusteePartnershipDetails__h1", partnershipName)
+  private val pageHeader = Message(s"messages__${messageKeyPrefix}__h1", partnershipName)
 
   def createView(): HtmlFormat.Appendable = whatYouWillNeedPartnershipDetails(
     frontendAppConfig,
@@ -37,15 +37,18 @@ class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
     nextPageUrl,
     partnershipName,
     None
-    )(fakeRequest, messages)
+  )(fakeRequest, messages)
 
   "whatYouWillNeedTrusteePartnershipDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, pageHeader,
-      expectedGuidanceKeys = "_p1", "_item1", "_item2", "_item3")
+      expectedGuidanceKeys = "_item1", "_item2")
 
-    "display the paragraph" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p2", partnershipName)
+    "display the dynamic paragraph and bullet points" in {
+      val doc = Jsoup.parse(createView().toString())
+      doc must haveDynamicText(s"messages__${messageKeyPrefix}__p1", partnershipName)
+      doc must haveDynamicText(s"messages__${messageKeyPrefix}__p2", partnershipName)
+      doc must haveDynamicText(s"messages__${messageKeyPrefix}__item3", partnershipName)
     }
 
     behave like pageWithSubmitButton(createView,

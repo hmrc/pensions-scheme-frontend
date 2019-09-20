@@ -18,8 +18,11 @@ package navigators.establishers.partnership
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
+import controllers.register.establishers.partnership.routes._
 import identifiers.Identifier
-import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.partnership._
+import models.Mode.journeyMode
 import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
@@ -29,27 +32,85 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
 
   import EstablisherPartnershipDetailsNavigator._
 
-  private def normalModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case PartnershipDetailsId(_)                                  => addEstablisherPage(mode, srn)
+    case id@PartnershipHasUTRId(index)                            => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index) if mode == NormalMode            => hasVat(mode, index, srn)
+    case PartnershipUTRId(index)                                  => cyaPage(mode, index, srn)
+    case PartnershipNoUTRReasonId(index) if mode == NormalMode    => hasVat(mode, index, srn)
+    case PartnershipNoUTRReasonId(index)                          => cyaPage(mode, index, srn)
+    case id@PartnershipHasVATId(index) if mode == NormalMode      => booleanNav(id, ua, enterVat(mode, index, srn), hasPaye(mode, index, srn))
+    case id@PartnershipHasVATId(index)                            => booleanNav(id, ua, enterVat(mode, index, srn), cyaPage(mode, index, srn))
+    case PartnershipEnterVATId(index) if mode == NormalMode       => hasPaye(mode, index, srn)
+    case PartnershipEnterVATId(index)                             => cyaPage(mode, index, srn)
+    case id@PartnershipHasPAYEId(index)                           => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case PartnershipPayeVariationsId(index)                       => cyaPage(mode, index, srn)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
+    case PartnershipDetailsId(_)                                  => addEstablisherPage(mode, srn)
+    case id@PartnershipHasUTRId(index)                            => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index)                                  => hasVat(mode, index, srn)
+    case PartnershipNoUTRReasonId(index)                          => hasVat(mode, index, srn)
+    case id@PartnershipHasVATId(index)                            => booleanNav(id, ua, enterVat(mode, index, srn), hasPaye(mode, index, srn))
+    case PartnershipEnterVATId(index)                             => hasPaye(mode, index, srn)
+    case id@PartnershipHasPAYEId(index)       => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case PartnershipPayeVariationsId(index)   => cyaPage(mode, index, srn)
+  }
+
+  private def checkUpdateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+    case id@PartnershipHasUTRId(index)                              => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
+    case PartnershipUTRId(index) if isNewEstablisher(index, ua)         => cyaPage(mode, index, srn)
+    case PartnershipUTRId(_)                                        => anyMoreChangesPage(srn)
+    case PartnershipNoUTRReasonId(index) if isNewEstablisher(index, ua) => cyaPage(mode, index, srn)
+    case PartnershipNoUTRReasonId(_)                                => anyMoreChangesPage(srn)
+    case id@PartnershipHasVATId(index)                              => booleanNav(id, ua, enterVat(mode, index, srn), cyaPage(mode, index, srn))
+    case PartnershipEnterVATId(index)    if isNewEstablisher(index, ua) => cyaPage(mode, index, srn)
+    case PartnershipEnterVATId(_)                                   => anyMoreChangesPage(srn)
+    case id@PartnershipHasPAYEId(index)                                 => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
+    case PartnershipPayeVariationsId(index) if isNewEstablisher(index, ua)  => cyaPage(mode, index, srn)
+    case PartnershipPayeVariationsId(_)                                 => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
 object EstablisherPartnershipDetailsNavigator {
+  private def isNewEstablisher(index: Int, ua: UserAnswers): Boolean =
+    ua.get(IsEstablisherNewId(index)).getOrElse(false)
+
   private def addEstablisherPage(mode: Mode, srn: Option[String]): Call =
     controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+
+  private def hasVat(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipHasVATController.onPageLoad(mode, index, srn)
+
+  private def cyaPage(mode: Mode, index: Index, srn: Option[String]): Call =
+    CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)
+
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipUTRController.onPageLoad(mode, index, srn)
+
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
+
+  private def enterVat(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipEnterVATController.onPageLoad(mode, index, srn)
+
+  private def hasPaye(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipHasPAYEController.onPageLoad(mode, index, srn)
+
+  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
+    PartnershipPayeVariationsController.onPageLoad(mode, index, srn)
 }
 

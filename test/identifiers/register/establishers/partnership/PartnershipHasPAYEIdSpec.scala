@@ -17,9 +17,16 @@
 package identifiers.register.establishers.partnership
 
 import base.SpecBase
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
+import models.requests.DataRequest
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import viewmodels.AnswerRow
+import utils.checkyouranswers.Ops._
 
 class PartnershipHasPAYEIdSpec extends SpecBase {
 
@@ -42,9 +49,50 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       }
     }
   }
+
+  "cya" when {
+
+    val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).flatMap(
+      _.set(PartnershipHasPAYEId(0))(true)).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        PartnershipHasPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for new establisher - partnership" must {
+
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for existing establisher - partnership" must {
+
+      "not display any row" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
+        PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
+      }
+    }
+  }
 }
 
 object PartnershipHasPAYEIdSpec extends SpecBase {
+
+  val onwardUrl = "onwardUrl"
+  val name = "test partnership name"
+
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
+  )
 
   private def ua(v:Boolean): UserAnswers = UserAnswers(Json.obj())
     .set(PartnershipHasPAYEId(0))(v)

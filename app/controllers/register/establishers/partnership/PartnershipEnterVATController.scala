@@ -27,8 +27,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,7 +35,7 @@ class PartnershipEnterVATController @Inject()(
                                                     override val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     override val userAnswersService: UserAnswersService,
-                                                    @EstablisherPartnership override val navigator: Navigator,
+                                                    override val navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     allowAccess: AllowAccessActionProvider,
@@ -46,12 +45,12 @@ class PartnershipEnterVATController @Inject()(
 
   private def form(companyName: String) = formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT__partnership_title"),
-      heading = Message("messages__enterVAT__heading", companyName),
-      hint = Message("messages__enterVAT__hint", companyName),
+      title = Message("messages__common_partnershipVat__title"),
+      heading = Message("messages__dynamic_whatIsVAT", partnershipName),
+      hint = Message("messages__enterVAT__hint", partnershipName),
       subHeading = None,
       srn = srn
     )

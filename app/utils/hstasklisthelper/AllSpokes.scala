@@ -153,7 +153,7 @@ trait AllSpokes  {
     override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
       establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index, srn)
 
-    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyDetailsComplete(index, mode)
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherIndividualDetailsComplete(index)
   }
 
   case object EstablisherIndividualAddress extends AddressSpoke {

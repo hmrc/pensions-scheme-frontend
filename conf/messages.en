@@ -135,6 +135,11 @@ messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__common__address_years__establisher = the establisher
 messages__common__address_years__trustee = the trustee
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
+
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
+messages__common_partnershipPaye__title = What is the employer PAYE reference for the partnership?
+messages__common_partnershipVat__title = What is the VAT registration number for the partnership?
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -1241,6 +1246,8 @@ messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have
 messages__visuallyhidden__dynamic_crn = the company number for {0}
 
 messages__dynamic_whatIsUTR = What is the UTR for {0}?
+messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
+messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
@@ -1665,7 +1672,8 @@ messages__changeHasBeen1Year = whether {0} has been at their address for at leas
 messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
-messages__theEstablisher = the establisher
+messages__thePartnership = the partnership
+messages__thePerson = the person
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
@@ -1837,6 +1845,7 @@ messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
+
 messages__partnershipHasUtr__title = Does the partnership have a UTR?
 messages__partnershipHasUtr__heading = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__partnershipUtr__title = What is the partnership’s UTR?
@@ -1848,23 +1857,23 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
-messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__title  = Contact details
 messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
 messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
-
-messages__whatYouWillNeedTrusteePartnershipDetails__title = Partnership details
-messages__whatYouWillNeedTrusteePartnershipDetails__h1 = Partnership details for {0}
-messages__whatYouWillNeedTrusteePartnershipDetails__p1 = You will need to tell us the partnership’s:
-messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
-messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
-messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
-messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+messages__whatYouWillNeedPartnershipDetails__title = Partnership details
+messages__whatYouWillNeedPartnershipDetails__h1 = Partnership details for {0}
+messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedPartnershipDetails__item2 = VAT registration number
+messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
 
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
+
