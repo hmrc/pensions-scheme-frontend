@@ -80,7 +80,6 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
       "display an add link if vat is not available" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(messages("messages__dynamic_whatIsVAT", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,

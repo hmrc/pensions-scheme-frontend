@@ -52,7 +52,6 @@ class PartnershipUTRIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -64,7 +63,6 @@ class PartnershipUTRIdSpec extends SpecBase {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
           PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
@@ -78,21 +76,18 @@ class PartnershipUTRIdSpec extends SpecBase {
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().establisherPartnershipDetails(index = 0, PartnershipDetails(name)), PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
           PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
           PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
           PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }

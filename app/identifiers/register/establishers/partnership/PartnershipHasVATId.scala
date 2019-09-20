@@ -45,7 +45,7 @@ object PartnershipHasVATId {
 
     new CheckYourAnswers[PartnershipHasVATId] {
       override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
         val label = Some(messages("messages__vat__heading", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasVat", partnershipName))
 
