@@ -19,7 +19,6 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.individual.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages}
 import identifiers.register.establishers.individual
 import identifiers.register.establishers.individual._
 import models._
@@ -41,9 +40,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
-  implicit val request: FakeDataRequest = FakeDataRequest(individualAnswers)
-  implicit val userAnswers: UserAnswers = request.userAnswers
-  val firstIndex = Index(0)
+  implicit val request: FakeDataRequest           = FakeDataRequest(individualAnswers)
+  implicit val userAnswers: UserAnswers           = request.userAnswers
+  val firstIndex                                  = Index(0)
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -84,7 +83,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
           EstablisherNewNinoId(firstIndex).row(
-            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url,
+            UpdateMode)
         }
 
         val result = controller(individualAnswersWithNoNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
@@ -97,7 +97,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNewNino)
           EstablisherNewNinoId(firstIndex).row(
-            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url, UpdateMode)
+            controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url,
+            UpdateMode)
         }
 
         val result = controller(individualAnswersWithNewNino.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, Some("srn"))(fakeRequest)
@@ -109,20 +110,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     def individualDetails(ninoRow: Seq[AnswerRow], mode: Mode, srn: Option[String]) = AnswerSection(
       None,
-      EstablisherDetailsId(firstIndex).row(
-        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+      EstablisherDetailsId(firstIndex)
+        .row(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
         ninoRow ++
-        UniqueTaxReferenceId(firstIndex).row(
-          routes.UniqueTaxReferenceController.onPageLoad(mode, firstIndex, srn).url, mode) ++
-        AddressId(firstIndex).row(
-          controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, firstIndex, srn).url, mode) ++
-        AddressYearsId(firstIndex).row(
-          controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        UniqueTaxReferenceId(firstIndex).row(routes.UniqueTaxReferenceController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        AddressId(firstIndex).row(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, firstIndex, srn).url, mode) ++
+        AddressYearsId(firstIndex)
+          .row(controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, firstIndex, srn).url, mode) ++
         PreviousAddressId(firstIndex).row(
-          controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, firstIndex, srn).url, mode
+          controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, firstIndex, srn).url,
+          mode
         ) ++
         ContactDetailsId(firstIndex).row(
-          controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, firstIndex, srn).url, mode
+          controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(mode, firstIndex, srn).url,
+          mode
         )
     )
 
@@ -132,27 +133,29 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends OptionValues {
   val postUrl: Call = controllers.routes.IndexController.onPageLoad()
 
-  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String = checkYourAnswers(
-    frontendAppConfig,
-    answerSections,
-    postUrl,
-    None,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false,
-    srn = srn,
-    mode = mode
-  )(fakeRequest, messages).toString
+  def viewAsString(answerSections: Seq[AnswerSection], mode: Mode, srn: Option[String]): String =
+    checkYourAnswers(
+      frontendAppConfig,
+      answerSections,
+      postUrl,
+      None,
+      hideEditLinks = false,
+      hideSaveAndContinueButton = false,
+      srn = srn,
+      mode = mode
+    )(fakeRequest, messages).toString
 
   private val firstIndex = Index(0)
 
-  private def commonJsResultAnswers(f: UserAnswers => JsResult[UserAnswers]): JsResult[UserAnswers] = UserAnswers()
-    .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
-    .flatMap(dd => f(dd))
-    .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
-    .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
-    .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
-    .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
-    .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
+  private def commonJsResultAnswers(f: UserAnswers => JsResult[UserAnswers]): JsResult[UserAnswers] =
+    UserAnswers()
+      .set(EstablisherDetailsId(firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
+      .flatMap(dd => f(dd))
+      .flatMap(_.set(UniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("1234567890")))
+      .flatMap(_.set(AddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
+      .flatMap(_.set(AddressYearsId(firstIndex))(AddressYears.UnderAYear))
+      .flatMap(_.set(individual.PreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
+      .flatMap(_.set(individual.ContactDetailsId(firstIndex))(ContactDetails("test@test.com", "123456789")))
 
   private val individualAnswers: UserAnswers = commonJsResultAnswers(_.set(EstablisherNinoId(firstIndex))(Nino.Yes("AB100100A"))).asOpt.value
   private val individualAnswersWithNoNino: UserAnswers = commonJsResultAnswers(
