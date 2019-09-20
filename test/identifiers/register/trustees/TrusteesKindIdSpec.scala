@@ -68,18 +68,19 @@ class TrusteesKindIdSpec extends WordSpec with MustMatchers with OptionValues wi
 }
 
 object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
-
+  // TODO 3341: Deal with email and phone id
   val trusteeCompany = UserAnswers()
     .set(TrusteeKindId(0))(TrusteeKind.Company)
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
-    .flatMap(_.set(CompanyRegistrationNumberId(0))(CompanyRegistrationNumber.No("")))
-    .flatMap(_.set(CompanyUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
+    .flatMap(_.set(HasCompanyNumberId(0))(false))
+    .flatMap(_.set(HasCompanyUTRId(0))(false))
     .flatMap(_.set(CompanyPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
-    .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
+//    .flatMap(_.set(CompanyEmailId(0))(""))
+//    .flatMap(_.set(CompanyPhoneId(0))(""))
     .asOpt.value
 
   val trusteeIndividual = UserAnswers(Json.obj())
@@ -92,8 +93,8 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(TrusteePreviousAddressId(0))(Address("", "", None, None, None, "")))
-    .flatMap(_.set(TrusteeEmailId(0))(""))
-    .flatMap(_.set(TrusteePhoneId(0))(""))
+//    .flatMap(_.set(TrusteeEmailId(0))(""))
+//    .flatMap(_.set(TrusteePhoneId(0))(""))
     .asOpt.value
 
   val trusteePartnership = UserAnswers()

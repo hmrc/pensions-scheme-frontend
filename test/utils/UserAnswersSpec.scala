@@ -24,7 +24,7 @@ import identifiers.register.establishers.individual.{EstablisherDetailsId, Estab
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.trustees.company.{CompanyPayeId, CompanyVatId, CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyEnterVATId, CompanyPayeVariationsId, HasCompanyNumberId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{company => _, _}
 import models._
@@ -437,7 +437,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       }
 
       "return true if trustees are completed" in {
-        val trusteeCompleted = trustee.trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
+        val trusteeCompleted = trustee.trusteesCompanyPhone(0, "12345")
+            .trusteesCompanyEmail(0, "z@z.z")
         trusteeCompleted.areVariationChangesCompleted(false) mustBe true
       }
     }
@@ -460,7 +461,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       "return true if establishers partnership is completed" in {
         val establisherCompleted = establisherPartnership
-          .trusteesCompanyContactDetails(0, ContactDetails("z@z.z", "12345"))
+          .trusteesCompanyPhone(0, "12345")
+          .trusteesCompanyEmail(0, "z@z.z")
           .set(IsEstablisherCompleteId(0))(true).flatMap(
           _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
         establisherCompleted.areVariationChangesCompleted() mustBe true
@@ -518,6 +520,10 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
 
   private val crn = CompanyRegistrationNumber.Yes("test-crn")
   private val utr = UniqueTaxReference.Yes("test-utr")
+
+  private val newCrn = "test-crn"
+  private val newUtr = "test-utr"
+
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYears = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
@@ -533,13 +539,17 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
 
   private val trustee = insuranceCompanyDetails
     .trusteesCompanyDetails(0, company)
-    .trusteesCompanyRegistrationNumber(0, crn)
-    .trusteesUniqueTaxReference(0, utr)
+    .set(HasCompanyNumberId(0))(true).asOpt.value
+    .trusteesCompanyCrnVariations(0, ReferenceValue(newCrn))
+    .set(HasCompanyUTRId(0))(true).asOpt.value
+    .trusteesCompanyUtr(0, ReferenceValue(newUtr))
     .trusteesCompanyAddress(0, address)
     .trusteesCompanyAddressYears(0, addressYears)
     .trusteesCompanyPreviousAddress(0, previousAddress)
-    .set(CompanyVatId(0))(Vat.Yes("vat")).asOpt.value
-    .set(CompanyPayeId(0))(Paye.Yes("vat")).asOpt.value
+    .set(HasCompanyVATId(0))(true).asOpt.value
+    .set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.value
+    .set(HasCompanyPAYEId(0))(true).asOpt.value
+    .set(CompanyPayeVariationsId(0))(ReferenceValue("vat")).asOpt.value
 
   private val userAnswersHnS = UserAnswers(readJsonFromFile("/payloadHnS.json"))
 

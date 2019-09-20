@@ -462,16 +462,16 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     setTrusteeCompletionStatus(isCompleteTrustees, 0, UserAnswers().set(TrusteeNameId(0))(PersonName("firstName", "lastName"))
       .flatMap(
         _.set(IsTrusteeNewId(0))(true).flatMap(
-            _.set(trusteesCompany.CompanyVatId(0))(Vat.No).flatMap(
-              _.set(trusteesCompany.CompanyPayeId(0))(Paye.No).flatMap(
+            _.set(trusteesCompany.HasCompanyVATId(0))(false).flatMap(
+              _.set(trusteesCompany.HasCompanyPAYEId(0))(false).flatMap(
                 _.set(trusteesCompany.CompanyDetailsId(1))(CompanyDetails("test company", false)).flatMap(
                   _.set(IsTrusteeNewId(1))(true).flatMap(
-                      _.set(trusteesCompany.CompanyVatId(1))(Vat.No).flatMap(
-                        _.set(trusteesCompany.CompanyPayeId(1))(Paye.No).flatMap(
+                      _.set(trusteesCompany.HasCompanyVATId(1))(false).flatMap(
+                        _.set(trusteesCompany.HasCompanyPAYEId(1))(false).flatMap(
                             _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
                               _.set(IsTrusteeNewId(2))(true).flatMap(
-                                  _.set(trusteesCompany.CompanyVatId(2))(Vat.No).flatMap(
-                                    _.set(trusteesCompany.CompanyPayeId(2))(Paye.No)
+                                  _.set(trusteesCompany.HasCompanyVATId(2))(false).flatMap(
+                                    _.set(trusteesCompany.HasCompanyPAYEId(2))(false)
                                     ))))))))))).asOpt.value)
   }
 

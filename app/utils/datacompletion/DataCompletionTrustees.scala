@@ -46,12 +46,13 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyCompleteNonHns(index: Int): Boolean =
     isListComplete(Seq(
       get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
-      get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
-      get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
+      get(CompanyRegistrationNumberVariationsId(index)).isDefined,
+      get(HasCompanyUTRId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
+      get(HasCompanyVATId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
+      get(HasCompanyPAYEId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
-      get(CompanyContactDetailsId(index)).isDefined
+      get(CompanyEmailId(index)).isDefined,
+      get(CompanyPhoneId(index)).isDefined
     ))
 
   def isTrusteeCompanyComplete(index: Int): Boolean =

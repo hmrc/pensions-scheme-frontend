@@ -53,20 +53,24 @@ object TrusteeKindId {
     PartnershipContactDetailsId(index)
   )
 
+  // TODO 3341: Deal with email and phone id
   private def companyIdList(index: Index): List[TypedIdentifier[_]] = List(
     CompanyDetailsId(index),
-    CompanyRegistrationNumberId(index),
-    CompanyUniqueTaxReferenceId(index),
+    HasCompanyNumberId(index),
+    CompanyRegistrationNumberVariationsId(index),
+    HasCompanyUTRId(index),
+    CompanyUTRId(index),
     CompanyPostcodeLookupId(index),
     CompanyAddressId(index),
     CompanyAddressYearsId(index),
     CompanyPreviousAddressPostcodeLookupId(index),
-    CompanyPreviousAddressId(index),
-    CompanyEmailId,(index),
-    company.CompanyPhoneId(index)
+    CompanyPreviousAddressId(index)
+//    CompanyEmailId(index)
+//    company.CompanyPhoneId(index)
   )
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
+    TrusteeNameId(index),
     TrusteeNinoId(index),
     UniqueTaxReferenceId(index),
     IndividualPostCodeLookupId(index),
