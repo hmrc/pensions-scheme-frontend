@@ -17,11 +17,30 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
-import models.ReferenceValue
+import identifiers.register.trustees.IsTrusteeNewId
+import models.person.PersonName
+import models.requests.DataRequest
+import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import utils.checkyouranswers.Ops._
+import viewmodels.AnswerRow
 
 class TrusteeHasUTRIdSpec extends SpecBase {
+
+  val onwardUrl = "onwardUrl"
+  val name = PersonName("test", "name")
+  private val answerRowsWithChangeLinks = Seq(
+    AnswerRow(
+      label = messages("messages__dynamic_hasUtr", name.fullName),
+      answer = List("site.yes"),
+      answerIsMessageKey = true,
+      changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_hasUtr", name.fullName))))
+    )
+  )
 
   "Cleanup" when {
 
@@ -59,6 +78,42 @@ class TrusteeHasUTRIdSpec extends SpecBase {
 
       "not remove the data for `NoUTRReason`" in {
         result.get(TrusteeNoUTRReasonId(0)) mustBe defined
+      }
+    }
+  }
+
+  "cya" when {
+
+    val answers: UserAnswers = UserAnswers().set(TrusteeNameId(0))(name).flatMap(
+      _.set(TrusteeHasUTRId(0))(true)).asOpt.get
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        TrusteeHasUTRId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for new trustee" must {
+
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        TrusteeHasUTRId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for existing trustee" must {
+
+      "not display any row" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        TrusteeHasUTRId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }
