@@ -120,7 +120,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
     val partners: Seq[PartnerEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
-    behave like entityList(createView(), createView(partners), partners, frontendAppConfig)
+    behave like entityList(createView(), createView(partners), partners, frontendAppConfig, noOfListItems = partners.size)
 
     "show the Continue button when there are partners" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))

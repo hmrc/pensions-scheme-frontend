@@ -118,7 +118,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
     val directors: Seq[DirectorEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
-    behave like entityList(createView(), createView(directors), directors, frontendAppConfig)
+    behave like entityList(createView(), createView(directors), directors, frontendAppConfig, noOfListItems = directors.size)
 
     "show the Continue button when there are directors" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))

@@ -66,7 +66,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private val testCompany = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company", false, true, true, 3, Some("single"))
   private val testPartnership = TrusteePartnershipEntity(PartnershipDetailsId(0), "Trustee Partnership", false, true, true, 3, Some("single"))
 
-  private val trusteesToggleOn = Seq(johnDoe, testCompany, testPartnership)
+  private val trusteesAllTypes = Seq(johnDoe, testCompany, testPartnership)
 
   val form = new AddTrusteeFormProvider()()
 
@@ -79,63 +79,62 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
-//  "AddTrustee view with toggle off" must {
-//    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
-//
-//    behave like pageWithReturnLink(createView(), getReturnLink)
-//
-//    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
-//
-//
-//    "when there are no trustees" when {
-//      "do not show the yes no inputs" in {
-//        val doc = asDocument(createView()())
-//        doc.select("legend > span").size() mustBe 0
-//      }
-//
-//      "show the add trustee text" in {
-//        val doc = asDocument(createView()())
-//        doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
-//      }
-//
-//      "enable the submit button" in {
-//        val doc = asDocument(createView()())
-//        doc.getElementById("submit").hasAttr("disabled") mustBe false
-//      }
-//    }
-//
-//    "when there are 10 trustees" when {
-//      "not show the yes no inputs" in {
-//        val doc = asDocument(createViewUsingForm(fullTrustees)(form))
-//        doc.select("legend > span").size() mustBe 0
-//      }
-//
-//      "show the maximum number of trustees message" in {
-//        val doc = asDocument(createView(fullTrustees)())
-//        doc must haveDynamicText("messages__addTrustees_at_maximum")
-//        doc must haveDynamicText("messages__addTrustees_tell_us_if_you_have_more")
-//      }
-//    }
-//
-//    "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
-//      val doc = asDocument(createView(trustees)())
-//      doc.select("#value-yes").size() mustEqual 1
-//      doc.select("#value-no").size() mustEqual 1
-//    }
-//  }
+  "AddTrustee view" must {
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
-  "AddTrustee view hns" must {
-//    behave like yesNoPage(
-//      createViewUsingForm(trustees),
-//      messageKeyPrefix,
-//      routes.AddTrusteeController.onSubmit(NormalMode, None).url,
-//      "_text",
-//      expectedHintKey = None
-//    )
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
-    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig, isToggleOn = true)
+    behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
-//    behave like addEntityList(createView(trusteesToggleOn), trusteesToggleOn, "Trustee",
-//      Seq("Partnership", "Company", "Individual"))
+    behave like yesNoPage(
+      createViewUsingForm(trustees),
+      messageKeyPrefix,
+      routes.AddTrusteeController.onSubmit(NormalMode, None).url,
+      "_text",
+      expectedHintKey = None
+    )
+
+    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig, noOfListItems = 3)
+
+    behave like addEntityList(createView(trusteesAllTypes), trusteesAllTypes, "Trustee",
+      Seq("Partnership", "Company", "Individual"))
+
+
+    "when there are no trustees" when {
+      "do not show the yes no inputs" in {
+        val doc = asDocument(createView()())
+        doc.select("legend > span").size() mustBe 0
+      }
+
+      "show the add trustee text" in {
+        val doc = asDocument(createView()())
+        doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
+      }
+
+      "enable the submit button" in {
+        val doc = asDocument(createView()())
+        doc.getElementById("submit").hasAttr("disabled") mustBe false
+      }
+    }
+
+    "when there are 10 trustees" when {
+      "not show the yes no inputs" in {
+        val doc = asDocument(createViewUsingForm(fullTrustees)(form))
+        doc.select("legend > span").size() mustBe 0
+      }
+
+      "show the maximum number of trustees message" in {
+        val doc = asDocument(createView(fullTrustees)())
+        doc must haveDynamicText("messages__addTrustees_at_maximum")
+        doc must haveDynamicText("messages__addTrustees_tell_us_if_you_have_more")
+      }
+    }
+
+    "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
+      val doc = asDocument(createView(trustees)())
+      doc.select("#value-yes").size() mustEqual 1
+      doc.select("#value-no").size() mustEqual 1
+    }
   }
+
 }
