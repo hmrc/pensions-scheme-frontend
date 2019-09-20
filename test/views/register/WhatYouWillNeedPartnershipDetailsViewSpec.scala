@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package views.register.trustees.partnership
+package views.register
 
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipDetails
+import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
 

@@ -1837,7 +1837,7 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
-messages__whatYouWillNeedPartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__title  = Contact details
 messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
