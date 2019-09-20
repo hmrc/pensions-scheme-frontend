@@ -62,7 +62,8 @@ object TrusteeKindId {
     CompanyAddressYearsId(index),
     CompanyPreviousAddressPostcodeLookupId(index),
     CompanyPreviousAddressId(index),
-    CompanyContactDetailsId(index)
+    CompanyEmailId,(index),
+    company.CompanyPhoneId(index)
   )
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(

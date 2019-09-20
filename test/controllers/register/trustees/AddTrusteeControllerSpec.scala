@@ -43,8 +43,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
   private lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
     CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+    TrusteeNameId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
 
-  private lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB)
+  private lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
   private val formProvider = new AddTrusteeFormProvider()
   private val schemeName = "Test Scheme Name"
   private val form = formProvider()
@@ -191,6 +193,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
       status(result) mustBe BAD_REQUEST
+
       contentAsString(result) mustBe viewAsString(boundForm, allTrustees)
     }
 

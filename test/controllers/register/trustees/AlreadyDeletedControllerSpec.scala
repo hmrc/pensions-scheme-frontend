@@ -57,7 +57,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
       val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString("Test Trustee Name")
+      contentAsString(result) mustBe viewAsString("Test Name")
     }
 
     "return OK and the correct view for a GET for a company trustee" in {
