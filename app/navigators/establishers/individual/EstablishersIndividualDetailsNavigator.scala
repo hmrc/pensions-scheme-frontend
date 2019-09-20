@@ -84,7 +84,7 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
 }
 
 object EstablishersIndividualDetailsNavigator {
-  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNinoNewController.onPageLoad(mode, index, srn)
+  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterNINOController.onPageLoad(mode, index, srn)
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoNINOReasonController.onPageLoad(mode, index, srn)
 

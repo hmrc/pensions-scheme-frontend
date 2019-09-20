@@ -24,11 +24,9 @@ import identifiers.register.establishers.individual.{EstablisherHasNINOId, Estab
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
@@ -36,12 +34,13 @@ import scala.concurrent.ExecutionContext
 class EstablisherHasNINOController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
                                              override val userAnswersService: UserAnswersService,
-                                             @EstablishersIndividual override val navigator: Navigator,
+                                             val navigator: Navigator,
                                              authenticate: AuthAction,
                                              allowAccess: AllowAccessActionProvider,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             formProvider: HasUtrFormProvider)(implicit val ec: ExecutionContext)
+                                             formProvider: HasUtrFormProvider)
+                                            (implicit val ec: ExecutionContext)
   extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
