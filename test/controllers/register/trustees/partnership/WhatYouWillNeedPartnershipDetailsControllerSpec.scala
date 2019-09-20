@@ -25,7 +25,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipDetails
+import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val index = 0
