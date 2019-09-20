@@ -40,7 +40,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
                                                          override val messagesApi: MessagesApi,
                                                          val userAnswersService: UserAnswersService,
                                                          authenticate: AuthAction,
-                                                         @EstablisherPartnership navigator: Navigator,
+                                                         navigator: Navigator,
                                                          getData: DataRetrievalAction,
                                                          allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
