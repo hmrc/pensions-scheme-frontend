@@ -444,13 +444,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
 
     "checking establishers" must {
+      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnSInProgress.json"))
       "return false if establishers are not completed" in {
-        userAnswersHnS.areVariationChangesCompleted(false) mustBe false
-      }
-
-      "return false if establishers are completed but directors are not completed" in {
-        val establisherCompleted = userAnswersHnS.set(IsEstablisherCompleteId(0))(true).asOpt.get
-        establisherCompleted.areVariationChangesCompleted(false) mustBe false
+        userAnswers.areVariationChangesCompleted(false) mustBe false
       }
 
       "return true if establishers company is completed " in {
