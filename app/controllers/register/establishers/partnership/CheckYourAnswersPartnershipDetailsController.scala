@@ -24,10 +24,8 @@ import identifiers.register.establishers.partnership._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -45,8 +43,6 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                               requireData: DataRequiredAction,
                                                               implicit val countryOptions: CountryOptions,
-                                                              navigator: Navigator,
-                                                              userAnswersService: UserAnswersService,
                                                               allowChangeHelper: AllowChangeHelper
                                                             )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {

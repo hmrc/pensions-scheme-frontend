@@ -254,8 +254,6 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute()),
-      FakeUserAnswersService,
       allowChangeHelper
     )
 
