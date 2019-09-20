@@ -37,7 +37,8 @@ hint: Option[String] = None
             <span class="error-notification" id="error-message-date">@messages("messages__error__date")</span>
         } else {
             @field.errors.map { error =>
-                <span class="error-notification" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+            <span class="error-notification" id="error-message-@{field.id}-input"><span class="visually-hidden">
+                    @messages("site.error")</span> @messages(error.message, error.args: _*)</span>
             }
         }
 

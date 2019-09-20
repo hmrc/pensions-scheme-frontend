@@ -227,7 +227,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
     "display future date error when date is in future" in {
       val tomorrow = LocalDate.now.plusDays(1)
-      val expectedError = messages("messages__error__date_future")
+      val expectedError = s"${messages("site.error")} ${messages("messages__error__date_future")}"
       val invalidData: Map[String, String] = Map(
         "firstName" -> "testFirstName",
         "lastName" -> "testLastName",
