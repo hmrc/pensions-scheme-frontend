@@ -135,6 +135,7 @@ messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__common__address_years__establisher = the establisher
 messages__common__address_years__trustee = the trustee
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
