@@ -23,20 +23,19 @@ import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import helpers.DataCompletionHelper
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId, company => establisherCompanyPath}
-import identifiers.register.trustees.individual.{TrusteeNameId, _}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId, company => trusteesCompany}
 import identifiers.{IsWorkingKnowledgeCompleteId, _}
-import models.{person, _}
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.SchemeType
 import models.register.SchemeType.SingleTrust
-import org.joda.time.LocalDate
+import models.{person, _}
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.libs.json.{JsArray, JsObject, JsPath, JsResult, Json}
+import play.api.libs.json.{JsArray, JsObject, JsResult, Json}
 import utils.hstasklisthelper.HsTaskListHelper
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
@@ -61,7 +60,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected lazy val deleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_delete_link")
   protected lazy val deleteTrusteesAdditionalInfo: String = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
-  val deletedEstablishers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+  val deletedEstablishers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
     _.set(IsEstablisherCompleteId(0))(false).flatMap(
       _.set(IsEstablisherNewId(0))(true).flatMap(
         _.set(establisherCompanyPath.CompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
@@ -109,7 +108,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
 
     "return the link to add establisher page when establishers are added " in {
-      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      val userAnswers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
@@ -118,7 +117,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
 
     "return the link to add establisher page when establishers are added with toggle ON " in {
-      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      val userAnswers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementServiceToggleON)
       helper.addEstablisherHeader(userAnswers, mode, srn).value mustBe
@@ -396,7 +395,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
           _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
             _.set(IsAboutBenefitsAndInsuranceCompleteId)(true).flatMap(
               _.set(IsWorkingKnowledgeCompleteId)(true).flatMap(
-                _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                _.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
                   _.set(SchemeTypeId)(SingleTrust)).flatMap(
                   _.set(IsEstablisherCompleteId(0))(true)).flatMap(
                   _.set(HaveAnyTrusteesId)(true))
@@ -427,16 +426,16 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                             toggled: Boolean
                            ): JsResult[UserAnswers] = {
 
-    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, 0, UserAnswers()
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, UserAnswers()
       .set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
       _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
         _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
             _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-              _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+              _.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
                 _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
                 _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                _.set(TrusteeNameId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())))
+                _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")))
             )
           )
         )
@@ -460,7 +459,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
       _.set(IsTrusteeNewId(0))(true)).asOpt.value
 
   protected def allTrustees(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {
-    setTrusteeCompletionStatus(isCompleteTrustees, toggled, 0, UserAnswers().set(TrusteeNameId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now()))
+    setTrusteeCompletionStatus(isCompleteTrustees, 0, UserAnswers().set(TrusteeNameId(0))(PersonName("firstName", "lastName"))
       .flatMap(
         _.set(IsTrusteeNewId(0))(true).flatMap(
             _.set(trusteesCompany.CompanyVatId(0))(Vat.No).flatMap(
@@ -478,7 +477,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
   protected def allTrusteesIndividual(isCompleteTrustees: Boolean = true, toggled: Boolean): UserAnswers = {
     setTrusteeCompletionStatus(
-      isCompleteTrustees, toggled, 0, UserAnswers()
+      isCompleteTrustees, 0, UserAnswers()
         .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
         _.set(IsTrusteeNewId(0))(true)
       ).asOpt.value
