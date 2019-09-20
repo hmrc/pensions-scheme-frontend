@@ -26,16 +26,16 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class CompanyEmailIdSpec extends SpecBase {
+class CompanyPhoneIdSpec extends SpecBase {
 
   "cya" when {
-    val email = "test@test.com"
+    val phone = "0111"
     val onwardUrl = "onwardUrl"
     val companyDetails = CompanyDetails("test company")
     val request: DataRequest[AnyContent] = DataRequest(
       FakeRequest(),
       "id",
-      UserAnswers().trusteesCompanyDetails(0, companyDetails).trusteeCompanyEmail(0, email), PsaId("A0000000")
+      UserAnswers().trusteesCompanyDetails(0, companyDetails).trusteeCompanyPhone(0, phone), PsaId("A0000000")
     )
     implicit val userAnswers: UserAnswers = request.userAnswers
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
@@ -43,12 +43,12 @@ class CompanyEmailIdSpec extends SpecBase {
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
-          CompanyEmailId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
+          CompanyPhoneId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              label = Message("messages__common_email__heading", companyDetails.companyName),
-              answer = Seq(email),
+              label = Message("messages__common_phone__heading", companyDetails.companyName),
+              answer = Seq(phone),
               answerIsMessageKey = false,
-              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", companyDetails.companyName))))
+              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone", companyDetails.companyName))))
             )))
         }
       }

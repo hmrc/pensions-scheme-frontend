@@ -270,6 +270,10 @@ package object utils {
       answers.set(trustees.company.CompanyEmailId(index))(email).asOpt.value
     }
 
+    def trusteeCompanyPhone(index: Int, phone: String): UserAnswers = {
+      answers.set(trustees.company.CompanyPhoneId(index))(phone).asOpt.value
+    }
+
     //Trustee Individual
 
     def trusteeName(index: Int, trusteeName: PersonName): UserAnswers = {
