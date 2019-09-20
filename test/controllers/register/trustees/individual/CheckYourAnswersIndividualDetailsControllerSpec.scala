@@ -185,7 +185,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
           messages("messages__visuallyhidden__dynamic_dob", name)),
         booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__noNinoReason__heading", name), noNinoReason(mode, srn), reason,
+        stringChangeLink(messages("messages__noGenericNino__heading", name), noNinoReason(mode, srn), reason,
           messages("messages__visuallyhidden__dynamic_noNinoReason", name)),
         booleanChangeLink(messages("messages__dynamic_hasUtr", name), hasUtr(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
