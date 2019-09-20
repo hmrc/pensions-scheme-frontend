@@ -27,8 +27,7 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
@@ -36,7 +35,7 @@ class PartnershipEnterVATController @Inject()(
                                                     override val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     override val userAnswersService: UserAnswersService,
-                                                    @EstablisherPartnership override val navigator: Navigator,
+                                                    override val navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     allowAccess: AllowAccessActionProvider,

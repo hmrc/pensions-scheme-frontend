@@ -37,7 +37,7 @@ class PartnershipPayeVariationsController @Inject()(
                                                      val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      override val userAnswersService: UserAnswersService,
-                                                     @EstablisherPartnership val navigator: Navigator,
+                                                     val navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
