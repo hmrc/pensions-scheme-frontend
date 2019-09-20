@@ -198,6 +198,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       answers.get(CompanyAddressYearsId(index)),
       answers.get(IsEstablisherNewId(index)).getOrElse(false)
     ) match {
+      case (Some(AddressYears.UnderAYear), false) =>
+        NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
       case (Some(AddressYears.UnderAYear), _) =>
         NavigateTo.dontSave(HasBeenTradingCompanyController.onPageLoad(mode, srn, index))
       case (Some(AddressYears.OverAYear), _) =>
@@ -206,8 +208,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
-
-
+  
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(
         if (answers.allDirectorsAfterDelete(index).isEmpty) {
