@@ -130,7 +130,7 @@ messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
 messages__common__address_years__company = the company
 messages__common__address_years__director = the director
-messages__common__address_years__partnership = the partnership
+messages__common__partnership = the partnership
 messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__common__address_years__establisher = the establisher
@@ -608,7 +608,8 @@ messages__directorAddressPostcodeLookup__lede = This is usually the director’s
 messages__directorDOB__title = What is the director’s date of birth?
 messages__directorDOB__heading = What is {0}’s date of birth?
 
-messages__trusteeIndividualDOB__heading = What is {0}’s date of birth?
+messages__DOB__title = What is the date of birth for {0}?
+messages__DOB__heading = What is the date of birth for {0}?
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
@@ -1021,7 +1022,7 @@ messages__error__has_nino_partner = Select yes if the partner has a National Ins
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
 messages__common_nino__title = What is the person’s National Insurance number?
-messages__common_nino__h1 = What is {0}’s National Insurance number?
+messages__common_nino__h1 = What is the National Insurance number for {0}?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
@@ -1239,6 +1240,9 @@ messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
 messages__visuallyhidden__dynamic_crn = the company number for {0}
 
+messages__dynamic_whatIsUTR = What is the UTR for {0}?
+messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
+
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
 messages__visuallyhidden__partner__nino = the partner’s National Insurance number
@@ -1312,9 +1316,6 @@ messages__schemeTaskList__sectionEstablishers_add_link = Add establishers
 messages__schemeTaskList__sectionEstablishers_change_link = Change establishers
 messages__schemeTaskList__sectionEstablishers_no_establishers = No establishers
 
-messages__schemeTaskList__sectionEstablishersCompany_add_details = Add company details for {0}
-messages__schemeTaskList__sectionEstablishersCompany_add_directors = Add directors for {0}
-
 messages__schemeTaskList__add_details = Add details for {0}
 messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
@@ -1327,12 +1328,11 @@ messages__schemeTaskList__continue_details = Continue adding details for {0}
 messages__schemeTaskList__continue_address = Continue adding address for {0}
 messages__schemeTaskList__continue_contact = Continue adding contact details for {0}
 
-messages__schemeTaskList__sectionPartnership_add_details = Add {0}’s partnership’s details
-messages__schemeTaskList__sectionPartnership_add_address = Add {0}’s partnership’s address
-messages__schemeTaskList__sectionPartnership_add_contact = Add {0}’s partnership’s contact details
+messages__schemeTaskList__add_directors = Add directors for {0}
+messages__schemeTaskList__add_partners = Add partners for {0}
 
-messages__schemeTaskList__sectionEstablishersCompany_change_details = Change {0}’s company details
-messages__schemeTaskList__sectionEstablishersCompany_change_directors = Change {0}’s directors
+messages__schemeTaskList__change_directors = Change directors for {0}
+messages__schemeTaskList__change_partners = Change partners for {0}
 
 messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s details
 messages__schemeTaskList__sectionIndividual_change_address = Change {0}’s address
@@ -1642,10 +1642,17 @@ messages__hasCompanyUtr__title = Does the company have a UTR?
 messages__hasCompanyUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
 
+messages__hasUTR__error__required = Select yes if the person has a UTR
+
 messages__hasCompanyVat__title = Is the company registered for VAT?
 messages__hasCompanyVat__h1 = Is {0} registered for VAT?
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
+
+messages__hasPersonUTR__title = Does the person have a UTR?
+messages__personUTR__title = What is the person’s UTR?
+
+messages__hasPersonNINO__title = Does the person have a National Insurance number?
 
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address
@@ -1658,6 +1665,7 @@ messages__changeHasBeen1Year = whether {0} has been at their address for at leas
 messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
+messages__theEstablisher = the establisher
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
@@ -1758,6 +1766,9 @@ messages__reason__error_invalid = Reason must only include letters, numbers and 
 messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
+messages__whyPersonNoUTR = Why does the person not have a UTR?
+messages__whyPersonNoNINO = Why does the person not have a National Insurance number?
+
 messages__trustee_phone__title =  What is the company’s phone number?
 messages__establisher_phone__title =  What is the establisher’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
@@ -1770,7 +1781,6 @@ messages__email__hint = We will only use this to contact about pension scheme ad
 
 messages__noNinoReason__director_title = Why does the director not have a National Insurance number?
 messages__noNinoReason__trustee_title = Why does the trustee not have a National Insurance number?
-messages__noNinoReason__heading = Why does {0} not have a National Insurance number?
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a National Insurance number?
 
@@ -1793,6 +1803,8 @@ messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
 messages__noGenericUtr__title = Why does {0} not have a UTR?
 messages__noGenericUtr__heading = Why does {0} not have a UTR?
 messages__noGenericUtr__cya_fallback = Why does {0} not have a UTR?
+
+messages__noGenericNino__heading = Why does {0} not have a National Insurance number?
 
 messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
@@ -1820,7 +1832,6 @@ messages__establisher__type__title = What kind of establisher are you adding?
 messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__hasUtr__title = Does the trustee have a UTR?
-messages__hasUtr__h1 = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?

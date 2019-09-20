@@ -17,6 +17,7 @@
 package utils.datacompletion
 
 import identifiers.register.establishers.company.director._
+import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
 import models.{Mode, NormalMode}
@@ -132,4 +133,40 @@ trait DataCompletionEstablishers extends DataCompletion {
       ))
     }
 
+
+  //ESTABLISHER PARTNERSHIP
+  def isEstablisherPartnershipDetailsComplete(index: Int): Option[Boolean] =
+    isComplete(
+      Seq(
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
+      )
+    )
+
+  def isEstablisherPartnershipAddressComplete(index: Int): Option[Boolean] =
+    isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index),
+      PartnershipAddressYearsId(index), Some(PartnershipHasBeenTradingId(index)))
+
+  def isEstablisherPartnershipContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneNumberId(index))
+
+  def isEstablisherPartnershipCompleteNonHns(index: Int, mode: Mode): Boolean =
+    isListComplete(Seq(
+      get(PartnershipDetailsId(index)).isDefined,
+      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
+      get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
+      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
+      isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
+      get(PartnershipContactDetailsId(index)).isDefined
+    ))
+
+  def isEstablisherPartnershipComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
+    if (isHnSEnabled)
+      isComplete(Seq(
+        isEstablisherPartnershipDetailsComplete(index),
+        isEstablisherPartnershipAddressComplete(index),
+        isEstablisherPartnershipContactDetailsComplete(index))).getOrElse(false)
+    else
+      isEstablisherPartnershipCompleteNonHns(index, mode)
 }

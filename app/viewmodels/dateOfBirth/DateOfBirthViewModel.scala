@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package viewmodels.dateOfBirth
 
-import identifiers._
-import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.mvc.Call
 
-case class PartnershipHasVatId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipHasVatId.toString
-}
-
-object PartnershipHasVatId {
-  override def toString: String = "hasVat"
-}
-
-
-
-
-
-
-
-
-
-
-
+case class DateOfBirthViewModel(
+                                 postCall: Call,
+                                 srn: Option[String] = None,
+                                 token: String
+                               )

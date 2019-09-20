@@ -17,28 +17,59 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import controllers.register.establishers.partnership.routes._
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipHasVATId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import navigators.Navigator
+import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnershipHasVATController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
+                                            val userAnswersService: UserAnswersService,
+                                            val navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             allowAccess: AllowAccessActionProvider,
-                                            requireData: DataRequiredAction
-                                           ) extends FrontendController with I18nSupport {
+                                            requireData: DataRequiredAction,
+                                            formProvider: HasReferenceNumberFormProvider
+                                           )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  def form(partnershipName: String): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
+      title = Message("messages__vat__title", Message("messages__common__partnership").resolve),
+      heading = Message("messages__vat__heading", partnershipName),
+      hint = None,
+      srn = srn
+    )
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipHasVATId(index), form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            post(PartnershipHasVATId(index), mode: Mode, form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
 }
