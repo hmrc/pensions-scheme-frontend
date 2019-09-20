@@ -23,7 +23,7 @@ hint: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-field @if(Seq(field, field("day"), field("month"), field("year")).flatMap(_.errors).nonEmpty){form-field--error}">
-<fieldset id="@field.id">
+<fieldset id="@field.id" @if(hint.nonEmpty){aria-describedby="@{field.id}-date-hint"}>
     <legend>
         <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
             @label

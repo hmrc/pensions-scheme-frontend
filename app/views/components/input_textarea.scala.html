@@ -27,7 +27,7 @@
     <label class="form-label" for="@{field.id}">
         <span class="bold">@label</span>
         @hint.map { hint =>
-            <span class="form-hint">@hint</span>
+            <span class="form-hint" id="@{field.id}-text-hint">@hint</span>
         }
         @field.errors.map { error =>
             <span class="error-notification" id="error-message-@{field.id}-input">
@@ -41,7 +41,7 @@
         id="@{field.id}"
         name="@{field.id}"
         value="@{field.value}"
-        @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"}
+        @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input @{field.id}-text-hint"}
             @if(charLimit.isDefined){maxLength="@{charLimit}"}
         data-char-field
         cols="30"
