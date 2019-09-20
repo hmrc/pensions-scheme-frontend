@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.director.{DirectorId, DirectorN
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerId}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.establishers.EstablisherKind
 import play.api.libs.json.{JsPath, JsResult, JsSuccess}
 import utils.UserAnswers
@@ -49,7 +49,7 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
     }
 
   private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.getAllRecursive[PersonDetails](DirectorNameId.collectionPath(index)) match {
+    userAnswers.getAllRecursive[PersonName](DirectorNameId.collectionPath(index)) match {
       case Some(allDirectors) if allDirectors.nonEmpty =>
         userAnswers.remove(DirectorId(index, 0)).flatMap(removeAllDirectors)
       case _ =>
@@ -59,6 +59,12 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
 
   private def removeAllCompany(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.remove(CompanyDetailsId(index))
+
+      .flatMap(_.remove(HasCompanyNumberId(index)))
+      .flatMap(_.remove(CompanyRegistrationNumberVariationsId(index)))
+      .flatMap(_.remove(HasCompanyUTRId(index)))
+      .flatMap(_.remove(CompanyUTRId(index)))
+
       .flatMap(_.remove(CompanyPostCodeLookupId(index)))
       .flatMap(_.remove(CompanyAddressListId(index)))
       .flatMap(_.remove(CompanyAddressId(index)))
@@ -66,6 +72,10 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
       .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
       .flatMap(_.remove(CompanyPreviousAddressListId(index)))
       .flatMap(_.remove(CompanyPreviousAddressId(index)))
+
+    // TODO 3341 - problems removing these
+      //.flatMap(_.remove(CompanyEmailId(index)))
+      //.flatMap(_.remove(CompanyPhoneId(index)))
       .flatMap(removeAllDirectors)
   }
 
