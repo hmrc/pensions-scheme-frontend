@@ -152,20 +152,6 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
       }
     }
 
-    "isEstablisherPartnershipComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, mode, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherPartnershipComplete(2, mode, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, mode, false) mustBe false
-      }
-    }
-
   }
 
   "Establisher Individual completion status should be returned correctly" when {

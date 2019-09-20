@@ -49,13 +49,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "accessed in NormalMode with srn as None" must {
 
       "return OK and the correct view" when {
-        "toggle is off" in {
-          val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
-
-          status(result) mustBe OK
-          contentAsString(result) mustBe schemeDetailsTaskListNonHns(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
-        }
-
         "toggle is on" in {
           val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction,
             isHnsEnabled = true).onPageLoad(NormalMode, None)(fakeRequest)

@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -45,7 +45,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   val invalidIndex = Index(10)
-  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonName("first", "last")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DirectorAddressYearsController =
     new DirectorAddressYearsController(

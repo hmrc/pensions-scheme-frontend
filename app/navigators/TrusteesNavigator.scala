@@ -67,7 +67,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
+        if (answers.allTrusteesAfterDelete.isEmpty) {
           NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, None))
+        } else {
+          NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, None))
+        }
       case Some(false) =>
         NavigateTo.dontSave(SchemeTaskListController.onPageLoad(NormalMode, None))
       case None =>

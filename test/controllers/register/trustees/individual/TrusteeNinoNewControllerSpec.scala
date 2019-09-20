@@ -104,8 +104,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
   val form = formProvider("First Name Last Name")
   private val index = Index(0)
   private val ninoData = "CS700100A"
-  val trusteeFullName = "Test Trustee Name"
-  val trusteeFirstAndLastName = "Test Name"
+  val trusteeFullName = "Test Name"
   private val schemeName = "pension scheme details"
 
   private val alreadySubmittedData: JsObject = Json.obj(
@@ -133,7 +132,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
                                  formProvider,
                                  new FakeFeatureSwitchManagementService(toggled))
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String = trusteeFirstAndLastName): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String = trusteeFullName): String = {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit(mode, index, srn),

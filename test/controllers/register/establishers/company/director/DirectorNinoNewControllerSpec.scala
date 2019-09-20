@@ -42,11 +42,11 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
 
   val companyName = "test company name"
   val formProvider = new NinoNewFormProvider()
-  val form = formProvider("First Name Middle Name Last Name")
+  val form = formProvider("First Name Last Name")
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   val invalidIndex = Index(11)
-  val directorName = "First Name Middle Name Last Name"
+  val directorName = "First Name Last Name"
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
