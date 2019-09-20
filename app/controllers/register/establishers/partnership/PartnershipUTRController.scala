@@ -48,8 +48,8 @@ class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConf
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.PartnershipUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__partnershipUtr__title"),
-      heading = Message("messages__trusteeUtr__h1", partnershipName),
+      title = Message("messages__common_partnershipUtr__title"),
+      heading = Message("messages__dynamic_whatIsUTR", partnershipName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )
