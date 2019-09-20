@@ -36,19 +36,19 @@ object EstablisherNewNinoId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherNewNinoId] = {
 
     new CheckYourAnswers[EstablisherNewNinoId] {
-
-      private val label = "messages__common__nino"
-      private val hiddenLabel = "messages__visuallyhidden__establisher__nino"
+      def establisherName(index: Int): String = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
+      def label(index: Int): String = messages("messages__common_nino__h1", establisherName(index))
+      def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_nino", establisherName(index))
 
       override def row(id: EstablisherNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[EstablisherNewNinoId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: EstablisherNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherNewNinoId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[EstablisherNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherNewNinoId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

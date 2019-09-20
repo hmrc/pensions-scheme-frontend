@@ -130,11 +130,16 @@ messages__common__cya__email = Email address
 messages__common__cya__phone = Phone number
 messages__common__address_years__company = the company
 messages__common__address_years__director = the director
-messages__common__address_years__partnership = the partnership
+messages__common__partnership = the partnership
 messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__common__address_years__establisher = the establisher
 messages__common__address_years__trustee = the trustee
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
+
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
+messages__common_partnershipPaye__title = What is the employer PAYE reference for the partnership?
+messages__common_partnershipVat__title = What is the VAT registration number for the partnership?
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -1022,7 +1027,7 @@ messages__error__has_nino_partner = Select yes if the partner has a National Ins
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
 messages__common_nino__title = What is the person’s National Insurance number?
-messages__common_nino__h1 = What is {0}’s National Insurance number?
+messages__common_nino__h1 = What is the National Insurance number for {0}?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
@@ -1242,6 +1247,8 @@ messages__visuallyhidden__dynamic_crn = the company number for {0}
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 messages__dynamic_whatIsUTR = What is the UTR for {0}?
+messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
+messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
@@ -1654,6 +1661,8 @@ messages__hasCompanyVat__error__required = Select yes if the {0} is registered 
 messages__hasPersonUTR__title = Does the person have a UTR?
 messages__personUTR__title = What is the person’s UTR?
 
+messages__hasPersonNINO__title = Does the person have a National Insurance number?
+
 messages__trusteeAddress = {0}’s address
 messages__changeTrusteeAddress = Change {0}’s address
 
@@ -1665,7 +1674,8 @@ messages__changeHasBeen1Year = whether {0} has been at their address for at leas
 messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
-messages__theEstablisher = the establisher
+messages__thePartnership = the partnership
+messages__thePerson = the person
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
@@ -1767,6 +1777,7 @@ messages__noCompanyUtr__title = Why does the company not have a UTR?
 messages__noCompanyUtr__heading = Why does {0} not have a UTR?
 
 messages__whyPersonNoUTR = Why does the person not have a UTR?
+messages__whyPersonNoNINO = Why does the person not have a National Insurance number?
 
 messages__trustee_phone__title =  What is the company’s phone number?
 messages__establisher_phone__title =  What is the establisher’s phone number?
@@ -1780,7 +1791,6 @@ messages__email__hint = We will only use this to contact about pension scheme ad
 
 messages__noNinoReason__director_title = Why does the director not have a National Insurance number?
 messages__noNinoReason__trustee_title = Why does the trustee not have a National Insurance number?
-messages__noNinoReason__heading = Why does {0} not have a National Insurance number?
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a National Insurance number?
 
@@ -1803,6 +1813,8 @@ messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
 messages__noGenericUtr__title = Why does {0} not have a UTR?
 messages__noGenericUtr__heading = Why does {0} not have a UTR?
 messages__noGenericUtr__cya_fallback = Why does {0} not have a UTR?
+
+messages__noGenericNino__heading = Why does {0} not have a National Insurance number?
 
 messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
@@ -1835,6 +1847,7 @@ messages__trusteeUtr__title = What is the trustee’s UTR?
 messages__trusteeUtr__h1 =  What is {0}’s UTR?
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
+
 messages__partnershipHasUtr__title = Does the partnership have a UTR?
 messages__partnershipHasUtr__heading = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__partnershipUtr__title = What is the partnership’s UTR?
@@ -1846,21 +1859,21 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
-messages__whatYouWillNeedTrusteePartnershipContact__title = Contact details
+messages__whatYouWillNeedTrusteePartnershipContact__title  = Contact details
 messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
 messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
-
-messages__whatYouWillNeedTrusteePartnershipDetails__title = Partnership details
-messages__whatYouWillNeedTrusteePartnershipDetails__h1 = Partnership details for {0}
-messages__whatYouWillNeedTrusteePartnershipDetails__p1 = You will need to tell us the partnership’s:
-messages__whatYouWillNeedTrusteePartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
-messages__whatYouWillNeedTrusteePartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
-messages__whatYouWillNeedTrusteePartnershipDetails__item2 = VAT registration number
-messages__whatYouWillNeedTrusteePartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if has more than one)
+messages__whatYouWillNeedPartnershipDetails__title = Partnership details
+messages__whatYouWillNeedPartnershipDetails__h1 = Partnership details for {0}
+messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
+messages__whatYouWillNeedPartnershipDetails__item2 = VAT registration number
+messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
 
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
+

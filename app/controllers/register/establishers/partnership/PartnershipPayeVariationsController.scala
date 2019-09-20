@@ -37,7 +37,7 @@ class PartnershipPayeVariationsController @Inject()(
                                                      val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      override val userAnswersService: UserAnswersService,
-                                                     @EstablisherPartnership val navigator: Navigator,
+                                                     val navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
@@ -50,8 +50,8 @@ class PartnershipPayeVariationsController @Inject()(
 
     PayeViewModel(
       postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
-      title = Message("messages__payeVariations__partnership_title"),
-      heading = Message("messages__payeVariations__heading", partnershipName),
+      title = Message("messages__common_partnershipPaye__title"),
+      heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
       hint = Some(Message("messages__payeVariations__hint")),
       srn = srn,
       entityName = Some(partnershipName)

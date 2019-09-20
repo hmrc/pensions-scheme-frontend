@@ -51,7 +51,7 @@ class DirectorNoNINOReasonController @Inject()(
     ReasonViewModel(
       postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__noNinoReason__director_title"),
-      heading = Message("messages__noNinoReason__heading", name),
+      heading = Message("messages__noGenericNino__heading", name),
       srn = srn
     )
   }

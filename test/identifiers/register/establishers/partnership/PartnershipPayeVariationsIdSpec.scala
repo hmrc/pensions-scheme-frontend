@@ -27,65 +27,63 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-
 class PartnershipPayeVariationsIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
+  private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__paye", List("paye"), false, Some(Link("site.change", onwardUrl,
-      Some("messages__visuallyhidden__establisher__paye_number"))))
+    AnswerRow(messages("messages__dynamic_whatIsPAYE", partnershipName), List("paye"), false, Some(Link("site.change", onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))
   )
+
+  private val ua = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
+
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(PartnershipPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
+    def answers: UserAnswers = ua.set(PartnershipPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        PartnershipPayeVariationsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new establisher - company paye" must {
+    "in update mode for new establisher - partnership paye" must {
 
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnershipPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        PartnershipPayeVariationsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for existing establisher - company paye" must {
+    "in update mode for existing establisher - partnership paye" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnershipPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
+        PartnershipPayeVariationsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
+          AnswerRow(messages("messages__dynamic_whatIsPAYE", partnershipName), List("paye"), false, None)
         ))
       }
 
       "return answers rows with change links if paye is available and editable" in {
-        val answers = UserAnswers().set(PartnershipPayeVariationsId(0))(ReferenceValue("paye", true)).asOpt.get
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val answers = ua.set(PartnershipPayeVariationsId(0))(ReferenceValue("paye", true)).asOpt.get
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnershipPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        PartnershipPayeVariationsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if no answer if found" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"))
 
-        PartnershipPayeVariationsId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__paye_number"))))))
+        PartnershipPayeVariationsId(0).row(onwardUrl, CheckUpdateMode)(request, implicitly) must equal(Seq(
+          AnswerRow(messages("messages__dynamic_whatIsPAYE", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))))
       }
     }
   }
