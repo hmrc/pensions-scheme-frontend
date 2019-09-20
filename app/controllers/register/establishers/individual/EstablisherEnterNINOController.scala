@@ -28,26 +28,24 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherEnterNINOController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider
-                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
+                                               val messagesApi: MessagesApi,
+                                               val userAnswersService: UserAnswersService,
+                                               val navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction,
+                                               val formProvider: NinoNewFormProvider)
+                                              (implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit _
 
-  private def viewmodel(personDetails: PersonName, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
       title = Message("messages__common_nino__title"),
@@ -58,12 +56,12 @@ class EstablisherEnterNINOController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      EstablisherNameId(index).retrieve.right.map {
-        details =>
-          get(EstablisherNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
-      }
-  }
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map {
+          details =>
+            get(EstablisherNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>

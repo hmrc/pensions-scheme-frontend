@@ -135,6 +135,7 @@ messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__common__address_years__establisher = the establisher
 messages__common__address_years__trustee = the trustee
+messages__common_partnershipUtr__title = What is the UTR for the partnership?
 
 messages__common_partnershipUtr__title = What is the UTR for the partnership?
 messages__common_partnershipPaye__title = What is the employer PAYE reference for the partnership?
@@ -1671,7 +1672,7 @@ messages__changeHasBeen1Year = whether {0} has been at their address for at leas
 messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
-messages__theEstablisher = the establisher
+messages__thePerson = the person
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?

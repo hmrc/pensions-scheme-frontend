@@ -28,22 +28,20 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherUTRController@Inject()(
-                                         override val appConfig: FrontendAppConfig,
+class EstablisherUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          override val userAnswersService: UserAnswersService,
-                                         @EstablishersIndividual override val navigator: Navigator,
+                                         val navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: UTRFormProvider
-                                       )(implicit val ec: ExecutionContext) extends UTRController {
+                                         formProvider: UTRFormProvider)
+                                        (implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
