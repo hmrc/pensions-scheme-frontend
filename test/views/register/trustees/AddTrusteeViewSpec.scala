@@ -70,7 +70,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
   val form = new AddTrusteeFormProvider()()
 
-  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = true, isHnsEnabled: Boolean = false) = () =>
+  private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
   private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
@@ -86,13 +86,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
-    behave like yesNoPage(
-      createViewUsingForm(trustees),
-      messageKeyPrefix,
-      routes.AddTrusteeController.onSubmit(NormalMode, None).url,
-      "_text",
-      expectedHintKey = Some("_lede")
-    )
 
     "when there are no trustees" when {
       "do not show the yes no inputs" in {
@@ -103,11 +96,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       "show the add trustee text" in {
         val doc = asDocument(createView()())
         doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
-      }
-
-      "disable the submit button" in {
-        val doc = asDocument(createView(enable = false)())
-        doc.getElementById("submit").hasAttr("disabled") mustBe true
       }
 
       "enable the submit button" in {
@@ -129,18 +117,10 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       }
     }
 
-    behave like entityList(createView(), createView(trustees, false), trustees, frontendAppConfig)
-
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
-    }
-
-    "display the status and edit link" in {
-      val doc = asDocument(createView(trustees)())
-      doc must haveDynamicText("site.incomplete")
-      assertRenderedById(doc,"person-0-edit")
     }
   }
 
@@ -150,12 +130,12 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
       "_text",
-      expectedHintKey = Some("_lede")
+      expectedHintKey = None
     )
 
-    behave like entityList(createView(), createView(trustees, enable = false), trustees, frontendAppConfig)
+    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig)
 
-    behave like addEntityList(createView(trusteesToggleOn, isHnsEnabled = true), trusteesToggleOn, "Trustee",
+    behave like addEntityList(createView(trusteesToggleOn), trusteesToggleOn, "Trustee",
       Seq("Partnership", "Company", "Individual"))
   }
 }

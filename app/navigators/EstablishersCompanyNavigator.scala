@@ -208,7 +208,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
-  
+
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
     NavigateTo.dontSave(
         if (answers.allDirectorsAfterDelete(index).isEmpty) {

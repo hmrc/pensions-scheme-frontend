@@ -30,7 +30,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
-  private val directorName = "first middle last"
+  private val directorName = "first last"
   private val companyName = "test company name"
 
   def viewmodel = AlreadyDeletedViewModel(Message("messages__alreadyDeleted__director_title"), directorName, onwardRoute)
