@@ -17,35 +17,57 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.ReasonController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import forms.ReasonFormProvider
+import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNoNINOReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherNoNINOReasonController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction
-                                         )(implicit val ec: ExecutionContext) extends I18nSupport {
+class EstablisherNoNINOReasonController @Inject()(override val appConfig: FrontendAppConfig,
+                                                  override val messagesApi: MessagesApi,
+                                                  override val userAnswersService: UserAnswersService,
+                                                  val navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  allowAccess: AllowAccessActionProvider,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: ReasonFormProvider)
+                                                 (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+
+  private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.EstablisherNoNINOReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__whyPersonNoNINO"),
+      heading = Message("messages__noGenericNino__heading", name),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map { details =>
+          val name = details.fullName
+          get(EstablisherNoNINOReasonId(index), viewModel(mode, index, srn, name), form(name))
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map { details =>
+          val name = details.fullName
+          post(EstablisherNoNINOReasonId(index), mode, viewModel(mode, index, srn, name), form(name))
+        }
+    }
 }

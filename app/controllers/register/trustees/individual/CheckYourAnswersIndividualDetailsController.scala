@@ -29,10 +29,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import utils.annotations.TrusteesIndividual
-import viewmodels.AnswerSection
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
+import viewmodels.AnswerSection
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,12 +43,12 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             val navigator: Navigator,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
-                                                            allowAccess: AllowAccessActionProvider,
+                                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                             allowChangeHelper: AllowChangeHelper,
                                                             requireData: DataRequiredAction,
                                                             implicit val countryOptions: CountryOptions,
                                                             implicit val featureSwitchManagementService: FeatureSwitchManagementService
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -56,15 +56,14 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
         implicit val userAnswers: UserAnswers = request.userAnswers
         val companyDetails = Seq(AnswerSection(
           None,
-            TrusteeDOBId(index)
-              .row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeUTRId(index).row(routes.TrusteeUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
-          ))
+          TrusteeDOBId(index).row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeUTRId(index).row(routes.TrusteeUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        ))
 
         Future.successful(Ok(checkYourAnswers(
           appConfig,

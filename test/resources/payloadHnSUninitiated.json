@@ -27,6 +27,23 @@
         "companyName": "Test Company",
         "isDeleted": false
       }
+    },
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "individual",
+      "establisherDetails": {
+        "firstName": "Test",
+        "lastName": "Individual",
+        "isDeleted": false
+      }
+    },
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "partnership",
+      "partnershipDetails": {
+        "partnershipName": "Test Partnership",
+        "isDeleted": false
+      }
     }
   ]
 }

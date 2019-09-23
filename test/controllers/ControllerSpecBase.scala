@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
@@ -63,7 +63,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     Json.obj(
       "establishers" -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> PersonDetails("test first name", None, "test last name", LocalDate.now(), false)
+          EstablisherNameId.toString -> PersonName("Test", "Name", false)
         )
       )
     )))
@@ -115,6 +115,17 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name")
+        )
+      )
+    ))
+  )
+
+  def getMandatoryEstablisherIndividual: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString ->
+            person.PersonName("Test", "Name")
         )
       )
     ))
@@ -234,9 +245,35 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     )
   }
 
+  protected def validEstablisherIndividualData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherNameId.toString -> Json.obj(
+            "firstName" -> "Test",
+            "lastName" -> "Name",
+            "isDeleted" -> "false"
+          ),
+          jsValue
+        )
+      )
+    )
+  }
+
   protected def validTrusteePartnershipData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
     Json.obj(
       TrusteesId.toString -> Json.arr(
+        Json.obj(
+          PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
+          jsValue
+        )
+      )
+    )
+  }
+
+  protected def validEstablisherPartnershipData(jsValue: (String, Json.JsValueWrapper)): JsObject = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
           jsValue

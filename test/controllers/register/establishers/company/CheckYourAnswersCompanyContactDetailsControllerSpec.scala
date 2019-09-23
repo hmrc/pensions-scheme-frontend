@@ -37,6 +37,8 @@ import views.html.checkYourAnswers
 class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
+  private val name = "test company"
+
   private val index = Index(0)
   private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
@@ -49,12 +51,12 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
         messages("messages__common_email__heading", companyDetails.companyName)),
-        Some(messages("messages__common_company_email__visually_hidden_change_label")))().row(CompanyEmailId(index))(
+        Some(messages("messages__visuallyhidden__dynamic_email", name)))().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
           messages("messages__common_phone__heading", companyDetails.companyName)),
-          Some(messages("messages__common_company_phone__visually_hidden_change_label")))().row(CompanyPhoneId(index))(
+          Some(messages("messages__visuallyhidden__dynamic_phone", name)))().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers)
     ))
   }
@@ -103,6 +105,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
           status(result) mustBe OK
+
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
         }
       }

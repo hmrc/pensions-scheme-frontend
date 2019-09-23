@@ -341,7 +341,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
         Some(Link(
           "site.add",
           routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), index, index, Some("srn")).url,
-          Some(s"messages__visuallyhidden__director__nino")
+          Some(messages("messages__visuallyhidden__dynamic_nino", directorPersonDetails.firstAndLastName))
         ))
       )
     )

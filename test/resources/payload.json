@@ -11,12 +11,16 @@
   "schemeEstablishedCountry": "GB",
   "membership": "opt2",
   "schemeStatus" : "Open",
+  "isBeforeYouStartComplete" : true,
   "membershipFuture": "opt3",
+  "isAboutMembersComplete" : true,
   "investmentRegulated": true,
   "occupationalPensionScheme": true,
   "benefits": "opt1",
   "securedBenefits": false,
+  "isAboutBenefitsAndInsuranceComplete" : true,
   "uKBankAccount": false,
+  "IsAboutBankDetailsComplete" : true,
   "isAboutSchemeComplete": true,
   "establishers": [
     {
@@ -126,16 +130,14 @@
         "isDeleted" : false
       },
       "partnershipVat" : {
-        "hasVat" : true,
-        "vat" : "123456789"
+        "hasVat" : false
       },
       "partnershipPaye" : {
-        "hasPaye" : true,
-        "paye" : "123456"
+        "hasPaye" : false
       },
-      "partnershipUniqueTaxReference" : {
-        "hasUtr" : true,
-        "utr" : "1234567890"
+      "partnershipUniqueTaxReference": {
+        "hasUtr": true,
+        "utr": "1234567890"
       },
       "partnershipAddress" : {
         "addressLine1" : "4 Other Place",

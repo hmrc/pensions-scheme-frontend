@@ -33,7 +33,8 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.{FakeNavigator, SectionComplete, UserAnswers}
-import views.html.register.establishers.company.director.directorName
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.personName
 
 import scala.concurrent.Future
 
@@ -42,6 +43,11 @@ import scala.concurrent.Future
 class DirectorNameControllerSpec extends ControllerSpecBase {
 
   import DirectorNameControllerSpec._
+
+  private val viewmodel = CommonFormWithHintViewModel(
+    routes.DirectorNameController.onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+    title = Message("messages__directorName__title"),
+    heading = Message("messages__directorName__heading"))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorNameController =
     new DirectorNameController(
@@ -56,16 +62,11 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       formProvider,
       mockSectionComplete)
 
-  private val postCall = routes.DirectorNameController.onSubmit _
 
-  def viewAsString(form: Form[_] = form): String = directorName(
+  def viewAsString(form: Form[_] = form): String = personName(
     frontendAppConfig,
     form,
-    NormalMode,
-    firstEstablisherIndex,
-    firstDirectorIndex,
-    None,
-    postCall(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+    viewmodel,
     None)(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"))
