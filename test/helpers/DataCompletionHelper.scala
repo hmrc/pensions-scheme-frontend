@@ -16,9 +16,12 @@
 
 package helpers
 
+import identifiers.register.establishers.company._
+import identifiers.register.trustees.company.CompanyUTRId
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
+import models.register.DeclarationDormant
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
@@ -103,4 +106,128 @@ trait DataCompletionHelper extends OptionValues {
 
   protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  protected def setCompanyCompletionStatusCompanyDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setCompanyCompletionStatusJsResultCompanyDetails(isComplete, index, ua).asOpt.value
+
+  protected def setCompanyCompletionStatusAddressDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setCompanyCompletionStatusJsResultAddressDetails(isComplete, index, ua).asOpt.value
+
+  protected def setCompanyCompletionStatusContactDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setCompanyCompletionStatusJsResultContactDetails(isComplete, index, ua).asOpt.value
+
+  protected def setCompanyCompletionStatusJsResultCompanyDetails(isComplete: Boolean,
+                                                                    index: Int = 0,
+                                                                    ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    if (isComplete) {
+      ua.set(HasCompanyNumberId(index))(false)
+        .asOpt
+        .value
+        .set(NoCompanyNumberId(index))(stringValue)
+        .asOpt
+        .value
+        .set(HasCompanyUTRId(index))(false)
+        .asOpt
+        .value
+        .set(NoCompanyUTRId(index))(stringValue)
+        .asOpt
+        .value
+
+
+        .set(HasCompanyVATId(index))(true)
+        .asOpt
+        .value
+        .set(CompanyEnterVATId(index))(ReferenceValue(stringValue))
+        .asOpt
+        .value
+
+        .set(HasCompanyPAYEId(index))(true)
+        .asOpt
+        .value
+        .set(CompanyPayeVariationsId(index))(ReferenceValue(stringValue))
+        .asOpt
+        .value
+
+        .set(IsCompanyDormantId(index))(DeclarationDormant.No)
+    }
+    else {
+      ua.set(HasCompanyNumberId(index))(false)
+        .asOpt
+        .value
+        .set(NoCompanyNumberId(index))(stringValue)
+        .asOpt
+        .value
+        .set(HasCompanyUTRId(index))(false)
+        .asOpt
+        .value
+        .set(NoCompanyUTRId(index))(stringValue)
+        .asOpt
+        .value
+
+
+        .set(HasCompanyVATId(index))(true)
+        .asOpt
+        .value
+
+        .set(HasCompanyPAYEId(index))(true)
+        .asOpt
+        .value
+        .set(CompanyPayeVariationsId(index))(ReferenceValue(stringValue))
+        .asOpt
+        .value
+
+        .set(IsCompanyDormantId(index))(DeclarationDormant.No)
+    }
+
+  protected def setCompanyCompletionStatusJsResultAddressDetails(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    if (isComplete) {
+      ua.set(CompanyAddressId(index))(address)
+        .asOpt
+        .value
+        .set(CompanyAddressYearsId(index))(AddressYears.OverAYear)
+    }
+    else {
+      ua.set(CompanyAddressId(index))(address)
+    }
+
+  protected def setCompanyCompletionStatusJsResultContactDetails(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    if (isComplete) {
+      ua.set(CompanyEmailId(index))(stringValue)
+        .asOpt
+        .value
+        .set(CompanyPhoneId(index))(stringValue)
+    }
+    else {
+      ua.set(CompanyPhoneId(index))(stringValue)
+    }
+
+  protected def setCompanyCompletionStatusJsResult(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    setCompanyCompletionStatusJsResultContactDetails(
+      isComplete,
+      index,
+      setCompanyCompletionStatusJsResultAddressDetails(isComplete,
+        index,
+        setCompanyCompletionStatusJsResultCompanyDetails(isComplete, index, ua).asOpt.value).asOpt.value
+    )
+
+  protected def setCompanyCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setCompanyCompletionStatusJsResult(isComplete, index, ua).asOpt.value
 }
