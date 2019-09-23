@@ -29,20 +29,18 @@
         "companyName": "Test company name",
         "isDeleted": false
       },
-      "companyVat" : {
-        "hasVat" : false
+      "hasCrn" : true,
+      "companyRegistrationNumber" : {
+        "value" : "AB123456",
+        "isEditable" : true
       },
-      "companyPaye" : {
-        "hasPaye" : false
+      "hasUtr" : true,
+      "utr" : {
+        "value" : "1234567890",
+        "isEditable" : true
       },
-      "companyRegistrationNumber": {
-        "hasCrn": true,
-        "crn": "AB123456"
-      },
-      "companyUniqueTaxReference": {
-        "hasUtr": true,
-        "utr": "1234567890"
-      },
+      "hasVat" : false,
+      "hasPaye" : false,
       "companyAddress": {
         "addressLine1": "10 Other Place",
         "addressLine2": "Some District",
@@ -60,18 +58,19 @@
         {
           "directorDetails": {
             "firstName": "first",
-            "middleName": "middle",
             "lastName": "last",
-            "date": "2001-01-01",
             "isDeleted": false
           },
-          "directorNino": {
-            "hasNino": true,
-            "nino": "AB123456C"
+          "dateOfBirth": "2001-01-01",
+          "hasNino" : true,
+          "directorNino" : {
+            "value" : "AB123456C",
+            "isEditable" : true
           },
-          "directorUniqueTaxReference": {
-            "hasUtr": true,
-            "utr": "9876543210"
+          "hasUtr" : true,
+          "utr" : {
+            "value" : "9876543210",
+            "isEditable" : true
           },
           "directorAddressId": {
             "addressLine1": "2 Other Place",

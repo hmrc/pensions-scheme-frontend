@@ -121,6 +121,9 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+
+
+
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
       userAnswers.get(IsBeforeYouStartCompleteId),

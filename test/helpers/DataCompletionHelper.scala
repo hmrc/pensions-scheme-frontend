@@ -17,7 +17,7 @@
 package helpers
 
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
+import identifiers.register.establishers.company.director._
 import identifiers.register.trustees.company.CompanyUTRId
 import identifiers.register.trustees.individual._
 import models._
@@ -32,9 +32,10 @@ import utils.UserAnswers
 trait DataCompletionHelper extends OptionValues {
   private val address     = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val stringValue = "value"
+  private val refValue    = ReferenceValue(stringValue)
   private val firstName   = "firstName"
   private val lastName    = "lastName"
-  private val dateValue = new LocalDate(2000, 6, 9)
+  private val dateValue   = new LocalDate(2000, 6, 9)
 
   protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value
@@ -110,24 +111,6 @@ trait DataCompletionHelper extends OptionValues {
   protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   protected def setCompanyCompletionStatusCompanyDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setCompanyCompletionStatusJsResultCompanyDetails(isComplete, index, ua).asOpt.value
 
@@ -140,9 +123,7 @@ trait DataCompletionHelper extends OptionValues {
   protected def setCompanyCompletionStatusDirectorDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setCompanyCompletionStatusJsResultDirectorDetails(isComplete, index, ua).asOpt.value
 
-  protected def setCompanyCompletionStatusJsResultCompanyDetails(isComplete: Boolean,
-                                                                    index: Int = 0,
-                                                                    ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+  protected def setCompanyCompletionStatusJsResultCompanyDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
       ua.set(HasCompanyNumberId(index))(false)
         .asOpt
@@ -156,22 +137,18 @@ trait DataCompletionHelper extends OptionValues {
         .set(NoCompanyUTRId(index))(stringValue)
         .asOpt
         .value
-
-
         .set(HasCompanyVATId(index))(true)
         .asOpt
         .value
         .set(CompanyEnterVATId(index))(ReferenceValue(stringValue))
         .asOpt
         .value
-
         .set(HasCompanyPAYEId(index))(true)
         .asOpt
         .value
         .set(CompanyPayeVariationsId(index))(ReferenceValue(stringValue))
         .asOpt
         .value
-
         .set(IsCompanyDormantId(index))(DeclarationDormant.No)
     }
     else {
@@ -187,19 +164,15 @@ trait DataCompletionHelper extends OptionValues {
         .set(NoCompanyUTRId(index))(stringValue)
         .asOpt
         .value
-
-
         .set(HasCompanyVATId(index))(true)
         .asOpt
         .value
-
         .set(HasCompanyPAYEId(index))(true)
         .asOpt
         .value
         .set(CompanyPayeVariationsId(index))(ReferenceValue(stringValue))
         .asOpt
         .value
-
         .set(IsCompanyDormantId(index))(DeclarationDormant.No)
     }
 
@@ -225,25 +198,75 @@ trait DataCompletionHelper extends OptionValues {
       ua.set(CompanyPhoneId(index))(stringValue)
     }
 
-  protected def setCompanyCompletionStatusJsResultDirectorDetails(isComplete: Boolean,
-                                                                 index: Int = 0,
-                                                                 ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+  protected def setCompanyCompletionStatusJsResultDirectorDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
     if (isComplete) {
-      ua.set(DirectorNameId(0,0))(PersonName(stringValue,stringValue))
+      ua.set(DirectorNameId(0, 0))(PersonName(stringValue, stringValue))
         .asOpt
         .value
-        .set(DirectorDOBId(0,0))(
-    } else {
-
+        .set(DirectorDOBId(0, 0))(dateValue)
+        .asOpt
+        .value
+        .set(DirectorHasNINOId(0, 0))(true)
+        .asOpt
+        .value
+        .set(DirectorNewNinoId(0, 0))(refValue)
+        .asOpt
+        .value
+        .set(DirectorHasUTRId(0, 0))(true)
+        .asOpt
+        .value
+        .set(DirectorUTRId(0, 0))(refValue)
+        .asOpt
+        .value
+        .set(DirectorAddressId(0, 0))(address)
+        .asOpt
+        .value
+        .set(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear)
+        .asOpt
+        .value
+        .set(DirectorEmailId(0, 0))(stringValue)
+        .asOpt
+        .value
+        .set(DirectorPhoneNumberId(0, 0))(stringValue)
+    }
+    else {
+      ua.set(DirectorNameId(0, 0))(PersonName(stringValue, stringValue))
+        .asOpt
+        .value
+        .set(DirectorDOBId(0, 0))(dateValue)
+        .asOpt
+        .value
+        .set(DirectorHasNINOId(0, 0))(true)
+        .asOpt
+        .value
+        .set(DirectorNewNinoId(0, 0))(refValue)
+        .asOpt
+        .value
+        .set(DirectorHasUTRId(0, 0))(true)
+        .asOpt
+        .value
+        .set(DirectorAddressId(0, 0))(address)
+        .asOpt
+        .value
+        .set(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear)
+        .asOpt
+        .value
+        .set(DirectorEmailId(0, 0))(stringValue)
+        .asOpt
+        .value
+        .set(DirectorPhoneNumberId(0, 0))(stringValue)
     }
 
   protected def setCompanyCompletionStatusJsResult(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
-    setCompanyCompletionStatusJsResultContactDetails(
+    setCompanyCompletionStatusJsResultDirectorDetails(
       isComplete,
       index,
-      setCompanyCompletionStatusJsResultAddressDetails(isComplete,
+      setCompanyCompletionStatusJsResultContactDetails(
+        isComplete,
         index,
-        setCompanyCompletionStatusJsResultCompanyDetails(isComplete, index, ua).asOpt.value).asOpt.value
+        setCompanyCompletionStatusJsResultAddressDetails(isComplete, index,
+          setCompanyCompletionStatusJsResultCompanyDetails(isComplete, index, ua).asOpt.value).asOpt.value
+      ).asOpt.value
     )
 
   protected def setCompanyCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =

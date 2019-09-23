@@ -28,7 +28,7 @@ trait DataCompletionEstablishers extends DataCompletion {
   self: UserAnswers =>
 
   //ESTABLISHER COMPANY
-  def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] =
+  def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] = {
     isComplete(
       Seq(
         isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
@@ -37,6 +37,7 @@ trait DataCompletionEstablishers extends DataCompletion {
         isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
       ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
     )
+  }
 
   def isEstablisherCompanyAddressComplete(index: Int): Option[Boolean] =
     isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
@@ -44,20 +45,17 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isEstablisherCompanyComplete(index: Int, mode: Mode): Boolean =
-      isComplete(Seq(
-        isEstablisherCompanyDetailsComplete(index, mode),
-        isEstablisherCompanyAddressComplete(index),
-        isEstablisherCompanyContactDetailsComplete(index))).getOrElse(false)
+  def isEstablisherCompanyComplete(index: Int, mode: Mode): Boolean = {
+    isComplete(
+      Seq(isEstablisherCompanyDetailsComplete(index, mode), isEstablisherCompanyAddressComplete(index),
+        isEstablisherCompanyContactDetailsComplete(index)))
+      .getOrElse(false)
+  }
 
   def isEstablisherCompanyAndDirectorsComplete(index: Int, mode: Mode): Boolean = {
     val allDirectors = allDirectorsAfterDelete(index)
     val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
     val isCompanyComplete = isEstablisherCompanyComplete(index, mode)
-    println("\nINDEX:" + index)
-    println("MODE:" + mode)
-    println("CC:" + isCompanyComplete)
-    println("ECC:" + isEstablisherCompanyComplete(index, mode))
     allDirectorsCompleted & isCompanyComplete
   }
 
