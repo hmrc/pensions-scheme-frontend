@@ -74,7 +74,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       srn = srn
     )(fakeRequest, messages).toString
 
-  "toggle isEstablisherCompanyHnSEnabled is true" when {
+  "having set up answer sections" when {
     val request: DataRequest[AnyContent]                                        = FakeDataRequest(directorAnswersHnsEnabled)
     implicit val userAnswers: UserAnswers                                       = request.userAnswers
     implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
