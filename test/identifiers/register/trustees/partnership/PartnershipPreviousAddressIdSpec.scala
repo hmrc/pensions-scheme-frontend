@@ -17,11 +17,12 @@
 package identifiers.register.trustees.partnership
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
+import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
+import models.person.PersonName
 import models.requests.DataRequest
-import models.{Link, NormalMode, UpdateMode}
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
+import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -31,86 +32,90 @@ import viewmodels.{AnswerRow, Message}
 
 class PartnershipPreviousAddressIdSpec extends SpecBase {
 
+  import PartnershipPreviousAddressIdSpec._
+
+  private val answerRowWithChangeLink = Seq(
+    AnswerRow(
+      Message("messages__previousAddressFor", trusteeName.name),
+      addressAnswer(address),
+      answerIsMessageKey = false,
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName.name))))
+    ))
+
+  private val answerRowWithAddLink = Seq(
+    AnswerRow(Message("messages__previousAddressFor", trusteeName.name),
+      Seq("site.not_entered"),
+      answerIsMessageKey = true,
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName.name))))))
+
   "cya" when {
-    implicit val countryOptions:CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
-    val address = Address(
-      "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
-    )
-
-    def addressAnswer(address: Address): Seq[String] = {
-      val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-
-      Seq(
-        Some(address.addressLine1),
-        Some(address.addressLine2),
-        address.addressLine3,
-        address.addressLine4,
-        address.postcode,
-        Some(country)
-      ).flatten
-    }
-
-    val onwardUrl = "onwardUrl"
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PartnershipPreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers:UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__previousAddressFor", messages("messages__theTrustee")),
-            addressAnswer(address),
-            answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
-          )))
+        PartnershipPreviousAddressId(index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
       }
     }
 
-    "in update mode" must {
-      "return row with add links for existing establisher if address years is under a year and there is no previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers:UserAnswers = request.userAnswers
+    "in update mode" when {
+      "for new partnership" must {
+        "return answer row with change links" in {
+          val answersNew = answers.set(IsTrusteeNewId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
 
-        PartnershipPreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__previousAddressFor", messages("messages__theTrustee")),
-            Seq("site.not_entered"),
-            answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee"))))))
-        )
-        )
+          PartnershipPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
       }
+      "for existing partnership" must {
+        "return answer row with change links if there is a previous address" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-    "return row with change links for existing establisher if there is a previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(PartnershipPreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers:UserAnswers = request.userAnswers
+          PartnershipPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
 
-        PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__previousAddressFor", messages("messages__theTrustee")),
-            addressAnswer(address),
-            answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
-          )))
-      }
+        "return answer row with add link if there is no previous address and `is this previous address` is no" in {
+          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteePartnershipDetails(index, trusteeName).
+            set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
-    "return row with change links for new establisher if there is a previous address" in {
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-        UserAnswers().set(PartnershipPreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
-      implicit val userAnswers:UserAnswers = request.userAnswers
+          PartnershipPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
+        }
 
-      PartnershipPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-        AnswerRow(
-          Message("messages__previousAddressFor", messages("messages__theTrustee")),
-          addressAnswer(address),
-          answerIsMessageKey = false,
-          Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", messages("messages__theTrustee")))))
-        )))
+        "return no answer row if there is no previous address and `is this previous address` is yes" in {
+          val answersWithYesIsThisPreviousAddress = UserAnswers().set(PartnershipConfirmPreviousAddressId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, PsaId("A0000000"))
+
+          PartnershipPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+        }
       }
     }
   }
+}
+
+object PartnershipPreviousAddressIdSpec extends OptionValues {
+  private val index = 0
+  implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+  private val trusteeName = PartnershipDetails("test partnership")
+  private val address = Address(
+    "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
+  )
+
+  private def addressAnswer(address: Address): Seq[String] = {
+    val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+
+    Seq(
+      Some(address.addressLine1),
+      Some(address.addressLine2),
+      address.addressLine3,
+      address.addressLine4,
+      address.postcode,
+      Some(country)
+    ).flatten
+  }
+
+  private val onwardUrl = "onwardUrl"
+
+  private val answers: UserAnswers = UserAnswers().trusteePartnershipDetails(index, trusteeName).set(PartnershipPreviousAddressId(index))(address).asOpt.value
 }

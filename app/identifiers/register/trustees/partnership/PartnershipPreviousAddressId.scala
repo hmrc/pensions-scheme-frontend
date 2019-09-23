@@ -47,7 +47,7 @@ object PartnershipPreviousAddressId {
         PreviousAddressCYA(label(id.index, ua),
           changeAddress(id.index, ua),
           ua.get(IsTrusteeNewId(id.index)),
-          ua.get(PartnershipAddressYearsId(id.index))
+          ua.get(PartnershipConfirmPreviousAddressId(id.index))
         )().updateRow(id)(changeUrl, ua)
     }
   }
