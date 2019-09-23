@@ -71,7 +71,7 @@ trait EntityListBehaviours {
           val visibleText = doc.select(s"#person-${item.index}-delete span").first.text
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
           link.size mustBe 1
-          visibleText mustBe messages("site.delete")
+          visibleText mustBe messages("site.remove")
           hiddenText mustBe item.name
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
@@ -117,7 +117,7 @@ trait EntityListBehaviours {
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
 
           link.size mustBe 1
-          visibleText mustBe messages("site.delete")
+          visibleText mustBe messages("site.remove")
           hiddenText mustBe item.name
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
