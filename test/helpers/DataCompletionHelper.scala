@@ -111,5 +111,5 @@ trait DataCompletionHelper extends OptionValues {
   protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
 
-
+ 
 }

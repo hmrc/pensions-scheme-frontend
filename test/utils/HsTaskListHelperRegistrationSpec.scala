@@ -165,8 +165,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   }
 
   "establishers" must {
-
-    behave like establishersSection(NormalMode, None)
     behave like establishersSectionHnS(NormalMode, None)
   }
 
@@ -192,54 +190,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     "not have link when working knowledge section not completed" in {
       val userAnswers = answersData(isCompleteWk = false).asOpt.value
       mustNotHaveDeclarationLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
-    }
-  }
-
-  def establishersSection(mode: Mode, srn: Option[String]): Unit = {
-
-    "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allAnswers
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
-      helper.establishers(userAnswers, mode, srn) mustBe
-        Seq(
-//          SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(companyLinkText,
-//          controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(mode, srn, 0).url), Some(true))), Some("Test company name")),
-          SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
-            controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, 1, srn).url),
-            Some(true))), Some("Test individual name")),
-          SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, 2, srn).url),
-            Some(true))), Some("Test Partnership"))
-        )
-    }
-
-    "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allAnswersIncomplete
-      val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
-      helper.establishers(userAnswers, NormalMode, None) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(companyLinkText,
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, 0).url), Some(false))), Some("Test company name")),
-          SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 1, srn).url),
-            Some(false))), Some("Test individual name")),
-          SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 2, srn).url),
-            Some(false))), Some("Test Partnership"))
-        )
-    }
-
-    "return the seq of establishers sub sections after filtering out deleted establishers" in {
-
-      val helper = new HsTaskListHelperRegistration(deletedEstablishers, fakeFeatureManagementService)
-      helper.establishers(deletedEstablishers, NormalMode, None) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None).url),
-          Some(false))), Some("firstName lastName")),
-          SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(partnershipLinkText,
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 2, None).url),
-            Some(false))), Some("test partnership"))
-        )
     }
   }
 }
