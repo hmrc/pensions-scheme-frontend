@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, DateHelper, UserAnswers}
-import viewmodels.{AnswerRow, Message}
+import viewmodels.AnswerRow
 
 class TrusteeDOBIdSpec extends SpecBase {
 

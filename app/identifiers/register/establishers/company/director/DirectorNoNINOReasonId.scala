@@ -38,7 +38,7 @@ object DirectorNoNINOReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorNoNINOReasonId] = {
 
     def label(establisherIndex: Int, directorIndex: Int) = userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-      case Some(name) => Some(messages("messages__noNinoReason__heading", name.fullName))
+      case Some(name) => Some(messages("messages__noGenericNino__heading", name.fullName))
       case _ => Some(messages("messages__directorNoNinoReason__cya_fallback"))
     }
 
