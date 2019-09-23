@@ -47,6 +47,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
+
         contentAsString(result) mustBe viewAsString(answerSections(request))
       }
 
@@ -103,7 +104,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
-
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
@@ -180,7 +180,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
       reasonLabel = "messages__company__cya__utr_no_reason"
     )().row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
 
-    val isDormantRows = IsDormantCYA()().row(IsCompanyDormantId(index))(isCompanyDormantRoute, request.userAnswers)
+    val isDormantRows = IsDormantCYA(
+      label = "messages__company__cya__dormant",
+      changeIsDormant = messages("messages__visuallyhidden__dynamic_company__dormant", companyDetails.companyName)
+    )().row(IsCompanyDormantId(index))(isCompanyDormantRoute, request.userAnswers)
 
     AnswerSection(
       Some("messages__common__company_details__title"),
@@ -191,17 +194,17 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
 
     val addressRows = AddressCYA(
       label = Message("messages__establisherConfirmAddress__cya_label", companyDetails.companyName),
-      changeAddress = "messages__establisherConfirmAddress__cya_visually_hidden_label")().row(
+      changeAddress = messages("messages__visuallyhidden__dynamic_address", companyDetails.companyName))().row(
       CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
 
     val addressYearsRows = AddressYearsCYA(label = Message("messages__company_address_years__h1", companyDetails.companyName),
-      changeAddressYears = "messages__visuallyhidden__establisher__address_years")().row(CompanyAddressYearsId(index))(
+      changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", companyDetails.companyName))().row(CompanyAddressYearsId(index))(
       companyAddressYearsRoute, request.userAnswers
     )
 
     val previousAddressRows = AddressCYA(
       label = Message("messages__establisherPreviousConfirmAddress__cya_label", companyDetails.companyName),
-      changeAddress = "messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"
+      changeAddress = messages("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName)
     )().row(CompanyPreviousAddressId(index))(companyPreviousAddressRoute, request.userAnswers)
 
     val contactDetailsRows = ContactDetailsCYA(

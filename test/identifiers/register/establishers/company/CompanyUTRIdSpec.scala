@@ -30,21 +30,29 @@ import viewmodels.AnswerRow
 
 class CompanyUTRIdSpec extends SpecBase {
 
-  val onwardUrl = "onwardUrl"
-  val name = "test company name"
-  val utr = "1234567890"
+  private val companyName = "test company"
+
+  val onwardUrl                               = "onwardUrl"
+  val name                                    = "test company name"
+  val utr                                     = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyUTR"))))
+    AnswerRow(
+      "messages__utr__checkyouranswerslabel",
+      List(utr),
+      false,
+      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_utr", companyName))))
+    )
   )
 
-  private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
+  private val answerRowsWithoutChangeLink = Seq(AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
 
   "Cleanup" when {
-    def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(NoCompanyUTRId(0))("reason").asOpt.value
+    def answers: UserAnswers =
+      UserAnswers(Json.obj())
+        .set(NoCompanyUTRId(0))("reason")
+        .asOpt
+        .value
 
     "remove the data for `NoCompanyUTRReason`" in {
       val result: UserAnswers = answers.set(CompanyUTRId(0))(ReferenceValue("utr")).asOpt.value
@@ -54,12 +62,19 @@ class CompanyUTRIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(CompanyUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers =
+      UserAnswers()
+        .set(CompanyUTRId(0))(ReferenceValue(utr, isEditable))
+        .flatMap(
+          _.set(CompanyDetailsId(0))(CompanyDetails(companyName))
+        )
+        .asOpt
+        .get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+        val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
@@ -71,7 +86,7 @@ class CompanyUTRIdSpec extends SpecBase {
       "for new establisher" must {
 
         "return answers rows with change links" in {
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
           CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
@@ -80,26 +95,28 @@ class CompanyUTRIdSpec extends SpecBase {
       "for existing establisher" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add",onwardUrl,
-              Some("messages__visuallyhidden__companyUTR")
-              )))
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
+          val answerRowWithAddLink = AnswerRow(
+            "messages__utr__checkyouranswerslabel",
+            List("site.not_entered"),
+            answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_utr", companyName))))
+          )
+          val answers                           = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks

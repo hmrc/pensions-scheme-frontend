@@ -16,6 +16,8 @@
 
 package utils.checkyouranswers
 
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models.AddressYears.UnderAYear
 import models._
@@ -33,6 +35,24 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 
   def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
+}
+
+trait CheckYourAnswersDirectors[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def directorName(establisherIndex:Int, directorIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
+    ua.get(DirectorNameId(establisherIndex, directorIndex)).fold(messages("messages__theDirector"))(_.fullName)
+
+  protected def dynamicMessage(establisherIndex: Int, directorIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
+    messages(messageKey, directorName(establisherIndex, directorIndex, ua))
+
+}
+
+trait CheckYourAnswersCompany[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def companyName(establisherIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
+    ua.get(CompanyDetailsId(establisherIndex)).fold(messages("messages__theCompany"))(_.companyName)
+
+  protected def dynamicMessage(establisherIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
+    messages(messageKey, companyName(establisherIndex, ua))
+
 }
 
 object CheckYourAnswers {
