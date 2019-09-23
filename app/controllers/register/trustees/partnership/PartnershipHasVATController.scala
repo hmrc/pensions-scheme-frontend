@@ -49,7 +49,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
-      title = Message("messages__vat__title", Message("messages__common__address_years__partnership").resolve),
+      title = Message("messages__vat__title", Message("messages__common__partnership").resolve),
       heading = Message("messages__vat__heading", partnershipName),
       hint = None,
       srn = srn

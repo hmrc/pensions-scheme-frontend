@@ -174,27 +174,39 @@
         "name": "Test Partnership",
         "isDeleted": false
       },
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
+      },
+      "hasVat": true,
       "partnershipVat": {
-        "hasVat": true,
-        "vat": "123456789"
+        "value": "123456789",
+        "isEditable": true
       },
+      "hasPaye": true,
       "partnershipPaye": {
-        "hasPaye": true,
-        "paye": "123456"
-      },
-      "partnershipUniqueTaxReference": {
-        "hasUtr": true,
-        "utr": "1234567890"
+        "value": "123456",
+        "isEditable": true
       },
       "partnershipAddress": {
-        "addressLine1": "4 Other Place",
+        "addressLine1": "2 Other Place",
         "addressLine2": "Some District",
         "addressLine3": "Anytown",
         "addressLine4": "Somerset",
         "postcode": "ZZ1 1ZZ",
         "country": "GB"
       },
-      "partnershipAddressYears": "over_a_year",
+      "partnershipAddressYears": "under_a_year",
+      "hasBeenTrading": true,
+      "partnershipPreviousAddress": {
+        "addressLine1": "6 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
       "partnershipContactDetails": {
         "emailAddress": "r@r.r",
         "phoneNumber": "123456"

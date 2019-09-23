@@ -34,7 +34,7 @@ import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers,
                                 featureSwitchManagementService: FeatureSwitchManagementService
-                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils {
+                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
   override val isHnSPhase1Enabled: Boolean = featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled)
   override val isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
@@ -174,6 +174,13 @@ abstract class HsTaskListHelper(answers: UserAnswers,
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              Some(section.name))
+            )
+
+          case EstablisherPartnershipDetailsId(_) if featureSwitchManagementService.get(Toggles.isHnSEnabled) =>
+            Some(SchemeDetailsTaskListEntitySection(
+              None,
+              getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
 

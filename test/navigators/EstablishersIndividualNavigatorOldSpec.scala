@@ -31,9 +31,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class EstablishersIndividualNavigatorOldSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
-  import EstablishersIndividualNavigatorSpec._
+  import EstablishersIndividualNavigatorOldSpec._
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = {
     Table(
@@ -66,8 +66,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     )
   }
 
-  private val navigator: EstablishersIndividualNavigator =
-    new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector)
+  private val navigator: EstablishersIndividualNavigatorOld =
+    new EstablishersIndividualNavigatorOld(frontendAppConfig, FakeUserAnswersCacheConnector)
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
@@ -76,7 +76,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
   }
 }
 
-object EstablishersIndividualNavigatorSpec extends SpecBase with OptionValues {
+object EstablishersIndividualNavigatorOldSpec extends SpecBase with OptionValues {
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYearNew = UserAnswers(Json.obj())

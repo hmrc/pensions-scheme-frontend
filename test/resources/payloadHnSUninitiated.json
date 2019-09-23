@@ -36,6 +36,14 @@
         "lastName": "Individual",
         "isDeleted": false
       }
+    },
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "partnership",
+      "partnershipDetails": {
+        "partnershipName": "Test Partnership",
+        "isDeleted": false
+      }
     }
   ]
 }

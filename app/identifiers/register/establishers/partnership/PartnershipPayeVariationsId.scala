@@ -35,19 +35,26 @@ object PartnershipPayeVariationsId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
     new CheckYourAnswers[PartnershipPayeVariationsId] {
 
-      private val payeLabel = "messages__common__cya__paye"
-      private val hiddenLabelPaye = "messages__visuallyhidden__establisher__paye_number"
+      def getLabel(index: Int, ua: UserAnswers): (String, String) = {
+        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
+        (messages("messages__dynamic_whatIsPAYE", partnershipName),
+          messages("messages__visuallyhidden__dynamic_paye", partnershipName))
+      }
 
-      override def row(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipPayeVariationsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, ua)
+        ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().row(id)(changeUrl, ua)
+      }
 
-      override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsEstablisherNewId(id.index)) match {
+      override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, ua)
+        ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().row(id)(changeUrl, ua)
           case _ =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
         }
+      }
     }
   }
 }

@@ -41,7 +41,7 @@ class EstablisherNameController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
+                                           val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
