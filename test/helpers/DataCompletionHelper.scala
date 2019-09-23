@@ -17,10 +17,12 @@
 package helpers
 
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import identifiers.register.trustees.company.CompanyUTRId
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
+import models.person.PersonName
 import models.register.DeclarationDormant
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -32,6 +34,7 @@ trait DataCompletionHelper extends OptionValues {
   private val stringValue = "value"
   private val firstName   = "firstName"
   private val lastName    = "lastName"
+  private val dateValue = new LocalDate(2000, 6, 9)
 
   protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value
@@ -134,6 +137,9 @@ trait DataCompletionHelper extends OptionValues {
   protected def setCompanyCompletionStatusContactDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setCompanyCompletionStatusJsResultContactDetails(isComplete, index, ua).asOpt.value
 
+  protected def setCompanyCompletionStatusDirectorDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
+    setCompanyCompletionStatusJsResultDirectorDetails(isComplete, index, ua).asOpt.value
+
   protected def setCompanyCompletionStatusJsResultCompanyDetails(isComplete: Boolean,
                                                                     index: Int = 0,
                                                                     ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
@@ -217,6 +223,18 @@ trait DataCompletionHelper extends OptionValues {
     }
     else {
       ua.set(CompanyPhoneId(index))(stringValue)
+    }
+
+  protected def setCompanyCompletionStatusJsResultDirectorDetails(isComplete: Boolean,
+                                                                 index: Int = 0,
+                                                                 ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
+    if (isComplete) {
+      ua.set(DirectorNameId(0,0))(PersonName(stringValue,stringValue))
+        .asOpt
+        .value
+        .set(DirectorDOBId(0,0))(
+    } else {
+
     }
 
   protected def setCompanyCompletionStatusJsResult(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): JsResult[UserAnswers] =
