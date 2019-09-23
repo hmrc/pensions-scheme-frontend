@@ -57,7 +57,7 @@ object HasCompanyVATId {
 
       override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => BooleanCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
+          case Some(true) => row(id)(changeUrl, userAnswers)
           case _          => Seq.empty[AnswerRow]
         }
     }
