@@ -1,13 +1,8 @@
 {
-  "schemeDetails": {
-    "schemeName": "Test scheme name",
-    "schemeType": {
-      "name": "single"
-    }
-  },
-  "lastPage": {
-    "method": "GET",
-    "url": "/register-pension-scheme/register/declaration-dormant-company"
+  "schemeName": "Test Scheme Name",
+  "isBeforeYouStartComplete": true,
+  "schemeType": {
+    "name": "single"
   },
   "schemeEstablishedCountry": "GB",
   "membership": "opt2",
@@ -23,380 +18,111 @@
     {
       "establisherKind": "company",
       "companyDetails": {
-        "companyName": "Test company name",
+        "companyName": "Test Company Name",
         "isDeleted": false
       },
+      "hasCrn": true,
       "companyRegistrationNumber": {
-        "hasCrn": true,
-        "crn": "AB123456"
+        "value": "AB123456",
+        "isEditable": true
       },
-      "companyUniqueTaxReference": {
-        "hasUtr": true,
-        "utr": "1234567890"
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
       },
-      "companyAddresses": [
-        {
-          "addressLine1": "10 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "2 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "3 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "4 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "5 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "6 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "8 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "9 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 1",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 2",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 3",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        }
-      ],
-      "companyAddressList": {
-        "addressLine1": "10 Other Place",
-        "addressLine2": "Some District",
-        "addressLine3": "Anytown",
-        "addressLine4": "Somerset",
-        "postalCode": "ZZ1 1ZZ",
-        "countryCode": "GB"
-      },
+      "isCompanyDormant": "no",
+      "isAddressComplete": true,
       "companyAddress": {
-        "addressLine1": "10 Other Place",
+        "addressLine1": "2 Other Place",
         "addressLine2": "Some District",
         "addressLine3": "Anytown",
         "addressLine4": "Somerset",
         "postcode": "ZZ1 1ZZ",
         "country": "GB"
       },
-      "companyAddressYears": "over_a_year",
-      "companyContactDetails": {
-        "emailAddress": "m@m.m",
-        "phoneNumber": "1234567"
+      "companyAddressYears": "under_a_year",
+      "isCompanyComplete": false,
+      "isEstablisherComplete": false,
+      "hasBeenTrading": true,
+      "companyPreviousAddress": {
+        "addressLine1": "6 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
       },
-      "isCompanyComplete": true,
+      "isContactDetailsComplete": true,
+      "companyContactDetails": {
+        "emailAddress": "z@z.z",
+        "phoneNumber": "12345"
+      },
       "director": [
         {
+          "isNewDirector": true,
           "directorDetails": {
-            "firstName": "first",
-            "middleName": "middle",
-            "lastName": "last",
-            "date": "2001-01-01",
+            "firstName": "Director",
+            "lastName": "One",
             "isDeleted": false
           },
+          "dateOfBirth": "2002-01-01",
+          "hasNino": true,
           "directorNino": {
-            "hasNino": true,
-            "nino": "AB123456C"
+            "value": "AB123456C",
+            "isEditable": true
           },
-          "directorUniqueTaxReference": {
-            "hasUtr": true,
-            "utr": "9876543210"
-          },
-          "directorAddressPostcodeLookup": [
-            {
-              "addressLine1": "10 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "2 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "3 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "4 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "5 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "6 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "8 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "9 Other Place",
-              "addressLine2": "Some District",
-              "addressLine3": "Anytown",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "Flat 1",
-              "addressLine2": "7 Other Place",
-              "addressLine3": "Some District",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "Flat 2",
-              "addressLine2": "7 Other Place",
-              "addressLine3": "Some District",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            },
-            {
-              "addressLine1": "Flat 3",
-              "addressLine2": "7 Other Place",
-              "addressLine3": "Some District",
-              "addressLine4": "Somerset",
-              "postalCode": "ZZ1 1ZZ",
-              "countryCode": "UK"
-            }
-          ],
-          "directorAddressList": {
-            "addressLine1": "2 Other Place",
-            "addressLine2": "Some District",
-            "addressLine3": "Anytown",
-            "addressLine4": "Somerset",
-            "postalCode": "ZZ1 1ZZ",
-            "countryCode": "GB"
+          "hasUtr": true,
+          "utr": {
+            "value": "1234567890",
+            "isEditable": true
           },
           "directorAddressId": {
-            "addressLine1": "2 Other Place",
-            "addressLine2": "Some District",
-            "addressLine3": "Anytown",
+            "addressLine1": "Flat 1",
+            "addressLine2": "7 Other Place",
+            "addressLine3": "Some District",
             "addressLine4": "Somerset",
             "postcode": "ZZ1 1ZZ",
             "country": "GB"
           },
-          "companyDirectorAddressYears": "over_a_year",
-          "directorContactDetails": {
-            "emailAddress": "a@a.a",
-            "phoneNumber": "321"
+          "companyDirectorAddressYears": "under_a_year",
+          "isDirectorComplete": true,
+          "previousAddress": {
+            "addressLine1": "Flat 2",
+            "addressLine2": "7 Other Place",
+            "addressLine3": "Some District",
+            "addressLine4": "Somerset",
+            "postcode": "ZZ1 1ZZ",
+            "country": "GB"
           },
-          "isDirectorComplete": true
+          "directorContactDetails": {
+            "emailAddress": "p@p.p",
+            "phoneNumber": "345678"
+          }
         }
-      ],
-      "isEstablisherComplete": true,
-      "isCompanyDormant" : "no"
+      ]
     },
     {
+      "isEstablisherNew": true,
       "establisherKind": "individual",
       "establisherDetails": {
         "firstName": "Test",
-        "middleName": "individual",
-        "lastName": "name",
-        "date": "2002-02-02",
+        "lastName": "Individual",
         "isDeleted": false
       },
+      "dateOfBirth": "2002-01-01",
+      "hasNino": true,
       "establisherNino": {
-        "hasNino": true,
-        "nino": "AB234567C"
+        "value": "AB123456C",
+        "isEditable": true
       },
-      "uniqueTaxReference": {
-        "hasUtr": true,
-        "utr": "9876543210"
-      },
-      "addresses": [
-        {
-          "addressLine1": "10 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "2 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "3 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "4 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "5 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "6 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "8 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "9 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 1",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 2",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 3",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        }
-      ],
-      "addressResults": {
-        "addressLine1": "3 Other Place",
-        "addressLine2": "Some District",
-        "addressLine3": "Anytown",
-        "addressLine4": "Somerset",
-        "postalCode": "ZZ1 1ZZ",
-        "countryCode": "GB"
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
       },
       "address": {
-        "addressLine1": "3 Other Place",
+        "addressLine1": "2 Other Place",
         "addressLine2": "Some District",
         "addressLine3": "Anytown",
         "addressLine4": "Somerset",
@@ -405,127 +131,180 @@
       },
       "addressYears": "over_a_year",
       "contactDetails": {
-        "emailAddress": "e@e.e",
-        "phoneNumber": "456456"
+        "emailAddress": "q@q.q",
+        "phoneNumber": "1234"
+      }
+    },
+    {
+      "isEstablisherNew": true,
+      "establisherKind": "partnership",
+      "partnershipDetails": {
+        "name": "Test Partnership",
+        "isDeleted": false
       },
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
+      },
+      "hasVat": true,
+      "partnershipVat": {
+        "value": "123456789",
+        "isEditable": true
+      },
+      "hasPaye": true,
+      "partnershipPaye": {
+        "value": "123456",
+        "isEditable": true
+      },
+      "partnershipAddress": {
+        "addressLine1": "2 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "partnershipAddressYears": "under_a_year",
+      "hasBeenTrading": true,
+      "partnershipPreviousAddress": {
+        "addressLine1": "6 Other Place",
+        "addressLine2": "Some District",
+        "addressLine3": "Anytown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "partnershipContactDetails": {
+        "emailAddress": "r@r.r",
+        "phoneNumber": "123456"
+      },
+      "isPartnershipCompleteId": true,
+      "partner": [
+        {
+          "isNewPartner": true,
+          "partnerDetails": {
+            "firstName": "Partner",
+            "lastName": "One",
+            "date": "2001-01-01",
+            "isDeleted": false
+          },
+          "partnerNino": {
+            "hasNino": true,
+            "nino": "AB123456C"
+          },
+          "partnerUniqueTaxReference": {
+            "hasUtr": true,
+            "utr": "1234567890"
+          },
+          "partnerAddressId": {
+            "addressLine1": "10 Other Place",
+            "addressLine2": "Some District",
+            "addressLine3": "Anytown",
+            "addressLine4": "Somerset",
+            "postcode": "ZZ1 1ZZ",
+            "country": "GB"
+          },
+          "partnerAddressYears": "over_a_year",
+          "partnerContactDetails": {
+            "emailAddress": "e@e.e",
+            "phoneNumber": "1234567"
+          },
+          "isPartnerComplete": true
+        }
+      ],
       "isEstablisherComplete": true
     }
   ],
   "trustees": [
     {
-      "partnershipDetails": {
-        "name": "Test partnership name",
+      "isTrusteeNew": true,
+      "trusteeKind": "company",
+      "companyDetails": {
+        "companyName": "test company",
         "isDeleted": false
       },
-      "partnershipVat": {
-        "hasVat": true,
-        "vat": "123456789"
+      "hasCrn": true,
+      "companyRegistrationNumber": {
+        "value": "12345678",
+        "isEditable": true
       },
-      "partnershipPaye": {
-        "hasPaye": true,
-        "paye": "123AB56789"
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
       },
-      "partnershipUniqueTaxReference": {
-        "hasUtr": true,
-        "utr": "1234567890"
+      "hasVat": false,
+      "hasPaye": true,
+      "companyPaye": {
+        "value": "123456",
+        "isEditable": true
       },
-      "partnershipPostcodeLookup": [
-        {
-          "addressLine1": "10 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "2 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "3 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "4 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "5 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "6 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "8 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "9 Other Place",
-          "addressLine2": "Some District",
-          "addressLine3": "Anytown",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 1",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 2",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        },
-        {
-          "addressLine1": "Flat 3",
-          "addressLine2": "7 Other Place",
-          "addressLine3": "Some District",
-          "addressLine4": "Somerset",
-          "postalCode": "ZZ1 1ZZ",
-          "countryCode": "UK"
-        }
-      ],
-      "partnershipAddressList": {
+      "companyAddress": {
         "addressLine1": "4 Other Place",
         "addressLine2": "Some District",
         "addressLine3": "Anytown",
         "addressLine4": "Somerset",
-        "postalCode": "ZZ1 1ZZ",
-        "countryCode": "GB"
+        "postcode": "ZZ1 1ZZ",
+        "country": "GB"
+      },
+      "trusteesCompanyAddressYears": "over_a_year",
+      "isAddressComplete": true,
+      "isContactDetailsComplete": true,
+      "companyContactDetails": {
+        "emailAddress": "a@a.a",
+        "phoneNumber": "123456"
+      }
+    },
+    {
+      "trusteeKind": "individual",
+      "isTrusteeNew": true,
+      "trusteeDetails": {
+        "firstName": "firstName",
+        "lastName": "lastName",
+        "isDeleted": false
+      },
+      "dateOfBirth": "2002-02-02",
+      "hasNino": false,
+      "noNinoReason": "some reason",
+      "hasUtr": false,
+      "noUtrReason": "reason",
+      "trusteeAddressId": {
+        "addressLine1": "Flat 2a",
+        "addressLine2": "7 Test Street",
+        "addressLine3": "Testtown",
+        "addressLine4": "Somerset",
+        "postcode": "ZZ11 1ZZ",
+        "country": "GB"
+      },
+      "trusteeAddressYears": "over_a_year",
+      "trusteeContactDetails": {
+        "emailAddress": "q@q.q",
+        "phoneNumber": "1234567890"
+      },
+      "isTrusteeComplete": true
+    },
+    {
+      "trusteeKind": "partnership",
+      "isTrusteeNew": true,
+      "partnershipDetails": {
+        "name": "test partnership",
+        "isDeleted": false
+      },
+      "hasUtr": true,
+      "utr": {
+        "value": "1234567890",
+        "isEditable": true
+      },
+      "hasVat": true,
+      "partnershipVat": {
+        "value": "123456789",
+        "isEditable": true
+      },
+      "hasPaye": true,
+      "partnershipPaye": {
+        "value": "123456",
+        "isEditable": true
       },
       "partnershipAddress": {
         "addressLine1": "4 Other Place",
@@ -539,9 +318,7 @@
       "partnershipContactDetails": {
         "emailAddress": "x@x.x",
         "phoneNumber": "98765"
-      },
-      "isPartnershipCompleteId": true
+      }
     }
-  ],
-  "isWorkingKnowledgeComplete": true
+  ]
 }

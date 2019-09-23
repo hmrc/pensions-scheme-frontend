@@ -374,7 +374,7 @@ object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
 
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payloadHnS.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
 
   private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true)

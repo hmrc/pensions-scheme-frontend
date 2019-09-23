@@ -155,16 +155,6 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
   }
 
   "Establisher Individual completion status should be returned correctly" when {
-    "isEstablisherIndividualComplete H&S disabled" must {
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherIndividualComplete(isHnSEnabled = false, 1) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherIndividualComplete(isHnSEnabled = false, 1) mustBe false
-      }
-    }
-
     "isEstablisherIndividualComplete H&S enabled" must {
       "return true when all answers are present" in {
         UserAnswers(userAnswersCompleted).isEstablisherIndividualComplete(isHnSEnabled = true, 1) mustBe true
@@ -223,8 +213,6 @@ object DataCompletionEstablishersSpec extends JsonFileReader with DataCompletion
   private val mode = NormalMode
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
-
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
 
   private val emptyAnswers = UserAnswers()
