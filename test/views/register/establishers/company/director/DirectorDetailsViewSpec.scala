@@ -101,7 +101,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     }
 
     "display only one date error when all the date fields are missing" in {
-      val expectedError = messages("messages__error__date")
+      val expectedError = s"${messages("site.error")} ${messages("messages__error__date")}"
       val invalidData: Map[String, String] = Map(
         "firstName" -> "testFirstName",
         "lastName" -> "testLastName"
