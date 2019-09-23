@@ -54,6 +54,10 @@ trait DataCompletionEstablishers extends DataCompletion {
     val allDirectors = allDirectorsAfterDelete(index)
     val allDirectorsCompleted = allDirectors.nonEmpty & allDirectors.forall(_.isCompleted)
     val isCompanyComplete = isEstablisherCompanyComplete(index, mode)
+    println("\nINDEX:" + index)
+    println("MODE:" + mode)
+    println("CC:" + isCompanyComplete)
+    println("ECC:" + isEstablisherCompanyComplete(index, mode))
     allDirectorsCompleted & isCompanyComplete
   }
 
