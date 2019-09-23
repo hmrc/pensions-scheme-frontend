@@ -73,7 +73,7 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
       .flatMap(_.remove(CompanyPreviousAddressListId(index)))
       .flatMap(_.remove(CompanyPreviousAddressId(index)))
 
-    // TODO 3341 - problems removing these
+    // TODO 3341: Deal with email and phone id
       //.flatMap(_.remove(CompanyEmailId(index)))
       //.flatMap(_.remove(CompanyPhoneId(index)))
       .flatMap(removeAllDirectors)

@@ -156,45 +156,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url
       companyEntity.editLink(NormalMode, None) mustBe None
     }
-// TODO 3341 Is this still needed?
-//    "have cya link when company is completed and new" in {
-//      val completedCompanyEntity = EstablisherCompanyEntity(
-//        EstablisherCompanyDetailsId(index = 1),
-//        name = "test name",
-//        isDeleted = false,
-//        isCompleted = true,
-//        isNewEntity = true,
-//        1
-//      )
-//      val expectedEditLink = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url
-//      completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-//    }
-
-//    "have review link when company is completed and not new" in {
-//      val completedCompanyEntity = EstablisherCompanyEntity(
-//        EstablisherCompanyDetailsId(index = 1),
-//        name = "test name",
-//        isDeleted = false,
-//        isCompleted = true,
-//        isNewEntity = false,
-//        1
-//      )
-//      val expectedEditLink = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url
-//      completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-//    }
-
-//    "have review link when company is not completed and not new" in {
-//      val completedCompanyEntity = EstablisherCompanyEntity(
-//        EstablisherCompanyDetailsId(index = 1),
-//        name = "test name",
-//        isDeleted = false,
-//        isCompleted = false,
-//        isNewEntity = false,
-//        1
-//      )
-//      val expectedEditLink = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(NormalMode, None, 1).url
-//      completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-//    }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Company, None).url

@@ -181,8 +181,22 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
     behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
 
-    //TODO 3341 - fix remove text
     //behave like entityListWithMultipleRecords(createView(), createView(partners), partners, frontendAppConfig)
+
+    "show delete links " when {
+      "multiple records exist" in {
+        val doc = asDocument(createView(partners)())
+        partners.foreach { item =>
+          val link = doc.select(s"#person-${item.index}-delete")
+          val visibleText = doc.select(s"#person-${item.index}-delete span").first.text
+          val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
+          link.size mustBe 1
+          visibleText mustBe messages("site.remove")
+          hiddenText mustBe messages("site.remove") +" " + item.name
+          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
+        }
+      }
+    }
 
   }
 
