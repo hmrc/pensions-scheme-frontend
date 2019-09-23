@@ -111,14 +111,18 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
   }
 
-  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
+  protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+
     (userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode).isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
-      case (true, false) => Some(SchemeDetailsTaskListHeader(link = typeOfEstablisherLink(addEstablisherLinkText,
-        userAnswers.allEstablishers(isHnSPhase2Enabled, mode).size, srn, mode)))
+      case (true, false) =>
+        Some(
+          SchemeDetailsTaskListHeader(
+            link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers(isHnSPhase2Enabled, mode).size, srn, mode)))
       case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(changeEstablisherLinkText, srn, mode)))
-      case (false, true) => None
+      case (false, true)  => None
     }
+  }
 
   protected[utils] override def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {

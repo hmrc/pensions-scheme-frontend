@@ -18,23 +18,26 @@ package utils
 
 import config.FeatureSwitchManagementService
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherNameId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models._
-import models.person.PersonName
+import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType
+import models.register.establishers.EstablisherKind.Indivdual
+import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 
-class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
+class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
   private val srn = Some("test-srn")
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
 
@@ -59,7 +62,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
             _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
               _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
                 _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-                  _.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
+                  _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                     _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
@@ -181,12 +184,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionEstablishers_no_establishers")))
     }
 
-    "not display an add link when scheme is locked and establishers exist" in {
-      val userAnswers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
+    "not display an add link when scheme is locked and establishers exist 2222" in {
+      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
       helper.taskList.addEstablisherHeader mustBe None
     }
+
   }
 
   "addTrusteeHeader" must {
@@ -211,14 +215,35 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
 
   "establishers" must {
 
-    behave like establishersSection()
     behave like establishersSectionHnS(UpdateMode, srn)
   }
 
   "trustees" must {
 
-    behave like trusteesSection()
     behave like trusteesSectionHnS(UpdateMode, srn)
+  }
+
+  override def establishersSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
+
+    "return the seq of establishers sub sections" in {
+      val userAnswers = establisherCompany()
+      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
+      helper.establishers(userAnswers, mode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
+            ), Some("test company"))
+        )
+    }
   }
 
   def variationsTrusteeTests():Unit = {
@@ -327,67 +352,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
   }
-
-  def trusteesSection(): Unit = {
-
-    "return the seq of trustees sub sections for non deleted individual trustees which are all completed" in {
-      val userAnswers = allTrusteesIndividual()
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(
-            isCompleted = None,
-            entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
-            ),
-            Some("firstName lastName")
-          )
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are not completed" in {
-      val userAnswers = allTrusteesIndividual(isCompleteTrustees = false)
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(
-            isCompleted = None,
-            entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
-            ),
-            Some("firstName lastName")
-          )
-        )
-    }
-
-    "return the seq of trustees sub sections after filtering out deleted trustees" in {
-      val userAnswers = UserAnswers().set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
-          _.set(IsTrusteeNewId(0))(true).flatMap(
-            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-                _.set(IsTrusteeNewId(1))(true).flatMap(
-                  _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                    _.set(IsTrusteeNewId(2))(true))
-                  )))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-  }
 }
 
 class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
@@ -406,5 +370,4 @@ class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
     }
   }
 }
-
 

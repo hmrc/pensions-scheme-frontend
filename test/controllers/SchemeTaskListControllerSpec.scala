@@ -68,7 +68,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
     }
 
-    "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
+    "In UpdateMode when user holds the lock" must {
 
       "return OK and the correct view for a GET where scheme status is open" in {
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
