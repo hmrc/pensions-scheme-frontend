@@ -32,7 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
+class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            override val userAnswersService: UserAnswersService,
                                            override val navigator: Navigator,
@@ -47,7 +47,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(mode, index, srn),
+      postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(mode, index, srn),
       title = Message("messages__hasCompanyCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
       hint = Some(Message("messages__hasCompanyNumber__p1")),

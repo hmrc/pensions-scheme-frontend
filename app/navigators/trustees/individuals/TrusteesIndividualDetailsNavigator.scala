@@ -86,13 +86,13 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
 object TrusteesIndividualDetailsNavigator {
   private def hasNinoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeHasNINOController.onPageLoad(mode, index, srn)
 
-  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNinoNewController.onPageLoad(mode, index, srn)
+  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeEnterNINOController.onPageLoad(mode, index, srn)
 
   private def trusteeHasUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeHasUTRController.onPageLoad(mode, index, srn)
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoNINOReasonController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeUTRController.onPageLoad(mode, index, srn)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeEnterUTRController.onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = TrusteeNoUTRReasonController.onPageLoad(mode, index, srn)
 

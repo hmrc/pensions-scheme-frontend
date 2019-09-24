@@ -32,7 +32,7 @@ import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
+class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           override val userAnswersService: UserAnswersService,
                                           val navigator: Navigator,
@@ -47,7 +47,7 @@ class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppCon
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
-      postCall = controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(mode, index, srn),
+      postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(mode, index, srn),
       title = Message("messages__companyNoCompanyNumber__establisher__title"),
       heading = Message("messages__noCompanyNumber__establisher__heading", companyName),
       srn = srn

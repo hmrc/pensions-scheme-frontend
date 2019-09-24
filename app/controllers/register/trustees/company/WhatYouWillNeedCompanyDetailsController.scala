@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.register.trustees.company.routes.HasCompanyNumberController
+import controllers.register.trustees.company.routes.HasCompanyCRNController
 import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
@@ -48,7 +48,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
             whatYouWillNeedCompanyDetails(
               appConfig = appConfig,
               schemeName = existingSchemeName,
-              href = HasCompanyNumberController.onSubmit(mode, index, srn),
+              href = HasCompanyCRNController.onSubmit(mode, index, srn),
               srn = srn,
               title = Message("messages__whatYouWillNeedTrusteeCompany__h1", companyName
               )

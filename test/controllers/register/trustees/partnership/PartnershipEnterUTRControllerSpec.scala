@@ -33,11 +33,11 @@ import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnershipUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipUTRControllerSpec._
+  import PartnershipEnterUTRControllerSpec._
 
-  "PartnershipUTRController" must {
+  "PartnershipEnterUTRController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -71,7 +71,7 @@ class PartnershipUTRControllerSpec extends ControllerSpecBase with MustMatchers 
 
 
 
-object PartnershipUTRControllerSpec extends PartnershipUTRControllerSpec {
+object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSpec {
 
   val formProvider = new UTRFormProvider()
   val form: Form[ReferenceValue] = formProvider()
@@ -82,7 +82,7 @@ object PartnershipUTRControllerSpec extends PartnershipUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.PartnershipUTRController.onSubmit(NormalMode, index, srn),
+    routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),
     title = Message("messages__partnershipUtr__title"),
     heading = Message("messages__trusteeUtr__h1", "test partnership name"),
     hint = Message("messages_utr__hint"),
@@ -104,8 +104,8 @@ object PartnershipUTRControllerSpec extends PartnershipUTRControllerSpec {
     ))
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipUTRController =
-    new PartnershipUTRController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipEnterUTRController =
+    new PartnershipEnterUTRController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,

@@ -17,10 +17,9 @@
 package controllers.register.trustees.company
 
 import base.CSRFRequest
-import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import forms.PayeVariationsFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -29,74 +28,62 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import play.api.test.Helpers.{contentAsString, status, _}
-import viewmodels.{CompanyRegistrationNumberViewModel, Message}
-import views.html.register.companyRegistrationNumberVariations
+import viewmodels.{Message, PayeViewModel}
+import views.html.payeVariations
 
 import scala.concurrent.Future
 
-class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyRegistrationNumberVariationsControllerSpec._
+  import CompanyEnterPAYEControllerSpec._
 
-  val appConfig = app.injector.instanceOf[FrontendAppConfig]
-
-  "CompanyRegistrationNumberVariationsControllerSpec" must {
+  "CompanyEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe
-            companyRegistrationNumberVariations(
-              appConfig,
-              viewModel(),
-              form,
-              None,
-              postCall(CheckUpdateMode, srn, firstIndex),
-              srn
-            )(request, messages).toString
-
+          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyRegistrationNumberVariationsController.onSubmit(CheckUpdateMode, srn, firstIndex))
-          .withFormUrlEncodedBody(("companyRegistrationNumber", "1234567"))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
+          .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
+
   }
 
 }
 
-object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistrationNumberVariationsControllerSpec {
+object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
-  val companyName = "test company name"
-  val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
+  val form = new PayeVariationsFormProvider()("test company name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
-    CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__trustee__title"),
-      heading = Message("messages__companyNumber__trustee__heading", companyName),
-      hint = Message("messages__common__crn_hint", companyName)
-    )
-  }
-
-  val postCall = routes.CompanyRegistrationNumberVariationsController.onSubmit _
-
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val viewModel = PayeViewModel(
+    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__payeVariations__company_title"),
+    heading = Message("messages__payeVariations__heading", "test company name"),
+    hint = Some(Message("messages__payeVariations__hint")),
+    srn = srn,
+    entityName = Some("test company name")
+  )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
                               (implicit writeable: Writeable[T]): Unit = {
@@ -107,6 +94,7 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
       bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
     )) {
       app =>
         val req = request(app)
@@ -116,3 +104,11 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
   }
 
 }
+
+
+
+
+
+
+
+

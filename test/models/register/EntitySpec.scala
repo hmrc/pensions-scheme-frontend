@@ -278,7 +278,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1, None).url
+      val expectedEditLink = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 1, None).url
       partnershipEntity.editLink(NormalMode, None) mustBe None
     }
 

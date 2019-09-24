@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.trustees.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import forms.{PayeFormProvider, PayeVariationsFormProvider}
-import models.{CheckUpdateMode, Index, NormalMode}
+import controllers.actions._
+import forms.UTRFormProvider
+import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -28,63 +28,60 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
-import viewmodels.{Message, PayeViewModel}
-import views.html.{paye, payeVariations}
+import utils.annotations.TrusteesCompany
+import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.Future
 
-class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipPayeVariationsControllerSpec._
+  import CompanyEnterUTRControllerSpec._
 
-  "PartnershipPayeVariationsController" must {
+  "CompanyEnterUTRController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
-          .withFormUrlEncodedBody(("paye", "123456789"))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
+          .withFormUrlEncodedBody(("utr", "1234567890"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
-
   }
-
 }
 
 
-object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariationsControllerSpec {
 
-  val partnershipName = "test partnership name"
-  val form = new PayeVariationsFormProvider()(partnershipName)
+object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
+
+  val form = new UTRFormProvider()()
   val firstIndex = Index(0)
   val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = PayeViewModel(
-    routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__common_partnershipPaye__title"),
-    heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
-    hint = Some(Message("messages__payeVariations__hint")),
-    srn = srn,
-    entityName = Some(partnershipName)
+  val viewModel = UTRViewModel(
+    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
+    title = Message("messages__companyUtr__title"),
+    heading = Message("messages__companyUtr__heading", "test company name"),
+    hint = Message("messages_utr__hint"),
+    srn = srn
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -92,7 +89,7 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherPartnership),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
       bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
@@ -103,8 +100,9 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
         test(req, result)
     }
   }
-
 }
+
+
 
 
 

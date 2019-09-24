@@ -33,7 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 
-class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
+class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
   private val schemeName = None
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
@@ -45,7 +45,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
   private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
 
   private val viewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, index, srn),
+    controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, index, srn),
     title = Message("messages__hasCompanyCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "test company name"),
     hint = Some(Message("messages__hasCompanyNumber__p1"))
@@ -67,8 +67,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     ))
   )
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyNumberController =
-    new HasCompanyNumberController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyCRNController =
+    new HasCompanyCRNController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -82,7 +82,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasCompanyNumberController" must {
+  "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)

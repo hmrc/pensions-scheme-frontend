@@ -31,7 +31,7 @@ import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnershipUTRControllerSpec extends ControllerSpecBase {
+class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   appRunning()
   private val schemeName = None
   private val dummyUtr = "1111111111"

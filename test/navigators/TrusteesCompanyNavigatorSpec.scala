@@ -54,9 +54,9 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, None)
 
-  private def companyNoPage(mode: Mode): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
+  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, None, 0)
 
-  private def noCompanyNoPage(mode: Mode): Call = NoCompanyNumberController.onPageLoad(mode, 0, None)
+  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, None)
 
   private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, None)
 
@@ -64,13 +64,13 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, None)
 
-  private def utrPage(mode: Mode): Call = CompanyUTRController.onPageLoad(mode, None, 0)
+  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, None, 0)
 
   private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
 
   private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, None)
 
-  private def payePage(mode: Mode): Call = CompanyPayeVariationsController.onPageLoad(mode, 0, None)
+  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, None)
 
   private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, None)
 

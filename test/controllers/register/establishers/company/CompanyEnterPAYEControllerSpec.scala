@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
-import forms.register.NoCompanyNumberFormProvider
-import models.{Index, NormalMode}
+import controllers.actions._
+import forms.PayeVariationsFormProvider
+import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -28,34 +28,35 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import viewmodels.{Message, ReasonViewModel}
-import views.html.reason
+import utils.annotations.EstablishersCompany
+import viewmodels.{Message, PayeViewModel}
+import views.html.payeVariations
 
 import scala.concurrent.Future
 
-class NoCompanyNumberControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import NoCompanyNumberControllerSpec._
-  "NoCompanyNumberController" must {
+  import CompanyEnterPAYEControllerSpec._
+
+  "CompanyEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.NoCompanyNumberController.onPageLoad(NormalMode, firstIndex, None))),
+        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe reason(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(NormalMode, firstIndex, None))
-          .withFormUrlEncodedBody(("reason", "blaa"))),
+        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+          .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -67,18 +68,21 @@ class NoCompanyNumberControllerSpec extends ControllerSpecBase with MustMatchers
 
 }
 
-object NoCompanyNumberControllerSpec extends NoCompanyNumberControllerSpec {
+object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
-  val form = new NoCompanyNumberFormProvider()("test company name")
+  val form = new PayeVariationsFormProvider()("test company name")
   val firstIndex = Index(0)
+  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = ReasonViewModel(
-    postCall = controllers.register.trustees.company.routes.NoCompanyNumberController.onSubmit(NormalMode, firstIndex, None),
-    title = Message("messages__companyNoCompanyNumber__establisher__title"),
-    heading = Message("messages__noCompanyNumber__establisher__heading", "test company name"),
-    srn = None
+  val viewModel = PayeViewModel(
+    routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__payeVariations__company_title"),
+    heading = Message("messages__payeVariations__heading", "test company name"),
+    hint = Some(Message("messages__payeVariations__hint")),
+    srn = srn,
+    entityName = Some("test company name")
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -86,9 +90,11 @@ object NoCompanyNumberControllerSpec extends NoCompanyNumberControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService)
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
+      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
     )) {
       app =>
         val req = request(app)
@@ -98,6 +104,10 @@ object NoCompanyNumberControllerSpec extends NoCompanyNumberControllerSpec {
   }
 
 }
+
+
+
+
 
 
 

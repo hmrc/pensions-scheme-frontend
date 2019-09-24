@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.trustees.company
 
 import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterUTRId}
 import javax.inject.Inject
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -32,42 +32,44 @@ import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class TrusteeUTRController @Inject()(val appConfig: FrontendAppConfig,
-                                     val messagesApi: MessagesApi,
-                                     val userAnswersService: UserAnswersService,
-                                     val navigator: Navigator,
+class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
+                                     override val messagesApi: MessagesApi,
+                                     override val userAnswersService: UserAnswersService,
+                                      override val navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      allowAccess: AllowAccessActionProvider,
                                      requireData: DataRequiredAction,
                                      formProvider: UTRFormProvider
-                                     )(implicit val ec: ExecutionContext) extends UTRController {
+                                    )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(
-      postCall = routes.TrusteeUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__trusteeUtr__title"),
-      heading = Message("messages__trusteeUtr__h1", trusteeName),
+      postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
+      title = Message("messages__companyUtr__title"),
+      heading = Message("messages__companyUtr__heading", companyName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map { trusteeName =>
-          get(TrusteeUTRId(index), viewModel(mode, index, srn, trusteeName.fullName), form)
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyEnterUTRId(index), viewModel(mode, index, srn, companyName), form)
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      TrusteeNameId(index).retrieve.right.map { trusteeName =>
-        post(TrusteeUTRId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form)
-      }
-  }
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          post(CompanyEnterUTRId(index), mode, viewModel(mode, index, srn, companyName), form)
+        }
+    }
 }

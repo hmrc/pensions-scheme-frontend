@@ -32,7 +32,7 @@ import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class CompanyRegistrationNumberVariationsController @Inject()(
+class CompanyEnterCRNController @Inject()(
                                                                override val appConfig: FrontendAppConfig,
                                                                override val messagesApi: MessagesApi,
                                                                override val userAnswersService: UserAnswersService,
@@ -45,7 +45,7 @@ class CompanyRegistrationNumberVariationsController @Inject()(
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
-  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit
+  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(

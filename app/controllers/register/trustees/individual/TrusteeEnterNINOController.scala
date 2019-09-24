@@ -31,7 +31,7 @@ import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrusteeNinoNewController @Inject()(
+class TrusteeEnterNINOController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
@@ -43,7 +43,7 @@ class TrusteeNinoNewController @Inject()(
                                            val formProvider: NinoNewFormProvider
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
+  private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit _
 
   private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(

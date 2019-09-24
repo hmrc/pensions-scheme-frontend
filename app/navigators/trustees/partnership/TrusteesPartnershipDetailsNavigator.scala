@@ -95,7 +95,7 @@ object TrusteesPartnershipDetailsNavigator {
     AddTrusteeController.onPageLoad(mode, srn)
 
   private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
-    PartnershipUTRController.onPageLoad(mode, index, srn)
+    PartnershipEnterUTRController.onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call =
     PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
@@ -110,7 +110,7 @@ object TrusteesPartnershipDetailsNavigator {
     PartnershipHasPAYEController.onPageLoad(mode, index, srn)
 
   private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
-    PartnershipPayeVariationsController.onPageLoad(mode, index, srn)
+    PartnershipEnterPAYEController.onPageLoad(mode, index, srn)
 
   private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)

@@ -182,7 +182,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad(mode, 0, None)
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, None, 0)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(mode, None, 0)

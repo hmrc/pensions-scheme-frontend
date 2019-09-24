@@ -60,7 +60,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
   private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
-  "HasCompanyNumberController" must {
+  "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)

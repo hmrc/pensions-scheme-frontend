@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.trustees.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index}
+import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import forms.register.NoCompanyNumberFormProvider
+import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -28,60 +28,57 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
+import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import viewmodels.{Message, UTRViewModel}
-import views.html.utr
+import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.Future
 
-class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyUTRControllerSpec._
-
-  "CompanyUTRController" must {
+  import CompanyNoCRNReasonControllerSpec._
+  "CompanyNoCRNReasonController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
+        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onPageLoad(NormalMode, firstIndex, None))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe reason(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
-          .withFormUrlEncodedBody(("utr", "1234567890"))),
+        implicit app => addToken(FakeRequest(controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, None))
+          .withFormUrlEncodedBody(("reason", "blaa"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
+
   }
+
 }
 
+object CompanyNoCRNReasonControllerSpec extends CompanyNoCRNReasonControllerSpec {
 
-
-object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
-
-  val form = new UTRFormProvider()()
+  val form = new NoCompanyNumberFormProvider()("test company name")
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = UTRViewModel(
-    routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
-    title = Message("messages__companyUtr__title"),
-    heading = Message("messages__companyUtr__heading", "test company name"),
-    hint = Message("messages_utr__hint"),
-    srn = srn
+  val viewModel = ReasonViewModel(
+    postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, None),
+    title = Message("messages__companyNoCompanyNumber__establisher__title"),
+    heading = Message("messages__noCompanyNumber__establisher__heading", "test company name"),
+    srn = None
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -89,10 +86,9 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService)
     )) {
       app =>
         val req = request(app)
@@ -100,11 +96,8 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
         test(req, result)
     }
   }
+
 }
-
-
-
-
 
 
 

@@ -32,9 +32,9 @@ import utils.{FakeNavigator, UserAnswers}
 import viewmodels.NinoViewModel
 import views.html.nino
 
-class TrusteeNinoNewControllerSpec extends ControllerSpecBase {
+class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 
-  import TrusteeNinoNewControllerSpec._
+  import TrusteeEnterNINOControllerSpec._
 
   "TrusteeNino Controller" must {
 
@@ -93,7 +93,7 @@ class TrusteeNinoNewControllerSpec extends ControllerSpecBase {
   }
 }
 
-object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
+object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   val formProvider       = new NinoNewFormProvider()
   private val srn        = Some("srn")
   val form               = formProvider("First Name Last Name")
@@ -116,8 +116,8 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeNinoNewController =
-    new TrusteeNinoNewController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeEnterNINOController =
+    new TrusteeEnterNINOController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
@@ -132,7 +132,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String = trusteeFullName): String = {
 
     val vm = NinoViewModel(
-      postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit(mode, index, srn),
+      postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),
       title = messages("messages__trustee__individual__nino__title"),
       heading = messages("messages__trustee__individual__nino__heading", trusteeName),
       hint = "messages__common__nino_hint",

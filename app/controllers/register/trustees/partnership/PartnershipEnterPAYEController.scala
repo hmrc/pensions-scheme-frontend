@@ -32,7 +32,7 @@ import viewmodels.{Message, PayeViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipPayeVariationsController  @Inject()(
+class PartnershipEnterPAYEController  @Inject()(
                                                       val appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
                                                       override val userAnswersService: UserAnswersService,
@@ -48,7 +48,7 @@ class PartnershipPayeVariationsController  @Inject()(
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
     PayeViewModel(
-      postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
+      postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__payeVariations__partnership_title"),
       heading = Message("messages__payeVariations__heading", partnershipName),
       hint = Some(Message("messages__payeVariations__hint")),

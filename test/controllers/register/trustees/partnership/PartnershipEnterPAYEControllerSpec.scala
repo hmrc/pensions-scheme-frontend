@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.trustees.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.UTRFormProvider
+import forms.PayeVariationsFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -28,58 +28,61 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, status, _}
+import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
+import utils.annotations.TrusteesPartnership
 import utils.FakeNavigator
-import utils.annotations.TrusteesIndividual
-import viewmodels.{Message, UTRViewModel}
-import views.html.utr
+import viewmodels.{Message, PayeViewModel}
+import views.html.payeVariations
 
 import scala.concurrent.Future
 
-class TrusteeUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import TrusteeUTRControllerSpec._
+  import PartnershipEnterPAYEControllerSpec._
 
-  "TrusteeUTRController" must {
+  "PartnershipEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.TrusteeUTRController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.TrusteeUTRController.onSubmit(CheckUpdateMode, firstIndex, srn))
-          .withFormUrlEncodedBody(("utr", "1234567890"))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
+          .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
+
   }
+
 }
 
-object TrusteeUTRControllerSpec extends TrusteeUTRControllerSpec {
+object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEControllerSpec {
 
-  val form = new UTRFormProvider()()
+  val form = new PayeVariationsFormProvider()("test partnership name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = UTRViewModel(
-    routes.TrusteeUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__trusteeUtr__title"),
-    heading = Message("messages__trusteeUtr__h1", "Test Name"),
-    hint = Message("messages_utr__hint"),
-    srn = srn
+  val viewModel = PayeViewModel(
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__payeVariations__partnership_title"),
+    heading = Message("messages__payeVariations__heading", "test partnership name"),
+    hint = Some(Message("messages__payeVariations__hint")),
+    srn = srn,
+    entityName = Some("test partnership name")
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -87,10 +90,11 @@ object TrusteeUTRControllerSpec extends TrusteeUTRControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrustee),
+      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
       bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
     )) {
       app =>
         val req = request(app)
@@ -98,11 +102,8 @@ object TrusteeUTRControllerSpec extends TrusteeUTRControllerSpec {
         test(req, result)
     }
   }
+
 }
-
-
-
-
 
 
 

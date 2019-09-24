@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberVariationsFormProvider
-import models.{CheckUpdateMode, Index, Mode}
+import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -31,24 +31,24 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
 import utils.FakeNavigator
+import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.Future
 
-class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyRegistrationNumberVariationsControllerSpec._
+  import CompanyEnterCRNControllerSpec._
 
   val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  "CompanyRegistrationNumberVariationsControllerSpec" must {
+  "CompanyEnterCRNControllerSpec" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyRegistrationNumberVariationsController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterCRNController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe
@@ -67,7 +67,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyRegistrationNumberVariationsController.onSubmit(CheckUpdateMode, srn, firstIndex))
+        implicit app => addToken(FakeRequest(routes.CompanyEnterCRNController.onSubmit(CheckUpdateMode, srn, firstIndex))
           .withFormUrlEncodedBody(("companyRegistrationNumber", "1234567"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -79,7 +79,7 @@ class CompanyRegistrationNumberVariationsControllerSpec extends ControllerSpecBa
 
 }
 
-object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistrationNumberVariationsControllerSpec {
+object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
@@ -94,7 +94,7 @@ object CompanyRegistrationNumberVariationsControllerSpec extends CompanyRegistra
     )
   }
 
-  val postCall = routes.CompanyRegistrationNumberVariationsController.onSubmit _
+  val postCall = routes.CompanyEnterCRNController.onSubmit _
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 

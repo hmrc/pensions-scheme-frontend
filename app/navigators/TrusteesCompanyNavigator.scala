@@ -126,11 +126,11 @@ object TrusteesCompanyNavigator {
 
   private def underAYear(ua: UserAnswers, index: Int): Boolean = ua.get(CompanyAddressYearsId(index)).contains(AddressYears.UnderAYear)
 
-  private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, srn, index)
+  private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyEnterCRNController.onPageLoad(mode, srn, index)
 
-  private def noCompanyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = NoCompanyNumberController.onPageLoad(mode, index, srn)
+  private def noCompanyNoPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyNoCRNReasonController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyUTRController.onPageLoad(mode, srn, index)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyEnterUTRController.onPageLoad(mode, srn, index)
 
   private def noUtrPage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyNoUTRReasonController.onPageLoad(mode, index, srn)
 
@@ -138,7 +138,7 @@ object TrusteesCompanyNavigator {
 
   private def noVatPage(mode: Mode, index: Int, srn: Option[String]): Call = HasCompanyPAYEController.onPageLoad(mode, index, srn)
 
-  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyPayeVariationsController.onPageLoad(mode, index, srn)
+  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call = CompanyEnterPAYEController.onPageLoad(mode, index, srn)
 
   private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), index, srn)
 

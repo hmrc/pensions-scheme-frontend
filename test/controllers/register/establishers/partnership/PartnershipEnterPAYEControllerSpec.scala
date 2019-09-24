@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.PayeVariationsFormProvider
-import models.{CheckUpdateMode, Index}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import forms.{PayeFormProvider, PayeVariationsFormProvider}
+import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -30,25 +30,25 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesPartnership
+import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
-import views.html.payeVariations
+import views.html.{paye, payeVariations}
 
 import scala.concurrent.Future
 
-class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import PartnershipPayeVariationsControllerSpec._
+  import PartnershipEnterPAYEControllerSpec._
 
-  "PartnershipPayeVariationsController" must {
+  "PartnershipEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
         implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
@@ -68,9 +68,11 @@ class PartnershipPayeVariationsControllerSpec extends ControllerSpecBase with Mu
 
 }
 
-object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariationsControllerSpec {
 
-  val form = new PayeVariationsFormProvider()("test partnership name")
+object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEControllerSpec {
+
+  val partnershipName = "test partnership name"
+  val form = new PayeVariationsFormProvider()(partnershipName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 
@@ -78,11 +80,11 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
 
   val viewModel = PayeViewModel(
     routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__payeVariations__partnership_title"),
-    heading = Message("messages__payeVariations__heading", "test partnership name"),
+    title = Message("messages__common_partnershipPaye__title"),
+    heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
     hint = Some(Message("messages__payeVariations__hint")),
     srn = srn,
-    entityName = Some("test partnership name")
+    entityName = Some(partnershipName)
   )
 
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
@@ -90,11 +92,10 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherPartnership),
       bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-
     )) {
       app =>
         val req = request(app)
@@ -104,8 +105,6 @@ object PartnershipPayeVariationsControllerSpec extends PartnershipPayeVariations
   }
 
 }
-
-
 
 
 

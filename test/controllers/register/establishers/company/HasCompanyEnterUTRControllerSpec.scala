@@ -28,7 +28,7 @@ import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasUtr
 
-class HasCompanyUTRControllerSpec extends ControllerSpecBase {
+class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasUtrFormProvider()

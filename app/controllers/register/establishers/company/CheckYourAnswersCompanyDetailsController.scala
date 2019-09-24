@@ -61,7 +61,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           None,
           HasCompanyCRNId(index).row(routes.HasCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyEnterCRNId(index)
-              .row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+              .row(routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyNoCRNReasonId(index).row(routes.NoCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyEnterUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++

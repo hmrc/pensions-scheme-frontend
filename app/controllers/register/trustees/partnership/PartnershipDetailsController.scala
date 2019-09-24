@@ -36,7 +36,7 @@ import views.html.register.trustees.partnership.partnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrusteeDetailsController @Inject()(
+class PartnershipDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
@@ -52,7 +52,7 @@ class TrusteeDetailsController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
+      val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
       Future.successful(Ok(partnershipDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
   }
@@ -61,7 +61,7 @@ class TrusteeDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(mode, index, srn)
+          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>

@@ -119,7 +119,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def companyDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn)
 
-  private def partnershipDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, 0, srn)
+  private def partnershipDetails(mode: Mode, srn: Option[String]) = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, srn)
 
   private def moreThanTenTrustees(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 

@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
 
-class TrusteeDetailsControllerSpec extends ControllerSpecBase {
+class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -40,10 +40,10 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeDetailsController =
-    new TrusteeDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
+    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-  val submitUrl = controllers.register.trustees.partnership.routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex, None)
+  val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = partnershipDetails(
     frontendAppConfig,
     form,

@@ -102,7 +102,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(TrusteeKind.Individual) =>
           NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Partnership) =>
-        NavigateTo.dontSave(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }

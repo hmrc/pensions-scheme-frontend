@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.company
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
@@ -30,18 +30,18 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
+import utils.annotations.EstablishersCompany
 import utils.FakeNavigator
-import utils.annotations.TrusteesCompany
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.Future
 
-class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
 
-  import CompanyUTRControllerSpec._
+  import CompanyEnterUTRControllerSpec._
 
-  "CompanyUTRController" must {
+  "CompanyEnterUTRController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
@@ -68,7 +68,7 @@ class CompanyUTRControllerSpec extends ControllerSpecBase with MustMatchers with
 
 
 
-object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
+object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
@@ -89,8 +89,8 @@ object CompanyUTRControllerSpec extends CompanyUTRControllerSpec {
 
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
     )) {

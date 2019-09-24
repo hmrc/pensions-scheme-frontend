@@ -39,9 +39,9 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class NoCompanyEnterUTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
 
-  import NoCompanyUTRControllerSpec._
+  import NoCompanyEnterUTRControllerSpec._
 
   val viewmodel = ReasonViewModel(
     postCall = Call("GET", "www.example.com"),
@@ -157,7 +157,7 @@ class NoCompanyUTRControllerSpec extends WordSpec with MustMatchers with OptionV
 }
 
 
-object NoCompanyUTRControllerSpec {
+object NoCompanyEnterUTRControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[String]
 
