@@ -16,14 +16,13 @@
 
 package controllers.register.trustees
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
 import models.Mode
-import models.register.Trustee
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
@@ -31,7 +30,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles
 import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees.addTrustee
 
@@ -45,8 +43,7 @@ class AddTrusteeController @Inject()(
                                       getData: DataRetrievalAction,
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      formProvider: AddTrusteeFormProvider,
-                                      fsm: FeatureSwitchManagementService
+                                      formProvider: AddTrusteeFormProvider
                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()

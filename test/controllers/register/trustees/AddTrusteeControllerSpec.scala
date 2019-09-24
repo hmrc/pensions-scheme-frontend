@@ -63,7 +63,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, featureToggleEnabled: Boolean = false): AddTrusteeController = {
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
     new AddTrusteeController(
       frontendAppConfig,
       messagesApi,
@@ -72,8 +72,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      new FakeFeatureSwitchManagementService(enabledV2 = featureToggleEnabled)
+      formProvider
     )
   }
 
@@ -117,7 +116,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -137,7 +136,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -157,7 +156,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
