@@ -32,7 +32,7 @@ case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue
 object CompanyEnterPAYEId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
     new CheckYourAnswersCompany[CompanyEnterPAYEId] {
 
       private def hiddenLabel(index:  Int, ua: UserAnswers) : String =

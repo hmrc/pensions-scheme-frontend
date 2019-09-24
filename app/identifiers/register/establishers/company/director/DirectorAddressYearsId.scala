@@ -56,7 +56,7 @@ object DirectorAddressYearsId {
       private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
           dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
 
-      
+
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
           dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 

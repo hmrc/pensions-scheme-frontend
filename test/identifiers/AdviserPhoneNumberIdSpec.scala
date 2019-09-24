@@ -26,7 +26,7 @@ import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
 import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
 
-class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
+class AdviserPhoneNumberIdSpec extends SpecBase with Enumerable.Implicits  {
 
   val onwardUrl = "onwardUrl"
   val name = "adviserName"
@@ -39,7 +39,7 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
   private val answerRowsWithNoChangeLinks = Seq(
     AnswerRow(messages("adviserPhone.checkYourAnswersLabel", name),Seq(phone), false)
   )
-  val answers: UserAnswers = UserAnswers().set(AdviserPhoneId)(phone).flatMap(
+  val answers: UserAnswers = UserAnswers().set(AdviserPhoneNumberId)(phone).flatMap(
     _.set(AdviserNameId)(name)).asOpt.get
 
   "cya" when {
@@ -49,7 +49,7 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        AdviserPhoneId.row(onwardUrl, NormalMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
+        AdviserPhoneNumberId.row(onwardUrl, NormalMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -58,7 +58,7 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
       "return answers rows without links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        AdviserPhoneId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
+        AdviserPhoneNumberId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
       }
     }
 

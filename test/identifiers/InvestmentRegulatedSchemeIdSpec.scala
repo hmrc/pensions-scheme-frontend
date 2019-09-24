@@ -17,17 +17,14 @@
 package identifiers
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumberId}
-import models.{CompanyDetails, Link, NormalMode, UpdateMode}
 import models.requests.DataRequest
-import org.scalatest.FunSuite
+import models.{Link, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.AnswerRow
-import utils.checkyouranswers.Ops._
 
 class InvestmentRegulatedSchemeIdSpec extends SpecBase {
 

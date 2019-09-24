@@ -17,16 +17,13 @@
 package identifiers
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumberId}
 import models._
 import models.requests.DataRequest
-import org.scalatest.FunSuite
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
 
 class TypeOfBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
