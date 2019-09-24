@@ -18,6 +18,7 @@ import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterCRNId, CompanyEnterUTRId}
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -26,6 +27,7 @@ import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
+import play.api.i18n.Messages
 
 //scalastyle:off number.of.methods
 package object utils {
@@ -340,5 +342,4 @@ package object utils {
     }
 
   }
-
 }

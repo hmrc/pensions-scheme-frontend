@@ -31,7 +31,13 @@ import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.AnswerRow
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
+  private val userAnswersWithName: UserAnswers =
+    UserAnswers()
+      .set(DirectorNameId(0, 0))(PersonName("first", "last"))
+      .asOpt
+      .value
 
+  private val name                            = "first last"
   "Cleanup" must {
 
 
@@ -100,7 +106,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
     }
   }
 
-  "cya" when {
+  "cya with feature switch off" when {
 
     val onwardUrl = "onwardUrl"
 
@@ -115,7 +121,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
@@ -135,7 +141,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
@@ -153,7 +159,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

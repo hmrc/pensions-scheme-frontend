@@ -21,7 +21,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -38,18 +38,22 @@ object CompanyEnterCRNId {
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
 
     val label: String = "messages__checkYourAnswers__establishers__company__number"
-    val changeCrn: String = "messages__visuallyhidden__companyNumber"
 
-    new CheckYourAnswers[CompanyEnterCRNId] {
+    new CheckYourAnswersCompany[CompanyEnterCRNId] {
+
+      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_crn")
+
       override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

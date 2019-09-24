@@ -22,7 +22,7 @@ import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, ReferenceValueCYA}
 import viewmodels.AnswerRow
 
 case class DirectorEnterNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
@@ -38,22 +38,30 @@ object DirectorEnterNINOId {
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorEnterNINOId] = {
 
-    new CheckYourAnswers[DirectorEnterNINOId] {
+    new CheckYourAnswersDirectors[DirectorEnterNINOId] {
 
-      private val hiddenLabel = "messages__visuallyhidden__director__nino"
-      private val label = "messages__common__nino"
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__nino")
+
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_nino")
 
       override def row(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)()
+        ReferenceValueCYA[DirectorEnterNINOId](label(id.establisherIndex, id.directorIndex, userAnswers),
+          hiddenText(id.establisherIndex, id.directorIndex, userAnswers))()
           .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) =>
-            ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[DirectorEnterNINOId](label(id.establisherIndex, id.directorIndex, userAnswers),
+              hiddenText(id.establisherIndex, id.directorIndex, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[DirectorEnterNINOId](label(id.establisherIndex, id.directorIndex, userAnswers),
+              hiddenText(id.establisherIndex, id.directorIndex, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

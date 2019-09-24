@@ -14,61 +14,56 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyNumberId}
 import models._
 import models.requests.DataRequest
+import org.scalatest.FunSuite
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class HasCompanyCRNIdSpec extends SpecBase {
+class TypeOfBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
-  val name = "test company name"
+  val name = "schemeName"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasCompanyNumber__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasCrn", name)))))
+    AnswerRow(messages("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true,
+      Some(Link("site.change",onwardUrl, Some(messages("messages__visuallyhidden__type_of_benefits_change", name)))))
   )
+  private val answerRowsWithNoChangeLinks = Seq(
+    AnswerRow(messages("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true)
+  )
+  val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
+    _.set(TypeOfBenefitsId)(TypeOfBenefits.Defined)).asOpt.get
 
   "cya" when {
 
-    val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(HasCompanyCRNId(0))(true)).asOpt.get
+
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyCRNId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        TypeOfBenefitsId.row(onwardUrl, NormalMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new establisher - company paye" must {
+    "in update mode " must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
-
-      "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
-      }
-    }
-
-    "in update mode for existing establisher - company paye" must {
-
-      "not display any row" in {
+      "return answers rows without links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-
-        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        TypeOfBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
       }
     }
+
   }
 }

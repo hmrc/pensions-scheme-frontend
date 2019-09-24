@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
 import models.address.Address
 import models.requests.DataRequest
-import models.{CompanyDetails, Link, NormalMode, UpdateMode}
+import models.{Link, Mode, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class CompanyAddressIdSpec extends SpecBase {
+class AdviserAddressIdSpec extends SpecBase with Enumerable.Implicits {
 
-  private val companyName = "test company"
-
+  val name = "adviserName"
   "cya" when {
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
@@ -53,20 +50,22 @@ class CompanyAddressIdSpec extends SpecBase {
     }
 
     val onwardUrl = "onwardUrl"
-    Seq(NormalMode, UpdateMode).foreach{ mode =>
+    Seq(NormalMode, UpdateMode).foreach { mode =>
 
-      s"in ${mode.toString} mode" must {
+      s"in ${Mode.jsLiteral.to(mode)} mode" must {
         "return answers rows with change links" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().set(CompanyAddressId(0))(address).flatMap(
-              _.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+            UserAnswers().set(AdviserAddressId)(address).flatMap(
+              _.set(AdviserNameId)(name)).asOpt.value, PsaId("A0000000"))
 
-          CompanyAddressId(0).row(onwardUrl, mode) must equal(Seq(
+          implicit val ua: UserAnswers = request.userAnswers
+
+          AdviserAddressId.row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__establisherConfirmAddress__cya_label", "test company"),
+              Message("adviserAddress.checkYourAnswersLabel", name),
               addressAnswer(address),
-              false,
-              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
+              answerIsMessageKey = false,
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__adviser__address", name))))
             )))
         }
       }

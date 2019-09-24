@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -39,18 +39,26 @@ object DirectorEnterUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorEnterUTRId] = {
 
-    val label: String = "messages__utr__checkyouranswerslabel"
-    val hiddenLabel = "messages__visuallyhidden__companyUTR"
+    new CheckYourAnswersDirectors[DirectorEnterUTRId] {
 
-    new CheckYourAnswers[DirectorEnterUTRId] {
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__utr__checkyouranswerslabel")
+
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_utr")
+
       override def row(id: DirectorEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: DirectorEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => ReferenceValueCYA(label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+          case _ => ReferenceValueCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+            hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+            .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

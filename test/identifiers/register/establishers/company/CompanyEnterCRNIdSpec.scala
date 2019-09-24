@@ -30,11 +30,12 @@ import viewmodels.AnswerRow
 
 class CompanyEnterCRNIdSpec extends SpecBase {
 
+  private val companyName = "the company"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyNumber"))))
+      Some(messages("messages__visuallyhidden__dynamic_crn", companyName)))))
   )
 
   "Cleanup" when {
@@ -96,7 +97,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
 
         CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_crn", companyName)))))))
       }
     }
   }
