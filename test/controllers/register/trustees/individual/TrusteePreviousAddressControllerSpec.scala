@@ -59,27 +59,21 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
   val fakeAuditService = new StubSuccessfulAuditService()
   val form: Form[Address] = formProvider()
 
-  private def retrieval(isHnsEnabled: Boolean = false): DataRetrievalAction = {
-    if(isHnsEnabled){
+  private def retrieval: DataRetrievalAction = {
       UserAnswers().set(TrusteeNameId(0))(trusteeName).asOpt.value.dataRetrievalAction
-    } else {
-      UserAnswers().set(TrusteeNameId(0))(trusteeDetails).asOpt.value.dataRetrievalAction
-    }
   }
 
   "PreviousAddress Controller" must {
 
-    Seq(true, false).foreach { isHnsEnabled =>
-      s"render manualAddress from GET request when toggle is $isHnsEnabled" in {
+      "render manualAddress from GET request" in {
         FakeUserAnswersService.reset()
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[Navigator].toInstance(FakeNavigator),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
-          bind[CountryOptions].to(countryOptions),
-          bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(isHnsEnabled))
+          bind[DataRetrievalAction].toInstance(retrieval),
+          bind[CountryOptions].to(countryOptions)
         )) {
           implicit app =>
 
@@ -112,7 +106,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
       }
 
-      s"redirect to next page on POST request when toggle is $isHnsEnabled" which {
+      s"redirect to next page on POST request" which {
         "saves address" in {
 
           val address = Address(
@@ -129,10 +123,9 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             bind[UserAnswersService].toInstance(FakeUserAnswersService),
             bind(classOf[Navigator]).toInstance(fakeNavigator),
             bind[AuthAction].to(FakeAuthAction),
-            bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled)),
+            bind[DataRetrievalAction].toInstance(retrieval),
             bind[DataRequiredAction].to(new DataRequiredActionImpl),
-            bind[AddressFormProvider].to(formProvider),
-            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(isHnsEnabled))
+            bind[AddressFormProvider].to(formProvider)
           )) {
             implicit app =>
 
@@ -154,7 +147,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
         }
       }
 
-      s"send an audit event when valid data is submitted when toggle is $isHnsEnabled" in {
+      s"send an audit event when valid data is submitted" in {
 
         val address = Address(
           addressLine1 = "value 1",
@@ -170,7 +163,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AuthAction].to(FakeAuthAction),
           bind[CountryOptions].to(countryOptions),
-          bind[DataRetrievalAction].to(retrieval(isHnsEnabled)),
+          bind[DataRetrievalAction].to(retrieval),
           bind[AuditService].toInstance(fakeAuditService),
         bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false)))) {
           implicit app =>
@@ -200,6 +193,5 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             }
         }
       }
-    }
   }
 }

@@ -40,8 +40,7 @@ class TrusteeNinoNewController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider,
-                                           fs: FeatureSwitchManagementService
+                                           val formProvider: NinoNewFormProvider
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeNinoNewController.onSubmit _
