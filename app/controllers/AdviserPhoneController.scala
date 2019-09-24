@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.adviser.AdviserPhoneFormProvider
-import identifiers.{AdviserNameId, AdviserPhoneId}
+import identifiers.{AdviserNameId, AdviserPhoneNumberId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -28,8 +28,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.WorkingKnowledge
 import utils.UserAnswers
+import utils.annotations.WorkingKnowledge
 import views.html.adviserPhone
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +51,7 @@ class AdviserPhoneController @Inject()(
     implicit request =>
       val form = formProvider()
       AdviserNameId.retrieve.right.map { adviserName =>
-        val preparedForm = request.userAnswers.get(AdviserPhoneId) match {
+        val preparedForm = request.userAnswers.get(AdviserPhoneNumberId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
@@ -68,9 +68,9 @@ class AdviserPhoneController @Inject()(
           }
         },
         value =>
-          dataCacheConnector.save(request.externalId, AdviserPhoneId, value).map {
+          dataCacheConnector.save(request.externalId, AdviserPhoneNumberId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserPhoneNumberId, mode, UserAnswers(cacheMap)))
           }
       )
   }
