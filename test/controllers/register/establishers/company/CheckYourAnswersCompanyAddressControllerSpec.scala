@@ -159,8 +159,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersCompanyAddressController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(
       frontendAppConfig,
       messagesApi,
@@ -171,8 +170,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =

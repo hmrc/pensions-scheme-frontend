@@ -40,8 +40,7 @@ class AddCompanyDirectorsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: AddCompanyDirectorsFormProvider,
-                                               fs: FeatureSwitchManagementService
+                                               formProvider: AddCompanyDirectorsFormProvider
                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()

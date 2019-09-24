@@ -284,8 +284,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersCompanyDetailsController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyDetailsController =
     new CheckYourAnswersCompanyDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -296,8 +295,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
