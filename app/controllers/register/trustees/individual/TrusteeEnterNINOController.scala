@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -40,7 +40,7 @@ class TrusteeEnterNINOController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider
+                                           val formProvider: NINOFormProvider
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit _

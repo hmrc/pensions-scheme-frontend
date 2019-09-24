@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasCrnFormProvider
+import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyCRNId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -32,7 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
+class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            override val userAnswersService: UserAnswersService,
                                            @EstablishersCompany override val navigator: Navigator,
@@ -40,12 +40,12 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
                                            allowAccess: AllowAccessActionProvider,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: HasCrnFormProvider
+                                           formProvider: HasCRNFormProvider
                                           )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(mode, srn, index),
+      postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(mode, srn, index),
       title = Message("messages__hasCompanyNumber__title"),
       heading = Message("messages__hasCompanyNumber__h1", companyName),
       hint = Some(Message("messages__hasCompanyNumber__p1")),

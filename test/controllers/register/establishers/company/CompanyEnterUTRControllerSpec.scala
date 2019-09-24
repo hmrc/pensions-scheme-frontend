@@ -45,7 +45,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -55,7 +55,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
+        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
           .withFormUrlEncodedBody(("utr", "1234567890"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -77,7 +77,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.CompanyUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
+    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
     title = Message("messages__companyUtr__title"),
     heading = Message("messages__companyUtr__heading", "test company name"),
     hint = Message("messages_utr__hint"),

@@ -45,7 +45,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
@@ -55,7 +55,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -77,7 +77,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.CompanyPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__payeVariations__company_title"),
     heading = Message("messages__payeVariations__heading", "test company name"),
     hint = Some(Message("messages__payeVariations__hint")),

@@ -114,17 +114,17 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   private val emptyAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
   private def hasCompanyNumberRoute(mode: Mode, srn: Option[String]) =
-    routes.HasCompanyNumberController.onPageLoad(checkMode(mode), srn, 0).url
+    routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: Option[String]) =
     routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url
   private def noCompanyNumberReasonRoute(mode: Mode, srn: Option[String]) =
-    routes.NoCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url
+    routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn, index).url
   private def hasCompanyUTRRoute(mode: Mode, srn: Option[String]) =
     routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url
   private def companyUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url
+    routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index).url
   private def noCompanyUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.NoCompanyUTRController.onPageLoad(checkMode(mode), srn, 0).url
+    routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), srn, 0).url
   private def hasCompanyVatRoute(mode: Mode, srn: Option[String]) =
     routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyEnterVATRoute(mode: Mode, srn: Option[String]) =
@@ -132,7 +132,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def hasCompanyPayeRoute(mode: Mode, srn: Option[String]) =
     routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyPayeVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), 0, srn).url
+    routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
   private def isCompanyDormantRoute(mode: Mode, srn: Option[String]) =
   routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, 0).url
 

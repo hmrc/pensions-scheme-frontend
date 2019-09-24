@@ -36,7 +36,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, None, index=Index(0))
 
   def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, href, None, "test company name")(fakeRequest, messages).toString
 

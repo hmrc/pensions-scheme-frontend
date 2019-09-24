@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
 import models._
@@ -94,7 +94,7 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 }
 
 object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
-  val formProvider       = new NinoNewFormProvider()
+  val formProvider       = new NINOFormProvider()
   private val srn        = Some("srn")
   val form               = formProvider("First Name Last Name")
   private val index      = Index(0)

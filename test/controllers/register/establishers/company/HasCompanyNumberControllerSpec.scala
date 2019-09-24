@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasCrnFormProvider
+import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.HasCompanyCRNId
 import models.{Index, NormalMode}
 import org.scalatest.mockito.MockitoSugar
@@ -32,21 +32,21 @@ import views.html.hasReferenceNumber
 class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasCrnFormProvider()
+  val formProvider = new HasCRNFormProvider()
   val form = formProvider("messages__hasCompanyNumber__error__required","test company name")
   val index = Index(0)
   val srn = None
-  val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
+  val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index),
+    controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCompanyNumber__title"),
     heading = Message("messages__hasCompanyNumber__h1", "test company name"),
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyNumberController =
-    new HasCompanyNumberController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyCRNController =
+    new HasCompanyCRNController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,

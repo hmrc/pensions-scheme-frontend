@@ -176,16 +176,16 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def hasCompanyNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasCompanyCRNController.onPageLoad(mode, None, 0)
 
   private def whatIsPAYE(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyPayeVariationsController.onPageLoad(mode, 0, None)
+    controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, None, 0)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.NoCompanyNumberController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyNoCRNReasonController.onPageLoad(mode, None, 0)
 
   private def companyVatNumberNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
@@ -194,10 +194,10 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, None, 0)
 
   private def companyUTRNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyUTRController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyEnterUTRController.onPageLoad(mode, None, 0)
 
   private def noCompanyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.NoCompanyUTRController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyNoUTRReasonController.onPageLoad(mode, None, 0)
 
   private def companyHasPaye(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, None, 0)

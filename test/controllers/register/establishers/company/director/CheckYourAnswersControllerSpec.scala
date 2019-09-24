@@ -87,13 +87,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             DirectorDOBId(index, index).row(routes.DirectorDOBController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorHasNINOId(index, index).row(routes.DirectorHasNINOController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                                 implicitly),
-            DirectorEnterNINOId(index, index).row(routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
+            DirectorEnterNINOId(index, index).row(routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                                 implicitly),
             DirectorNoNINOReasonId(index, index)
               .row(routes.DirectorNoNINOReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorHasUTRId(index, index).row(routes.DirectorHasUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                               implicitly),
-            DirectorEnterUTRId(index, index).row(routes.DirectorUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
+            DirectorEnterUTRId(index, index).row(routes.DirectorEnterUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorNoUTRReasonId(index, index)
               .row(routes.DirectorNoUTRReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorAddressId(index, index).row(routes.DirectorAddressController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
@@ -203,7 +203,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
           Some(
             Link(
               "site.add",
-              routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), index, index, Some("srn")).url,
+              routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), index, index, Some("srn")).url,
               Some(s"messages__visuallyhidden__director__nino")
             ))
         )

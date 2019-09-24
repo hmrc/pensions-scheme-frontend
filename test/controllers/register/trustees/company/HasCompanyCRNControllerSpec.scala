@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasCrnFormProvider
+import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyEnterCRNId, HasCompanyCRNId, CompanyNoCRNReasonId}
@@ -38,11 +38,11 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val formProvider = new HasCrnFormProvider()
+  private val formProvider = new HasCRNFormProvider()
   private val form = formProvider("messages__hasCompanyNumber__error__required", "test company name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
+  private val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
 
   private val viewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, index, srn),

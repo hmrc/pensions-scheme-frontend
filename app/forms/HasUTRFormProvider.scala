@@ -22,9 +22,9 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasCrnFormProvider @Inject() extends Mappings {
+class HasUTRFormProvider @Inject() extends Mappings {
 
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(errorKey:String, name : String)(implicit messages: Messages): Form[Boolean] =
     Form(
       "value" -> boolean(Message(errorKey, name).resolve)
     )

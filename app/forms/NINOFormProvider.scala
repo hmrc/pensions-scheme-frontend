@@ -16,16 +16,20 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.{Constraints, Mappings, Transforms}
 import javax.inject.Inject
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import viewmodels.Message
 
-class HasUtrFormProvider @Inject() extends Mappings {
-
-  def apply(errorKey:String, name : String)(implicit messages: Messages): Form[Boolean] =
+class NINOFormProvider @Inject()() extends Mappings with Constraints with Transforms {
+  def apply(personName: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
-      "value" -> boolean(Message(errorKey, name).resolve)
+      mapping(
+        "nino" -> text(Message("messages__error__common_nino", personName).resolve).transform(noSpaceWithUpperCaseTransform, noTransform).
+          verifying(validNino(Message("messages__error__common_nino_invalid", personName)))
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
 }

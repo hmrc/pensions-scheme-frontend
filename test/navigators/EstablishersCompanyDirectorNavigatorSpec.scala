@@ -156,7 +156,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
-  private def directorNinoNew(mode: Mode) = routes.DirectorNinoNewController.onPageLoad(mode, directorIndex, establisherIndex, None)
+  private def directorNinoNew(mode: Mode) = routes.DirectorEnterNINOController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorNinoReason(mode: Mode) = routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
@@ -177,7 +177,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
     mode, None, establisherIndex)
 
-  private def directorWhatIsDirectorUTR(mode: Mode) = routes.DirectorUTRController.onPageLoad(mode, directorIndex, establisherIndex, None)
+  private def directorWhatIsDirectorUTR(mode: Mode) = routes.DirectorEnterUTRController.onPageLoad(mode, directorIndex, establisherIndex, None)
 
   private def directorWhyNoUTR(mode: Mode) = routes.DirectorNoUTRReasonController.onPageLoad(mode, directorIndex, establisherIndex, None)
 

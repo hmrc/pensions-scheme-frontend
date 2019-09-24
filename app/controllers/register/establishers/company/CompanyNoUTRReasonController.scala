@@ -19,8 +19,8 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.ReasonController
 import controllers.actions._
-import forms.register.NoCompanyNumberFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoCRNReasonId}
+import forms.ReasonFormProvider
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -32,24 +32,24 @@ import viewmodels.{Message, ReasonViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val userAnswersService: UserAnswersService,
-                                          @EstablishersCompany val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: NoCompanyNumberFormProvider
-                                         )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+class CompanyNoUTRReasonController @Inject()(override val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       override val userAnswersService: UserAnswersService,
+                                       @EstablishersCompany override val navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
+                                       formProvider: ReasonFormProvider
+                                      )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
-  protected def form(name: String) = formProvider(name)
+  private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
-      postCall = routes.NoCompanyNumberController.onSubmit(mode, srn, index),
-      title = Message("messages__noCompanyNumber__establisher__title"),
-      heading = Message("messages__noCompanyNumber__establisher__heading", companyName),
+      postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, srn, index),
+      title = Message("messages__noCompanyUtr__title"),
+      heading = Message("messages__noCompanyUtr__heading", companyName),
       srn = srn
     )
   }
@@ -59,7 +59,7 @@ class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppCon
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          get(CompanyNoCRNReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
+          get(CompanyNoUTRReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 
@@ -68,8 +68,7 @@ class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppCon
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          post(CompanyNoCRNReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+          post(CompanyNoUTRReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
-
 }

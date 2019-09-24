@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.establishers.company.HasCompanyUTRId
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -31,7 +31,7 @@ import views.html.hasUtr
 class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new HasUtrFormProvider()
+  val formProvider = new HasUTRFormProvider()
   val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   val index = Index(0)
   val srn = None

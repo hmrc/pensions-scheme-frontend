@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherHasNINOId, EstablisherNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -39,7 +39,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
                                              allowAccess: AllowAccessActionProvider,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             formProvider: HasUtrFormProvider)
+                                             formProvider: HasUTRFormProvider)
                                             (implicit val ec: ExecutionContext)
   extends HasReferenceNumberController {
 

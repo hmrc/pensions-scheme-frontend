@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual.TrusteeNoUTRReasonId
@@ -34,7 +34,7 @@ import views.html.hasUtr
 class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasUTRFormProvider()
   private val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   private val index = Index(0)
   private val srn = None

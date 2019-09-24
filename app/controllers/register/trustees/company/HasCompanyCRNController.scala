@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasCrnFormProvider
+import forms.HasCRNFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyCRNId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -40,7 +40,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: HasCrnFormProvider
+                                          formProvider: HasCRNFormProvider
                                         )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
 

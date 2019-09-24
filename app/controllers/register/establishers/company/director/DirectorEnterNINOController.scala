@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterNINOId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -32,7 +32,7 @@ import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class DirectorNinoNewController @Inject()(
+class DirectorEnterNINOController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
@@ -41,11 +41,11 @@ class DirectorNinoNewController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider,
+                                           val formProvider: NINOFormProvider,
                                            featureSwitchManagementService: FeatureSwitchManagementService
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorNinoNewController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit _
   private[controllers] val hint: String = "messages__common__nino_hint"
 
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String): NinoViewModel =

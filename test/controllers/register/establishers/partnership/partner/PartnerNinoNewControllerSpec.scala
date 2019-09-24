@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNewNinoId, PartnerNinoId}
@@ -42,7 +42,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
 
 
   val partnershipName = "test partnership name"
-  val formProvider = new NinoNewFormProvider()
+  val formProvider = new NINOFormProvider()
   val form = formProvider("First Name Middle Name Last Name")
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)

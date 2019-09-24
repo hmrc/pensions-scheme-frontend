@@ -21,13 +21,13 @@ import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 import viewmodels.Message
 
-class HasCrnFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
+class HasCRNFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
   private val requiredKey = Message("messages__hasCompanyNumber__error__required", "ABC").resolve
   private val invalidKey = "error.boolean"
   private val fieldName = "value"
 
-  private def formProvider(companyName:String) = new HasCrnFormProvider()("messages__hasCompanyNumber__error__required", companyName)
+  private def formProvider(companyName:String) = new HasCRNFormProvider()("messages__hasCompanyNumber__error__required", companyName)
 
   "HasCompanyNumber Form Provider" must {
 

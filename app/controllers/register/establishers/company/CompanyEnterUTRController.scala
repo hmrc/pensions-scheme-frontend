@@ -33,7 +33,7 @@ import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class CompanyUTRController @Inject()(
+class CompanyEnterUTRController @Inject()(
                                       override val appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
                                       override val userAnswersService: UserAnswersService,
@@ -49,7 +49,7 @@ class CompanyUTRController @Inject()(
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(
-      postCall = routes.CompanyUTRController.onSubmit(mode, srn, index),
+      postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
       title = Message("messages__companyUtr__title"),
       heading = Message("messages__companyUtr__heading", companyName),
       hint = Message("messages_utr__hint"),

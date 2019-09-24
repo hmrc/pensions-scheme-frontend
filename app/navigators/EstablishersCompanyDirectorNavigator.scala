@@ -176,7 +176,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   private def hasNinoRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
     navigateOrSessionExpired(answers, DirectorHasNINOId(establisherIndex, directorIndex),
       if (_: Boolean)
-        routes.DirectorNinoNewController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+        routes.DirectorEnterNINOController.onPageLoad(mode, establisherIndex, directorIndex, srn)
       else
         routes.DirectorNoNINOReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
     )
@@ -212,7 +212,7 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   private def hasUTRRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] =
     navigateOrSessionExpired(answers, DirectorHasUTRId(establisherIndex, directorIndex),
       if (_: Boolean)
-        routes.DirectorUTRController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+        routes.DirectorEnterUTRController.onPageLoad(mode, establisherIndex, directorIndex, srn)
       else
         routes.DirectorNoUTRReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
     )

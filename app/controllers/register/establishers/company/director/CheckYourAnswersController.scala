@@ -69,7 +69,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             .row(routes.DirectorHasNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorEnterNINOId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+            .row(routes.DirectorEnterNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorNoNINOReasonId(companyIndex, directorIndex)
             .row(routes.DirectorNoNINOReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
@@ -78,7 +78,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             .row(routes.DirectorHasUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorEnterUTRId(companyIndex, directorIndex)
-            .row(routes.DirectorUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+            .row(routes.DirectorEnterUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorNoUTRReasonId(companyIndex, directorIndex)
             .row(routes.DirectorNoUTRReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
