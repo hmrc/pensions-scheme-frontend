@@ -19,13 +19,14 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.trustees.individual.whatYouWillNeedIndividualAddress
+import viewmodels.Message
+import views.html.register.whatYouWillNeedIndividualAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,6 +45,6 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           name =>
             val trusteeName = name.fullName
             val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, trusteeName)))        }
+            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))}
     }
 }

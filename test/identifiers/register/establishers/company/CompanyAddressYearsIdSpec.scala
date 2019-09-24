@@ -32,6 +32,9 @@ import viewmodels.{AnswerRow, Message}
 
 class CompanyAddressYearsIdSpec extends SpecBase {
 
+  private val onwardUrl = "onwardUrl"
+  private val companyName = "test company"
+
   "Cleanup" must {
 
     val answers = UserAnswers(Json.obj())
@@ -110,9 +113,6 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
   "cya" when {
 
-    val onwardUrl = "onwardUrl"
-    val companyName = "test company"
-
     def answers: UserAnswers = UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).flatMap(
       _.set(CompanyDetailsId(0))(CompanyDetails(companyName))).asOpt.get
 
@@ -126,7 +126,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__address_years")))
+              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }
@@ -143,7 +143,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__address_years")))
+              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }

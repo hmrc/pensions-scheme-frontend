@@ -38,14 +38,14 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
       Message("messages__establisherPreviousConfirmAddress__cya_label", companyDetails.companyName),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
+      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName))))
     ))
 
   private val answerRowWithAddLink = Seq(
     AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyDetails.companyName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))))
+      Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName))))))
 
   "cya" when {
 

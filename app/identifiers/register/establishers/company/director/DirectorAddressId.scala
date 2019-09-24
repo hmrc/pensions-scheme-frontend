@@ -19,9 +19,11 @@ package identifiers.register.establishers.company.director
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersDirectors}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorAddressId.toString
@@ -30,6 +32,21 @@ case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends 
 object DirectorAddressId {
   override def toString: String = "directorAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorAddressId] =
-    AddressCYA[DirectorAddressId](changeAddress = "messages__visuallyhidden__director__address")()
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[DirectorAddressId] = {
+
+    new CheckYourAnswersDirectors[DirectorAddressId] {
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__cya__address")
+
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_address")
+
+      override def row(id: DirectorAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        AddressCYA(label(id.establisherIndex, id.directorIndex, ua), hiddenLabel(id.establisherIndex, id.directorIndex, ua))()
+          .row(id)(changeUrl, ua)
+      }
+
+      override def updateRow(id: DirectorAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+    }
+  }
 }

@@ -35,17 +35,17 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      "messages__common__cya__previous_address",
+      messages("messages__common__cya__previous_address"),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__previous_address"))))
+      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
   )
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow("messages__common__cya__previous_address",
+    AnswerRow(messages("messages__common__cya__previous_address"),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__previous_address"))))
+      Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
   )
 
   "cya" when {
@@ -76,7 +76,7 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().set(DirectorConfirmPreviousAddressId(index, index))(value = false).asOpt.value
+          val answersWithNoIsThisPreviousAddress = userAnswersWithName.set(DirectorConfirmPreviousAddressId(index, index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
           DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
@@ -114,6 +114,13 @@ object DirectorPreviousAddressIdSpec extends OptionValues {
   }
 
   private val onwardUrl = "onwardUrl"
+  private val name = "first last"
 
-  private val answers: UserAnswers = UserAnswers().set(DirectorPreviousAddressId(index, index))(address).asOpt.value
+  private val userAnswersWithName: UserAnswers =
+    UserAnswers()
+      .set(DirectorNameId(0, 0))(PersonName("first", "last"))
+      .asOpt
+      .value
+
+  private val answers: UserAnswers = userAnswersWithName.set(DirectorPreviousAddressId(index, index))(address).asOpt.value
 }

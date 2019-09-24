@@ -20,6 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.SchemeTaskListController
+import identifiers.register.establishers.company.CompanyConfirmPreviousAddressId
 import models.Mode.checkMode
 import models._
 import models.address.Address
@@ -51,6 +52,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
+
         contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
       }
 
@@ -59,6 +61,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn, index)(request)
 
         status(result) mustBe OK
+
         contentAsString(result) mustBe viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode)
       }
     }
@@ -104,8 +107,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   private val partialAnswers = emptyAnswers.
     establisherCompanyDetails(0, CompanyDetails(companyName)).
-    establishersCompanyAddress(0, address).
-    establisherCompanyAddressYears(0, addressYearsUnderAYear)
+    establishersCompanyAddress(0, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -116,14 +118,14 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
+      Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
   )
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__company_address_years__h1", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
     Some(Link("site.change", companyAddressYearsRoute(checkMode(mode), srn),
-      Some("messages__visuallyhidden__establisher__address_years")))
+      Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
   def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
@@ -139,14 +141,14 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
-      Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label")))
+      Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
     AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
-    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some("messages__establisherPreviousConfirmAddress__cya_visually_hidden_label"))))
+    Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None), tradingTimeAnswerRow(NormalMode, None),
@@ -155,6 +157,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAnswerRow(UpdateMode, srn))))
+
   def companyAddressUpdatePartial: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
