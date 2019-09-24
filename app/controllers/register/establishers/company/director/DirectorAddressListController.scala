@@ -29,7 +29,6 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.Toggles
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}

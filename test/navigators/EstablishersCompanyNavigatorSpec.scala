@@ -25,8 +25,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models.Mode.checkMode
 import models._
-import models.person.{PersonDetails, PersonName}
-import org.joda.time.LocalDate
+import models.person.PersonName
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
@@ -147,27 +146,17 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
 
-  private def underAYearRouteWithToggle(mode: Mode) = hasBeenTrading(mode)
+  private def underAYearRoute(mode: Mode) = hasBeenTrading(mode)
 
   private def hasCompanyUtr(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
 
   private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val toggleOnJohnDoe = PersonName("John", "Doe")
+  private val johnDoe = PersonName("John", "Doe")
+
+
 
   private def validData(directors: PersonName*) = {
-    Json.obj(
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          CompanyDetailsId.toString -> CompanyDetails("test company name"),
-          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
-        )
-      )
-    )
-  }
-
-  private def toggleOnValidData(directors: PersonName*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
@@ -317,10 +306,10 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
   private def addCompanyDirectorsMoreThan10 =
-    UserAnswers(toggleOnValidData(Seq.fill(10)(toggleOnJohnDoe): _*))
+    UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
 
   private def addOneCompanyDirectors =
-    UserAnswers(toggleOnValidData(toggleOnJohnDoe))
+    UserAnswers(validData(johnDoe))
 
   private val confirmPreviousAddressYes = UserAnswers(Json.obj())
     .set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
