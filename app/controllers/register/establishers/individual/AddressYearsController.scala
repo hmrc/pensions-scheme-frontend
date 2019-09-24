@@ -21,15 +21,13 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressYearsController => GenericAddressYearController}
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils._
-import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
@@ -38,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class AddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
                                         val userAnswersService: UserAnswersService,
-                                        @EstablishersIndividual val navigator: Navigator,
+                                        val navigator: Navigator,
                                         override val messagesApi: MessagesApi,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
@@ -51,14 +49,14 @@ class AddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
+      EstablisherNameId(index).retrieve.right.map { establisherDetails =>
         get(AddressYearsId(index), form(establisherDetails.fullName), viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
+      EstablisherNameId(index).retrieve.right.map { establisherDetails =>
         post(AddressYearsId(index), mode, form(establisherDetails.fullName), viewModel(mode, index, establisherDetails.fullName, srn))
       }
   }

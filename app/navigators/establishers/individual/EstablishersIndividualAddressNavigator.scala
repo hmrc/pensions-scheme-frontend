@@ -36,25 +36,25 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PostCodeLookupId(index)                => AddressListController.onPageLoad(mode, index, None)
     case AddressListId(index)                   => AddressController.onPageLoad(mode, index, None)
-    case AddressId(index) if mode == NormalMode    => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressId(index)                          => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressYearsId(index)                     => establisherAddressYearsRoutes(mode, ua, index, None)
-    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, None)
-    case PreviousAddressListId(index)              => PreviousAddressController.onPageLoad(mode, index, None)
-    case PreviousAddressId(index)                  => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
+    case AddressId(index)                       => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case AddressYearsId(index)                  => establisherAddressYearsRoutes(mode, ua, index, None)
+    case PreviousPostCodeLookupId(index)        => PreviousAddressListController.onPageLoad(mode, index, None)
+    case PreviousAddressListId(index)           => PreviousAddressController.onPageLoad(mode, index, None)
+    case PreviousAddressId(index)               => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
   }
 
   //scalastyle:off cyclomatic.complexity
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PostCodeLookupId(index)                => AddressListController.onPageLoad(mode, index, srn)
-    case AddressListId(index)                   => AddressController.onPageLoad(mode, index, srn)
-    case AddressId(index) if mode == UpdateMode    => AddressYearsController.onPageLoad(mode, index, srn)
-    case AddressId(index)                          => establisherAddressRoute(ua, mode, index, srn)
-    case AddressYearsId(index)                     => establisherAddressYearsRoutes(mode, ua, index, srn)
-    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, srn)
-    case PreviousAddressListId(index)              => PreviousAddressController.onPageLoad(mode, index, srn)
-    case id@IndividualConfirmPreviousAddressId(index)     => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
-    case PreviousAddressId(index)                  => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
+    case PostCodeLookupId(index)                      => AddressListController.onPageLoad(mode, index, srn)
+    case AddressListId(index)                         => AddressController.onPageLoad(mode, index, srn)
+    case AddressId(index) if mode == UpdateMode       => AddressYearsController.onPageLoad(mode, index, srn)
+    case AddressId(index)                             => establisherAddressRoute(ua, mode, index, srn)
+    case AddressYearsId(index)                        => establisherAddressYearsRoutes(mode, ua, index, srn)
+    case PreviousPostCodeLookupId(index)              => PreviousAddressListController.onPageLoad(mode, index, srn)
+    case PreviousAddressListId(index)                 => PreviousAddressController.onPageLoad(mode, index, srn)
+    case id@IndividualConfirmPreviousAddressId(index) => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
+    case PreviousAddressId(index)                     => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
   }
   //scalastyle:on cyclomatic.complexity
 
