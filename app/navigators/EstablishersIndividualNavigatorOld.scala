@@ -43,7 +43,7 @@ class EstablishersIndividualFeatureSwitchNavigator @Inject()(
                                                                                                            ec: ExecutionContext,
                                                                                                            hc: HeaderCarrier): Option[Call] = {
     if (featureSwitchService.get(Toggles.isHnSEnabled)) {
-      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse addressNavigator.nextPageOptional(id, mode, userAnswers)
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
