@@ -24,7 +24,7 @@ import identifiers.register.establishers.individual.{EstablisherDetailsId, Estab
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.trustees.company.{CompanyEnterVATId, CompanyPayeVariationsId, HasCompanyNumberId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyEnterVATId, CompanyEnterPAYEId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{company => _, _}
 import models._
@@ -535,7 +535,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
 
   private val trustee = insuranceCompanyDetails
     .trusteesCompanyDetails(0, company)
-    .set(HasCompanyNumberId(0))(true).asOpt.value
+    .set(HasCompanyCRNId(0))(true).asOpt.value
     .trusteesCompanyCrnVariations(0, ReferenceValue(newCrn))
     .set(HasCompanyUTRId(0))(true).asOpt.value
     .trusteesCompanyUtr(0, ReferenceValue(newUtr))
@@ -545,7 +545,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     .set(HasCompanyVATId(0))(true).asOpt.value
     .set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.value
     .set(HasCompanyPAYEId(0))(true).asOpt.value
-    .set(CompanyPayeVariationsId(0))(ReferenceValue("vat")).asOpt.value
+    .set(CompanyEnterPAYEId(0))(ReferenceValue("vat")).asOpt.value
 
   private val userAnswersHnS = UserAnswers(readJsonFromFile("/payload.json"))
 

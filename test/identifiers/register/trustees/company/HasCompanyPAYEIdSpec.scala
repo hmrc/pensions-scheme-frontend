@@ -42,7 +42,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
 
     def answers(hasPaye: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(HasCompanyPAYEId(0))(hasPaye)
-      .flatMap(_.set(CompanyPayeVariationsId(0))(ReferenceValue("test-paye")))
+      .flatMap(_.set(CompanyEnterPAYEId(0))(ReferenceValue("test-paye")))
       .asOpt.value
 
     "`HasCompanyPAYE` is set to `false`" must {
@@ -50,7 +50,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(HasCompanyPAYEId(0))(false).asOpt.value
 
       "remove the data for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustNot be(defined)
+        result.get(CompanyEnterPAYEId(0)) mustNot be(defined)
       }
     }
 
@@ -59,7 +59,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
       val result: UserAnswers = answers(false).set(HasCompanyPAYEId(0))(true).asOpt.value
 
       "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) must be(defined)
+        result.get(CompanyEnterPAYEId(0)) must be(defined)
       }
     }
 
@@ -68,7 +68,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
       val result: UserAnswers = answers().remove(HasCompanyPAYEId(0)).asOpt.value
 
       "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustBe defined
+        result.get(CompanyEnterPAYEId(0)) mustBe defined
       }
     }
   }

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPayeVariationsId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterPAYEId}
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -60,7 +60,7 @@ class CompanyPayeVariationsController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(CompanyPayeVariationsId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
+            get(CompanyEnterPAYEId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
         }
     }
 
@@ -68,7 +68,7 @@ class CompanyPayeVariationsController @Inject()(
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         details =>
-          post(CompanyPayeVariationsId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details.companyName))
+          post(CompanyEnterPAYEId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details.companyName))
       }
   }
 }

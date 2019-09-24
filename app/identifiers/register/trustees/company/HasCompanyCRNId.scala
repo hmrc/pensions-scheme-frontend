@@ -25,25 +25,25 @@ import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
-case class HasCompanyNumberId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = TrusteesId(index).path \ HasCompanyNumberId.toString
+case class HasCompanyCRNId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = TrusteesId(index).path \ HasCompanyCRNId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) =>
-        userAnswers.remove(NoCompanyNumberId(this.index))
+        userAnswers.remove(CompanyNoCRNReasonId(this.index))
       case Some(false) =>
-        userAnswers.remove(CompanyRegistrationNumberVariationsId(this.index))
+        userAnswers.remove(CompanyEnterCRNId(this.index))
       case _ =>
         super.cleanup(value, userAnswers)
     }
   }
 }
 
-object HasCompanyNumberId {
+object HasCompanyCRNId {
   override def toString: String = "hasCrn"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyNumberId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyCRNId] = {
 
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
@@ -56,11 +56,11 @@ object HasCompanyNumberId {
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasCrn", companyName(index)))
 
-    new CheckYourAnswers[HasCompanyNumberId] {
-      override def row(id: HasCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+    new CheckYourAnswers[HasCompanyCRNId] {
+      override def row(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: HasCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _          => Seq.empty[AnswerRow]

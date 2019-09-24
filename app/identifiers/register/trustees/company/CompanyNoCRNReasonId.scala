@@ -25,16 +25,16 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class NoCompanyNumberId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = TrusteesId(index).path \ NoCompanyNumberId.toString
+case class CompanyNoCRNReasonId(index: Int) extends TypedIdentifier[String] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyNoCRNReasonId.toString
 }
 
-object NoCompanyNumberId {
+object CompanyNoCRNReasonId {
   override def toString: String = "noCrnReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[NoCompanyNumberId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyNoCRNReasonId] = {
 
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
@@ -47,12 +47,12 @@ object NoCompanyNumberId {
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
 
-    new CheckYourAnswers[NoCompanyNumberId] {
-      override def row(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+    new CheckYourAnswers[CompanyNoCRNReasonId] {
+      override def row(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
-      override def updateRow(id: NoCompanyNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]

@@ -20,7 +20,6 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
-import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -28,75 +27,65 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
+class CompanyEnterPAYEIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
-  private val onwardUrl = "onwardUrl"
+  val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some("messages__visuallyhidden__companyNumber"))))
+    AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__companyPaye"))))
   )
-
-  "Cleanup" when {
-    def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(NoCompanyNumberId(0))("reason").asOpt.value
-
-    "remove the data for `NoCompanyNumber`" in {
-      val result: UserAnswers = answers.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("crn", true)).asOpt.value
-      result.get(NoCompanyNumberId(0)) mustNot be(defined)
-    }
-  }
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        CompanyPayeVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for new establisher - companyRegistrationNumber" must {
+    "in update mode for new establisher - company paye" must {
 
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
-    "in update mode for existing establisher - company companyRegistrationNumber" must {
+    "in update mode for existing establisher - company paye" must {
 
-      "return answers rows without change links if companyRegistrationNumber is available and not editable" in {
+      "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false, None)
+        CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__paye",List("paye"), false, None)
         ))
       }
 
-      "return answers rows with change links if companyRegistrationNumber is available and editable" in {
-        val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
+      "return answers rows with change links if paye is available and editable" in {
+        val answers = UserAnswers().set(CompanyPayeVariationsId(0))(ReferenceValue("paye", isEditable = true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyPayeVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
-      "display an add link if companyRegistrationNumber is not available" in {
+      "display an add link if no answer is found" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
+        CompanyPayeVariationsId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
+          AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyPaye"))))))
       }
     }
   }

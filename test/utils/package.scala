@@ -19,7 +19,7 @@ import identifiers._
 import identifiers.register._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyPayeVariationsId, CompanyRegistrationNumberVariationsId, CompanyUTRId}
+import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterCRNId, CompanyEnterUTRId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.address.{Address, TolerantAddress}
@@ -199,15 +199,15 @@ package object utils {
     }
 
     def trusteesCompanyPayeVariations(index: Int, paye: ReferenceValue): UserAnswers = {
-      answers.set(CompanyPayeVariationsId(index))(paye).asOpt.value
+      answers.set(CompanyEnterPAYEId(index))(paye).asOpt.value
     }
 
     def trusteesCompanyCrnVariations(index: Int, crn: ReferenceValue): UserAnswers = {
-      answers.set(CompanyRegistrationNumberVariationsId(index))(crn).asOpt.value
+      answers.set(CompanyEnterCRNId(index))(crn).asOpt.value
     }
 
     def trusteesCompanyUtr(index: Int, utr: ReferenceValue): UserAnswers = {
-      answers.set(CompanyUTRId(index))(utr).asOpt.value
+      answers.set(CompanyEnterUTRId(index))(utr).asOpt.value
     }
 
 

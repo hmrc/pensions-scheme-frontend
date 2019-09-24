@@ -52,7 +52,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
           CompanyDetailsId.toString -> CompanyDetails("test company name"),
           HasCompanyUTRId.toString -> hasUtrValue,
           NoUTRId.toString -> "utr number is not present",
-          CompanyUTRId.toString -> "9999999999"
+          CompanyEnterUTRId.toString -> "9999999999"
         )
       )
     ))
@@ -109,7 +109,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(HasCompanyUTRId(index), false)
-      FakeUserAnswersService.verifyNot(CompanyUTRId(index))
+      FakeUserAnswersService.verifyNot(CompanyEnterUTRId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
@@ -120,7 +120,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
 
       FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
-      FakeUserAnswersService.verifyNot(NoUTRId(index))
+      FakeUserAnswersService.verifyNot(CompanyNoUTRReasonId(index))
     }
 
   }

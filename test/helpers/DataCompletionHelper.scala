@@ -18,7 +18,7 @@ package helpers
 
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
-import identifiers.register.trustees.company.CompanyUTRId
+import identifiers.register.trustees.company.CompanyEnterUTRId
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address

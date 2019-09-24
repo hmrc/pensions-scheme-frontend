@@ -30,10 +30,10 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-        isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(CompanyNoUTRReasonId(index))),
+        isAnswerComplete(HasCompanyCRNId(index), CompanyEnterCRNId(index), Some(CompanyNoCRNReasonId(index))),
+        isAnswerComplete(HasCompanyUTRId(index), CompanyEnterUTRId(index), Some(CompanyNoUTRReasonId(index))),
         isAnswerComplete(HasCompanyVATId(index), CompanyEnterVATId(index), None),
-        isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+        isAnswerComplete(HasCompanyPAYEId(index), CompanyEnterPAYEId(index), None)
       )
     )
 
@@ -46,10 +46,10 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyCompleteNonHns(index: Int): Boolean =
     isListComplete(Seq(
       get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberVariationsId(index)).isDefined,
-      get(HasCompanyUTRId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
+      get(CompanyEnterCRNId(index)).isDefined,
+      get(HasCompanyUTRId(index)).isDefined | get(CompanyEnterUTRId(index)).isDefined,
       get(HasCompanyVATId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
-      get(HasCompanyPAYEId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
+      get(HasCompanyPAYEId(index)).isDefined | get(CompanyEnterPAYEId(index)).isDefined,
       isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
       get(CompanyEmailId(index)).isDefined,
       get(CompanyPhoneId(index)).isDefined

@@ -26,19 +26,19 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = TrusteesId(index).path \ CompanyUTRId.toString
+case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ CompanyEnterUTRId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(CompanyNoUTRReasonId(this.index))
 }
 
-object CompanyUTRId {
+object CompanyEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterUTRId] = {
 
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
@@ -49,16 +49,16 @@ object CompanyUTRId {
     val label: String = "messages__utr__checkyouranswerslabel"
     def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", companyName(index))
 
-    new CheckYourAnswers[CompanyUTRId] {
-      override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyUTRId](label, hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswers[CompanyEnterUTRId] {
+      override def row(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[CompanyEnterUTRId](label, hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyUTRId](label, hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterUTRId](label, hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

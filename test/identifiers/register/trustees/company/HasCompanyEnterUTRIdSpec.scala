@@ -23,32 +23,30 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class NoCompanyNumberIdSpec extends SpecBase {
+class HasCompanyEnterUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
-  val reason = "some lame reason"
-  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__noCompanyNumber__establisher__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_noCrnReason", name)))))
+    AnswerRow(messages("messages__hasCompanyUtr__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_hasUtr", name)))))
   )
 
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(NoCompanyNumberId(0))(reason)).asOpt.get
+      _.set(HasCompanyUTRId(0))(true)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        NoCompanyNumberId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyUTRId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -59,7 +57,7 @@ class NoCompanyNumberIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        NoCompanyNumberId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyUTRId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -69,7 +67,7 @@ class NoCompanyNumberIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        NoCompanyNumberId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        HasCompanyUTRId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }

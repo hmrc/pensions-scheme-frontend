@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.establishers.company
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
 import play.api.libs.json.Json
@@ -28,14 +28,13 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
+class CompanyEnterCRNIdSpec extends SpecBase {
 
-  private val name = "name"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_crn", name)))))
+    AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__companyNumber"))))
   )
 
   "Cleanup" when {
@@ -50,8 +49,7 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber"))).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
 
     "in normal mode" must {
 
@@ -62,9 +60,9 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for new trustee - companyRegistrationNumber" must {
+    "in update mode for new establisher - companyRegistrationNumber" must {
 
-      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -73,22 +71,19 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
     }
 
-    "in update mode for existing trustee - company companyRegistrationNumber" must {
+    "in update mode for existing establisher - company companyRegistrationNumber" must {
 
       "return answers rows without change links if companyRegistrationNumber is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__trustees__company__number",List("companyRegistrationNumber"),false, None)
+          AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false, None)
         ))
       }
 
       "return answers rows with change links if companyRegistrationNumber is available and editable" in {
-
-        def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-          _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true))).asOpt.get
-
+        val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -96,16 +91,12 @@ class CompanyRegistrationNumberVariationsIdSpec extends SpecBase {
       }
 
       "display an add link if companyRegistrationNumber is not available" in {
-
-
-        def answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).asOpt.get
-
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__trustees__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_crn", name)))))))
+          AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
       }
     }
   }

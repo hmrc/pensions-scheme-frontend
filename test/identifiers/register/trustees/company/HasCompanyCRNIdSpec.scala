@@ -14,52 +14,50 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class NoCompanyNumberIdSpec extends SpecBase {
+class HasCompanyCRNIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
-  val reason = "some lame reason"
-  implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__noCompanyNumber__establisher__heading", name), List(reason), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__noCompanyNumberReason")))))
+    AnswerRow(messages("messages__hasCompanyNumber__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_hasCrn", name)))))
   )
 
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(NoCompanyNumberId(0))(reason)).asOpt.get
+      _.set(HasCompanyCRNId(0))(true)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        NoCompanyNumberId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyCRNId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for new establisher - company paye" must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        NoCompanyNumberId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -69,7 +67,7 @@ class NoCompanyNumberIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        NoCompanyNumberId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }

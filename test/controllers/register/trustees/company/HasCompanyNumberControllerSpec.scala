@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasCrnFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.{CompanyRegistrationNumberVariationsId, HasCompanyNumberId, NoCompanyNumberId}
+import identifiers.register.trustees.company.{CompanyEnterCRNId, HasCompanyCRNId, CompanyNoCRNReasonId}
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -98,7 +98,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+      FakeUserAnswersService.verify(HasCompanyCRNId(index), true)
 
     }
 
@@ -118,8 +118,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), false)
-      FakeUserAnswersService.verifyNot(CompanyRegistrationNumberVariationsId(index))
+      FakeUserAnswersService.verify(HasCompanyCRNId(index), false)
+      FakeUserAnswersService.verifyNot(CompanyEnterCRNId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no crn reason" in {
@@ -128,8 +128,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
-      FakeUserAnswersService.verifyNot(NoCompanyNumberId(index))
+      FakeUserAnswersService.verify(HasCompanyCRNId(index), true)
+      FakeUserAnswersService.verifyNot(CompanyNoCRNReasonId(index))
     }
   }
 }

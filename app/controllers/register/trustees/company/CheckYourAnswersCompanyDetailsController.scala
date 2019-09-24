@@ -57,17 +57,17 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
         implicit val userAnswers: UserAnswers = request.userAnswers
         val companyDetails = Seq(AnswerSection(
           None,
-          HasCompanyNumberId(index).row(routes.HasCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyRegistrationNumberVariationsId(index)
+          HasCompanyCRNId(index).row(routes.HasCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyEnterCRNId(index)
               .row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            NoCompanyNumberId(index).row(routes.NoCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyNoCRNReasonId(index).row(routes.NoCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyNoUTRReasonId(index).row(routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            CompanyEnterPAYEId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(

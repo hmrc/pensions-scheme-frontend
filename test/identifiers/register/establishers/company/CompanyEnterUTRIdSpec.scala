@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.establishers.company
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest
 import play.api.libs.json.Json
@@ -28,15 +28,15 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class CompanyUTRIdSpec extends SpecBase {
+class CompanyEnterUTRIdSpec extends SpecBase {
+
   val onwardUrl = "onwardUrl"
   val name = "test company name"
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
-
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
+      Some("messages__visuallyhidden__companyUTR"))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
@@ -44,18 +44,17 @@ class CompanyUTRIdSpec extends SpecBase {
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(CompanyNoUTRReasonId(0))("reason").asOpt.value
+      .set(NoCompanyUTRId(0))("reason").asOpt.value
 
-    "remove the data for `CompanyNoUTRReason`" in {
+    "remove the data for `NoCompanyUTRReason`" in {
       val result: UserAnswers = answers.set(CompanyUTRId(0))(ReferenceValue("utr")).asOpt.value
-      result.get(CompanyNoUTRReasonId(0)) mustNot be(defined)
+      result.get(NoCompanyUTRId(0)) mustNot be(defined)
     }
   }
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(CompanyUTRId(0))(ReferenceValue(utr, isEditable))).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(CompanyUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
@@ -67,9 +66,9 @@ class CompanyUTRIdSpec extends SpecBase {
     }
 
     "in update mode" when {
-      def answersNew: UserAnswers = answers().set(IsTrusteeNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers().set(IsEstablisherNewId(0))(true).asOpt.value
 
-      "for new trustee" must {
+      "for new establisher" must {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
@@ -78,13 +77,13 @@ class CompanyUTRIdSpec extends SpecBase {
         }
       }
 
-      "for existing trustee" must {
+      "for existing establisher" must {
 
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_utr", name))
-            )))
+              Some("messages__visuallyhidden__companyUTR")
+              )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers

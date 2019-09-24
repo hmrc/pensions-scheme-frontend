@@ -42,7 +42,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
       "remove the data for `CompanyDetails`" in {
         result.get(CompanyDetailsId(0)) mustNot be(defined)
       }
-      "remove the data for `HasCompanyNumberId`" in {
+      "remove the data for `HasCompanyCRNId`" in {
         result.get(HasCompanyNumberId(0)) mustNot be(defined)
       }
       "remove the data for `CompanyRegistrationNumber`" in {
@@ -51,7 +51,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
       "remove the data for `HasCompanyUTRId`" in {
         result.get(HasCompanyUTRId(0)) mustNot be(defined)
       }
-      "remove the data for `CompanyUTRId`" in {
+      "remove the data for `CompanyEnterUTRId`" in {
         result.get(CompanyUTRId(0)) mustNot be(defined)
       }
       "remove the data for `Company Address`" in {
