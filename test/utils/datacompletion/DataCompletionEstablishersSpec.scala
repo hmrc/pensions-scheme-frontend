@@ -211,9 +211,9 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
 
 object DataCompletionEstablishersSpec extends JsonFileReader with DataCompletionHelper  {
   private val mode = NormalMode
-  private val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
-  private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
-  private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
+  private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
+  private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
 
   private val emptyAnswers = UserAnswers()
 }

@@ -195,7 +195,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   val srnValue = "S1000000456"
   val srn = Some(srnValue)
 
-  private val userAnswersJson = readJsonFromFile("/payloadHnS.json")
+  private val userAnswersJson = readJsonFromFile("/payload.json")
   private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
   private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))

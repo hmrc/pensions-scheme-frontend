@@ -45,7 +45,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allEstablishers" must {
     "return a sequence of establishers names, edit links and delete links" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 
       val allEstablisherEntities: Seq[Establisher[_]] = Seq(
         establisherEntity("Test Company", 0, Company, isComplete = true),
@@ -118,7 +118,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   ".allTrustees" must {
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
         trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
@@ -194,7 +194,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   ".allDirectors" must {
 
     "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
         .set(DirectorNameId(0, 1))(PersonName("First", "Last", isDeleted = true)).asOpt.value
         .set(DirectorNameId(0, 2))(PersonName("First", "Last")).asOpt.value
 
@@ -444,7 +444,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
 
     "checking establishers" must {
-      val userAnswers = UserAnswers(readJsonFromFile("/payloadHnSInProgress.json"))
+      val userAnswers = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
       "return false if establishers are not completed" in {
         userAnswers.areVariationChangesCompleted(false) mustBe false
       }
@@ -547,7 +547,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     .set(HasCompanyPAYEId(0))(true).asOpt.value
     .set(CompanyPayeVariationsId(0))(ReferenceValue("vat")).asOpt.value
 
-  private val userAnswersHnS = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+  private val userAnswersHnS = UserAnswers(readJsonFromFile("/payload.json"))
 
   val establisherPartnership = trustee.set(EstablisherKindId(0))(EstablisherKind.Partnership)
     .flatMap(_.set(PartnershipDetailsId(0))(PartnershipDetails("")))

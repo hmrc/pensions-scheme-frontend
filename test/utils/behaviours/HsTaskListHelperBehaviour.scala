@@ -405,9 +405,9 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def mustNotHaveDeclarationLink(helper: HsTaskListHelper, userAnswers: UserAnswers): Unit =
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
 
-  protected def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
-  protected def allAnswersHnS: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnS.json"))
-  protected def allAnswersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadHnSInProgress.json")) //"/payloadIncomplete.json"
+  protected def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+  protected def allAnswersHnS: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+  protected def allAnswersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadInProgress.json")) //"/payloadIncomplete.json"
 
   protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
     UserAnswers().set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(

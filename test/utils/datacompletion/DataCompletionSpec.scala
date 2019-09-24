@@ -371,11 +371,11 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
 object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
   private val mode = NormalMode
-  private val userAnswersCompleted: JsValue = readJsonFromFile("/payloadHnS.json")
-  private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadHnSInProgress.json")
+  private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
 
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payloadHnS.json")
-  private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadHnSUninitiated.json")
+  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
 
   private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true)
   private val userAnswersIndividualDetailsInProgress: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = false)

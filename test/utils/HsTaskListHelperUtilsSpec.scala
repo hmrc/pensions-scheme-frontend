@@ -279,7 +279,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       .asOpt.value
   }
 
-  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payloadHnS.json"))
+  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payload.json"))
   protected def trusteeIndividual(isComplete: Boolean): UserAnswers = {
     val ua = trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
@@ -294,8 +294,8 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
     setTrusteeCompletionStatus(isComplete = isComplete, 0, ua)
   }
 
-  protected def answersComplete = UserAnswers(readJsonFromFile("/payloadHnS.json"))
-  protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadHnSInProgress.json"))
+  protected def answersComplete = UserAnswers(readJsonFromFile("/payload.json"))
+  protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 
