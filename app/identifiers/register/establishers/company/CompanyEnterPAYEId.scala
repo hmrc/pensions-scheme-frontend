@@ -25,28 +25,28 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyPayeVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyPayeVariationsId.toString
+case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyEnterPAYEId.toString
 }
 
-object CompanyPayeVariationsId {
+object CompanyEnterPAYEId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyPayeVariationsId] = {
-    new CheckYourAnswers[CompanyPayeVariationsId] {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
+    new CheckYourAnswers[CompanyEnterPAYEId] {
 
       private val payeLabel = "messages__common__cya__paye"
       private val hiddenLabelPaye = "messages__visuallyhidden__companyPaye"
 
-      override def row(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+      override def row(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: CompanyPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabelPaye)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyPayeVariationsId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabelPaye)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

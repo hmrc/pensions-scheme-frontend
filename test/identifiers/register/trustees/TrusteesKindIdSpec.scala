@@ -79,15 +79,12 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
-//    .flatMap(_.set(CompanyEmailId(0))(""))
-//    .flatMap(_.set(CompanyPhoneId(0))(""))
     .asOpt.value
 
   val trusteeIndividual = UserAnswers(Json.obj())
     .set(TrusteeKindId(0))(TrusteeKind.Individual)
     .flatMap(_.set(TrusteeNameId(0))(PersonName("", "")))
-    .flatMap(_.set(TrusteeNinoId(0))(Nino.No("")))
-    .flatMap(_.set(UniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
+    .flatMap(_.set(TrusteeEnterNINOId(0))(ReferenceValue("")))
     .flatMap(_.set(IndividualPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(TrusteeAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear))
@@ -100,9 +97,6 @@ object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
   val trusteePartnership = UserAnswers()
     .set(TrusteeKindId(0))(TrusteeKind.Partnership)
     .flatMap(_.set(PartnershipDetailsId(0))(models.PartnershipDetails("test partnership")))
-    .flatMap(_.set(PartnershipPayeId(0))(Paye.No))
-    .flatMap(_.set(PartnershipVatId(0))(Vat.No))
-    .flatMap(_.set(PartnershipUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
     .flatMap(_.set(PartnershipPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(partnership.PartnershipAddressListId(0))(TolerantAddress(Some(""),
       Some(""), None, None, None, None)))

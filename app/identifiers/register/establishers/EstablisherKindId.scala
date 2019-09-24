@@ -60,10 +60,10 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
   private def removeAllCompany(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.remove(CompanyDetailsId(index))
 
-      .flatMap(_.remove(HasCompanyNumberId(index)))
-      .flatMap(_.remove(CompanyRegistrationNumberVariationsId(index)))
+      .flatMap(_.remove(HasCompanyCRNId(index)))
+      .flatMap(_.remove(CompanyEnterCRNId(index)))
       .flatMap(_.remove(HasCompanyUTRId(index)))
-      .flatMap(_.remove(CompanyUTRId(index)))
+      .flatMap(_.remove(CompanyEnterUTRId(index)))
 
       .flatMap(_.remove(CompanyPostCodeLookupId(index)))
       .flatMap(_.remove(CompanyAddressListId(index)))

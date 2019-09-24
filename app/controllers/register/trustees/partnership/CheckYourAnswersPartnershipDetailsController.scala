@@ -58,12 +58,12 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         val companyDetails = Seq(AnswerSection(
           None,
           PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipUTRId(index).row(routes.PartnershipUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipEnterUTRId(index).row(routes.PartnershipUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            PartnershipEnterPAYEId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(

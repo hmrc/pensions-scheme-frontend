@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasUtrFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipEnterUTRId}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -52,7 +52,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
           PartnershipHasUTRId.toString -> hasUtrValue,
           PartnershipNoUTRReasonId.toString -> "utr number is not present",
-          PartnershipUTRId.toString -> "9999999999"
+          PartnershipEnterUTRId.toString -> "9999999999"
         )
       )
     ))
@@ -109,7 +109,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipHasUTRId(index), false)
-      FakeUserAnswersService.verifyNot(PartnershipUTRId(index))
+      FakeUserAnswersService.verifyNot(PartnershipEnterUTRId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {

@@ -58,7 +58,7 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
           None,
           TrusteeDOBId(index).row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeNewNinoId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          TrusteeEnterNINOId(index).row(routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           TrusteeUTRId(index).row(routes.TrusteeUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++

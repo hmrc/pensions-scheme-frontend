@@ -56,7 +56,7 @@ trait DataCompletionHelper extends OptionValues {
         .set(TrusteeHasNINOId(index))(true)
         .asOpt
         .value
-        .set(TrusteeNewNinoId(index))(ReferenceValue(stringValue))
+        .set(TrusteeEnterNINOId(index))(ReferenceValue(stringValue))
         .asOpt
         .value
         .set(TrusteeHasUTRId(index))(true)

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ReasonController
 import controllers.actions._
 import forms.register.NoCompanyNumberFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, NoCompanyNumberId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoCRNReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -59,7 +59,7 @@ class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppCon
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          get(NoCompanyNumberId(index), viewModel(mode, index, srn, companyName), form(companyName))
+          get(CompanyNoCRNReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 
@@ -68,7 +68,7 @@ class NoCompanyNumberController @Inject()(override val appConfig: FrontendAppCon
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          post(NoCompanyNumberId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+          post(CompanyNoCRNReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 

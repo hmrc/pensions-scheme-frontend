@@ -44,7 +44,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorNameId(0, 0), newDirector, directorDOB(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorDOBId(0, 0), emptyAnswers, directorHasNINO(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorDOBId(0, 0), newDirector, directorHasNINO(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorNewNinoId(0, 0), emptyAnswers, directorHasUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorEnterNINOId(0, 0), emptyAnswers, directorHasUTR(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorNoUTRReasonId(0, 0), newDirector, directorAddressPostcode(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = true), directorNinoNew(mode), true, Some(directorNinoNew(checkMode(mode))), true),
     (DirectorHasNINOId(0, 0), hasNino(newDirector, value = false), directorNinoReason(mode), true, Some(directorNinoReason(checkMode(mode))), true),
@@ -202,9 +202,9 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
     .set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
     _.set(DirectorNameId(establisherIndex, directorIndex))(PersonName("Alan", "Allman", false))).flatMap(
     _.set(DirectorHasNINOId(establisherIndex, directorIndex))(true)).flatMap(
-    _.set(DirectorNewNinoId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
+    _.set(DirectorEnterNINOId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
     _.set(DirectorHasUTRId(establisherIndex, directorIndex))(true)).flatMap(
-    _.set(DirectorUTRId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
+    _.set(DirectorEnterUTRId(establisherIndex, directorIndex))(ReferenceValue("a"))).flatMap(
     _.set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.UnderAYear)).flatMap(
     _.set(DirectorAddressId(establisherIndex, directorIndex))(Address("Line 1", "Line 2", None, None, None, "UK"))).asOpt.value
 

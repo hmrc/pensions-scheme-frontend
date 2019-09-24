@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -47,7 +47,7 @@ class TrusteeNinoNewControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = UserAnswers()
         .set(TrusteeNameId(0))(PersonName("Test", "Name"))
-        .flatMap(_.set(TrusteeNewNinoId(0))(ReferenceValue(ninoData)))
+        .flatMap(_.set(TrusteeEnterNINOId(0))(ReferenceValue(ninoData)))
         .flatMap(_.set(SchemeNameId)(schemeName))
         .asOpt
         .value
@@ -106,7 +106,7 @@ object TrusteeNinoNewControllerSpec extends ControllerSpecBase {
     "trustees" -> Json.arr(
       Json.obj(
         TrusteeNameId.toString -> PersonName("Test", "Name", false),
-        TrusteeNewNinoId.toString -> Json.obj(
+        TrusteeEnterNINOId.toString -> Json.obj(
           "value" -> ninoData
         )
       )

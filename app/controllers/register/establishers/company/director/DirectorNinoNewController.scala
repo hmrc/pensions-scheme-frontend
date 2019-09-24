@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNewNinoId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterNINOId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -67,7 +67,7 @@ class DirectorNinoNewController @Inject()(
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
-            get(DirectorNewNinoId(establisherIndex, directorIndex), formProvider(name),
+            get(DirectorEnterNINOId(establisherIndex, directorIndex), formProvider(name),
               viewmodel(establisherIndex, directorIndex, mode, srn, name))
         }
     }
@@ -77,7 +77,7 @@ class DirectorNinoNewController @Inject()(
     implicit request =>
       directorName(establisherIndex, directorIndex).retrieve.right.map {
         name =>
-          post(DirectorNewNinoId(establisherIndex, directorIndex), mode, formProvider(name),
+          post(DirectorEnterNINOId(establisherIndex, directorIndex), mode, formProvider(name),
             viewmodel(establisherIndex, directorIndex, mode, srn, name))
       }
   }

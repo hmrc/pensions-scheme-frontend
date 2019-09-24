@@ -27,7 +27,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class DirectorNewNinoIdSpec extends SpecBase {
+class DirectorEnterNINOIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
@@ -41,21 +41,21 @@ class DirectorNewNinoIdSpec extends SpecBase {
       .set(DirectorNoNINOReasonId(0, 0))("reason").asOpt.value
 
     "remove the data for `DirectorNoNINOReason`" in {
-      val result: UserAnswers = answers.set(DirectorNewNinoId(0, 0))(ReferenceValue("nino", true)).asOpt.value
+      val result: UserAnswers = answers.set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino", true)).asOpt.value
       result.get(DirectorNoNINOReasonId(0, 0)) mustNot be(defined)
     }
   }
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(DirectorNewNinoId(0, 0))(ReferenceValue("nino")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        DirectorNewNinoId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        DirectorEnterNINOId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -66,7 +66,7 @@ class DirectorNewNinoIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -76,24 +76,24 @@ class DirectorNewNinoIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+        DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__nino",List("nino"),false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
-        val answers = UserAnswers().set(DirectorNewNinoId(0, 0))(ReferenceValue("nino", true)).asOpt.get
+        val answers = UserAnswers().set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+        DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__nino"))))))
       }

@@ -31,7 +31,7 @@ case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
-        userAnswers.remove(PartnershipPayeVariationsId(this.index))
+        userAnswers.remove(PartnershipEnterPAYEId(this.index))
       case _ =>
         super.cleanup(value, userAnswers)
     }

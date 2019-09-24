@@ -33,7 +33,7 @@ case class DirectorHasNINOId(establisherIndex: Int, directorIndex: Int) extends 
       case Some(true) =>
         userAnswers.remove(DirectorNoNINOReasonId(establisherIndex, directorIndex))
       case Some(false) =>
-        userAnswers.remove(DirectorNewNinoId(establisherIndex, directorIndex))
+        userAnswers.remove(DirectorEnterNINOId(establisherIndex, directorIndex))
       case _ =>
         super.cleanup(value, userAnswers)
     }

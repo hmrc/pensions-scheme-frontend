@@ -87,13 +87,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
             DirectorDOBId(index, index).row(routes.DirectorDOBController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorHasNINOId(index, index).row(routes.DirectorHasNINOController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                                 implicitly),
-            DirectorNewNinoId(index, index).row(routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
+            DirectorEnterNINOId(index, index).row(routes.DirectorNinoNewController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                                 implicitly),
             DirectorNoNINOReasonId(index, index)
               .row(routes.DirectorNoNINOReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorHasUTRId(index, index).row(routes.DirectorHasUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
                                                                                                                                               implicitly),
-            DirectorUTRId(index, index).row(routes.DirectorUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
+            DirectorEnterUTRId(index, index).row(routes.DirectorUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorNoUTRReasonId(index, index)
               .row(routes.DirectorNoUTRReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
             DirectorAddressId(index, index).row(routes.DirectorAddressController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
@@ -151,13 +151,13 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .value
 
   val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
-    .set(DirectorNewNinoId(index, index))(ReferenceValue("AB100100A"))
+    .set(DirectorEnterNINOId(index, index))(ReferenceValue("AB100100A"))
     .flatMap(_.set(DirectorHasNINOId(index, index))(true))
     .asOpt
     .value
 
   val directorAnswers = directorAnswersUpdate
-    .set(DirectorUTRId(index, index))(ReferenceValue("1234567890"))
+    .set(DirectorEnterUTRId(index, index))(ReferenceValue("1234567890"))
     .flatMap(_.set(DirectorHasUTRId(index, index))(true))
     .flatMap(_.set(DirectorAddressId(index, index))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(DirectorAddressYearsId(index, index))(AddressYears.UnderAYear))
@@ -168,8 +168,8 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   val directorAnswersHnsEnabled: UserAnswers = UserAnswers()
     .set(DirectorNameId(index, index))(PersonName("First", "Last"))
     .flatMap(
-      _.set(DirectorNewNinoId(index, index))(ReferenceValue("AB100100A")).flatMap(
-        _.set(DirectorUTRId(index, index))(ReferenceValue("1234567890"))
+      _.set(DirectorEnterNINOId(index, index))(ReferenceValue("AB100100A")).flatMap(
+        _.set(DirectorEnterUTRId(index, index))(ReferenceValue("1234567890"))
           .flatMap(_.set(DirectorAddressId(index, index))(Address("Address 1", "Address 2", None, None, None, "GB")))
           .flatMap(_.set(DirectorAddressYearsId(index, index))(AddressYears.UnderAYear))
           .flatMap(_.set(DirectorPreviousAddressId(index, index))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))

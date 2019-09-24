@@ -39,14 +39,14 @@ class HasCompanyCRNIdSpec extends SpecBase {
   "cya" when {
 
     val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(name)).flatMap(
-      _.set(HasCompanyNumberId(0))(true)).asOpt.get
+      _.set(HasCompanyCRNId(0))(true)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyNumberId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyCRNId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -57,7 +57,7 @@ class HasCompanyCRNIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        HasCompanyNumberId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -67,7 +67,7 @@ class HasCompanyCRNIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        HasCompanyNumberId(0).row(onwardUrl, UpdateMode) mustEqual Nil
+        HasCompanyCRNId(0).row(onwardUrl, UpdateMode) mustEqual Nil
       }
     }
   }

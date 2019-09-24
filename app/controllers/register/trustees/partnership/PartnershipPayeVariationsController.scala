@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPayeVariationsId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId}
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -61,7 +61,7 @@ class PartnershipPayeVariationsController  @Inject()(
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            get(PartnershipPayeVariationsId(index), form(details.name), viewmodel(mode, index, srn, details.name))
+            get(PartnershipEnterPAYEId(index), form(details.name), viewmodel(mode, index, srn, details.name))
         }
     }
 
@@ -69,7 +69,7 @@ class PartnershipPayeVariationsController  @Inject()(
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         details =>
-          post(PartnershipPayeVariationsId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
+          post(PartnershipEnterPAYEId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
       }
   }
 }

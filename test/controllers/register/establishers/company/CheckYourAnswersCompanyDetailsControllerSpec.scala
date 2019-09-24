@@ -137,21 +137,21 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, 0).url
 
   private val fullAnswersYes = emptyAnswers
-    .set(HasCompanyNumberId(0))(true).flatMap(
-      _.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue(crn, isEditable = true)).flatMap(
+    .set(HasCompanyCRNId(0))(true).flatMap(
+      _.set(CompanyEnterCRNId(0))(ReferenceValue(crn, isEditable = true)).flatMap(
        _.set(HasCompanyUTRId(0))(true).flatMap(
-         _.set(CompanyUTRId(0))(ReferenceValue(utr)).flatMap(
+         _.set(CompanyEnterUTRId(0))(ReferenceValue(utr)).flatMap(
            _.set(HasCompanyVATId(0))(true).flatMap(
            _.set(CompanyEnterVATId(0))(ReferenceValue(vat, isEditable = true)).flatMap(
              _.set(HasCompanyPAYEId(0))(true).flatMap(
-               _.set(CompanyPayeVariationsId(0))(ReferenceValue(paye, isEditable = true))
+               _.set(CompanyEnterPAYEId(0))(ReferenceValue(paye, isEditable = true))
        ))))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers
-    .set(HasCompanyNumberId(0))(false).flatMap(
-    _.set(NoCompanyNumberId(0))(reason).flatMap(
+    .set(HasCompanyCRNId(0))(false).flatMap(
+    _.set(CompanyNoCRNReasonId(0))(reason).flatMap(
       _.set(HasCompanyUTRId(0))(false).flatMap(
-        _.set(NoCompanyUTRId(0))(reason).flatMap(
+        _.set(CompanyNoUTRReasonId(0))(reason).flatMap(
           _.set(HasCompanyVATId(0))(false).flatMap(
               _.set(HasCompanyPAYEId(0))(false)
               ))))).asOpt.value

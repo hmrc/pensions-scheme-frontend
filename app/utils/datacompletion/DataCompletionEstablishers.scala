@@ -31,10 +31,10 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherCompanyDetailsComplete(index: Int, mode: Mode): Option[Boolean] = {
     isComplete(
       Seq(
-        isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-        isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(NoCompanyUTRId(index))),
+        isAnswerComplete(HasCompanyCRNId(index), CompanyEnterCRNId(index), Some(CompanyNoCRNReasonId(index))),
+        isAnswerComplete(HasCompanyUTRId(index), CompanyEnterUTRId(index), Some(CompanyNoUTRReasonId(index))),
         isAnswerComplete(HasCompanyVATId(index), CompanyEnterVATId(index), None),
-        isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+        isAnswerComplete(HasCompanyPAYEId(index), CompanyEnterPAYEId(index), None)
       ) ++ (if (mode == NormalMode) Seq(isAnswerComplete(IsCompanyDormantId(index))) else Nil)
     )
   }
@@ -64,8 +64,8 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isDirectorDetailsComplete(estIndex: Int, dirIndex: Int): Option[Boolean] =
     isComplete(Seq(
       Some(get(DirectorDOBId(estIndex, dirIndex)).isDefined),
-      isAnswerComplete(DirectorHasNINOId(estIndex, dirIndex), DirectorNewNinoId(estIndex, dirIndex), Some(DirectorNoNINOReasonId(estIndex, dirIndex))),
-      isAnswerComplete(DirectorHasUTRId(estIndex, dirIndex), DirectorUTRId(estIndex, dirIndex), Some(DirectorNoUTRReasonId(estIndex, dirIndex)))
+      isAnswerComplete(DirectorHasNINOId(estIndex, dirIndex), DirectorEnterNINOId(estIndex, dirIndex), Some(DirectorNoNINOReasonId(estIndex, dirIndex))),
+      isAnswerComplete(DirectorHasUTRId(estIndex, dirIndex), DirectorEnterUTRId(estIndex, dirIndex), Some(DirectorNoUTRReasonId(estIndex, dirIndex)))
     ))
 
   def isDirectorCompleteHnS(estIndex: Int, dirIndex: Int): Boolean =

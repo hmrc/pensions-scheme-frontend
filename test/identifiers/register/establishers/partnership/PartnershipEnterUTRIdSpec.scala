@@ -28,9 +28,9 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class PartnershipUTRIdSpec extends SpecBase {
+class PartnershipEnterUTRIdSpec extends SpecBase {
 
-  import PartnershipUTRIdSpec._
+  import PartnershipEnterUTRIdSpec._
 
   "cleanup" when {
     "`PartnershipUTR` changed to a new value" must {
@@ -96,7 +96,7 @@ class PartnershipUTRIdSpec extends SpecBase {
   }
 }
 
-object PartnershipUTRIdSpec extends SpecBase {
+object PartnershipEnterUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test partnership name"

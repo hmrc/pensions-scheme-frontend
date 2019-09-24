@@ -116,7 +116,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     .set(TrusteeNameId(0))(trusteeName).flatMap(
     _.set(TrusteeDOBId(0))(trusteeDob).flatMap(
       _.set(TrusteeHasNINOId(0))(true).flatMap(
-        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino)).flatMap(
+        _.set(TrusteeEnterNINOId(0))(ReferenceValue(nino)).flatMap(
           _.set(TrusteeHasUTRId(0))(true).flatMap(
             _.set(TrusteeUTRId(0))(ReferenceValue(utr))
               ))))).asOpt.value

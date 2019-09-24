@@ -41,9 +41,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (HasCompanyNumberId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
-    (HasCompanyNumberId(0), hasCompanyNumber(true), companyRegistrationNumberNew(mode), true, Some(companyRegistrationNumberNew(checkMode(mode))), true),
-    (HasCompanyNumberId(0), hasCompanyNumber(false), noCompanyRegistrationNumber(mode), true, Some(noCompanyRegistrationNumber(checkMode(mode))), true),
+    (HasCompanyCRNId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
+    (HasCompanyCRNId(0), hasCompanyNumber(true), companyRegistrationNumberNew(mode), true, Some(companyRegistrationNumberNew(checkMode(mode))), true),
+    (HasCompanyCRNId(0), hasCompanyNumber(false), noCompanyRegistrationNumber(mode), true, Some(noCompanyRegistrationNumber(checkMode(mode))), true),
     (HasCompanyVATId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
     (HasCompanyVATId(0), hasCompanyVat(true), companyVatNew(mode), true, Some(companyVatNew(checkMode(mode))), true),
     (HasCompanyVATId(0), hasCompanyVat(false), hasCompanyPaye(mode), true, Some(cyaCompanyDetails(mode)), true),
@@ -54,10 +54,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (HasCompanyUTRId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
     (HasCompanyUTRId(0), hasCompanyUtr(true), companyUTRNew(mode), true, Some(companyUTRNew(checkMode(mode))), true),
     (HasCompanyUTRId(0), hasCompanyUtr(false), noCompanyUTR(mode), true, Some(noCompanyUTR(checkMode(mode))), true),
-    (CompanyUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
-    (CompanyUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
-    (NoCompanyUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
-    (NoCompanyUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
+    (CompanyEnterUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
+    (CompanyEnterUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
+    (CompanyNoUTRReasonId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
+    (CompanyNoUTRReasonId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
     (CompanyPostCodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
     (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, cyaCompanyAddressDetails(mode) , true, Some(exitJourney(mode, addressYearsOverAYear, 0, cyaCompanyAddressDetails(mode))), true),
@@ -85,12 +85,12 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (CompanyRegistrationNumberVariationsId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
+    (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(NormalMode), true, Some(cyaCompanyContactDetails(NormalMode)), true),
     (IsCompanyDormantId(0), emptyAnswers, cyaCompanyDetails(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (HasCompanyPAYEId(0), establisherHasPAYE(false), isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode) ), true),
-    (NoCompanyNumberId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
-    (CompanyPayeVariationsId(0), emptyAnswers, isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
+    (CompanyNoCRNReasonId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
+    (CompanyEnterPAYEId(0), emptyAnswers, isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
     (CompanyAddressId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true)
   )
@@ -102,10 +102,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, hasBeenTrading(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))), true),
     (AddCompanyDirectorsId(0), addCompanyDirectorsFalseWithChanges, taskList(UpdateMode), true, None, true),
-    (CompanyPayeVariationsId(0), emptyAnswers, cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
-    (CompanyRegistrationNumberVariationsId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
+    (CompanyEnterPAYEId(0), emptyAnswers, cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
+    (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
     (HasCompanyPAYEId(0), establisherHasPAYE(false), cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))), true),
-    (NoCompanyNumberId(0), newEstablisher, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))), true),
+    (CompanyNoCRNReasonId(0), newEstablisher, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
     (CompanyAddressId(0), newEstablisher, companyAddressYears(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))), true)
   )
@@ -144,7 +144,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def establisherEnteredPAYE = UserAnswers(Json.obj())
     .set(CompanyEnterVATId(0))(ReferenceValue("123456789")).asOpt.value
 
-  private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyNumberId(0))(yesNo).asOpt.value
+  private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyCRNId(0))(yesNo).asOpt.value
 
   private def underAYearRoute(mode: Mode) = hasBeenTrading(mode)
 

@@ -141,11 +141,11 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
     .set(PartnershipHasUTRId(0))(true).flatMap(
-        _.set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
+        _.set(PartnershipEnterUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
           _.set(PartnershipHasVATId(0))(true).flatMap(
             _.set(PartnershipEnterVATId(0))(ReferenceValue(vat, isEditable)).flatMap(
               _.set(PartnershipHasPAYEId(0))(true).flatMap(
-                _.set(PartnershipPayeVariationsId(0))(ReferenceValue(paye, isEditable))
+                _.set(PartnershipEnterPAYEId(0))(ReferenceValue(paye, isEditable))
               ))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers

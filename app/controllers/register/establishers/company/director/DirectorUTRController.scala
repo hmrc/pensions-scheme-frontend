@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorUTRId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterUTRId}
 import javax.inject.Inject
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -62,7 +62,7 @@ class DirectorUTRController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           val directorName = details.fullName
-          get(DirectorUTRId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+          get(DirectorEnterUTRId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
         }
     }
 
@@ -71,7 +71,7 @@ class DirectorUTRController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           val directorName = details.fullName
-          post(DirectorUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+          post(DirectorEnterUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
         }
     }
 

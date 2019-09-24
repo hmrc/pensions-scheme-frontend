@@ -47,7 +47,6 @@ case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
 object TrusteeKindId {
   private def partnershipIdList(index: Index): List[TypedIdentifier[_]] = List(
     PartnershipDetailsId(index),
-    PartnershipPayeId(index), PartnershipVatId(index), PartnershipUniqueTaxReferenceId(index),
     PartnershipPostcodeLookupId(index), PartnershipAddressListId(index), PartnershipAddressId(index), PartnershipAddressYearsId(index),
     PartnershipPreviousAddressPostcodeLookupId(index), PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index),
     PartnershipContactDetailsId(index)
@@ -71,8 +70,7 @@ object TrusteeKindId {
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
     TrusteeNameId(index),
-    TrusteeNinoId(index),
-    UniqueTaxReferenceId(index),
+    TrusteeEnterNINOId(index),
     IndividualPostCodeLookupId(index),
     TrusteeAddressId(index),
     TrusteeAddressYearsId(index),

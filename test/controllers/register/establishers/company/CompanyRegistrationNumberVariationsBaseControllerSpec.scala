@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.CompanyRegistrationNumberVariationsId
+import identifiers.register.establishers.company.CompanyEnterCRNId
 import models._
 import models.requests.DataRequest
 import navigators.Navigator
@@ -95,7 +95,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestBaseController]
-          val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(firstIndex))(ReferenceValue("123456789")).get
+          val answers = UserAnswers().set(CompanyEnterCRNId(firstIndex))(ReferenceValue("123456789")).get
           val result = controller.onPageLoad(answers)
 
           status(result) mustEqual OK
@@ -135,7 +135,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(CompanyRegistrationNumberVariationsId(0), ReferenceValue("12345678", isEditable = true))
+          FakeUserAnswersService.verify(CompanyEnterCRNId(0), ReferenceValue("12345678", isEditable = true))
       }
     }
   }
@@ -195,7 +195,7 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
 
     def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEmailController.onSubmit _
 
-    override def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
+    override def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
     override protected def form(name: String): Form[ReferenceValue] = formProvider(name)
 

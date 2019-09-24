@@ -44,24 +44,24 @@ class CompanyEnterUTRIdSpec extends SpecBase {
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(NoCompanyUTRId(0))("reason").asOpt.value
+      .set(CompanyNoUTRReasonId(0))("reason").asOpt.value
 
     "remove the data for `NoCompanyUTRReason`" in {
-      val result: UserAnswers = answers.set(CompanyUTRId(0))(ReferenceValue("utr")).asOpt.value
-      result.get(NoCompanyUTRId(0)) mustNot be(defined)
+      val result: UserAnswers = answers.set(CompanyEnterUTRId(0))(ReferenceValue("utr")).asOpt.value
+      result.get(CompanyNoUTRReasonId(0)) mustNot be(defined)
     }
   }
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(CompanyUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(CompanyEnterUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        CompanyEnterUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -73,7 +73,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
-          CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+          CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
 
@@ -88,21 +88,21 @@ class CompanyEnterUTRIdSpec extends SpecBase {
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
+          CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
+          CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          CompanyUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
+          CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }
       }
     }

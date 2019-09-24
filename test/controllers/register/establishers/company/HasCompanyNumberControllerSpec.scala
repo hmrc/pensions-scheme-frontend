@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.HasCompanyNumberId
+import identifiers.register.establishers.company.HasCompanyCRNId
 import models.{Index, NormalMode}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -76,7 +76,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(HasCompanyNumberId(index), true)
+      FakeUserAnswersService.verify(HasCompanyCRNId(index), true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

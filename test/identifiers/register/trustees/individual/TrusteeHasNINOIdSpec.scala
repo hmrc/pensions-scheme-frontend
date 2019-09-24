@@ -46,7 +46,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
   "Cleanup" when {
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(TrusteeHasNINOId(0))(hasNino)
-      .flatMap(_.set(TrusteeNewNinoId(0))(ReferenceValue("test-nino", isEditable = true)))
+      .flatMap(_.set(TrusteeEnterNINOId(0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(TrusteeNoNINOReasonId(0))("reason"))
       .asOpt.value
 
@@ -55,7 +55,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
       val result: UserAnswers = answers().set(TrusteeHasNINOId(0))(false).asOpt.value
 
       "remove the data for `TrusteeNino`" in {
-        result.get(TrusteeNewNinoId(0)) mustNot be(defined)
+        result.get(TrusteeEnterNINOId(0)) mustNot be(defined)
       }
     }
 

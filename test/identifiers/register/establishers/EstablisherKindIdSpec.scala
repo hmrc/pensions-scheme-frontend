@@ -43,16 +43,16 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyDetailsId(0)) mustNot be(defined)
       }
       "remove the data for `HasCompanyCRNId`" in {
-        result.get(HasCompanyNumberId(0)) mustNot be(defined)
+        result.get(HasCompanyCRNId(0)) mustNot be(defined)
       }
       "remove the data for `CompanyRegistrationNumber`" in {
-        result.get(CompanyRegistrationNumberVariationsId(0)) mustNot be(defined)
+        result.get(CompanyEnterCRNId(0)) mustNot be(defined)
       }
       "remove the data for `HasCompanyUTRId`" in {
         result.get(HasCompanyUTRId(0)) mustNot be(defined)
       }
       "remove the data for `CompanyEnterUTRId`" in {
-        result.get(CompanyUTRId(0)) mustNot be(defined)
+        result.get(CompanyEnterUTRId(0)) mustNot be(defined)
       }
       "remove the data for `Company Address`" in {
         result.get(CompanyPostCodeLookupId(0)) mustNot be(defined)
@@ -197,10 +197,10 @@ object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
   val establisherCompany = UserAnswers(Json.obj())
     .set(EstablisherKindId(0))(EstablisherKind.Company)
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))
-    .flatMap(_.set(HasCompanyNumberId(0))(false))
-    .flatMap(_.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("")))
+    .flatMap(_.set(HasCompanyCRNId(0))(false))
+    .flatMap(_.set(CompanyEnterCRNId(0))(ReferenceValue("")))
     .flatMap(_.set(HasCompanyUTRId(0))(false))
-    .flatMap(_.set(CompanyUTRId(0))(ReferenceValue("")))
+    .flatMap(_.set(CompanyEnterUTRId(0))(ReferenceValue("")))
     .flatMap(_.set(CompanyPostCodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear))

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberVariationsId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterCRNId}
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -43,7 +43,7 @@ class CompanyRegistrationNumberVariationsController @Inject()(
                                                                requireData: DataRequiredAction
                                                              )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
 
-  def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyRegistrationNumberVariationsId(index)
+  def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyRegistrationNumberVariationsController.onSubmit
 

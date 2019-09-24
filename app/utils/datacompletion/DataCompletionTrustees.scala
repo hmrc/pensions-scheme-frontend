@@ -43,18 +43,6 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isTrusteeCompanyCompleteNonHns(index: Int): Boolean =
-    isListComplete(Seq(
-      get(CompanyDetailsId(index)).isDefined,
-      get(CompanyEnterCRNId(index)).isDefined,
-      get(HasCompanyUTRId(index)).isDefined | get(CompanyEnterUTRId(index)).isDefined,
-      get(HasCompanyVATId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
-      get(HasCompanyPAYEId(index)).isDefined | get(CompanyEnterPAYEId(index)).isDefined,
-      isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
-      get(CompanyEmailId(index)).isDefined,
-      get(CompanyPhoneId(index)).isDefined
-    ))
-
   def isTrusteeCompanyComplete(index: Int): Boolean =
       isComplete(Seq(
         isTrusteeCompanyDetailsComplete(index),
@@ -66,7 +54,7 @@ trait DataCompletionTrustees {
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] = {
     isComplete(Seq(
       isAnswerComplete(TrusteeDOBId(trusteeIndex)),
-      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
+      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeEnterNINOId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
       isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId(trusteeIndex)))
     ))
   }
@@ -89,9 +77,9 @@ trait DataCompletionTrustees {
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId(index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
       )
     )
 
@@ -101,16 +89,6 @@ trait DataCompletionTrustees {
 
   def isTrusteePartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneId(index))
-
-  def isTrusteePartnershipCompleteNonHns(index: Int): Boolean =
-    isListComplete(Seq(
-      get(PartnershipDetailsId(index)).isDefined,
-      get(PartnershipUniqueTaxReferenceId(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
-      get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
-      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
-      isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
-      get(PartnershipContactDetailsId(index)).isDefined
-    ))
 
   def isTrusteePartnershipComplete(index: Int): Boolean =
       isComplete(Seq(

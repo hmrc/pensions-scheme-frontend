@@ -41,8 +41,8 @@ class HasCompanyEnterUTRIdSpec extends SpecBase {
 
     def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(HasCompanyUTRId(0))(hasUtr)
-      .flatMap(_.set(CompanyUTRId(0))(ReferenceValue("test-utr")))
-      .flatMap(_.set(NoCompanyUTRId(0))("reason"))
+      .flatMap(_.set(CompanyEnterUTRId(0))(ReferenceValue("test-utr")))
+      .flatMap(_.set(CompanyNoUTRReasonId(0))("reason"))
       .asOpt.value
 
     "`HasCompanyUTR` is set to `false`" must {
@@ -50,7 +50,7 @@ class HasCompanyEnterUTRIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(HasCompanyUTRId(0))(false).asOpt.value
 
       "remove the data for `CompanyUTR`" in {
-        result.get(CompanyUTRId(0)) mustNot be(defined)
+        result.get(CompanyEnterUTRId(0)) mustNot be(defined)
       }
     }
 
@@ -59,7 +59,7 @@ class HasCompanyEnterUTRIdSpec extends SpecBase {
       val result: UserAnswers = answers(false).set(HasCompanyUTRId(0))(true).asOpt.value
 
       "remove the data for `CompanyRegistrationNumberVariations`" in {
-        result.get(NoCompanyUTRId(0)) mustNot be(defined)
+        result.get(CompanyNoUTRReasonId(0)) mustNot be(defined)
       }
     }
 
@@ -68,11 +68,11 @@ class HasCompanyEnterUTRIdSpec extends SpecBase {
       val result: UserAnswers = answers().remove(HasCompanyUTRId(0)).asOpt.value
 
       "not remove the data for `CompanyUTR`" in {
-        result.get(CompanyUTRId(0)) mustBe defined
+        result.get(CompanyEnterUTRId(0)) mustBe defined
       }
 
       "not remove the data for `NoCompanyUTR`" in {
-        result.get(NoCompanyUTRId(0)) mustBe defined
+        result.get(CompanyNoUTRReasonId(0)) mustBe defined
       }
     }
   }

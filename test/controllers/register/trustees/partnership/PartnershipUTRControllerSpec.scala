@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipEnterUTRId}
 import models.{CheckUpdateMode, Index, NormalMode, PartnershipDetails, ReferenceValue}
 import org.scalatest.MustMatchers
 import play.api.data.Form
@@ -53,7 +53,7 @@ class PartnershipUTRControllerSpec extends ControllerSpecBase with MustMatchers 
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(PartnershipUTRId(index)).value mustBe ReferenceValue(utrValue, true)
+      FakeUserAnswersService.userAnswer.get(PartnershipEnterUTRId(index)).value mustBe ReferenceValue(utrValue, true)
       FakeUserAnswersService.userAnswer.get(PartnershipNoUTRReasonId(index)) mustBe None
     }
 

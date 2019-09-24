@@ -31,9 +31,9 @@ case class HasCompanyUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) =>
-        userAnswers.remove(NoCompanyUTRId(this.index))
+        userAnswers.remove(CompanyNoUTRReasonId(this.index))
       case Some(false) =>
-        userAnswers.remove(CompanyUTRId(this.index))
+        userAnswers.remove(CompanyEnterUTRId(this.index))
       case _ =>
         super.cleanup(value, userAnswers)
     }

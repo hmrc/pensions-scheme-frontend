@@ -25,29 +25,29 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class PartnershipPayeVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = TrusteesId(index).path \ PartnershipPayeVariationsId.toString
+case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipEnterPAYEId.toString
 }
 
-object PartnershipPayeVariationsId {
+object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
-    new CheckYourAnswers[PartnershipPayeVariationsId] {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+    new CheckYourAnswers[PartnershipEnterPAYEId] {
 
       def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
       def label(index: Int) = messages("messages__payeVariations__heading", trusteeName(index))
       def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_paye", trusteeName(index))
 
-      override def row(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

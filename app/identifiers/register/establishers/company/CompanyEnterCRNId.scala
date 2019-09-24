@@ -25,31 +25,31 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyRegistrationNumberVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyRegistrationNumberVariationsId.toString
+case class CompanyEnterCRNId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyEnterCRNId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.remove(NoCompanyNumberId(this.index))
+    userAnswers.remove(CompanyNoCRNReasonId(this.index))
 }
 
-object CompanyRegistrationNumberVariationsId {
+object CompanyEnterCRNId {
   override def toString: String = "companyRegistrationNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyRegistrationNumberVariationsId] = {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
 
     val label: String = "messages__checkYourAnswers__establishers__company__number"
     val changeCrn: String = "messages__visuallyhidden__companyNumber"
 
-    new CheckYourAnswers[CompanyRegistrationNumberVariationsId] {
-      override def row(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswers[CompanyEnterCRNId] {
+      override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: CompanyRegistrationNumberVariationsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyRegistrationNumberVariationsId](label, changeCrn)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn)().updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

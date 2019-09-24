@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.individual
+package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.person.PersonName
 import models.requests.DataRequest
@@ -29,86 +28,81 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class TrusteeUTRIdSpec extends SpecBase {
+class DirectorEnterUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
-  val name = "test name"
+  val name = "test company name"
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
+    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, Some(Link("site.change",onwardUrl,
+      Some("messages__visuallyhidden__companyUTR"))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, None))
-
+    AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(TrusteeNoUTRReasonId(0))("reason").asOpt.value
+      .set(DirectorNoUTRReasonId(0, 0))("reason").asOpt.value
 
-    "remove the data for `TrusteeNoUTRReason`" in {
-      val result: UserAnswers = answers.set(TrusteeUTRId(0))(ReferenceValue("utr")).asOpt.value
-      result.get(TrusteeNoUTRReasonId(0)) mustNot be(defined)
+    "remove the data for `NoCompanyUTRReason`" in {
+      val result: UserAnswers = answers.set(DirectorEnterUTRId(0, 0))(ReferenceValue("utr")).asOpt.value
+      result.get(DirectorNoUTRReasonId(0, 0)) mustNot be(defined)
     }
   }
 
   "cya" when {
 
-    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers()
-      .set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
-      .set(TrusteeUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+    def answers(isEditable: Boolean = false): UserAnswers = UserAnswers().set(DirectorEnterUTRId(0, 0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TrusteeUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        DirectorEnterUTRId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode" when {
-      def answersNew: UserAnswers = answers().set(IsTrusteeNewId(0))(value = true).asOpt.value
+      def answersNew: UserAnswers = answers().set(IsNewDirectorId(0, 0))(true).asOpt.value
 
-      "for new trustee" must {
+      "for new director" must {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
-          TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+          DirectorEnterUTRId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
 
-      "for existing trustee" must {
+      "for existing director" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__trusteeUtr__h1", name), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow("messages__utr__checkyouranswerslabel", List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_utr", name))
-            )))
+              Some("messages__visuallyhidden__companyUTR")
+              )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers()
-              .set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
-              .trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
+            UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
+          DirectorEnterUTRId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
-        "return row without change link if there is data available and is not editable" in {
+        "return row without change link if there is data avalable and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
+          DirectorEnterUTRId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
-          TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
+          DirectorEnterUTRId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }
       }
     }

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ReasonController
 import controllers.actions._
 import forms.ReasonFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, NoCompanyUTRId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -59,7 +59,7 @@ class NoCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          get(NoCompanyUTRId(index), viewModel(mode, index, srn, companyName), form(companyName))
+          get(CompanyNoUTRReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 
@@ -68,7 +68,7 @@ class NoCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          post(NoCompanyUTRId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+          post(CompanyNoUTRReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
 }

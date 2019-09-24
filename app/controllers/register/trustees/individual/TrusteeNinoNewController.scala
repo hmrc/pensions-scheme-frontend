@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NinoNewFormProvider
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNewNinoId}
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -62,7 +62,7 @@ class TrusteeNinoNewController @Inject()(
 
       fullNameOption.right.map {
         fullName =>
-          get(TrusteeNewNinoId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
+          get(TrusteeEnterNINOId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }
   }
 
@@ -73,7 +73,7 @@ class TrusteeNinoNewController @Inject()(
 
       fullNameOption.right.map {
         fullName =>
-          post(TrusteeNewNinoId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
+          post(TrusteeEnterNINOId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }
   }
 

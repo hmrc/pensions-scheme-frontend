@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUTRId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterUTRId}
 import javax.inject.Inject
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -62,7 +62,7 @@ class CompanyUTRController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          get(CompanyUTRId(index), viewModel(mode, index, srn, companyName), form)
+          get(CompanyEnterUTRId(index), viewModel(mode, index, srn, companyName), form)
         }
     }
 
@@ -71,7 +71,7 @@ class CompanyUTRController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          post(CompanyUTRId(index), mode, viewModel(mode, index, srn, companyName), form)
+          post(CompanyEnterUTRId(index), mode, viewModel(mode, index, srn, companyName), form)
         }
     }
 }

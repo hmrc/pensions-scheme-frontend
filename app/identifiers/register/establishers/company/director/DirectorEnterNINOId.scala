@@ -25,35 +25,35 @@ import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import viewmodels.AnswerRow
 
-case class DirectorNewNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNewNinoId.toString
+case class DirectorEnterNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorEnterNINOId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(DirectorNoNINOReasonId(this.establisherIndex, this.directorIndex))
 }
 
-object DirectorNewNinoId {
+object DirectorEnterNINOId {
 
   override lazy val toString: String = "directorNino"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNewNinoId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorEnterNINOId] = {
 
-    new CheckYourAnswers[DirectorNewNinoId] {
+    new CheckYourAnswers[DirectorEnterNINOId] {
 
       private val hiddenLabel = "messages__visuallyhidden__director__nino"
       private val label = "messages__common__nino"
 
-      override def row(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)()
+      override def row(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)()
           .row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: DirectorNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) =>
-            ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[DirectorNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[DirectorEnterNINOId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

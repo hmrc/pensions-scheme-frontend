@@ -26,34 +26,34 @@ import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import viewmodels.AnswerRow
 
-case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = TrusteesId(index).path \ PartnershipUTRId.toString
+case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipEnterUTRId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnershipNoUTRReasonId(this.index))
 }
 
-object PartnershipUTRId {
+object PartnershipEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipUTRId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
 
     def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
     def label(index: Int) = messages("messages__trusteeUtr__h1", trusteeName(index))
     def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", trusteeName(index))
 
-    new CheckYourAnswers[PartnershipUTRId] {
-      override def row(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+    new CheckYourAnswers[PartnershipEnterUTRId] {
+      override def row(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: PartnershipUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

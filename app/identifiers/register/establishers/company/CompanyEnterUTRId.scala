@@ -25,28 +25,28 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class CompanyUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyUTRId.toString
+case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyEnterUTRId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.remove(NoCompanyUTRId(this.index))
+    userAnswers.remove(CompanyNoUTRReasonId(this.index))
 }
 
-object CompanyUTRId {
+object CompanyEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
                    messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyUTRId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterUTRId] = {
 
     val label: String = "messages__utr__checkyouranswerslabel"
     val hiddenLabel = "messages__visuallyhidden__companyUTR"
 
-    new CheckYourAnswers[CompanyUTRId] {
-      override def row(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+    new CheckYourAnswers[CompanyEnterUTRId] {
+      override def row(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: CompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => ReferenceValueCYA(label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
 import javax.inject.Inject
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -59,7 +59,7 @@ class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConf
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
-          get(PartnershipUTRId(index), viewModel(mode, index, srn, details.name), form)
+          get(PartnershipEnterUTRId(index), viewModel(mode, index, srn, details.name), form)
         }
     }
 
@@ -67,7 +67,7 @@ class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConf
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
-          post(PartnershipUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
+          post(PartnershipEnterUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
         }
     }
 }

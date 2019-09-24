@@ -31,7 +31,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.AnswerRow
 
-class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
+class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
@@ -48,7 +48,7 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
       .set(TrusteeNoNINOReasonId(0))("reason").asOpt.value
 
       "remove the data for `TrusteeNoNINOReason`" in {
-        val result: UserAnswers = answers.set(TrusteeNewNinoId(0))(ReferenceValue("nino", true)).asOpt.value
+        val result: UserAnswers = answers.set(TrusteeEnterNINOId(0))(ReferenceValue("nino", true)).asOpt.value
         result.get(TrusteeNoNINOReasonId(0)) mustNot be(defined)
       }
     }
@@ -56,14 +56,14 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
   "cya" when {
 
     def answers: UserAnswers = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
-      .set(TrusteeNewNinoId(0))(ReferenceValue("nino")).asOpt.value
+      .set(TrusteeEnterNINOId(0))(ReferenceValue("nino")).asOpt.value
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TrusteeNewNinoId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        TrusteeEnterNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -74,7 +74,7 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -84,18 +84,18 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(messages("messages__trustee__individual__nino__heading", name), List("nino"),false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
         val answers = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
-          .set(TrusteeNewNinoId(0))(ReferenceValue("nino", true)).asOpt.get
+          .set(TrusteeEnterNINOId(0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
@@ -103,7 +103,7 @@ class TrusteeNewNinoIdSpec extends SpecBase with OptionValues {
           UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        TrusteeNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(messages("messages__trustee__individual__nino__heading", name), Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name)))))))
       }

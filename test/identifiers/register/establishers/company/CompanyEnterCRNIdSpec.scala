@@ -39,24 +39,24 @@ class CompanyEnterCRNIdSpec extends SpecBase {
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
-      .set(NoCompanyNumberId(0))("reason").asOpt.value
+      .set(CompanyNoCRNReasonId(0))("reason").asOpt.value
 
     "remove the data for `NoCompanyNumber`" in {
-      val result: UserAnswers = answers.set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("crn", true)).asOpt.value
-      result.get(NoCompanyNumberId(0)) mustNot be(defined)
+      val result: UserAnswers = answers.set(CompanyEnterCRNId(0))(ReferenceValue("crn", true)).asOpt.value
+      result.get(CompanyNoCRNReasonId(0)) mustNot be(defined)
     }
   }
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(CompanyEnterCRNId(0))(ReferenceValue("companyRegistrationNumber")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterCRNId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -67,7 +67,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -77,24 +77,24 @@ class CompanyEnterCRNIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false, None)
         ))
       }
 
       "return answers rows with change links if companyRegistrationNumber is available and editable" in {
-        val answers = UserAnswers().set(CompanyRegistrationNumberVariationsId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
+        val answers = UserAnswers().set(CompanyEnterCRNId(0))(ReferenceValue("companyRegistrationNumber", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if companyRegistrationNumber is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        CompanyRegistrationNumberVariationsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__companyNumber"))))))
       }

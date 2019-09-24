@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCrnFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyNumberId}
+import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyCRNId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -59,7 +59,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(HasCompanyNumberId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            get(HasCompanyCRNId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 
@@ -68,7 +68,7 @@ class HasCompanyNumberController @Inject()(override val appConfig: FrontendAppCo
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyNumberId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasCompanyCRNId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
     }
 }

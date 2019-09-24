@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.NinoNewFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNewNinoId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterNINOId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -56,7 +56,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
           Json.obj(
             DirectorNameId.toString ->
               PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-              DirectorNewNinoId.toString -> Json.obj( "value" -> "CS700100A")
+              DirectorEnterNINOId.toString -> Json.obj( "value" -> "CS700100A")
           )
         )
       )
