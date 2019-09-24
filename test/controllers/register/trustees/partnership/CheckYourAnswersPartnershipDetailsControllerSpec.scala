@@ -244,8 +244,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersPartnershipDetailsController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipDetailsController =
     new CheckYourAnswersPartnershipDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -256,8 +255,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       new FakeNavigator(onwardRoute()),
       FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

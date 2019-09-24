@@ -164,8 +164,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach,
-                         isToggleOn: Boolean = true): CheckYourAnswersPartnershipAddressController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipAddressController =
     new CheckYourAnswersPartnershipAddressController(
       frontendAppConfig,
       messagesApi,

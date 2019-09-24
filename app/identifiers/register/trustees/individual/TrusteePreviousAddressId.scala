@@ -23,7 +23,7 @@ import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {

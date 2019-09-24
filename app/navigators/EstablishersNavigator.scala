@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import models.register.establishers.EstablisherKind
+import models.{CheckMode, Mode, NormalMode, UpdateMode}
 import utils.{Enumerable, Toggles, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

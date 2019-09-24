@@ -20,12 +20,11 @@ import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeNewNinoId(index: Int) extends TypedIdentifier[ReferenceValue] {

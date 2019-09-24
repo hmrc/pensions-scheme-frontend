@@ -23,7 +23,7 @@ import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
