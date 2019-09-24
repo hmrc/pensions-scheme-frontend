@@ -45,8 +45,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   implicit val userAnswers: UserAnswers           = request.userAnswers
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach,
-                         toggle: Boolean): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -56,8 +55,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       countryOptions,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(toggle)
+      allowChangeHelper
     )
 
   private def viewAsString(mode: Mode, answerSection: (Mode, Option[String]) => Seq[AnswerSection], href: Call, srn: Option[String]): String =
@@ -113,14 +111,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "onPageLoad" must {
 
       "return OK and display all the answers" in {
-        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction, toggle = true).onPageLoad(index, index, NormalMode, None)(request)
+        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction).onPageLoad(index, index, NormalMode, None)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode, answerSectionDirectorHnSEnabled _, href(NormalMode, None, 0), None)
       }
 
       "return OK and display all given answers for UpdateMode" in {
-        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction, toggle = true).onPageLoad(index, index, UpdateMode, Some("srn"))(request)
+        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction).onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode,
@@ -130,7 +128,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       }
 
       behave like changeableController(
-        controller(directorAnswersHnsEnabled.dataRetrievalAction, _: AllowChangeHelper, toggle = true)
+        controller(directorAnswersHnsEnabled.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(index, index, NormalMode, None)(request)
       )
     }

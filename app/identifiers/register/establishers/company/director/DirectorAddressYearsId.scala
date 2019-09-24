@@ -16,14 +16,13 @@
 
 package identifiers.register.establishers.company.director
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersDirectors}
-import utils.{Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
@@ -46,7 +45,7 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 
-  implicit def cya(implicit messages: Messages, featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorAddressYearsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
 
     val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
         ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)

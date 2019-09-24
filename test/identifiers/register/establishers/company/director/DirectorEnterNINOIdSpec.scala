@@ -63,12 +63,7 @@ class DirectorEnterNINOIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino")).asOpt.get
-//    def answers: UserAnswers =
-//      userAnswersWithName
-//        .set(DirectorNewNinoId(0, 0))(ReferenceValue("nino"))
-//        .asOpt
-//        .get
+    def answers: UserAnswers = userAnswersWithName.set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino")).asOpt.get
 
     "in normal mode" must {
 
@@ -76,8 +71,6 @@ class DirectorEnterNINOIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         DirectorEnterNINOId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
-//        implicit val userAnswers: UserAnswers         = request.userAnswers
-//        DirectorNewNinoId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -89,8 +82,6 @@ class DirectorEnterNINOIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
-//        implicit val userAnswers: UserAnswers         = request.userAnswers
-//        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -107,20 +98,12 @@ class DirectorEnterNINOIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino",List("nino"),false, None)
+          AnswerRow(messages("messages__common__nino"),List("nino"),false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
-        val answers = UserAnswers().set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino", true)).asOpt.get
-//        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(
-//          Seq(
-//            AnswerRow(messages("messages__common__nino"), List("nino"), false, None)
-//          ))
-//      }
-//
-//      "return answers rows with change links if nino is available and editable" in {
-//        val answers                                   = userAnswersWithName.set(DirectorNewNinoId(0, 0))(ReferenceValue("nino", true)).asOpt.get
+        val answers = userAnswersWithName.set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino", isEditable = true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
@@ -128,22 +111,13 @@ class DirectorEnterNINOIdSpec extends SpecBase {
       }
 
       "display an add link if nino is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", userAnswersWithName, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__nino"))))))
-//        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", userAnswersWithName, PsaId("A0000000"))
-//        implicit val userAnswers: UserAnswers         = request.userAnswers
-//
-//        DirectorNewNinoId(0, 0).row(onwardUrl, UpdateMode) must equal(
-//          Seq(AnswerRow(
-//            messages("messages__common__nino"),
-//            Seq("site.not_entered"),
-//            answerIsMessageKey = true,
-//            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name))))
-//          )))
+          AnswerRow(messages("messages__common__nino"), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name)))))))
+
       }
     }
   }

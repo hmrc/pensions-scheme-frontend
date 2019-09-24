@@ -111,7 +111,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
     val onwardUrl = "onwardUrl"
 
     val directorDetails = PersonName("John",  "One")
-    implicit val featureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
 
     def answers = UserAnswers()
       .set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value
@@ -128,7 +127,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
             messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResult)
@@ -148,7 +147,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
             messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl,Some("messages__visuallyhidden__director__address_years")))
+            Some(Link("site.change", onwardUrl,Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)

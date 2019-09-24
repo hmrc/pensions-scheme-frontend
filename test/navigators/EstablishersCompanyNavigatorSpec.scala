@@ -78,6 +78,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (AddCompanyDirectorsId(0), addCompanyDirectorsFalseNewDir, taskList(mode), true, None, true),
     (AddCompanyDirectorsId(0), addOneCompanyDirectors, sessionExpired, false, None, false),
     (AddCompanyDirectorsId(0), addCompanyDirectorsMoreThan10, otherDirectors(mode), true, None, true),
+    (OtherDirectorsId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else taskList(mode), true, Some(taskList(mode)), true),
     (CheckYourAnswersId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true, None, false),
     (CheckYourAnswersId(0), newEstablisher, addCompanyDirectors(0, mode), true, None, false)
   )

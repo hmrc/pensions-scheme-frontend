@@ -40,7 +40,7 @@ object DirectorNoNINOReasonId {
     new CheckYourAnswersDirectors[DirectorNoNINOReasonId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__noNinoReason__heading")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__noGenericNino__heading")
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_noNinoReason")

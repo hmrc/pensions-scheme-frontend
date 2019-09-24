@@ -222,7 +222,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     }
 
-    "establisherCompany when h&s toggle is on" should {
+    "establisherCompany" should {
 
       val view = createView(schemeDetailsTaskListData(establishers = establisherCompanyToggleOn))
 
@@ -335,7 +335,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       }
     }
 
-    "trusteeCompany when h&s toggle is on" should {
+    "trusteeCompany" should {
 
       val view = createView(schemeDetailsTaskListData(trustees = trusteeCompanyToggleOn))
 

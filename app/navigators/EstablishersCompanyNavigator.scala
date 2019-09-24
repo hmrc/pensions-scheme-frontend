@@ -106,6 +106,12 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
+      case OtherDirectorsId(index) =>
+        if (mode == CheckMode || mode == NormalMode) {
+          NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
+        } else {
+          NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
+        }
       case CheckYourAnswersId(index) =>
         listOrAnyMoreChange(index, mode, srn)(from.userAnswers)
       case _ => None
@@ -165,6 +171,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPhoneId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case CompanyEmailId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case IsCompanyDormantId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case OtherDirectorsId(index) =>
+        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(journeyMode(mode), srn))
       case HasBeenTradingCompanyId(index) => confirmHasBeenTrading(index, mode, srn)(from.userAnswers)
       case _ => None
     }

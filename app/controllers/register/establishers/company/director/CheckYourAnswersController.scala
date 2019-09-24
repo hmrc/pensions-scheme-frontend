@@ -45,8 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
@@ -54,7 +53,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
-      implicit val featureSwitchManagementService: FeatureSwitchManagementService = fs
 
       val directorAnswerSection = AnswerSection(
         None,

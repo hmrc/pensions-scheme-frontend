@@ -42,15 +42,8 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   import ConfirmDeleteEstablisherControllerSpec._
 
   "ConfirmDeleteEstablisher Controller" must {
-    "return OK and the correct view for a GET for individual when toggle is off" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "return OK and the correct view for a GET for individual when toggle is on" in {
+    "return OK and the correct view for a GET for individual" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val establisherIndex = Index(4)
       val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)
@@ -120,16 +113,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-
-    "delete the establisher individual on a POST when toggle is off" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
-    }
-
-    "delete the establisher individual on a POST when toggle is on" in {
+    "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data, isHnsSEnabled(true)).onSubmit(NormalMode, Index(4), establisherKind, None)(postRequest)
 
