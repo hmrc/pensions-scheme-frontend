@@ -18,6 +18,7 @@ package identifiers
 
 import models.Link
 import models.address.Address
+import play.api.i18n.Messages
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
@@ -26,10 +27,11 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
   self =>
   override def toString: String = "insurerAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit countryOptions: CountryOptions,userAnswers: UserAnswers,messages: Messages): CheckYourAnswers[self.type] = {
 
-    val label = "messages__insurer_confirm_address_cya_label"
-    val hiddenLabel = "messages__visuallyhidden__insurer_confirm_address"
+    val insuranceCompanyName = userAnswers.get(InsuranceCompanyNameId).getOrElse("")
+    val label = messages("messages__addressFor",insuranceCompanyName)
+    val hiddenLabel = messages("messages__visuallyhidden__insurer_confirm_address",insuranceCompanyName)
 
     new CheckYourAnswers[self.type] {
 

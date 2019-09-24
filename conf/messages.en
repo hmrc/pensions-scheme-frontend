@@ -180,6 +180,7 @@ site.printThisPage = Print this page
 site.saveOrPrint = Save or print
 site.return_to = Return to {0}
 site.type = Type
+site.error = Error:
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -525,7 +526,7 @@ messages__directorDetails__heading = Company director
 messages__directorName__title = What is the director’s name?
 messages__directorName__heading = What is the director’s name?
 messages__directorName__cya = Director’s name
-messages__visuallyhidden__directorName = Change name of director
+messages__visuallyhidden__directorName = the name of the director
 
 messages__companyPreviousAddressPostcodeLookup__title = What was the company’s previous postcode?
 messages__companyPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
@@ -1244,6 +1245,9 @@ messages__visuallyhidden__dynamic_noNinoReason = the reason why {0} does not hav
 messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
 messages__visuallyhidden__dynamic_crn = the company number for {0}
+messages__visuallyhidden__dynamic_company__dormant = whether {0} has been dormant in the last 12 months
+messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
+
 
 messages__dynamic_whatIsUTR = What is the UTR for {0}?
 messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
@@ -1284,7 +1288,7 @@ messages__visuallyhidden__trustee__phone_number = the trustee’s phone number
 
 messages__visuallyhidden__adviser__email_address = the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = the adviser’s phone number
-messages__visuallyhidden__adviser__address = the adviser’s address
+messages__visuallyhidden__adviser__address = the address for {0}
 
 messages__cya__utr = UTR for {0}
 messages__cya__vat = VAT registration number for {0}
@@ -1420,14 +1424,14 @@ messages__phone__length = The phone number cannot be more than 24 characters
 messages__phone__invalid = Enter a phone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
-messages__visuallyhidden__declarationDuties = if you have working knowledge of pensions and pensions tax legislation
-adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
-adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
-adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
-adviserAddress.checkYourAnswersLabel = {0}’s address
-messages__visuallyhidden__adviserName = who has working knowledge of pensions and pensions tax legislation?
-messages__visuallyhidden__adviserEmail = the adviser’s email address
-messages__visuallyhidden__adviserPhone = the adviser’s phone number
+messages__visuallyhidden__declarationDuties = whether you have working knowledge of pensions and pensions tax legislation
+adviserName.checkYourAnswersLabel = Who is the person with working knowledge of pensions and pensions tax legislation?
+adviserEmail.checkYourAnswersLabel = What is the email address for {0}?
+adviserPhone.checkYourAnswersLabel = What is the phone number for {0} ?
+adviserAddress.checkYourAnswersLabel = Address for {0}
+messages__visuallyhidden__adviserName = who the person is that has working knowledge of pensions and pensions tax legislation
+messages__visuallyhidden__adviserEmail = the email address for {0}
+messages__visuallyhidden__adviserPhone = the phone number for {0}
 
 messages__what_you_will_need_wk__title = Who has working knowledge of pensions and pensions tax legislation
 messages__what_you_will_need_wk__h1 = Who has working knowledge of pensions and pensions tax legislation
@@ -1456,7 +1460,7 @@ messages__future_members__h1 = How many scheme members do you expect {0} to have
 messages__current_members_cya_label = How many members does {0} currently have?
 messages__visuallyhidden__current_members_change = how many members {0} currently has
 messages__future_members_cya_label = How many scheme members do you expect {0} to have in 12 months time?
-messages__visuallyhidden__future_members_change = how many members you expect {0} to have in 12 months time
+messages__visuallyhidden__future_members_change = how many scheme members you expect {0} to have in 12 months time
 
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
@@ -1487,10 +1491,10 @@ messages__what_you_will_need_bank_details__item_4 = account number
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is {0} investment regulated?
 investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
-messages__visuallyhidden__investmentRegulated = if the scheme is investment regulated
+messages__visuallyhidden__investmentRegulated = if {0} is investment regulated
 
 occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
-messages__visuallyhidden__occupationalPensionScheme = if the scheme an occupational pension scheme
+messages__visuallyhidden__occupationalPensionScheme = if {0} is an occupational pension scheme
 
 messages__type_of_benefits__title = How does the scheme provide benefits?
 messages__type_of_benefits__h1 = How does {0} provide benefits?
@@ -1498,8 +1502,8 @@ messages__type_of_benefits__opt1 = Money purchase benefits only - this is a defi
 messages__type_of_benefits__opt2 = Defined benefits only
 messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
 
-messages__type_of_benefits_cya_label = How does the scheme provide benefits?
-messages__visuallyhidden__type_of_benefits_change = how the scheme provides benefits
+messages__type_of_benefits_cya_label = How does {0} provide benefits?
+messages__visuallyhidden__type_of_benefits_change = how {0} provides benefits
 
 messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__benefits_secured_by_insurance__h1 = Are any of {0} benefits secured by a contract of insurance or annuity?
@@ -1529,8 +1533,7 @@ messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
 
 messages__insurer_confirm_address__title = Insurance company’s address
 messages__insurer_confirm_address__h1 = Insurance company’s address
-messages__insurer_confirm_address_cya_label = Insurance company’s address
-messages__visuallyhidden__insurer_confirm_address = the insurance company’s address
+messages__visuallyhidden__insurer_confirm_address = the address for {0}
 
 messages__established_country__title = Which country was the scheme established in?
 messages__established_country__h1 = Which country was {0} established in?
@@ -1544,7 +1547,7 @@ messages__what_you_will_need_members__item_2 = you expect the scheme to have in 
 schemeName.checkYourAnswersLabel = What is the name of the scheme?
 messages__visuallyhidden__schemeName = the name of the scheme
 schemeType.checkYourAnswersLabel = What type of scheme is {0}?
-messages__visuallyhidden__schemeType = the type of scheme {0} is
+messages__visuallyhidden__schemeType = what type of scheme {0} is
 haveAnyTrustees.checkYourAnswersLabel = Does {0} have any trustees?
 messages__visuallyhidden__haveAnyTrustees = if {0} has any trustees
 schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
@@ -1561,9 +1564,9 @@ messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
 
 uKBankAccount.hns_checkYourAnswersLabel = Does {0} have a UK bank account?
-messages__visuallyhidden__hns_uKBankAccount = if {0} has a UK bank account
-uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
-messages__visuallyhidden__hns_uKBankDetails = {0}’s bank account details
+messages__visuallyhidden__hns_uKBankAccount = whether {0} has a UK bank account
+uKBankDetails.hns_checkYourAnswersLabel = What are the bank account details for {0}?
+messages__visuallyhidden__hns_uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
 messages__companyDetailsFor = Company details for {0}
@@ -1585,9 +1588,9 @@ messages__whatYouWillNeedTrusteeCompanyAddress__lede = You will need to tell us 
 messages__whatYouWillNeedTrusteeCompanyAddress__item1 = current address
 messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the company has been at the current address for less than 1 year
 
-messages__whatYouWillNeedTrusteeAddress__p1 = You will need to tell us the trustee’s:
-messages__whatYouWillNeedTrusteeAddress__item1 = current address
-messages__whatYouWillNeedTrusteeAddress__item2 = previous address if the trustee has been at the current address for less than 1 year
+messages__whatYouWillNeedAddress__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedAddress__item1 = current address
+messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at the current address for less than 1 year
 
 messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address

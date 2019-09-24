@@ -16,6 +16,8 @@
 
 package utils.checkyouranswers
 
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
 import models.AddressYears.UnderAYear
 import models._
@@ -33,6 +35,24 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 
   def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
+}
+
+trait CheckYourAnswersDirectors[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def directorName(establisherIndex:Int, directorIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
+    ua.get(DirectorNameId(establisherIndex, directorIndex)).fold(messages("messages__theDirector"))(_.fullName)
+
+  protected def dynamicMessage(establisherIndex: Int, directorIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
+    messages(messageKey, directorName(establisherIndex, directorIndex, ua))
+
+}
+
+trait CheckYourAnswersCompany[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def companyName(establisherIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
+    ua.get(CompanyDetailsId(establisherIndex)).fold(messages("messages__theCompany"))(_.companyName)
+
+  protected def dynamicMessage(establisherIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
+    messages(messageKey, companyName(establisherIndex, ua))
+
 }
 
 object CheckYourAnswers {
@@ -151,28 +171,6 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      private def typeOfBenefitsCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
-        userAnswers.get(id).map {
-          typeOfBenefits =>
-            Seq(
-              AnswerRow(
-                "messages__type_of_benefits_cya_label",
-                Seq(s"messages__type_of_benefits__$typeOfBenefits"),
-                answerIsMessageKey = true,
-                changeUrl
-              )
-            )
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers,
-        Some(Link("site.change", changeUrl, Some("messages__visuallyhidden__type_of_benefits_change"))))
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers, None)
-    }
-  }
 
   case class ContactDetailsCYA[I <: TypedIdentifier[ContactDetails]](changeEmailAddress: String = "messages__visuallyhidden__common__email_address",
                                                                      changePhoneNumber: String = "messages__visuallyhidden__common__phone_number") {

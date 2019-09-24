@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package views.register.trustees.individual
+package views.register
 
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.individual.whatYouWillNeedIndividualAddress
+import views.html.register.whatYouWillNeedIndividualAddress
 
 class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedAddress"
   private val testUser = "test name"
+  private val token = messages("messages__theTrustee")
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig,
-    Some("testScheme"), href, None, testUser)(fakeRequest, messages)
+    Some("testScheme"), href, None, testUser, token)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
@@ -38,13 +39,13 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
     "display the correct p1" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__p1"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__p1", token))
     }
 
     "display the correct bullet points" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__item1"))
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeAddress__item2"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item1"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item2", token))
     }
 
     behave like pageWithSubmitButton(createView, Some(href))

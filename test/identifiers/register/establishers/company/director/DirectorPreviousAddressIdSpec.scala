@@ -20,6 +20,7 @@ import base.SpecBase
 import models.AddressYears.UnderAYear
 import models.{Link, NormalMode, UpdateMode}
 import models.address.Address
+import models.person.PersonName
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -29,6 +30,14 @@ import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
 
 class DirectorPreviousAddressIdSpec extends SpecBase {
+
+  private val userAnswersWithName: UserAnswers =
+    UserAnswers()
+      .set(DirectorNameId(0, 0))(PersonName("first", "last"))
+      .asOpt
+      .value
+  
+  private val name = "first last"
 
   "cya" when {
     implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
@@ -55,14 +64,14 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(DirectorPreviousAddressId(0, 0))(address).asOpt.value, PsaId("A0000000"))
+          userAnswersWithName.set(DirectorPreviousAddressId(0, 0))(address).asOpt.value, PsaId("A0000000"))
 
         DirectorPreviousAddressId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__previous_address",
+            messages("messages__common__cya__previous_address"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
     }
@@ -70,39 +79,39 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
     "in update mode" must {
       "return row with add links for existing establisher if address years is under a year and there is no previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value, PsaId("A0000000"))
+          userAnswersWithName.set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value, PsaId("A0000000"))
 
         DirectorPreviousAddressId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__previous_address",
+          AnswerRow(messages("messages__common__cya__previous_address"),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__director__previous_address")))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))))
         )
       }
 
       "return row with change links for existing establisher if there is a previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(DirectorPreviousAddressId(0, 0))(address).asOpt.value, PsaId("A0000000"))
+          userAnswersWithName.set(DirectorPreviousAddressId(0, 0))(address).asOpt.value, PsaId("A0000000"))
 
         DirectorPreviousAddressId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__previous_address",
+            messages("messages__common__cya__previous_address"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
 
       "return row with change links for new establisher if there is a previous address" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(DirectorPreviousAddressId(0, 0))(address).flatMap(_.set(IsNewDirectorId(0, 0))(true)).asOpt.value, PsaId("A0000000"))
+          userAnswersWithName.set(DirectorPreviousAddressId(0, 0))(address).flatMap(_.set(IsNewDirectorId(0, 0))(true)).asOpt.value, PsaId("A0000000"))
 
         DirectorPreviousAddressId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__previous_address",
+            messages("messages__common__cya__previous_address"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__previous_address")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name))))
           )))
       }
     }
