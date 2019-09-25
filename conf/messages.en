@@ -1869,7 +1869,7 @@ messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
 
 messages__whatYouWillNeedContact__title = Contact details
-messages__whatYouWillNeedContact__h1 = Contact details for {0}
+messages__whatYouWillNeedContact__h1 = {0}’s contact details
 messages__whatYouWillNeedContact__p1 = You will need to tell us the {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
