@@ -33,28 +33,32 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteePreviousAddressId] = {
-    val name = (index: Int) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+
+    def getLabel(index: Int, ua: UserAnswers): (String, String) = {
+      val name = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         ua.get(TrusteeNameId(index)).map(_.fullName)
       else
         ua.get(TrusteeDetailsId(index)).map(_.fullName)
-
-    def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
-    def label(index: Int) = messages("messages__trusteePreviousAddress", trusteeName(index))
-    def changeAddress(index: Int) = messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index))
+      (messages("messages__trusteePreviousAddress", name.getOrElse(messages("messages__theTrustee"))),
+        messages("messages__visuallyhidden__dynamic_previousAddress", name.getOrElse(messages("messages__theTrustee"))))
+    }
 
     new CheckYourAnswers[TrusteePreviousAddressId] {
-      override def row(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label(id.index), changeAddress(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: TrusteePreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, changeAddress) = getLabel(id.index, ua)
+        AddressCYA(label, changeAddress)().row(id)(changeUrl, ua)
+      }
 
-      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.index),
-          changeAddress(id.index),
-          userAnswers.get(IsTrusteeNewId(id.index)),
-          userAnswers.get(TrusteeAddressYearsId(id.index))
-        )().updateRow(id)(changeUrl, userAnswers)
+      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, changeAddress) = getLabel(id.index, ua)
+        PreviousAddressCYA(label,
+          changeAddress,
+          ua.get(IsTrusteeNewId(id.index)),
+          ua.get(IndividualConfirmPreviousAddressId(id.index))
+        )().updateRow(id)(changeUrl, ua)
+      }
     }
   }
 }

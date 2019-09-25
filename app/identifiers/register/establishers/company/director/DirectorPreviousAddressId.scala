@@ -51,7 +51,7 @@ object DirectorPreviousAddressId {
         PreviousAddressCYA(label(id.establisherIndex, id.directorIndex,userAnswers),
           hiddenLabel(id.establisherIndex, id.directorIndex,userAnswers),
           userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)),
-          userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex))
+          userAnswers.get(DirectorConfirmPreviousAddressId(id.establisherIndex, id.directorIndex))
         )().updateRow(id)(changeUrl, userAnswers)
     }
   }

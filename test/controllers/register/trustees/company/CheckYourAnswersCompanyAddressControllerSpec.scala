@@ -20,6 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.SchemeTaskListController
+import identifiers.register.trustees.company.CompanyConfirmPreviousAddressId
 import models.Mode.checkMode
 import models.address.Address
 import models.{NormalMode, _}
@@ -105,8 +106,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   private val partialAnswersForAddLink = emptyAnswers.
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
-    trusteesCompanyAddress(index, address).
-    trusteesCompanyAddressYears(index, addressYearsUnderAYear)
+    trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
 
