@@ -1634,7 +1634,7 @@ messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if t
 
 messages__whatYouWillNeedIndividual__title = Details
 messages__whatYouWillNeedIndividual__h1 = Details for {0}
-messages__whatYouWillNeedIndividual__p1 = You will need to tell us {0}'s:
+messages__whatYouWillNeedIndividual__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedIndividual__item1 = date of birth
 messages__whatYouWillNeedIndividual__item2 = National Insurance number, or reason why they do not have one
 messages__whatYouWillNeedIndividual__item3 = Unique Taxpayer Reference (UTR), or reason why they do not have one
