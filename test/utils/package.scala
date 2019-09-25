@@ -99,8 +99,16 @@ package object utils {
     }
 
     //Establishers Individual
+    def establishersIndividualName(index: Int, personName: PersonName): UserAnswers = {
+      answers.set(establishers.individual.EstablisherNameId(index))(personName).asOpt.value
+    }
+
     def establishersIndividualAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.individual.AddressId(index))(address).asOpt.value
+    }
+
+    def establishersIndividualAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.individual.AddressYearsId(index))(addressYears).asOpt.value
     }
 
     def trusteesIndividualAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {

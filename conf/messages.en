@@ -1233,7 +1233,7 @@ messages__visuallyhidden__dynamic_vat = the VAT registration number for {0}
 messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
 messages__visuallyhidden__dynamic_paye = the employer PAYE reference for {0}
 messages__visuallyhidden__dynamic_address = the address for {0}
-messages__visuallyhidden__dynamic_addressYears = whether {0} has used this contact address for at least 1 year
+messages__visuallyhidden__dynamic_addressYears = whether {0} has used this address for at least 1 year
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
@@ -1578,6 +1578,7 @@ messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it
 messages__whatYouWillNeedAddress__title = Address
 messages__addressFor = Address for {0}
 messages__previousAddressFor = Previous address for {0}
+messages__addressYears = Has {0} used this address for at least 1 year?
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
 messages__whatYouWillNeedEstablisherCompanyAddress__item1 = current address
@@ -1873,8 +1874,6 @@ messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also
 messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
 messages__whatYouWillNeedPartnershipDetails__item2 = VAT registration number
 messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
-
-messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?

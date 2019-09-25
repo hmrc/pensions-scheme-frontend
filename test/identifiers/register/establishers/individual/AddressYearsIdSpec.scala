@@ -16,21 +16,25 @@
 
 package identifiers.register.establishers.individual
 
+import base.SpecBase
+import config.FeatureSwitchManagementService
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
 import models.AddressYears.UnderAYear
 import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.requests.DataRequest
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
+import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
 
-class AddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 
@@ -111,50 +115,52 @@ class AddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues wi
   "cya" when {
 
     val onwardUrl = "onwardUrl"
-
-    def answers = UserAnswers().set(AddressYearsId(0))(UnderAYear).asOpt.get
+    val name = "test name"
+    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
+    def answers = UserAnswers().set(EstablisherNameId(0))(PersonName("test", "name")).asOpt.value
+      .set(AddressYearsId(0))(UnderAYear).asOpt.value
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        AddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
+        AddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_address_years_cya_label",
+            Message("messages__addressYears", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__address_years")))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new establisher" must {
 
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
-        AddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        AddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_address_years_cya_label",
+            messages("messages__addressYears", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__establisher__address_years")))
+              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing establisher" must {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
 
-        AddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
+        AddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }
