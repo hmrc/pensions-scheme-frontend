@@ -108,9 +108,10 @@ messages__common_email__heading = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
 messages__common_email__visually_hidden_change_label = Change {0}’s email
 messages__common_phone__heading = What is {0}’s phone number?
+messages__individual_phone__title = What is the person’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
 messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
-
+messages__phone_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
 
 
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
