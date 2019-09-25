@@ -52,7 +52,6 @@ object TrusteeKindId {
     PartnershipContactDetailsId(index)
   )
 
-  // TODO 3341: Deal with email and phone id
   private def companyIdList(index: Index): List[TypedIdentifier[_]] = List(
     CompanyDetailsId(index),
     HasCompanyCRNId(index),

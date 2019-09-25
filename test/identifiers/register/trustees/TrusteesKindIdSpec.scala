@@ -68,7 +68,6 @@ class TrusteesKindIdSpec extends WordSpec with MustMatchers with OptionValues wi
 }
 
 object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
-  // TODO 3341: Deal with email and phone id
   val trusteeCompany = UserAnswers()
     .set(TrusteeKindId(0))(TrusteeKind.Company)
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("")))

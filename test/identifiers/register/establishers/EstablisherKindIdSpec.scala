@@ -67,13 +67,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
         result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
       }
-      // TODO 3341: Deal with email and phone id
-//      "remove the data for `CompanyEmailId`" in {
-//        result.get(CompanyEmailId(0)) mustNot be(defined)
-//      }
-//      "remove the data for `CompanyPhoneId`" in {
-//        result.get(CompanyPhoneId(0)) mustNot be(defined)
-//      }
+
       "remove the data for `Directors`" in {
         result.get(DirectorNameId(0, 0)) mustNot be(defined)
         result.get(DirectorNameId(0, 1)) mustNot be(defined)
