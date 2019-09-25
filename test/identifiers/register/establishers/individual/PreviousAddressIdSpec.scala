@@ -20,6 +20,7 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.address.Address
+import models.person.PersonName
 import models.requests.DataRequest
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
@@ -32,20 +33,6 @@ import viewmodels.AnswerRow
 class PreviousAddressIdSpec extends SpecBase {
 
   import PreviousAddressIdSpec._
-
-  private val answerRowWithChangeLink = Seq(
-    AnswerRow(
-      "messages__establisher_individual_previous_address_cya_label",
-      addressAnswer(address),
-      answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))
-    ))
-
-  private val answerRowWithAddLink = Seq(
-    AnswerRow("messages__establisher_individual_previous_address_cya_label",
-      Seq("site.not_entered"),
-      answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))))
 
   "cya" when {
 
@@ -75,7 +62,7 @@ class PreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().set(IndividualConfirmPreviousAddressId(index))(value = false).asOpt.value
+          val answersWithNoIsThisPreviousAddress = answers.set(IndividualConfirmPreviousAddressId(index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
           PreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
@@ -92,7 +79,7 @@ class PreviousAddressIdSpec extends SpecBase {
   }
 }
 
-object PreviousAddressIdSpec extends OptionValues {
+object PreviousAddressIdSpec extends SpecBase with OptionValues {
   private val index = 0
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
   private val address = Address(
@@ -114,5 +101,26 @@ object PreviousAddressIdSpec extends OptionValues {
 
   private val onwardUrl = "onwardUrl"
 
-  private val answers: UserAnswers = UserAnswers().set(PreviousAddressId(index))(address).asOpt.value
+  private val establisherName = PersonName("Test", "Name")
+
+  private val answerRowWithChangeLink = Seq(
+    AnswerRow(
+      messages("messages__previousAddressFor", establisherName.fullName),
+      addressAnswer(address),
+      answerIsMessageKey = false,
+      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
+    ))
+
+  private val answerRowWithAddLink = Seq(
+    AnswerRow(
+      messages("messages__previousAddressFor", establisherName.fullName),
+      Seq("site.not_entered"),
+      answerIsMessageKey = true,
+      Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
+    ))
+
+  private val answers: UserAnswers =
+    UserAnswers().set(PreviousAddressId(index))(address).flatMap(
+      _.set(EstablisherNameId(index))(establisherName)
+    ).asOpt.value
 }
