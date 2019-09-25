@@ -19,6 +19,7 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import identifiers.register.trustees.partnership.PartnershipConfirmPreviousAddressId
 import models.Mode.checkMode
 import models._
 import models.address.Address
@@ -102,7 +103,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private val partialAnswers = emptyAnswers
     .trusteePartnershipDetails(index, PartnershipDetails(partnershipName))
     .trusteePartnershipAddress(index, address)
-    .trusteePartnershipAddressYears(index, addressYearsUnderAYear)
+    .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =
     controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)

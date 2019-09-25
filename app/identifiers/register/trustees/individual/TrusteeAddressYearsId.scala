@@ -44,7 +44,7 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressYearsId] =
     new CheckYourAnswers[TrusteeAddressYearsId] {
       override def row(id: TrusteeAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {

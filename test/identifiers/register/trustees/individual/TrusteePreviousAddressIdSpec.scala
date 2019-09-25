@@ -19,7 +19,6 @@ package identifiers.register.trustees.individual
 import base.SpecBase
 import config.FeatureSwitchManagementService
 import identifiers.register.trustees.IsTrusteeNewId
-import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
 import models.person.PersonName
@@ -75,7 +74,6 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
         "return answers rows with change links for subscription or variation when adding new trustee" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             answers.set(IsTrusteeNewId(0))(value = true).asOpt.value, PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
           TrusteePreviousAddressId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLInks)
         }
@@ -83,27 +81,23 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
     }
 
     "in update mode" must {
-      "return row with add links for existing trustee if address years is under a year and there is no previous address" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
-            _.set(TrusteeNameId(0))(PersonName("Test", "Name"))).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+      "return answer row with add link if there is no previous address and `is this previous address` is no" in {
+        val answersWithNoIsThisPreviousAddress = UserAnswers().trusteeName(0, PersonName("Test", "Name")).
+          set(IndividualConfirmPreviousAddressId(0))(value = false).asOpt.value
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
         TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__trusteePreviousAddress", trusteeName),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))))
-        )
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName)))))))
       }
 
-      "return row with change links for existing trustee if there is a previous address" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+      "return answer row with change links if there is a previous address" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        TrusteePreviousAddressId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLInks)
+        TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLInks)
       }
     }
   }

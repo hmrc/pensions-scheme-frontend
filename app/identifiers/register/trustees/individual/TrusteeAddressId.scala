@@ -33,7 +33,7 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
