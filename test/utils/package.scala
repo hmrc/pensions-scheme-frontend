@@ -119,6 +119,10 @@ package object utils {
       answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
     }
 
+    def establishersIndividualName(index: Int, name: PersonName): UserAnswers = {
+      answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
+    }
+
     // Establishers company
     def establisherCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
