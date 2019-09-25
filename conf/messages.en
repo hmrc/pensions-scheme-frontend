@@ -1597,19 +1597,7 @@ messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell u
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
 messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
 
-messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
-messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
-messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
-messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
-messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
-
 messages__contactDetailsFor = Contact details for {0}
-
-messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
-messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
-messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
-messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
-messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors for {0}
@@ -1880,3 +1868,8 @@ messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (yo
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
 
+messages__whatYouWillNeedContact__title = Contact details
+messages__whatYouWillNeedContact__h1 = Contact details for {0}
+messages__whatYouWillNeedContact__p1 = You will need to tell us the {0}’s:
+messages__whatYouWillNeedContact__item1 = contact email address
+messages__whatYouWillNeedContact__item2 = contact phone number
