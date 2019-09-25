@@ -445,7 +445,7 @@ messages__error__paye_invalid = Enter an employer PAYE number using only numbers
 messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
 messages__establisher_individual_address__title = Establisher’s address
-messages__establisher_individual_address__heading = What is {0}’s postcode?
+messages__establisher_individual_address__heading = What is the postcode for {0}?
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
@@ -1253,6 +1253,9 @@ messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
 
+messages__dynamic_whatIsAddress = What is the address for {0}?
+
+
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
 messages__visuallyhidden__partner__nino = the partner’s National Insurance number
@@ -1590,7 +1593,7 @@ messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the 
 
 messages__whatYouWillNeedAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedAddress__item1 = current address
-messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at the current address for less than 1 year
+messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at their current address for less than 1 year
 
 messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
@@ -1877,4 +1880,3 @@ messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (yo
 
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
-
