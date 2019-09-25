@@ -87,16 +87,16 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 }
 
 object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase {
-
+  private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
   private def postUrl(mode : Mode = NormalMode) = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
-  private val data = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+  private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress).dataRetrievalAction
 
-  private val updateData = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+  private val updateData = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true)
     .insuranceCompanyName(insuranceCompanyName).dataRetrievalAction
 
@@ -123,7 +123,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
-        messages("messages__insurer_confirm_address_cya_label"),
+        messages("messages__addressFor",insuranceCompanyName),
         Seq(
           insurerAddress.addressLine1,
           insurerAddress.addressLine2,
@@ -133,7 +133,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           "Country of GB"),
         answerIsMessageKey = false,
         Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
+          Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompanyName)))))
     )
   )
 
@@ -148,49 +148,49 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
-        messages("messages__insurer_confirm_address_cya_label"),
+        messages("messages__addressFor",insuranceCompanyName),
         Seq("site.not_entered"),
         answerIsMessageKey = true,
         Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__insurer_confirm_address")))))
+          Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompanyName)))))
     )
   )
 
   private def commonRows(mode : Mode):  Seq[AnswerRow] ={
     Seq(
       AnswerRow(
-        messages("investmentRegulated.checkYourAnswersLabel"),
+        messages("messages__investment_regulated_scheme__h1", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
         if(mode==UpdateMode) { None } else {
           Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
-            Some(messages("messages__visuallyhidden__investmentRegulated"))))
+            Some(messages("messages__visuallyhidden__investmentRegulated", schemeName))))
         }
       ),
       AnswerRow(
-        messages("occupationalPensionScheme.checkYourAnswersLabel"),
+        messages("messages__occupational_pension_scheme__h1", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
         if(mode==UpdateMode) { None } else {
           Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
-            Some(messages("messages__visuallyhidden__occupationalPensionScheme"))))
+            Some(messages("messages__visuallyhidden__occupationalPensionScheme", schemeName))))
         }
       ),
       AnswerRow(
-        messages("messages__type_of_benefits_cya_label"),
+        messages("messages__type_of_benefits_cya_label", schemeName),
         Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
         answerIsMessageKey = true,
         if(mode==UpdateMode) { None } else {
           Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
-            Some(messages("messages__visuallyhidden__type_of_benefits_change"))))
+            Some(messages("messages__visuallyhidden__type_of_benefits_change", schemeName))))
         }
       ),
       AnswerRow(
-        messages("securedBenefits.checkYourAnswersLabel"),
+        messages("securedBenefits.checkYourAnswersLabel", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), None).url,
-          Some(messages("messages__visuallyhidden__securedBenefits"))))
+          Some(messages("messages__visuallyhidden__securedBenefits", schemeName))))
       ),
       AnswerRow(
         messages("insuranceCompanyName.checkYourAnswersLabel"),
@@ -208,7 +208,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       benefitsAndInsuranceSection(mode)
     ),
     postUrl(mode),
-    None,
+    Some(schemeName),
     false,
     mode,
     hideEditLinks = false,
@@ -221,7 +221,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       updateBenefitsAndInsuranceSection(mode)
     ),
     postUrl(mode),
-    None,
+    Some(schemeName),
     false,
     mode,
     hideEditLinks = false,

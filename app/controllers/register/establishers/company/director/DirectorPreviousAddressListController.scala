@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -79,9 +78,6 @@ class DirectorPreviousAddressListController @Inject()(
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 }

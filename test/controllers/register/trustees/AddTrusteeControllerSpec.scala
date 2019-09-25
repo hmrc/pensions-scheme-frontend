@@ -21,58 +21,49 @@ import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import helpers.DataCompletionHelper
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual._
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
+import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models._
 import models.address.Address
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId, _}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc.{Call, Result}
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
 
-import scala.concurrent.Future
-
 class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper {
   appRunning()
 
-  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
+  private lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
     CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
+  private lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(
     CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val trusteeIndividual: TrusteeIndividualEntityNonHns = TrusteeIndividualEntityNonHns(
-    TrusteeDetailsId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
-  lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
-  val formProvider = new AddTrusteeFormProvider()
-  val schemeName = "Test Scheme Name"
-  val form = formProvider()
-  val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
-  val testAnswer = "true"
-  val address = Address("addr1", "addr2", None, None, Some("ZZ11ZZ"), "UK")
-  val stringValue = "aa"
+  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(
+    TrusteeNameId(2), "Trustee Individual", isDeleted = false, isCompleted = false, isNewEntity = true, 3, Some(SingleTrust.toString))
+
+  private lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
+  private val formProvider = new AddTrusteeFormProvider()
+  private val schemeName = "Test Scheme Name"
+  private val form = formProvider()
+  private val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
+  private val testAnswer = "true"
+  private val address = Address("addr1", "addr2", None, None, Some("ZZ11ZZ"), "UK")
+  private val stringValue = "aa"
   private val firstName = "First"
   private val lastName = "Last"
-
-  import models.UniqueTaxReference
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
 
-  def editTrusteeIndividualRoute(id: Int): String =
-    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id, None).url
-
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, featureToggleEnabled: Boolean = false): AddTrusteeController = {
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
     new AddTrusteeController(
       frontendAppConfig,
       messagesApi,
@@ -81,15 +72,14 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      new FakeFeatureSwitchManagementService(enabledV2 = featureToggleEnabled)
+      formProvider
     )
   }
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty, enable: Boolean = false): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None, enable, false)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(
@@ -107,7 +97,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
         ),
         Json.obj(
           TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-          TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now()),
+          TrusteeNameId.toString -> PersonName("Trustee", "Individual"),
           IsTrusteeNewId.toString -> true
         )
       )
@@ -116,17 +106,17 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
   "AddTrustee Controller" must {
 
-    "return view with button ENABLED when toggle set to TRUE  and some trustees incomplete" in {
+    "return view with button ENABLED when some trustees incomplete" in {
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = false, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = false, 1,
+          setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
-              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -136,17 +126,17 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
     }
 
-    "return view with button ENABLED when toggle set to TRUE and all trustees complete" in {
+    "return view with button ENABLED when all trustees complete" in {
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = true, toggled = true, 0,
+        setTrusteeCompletionStatus(isComplete = true, 1,
+          setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
-              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -155,70 +145,24 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       view.getElementById("submit").hasAttr("disabled") mustEqual false
     }
 
-    "return view with button ENABLED when toggle set to FALSE and all trustees complete" in {
+    "return view with button ENABLED when at least one trustee is INCOMPLETE" in {
+
       val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = false, 1,
-          setTrusteeCompletionStatus(isComplete = true, toggled = false, 0,
+        setTrusteeCompletionStatus(isComplete = true, 1,
+          setTrusteeCompletionStatus(isComplete = false, 0,
             UserAnswers()
-              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
+              .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
           )
         ).json
 
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
+      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
       val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
       view.getElementById("submit").hasAttr("disabled") mustEqual false
-    }
-
-    "return view with button DISABLED when toggle set to FALSE and at least one trustee is INCOMPLETE" in {
-
-      val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = false, 1,
-          setTrusteeCompletionStatus(isComplete = false, toggled = false, 0,
-            UserAnswers()
-              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-          )
-        ).json
-
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = false)
-
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
-
-      val view = asDocument(contentAsString(result))
-
-      view.getElementById("submit").hasAttr("disabled") mustEqual true
-    }
-
-    "return view with button ENABLED when toggle set to TRUE and at least one trustee is INCOMPLETE" in {
-
-      val trusteeList: JsValue =
-        setTrusteeCompletionStatus(isComplete = true, toggled = true, 1,
-          setTrusteeCompletionStatus(isComplete = false, toggled = true, 0,
-            UserAnswers()
-              .set(TrusteeDetailsId(0))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-              .set(TrusteeDetailsId(1))(PersonDetails("fistName", None, "lastName", LocalDate.now())).asOpt.value
-          )
-        ).json
-
-      val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)), featureToggleEnabled = true)
-
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
-
-      val view = asDocument(contentAsString(result))
-
-      view.getElementById("submit").hasAttr("disabled") mustEqual false
-    }
-
-    "return OK and the correct view for a GET" in {
-      val result: Future[Result] = controller(featureToggleEnabled = false).onPageLoad(NormalMode, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(enable = true)
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -248,6 +192,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
       status(result) mustBe BAD_REQUEST
+
       contentAsString(result) mustBe viewAsString(boundForm, allTrustees)
     }
 

@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
@@ -37,16 +37,18 @@ object DirectorNoNINOReasonId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorNoNINOReasonId] = {
 
-    def label(establisherIndex: Int, directorIndex: Int) = userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-      case Some(name) => Some(messages("messages__noGenericNino__heading", name.fullName))
-      case _ => Some(messages("messages__directorNoNinoReason__cya_fallback"))
-    }
+    new CheckYourAnswersDirectors[DirectorNoNINOReasonId] {
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__director__nino_no"))
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__noGenericNino__heading")
 
-    new CheckYourAnswers[DirectorNoNINOReasonId] {
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_noNinoReason")
+
       override def row(id: DirectorNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        StringCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+          Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
 
       override def updateRow(id: DirectorNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

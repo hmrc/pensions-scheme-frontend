@@ -17,13 +17,11 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherCompleteId
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -33,7 +31,13 @@ import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.AnswerRow
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
+  private val userAnswersWithName: UserAnswers =
+    UserAnswers()
+      .set(DirectorNameId(0, 0))(PersonName("first", "last"))
+      .asOpt
+      .value
 
+  private val name                            = "first last"
   "Cleanup" must {
 
 
@@ -102,29 +106,28 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
     }
   }
 
-  "cya" when {
+  "cya with feature switch off" when {
 
     val onwardUrl = "onwardUrl"
 
-    val directorDetails = PersonDetails("John", None, "One", LocalDate.now())
-    implicit val featureSwitchManagementService = new FakeFeatureSwitchManagementService(false)
+    val directorDetails = PersonName("John",  "One")
 
     def answers = UserAnswers()
       .set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value
-      .set(DirectorDetailsId(0, 0))(directorDetails).asOpt.value
+      .set(DirectorNameId(0, 0))(directorDetails).asOpt.value
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.firstAndLastName),
+            messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__director__address_years")))
+            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResult)
@@ -137,14 +140,14 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.firstAndLastName),
+            messages("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl,Some("messages__visuallyhidden__director__address_years")))
+            Some(Link("site.change", onwardUrl,Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)
@@ -155,7 +158,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers:UserAnswers = request.userAnswers
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

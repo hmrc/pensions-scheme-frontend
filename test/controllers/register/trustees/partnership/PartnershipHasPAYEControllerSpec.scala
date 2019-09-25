@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasPAYEFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasPAYEId, PartnershipPayeVariationsId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasPAYEId, PartnershipEnterPAYEId}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -52,7 +52,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
           PartnershipHasPAYEId.toString -> true,
-          PartnershipPayeVariationsId.toString -> "9999999999"
+          PartnershipEnterPAYEId.toString -> "9999999999"
         )
       )
     ))
@@ -109,7 +109,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipHasPAYEId(index), false)
-      FakeUserAnswersService.verifyNot(PartnershipPayeVariationsId(index))
+      FakeUserAnswersService.verifyNot(PartnershipEnterPAYEId(index))
     }
 
   }

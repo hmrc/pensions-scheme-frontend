@@ -17,14 +17,13 @@
 package identifiers
 
 import identifiers.register.trustees.company._
-import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
 import models._
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
@@ -41,16 +40,19 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
       "remove all the data for `Trustees`" in {
         result.get(TrusteeKindId(0)) mustNot be(defined)
         result.get(CompanyDetailsId(0)) mustNot be(defined)
-        result.get(CompanyRegistrationNumberId(0)) mustNot be(defined)
-        result.get(CompanyUniqueTaxReferenceId(0)) mustNot be(defined)
+        result.get(HasCompanyCRNId(0)) mustNot be(defined)
+        result.get(CompanyEnterCRNId(0)) mustNot be(defined)
+        result.get(HasCompanyUTRId(0)) mustNot be(defined)
+        result.get(CompanyEnterUTRId(0)) mustNot be(defined)
         result.get(CompanyPostcodeLookupId(0)) mustNot be(defined)
         result.get(CompanyAddressId(0)) mustNot be(defined)
         result.get(CompanyAddressYearsId(0)) mustNot be(defined)
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustNot be(defined)
         result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
-        result.get(CompanyContactDetailsId(0)) mustNot be(defined)
+        result.get(CompanyEmailId(0)) mustNot be(defined)
+        result.get(CompanyPhoneId(0)) mustNot be(defined)
         result.get(TrusteeKindId(1)) mustNot be(defined)
-        result.get(TrusteeDetailsId(1)) mustNot be(defined)
+        result.get(TrusteeNameId(1)) mustNot be(defined)
         result.get(TrusteeKindId(2)) mustNot be(defined)
         result.get(CompanyDetailsId(2)) mustNot be(defined)
         result.get(TrusteeKindId(3)) mustNot be(defined)
@@ -64,15 +66,18 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
 
       "not remove any data for `Trustees`" in {
         result.get(CompanyDetailsId(0)) must be(defined)
-        result.get(CompanyRegistrationNumberId(0)) must be(defined)
-        result.get(CompanyUniqueTaxReferenceId(0)) must be(defined)
+        result.get(HasCompanyCRNId(0)) must be(defined)
+        result.get(CompanyEnterCRNId(0)) must be(defined)
+        result.get(HasCompanyUTRId(0)) must be(defined)
+        result.get(CompanyEnterUTRId(0)) must be(defined)
         result.get(CompanyPostcodeLookupId(0)) must be(defined)
         result.get(CompanyAddressId(0)) must be(defined)
         result.get(CompanyAddressYearsId(0)) must be(defined)
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) must be(defined)
         result.get(CompanyPreviousAddressId(0)) must be(defined)
-        result.get(CompanyContactDetailsId(0)) must be(defined)
-        result.get(TrusteeDetailsId(1)) must be(defined)
+        result.get(CompanyEmailId(0)) must be(defined)
+        result.get(CompanyPhoneId(0)) must be(defined)
+        result.get(TrusteeNameId(1)) must be(defined)
         result.get(CompanyDetailsId(2)) must be(defined)
         result.get(MoreThanTenTrusteesId) must be(defined)
       }
@@ -86,16 +91,20 @@ object HaveAnyTrusteesIdSpec extends OptionValues with Enumerable.Implicits {
     .set(HaveAnyTrusteesId)(true)
     .flatMap(_.set(TrusteeKindId(0))(TrusteeKind.Company))
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("first")))
-    .flatMap(_.set(CompanyRegistrationNumberId(0))(CompanyRegistrationNumber.No("")))
-    .flatMap(_.set(CompanyUniqueTaxReferenceId(0))(UniqueTaxReference.No("")))
+    .flatMap(_.set(CompanyEnterCRNId(0))(ReferenceValue("")))
+    .flatMap(_.set(HasCompanyCRNId(0))(true))
+    .flatMap(_.set(CompanyEnterCRNId(0))(ReferenceValue("")))
+    .flatMap(_.set(HasCompanyUTRId(0))(true))
+    .flatMap(_.set(CompanyEnterUTRId(0))(ReferenceValue("")))
     .flatMap(_.set(CompanyPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear))
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
-    .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
+    .flatMap(_.set(CompanyEmailId(0))(""))
+    .flatMap(_.set(CompanyPhoneId(0))(""))
     .flatMap(_.set(TrusteeKindId(1))(TrusteeKind.Individual))
-    .flatMap(_.set(TrusteeDetailsId(1))(PersonDetails("", None, "", LocalDate.now)))
+    .flatMap(_.set(TrusteeNameId(1))(PersonName("", "")))
     .flatMap(_.set(TrusteeKindId(2))(TrusteeKind.Company))
     .flatMap(_.set(CompanyDetailsId(2))(CompanyDetails("second")))
     .flatMap(_.set(TrusteeKindId(3))(TrusteeKind.Partnership))

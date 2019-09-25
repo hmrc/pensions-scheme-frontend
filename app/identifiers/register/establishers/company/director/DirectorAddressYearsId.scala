@@ -16,14 +16,13 @@
 
 package identifiers.register.establishers.company.director
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import utils.{Toggles, UserAnswers}
+import utils.UserAnswers
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersDirectors}
 import viewmodels.AnswerRow
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
@@ -33,7 +32,8 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(AddressYears.OverAYear) =>
-        userAnswers.remove(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
+        userAnswers
+          .remove(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
           .flatMap(_.remove(DirectorPreviousAddressId(establisherIndex, directorIndex)))
           .flatMap(_.remove(DirectorPreviousAddressListId(establisherIndex, directorIndex)))
       case _ => super.cleanup(value, userAnswers)
@@ -45,29 +45,32 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 
-  implicit def cya(implicit messages: Messages, featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorAddressYearsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
 
     val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
-      if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)
-       else
-        ua.get(DirectorDetailsId(establisherIndex, directorIndex)).map(_.fullName)
 
-    def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers)=
-      name(establisherIndex, directorIndex, ua).fold("messages__director__cya__address_years__fallback")(name =>
-        messages("messages__director__cya__address_years", name)
-      )
+    new CheckYourAnswersDirectors[DirectorAddressYearsId] {
 
-    val changeAddressYears: String = "messages__visuallyhidden__director__address_years"
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+          dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
 
-    new CheckYourAnswers[DirectorAddressYearsId] {
+
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+          dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
+
       override def row(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
+          case _ =>
+            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

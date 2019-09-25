@@ -21,12 +21,11 @@ import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeNameId}
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -38,7 +37,7 @@ import views.html.address.addressList
 
 class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+  private val trusteeDetails = PersonName("Test", "Name")
   private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private lazy val fakeNavigator = new FakeNavigator(onwardRoute)
 
@@ -63,7 +62,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val data =
     UserAnswers(Json.obj())
-      .set(TrusteeDetailsId(0))(trusteeDetails)
+      .set(TrusteeNameId(0))(trusteeDetails)
       .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(addresses))
       .asOpt.map(_.json)
 

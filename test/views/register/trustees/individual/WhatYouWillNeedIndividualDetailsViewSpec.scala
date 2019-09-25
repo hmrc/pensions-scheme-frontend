@@ -26,7 +26,7 @@ class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "whatYouWillNeedIndividual"
   val personName = "wibble"
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyNumberController.onPageLoad(NormalMode, None, index=Index(0))
+  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onPageLoad(NormalMode, None, index=Index(0))
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, personName)(fakeRequest, messages)
 

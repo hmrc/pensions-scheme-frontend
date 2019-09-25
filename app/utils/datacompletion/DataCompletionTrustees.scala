@@ -30,10 +30,10 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(HasCompanyNumberId(index), CompanyRegistrationNumberVariationsId(index), Some(NoCompanyNumberId(index))),
-        isAnswerComplete(HasCompanyUTRId(index), CompanyUTRId(index), Some(CompanyNoUTRReasonId(index))),
+        isAnswerComplete(HasCompanyCRNId(index), CompanyEnterCRNId(index), Some(CompanyNoCRNReasonId(index))),
+        isAnswerComplete(HasCompanyUTRId(index), CompanyEnterUTRId(index), Some(CompanyNoUTRReasonId(index))),
         isAnswerComplete(HasCompanyVATId(index), CompanyEnterVATId(index), None),
-        isAnswerComplete(HasCompanyPAYEId(index), CompanyPayeVariationsId(index), None)
+        isAnswerComplete(HasCompanyPAYEId(index), CompanyEnterPAYEId(index), None)
       )
     )
 
@@ -43,32 +43,18 @@ trait DataCompletionTrustees {
   def isTrusteeCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isTrusteeCompanyCompleteNonHns(index: Int): Boolean =
-    isListComplete(Seq(
-      get(CompanyDetailsId(index)).isDefined,
-      get(CompanyRegistrationNumberId(index)).isDefined | get(CompanyRegistrationNumberVariationsId(index)).isDefined,
-      get(CompanyUniqueTaxReferenceId(index)).isDefined | get(CompanyUTRId(index)).isDefined,
-      get(CompanyVatId(index)).isDefined | get(CompanyEnterVATId(index)).isDefined,
-      get(CompanyPayeId(index)).isDefined | get(CompanyPayeVariationsId(index)).isDefined,
-      isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), None).getOrElse(false),
-      get(CompanyContactDetailsId(index)).isDefined
-    ))
-
-  def isTrusteeCompanyComplete(index: Int, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
+  def isTrusteeCompanyComplete(index: Int): Boolean =
       isComplete(Seq(
         isTrusteeCompanyDetailsComplete(index),
         isTrusteeCompanyAddressComplete(index),
         isTrusteeCompanyContactDetailsComplete(index))).getOrElse(false)
-    else
-      isTrusteeCompanyCompleteNonHns(index)
 
   //TRUSTEE INDIVIDUAL
 
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] = {
     isComplete(Seq(
       isAnswerComplete(TrusteeDOBId(trusteeIndex)),
-      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeNewNinoId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
+      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeEnterNINOId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
       isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId(trusteeIndex)))
     ))
   }
@@ -78,8 +64,7 @@ trait DataCompletionTrustees {
 
   def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
 
-  def isTrusteeIndividualComplete(isHnSEnabled: Boolean, index: Int): Boolean =
-    if (isHnSEnabled) {
+  def isTrusteeIndividualComplete(index: Int): Boolean =
       isComplete(
         Seq(
           isTrusteeIndividualDetailsComplete(index),
@@ -87,24 +72,14 @@ trait DataCompletionTrustees {
           isTrusteeIndividualContactDetailsComplete(index)
         )
       ).getOrElse(false)
-    } else {
-      isListComplete(Seq(
-        get(TrusteeDetailsId(index)).isDefined,
-        get(TrusteeNinoId(index)).isDefined | get(TrusteeNewNinoId(index)).isDefined,
-        get(UniqueTaxReferenceId(index)).isDefined | get(TrusteeUTRId(index)).isDefined,
-        isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index),
-          TrusteeAddressYearsId(index), None).getOrElse(false),
-        get(TrusteeContactDetailsId(index)).isDefined
-      ))
-    }
 
   //TRUSTEE PARTNERSHIP
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId(index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
       )
     )
 
@@ -115,22 +90,9 @@ trait DataCompletionTrustees {
   def isTrusteePartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneId(index))
 
-  def isTrusteePartnershipCompleteNonHns(index: Int): Boolean =
-    isListComplete(Seq(
-      get(PartnershipDetailsId(index)).isDefined,
-      get(PartnershipUniqueTaxReferenceId(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
-      get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
-      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
-      isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
-      get(PartnershipContactDetailsId(index)).isDefined
-    ))
-
-  def isTrusteePartnershipComplete(index: Int, isHnSEnabled: Boolean): Boolean =
-    if (isHnSEnabled)
+  def isTrusteePartnershipComplete(index: Int): Boolean =
       isComplete(Seq(
         isTrusteePartnershipDetailsComplete(index),
         isTrusteePartnershipAddressComplete(index),
         isTrusteePartnershipContactDetailsComplete(index))).getOrElse(false)
-    else
-      isTrusteePartnershipCompleteNonHns(index)
 }

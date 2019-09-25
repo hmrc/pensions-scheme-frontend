@@ -45,8 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
@@ -54,7 +53,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
-      implicit val featureSwitchManagementService: FeatureSwitchManagementService = fs
 
       val directorAnswerSection = AnswerSection(
         None,
@@ -68,8 +66,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           DirectorHasNINOId(companyIndex, directorIndex)
             .row(routes.DirectorHasNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
-          DirectorNewNinoId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+          DirectorEnterNINOId(companyIndex, directorIndex)
+            .row(routes.DirectorEnterNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorNoNINOReasonId(companyIndex, directorIndex)
             .row(routes.DirectorNoNINOReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
@@ -77,8 +75,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           DirectorHasUTRId(companyIndex, directorIndex)
             .row(routes.DirectorHasUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
-          DirectorUTRId(companyIndex, directorIndex)
-            .row(routes.DirectorUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+          DirectorEnterUTRId(companyIndex, directorIndex)
+            .row(routes.DirectorEnterUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
 
           DirectorNoUTRReasonId(companyIndex, directorIndex)
             .row(routes.DirectorNoUTRReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
@@ -100,46 +98,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-
-      val directorNinoDetails = (mode, userAnswers.get(IsNewDirectorId(companyIndex, directorIndex))) match {
-        case (_, Some(true)) | (NormalMode|CheckMode, _) =>
-          DirectorNinoId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-
-        case _ =>
-          DirectorNewNinoId(companyIndex, directorIndex)
-            .row(routes.DirectorNinoNewController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-      }
-
-      val companyDirectorDetails = AnswerSection(
-        Some("messages__director__cya__details_heading"),
-        Seq(
-          DirectorDetailsId(companyIndex, directorIndex)
-            .row(routes.DirectorDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          directorNinoDetails,
-          DirectorUniqueTaxReferenceId(companyIndex, directorIndex)
-            .row(routes.DirectorUniqueTaxReferenceController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-        ).flatten
-      )
-
-      val companyDirectorContactDetails = AnswerSection(
-        Some("messages__director__cya__contact__details_heading"),
-        Seq(
-          DirectorAddressId(companyIndex, directorIndex).
-            row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url),
-          DirectorAddressYearsId(companyIndex, directorIndex).
-            row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          DirectorPreviousAddressId(companyIndex, directorIndex).
-            row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-          DirectorContactDetailsId(companyIndex, directorIndex).
-            row(routes.DirectorContactDetailsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url)
-        ).flatten
-      )
-
-      val answerSections = if(fs.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val answerSections =
         Seq(directorAnswerSection)
-      else
-        Seq(companyDirectorDetails, companyDirectorContactDetails)
 
       Future.successful(Ok(checkYourAnswers(
         appConfig,

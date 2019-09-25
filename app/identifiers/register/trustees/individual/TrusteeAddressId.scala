@@ -23,7 +23,7 @@ import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -33,15 +33,12 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers,
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val name = (index: Int) =>
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
             ua.get(TrusteeNameId(index)).map(_.fullName)
-          else
-            ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
         val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 

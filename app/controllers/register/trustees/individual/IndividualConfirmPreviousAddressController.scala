@@ -21,14 +21,14 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteeNameId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId, TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.{CountryOptions, Toggles}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
@@ -42,8 +42,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
                                                            allowAccess: AllowAccessActionProvider,
                                                            getData: DataRetrievalAction,
                                                            requireData: DataRequiredAction,
-                                                           val countryOptions: CountryOptions,
-                                                           fs: FeatureSwitchManagementService
+                                                           val countryOptions: CountryOptions
                                                           )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
@@ -89,9 +88,6 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 }

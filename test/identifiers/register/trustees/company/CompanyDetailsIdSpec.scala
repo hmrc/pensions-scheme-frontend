@@ -17,13 +17,9 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{IsTrusteeNewId, MoreThanTenTrusteesId}
-import models.person.PersonDetails
+import identifiers.register.trustees.IsTrusteeNewId
 import models.requests.DataRequest
 import models.{CompanyDetails, Link, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
-import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId

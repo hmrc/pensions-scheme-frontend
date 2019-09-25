@@ -34,7 +34,7 @@ class HasCompanyPayeIdSpec extends SpecBase {
   val name = "test company name"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__companyPayeRef", name)))))
+      Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
   )
 
   "cya" when {
@@ -77,7 +77,7 @@ class HasCompanyPayeIdSpec extends SpecBase {
 
     def answers(hasPaye: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(HasCompanyPAYEId(0))(hasPaye)
-      .flatMap(_.set(CompanyPayeVariationsId(0))(ReferenceValue("test-paye")))
+      .flatMap(_.set(CompanyEnterPAYEId(0))(ReferenceValue("test-paye")))
       .asOpt.value
 
     "`HasCompanyPAYE` is set to `false`" must {
@@ -85,7 +85,7 @@ class HasCompanyPayeIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(HasCompanyPAYEId(0))(false).asOpt.value
 
       "remove the data for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustNot be(defined)
+        result.get(CompanyEnterPAYEId(0)) mustNot be(defined)
       }
     }
 
@@ -94,7 +94,7 @@ class HasCompanyPayeIdSpec extends SpecBase {
       val result: UserAnswers = answers(false).set(HasCompanyPAYEId(0))(true).asOpt.value
 
       "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) must be(defined)
+        result.get(CompanyEnterPAYEId(0)) must be(defined)
       }
     }
 
@@ -103,7 +103,7 @@ class HasCompanyPayeIdSpec extends SpecBase {
       val result: UserAnswers = answers().remove(HasCompanyPAYEId(0)).asOpt.value
 
       "no clean up for `CompanyPAYE`" in {
-        result.get(CompanyPayeVariationsId(0)) mustBe defined
+        result.get(CompanyEnterPAYEId(0)) mustBe defined
       }
     }
   }

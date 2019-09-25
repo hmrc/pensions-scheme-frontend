@@ -19,11 +19,11 @@ package identifiers.register.establishers.individual
 import base.SpecBase
 import config.FeatureSwitchManagementService
 import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
+import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -33,28 +33,95 @@ import viewmodels.AnswerRow
 
 class PreviousAddressIdSpec extends SpecBase {
 
+  import PreviousAddressIdSpec._
+
+  implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+  implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
+
+  val name = "test name"
+
+  val address = Address(
+    "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
+  )
+
+  private val answerRowWithChangeLink = Seq(
+    AnswerRow(
+      "messages__establisher_individual_previous_address_cya_label",
+      addressAnswer(address),
+      answerIsMessageKey = false,
+      Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))
+    ))
+
+  private val answerRowWithAddLink = Seq(
+    AnswerRow("messages__establisher_individual_previous_address_cya_label",
+      Seq("site.not_entered"),
+      answerIsMessageKey = true,
+      Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__establisher__previous_address")))))
+
   "cya" when {
-    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
-    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
 
-    val name = "test name"
+    "in normal mode" must {
 
-    val address = Address(
-      "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
-    )
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-    def addressAnswer(address: Address): Seq[String] = {
-      val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-
-      Seq(
-        Some(address.addressLine1),
-        Some(address.addressLine2),
-        address.addressLine3,
-        address.addressLine4,
-        address.postcode,
-        Some(country)
-      ).flatten
+        PreviousAddressId(index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
+      }
     }
+
+    "in update mode" when {
+      "for new individual" must {
+        "return answer row with change links" in {
+          val answersNew = answers.set(IsEstablisherNewId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+
+          PreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
+      }
+      "for existing individual" must {
+        "return answer row with change links if there is a previous address" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
+          PreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
+
+        "return answer row with add link if there is no previous address and `is this previous address` is no" in {
+          val answersWithNoIsThisPreviousAddress = UserAnswers().set(IndividualConfirmPreviousAddressId(index))(value = false).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
+
+          PreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
+        }
+
+        "return no answer row if there is no previous address and `is this previous address` is yes" in {
+          val answersWithYesIsThisPreviousAddress = UserAnswers().set(IndividualConfirmPreviousAddressId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, PsaId("A0000000"))
+
+          PreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+        }
+      }
+    }
+  }
+}
+
+object PreviousAddressIdSpec extends OptionValues {
+  private val index = 0
+  implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+  private val address = Address(
+    "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
+  )
+
+  private def addressAnswer(address: Address): Seq[String] = {
+    val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+
+    Seq(
+      Some(address.addressLine1),
+      Some(address.addressLine2),
+      address.addressLine3,
+      address.addressLine4,
+      address.postcode,
+      Some(country)
+    ).flatten
+  }
 
     val answers = UserAnswers().set(EstablisherNameId(0))(PersonName("test", "name")).asOpt.value
 

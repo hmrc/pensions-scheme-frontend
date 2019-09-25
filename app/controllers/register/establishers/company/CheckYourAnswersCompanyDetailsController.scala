@@ -48,8 +48,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           implicit val countryOptions: CountryOptions,
                                                           @EstablishersCompany navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
-                                                          allowChangeHelper: AllowChangeHelper,
-                                                          fs: FeatureSwitchManagementService
+                                                          allowChangeHelper: AllowChangeHelper
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -60,17 +59,17 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
 
         val companyDetails = Seq(AnswerSection(
           None,
-          HasCompanyNumberId(index).row(routes.HasCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            CompanyRegistrationNumberVariationsId(index)
-              .row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            NoCompanyNumberId(index).row(routes.NoCompanyNumberController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+          HasCompanyCRNId(index).row(routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterCRNId(index)
+              .row(routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyNoCRNReasonId(index).row(routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            CompanyUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            NoCompanyUTRId(index).row(routes.NoCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterUTRId(index).row(routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyNoUTRReasonId(index).row(routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 

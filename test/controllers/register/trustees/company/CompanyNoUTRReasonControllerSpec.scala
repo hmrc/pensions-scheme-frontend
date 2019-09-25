@@ -33,7 +33,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   import CompanyNoUTRReasonControllerSpec._
 
-  "NoCompanyUTRControllerSpec" must {
+  "NoCompanyEnterUTRControllerSpec" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)

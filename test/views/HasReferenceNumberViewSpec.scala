@@ -50,7 +50,7 @@ class HasReferenceNumberViewSpec extends YesNoViewBehaviours {
   }
 
   val form = new HasXFormProvider()("required", "name")
-  private val postCall = controllers.register.establishers.company.routes.HasCompanyNumberController.onSubmit(NormalMode, srn, index)
+  private val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
 
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
     hasReferenceNumber(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)

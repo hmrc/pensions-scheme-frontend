@@ -30,42 +30,34 @@ import viewmodels.AnswerRow
 
 class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
+  private val companyName = "the company"
+
   "cya" when {
     
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(IsCompanyDormantId(0))(Yes).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(IsCompanyDormantId(0))(Yes).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        IsCompanyDormantId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__company__cya__dormant",List("site.yes"),true,
-            Some(Link("site.change",onwardUrl,Some("messages__visuallyhidden__establisher__dormant"))))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        IsCompanyDormantId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
+          AnswerRow(messages("messages__company__cya__dormant"),List("site.yes"), answerIsMessageKey = true,
+            Some(Link("site.change",onwardUrl,Some(messages("messages__visuallyhidden__dynamic_company__dormant", companyName)))))
         ))
       }
     }
 
-    "in update mode for new establisher - company" must {
+    "in update mode " must {
 
-      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(value = true).asOpt.value
 
-      "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        IsCompanyDormantId(0).row(onwardUrl, UpdateMode) must equal(Seq())
-      }
-    }
-
-    "in update mode for existing establisher - company" must {
-
-      "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-
-        IsCompanyDormantId(0).row(onwardUrl, UpdateMode) must equal(Seq())
+      "return no answer rows" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        IsCompanyDormantId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }

@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.{PostcodeLookupController => GenericPostcodeLookupController}
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId}
+import identifiers.register.establishers.individual.{EstablisherNameId, PostCodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -40,7 +39,7 @@ class PostCodeLookupController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
                                           override val addressLookupConnector: AddressLookupConnector,
-                                          @EstablishersIndividual override val navigator: Navigator,
+                                          val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
@@ -49,14 +48,13 @@ class PostCodeLookupController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends GenericPostcodeLookupController {
 
   private val title: Message = "messages__establisher_individual_address__title"
-  private val hint: Message = "messages__establisher_individual_address_lede"
 
   protected val form: Form[String] = formProvider()
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
               routes.PostCodeLookupController.onSubmit(mode, index, srn),

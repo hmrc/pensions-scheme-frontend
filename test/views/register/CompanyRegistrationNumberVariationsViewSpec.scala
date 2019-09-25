@@ -29,7 +29,7 @@ class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "companyNumber__trustee"
   val index = Index(0)
   val form = new CompanyRegistrationNumberVariationsFormProvider()(name)
-  val submitUrl = controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onSubmit(NormalMode, None, index)
+  val submitUrl = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(NormalMode, index, None)
 
   def viewModel(name: String = name): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(

@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId, DirectorPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -72,12 +71,9 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =

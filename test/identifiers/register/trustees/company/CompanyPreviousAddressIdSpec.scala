@@ -17,11 +17,11 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
+import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
 import models.requests.DataRequest
 import models.{CompanyDetails, Link, NormalMode, UpdateMode}
+import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -31,88 +31,92 @@ import viewmodels.{AnswerRow, Message}
 
 class CompanyPreviousAddressIdSpec extends SpecBase {
 
+  import CompanyPreviousAddressIdSpec._
+
+  private val answerRowWithChangeLink = Seq(
+    AnswerRow(
+      Message("messages__trusteePreviousAddress", companyDetails.companyName),
+      addressAnswer(address),
+      answerIsMessageKey = false,
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName))))
+    ))
+
+  private val answerRowWithAddLink = Seq(
+    AnswerRow(Message("messages__trusteePreviousAddress", companyDetails.companyName),
+      Seq("site.not_entered"),
+      answerIsMessageKey = true,
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName))))))
+
   "cya" when {
-    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
 
-    val address = Address(
-      "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
-    )
-
-    def addressAnswer(address: Address): Seq[String] = {
-      val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-
-      Seq(
-        Some(address.addressLine1),
-        Some(address.addressLine2),
-        address.addressLine3,
-        address.addressLine4,
-        address.postcode,
-        Some(country)
-      ).flatten
-    }
-
-    val onwardUrl = "onwardUrl"
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(CompanyPreviousAddressId(0))(address).flatMap(
-            _.set(CompanyDetailsId(0))(CompanyDetails("test company"))
-          ).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__trusteePreviousAddress", "test company"),
-            addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "test company"))))
-          )))
+        CompanyPreviousAddressId(index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
       }
     }
 
-    "in update mode" must {
-      "return row with add links for existing establisher if address years is under a year and there is no previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(CompanyAddressYearsId(0))(UnderAYear).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+    "in update mode" when {
+      "for new company" must {
+        "return answer row with change links" in {
+          val answersNew = answers.set(IsTrusteeNewId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
 
-        CompanyPreviousAddressId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__trusteePreviousAddress", "the trustee"),
-            Seq("site.not_entered"),
-            answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))))
-        )
+          CompanyPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
       }
+      "for existing company" must {
+        "return answer row with change links if there is a previous address" in {
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-      "return row with change links for existing establisher if there is a previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(CompanyPreviousAddressId(0))(address).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+          CompanyPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        }
 
-        CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__trusteePreviousAddress", "the trustee"),
-            addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))
-          )))
-      }
+        "return answer row with add link if there is no previous address and `is this previous address` is no" in {
+          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(index, companyDetails).
+            set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
-      "return row with change links for new establisher if there is a previous address" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-          UserAnswers().set(CompanyPreviousAddressId(0))(address).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+          CompanyPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
+        }
 
-        CompanyPreviousAddressId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(
-            Message("messages__trusteePreviousAddress", "the trustee"),
-            addressAnswer(address),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", "the trustee"))))
-          )))
+        "return no answer row if there is no previous address and `is this previous address` is yes" in {
+          val answersWithYesIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(index, companyDetails).
+            set(CompanyConfirmPreviousAddressId(index))(value = true).asOpt.value
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, PsaId("A0000000"))
+
+          CompanyPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+        }
       }
     }
   }
+}
+
+object CompanyPreviousAddressIdSpec extends OptionValues {
+  private val index = 0
+  implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+  private val companyDetails = CompanyDetails("test company")
+  private val address = Address(
+    "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
+  )
+
+  private def addressAnswer(address: Address): Seq[String] = {
+    val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+
+    Seq(
+      Some(address.addressLine1),
+      Some(address.addressLine2),
+      address.addressLine3,
+      address.addressLine4,
+      address.postcode,
+      Some(country)
+    ).flatten
+  }
+
+  private val onwardUrl = "onwardUrl"
+
+  private val answers: UserAnswers = UserAnswers().set(CompanyPreviousAddressId(index))(address).flatMap(
+    _.set(CompanyDetailsId(index))(companyDetails)).asOpt.value
 }

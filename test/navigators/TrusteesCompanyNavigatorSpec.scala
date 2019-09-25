@@ -54,9 +54,9 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, None)
 
-  private def companyNoPage(mode: Mode): Call = CompanyRegistrationNumberVariationsController.onPageLoad(mode, None, 0)
+  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, None, 0)
 
-  private def noCompanyNoPage(mode: Mode): Call = NoCompanyNumberController.onPageLoad(mode, 0, None)
+  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, None)
 
   private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, None)
 
@@ -64,13 +64,13 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, None)
 
-  private def utrPage(mode: Mode): Call = CompanyUTRController.onPageLoad(mode, None, 0)
+  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, None, 0)
 
   private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
 
   private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, None)
 
-  private def payePage(mode: Mode): Call = CompanyPayeVariationsController.onPageLoad(mode, 0, None)
+  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, None)
 
   private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, None)
 
@@ -100,20 +100,20 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(CompanyDetailsId(0))(CompanyDetails(someStringValue), addTrusteePage(mode)),
-      row(HasCompanyNumberId(0))(true, companyNoPage(mode)),
-      row(HasCompanyNumberId(0))(false, noCompanyNoPage(mode)),
-      row(NoCompanyNumberId(0))(someStringValue, hasCompanyUtrPage(mode)),
-      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, hasCompanyUtrPage(mode)),
+      row(HasCompanyCRNId(0))(true, companyNoPage(mode)),
+      row(HasCompanyCRNId(0))(false, noCompanyNoPage(mode)),
+      row(CompanyNoCRNReasonId(0))(someStringValue, hasCompanyUtrPage(mode)),
+      row(CompanyEnterCRNId(0))(someRefValue, hasCompanyUtrPage(mode)),
       row(HasCompanyUTRId(0))(true, utrPage(mode)),
       row(HasCompanyUTRId(0))(false, noUtrPage(mode)),
       row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVatPage(mode)),
-      row(CompanyUTRId(0))(someRefValue, hasCompanyVatPage(mode)),
+      row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVatPage(mode)),
       row(HasCompanyVATId(0))(true, vatPage(mode)),
       row(HasCompanyVATId(0))(false, hasCompanyPayePage(mode)),
       row(CompanyEnterVATId(0))(someRefValue, hasCompanyPayePage(mode)),
       row(HasCompanyPAYEId(0))(true, payePage(mode)),
       row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
-      row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode)),
+      row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(mode)),
       row(CompanyPostcodeLookupId(0))(Seq(someTolerantAddress), selectAddressPage(mode)),
       row(CompanyAddressListId(0))(someTolerantAddress, confirmAddressPage(mode)),
       row(CompanyAddressId(0))(someAddress, addressYearsPage(mode)),
@@ -131,20 +131,20 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   def routesCheckMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(HasCompanyNumberId(0))(true, companyNoPage(mode)),
-      row(HasCompanyNumberId(0))(false, noCompanyNoPage(mode)),
-      row(NoCompanyNumberId(0))(someStringValue, cyaPage(mode)),
-      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, cyaPage(mode)),
+      row(HasCompanyCRNId(0))(true, companyNoPage(mode)),
+      row(HasCompanyCRNId(0))(false, noCompanyNoPage(mode)),
+      row(CompanyNoCRNReasonId(0))(someStringValue, cyaPage(mode)),
+      row(CompanyEnterCRNId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyUTRId(0))(true, utrPage(mode)),
       row(HasCompanyUTRId(0))(false, noUtrPage(mode)),
       row(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(mode)),
-      row(CompanyUTRId(0))(someRefValue, cyaPage(mode)),
+      row(CompanyEnterUTRId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyVATId(0))(true, vatPage(mode)),
       row(HasCompanyVATId(0))(false, cyaPage(mode)),
       row(CompanyEnterVATId(0))(someRefValue, cyaPage(mode)),
       row(HasCompanyPAYEId(0))(true, payePage(mode)),
       row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
-      row(CompanyPayeVariationsId(0))(someRefValue, cyaPage(mode)),
+      row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(mode)),
       row(CompanyAddressId(0))(someAddress, cyaAddressPage(mode)),
       row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(mode)),
       row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(mode)),
@@ -160,10 +160,10 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(CompanyRegistrationNumberVariationsId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyUTRId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyEnterCRNId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyEnterUTRId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyPayeVariationsId(0))(someRefValue, anyMoreChangesPage()),
+      row(CompanyEnterPAYEId(0))(someRefValue, anyMoreChangesPage()),
       row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
       row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),
       row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(mode)),

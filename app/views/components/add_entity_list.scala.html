@@ -63,7 +63,7 @@
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
                         <div>
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
-                                <span>@messages("site.delete")</span>
+                                <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
                             </a>
                         </div>

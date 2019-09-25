@@ -29,8 +29,7 @@
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String],
-    enableSubmission: Boolean
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -66,7 +65,7 @@
                     @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components.submit_button("site.save_and_continue", enableSubmission)
+                @components.submit_button("site.save_and_continue", true)
             }
         }
 

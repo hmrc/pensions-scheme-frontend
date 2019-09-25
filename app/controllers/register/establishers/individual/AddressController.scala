@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherDetailsId, PostCodeLookupId}
+import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherNameId, PostCodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -31,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.CountryOptions
-import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -41,7 +40,7 @@ class AddressController @Inject()(
                                    val appConfig: FrontendAppConfig,
                                    val messagesApi: MessagesApi,
                                    val userAnswersService: UserAnswersService,
-                                   @EstablishersIndividual val navigator: Navigator,
+                                   val navigator: Navigator,
                                    authenticate: AuthAction,
                                    getData: DataRetrievalAction,
                                    allowAccess: AllowAccessActionProvider,
@@ -70,7 +69,7 @@ class AddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.right.map {
           details =>
             get(AddressId(index), AddressListId(index), viewmodel(index, mode, srn, details.fullName))
         }
@@ -78,7 +77,7 @@ class AddressController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherDetailsId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.right.map {
         details =>
           val context = s"Establisher Individual Address: ${details.fullName}"
           post(AddressId(index), AddressListId(index),

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
@@ -36,8 +36,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.Trustees
-import utils.{Toggles, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,13 +50,10 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
-                                               formProvider: ConfirmDeleteTrusteeFormProvider,
-                                               fsm: FeatureSwitchManagementService)(implicit val ec: ExecutionContext)
+                                               formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-
-  private def isHnsEnabled: Boolean = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -91,13 +88,9 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           CompanyDetailsId(index).retrieve.right.map { companyDetails =>
             updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, None, srn, mode)
           }
-        case Individual if isHnsEnabled =>
+        case Individual =>
           TrusteeNameId(index).retrieve.right.map { trusteeName =>
             updateTrusteeKind(trusteeName.fullName, trusteeKind, index, None, None, None, Some(trusteeName), srn, mode)
-          }
-        case Individual =>
-          TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-            updateTrusteeKind(trusteeDetails.fullName, trusteeKind, index, None, Some(trusteeDetails), None, None, srn, mode)
           }
         case Partnership =>
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
@@ -131,10 +124,8 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           trusteeKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               company => userAnswersService.save(mode, srn, CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
-            case Individual if isHnsEnabled => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
+            case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               trustee => userAnswersService.save(mode, srn, TrusteeNameId(trusteeIndex), trustee.copy(isDeleted = true)))
-            case Individual => trusteeDetailsNonHns.fold(Future.successful(dataRequest.userAnswers.json))(
-              trustee => userAnswersService.save(mode, srn, TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }
@@ -153,11 +144,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   private def getDeletableTrustee(index: Index, trusteeKind: TrusteeKind, userAnswers: UserAnswers): Option[DeletableTrustee] = {
     trusteeKind match {
       case Individual => {
-        if(isHnsEnabled){
           userAnswers.get(TrusteeNameId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
-        } else {
-          userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
-        }
       }
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableTrustee(details.name, details.isDeleted))

@@ -43,7 +43,7 @@ object PartnershipPreviousAddressId {
         PreviousAddressCYA(label,
           changeAddress,
           userAnswers.get(IsEstablisherNewId(id.index)),
-          userAnswers.get(PartnershipAddressYearsId(id.index)))().updateRow(id)(changeUrl, userAnswers)
+          userAnswers.get(PartnershipConfirmPreviousAddressId(id.index)))().updateRow(id)(changeUrl, userAnswers)
     }
   }
 }

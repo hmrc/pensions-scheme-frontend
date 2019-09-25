@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.EstablisherHasNINOId
 import models.{Index, NormalMode}
 import play.api.data.Form
@@ -31,7 +31,7 @@ import views.html.hasUtr
 class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
   private def onwardRoute  = controllers.routes.IndexController.onPageLoad()
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasUTRFormProvider()
   private val form         = formProvider("messages__genericHasNino__error__required", "test company name")
   private val index        = Index(0)
   private val srn          = None

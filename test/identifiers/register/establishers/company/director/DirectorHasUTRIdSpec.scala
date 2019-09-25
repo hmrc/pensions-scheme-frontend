@@ -27,7 +27,7 @@ class DirectorHasUTRIdSpec extends SpecBase {
 
     def answers(hasUtr: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(DirectorHasUTRId(0, 0))(hasUtr)
-      .flatMap(_.set(DirectorUTRId(0, 0))(ReferenceValue("test-utr")))
+      .flatMap(_.set(DirectorEnterUTRId(0, 0))(ReferenceValue("test-utr")))
       .flatMap(_.set(DirectorNoUTRReasonId(0, 0))("reason"))
       .asOpt.value
 
@@ -36,7 +36,7 @@ class DirectorHasUTRIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(DirectorHasUTRId(0, 0))(false).asOpt.value
 
       "remove the data for `DirectorUTR`" in {
-        result.get(DirectorUTRId(0, 0)) mustNot be(defined)
+        result.get(DirectorEnterUTRId(0, 0)) mustNot be(defined)
       }
     }
 
@@ -54,7 +54,7 @@ class DirectorHasUTRIdSpec extends SpecBase {
       val result: UserAnswers = answers().remove(DirectorHasUTRId(0, 0)).asOpt.value
 
       "not remove the data for `DirectorUTR`" in {
-        result.get(DirectorUTRId(0, 0)) mustBe defined
+        result.get(DirectorEnterUTRId(0, 0)) mustBe defined
       }
 
       "not remove the data for `NoUTRReason`" in {

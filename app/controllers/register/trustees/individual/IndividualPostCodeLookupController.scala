@@ -21,16 +21,14 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.trustees.individual.{IndividualPostCodeLookupId, TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.{IndividualPostCodeLookupId, TrusteeNameId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -70,10 +68,7 @@ class IndividualPostCodeLookupController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (index: Index) => Retrieval {
     implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(index).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(index).retrieve.right.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

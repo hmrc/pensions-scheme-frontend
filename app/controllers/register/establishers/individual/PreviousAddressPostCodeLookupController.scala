@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.{PostcodeLookupController => GenericPostcodeLookupController}
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousPostCodeLookupId}
+import identifiers.register.establishers.individual.{EstablisherNameId, PreviousPostCodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -40,7 +39,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
                                                          override val messagesApi: MessagesApi,
                                                          val userAnswersService: UserAnswersService,
                                                          override val addressLookupConnector: AddressLookupConnector,
-                                                         @EstablishersIndividual override val navigator: Navigator,
+                                                         val navigator: Navigator,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
                                                          allowAccess: AllowAccessActionProvider,
@@ -70,7 +69,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        EstablisherDetailsId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
               routes.PreviousAddressPostCodeLookupController.onSubmit(mode, index, srn),

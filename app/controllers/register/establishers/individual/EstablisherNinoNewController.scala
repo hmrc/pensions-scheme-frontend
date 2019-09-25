@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNewNinoId}
 import javax.inject.Inject
 import models.person.PersonDetails
@@ -42,7 +42,7 @@ class EstablisherNinoNewController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NinoNewFormProvider
+                                           val formProvider: NINOFormProvider
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherNinoNewController.onSubmit _

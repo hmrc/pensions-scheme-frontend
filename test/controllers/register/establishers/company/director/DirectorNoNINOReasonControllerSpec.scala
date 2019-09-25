@@ -61,7 +61,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
 
     private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewmodel, schemeName)(fakeRequest, messages).toString
 
-    "HasCompanyNumberController" must {
+    "HasCompanyCRNController" must {
 
       "return OK and the correct view for a GET" in {
         val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)

@@ -27,14 +27,16 @@
 )(implicit messages: Messages)
 
 <div class="form-field @if(field.hasErrors){form-field--error}">
-    <fieldset class="form-group @fieldsetClass" id="@{field.id}">
+    <fieldset class="form-group @fieldsetClass" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-radio-hint"}>
         <legend>
             <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
             @if(hint.nonEmpty){
-                <span class="form-hint">@{hint.get}</span>
+                <span id="@{field.id}-radio-hint" class="form-hint">@{hint.get}</span>
             }
             @field.errors.map { error =>
-                <span class="error-notification" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+                <span class="error-notification" id="error-message-@{field.id}-input">
+                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
+                </span>
             }
         </legend>
         @for(input <- inputs) {

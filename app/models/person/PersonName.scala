@@ -19,6 +19,7 @@ package models.person
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
+
 case class PersonName(firstName: String, lastName: String, isDeleted: Boolean = false) {
   def fullName: String = s"$firstName $lastName"
 }

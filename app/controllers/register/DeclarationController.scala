@@ -87,7 +87,7 @@ class DeclarationController @Inject()(
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isEstablisherCompanyHnSEnabled), fs.get(Toggles.isHnSEnabled), NormalMode)
+    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isHnSEnabled), NormalMode)
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
     val readyForRender = if (isCompany) {
@@ -111,7 +111,6 @@ class DeclarationController @Inject()(
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.allEstablishersAfterDelete(
-      fs.get(Toggles.isEstablisherCompanyHnSEnabled),
       fs.get(Toggles.isHnSEnabled),
       NormalMode
     ).exists { allEstablishers =>

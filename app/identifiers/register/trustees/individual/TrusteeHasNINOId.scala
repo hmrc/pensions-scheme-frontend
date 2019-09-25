@@ -17,7 +17,6 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
@@ -32,7 +31,7 @@ case class TrusteeHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true)  => userAnswers.remove(TrusteeNoNINOReasonId(index))
-      case Some(false) => userAnswers.remove(TrusteeNinoId(index))
+      case Some(false) => userAnswers.remove(TrusteeEnterNINOId(index))
       case _           => super.cleanup(value, userAnswers)
     }
   }

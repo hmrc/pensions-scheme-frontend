@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -38,7 +37,7 @@ class PreviousAddressListController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                val userAnswersService: UserAnswersService,
-                                               @EstablishersIndividual override val navigator: Navigator,
+                                               val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
@@ -53,8 +52,8 @@ class PreviousAddressListController @Inject()(
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
   Either[Future[Result], AddressListViewModel] = {
-    (EstablisherDetailsId(index) and PreviousPostCodeLookupId(index)).retrieve.right.map {
-      case establisherDetails ~ addresses => AddressListViewModel(
+    PreviousPostCodeLookupId(index).retrieve.right.map {
+      addresses => AddressListViewModel(
         postCall = routes.PreviousAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,

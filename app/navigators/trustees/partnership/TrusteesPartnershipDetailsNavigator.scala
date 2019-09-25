@@ -36,8 +36,8 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(_)                                  => addTrusteesPage(mode, srn)
     case id@PartnershipHasUTRId(index)                            => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case PartnershipUTRId(index) if mode == NormalMode            => hasVat(mode, index, srn)
-    case PartnershipUTRId(index)                                  => cyaPage(mode, index, srn)
+    case PartnershipEnterUTRId(index) if mode == NormalMode            => hasVat(mode, index, srn)
+    case PartnershipEnterUTRId(index)                                  => cyaPage(mode, index, srn)
     case PartnershipNoUTRReasonId(index) if mode == NormalMode    => hasVat(mode, index, srn)
     case PartnershipNoUTRReasonId(index)                          => cyaPage(mode, index, srn)
     case id@PartnershipHasVATId(index) if mode == NormalMode      => booleanNav(id, ua, enterVat(mode, index, srn), hasPaye(mode, index, srn))
@@ -45,32 +45,32 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipEnterVATId(index) if mode == NormalMode       => hasPaye(mode, index, srn)
     case PartnershipEnterVATId(index)                             => cyaPage(mode, index, srn)
     case id@PartnershipHasPAYEId(index)                           => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
-    case PartnershipPayeVariationsId(index)                       => cyaPage(mode, index, srn)
+    case PartnershipEnterPAYEId(index)                       => cyaPage(mode, index, srn)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(_)                                  => addTrusteesPage(mode, srn)
     case id@PartnershipHasUTRId(index)                            => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case PartnershipUTRId(index)                                  => hasVat(mode, index, srn)
+    case PartnershipEnterUTRId(index)                                  => hasVat(mode, index, srn)
     case PartnershipNoUTRReasonId(index)                          => hasVat(mode, index, srn)
     case id@PartnershipHasVATId(index)                            => booleanNav(id, ua, enterVat(mode, index, srn), hasPaye(mode, index, srn))
     case PartnershipEnterVATId(index)                             => hasPaye(mode, index, srn)
     case id@PartnershipHasPAYEId(index)       => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
-    case PartnershipPayeVariationsId(index)   => cyaPage(mode, index, srn)
+    case PartnershipEnterPAYEId(index)   => cyaPage(mode, index, srn)
   }
 
   private def checkUpdateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case id@PartnershipHasUTRId(index)                              => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
-    case PartnershipUTRId(index) if isNewTrustee(index, ua)         => cyaPage(mode, index, srn)
-    case PartnershipUTRId(_)                                        => anyMoreChangesPage(srn)
+    case PartnershipEnterUTRId(index) if isNewTrustee(index, ua)         => cyaPage(mode, index, srn)
+    case PartnershipEnterUTRId(_)                                        => anyMoreChangesPage(srn)
     case PartnershipNoUTRReasonId(index) if isNewTrustee(index, ua) => cyaPage(mode, index, srn)
     case PartnershipNoUTRReasonId(_)                                => anyMoreChangesPage(srn)
     case id@PartnershipHasVATId(index)                              => booleanNav(id, ua, enterVat(mode, index, srn), cyaPage(mode, index, srn))
     case PartnershipEnterVATId(index)    if isNewTrustee(index, ua) => cyaPage(mode, index, srn)
     case PartnershipEnterVATId(_)                                   => anyMoreChangesPage(srn)
     case id@PartnershipHasPAYEId(index)                                 => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
-    case PartnershipPayeVariationsId(index) if isNewTrustee(index, ua)  => cyaPage(mode, index, srn)
-    case PartnershipPayeVariationsId(_)                                 => anyMoreChangesPage(srn)
+    case PartnershipEnterPAYEId(index) if isNewTrustee(index, ua)  => cyaPage(mode, index, srn)
+    case PartnershipEnterPAYEId(_)                                 => anyMoreChangesPage(srn)
   }
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
@@ -95,7 +95,7 @@ object TrusteesPartnershipDetailsNavigator {
     AddTrusteeController.onPageLoad(mode, srn)
 
   private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
-    PartnershipUTRController.onPageLoad(mode, index, srn)
+    PartnershipEnterUTRController.onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call =
     PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
@@ -110,7 +110,7 @@ object TrusteesPartnershipDetailsNavigator {
     PartnershipHasPAYEController.onPageLoad(mode, index, srn)
 
   private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
-    PartnershipPayeVariationsController.onPageLoad(mode, index, srn)
+    PartnershipEnterPAYEController.onPageLoad(mode, index, srn)
 
   private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)

@@ -19,8 +19,9 @@ package identifiers.register.establishers.company.director
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersDirectors, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -31,19 +32,26 @@ case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) 
 object DirectorPreviousAddressId {
   override def toString: String = "previousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorPreviousAddressId] = {
-    val label: String = "messages__common__cya__previous_address"
-    val changeAddress: String = "messages__visuallyhidden__director__previous_address"
+  implicit def cya(implicit countryOptions: CountryOptions,messages: Messages): CheckYourAnswers[DirectorPreviousAddressId] = {
 
-    new CheckYourAnswers[DirectorPreviousAddressId] {
+    new CheckYourAnswersDirectors[DirectorPreviousAddressId] {
+
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__cya__previous_address")
+
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
+
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+        AddressCYA(label(id.establisherIndex, id.directorIndex,userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex,userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label,
-          changeAddress,
+        PreviousAddressCYA(label(id.establisherIndex, id.directorIndex,userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex,userAnswers),
           userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)),
-          userAnswers.get(DirectorAddressYearsId(id.establisherIndex, id.directorIndex))
+          userAnswers.get(DirectorConfirmPreviousAddressId(id.establisherIndex, id.directorIndex))
         )().updateRow(id)(changeUrl, userAnswers)
     }
   }

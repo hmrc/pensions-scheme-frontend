@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
@@ -33,7 +33,7 @@ case class DirectorHasNINOId(establisherIndex: Int, directorIndex: Int) extends 
       case Some(true) =>
         userAnswers.remove(DirectorNoNINOReasonId(establisherIndex, directorIndex))
       case Some(false) =>
-        userAnswers.remove(DirectorNewNinoId(establisherIndex, directorIndex))
+        userAnswers.remove(DirectorEnterNINOId(establisherIndex, directorIndex))
       case _ =>
         super.cleanup(value, userAnswers)
     }
@@ -46,21 +46,22 @@ object DirectorHasNINOId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorHasNINOId] = {
 
-    def label(establisherIndex: Int, directorIndex: Int) =
-      userAnswers.get(DirectorNameId(establisherIndex, directorIndex)) match {
-        case Some(directorName) => Some(messages("messages__director__cya__nino", directorName.fullName))
-        case _ => Some(messages("messages__director__cya__nino__fallback"))
-      }
+    new CheckYourAnswersDirectors[DirectorHasNINOId] {
 
-    def hiddenLabel = Some(messages("messages__visuallyhidden__director__nino_yes_no"))
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__nino")
 
-    new CheckYourAnswers[DirectorHasNINOId] {
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasNino")
+
       override def row(id: DirectorHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+        BooleanCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+          Some(hiddenText(id.establisherIndex, id.directorIndex, userAnswers)))().row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => BooleanCYA(label(id.establisherIndex, id.directorIndex), hiddenLabel)().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
+            Some(hiddenText(id.establisherIndex, id.directorIndex, userAnswers)))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

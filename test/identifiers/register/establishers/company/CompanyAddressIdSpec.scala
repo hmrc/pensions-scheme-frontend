@@ -31,6 +31,8 @@ import viewmodels.{AnswerRow, Message}
 
 class CompanyAddressIdSpec extends SpecBase {
 
+  private val companyName = "test company"
+
   "cya" when {
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
@@ -64,7 +66,7 @@ class CompanyAddressIdSpec extends SpecBase {
               Message("messages__establisherConfirmAddress__cya_label", "test company"),
               addressAnswer(address),
               false,
-              Some(Link("site.change", onwardUrl, Some("messages__establisherConfirmAddress__cya_visually_hidden_label")))
+              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
             )))
         }
       }

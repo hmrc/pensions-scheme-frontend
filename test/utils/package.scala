@@ -18,14 +18,16 @@ import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
 import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyPayeVariationsId, CompanyRegistrationNumberId, CompanyRegistrationNumberVariationsId}
+import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterCRNId, CompanyEnterUTRId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
+import play.api.i18n.Messages
 
 //scalastyle:off number.of.methods
 package object utils {
@@ -130,24 +132,8 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
-    def establisherCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
-      answers.set(establishers.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
-    }
-
     def establisherCompanyDormant(index: Int, isDormant: DeclarationDormant): UserAnswers = {
       answers.set(establishers.company.IsCompanyDormantId(index))(isDormant).asOpt.value
-    }
-
-    def establisherUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
-      answers.set(establishers.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
-    }
-
-    def establisherVat(index: Int, vat: Vat): UserAnswers = {
-      answers.set(establishers.company.CompanyVatId(index))(vat).asOpt.value
-    }
-
-    def establisherPaye(index: Int, paye: Paye): UserAnswers = {
-      answers.set(establishers.company.CompanyPayeId(index))(paye).asOpt.value
     }
 
     def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
@@ -176,10 +162,6 @@ package object utils {
 
     def establishersCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
-    }
-
-    def establishersCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
-      answers.set(establishers.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
 
     def isEstablisherNew(index: Int, flag: Boolean): UserAnswers = {
@@ -222,37 +204,36 @@ package object utils {
       answers.set(trustees.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
     }
 
-    def trusteesCompanyVat(index: Int, vat: Vat): UserAnswers = {
-      answers.set(trustees.company.CompanyVatId(index))(vat).asOpt.value
-    }
-
-    def trusteesCompanyPaye(index: Int, paye: Paye): UserAnswers = {
-      answers.set(trustees.company.CompanyPayeId(index))(paye).asOpt.value
-    }
-
     def trusteesCompanyEnterVAT(index: Int, reference: ReferenceValue): UserAnswers = {
       answers.set(trustees.company.CompanyEnterVATId(index))(reference).asOpt.value
     }
 
     def trusteesCompanyPayeVariations(index: Int, paye: ReferenceValue): UserAnswers = {
-      answers.set(CompanyPayeVariationsId(index))(paye).asOpt.value
-    }
-
-    def trusteesCompanyCrn(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
-      answers.set(CompanyRegistrationNumberId(index))(crn).asOpt.value
+      answers.set(CompanyEnterPAYEId(index))(paye).asOpt.value
     }
 
     def trusteesCompanyCrnVariations(index: Int, crn: ReferenceValue): UserAnswers = {
-      answers.set(CompanyRegistrationNumberVariationsId(index))(crn).asOpt.value
+      answers.set(CompanyEnterCRNId(index))(crn).asOpt.value
     }
 
-    def trusteesCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
-      answers.set(trustees.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
+    def trusteesCompanyUtr(index: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(CompanyEnterUTRId(index))(utr).asOpt.value
     }
+
+
 
     def trusteesCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(trustees.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
+
+    def trusteesCompanyPhone(index: Int, phone: String): UserAnswers = {
+      answers.set(trustees.company.CompanyPhoneId(index))(phone).asOpt.value
+    }
+
+    def trusteesCompanyEmail(index: Int, email: String): UserAnswers = {
+      answers.set(trustees.company.CompanyEmailId(index))(email).asOpt.value
+    }
+
 
     def trusteesCompanyPreviousAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.company.CompanyPreviousAddressId(index))(address).asOpt.value
@@ -260,14 +241,6 @@ package object utils {
 
     def trusteesCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(trustees.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
-    }
-
-    def trusteesCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
-      answers.set(trustees.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
-    }
-
-    def trusteesUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
-      answers.set(trustees.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
     }
 
     def trusteeCompanyTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
@@ -351,11 +324,11 @@ package object utils {
     }
 
     def adviserPhone(phone: String): UserAnswers = {
-      answers.set(AdviserPhoneId)(phone).asOpt.value
+      answers.set(AdviserPhoneNumberId)(phone).asOpt.value
     }
 
     def workingKnowledgePersonPhone(phone: String): UserAnswers = {
-      answers.set(identifiers.AdviserPhoneId)(phone).asOpt.value
+      answers.set(identifiers.AdviserPhoneNumberId)(phone).asOpt.value
     }
 
     def adviserName(name: String): UserAnswers = {
@@ -377,5 +350,4 @@ package object utils {
     }
 
   }
-
 }

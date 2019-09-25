@@ -40,60 +40,7 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
 
     "return OK and the correct view for a GET" in {
 
-      val adviserName = "Xyx"
-      val adviserEmail = "x@x.c"
-      val adviserPhone = "0000"
-      val adviserAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
-
-      val getMandatoryAdviser = new FakeDataRetrievalAction(Some(UserAnswers()
-        .set(AdviserNameId)(adviserName)
-        .asOpt
-        .value
-        .set(AdviserEmailId)(adviserEmail)
-        .asOpt
-        .value
-        .set(AdviserAddressId)(adviserAddress)
-        .asOpt
-        .value
-        .workingKnowledgePersonPhone(adviserPhone)
-        .json
-      ))
-
       val result = controller(dataRetrievalAction = getMandatoryAdviser).onPageLoad(fakeRequest)
-
-      lazy val adviserSection = AnswerSection(None,
-        Seq(
-          AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
-            Some(Link("site.change", routes.AdviserNameController.onPageLoad(CheckMode).url,
-              Some("messages__visuallyhidden__adviserName")))),
-          AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
-            Some(Link("site.change", routes.AdviserEmailAddressController.onPageLoad(CheckMode).url,
-              Some("messages__visuallyhidden__adviserEmail")))),
-          AnswerRow(Messages("adviserPhone.checkYourAnswersLabel", adviserName), Seq(adviserPhone), answerIsMessageKey = false,
-            Some(Link("site.change", routes.AdviserPhoneController.onPageLoad(CheckMode).url,
-              Some("messages__visuallyhidden__adviserPhone")))),
-          AnswerRow(Messages("adviserAddress.checkYourAnswersLabel", adviserName),
-            Seq(
-              adviserAddress.addressLine1,
-              adviserAddress.addressLine2,
-              adviserAddress.addressLine3.get,
-              adviserAddress.addressLine4.get,
-              adviserAddress.postcode.get,
-              "Country of GB"),
-            answerIsMessageKey = false,
-            Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode).url,
-              Some("the adviser’s address"))))
-        )
-      )
-
-      val viewAsString: String = check_your_answers_old(
-        frontendAppConfig,
-        Seq(adviserSection),
-        postUrl,
-        None,
-        hideEditLinks = false,
-        hideSaveAndContinueButton = false
-      )(fakeRequest, messages).toString
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
@@ -120,7 +67,6 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
 
 object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
-  val adviserName = "name"
 
   val psaId = PsaId("A0000000")
 
@@ -130,16 +76,59 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url
   lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url
   lazy val postUrl: Call = routes.AdviserCheckYourAnswersController.onSubmit()
-  lazy val adviserSection = AnswerSection(None,
+
+  val adviserName = "Xyx"
+  val adviserEmail = "x@x.c"
+  val adviserPhone = "0000"
+  val adviserAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
+
+  val getMandatoryAdviser = new FakeDataRetrievalAction(Some(UserAnswers()
+    .set(AdviserNameId)(adviserName)
+    .asOpt
+    .value
+    .set(AdviserEmailId)(adviserEmail)
+    .asOpt
+    .value
+    .set(AdviserAddressId)(adviserAddress)
+    .asOpt
+    .value
+    .workingKnowledgePersonPhone(adviserPhone)
+    .json
+  ))
+
+  val adviserSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false,
-        Some(Link("site.change", adviserNameRoute, Some(Message("messages__visuallyhidden__common__name", adviserName))))),
-      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false,
-        Some(Link("site.change", adviserEmailRoute, Some(Message("messages__visuallyhidden__adviser__email_address"))))),
-      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false,
-        Some(Link("site.change", adviserPhoneRoute, Some(Message("messages__visuallyhidden__adviser__phone_number")))))
+      AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
+        Some(Link("site.change", routes.AdviserNameController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__adviserName", adviserName))))),
+      AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
+        Some(Link("site.change", routes.AdviserEmailAddressController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__adviserEmail", adviserName))))),
+      AnswerRow(Messages("adviserPhone.checkYourAnswersLabel", adviserName), Seq(adviserPhone), answerIsMessageKey = false,
+        Some(Link("site.change", routes.AdviserPhoneController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__adviserPhone", adviserName))))),
+      AnswerRow(Messages("adviserAddress.checkYourAnswersLabel", adviserName),
+        Seq(
+          adviserAddress.addressLine1,
+          adviserAddress.addressLine2,
+          adviserAddress.addressLine3.get,
+          adviserAddress.addressLine4.get,
+          adviserAddress.postcode.get,
+          "Country of GB"),
+        answerIsMessageKey = false,
+        Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__adviser__address", adviserName)))))
     )
   )
+
+  val viewAsString: String = check_your_answers_old(
+    frontendAppConfig,
+    Seq(adviserSection),
+    postUrl,
+    None,
+    hideEditLinks = false,
+    hideSaveAndContinueButton = false
+  )(fakeRequest, messages).toString
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -158,14 +147,5 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
       new FakeCountryOptions,
       FakeSectionComplete
     )
-
-  lazy val viewAsString: String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(adviserSection),
-    postUrl,
-    None,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false
-  )(fakeRequest, messages).toString
 
 }

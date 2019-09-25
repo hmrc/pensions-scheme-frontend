@@ -53,7 +53,7 @@ object PreviousAddressId {
         PreviousAddressCYA(label(id.index),
           changeAddress(id.index),
           userAnswers.get(IsEstablisherNewId(id.index)),
-          userAnswers.get(AddressYearsId(id.index))
+          userAnswers.get(IndividualConfirmPreviousAddressId(id.index))
         )().updateRow(id)(changeUrl, userAnswers)
     }
   }

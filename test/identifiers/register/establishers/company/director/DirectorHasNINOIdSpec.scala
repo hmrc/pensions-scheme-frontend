@@ -40,7 +40,7 @@ class DirectorHasNINOIdSpec extends SpecBase {
 
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(DirectorHasNINOId(0, 0))(hasNino)
-      .flatMap(_.set(DirectorNewNinoId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
+      .flatMap(_.set(DirectorEnterNINOId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(DirectorNoNINOReasonId(0, 0))("reason"))
       .asOpt.value
 
@@ -49,7 +49,7 @@ class DirectorHasNINOIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(DirectorHasNINOId(0, 0))(false).asOpt.value
 
       "remove the data for `DirectorNino`" in {
-        result.get(DirectorNewNinoId(0, 0)) mustNot be(defined)
+        result.get(DirectorEnterNINOId(0, 0)) mustNot be(defined)
       }
     }
 

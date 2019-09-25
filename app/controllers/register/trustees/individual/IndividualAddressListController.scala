@@ -26,10 +26,8 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
-import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -72,8 +70,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
 
     for {
       addresses <- IndividualPostCodeLookupId(index).retrieve.right.toOption
-      name      <- if (fs.get(Toggles.isEstablisherCompanyHnSEnabled)) TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
-                   else TrusteeDetailsId(index).retrieve.right.toOption.map(_.fullName)
+      name      <- TrusteeNameId(index).retrieve.right.toOption.map(_.fullName)
     } yield AddressListViewModel(
       postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
       manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),

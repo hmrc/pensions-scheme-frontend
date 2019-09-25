@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
@@ -33,13 +33,18 @@ object CompanyEmailId {
   override def toString: String = "emailAddress"
 
   implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
-      CheckYourAnswers[CompanyEmailId] {
-    private val label = "messages__common_email__heading"
-    private val hiddenLabel = Some(messages("messages__common_company_email__visually_hidden_change_label"))
+      CheckYourAnswersCompany[CompanyEmailId] {
 
-    override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-      StringCYA(userAnswers.get(CompanyDetailsId(id.index)).map(companyDetails =>
-        messages(label, companyDetails.companyName)), hiddenLabel)().row(id)(changeUrl, userAnswers)
+    private def label(index : Int, ua : UserAnswers) : String =
+      dynamicMessage(index, ua, "messages__common_email__heading")
+
+    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email")
+
+    override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      StringCYA(Some(label(id.index, userAnswers)), Some(messages(hiddenLabel(id.index, userAnswers))))()
+        .row(id)(changeUrl, userAnswers)
+    }
 
     override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
   }

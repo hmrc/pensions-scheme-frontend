@@ -19,11 +19,10 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorConfirmPreviousAddressId, DirectorDetailsId, ExistingCurrentAddressId}
+import identifiers.register.establishers.company.director.{DirectorConfirmPreviousAddressId, DirectorNameId, ExistingCurrentAddressId}
 import models._
 import models.address.Address
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
@@ -91,7 +90,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     )(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
-    .set(DirectorDetailsId(establisherIndex, directorIndex))(PersonDetails("John", None, "Doe", LocalDate.now())).flatMap(_.set(
+    .set(DirectorNameId(establisherIndex, directorIndex))(PersonName("John", "Doe")).flatMap(_.set(
     ExistingCurrentAddressId(establisherIndex, directorIndex))(testAddress))
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))

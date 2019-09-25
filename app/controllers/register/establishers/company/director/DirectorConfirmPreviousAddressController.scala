@@ -69,10 +69,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =

@@ -26,9 +26,8 @@ import helpers.DataCompletionHelper
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath, partnership => establisherPartnershipPath}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath, individual => trusteeIndividualPath, partnership => trusteePartnershipPath}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 
@@ -166,13 +165,13 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in subscription journey when all spokes are in progress" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = false, toggled = true), NormalMode, None, "test individual", 0
+          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0
         ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
       }
 
       "in subscription journey when all spokes are complete" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = true, toggled = true), NormalMode, None, "test individual", 0
+          trusteeIndividual(isComplete = true), NormalMode, None, "test individual", 0
         ) mustBe expectedCompletedTrusteeIndividualSpokes(NormalMode, None)
       }
 
@@ -184,13 +183,13 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
 
       "in variations journey when all spokes are in progress" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = false, toggled = true), UpdateMode, srn, "test individual", 0
+          trusteeIndividual(isComplete = false), UpdateMode, srn, "test individual", 0
         ) mustBe expectedInProgressTrusteeIndividualSpokes(UpdateMode, srn)
       }
 
       "in variations journey when all spokes are complete" in {
         subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = true, toggled = true), UpdateMode, srn, "test individual", 0
+          trusteeIndividual(isComplete = true), UpdateMode, srn, "test individual", 0
         ) mustBe expectedCompletedTrusteeIndividualSpokes(UpdateMode, srn)
       }
     }
@@ -267,7 +266,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   }
 
   protected def trusteeIndividualBlank: UserAnswers = {
-    UserAnswers().set(trusteeIndividualPath.TrusteeDetailsId(0))(PersonDetails("test", None, "person", LocalDate.now)).flatMap(
+    UserAnswers().set(trusteeIndividualPath.TrusteeNameId(0))(PersonName("test", "person")).flatMap(
       _.set(IsTrusteeNewId(0))(true)
     )
       .asOpt.value
@@ -280,23 +279,23 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       .asOpt.value
   }
 
-  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payloadHnS.json"))
-  protected def trusteeIndividual(isComplete: Boolean, toggled:Boolean): UserAnswers = {
+  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payload.json"))
+  protected def trusteeIndividual(isComplete: Boolean): UserAnswers = {
     val ua = trusteeIndividualBlank
       .set(IsTrusteeNewId(0))(true)
       .asOpt.value
-    setTrusteeCompletionStatus(isComplete = isComplete, toggled = toggled, 0, ua)
+    setTrusteeCompletionStatus(isComplete = isComplete, 0, ua)
   }
 
-  protected def trusteePartnership(isComplete: Boolean, toggled:Boolean): UserAnswers = {
+  protected def trusteePartnership(isComplete: Boolean): UserAnswers = {
     val ua = trusteePartnershipBlank
       .set(IsTrusteeNewId(0))(true)
       .asOpt.value
-    setTrusteeCompletionStatus(isComplete = isComplete, toggled = toggled, 0, ua)
+    setTrusteeCompletionStatus(isComplete = isComplete, 0, ua)
   }
 
-  protected def answersComplete = UserAnswers(readJsonFromFile("/payloadHnS.json"))
-  protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadHnSInProgress.json"))
+  protected def answersComplete = UserAnswers(readJsonFromFile("/payload.json"))
+  protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 

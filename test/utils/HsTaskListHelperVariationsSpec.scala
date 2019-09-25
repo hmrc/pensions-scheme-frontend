@@ -18,27 +18,28 @@ package utils
 
 import config.FeatureSwitchManagementService
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
-import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models._
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.register.SchemeType
+import models.register.establishers.EstablisherKind.Indivdual
 import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 
-class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
+class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
   private val srn = Some("test-srn")
   private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
-  private val fakeFeatureManagementServiceToggleON = new FakeFeatureSwitchManagementService(true)
 
   override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
@@ -51,11 +52,10 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                            isCompleteEstablishers: Boolean = true,
                            isCompleteTrustees: Boolean = true,
                            isChangedInsuranceDetails: Boolean = true,
-                           isChangedEstablishersTrustees: Boolean = true,
-                           toggled: Boolean
+                           isChangedEstablishersTrustees: Boolean = true
                           ): JsResult[UserAnswers] = {
 
-    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, toggled = toggled, 0,
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0,
       UserAnswers().set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
         _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
           _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
@@ -65,7 +65,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
                   _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
                     _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
-                    _.set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                    _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
                       _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
                   )
                 )
@@ -184,90 +184,102 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionEstablishers_no_establishers")))
     }
 
-    "not display an add link when scheme is locked and establishers exist" in {
+    "not display an add link when scheme is locked and establishers exist 2222" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
         .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
       helper.taskList.addEstablisherHeader mustBe None
     }
+
   }
 
   "addTrusteeHeader" must {
 
     behave like addTrusteeHeader(UpdateMode, srn)
 
-    "display correct link data when trustee is mandatory and no trustees exists with toggle ON" in {
-      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementServiceToggleON)
-      helper.addTrusteeHeader(userAnswers, UpdateMode, srn).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, userAnswers.allTrustees(true).size, srn).url)), None,
-          None)
-    }
-
     "display plain text when scheme is locked and no trustees exist" in {
       val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementServiceToggleON)
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
       helper.taskList.addTrusteeHeader.value mustBe
         SchemeDetailsTaskListHeader(None, None, None, None, Some(messages("messages__schemeTaskList__sectionTrustees_no_trustees")))
     }
 
     "no links when scheme is locked and trustees exist" in {
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementServiceToggleON)
+        .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
+        .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
       helper.taskList.addTrusteeHeader mustBe Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
   }
 
   "establishers" must {
 
-    behave like establishersSection()
     behave like establishersSectionHnS(UpdateMode, srn)
   }
 
   "trustees" must {
 
-    behave like trusteesSection()
     behave like trusteesSectionHnS(UpdateMode, srn)
   }
 
-  def variationsTrusteeTests(toggled: Boolean):Unit = {
-    val fsm:FakeFeatureSwitchManagementService = if(toggled) fakeFeatureManagementServiceToggleON else fakeFeatureManagementService
-    s"have a declaration section when viewonly is false with toggle set to $toggled" in {
-      val userAnswers = answersData(toggled = toggled).asOpt.value
+  override def establishersSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
+
+    "return the seq of establishers sub sections" in {
+      val userAnswers = establisherCompany()
+      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
+      helper.establishers(userAnswers, mode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
+            ), Some("test company"))
+        )
+    }
+  }
+
+  def variationsTrusteeTests():Unit = {
+    val fsm:FakeFeatureSwitchManagementService = fakeFeatureManagementService
+    s"have a declaration section when viewonly is false" in {
+      val userAnswers = answersData().asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
 
-    s"have incomplete link when about benefits and insurance section not completed with toggle set to $toggled" in {
-      val userAnswers = answersData(isCompleteAboutBenefits = false, toggled = toggled).asOpt.value
+    s"have incomplete link when about benefits and insurance section not completed" in {
+      val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    s"have incomplete link when establishers section not completed with toggle set to $toggled" in {
-      val userAnswers = answersData(isCompleteEstablishers = false, toggled = toggled).asOpt.value
+    s"have incomplete link when establishers section not completed" in {
+      val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    s"have incomplete link when trustees section not completed with toggle set to $toggled" in {
-      val userAnswers = answersData(isCompleteTrustees = false, toggled = toggled).asOpt.value
+    s"have incomplete link when trustees section not completed" in {
+      val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
-    s"have link when all the sections are completed with toggle set to $toggled" in {
-      val userAnswers = (if(toggled) allAnswersHnS else allAnswers).set(EstablishersOrTrusteesChangedId)(true).asOpt.value
+    s"have link when all the sections are completed" in {
+      val userAnswers =  allAnswersHnS.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.routes.VariationDeclarationController.onPageLoad(srn).url))
     }
 
-    s"have no link when all the sections are not completed and no user answers updated with toggle set to $toggled" in {
-      val userAnswers = answersData(isChangedInsuranceDetails = false, toggled = toggled).asOpt.value
+    s"have no link when all the sections are not completed and no user answers updated" in {
+      val userAnswers = answersData(isChangedInsuranceDetails = false).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.declarationSection(userAnswers).isDefined mustBe true
       mustNotHaveDeclarationLink(helper, userAnswers)
@@ -275,9 +287,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
   }
 
   "declaration" must {
-    behave like variationsTrusteeTests(toggled = false)
 
-    behave like variationsTrusteeTests(toggled = true)
+    behave like variationsTrusteeTests()
   }
 
   //scalastyle:off method.length
@@ -288,9 +299,13 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
         Seq(
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
-            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
+//          SchemeDetailsTaskListEntitySection(
+//            None,
+//            Seq(
+//              EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "Test company name"), controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(UpdateMode, srn, 0).url), None)
+//            ),
+//            None
+//          ),
           SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
             messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
             controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
@@ -318,7 +333,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
     }
 
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
-      val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+      val userAnswers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
         _.set(IsEstablisherCompleteId(0))(false).flatMap(
           _.set(IsEstablisherNewId(0))(true).flatMap(
             _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
@@ -337,92 +352,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour {
         )
     }
   }
-
-  def trusteesSection(): Unit = {
-    "return the seq of trustees sub sections for non deleted trustees which are all completed with toggle OFF" in {
-      val userAnswers = allAnswers
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-          controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle OFF" in {
-      val userAnswers = allAnswersIncomplete
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test company"),
-          controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted individual trustees which are all completed with toggle ON" in {
-      val userAnswers = allTrusteesIndividual(toggled = true)
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
-
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(
-            isCompleted = None,
-            entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                controllers.register.trustees.individual.routes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
-            ),
-            Some("firstName lastName")
-          )
-        )
-    }
-
-    "return the seq of trustees sub sections for non deleted trustees which are not completed with toggle ON" in {
-      val userAnswers = allTrusteesIndividual(isCompleteTrustees = false, toggled = true)
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementServiceToggleON)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(
-            isCompleted = None,
-            entities = List(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualAddressController.onPageLoad(UpdateMode, 0, srn).url, None), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                controllers.register.trustees.individual.routes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(UpdateMode, 0, srn).url, None), None)
-            ),
-            Some("firstName lastName")
-          )
-        )
-    }
-
-    "return the seq of trustees sub sections after filtering out deleted trustees" in {
-      val userAnswers = UserAnswers().set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-          _.set(IsTrusteeNewId(0))(true).flatMap(
-            _.set(TrusteeCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-                _.set(IsTrusteeNewId(1))(true).flatMap(
-                  _.set(TrusteePartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                    _.set(IsTrusteeNewId(2))(true))
-                  )))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn = Some("test-srn"), fakeFeatureManagementService)
-      helper.trustees(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, List(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-  }
 }
 
 class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
@@ -432,18 +361,13 @@ class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = true, srn = srn, fs)
 
   "declaration" must {
-    "NOT have a declaration section when viewonly is true" in {
-      val userAnswers = answersData(toggled = false).asOpt.value
-      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
-      helper.declarationSection(userAnswers).isDefined mustBe false
-    }
 
-    "NOT have a declaration section when viewonly is true with toggle ON" in {
-      val userAnswers = answersData(toggled = true).asOpt.value
+
+    "NOT have a declaration section when viewonly is true" in {
+      val userAnswers = answersData().asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.declarationSection(userAnswers).isDefined mustBe false
     }
   }
 }
-
 

@@ -24,7 +24,7 @@ import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
   val pageHeading = "page heading"
 
-  lazy val href = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
+  lazy val href = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
   def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyDetails(
     frontendAppConfig,

@@ -28,9 +28,7 @@
     mode: Mode,
     establishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String],
-    enableSubmission:Boolean,
-    isHnsEnabled: Boolean
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -48,7 +46,7 @@
 
             <p>@messages("messages__establishers__add_hint")</p>
 
-            @components.submit_button("site.continue", enableSubmission)
+            @components.submit_button("site.continue", true)
 
         } else {
 
@@ -59,11 +57,7 @@
             )
 
 
-            @if(isHnsEnabled) {
-                @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
-            } else {
-                @components.entity_list(establishers, mode = mode, srn = srn, displayStatus = !isHnsEnabled)
-            }
+            @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
 
             @components.input_yes_no(
                 field = form("value"),
@@ -73,7 +67,7 @@
             )
 
 
-            @components.submit_button("site.save_and_continue", enableSubmission)
+            @components.submit_button("site.save_and_continue", true)
         }
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
