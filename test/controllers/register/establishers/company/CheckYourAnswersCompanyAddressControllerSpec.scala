@@ -20,6 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.SchemeTaskListController
+import identifiers.register.establishers.company.CompanyConfirmPreviousAddressId
 import models.Mode.checkMode
 import models._
 import models.address.Address
@@ -106,8 +107,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   private val partialAnswers = emptyAnswers.
     establisherCompanyDetails(0, CompanyDetails(companyName)).
-    establishersCompanyAddress(0, address).
-    establisherCompanyAddressYears(0, addressYearsUnderAYear)
+    establishersCompanyAddress(0, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
 

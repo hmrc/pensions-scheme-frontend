@@ -500,7 +500,7 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
 case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
                                                              changeAddress: String,
                                                              isNew: Option[Boolean],
-                                                             addressYear: Option[AddressYears]
+                                                             isThisPreviousAddress: Option[Boolean]
                                                             ) {
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -516,8 +516,8 @@ case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
             userAnswers.get(id) match {
               case Some(_) => row(id)(changeUrl, userAnswers)
               case _ =>
-                addressYear match {
-                  case Some(UnderAYear) => Seq(AnswerRow(label,
+                isThisPreviousAddress match {
+                  case Some(false) => Seq(AnswerRow(label,
                     Seq("site.not_entered"),
                     answerIsMessageKey = true,
                     Some(Link("site.add", changeUrl, Some(changeAddress)))))
