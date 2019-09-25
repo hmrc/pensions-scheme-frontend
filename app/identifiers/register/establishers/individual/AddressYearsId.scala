@@ -51,11 +51,7 @@ object AddressYearsId {
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[AddressYearsId] =
     new CheckYourAnswers[AddressYearsId] {
       override def row(id: AddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val name = (index: Int) =>
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
-            ua.get(EstablisherNameId(index)).map(_.fullName)
-          else
-            ua.get(EstablisherDetailsId(index)).map(_.fullName)
+        val name = (index: Int) => ua.get(EstablisherNameId(index)).map(_.fullName)
 
         val establisherName = name(id.index).getOrElse(messages("messages__theEstablisher"))
 
