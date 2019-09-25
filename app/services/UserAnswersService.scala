@@ -37,7 +37,7 @@ import models.{Mode, _}
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Toggles, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +54,6 @@ trait UserAnswersService {
   protected def appConfig: FrontendAppConfig
 
   protected def fs: FeatureSwitchManagementService
-  protected val isHnSEnabled = fs.get(Toggles.isEstablisherCompanyHnSEnabled)
 
   case object MissingSrnNumber extends Exception
 

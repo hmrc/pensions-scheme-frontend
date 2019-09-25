@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
@@ -31,8 +31,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, Toggles}
+import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -49,8 +48,7 @@ class TrusteePreviousAddressController @Inject()(
                                                   requireData: DataRequiredAction,
                                                   formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
-                                                  val auditService: AuditService,
-                                                  featureSwitchManagementService: FeatureSwitchManagementService
+                                                  val auditService: AuditService
                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
@@ -96,9 +94,6 @@ class TrusteePreviousAddressController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 }

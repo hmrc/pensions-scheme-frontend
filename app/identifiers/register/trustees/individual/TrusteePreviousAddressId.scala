@@ -23,7 +23,7 @@ import models.address.Address
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -37,10 +37,9 @@ object TrusteePreviousAddressId {
                    featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteePreviousAddressId] = {
 
     def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-      val name = if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
+      val name =
         ua.get(TrusteeNameId(index)).map(_.fullName)
-      else
-        ua.get(TrusteeDetailsId(index)).map(_.fullName)
+
       (messages("messages__trusteePreviousAddress", name.getOrElse(messages("messages__theTrustee"))),
         messages("messages__visuallyhidden__dynamic_previousAddress", name.getOrElse(messages("messages__theTrustee"))))
     }

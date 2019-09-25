@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.DataRetrievalAction
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.TypedIdentifier
 import javax.inject.Inject
 import models.requests.DataRequest
@@ -52,7 +52,7 @@ class NinoControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new NinoNewFormProvider()
+  val formProvider = new NINOFormProvider()
   val form = formProvider("Mark")
 
   class TestNinoController @Inject()(

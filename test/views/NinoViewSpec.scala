@@ -16,7 +16,7 @@
 
 package views
 
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
@@ -29,7 +29,7 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "common_nino"
 
-  val form = new NinoNewFormProvider()("Mark")
+  val form = new NINOFormProvider()("Mark")
 
   private def viewmodel(srn:Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),

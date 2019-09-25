@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyUTRId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -40,7 +40,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasUtrFormProvider
+                                        formProvider: HasUTRFormProvider
                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =

@@ -25,7 +25,7 @@ trait EntityListBehaviours {
   this: ViewSpecBase =>
 
   // scalastyle:off method.length
-  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig, isToggleOn: Boolean = false): Unit = {
+  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig, noOfListItems: Int): Unit = {
     "behave like a list of items" must {
       "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
@@ -39,7 +39,7 @@ trait EntityListBehaviours {
 
       "display the correct number of items in the list" in {
         val doc = asDocument(nonEmptyView())
-        doc.select("#items > li").size() mustBe items.size
+        doc.select("#items > li").size() mustBe noOfListItems
       }
 
       "display the correct details for each person" in {
@@ -48,38 +48,6 @@ trait EntityListBehaviours {
           val name = doc.select(s"#person-${item.index}")
           name.size mustBe 1
           name.first.text mustBe item.name
-        }
-      }
-
-      "display the status for each person" in {
-        val doc = asDocument(nonEmptyView())
-        items.foreach { item =>
-          val link = doc.select(s"#person-${item.index}-status")
-          val expectedResult = if (item.isCompleted) messages("site.complete") else messages("site.incomplete")
-
-          link.size mustBe 1
-          link.first.text mustBe expectedResult
-        }
-      }
-
-      "disable the submit button if any of the items are incomplete" in {
-        val doc = asDocument(nonEmptyView())
-        doc.getElementById("submit").hasAttr("disabled") mustBe true
-      }
-
-
-      "display the edit link for each person" in {
-        if (!isToggleOn) {
-          val doc = asDocument(nonEmptyView())
-          items.foreach { item =>
-            val link = doc.select(s"#person-${item.index}-edit")
-            val visibleText = doc.select(s"#person-${item.index}-edit span[aria-hidden=true]").first.text
-            val hiddenText = doc.select(s"#person-${item.index}-edit span[class=visually-hidden]").first.text
-            link.size mustBe 1
-            visibleText mustBe messages("site.edit")
-            hiddenText mustBe s"${messages("site.edit")} ${item.name}"
-            link.first.attr("href") mustBe item.editLink(NormalMode, None).get
-          }
         }
       }
     }
@@ -100,11 +68,11 @@ trait EntityListBehaviours {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
           val link = doc.select(s"#person-${item.index}-delete")
-          val visibleText = doc.select(s"#person-${item.index}-delete span[aria-hidden=true]").first.text
+          val visibleText = doc.select(s"#person-${item.index}-delete span").first.text
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
           link.size mustBe 1
           visibleText mustBe messages("site.remove")
-          hiddenText mustBe s"${messages("site.remove")} ${item.name}"
+          hiddenText mustBe item.name
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }
       }
@@ -149,7 +117,7 @@ trait EntityListBehaviours {
           val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
 
           link.size mustBe 1
-          visibleText mustBe messages("site.delete")
+          visibleText mustBe messages("site.remove")
           hiddenText mustBe item.name
           link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
         }

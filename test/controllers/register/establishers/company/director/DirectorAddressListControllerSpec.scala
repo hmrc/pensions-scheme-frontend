@@ -18,27 +18,26 @@ package controllers.register.establishers.company.director
 
 import base.CSRFRequest
 import config.FeatureSwitchManagementService
-import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorNameId}
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val directorDetails = PersonDetails("Joe", None, "Bloggs", LocalDate.now())
+  private val directorDetails = PersonName("Joe", "Bloggs")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -60,7 +59,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
   )
   private val data =
     UserAnswers(Json.obj())
-      .set(DirectorDetailsId(0, 0))(directorDetails)
+      .set(DirectorNameId(0, 0))(directorDetails)
       .flatMap(_.set(DirectorAddressPostcodeLookupId(0, 0))(addresses))
       .asOpt.map(_.json)
 

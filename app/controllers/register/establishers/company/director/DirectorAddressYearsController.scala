@@ -21,14 +21,13 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -80,11 +79,8 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 }

@@ -18,7 +18,7 @@ package views
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -31,7 +31,7 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   val messageKeyPrefix = "hasCompanyUtr"
   val srn = Some("srn")
 
-  val form = new HasUtrFormProvider()("messages__hasCompanyUtr__error__required", "ABC")
+  val form = new HasUTRFormProvider()("messages__hasCompanyUtr__error__required", "ABC")
   val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, None, Index(0))
 
   def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(

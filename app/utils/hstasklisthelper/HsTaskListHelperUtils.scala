@@ -27,7 +27,6 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   self: AllSpokes =>
 
-  protected val isHnSPhase1Enabled: Boolean
   protected val isHnSPhase2Enabled: Boolean
 
   def createSpoke(answers: UserAnswers,
@@ -64,7 +63,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index, isHnSPhase1Enabled), EstablisherCompanyDirectors, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
     )
   }
 

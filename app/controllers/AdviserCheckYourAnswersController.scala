@@ -19,8 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers._
-import identifiers.IsWorkingKnowledgeCompleteId
+import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import navigators.Navigator
@@ -53,7 +52,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val seqAnswerSection = {
           val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
           val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-          val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
+          val adviserPhoneRow = AdviserPhoneNumberId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
           val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
           Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }

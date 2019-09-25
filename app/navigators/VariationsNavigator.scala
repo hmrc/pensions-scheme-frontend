@@ -37,7 +37,7 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
         case Some(true) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
         case Some(false) =>
-          if(from.userAnswers.areVariationChangesCompleted(fs.get(Toggles.isEstablisherCompanyHnSEnabled), fs.get(Toggles.isHnSEnabled)))
+          if(from.userAnswers.areVariationChangesCompleted(fs.get(Toggles.isHnSEnabled)))
             NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))
           else
             NavigateTo.dontSave(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn))

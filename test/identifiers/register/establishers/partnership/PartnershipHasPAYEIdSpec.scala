@@ -36,7 +36,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
     "`PartnershipHasPAYE` changed to false" must {
       val result = ua(true).set(PartnershipHasPAYEId(0))(value = false).asOpt.value
 
-      "remove the data for `PartnershipPayeVariationsId`" in {
+      "remove the data for `PartnershipEnterPAYEId`" in {
         result.get(PartnershipPayeVariationsId(0)) mustNot be(defined)
       }
     }
@@ -44,7 +44,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
     "`PartnershipHasPAYE` changed to true" must {
       val result = ua(false).set(PartnershipHasPAYEId(0))(value = true).asOpt.value
 
-      "not remove the data for `PartnershipPayeVariationsId`" in {
+      "not remove the data for `PartnershipEnterPAYEId`" in {
         result.get(PartnershipPayeVariationsId(0)) must be(defined)
       }
     }

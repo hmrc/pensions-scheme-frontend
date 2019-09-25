@@ -43,13 +43,13 @@ object DirectorContactDetailsId {
       override def row(id: DirectorContactDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
         contactDetails =>{
 
-          val emailLabel = userAnswers.get(DirectorDetailsId(id.establisherIndex, id.directorIndex)) match {
-            case Some(name) => messages("messages__director__cya__email_address", name.firstAndLastName)
+          val emailLabel = userAnswers.get(DirectorNameId(id.establisherIndex, id.directorIndex)) match {
+            case Some(name) => messages("messages__director__cya__email_address", name.fullName)
             case None => "messages__director__cya__email_address__fallback"
           }
 
-          val phoneLabel = userAnswers.get(DirectorDetailsId(id.establisherIndex, id.directorIndex)) match {
-            case Some(name) => messages("messages__director__cya__phone", name.firstAndLastName)
+          val phoneLabel = userAnswers.get(DirectorNameId(id.establisherIndex, id.directorIndex)) match {
+            case Some(name) => messages("messages__director__cya__phone", name.fullName)
             case None => "messages__director__cya__phone__fallback"
           }
 

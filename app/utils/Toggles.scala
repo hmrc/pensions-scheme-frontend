@@ -17,7 +17,5 @@
 package utils
 
 object Toggles {
-
-  val isEstablisherCompanyHnSEnabled: String = "is-establisher-company-hns"
   val isHnSEnabled: String = "is-hns-enabled"
 }

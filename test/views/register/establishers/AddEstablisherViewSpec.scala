@@ -28,7 +28,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
-import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours, YesNoViewBehaviours}
+import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EntityListBehaviours {
@@ -66,15 +66,15 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission, isHnSEnabled)(fakeRequest, messages)
+  private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
-  private def createViewUsingForm(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): Form[Boolean] => HtmlFormat.Appendable =
+  private def createViewUsingForm(establishers: Seq[Establisher[_]] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable =
     (form: Form[Boolean]) =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None, enableSubmission, isHnSEnabled)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
-  private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty, enableSubmission:Boolean = false, isHnSEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"), enableSubmission, isHnSEnabled)(fakeRequest, messages)
+  private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, UpdateMode, establishers, None, Some("srn"))(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -91,13 +91,9 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
         doc must haveDynamicText("messages__establishers__add_hint")
       }
 
-      "do disable the submit button" in {
-        val doc = asDocument(createView()())
-        doc.getElementById("submit").hasAttr("disabled") mustBe true
-      }
     }
 
-    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig)
+    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig, noOfListItems = 4)
 
     behave like entityListWithMultipleRecords(createView(), createView(establishers), establishers, frontendAppConfig)
 
@@ -112,29 +108,12 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
-
-    "do enable the submit button when enableSubmission is true" in {
-      val doc = asDocument(createView(enableSubmission = true)())
-      doc.getElementById("submit").hasAttr("disabled") mustBe false
-    }
-
-    "do not display the status if displayStatus is false" in {
-      val doc = asDocument(createView(establishers = establishers, isHnSEnabled = true)())
-      doc mustNot haveDynamicText("site.complete")
-      doc mustNot haveDynamicText("site.incomplete")
-    }
-
-    "display the status if displayStatus is true" in {
-      val doc = asDocument(createView(establishers = establishers)())
-      doc must haveDynamicText("site.complete")
-      doc must haveDynamicText("site.incomplete")
-    }
   }
 
-  "AddEstablisher view with toggle on" must {
+  "AddEstablisher view for all types" must {
 
     behave like addEntityList(
-      createView(establishers = establishers, isHnSEnabled = true),
+      createView(establishers),
       establishers,
       "Establisher",
       Seq("Individual", "Company", "Partnership")

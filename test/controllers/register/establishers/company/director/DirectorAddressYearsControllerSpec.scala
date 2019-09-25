@@ -16,19 +16,19 @@
 
 package controllers.register.establishers.company.director
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId}
-import models.person.PersonDetails
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
+import models.person.{PersonDetails, PersonName}
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -45,7 +45,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   val invalidIndex = Index(10)
-  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonName("first", "last")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DirectorAddressYearsController =
     new DirectorAddressYearsController(
@@ -79,7 +79,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       Json.obj(
         "director" -> Json.arr(
           Json.obj(
-            DirectorDetailsId.toString -> director
+            DirectorNameId.toString -> director
           )
         )
       )
@@ -105,7 +105,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 DirectorAddressYearsId.toString -> AddressYears.options.head.value.toString,
-                DirectorDetailsId.toString -> director
+                DirectorNameId.toString -> director
               )
             )
           )

@@ -16,25 +16,24 @@
 
 package controllers.register.trustees
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.{CompanyDetails, NormalMode, PartnershipDetails}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Writes
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import services.FakeUserAnswersService
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
@@ -50,20 +49,11 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(companyTrustee.companyName, Company)
     }
 
-    "return OK and the correct view for a GET to confirm deletion of an individual trustee" when {
-      "isEstablisherCompanyHnSEnabled is true" in {
-        val result = controller(testData(individualId)(individualTrustee), true).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
+    "return OK and the correct view for a GET to confirm deletion of an individual trustee" in {
+      val result = controller(testData(individualId)(individualTrustee)).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
-      }
-
-      "isEstablisherCompanyHnSEnabled is false" in {
-        val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(individualTrusteeNonHns.fullName, Individual)
-      }
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
     }
 
     "return OK and the correct view for a GET to confirm deletion of a partnership trustee" in {
@@ -71,13 +61,6 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(partnershipTrustee.name, Partnership)
-    }
-
-    "redirect to already deleted view for a GET if the trustee was already deleted" in {
-      val result = controller(testData(individualNonHnsId)(deletedTrustee)).onPageLoad(NormalMode, index = 0, trusteeKind = Individual, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, index = 0, trusteeKind = Individual, None).url)
     }
 
     "redirect to Session Expired for a GET if a deletable trustee cannot be found in UserAnswers" in {
@@ -101,21 +84,12 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
-    "remove the trustee in a POST request for an individual trustee" when {
-      
-      "isEstablisherCompanyHnSEnabled is true" in {
-        val result = controller(testData(individualId)(individualTrustee), isHnsEnabled = true).onSubmit(NormalMode, 0, Individual, None)(postRequest)
+    "remove the trustee in a POST request for an individual trustee" in {
+        val result = controller(testData(individualId)(individualTrustee)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         FakeUserAnswersService.verify(individualId, individualTrustee.copy(isDeleted = true))
-      }
-      
-      "isEstablisherCompanyHnSEnabled is false" in {
-        val result = controller(testData(individualNonHnsId)(individualTrusteeNonHns)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
 
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(individualNonHnsId, individualTrusteeNonHns.copy(isDeleted = true))
-      }
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
@@ -164,7 +138,7 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val formProvider = new ConfirmDeleteTrusteeFormProvider()
-  private val form = formProvider.apply()
+  private val form         = formProvider.apply()
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
@@ -172,17 +146,9 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   private val postRequestForCancel: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
-  private val individualNonHnsId = TrusteeDetailsId(0)
-  private val individualId = TrusteeNameId(0)
-  private val companyId = CompanyDetailsId(0)
+  private val individualId  = TrusteeNameId(0)
+  private val companyId     = CompanyDetailsId(0)
   private val partnershipId = PartnershipDetailsId(0)
-
-  private val individualTrusteeNonHns = PersonDetails(
-    "test-first-name",
-    None,
-    "test-last-name",
-    LocalDate.now()
-  )
 
   private val individualTrustee = PersonName(
     "test-first-name",
@@ -197,12 +163,9 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     "test-partnership-name"
   )
 
-  private val deletedTrustee = individualTrusteeNonHns.copy(isDeleted = true)
-
-
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isHnsEnabled: Boolean = false) =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteTrusteeController(
       frontendAppConfig,
       messagesApi,
@@ -212,8 +175,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      formProvider,
-      new FakeFeatureSwitchManagementService(isHnsEnabled)
+      formProvider
     )
 
   private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind, form: Form[_] = form) =
@@ -230,7 +192,8 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   private def testData[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): DataRetrievalAction = {
     val userAnswers = UserAnswers()
       .set(id)(value)
-      .asOpt.value
+      .asOpt
+      .value
 
     new FakeDataRetrievalAction(Some(userAnswers.json))
   }

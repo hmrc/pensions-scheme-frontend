@@ -32,7 +32,7 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AdviserNameId, emptyAnswers, adviserEmail(NormalMode), true, Some(adviserCYA), true),
     (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
-    (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true),
+    (AdviserPhoneNumberId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true),
     (AdviserAddressPostCodeLookupId, emptyAnswers, adviserAddressList(NormalMode), true, Some(adviserAddressList(CheckMode)), true),
     (AdviserAddressListId, emptyAnswers, adviserAddress(NormalMode), true, Some(adviserAddress(CheckMode)), true),
     (AdviserAddressId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),

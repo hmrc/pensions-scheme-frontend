@@ -18,9 +18,9 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipEnterUTRId}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -33,7 +33,7 @@ import views.html.hasReferenceNumber
 class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasUTRFormProvider()
   private val form = formProvider("messages__hasUtr__partnership_error_required","test partnership name")
   private val index = Index(0)
   private val srn = None
@@ -52,7 +52,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
           PartnershipHasUTRId.toString -> hasUtrValue,
           PartnershipNoUTRReasonId.toString -> "utr number is not present",
-          PartnershipUTRId.toString -> "9999999999"
+          PartnershipEnterUTRId.toString -> "9999999999"
         )
       )
     ))
@@ -109,7 +109,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipHasUTRId(index), false)
-      FakeUserAnswersService.verifyNot(PartnershipUTRId(index))
+      FakeUserAnswersService.verifyNot(PartnershipEnterUTRId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {

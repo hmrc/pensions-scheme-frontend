@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.DirectorNameId
 import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -42,8 +42,7 @@ class AlreadyDeletedController @Inject()(
   def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(srn = srn) andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-        case details =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName, srn))))
       }
 

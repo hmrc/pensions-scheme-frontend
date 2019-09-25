@@ -23,7 +23,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -56,7 +56,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
   val companyName: String = "test company name"
   val company = CompanyDetails(companyName)
-  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonName("first", "last")
 
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]

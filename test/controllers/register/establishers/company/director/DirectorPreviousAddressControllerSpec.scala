@@ -24,12 +24,11 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
+import identifiers.register.establishers.company.director.{DirectorNameId, DirectorPreviousAddressId}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -50,7 +49,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
-  val directorDetails = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val directorDetails = PersonName("first", "last")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -65,7 +64,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj("director" -> Json.arr(
-        Json.obj(DirectorDetailsId.toString -> directorDetails)
+        Json.obj(DirectorNameId.toString -> directorDetails)
       )
       )))))
 
@@ -116,7 +115,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
     "redirect to next page on POST request" which {
       "saves director address" in {
 
-        val onwardCall = routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+        val onwardCall = routes.DirectorEmailController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),

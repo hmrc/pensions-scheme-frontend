@@ -38,7 +38,7 @@ class PartnershipHasUTRIdSpec extends SpecBase {
         .set(PartnershipHasUTRId(0))(false)
         .asOpt.value
 
-      "remove the data for `PartnershipUTRId`" in {
+      "remove the data for `PartnershipEnterUTRId`" in {
         result.get(PartnershipUTRId(0)) mustNot be(defined)
       }
     }

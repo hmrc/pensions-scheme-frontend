@@ -157,7 +157,6 @@ site.continue = Continue
 site.complete = Completed
 site.incomplete = In progress
 site.remove = Remove
-site.delete = Delete
 site.edit = Edit
 site.change = Change
 site.add = Add

@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.NinoNewFormProvider
+import forms.NINOFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNewNinoId}
 import models._
@@ -94,7 +94,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 
   private val srn                       = Some("srn")
   private val schemeName                = "Test Scheme Name"
-  private val formProvider              = new NinoNewFormProvider()
+  private val formProvider              = new NINOFormProvider()
   private val form                      = formProvider(establisherName)
   private val firstIndex                = Index(0)
   private val establisherIndividualName = PersonName("test first name", "test last name", false)

@@ -18,11 +18,10 @@ package views.register.establishers.company
 
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.DirectorNameId
 import models.NormalMode
-import models.person.PersonDetails
-import models.register.DirectorEntityNonHnS
-import org.joda.time.LocalDate
+import models.person.PersonName
+import models.register.DirectorEntity
 import play.api.data.Form
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
@@ -33,18 +32,18 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val maxDirectors = frontendAppConfig.maxDirectors
 
   // scalastyle:off magic.number
-  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoe = PersonName("John", "Doe")
+  private val joeBloggs = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
   private val postCall = routes.AddCompanyDirectorsController.onSubmit _
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEntity = DirectorEntityNonHnS(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
-  private val joeBloggsEntity = DirectorEntityNonHnS(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
+  private val johnDoeEntity = DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = DirectorEntity(DirectorNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
-  private def createView(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
+  private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -54,11 +53,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         postCall(NormalMode, None, establisherIndex),
         viewOnly,
         NormalMode,
-        None,
-        false
+        None
       )(fakeRequest, messages)
 
-  private def createUpdateView(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
+  private def createUpdateView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -68,11 +66,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         postCall(NormalMode, None, establisherIndex),
         viewOnly,
         NormalMode,
-        Some("srn"),
-        false
+        Some("srn")
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[DirectorEntityNonHnS] = Nil, viewOnly: Boolean = false) =
+  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -82,8 +79,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         postCall(NormalMode, None, establisherIndex),
         viewOnly,
         NormalMode,
-        None,
-        false
+        None
       )(fakeRequest, messages)
 
   "AddCompanyDirectors view" must {
@@ -120,9 +116,9 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[DirectorEntityNonHnS] = Seq(johnDoeEntity, joeBloggsEntity)
+    val directors: Seq[DirectorEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
-    behave like entityList(createView(), createView(directors), directors, frontendAppConfig)
+    behave like entityList(createView(), createView(directors), directors, frontendAppConfig, noOfListItems = directors.size)
 
     "show the Continue button when there are directors" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))
@@ -183,6 +179,20 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
     behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
 
-    behave like entityListWithMultipleRecords(createView(), createView(directors), directors, frontendAppConfig)
+    "show delete links " when {
+      "multiple records exist" in {
+        val doc = asDocument(createView(directors)())
+        directors.foreach { item =>
+          val link = doc.select(s"#person-${item.index}-delete")
+          val visibleText = doc.select(s"#person-${item.index}-delete span").first.text
+          val hiddenText = doc.select(s"#person-${item.index}-delete span[class=visually-hidden]").first.text
+          link.size mustBe 1
+          visibleText mustBe messages("site.remove")
+          hiddenText mustBe messages("site.remove") +" " + item.name
+          link.first.attr("href") mustBe item.deleteLink(NormalMode, None).get
+        }
+      }
+    }
+
   }
 }

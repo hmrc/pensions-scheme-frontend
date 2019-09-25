@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.partnership
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
@@ -30,9 +30,9 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
-import utils.checkyouranswers.Ops._
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,8 +47,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               implicit val countryOptions: CountryOptions,
                                                               navigator: Navigator,
                                                               userAnswersService: UserAnswersService,
-                                                              allowChangeHelper: AllowChangeHelper,
-                                                              fs: FeatureSwitchManagementService
+                                                              allowChangeHelper: AllowChangeHelper
                                                             )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -59,12 +58,12 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         val companyDetails = Seq(AnswerSection(
           None,
           PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipUTRId(index).row(routes.PartnershipUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipEnterUTRId(index).row(routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipPayeVariationsId(index).row(routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            PartnershipEnterPAYEId(index).row(routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(

@@ -16,14 +16,13 @@
 
 package identifiers.register.establishers.company.director
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersDirectors}
-import utils.{Toggles, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
@@ -46,24 +45,19 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 
-  implicit def cya(implicit messages: Messages, featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[DirectorAddressYearsId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
 
-    val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) => ua.get(DirectorDetailsId(establisherIndex, directorIndex)).map(_.fullName)
+    val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
+        ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)
 
     new CheckYourAnswersDirectors[DirectorAddressYearsId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
           dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
-        else
-          name(establisherIndex, directorIndex, ua).fold("messages__director__cya__address_years__fallback")(name =>
-            messages("messages__director__cya__address_years", name))
+
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
           dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
-        else
-          "messages__visuallyhidden__director__address_years"
 
       override def row(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()

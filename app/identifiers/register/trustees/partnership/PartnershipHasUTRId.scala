@@ -34,7 +34,7 @@ case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 
       case Some(true) => userAnswers.remove(PartnershipNoUTRReasonId(index))
 
-      case Some(false) => userAnswers.remove(PartnershipUTRId(index))
+      case Some(false) => userAnswers.remove(PartnershipEnterUTRId(index))
 
       case _ => super.cleanup(value, userAnswers)
     }

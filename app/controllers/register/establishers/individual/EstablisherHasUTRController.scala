@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.establishers.company.HasCompanyUTRId
 import identifiers.register.establishers.individual.{EstablisherHasUTRId, EstablisherNameId}
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             allowAccess: AllowAccessActionProvider,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            formProvider: HasUtrFormProvider)(implicit val ec: ExecutionContext)
+                                            formProvider: HasUTRFormProvider)(implicit val ec: ExecutionContext)
     extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =

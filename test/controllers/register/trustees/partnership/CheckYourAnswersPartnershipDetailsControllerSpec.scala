@@ -122,7 +122,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
 
   private def partnershipUTRRoute(mode: Mode, srn: Option[String]) =
-    routes.PartnershipUTRController.onPageLoad(checkMode(mode), index, srn).url
+    routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
 
   private def noPartnershipUTRRoute(mode: Mode, srn: Option[String]) =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
@@ -137,15 +137,15 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[String]) =
-    routes.PartnershipPayeVariationsController.onPageLoad(checkMode(mode), 0, srn).url
+    routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
     .set(PartnershipHasUTRId(0))(true).flatMap(
-        _.set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
+        _.set(PartnershipEnterUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
           _.set(PartnershipHasVATId(0))(true).flatMap(
             _.set(PartnershipEnterVATId(0))(ReferenceValue(vat, isEditable)).flatMap(
               _.set(PartnershipHasPAYEId(0))(true).flatMap(
-                _.set(PartnershipPayeVariationsId(0))(ReferenceValue(paye, isEditable))
+                _.set(PartnershipEnterPAYEId(0))(ReferenceValue(paye, isEditable))
               ))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers
@@ -244,8 +244,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersPartnershipDetailsController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipDetailsController =
     new CheckYourAnswersPartnershipDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -256,8 +255,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       new FakeNavigator(onwardRoute()),
       FakeUserAnswersService,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      allowChangeHelper
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

@@ -25,7 +25,7 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) =>
-        userAnswers.removeAllOf(List(AdviserEmailId, AdviserPhoneId, AdviserNameId,
+        userAnswers.removeAllOf(List(AdviserEmailId, AdviserPhoneNumberId, AdviserNameId,
           AdviserAddressListId, AdviserAddressPostCodeLookupId, AdviserAddressId, IsWorkingKnowledgeCompleteId))
       case Some(false) =>
         userAnswers.remove(IsWorkingKnowledgeCompleteId)

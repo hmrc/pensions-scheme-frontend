@@ -20,12 +20,12 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNameId}
+import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.{PersonDetails, PersonName}
 import models.{CompanyDetails, PartnershipDetails, person}
@@ -64,16 +64,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       "establishers" -> Json.arr(
         Json.obj(
           EstablisherNameId.toString -> PersonName("Test", "Name", false)
-        )
-      )
-    )))
-
-  def getMandatoryTrusteeNonHnS: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
-    Json.obj(
-      "trustees" -> Json.arr(
-        Json.obj(
-          TrusteeDetailsId.toString ->
-            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
         )
       )
     )))
@@ -161,7 +151,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             CompanyDetails("test company name"),
           "director" -> Json.arr(
             Json.obj(
-              DirectorDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
+              DirectorNameId.toString -> PersonDetails("first", Some("middle"), "last",
                 new LocalDate(1990, 2, 2))
             )
           )

@@ -47,7 +47,6 @@ case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
 object TrusteeKindId {
   private def partnershipIdList(index: Index): List[TypedIdentifier[_]] = List(
     PartnershipDetailsId(index),
-    PartnershipPayeId(index), PartnershipVatId(index), PartnershipUniqueTaxReferenceId(index),
     PartnershipPostcodeLookupId(index), PartnershipAddressListId(index), PartnershipAddressId(index), PartnershipAddressYearsId(index),
     PartnershipPreviousAddressPostcodeLookupId(index), PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index),
     PartnershipContactDetailsId(index)
@@ -55,26 +54,27 @@ object TrusteeKindId {
 
   private def companyIdList(index: Index): List[TypedIdentifier[_]] = List(
     CompanyDetailsId(index),
-    CompanyRegistrationNumberId(index),
-    CompanyUniqueTaxReferenceId(index),
+    HasCompanyCRNId(index),
+    CompanyEnterCRNId(index),
+    HasCompanyUTRId(index),
+    CompanyEnterUTRId(index),
     CompanyPostcodeLookupId(index),
     CompanyAddressId(index),
     CompanyAddressYearsId(index),
     CompanyPreviousAddressPostcodeLookupId(index),
-    CompanyPreviousAddressId(index),
-    CompanyContactDetailsId(index)
+    CompanyPreviousAddressId(index)
+//    CompanyEmailId(index)
+//    company.CompanyPhoneId(index)
   )
 
   private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
-    TrusteeDetailsId(index),
-    TrusteeNinoId(index),
-    UniqueTaxReferenceId(index),
+    TrusteeNameId(index),
+    TrusteeEnterNINOId(index),
     IndividualPostCodeLookupId(index),
     TrusteeAddressId(index),
     TrusteeAddressYearsId(index),
     IndividualPreviousAddressPostCodeLookupId(index),
-    TrusteePreviousAddressId(index),
-    TrusteeContactDetailsId(index)
+    TrusteePreviousAddressId(index)
   )
 
   def collectionPath: JsPath = __ \ TrusteesId.toString \\ TrusteeKindId.toString

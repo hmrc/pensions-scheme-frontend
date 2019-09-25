@@ -19,6 +19,8 @@ import com.google.inject.multibindings.Multibinder
 import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
+import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
+import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator, TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations.{EstablishersPartner, _}
 import utils.{AllowChangeHelper, AllowChangeHelperImpl}
@@ -39,10 +41,14 @@ class PODSModule extends AbstractModule {
     navigators.addBinding().to(classOf[EstablishersNavigator])
     navigators.addBinding().to(classOf[EstablishersPartnerNavigator])
     navigators.addBinding().to(classOf[RegisterNavigator])
-    navigators.addBinding().to(classOf[TrusteesIndividualFeatureSwitchNavigator])
+    navigators.addBinding().to(classOf[TrusteesIndividualDetailsNavigator])
+    navigators.addBinding().to(classOf[TrusteesIndividualAddressNavigator])
+    navigators.addBinding().to(classOf[TrusteesIndividualContactDetailsNavigator])
     navigators.addBinding().to(classOf[TrusteesNavigator])
-    navigators.addBinding().to(classOf[TrusteesPartnershipFeatureSwitchNavigator])
-    navigators.addBinding().to(classOf[TrusteesCompanyFeatureSwitchNavigator])
+    navigators.addBinding().to(classOf[TrusteesPartnershipDetailsNavigator])
+    navigators.addBinding().to(classOf[TrusteesPartnershipContactDetailsNavigator])
+    navigators.addBinding().to(classOf[TrusteesPartnershipAddressNavigator])
+    navigators.addBinding().to(classOf[TrusteesCompanyNavigator])
     navigators.addBinding().to(classOf[EstablisherPartnershipFeatureSwitchNavigator])
     navigators.addBinding().to(classOf[VariationsNavigator])
     navigators.addBinding().to(classOf[WorkingKnowledgeNavigator])

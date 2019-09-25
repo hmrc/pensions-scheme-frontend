@@ -16,14 +16,13 @@
 
 package controllers.register.trustees
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
 import models.Mode
-import models.register.Trustee
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
@@ -31,7 +30,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles
 import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees.addTrustee
 
@@ -45,8 +43,7 @@ class AddTrusteeController @Inject()(
                                       getData: DataRetrievalAction,
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      formProvider: AddTrusteeFormProvider,
-                                      fsm: FeatureSwitchManagementService
+                                      formProvider: AddTrusteeFormProvider
                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -54,14 +51,14 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled)
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnSEnabled)))
+      val trustees = request.userAnswers.allTrusteesAfterDelete
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
 
-      val trustees = request.userAnswers.allTrusteesAfterDelete(isHnSEnabled)
+      val trustees = request.userAnswers.allTrusteesAfterDelete
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
         Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
@@ -69,7 +66,7 @@ class AddTrusteeController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             Future.successful(BadRequest(
-              addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn, enableSubmission(trustees), isHnSEnabled)))
+              addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn)))
           },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
@@ -84,9 +81,4 @@ class AddTrusteeController @Inject()(
       }
   }
 
-  private def enableSubmission(trusteeList: Seq[Trustee[_]]): Boolean = {
-    isHnSEnabled || trusteeList.forall(_.isCompleted)
-  }
-
-  private def isHnSEnabled = fsm.get(Toggles.isEstablisherCompanyHnSEnabled)
 }

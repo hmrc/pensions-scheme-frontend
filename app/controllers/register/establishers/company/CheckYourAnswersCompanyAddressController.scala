@@ -47,8 +47,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          implicit val countryOptions: CountryOptions,
                                                          @EstablishersCompany navigator: Navigator,
                                                          userAnswersService: UserAnswersService,
-                                                         allowChangeHelper: AllowChangeHelper,
-                                                         fs: FeatureSwitchManagementService
+                                                         allowChangeHelper: AllowChangeHelper
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 

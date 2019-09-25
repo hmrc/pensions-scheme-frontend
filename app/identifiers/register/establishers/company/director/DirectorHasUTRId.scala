@@ -33,7 +33,7 @@ case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends T
       case Some(true) =>
         userAnswers.remove(DirectorNoUTRReasonId(establisherIndex, directorIndex))
       case Some(false) =>
-        userAnswers.remove(DirectorUTRId(establisherIndex, directorIndex))
+        userAnswers.remove(DirectorEnterUTRId(establisherIndex, directorIndex))
       case _ =>
         super.cleanup(value, userAnswers)
     }

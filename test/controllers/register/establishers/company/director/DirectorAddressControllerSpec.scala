@@ -25,9 +25,9 @@ import controllers.actions._
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorNameId}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -56,7 +56,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   val year: Int = LocalDate.now().getYear
 
   val date = new LocalDate(year, month, day)
-  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonName("first", "last")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -73,7 +73,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
       Json.obj(
         "director" -> Json.arr(
           Json.obj(
-            DirectorDetailsId.toString -> director
+            DirectorNameId.toString -> director
           )
         )
       )

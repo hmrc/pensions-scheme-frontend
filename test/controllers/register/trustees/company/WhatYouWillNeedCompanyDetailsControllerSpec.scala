@@ -36,7 +36,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       new DataRequiredActionImpl
     )
 
-  lazy val postCall = controllers.register.trustees.company.routes.HasCompanyNumberController.onSubmit(NormalMode, Index(0), None)
+  lazy val postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
   def viewAsString(): String = {
     val header = Message("messages__whatYouWillNeedTrusteeCompany__h1", "test company name")

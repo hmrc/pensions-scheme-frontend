@@ -22,14 +22,12 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNameId}
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
-import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
@@ -67,10 +65,7 @@ class TrusteeAddressYearsController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
   private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = AddressYearsViewModel(

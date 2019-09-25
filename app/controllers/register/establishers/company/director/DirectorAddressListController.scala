@@ -29,7 +29,6 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
-import utils.Toggles
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -77,9 +76,6 @@ class DirectorAddressListController @Inject()(
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      if (featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-      else
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 }

@@ -22,12 +22,11 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
 import controllers.behaviours.AddressControllerBehaviours
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeNameId}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -47,10 +46,10 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
-  val personDetails = PersonDetails("First", None, "Last", LocalDate.now())
+  val personDetails = PersonName("First", "Last")
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
-    TrusteesId.toString -> Json.arr(Json.obj(TrusteeDetailsId.toString -> personDetails))
+    TrusteesId.toString -> Json.arr(Json.obj(TrusteeNameId.toString -> personDetails))
   )))
 
   private implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()

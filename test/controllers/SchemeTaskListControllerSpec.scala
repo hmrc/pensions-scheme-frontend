@@ -48,22 +48,13 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
     "accessed in NormalMode with srn as None" must {
 
-      "return OK and the correct view" when {
-        "toggle is off" in {
-          val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction).onPageLoad(NormalMode, None)(fakeRequest)
-
-          status(result) mustBe OK
-          contentAsString(result) mustBe schemeDetailsTaskListNonHns(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
-        }
-
-        "toggle is on" in {
+      "return OK and the correct view" in {
           val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction,
             isHnsEnabled = true).onPageLoad(NormalMode, None)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
         }
-      }
     }
 
     "accessed in NormalMode with no user answers and srn as None" must {
@@ -75,7 +66,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
     }
 
-    "isVariationsEnabled toggle switched on in UpdateMode and user holds the lock" must {
+    "In UpdateMode when user holds the lock" must {
 
       "return OK and the correct view for a GET where scheme status is open" in {
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))

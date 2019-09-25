@@ -18,9 +18,10 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
+import identifiers.register.trustees.individual.TrusteeNoUTRReasonId
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -33,7 +34,7 @@ import views.html.hasUtr
 class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasUTRFormProvider()
   private val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   private val index = Index(0)
   private val srn = None
@@ -51,8 +52,8 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails("test company name"),
           HasCompanyUTRId.toString -> hasUtrValue,
-          NoUTRId.toString -> "utr number is not present",
-          CompanyUTRId.toString -> "9999999999"
+          TrusteeNoUTRReasonId.toString -> "utr number is not present",
+          CompanyEnterUTRId.toString -> "9999999999"
         )
       )
     ))
@@ -109,7 +110,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(HasCompanyUTRId(index), false)
-      FakeUserAnswersService.verifyNot(CompanyUTRId(index))
+      FakeUserAnswersService.verifyNot(CompanyEnterUTRId(index))
     }
 
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
@@ -120,7 +121,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
 
       FakeUserAnswersService.verify(HasCompanyUTRId(index), true)
-      FakeUserAnswersService.verifyNot(NoUTRId(index))
+      FakeUserAnswersService.verifyNot(CompanyNoUTRReasonId(index))
     }
 
   }

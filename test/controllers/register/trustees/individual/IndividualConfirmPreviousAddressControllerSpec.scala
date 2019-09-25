@@ -20,17 +20,16 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeDetailsId, TrusteeNameId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId}
 import models._
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
-import org.joda.time.LocalDate
+import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
@@ -67,7 +66,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
   val index = 0
   val srn = Some("srn")
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs, isToggleOn: Boolean = false) =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
     new IndividualConfirmPreviousAddressController(
       frontendAppConfig,
       messagesApi,
@@ -77,8 +76,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      countryOptions,
-      new FakeFeatureSwitchManagementService(isToggleOn)
+      countryOptions
     )
 
   def viewAsString(form: Form[_] = form): String =
@@ -91,24 +89,19 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
     )(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
-    .set(TrusteeDetailsId(index))(PersonDetails("John", None, "Doe", LocalDate.now())).flatMap(_.set(
+    .set(TrusteeNameId(index))(PersonName("John", "Doe")).flatMap(_.set(
     ExistingCurrentAddressId(index))(testAddress))
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))
 
   "IndividualConfirmPreviousAddressController" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller(getRelevantData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
 
-    "return OK and the correct view for a GET when toggle is on" in {
+    "return OK and the correct view for a GET " in {
       val getRelevantData = UserAnswers().set(TrusteeNameId(index))(PersonName("John", "Doe")).flatMap(_.set(
         ExistingCurrentAddressId(index))(testAddress)).asOpt.value.dataRetrievalAction
-      val result = controller(getRelevantData, isToggleOn = true).onPageLoad(UpdateMode, index, srn)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()

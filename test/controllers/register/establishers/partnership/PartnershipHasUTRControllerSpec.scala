@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import forms.HasUtrFormProvider
+import forms.HasUTRFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasUTRId
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
@@ -37,7 +37,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
-  private val formProvider = new HasUtrFormProvider()
+  private val formProvider = new HasUTRFormProvider()
   private val form = formProvider("messages__hasUtr__partnership_error_required", partnershipDetails.name)
   private val index = Index(0)
   private val srn = None

@@ -102,13 +102,13 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private def hasNino(mode: Mode, srn: Option[String]) =
     routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url
   private def nino(mode: Mode, srn: Option[String]) =
-    routes.TrusteeNinoNewController.onPageLoad(checkMode(mode), index, srn).url
+    routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
   private def noNinoReason(mode: Mode, srn: Option[String]) =
     routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
   private def hasUtr(mode: Mode, srn: Option[String]) =
     routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
   private def utr(mode: Mode, srn: Option[String]) =
-    routes.TrusteeUTRController.onPageLoad(checkMode(mode), 0, srn).url
+    routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
   private def noUtrReason(mode: Mode, srn: Option[String]) =
     routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
@@ -116,7 +116,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     .set(TrusteeNameId(0))(trusteeName).flatMap(
     _.set(TrusteeDOBId(0))(trusteeDob).flatMap(
       _.set(TrusteeHasNINOId(0))(true).flatMap(
-        _.set(TrusteeNewNinoId(0))(ReferenceValue(nino)).flatMap(
+        _.set(TrusteeEnterNINOId(0))(ReferenceValue(nino)).flatMap(
           _.set(TrusteeHasUTRId(0))(true).flatMap(
             _.set(TrusteeUTRId(0))(ReferenceValue(utr))
               ))))).asOpt.value

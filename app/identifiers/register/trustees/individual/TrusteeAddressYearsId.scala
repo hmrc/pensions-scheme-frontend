@@ -23,7 +23,7 @@ import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -49,10 +49,7 @@ object TrusteeAddressYearsId {
     new CheckYourAnswers[TrusteeAddressYearsId] {
       override def row(id: TrusteeAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val name = (index: Int) =>
-          if(featureSwitchManagementService.get(Toggles.isEstablisherCompanyHnSEnabled))
             ua.get(TrusteeNameId(index)).map(_.fullName)
-          else
-            ua.get(TrusteeDetailsId(index)).map(_.fullName)
 
         val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 

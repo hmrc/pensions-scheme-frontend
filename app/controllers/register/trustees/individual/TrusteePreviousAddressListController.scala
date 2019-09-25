@@ -28,8 +28,6 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.Toggles
-import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -67,10 +65,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      if (fs.get(Toggles.isEstablisherCompanyHnSEnabled))
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-      else
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {

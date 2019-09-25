@@ -41,10 +41,10 @@ class DirectorUTRControllerSpec extends ControllerSpecBase with MustMatchers wit
 
   import DirectorUTRControllerSpec._
 
-  "DirectorUTRController" must {
+  "DirectorEnterUTRController" must {
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.DirectorUTRController.onPageLoad(NormalMode, establisherIndex, directorIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.DirectorEnterUTRController.onPageLoad(NormalMode, establisherIndex, directorIndex, srn))),
         (request, result) => {
 
           val expected = utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -56,7 +56,7 @@ class DirectorUTRControllerSpec extends ControllerSpecBase with MustMatchers wit
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.DirectorUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn))
+        implicit app => addToken(FakeRequest(routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn))
           .withFormUrlEncodedBody(("utr", "1234567890"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -77,7 +77,7 @@ object DirectorUTRControllerSpec extends DirectorUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.DirectorUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
+    routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorUtr__title"),
     heading = Message("messages__directorUtr__heading", "first last"),
     hint = Message("messages_utr__hint"),

@@ -38,8 +38,8 @@ class PartnershipHasUTRIdSpec extends SpecBase {
         .set(PartnershipHasUTRId(0))(false)
         .asOpt.value
 
-      "remove the data for `PartnershipUTRId`" in {
-        result.get(PartnershipUTRId(0)) mustNot be(defined)
+      "remove the data for `PartnershipEnterUTRId`" in {
+        result.get(PartnershipEnterUTRId(0)) mustNot be(defined)
       }
     }
 
@@ -107,7 +107,7 @@ object PartnershipHasUTRIdSpec extends SpecBase {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipHasUTRId.toString -> v,
-        PartnershipUTRId.toString -> "value",
+        PartnershipEnterUTRId.toString -> "value",
         PartnershipNoUTRReasonId.toString -> "value"
       )
     )

@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{NoSuspendedCheck, TrusteesCompany}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
@@ -47,8 +47,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           implicit val countryOptions: CountryOptions,
                                                           navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
-                                                          allowChangeHelper: AllowChangeHelper,
-                                                          fs: FeatureSwitchManagementService
+                                                          allowChangeHelper: AllowChangeHelper
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -58,17 +57,17 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
         implicit val userAnswers: UserAnswers = request.userAnswers
         val companyDetails = Seq(AnswerSection(
           None,
-          HasCompanyNumberId(index).row(routes.HasCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyRegistrationNumberVariationsId(index)
-              .row(routes.CompanyRegistrationNumberVariationsController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            NoCompanyNumberId(index).row(routes.NoCompanyNumberController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          HasCompanyCRNId(index).row(routes.HasCompanyCRNController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            CompanyEnterCRNId(index)
+              .row(routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyNoCRNReasonId(index).row(routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyUTRId(index).row(routes.CompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterUTRId(index).row(routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyNoUTRReasonId(index).row(routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyPayeVariationsId(index).row(routes.CompanyPayeVariationsController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(
