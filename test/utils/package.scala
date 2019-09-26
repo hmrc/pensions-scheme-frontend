@@ -99,9 +99,6 @@ package object utils {
     }
 
     //Establishers Individual
-    def establishersIndividualName(index: Int, personName: PersonName): UserAnswers = {
-      answers.set(establishers.individual.EstablisherNameId(index))(personName).asOpt.value
-    }
 
     def establishersIndividualAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.individual.AddressId(index))(address).asOpt.value
@@ -125,6 +122,10 @@ package object utils {
 
     def establishersIndividualPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersIndividualName(index: Int, name: PersonName): UserAnswers = {
+      answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
     }
 
     def establishersIndividualEmail(index: Int, email: String): UserAnswers = {
