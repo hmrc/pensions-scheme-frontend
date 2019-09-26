@@ -25,7 +25,7 @@ import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipAddress
+import views.html.register.whatYouWillNeedPartnershipAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
