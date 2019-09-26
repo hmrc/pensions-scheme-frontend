@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package views.register.trustees.partnership
+package views.register
 
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipAddress
+import views.html.register.whatYouWillNeedPartnershipAddress
 
 class WhatYouWillNeedPartnershipAddressViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedAddress"
   private val testUser = "partnership name"
 
-  private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
+  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedPartnershipAddress(frontendAppConfig,
     Some("testScheme"), href, None, testUser)(fakeRequest, messages)
