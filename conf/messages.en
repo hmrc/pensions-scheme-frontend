@@ -386,7 +386,7 @@ messages__trustee_company_contact_details__title = Enter the company’s contact
 messages__trustee_company_contact_details__heading = Enter the company’s contact details
 
 messages__trustee_company_trading-time__title = Has the company been trading for at least 1 year?
-messages__trustee_partnership_trading-time__title = Has the partnership been trading for at least 1 year?
+messages__partnership_trading_time__title = Has the partnership been trading for at least 1 year?
 
 messages__trustee_contact_details__title = Enter the trustee’s contact details
 messages__trustee_contact_details__heading = Enter the trustee’s contact details

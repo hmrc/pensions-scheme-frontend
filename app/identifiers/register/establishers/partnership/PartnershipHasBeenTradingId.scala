@@ -18,10 +18,23 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class PartnershipHasBeenTradingId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipHasBeenTradingId.toString
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers
+          .remove(PartnershipPreviousAddressPostcodeLookupId(this.index))
+          .flatMap(_.remove(PartnershipPreviousAddressId(this.index)))
+          .flatMap(_.remove(PartnershipPreviousAddressListId(this.index)))
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object PartnershipHasBeenTradingId {
