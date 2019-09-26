@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipContactDetails
+import views.html.register.whatYouWillNeedPartnershipContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,8 +45,8 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
           case PartnershipDetails(partnershipName, _) =>
             val viewModel = CommonFormWithHintViewModel(
               postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn),
-              title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
-              heading = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", partnershipName),
+              title = Message("messages__whatYouWillNeedPartnershipContact__title"),
+              heading = Message("messages__whatYouWillNeedPartnershipContact__h1", partnershipName),
               srn = srn
             )
             Future.successful(Ok(whatYouWillNeedPartnershipContactDetails(appConfig, existingSchemeName, viewModel)))

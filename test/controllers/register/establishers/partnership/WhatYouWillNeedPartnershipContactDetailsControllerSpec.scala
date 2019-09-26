@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -28,17 +28,17 @@ import views.html.register.whatYouWillNeedPartnershipContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
   private val index = 0
-  private val trusteePartnership = PartnershipDetails("partnership Name")
+  private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
   def viewAsString(): String = whatYouWillNeedPartnershipContactDetails(
     frontendAppConfig,
     None,
     CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
+      postCall = controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
       title = Message("messages__whatYouWillNeedPartnershipContact__title"),
-      heading = Message("messages__whatYouWillNeedPartnershipContact__h1", trusteePartnership.name),
+      heading = Message("messages__whatYouWillNeedPartnershipContact__h1", establisherPartnership.name),
       srn = None
     ))(fakeRequest, messages).toString
 
@@ -49,7 +49,7 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
