@@ -188,7 +188,7 @@ trait AllSpokes  {
 
   case object EstablisherPartnershipAddress extends AddressSpoke {
     override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, srn, index)
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
 
     override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
       establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)

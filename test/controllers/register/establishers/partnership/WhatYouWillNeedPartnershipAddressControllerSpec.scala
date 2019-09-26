@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -28,12 +28,12 @@ import views.html.register.whatYouWillNeedPartnershipAddress
 class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
 
   private val index  = 0
-  private val trusteePartnership = PartnershipDetails("partnership Name")
+  private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
+  private def href: Call = controllers.register.establishers.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
   private def viewAsString(): String =
-    whatYouWillNeedPartnershipAddress(frontendAppConfig, None, href, None, trusteePartnership.name)(fakeRequest, messages).toString
+    whatYouWillNeedPartnershipAddress(frontendAppConfig, None, href, None, establisherPartnership.name)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipAddressController" when {
 
@@ -42,7 +42,7 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)

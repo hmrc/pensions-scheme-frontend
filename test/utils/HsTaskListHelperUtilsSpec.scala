@@ -243,7 +243,6 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   val srn = Some("S123")
   private val partnershipName = "test partnership"
   private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
-  private val address = Address("line 1", "line 2", Some("line 3"), Some("line 4"), Some("zz11zz"), "GB")
 
   protected def establisherCompanyBlank: UserAnswers = {
     UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
@@ -339,7 +338,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
     EntitySpoke(Link(messages("messages__schemeTaskList__add_details", partnershipName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, 0).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_address", partnershipName),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, srn, 0).url), None),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 0, srn).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", partnershipName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 0, srn).url), None),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
@@ -350,7 +349,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
     EntitySpoke(Link(messages("messages__schemeTaskList__change_details", partnershipName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, 2).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", partnershipName),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, srn, 2).url), modeBasedCompletion(mode, Some(false))),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", partnershipName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
