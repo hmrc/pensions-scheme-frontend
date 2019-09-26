@@ -112,7 +112,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__addressFor", partnershipName),
+    Message("messages__address__cya", partnershipName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", partnershipAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_address", partnershipName))))
@@ -136,7 +136,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
 
   private def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow =
     AnswerRow(
-      Message("messages__previousAddressFor", partnershipName),
+      Message("messages__previousAddress__cya", partnershipName),
       UserAnswers().addressAnswer(previousAddress),
       answerIsMessageKey = false,
       Some(Link("site.change", partnershipPreviousAddressRoute(checkMode(mode), srn),
@@ -145,7 +145,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
 
   private def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
     AnswerRow(
-      Message("messages__previousAddressFor", partnershipName),
+      Message("messages__previousAddress__cya", partnershipName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", partnershipPreviousAddressRoute(checkMode(mode), srn),

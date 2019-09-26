@@ -37,7 +37,7 @@ object PartnershipAddressId {
     new CheckYourAnswers[PartnershipAddressId] {
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
-        val label = messages("messages__addressFor", establisherName)
+        val label = messages("messages__address__cya", establisherName)
         val changeAddress = messages("messages__visuallyhidden__dynamic_address", establisherName)
 
         AddressCYA(

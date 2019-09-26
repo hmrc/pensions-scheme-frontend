@@ -114,7 +114,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def postUrlUpdateMode: Call = SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__establisherConfirmAddress__cya_label", companyName),
+    Message("messages__address__cya", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
@@ -137,7 +137,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   )
 
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
+    Message("messages__previousAddress__cya", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
     Some(Link("site.change", companyPreviousAddressRoute(checkMode(mode), srn),
@@ -145,7 +145,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   )
 
   def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
-    AnswerRow(Message("messages__establisherPreviousConfirmAddress__cya_label", companyName),
+    AnswerRow(Message("messages__previousAddress__cya", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
     Some(Link("site.add", companyPreviousAddressRoute(checkMode(mode), srn), Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName)))))

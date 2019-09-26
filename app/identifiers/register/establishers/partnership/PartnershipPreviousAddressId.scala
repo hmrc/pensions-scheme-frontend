@@ -37,7 +37,7 @@ object PartnershipPreviousAddressId {
 
     def establisherName(index: Index, ua: UserAnswers) = ua.get(PartnershipDetailsId(index)).fold(messages("messages__theEstablisher"))(_.name)
 
-    def label(index: Int, ua: UserAnswers) = messages("messages__previousAddressFor", establisherName(index, ua))
+    def label(index: Int, ua: UserAnswers) = messages("messages__previousAddress__cya", establisherName(index, ua))
 
     def changeAddress(index: Int, ua: UserAnswers) = messages("messages__visuallyhidden__dynamic_previousAddress", establisherName(index, ua))
 
