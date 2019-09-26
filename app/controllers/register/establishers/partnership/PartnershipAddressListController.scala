@@ -28,8 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  val userAnswersService: UserAnswersService,
-                                                 @EstablisherPartnership override val navigator: Navigator,
+                                                 override val navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
