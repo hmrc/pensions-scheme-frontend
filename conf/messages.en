@@ -1252,6 +1252,7 @@ messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
 messages__dynamic_whatIsAddress = What is {0}’s address?
+messages__dynamic_whatWasPreviousAddress = What was {0}’s previous address?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
@@ -1576,8 +1577,8 @@ messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedAddress__title = Address
-messages__addressFor = Address for {0}
-messages__previousAddressFor = Previous address for {0}
+messages__addressFor = {0}’s address
+messages__previousAddressFor = {0}’s previous address
 messages__addressYears = Has {0} used this address for at least 1 year?
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
