@@ -109,9 +109,10 @@ messages__individual_email__title = What is the person’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
 messages__common_email__visually_hidden_change_label = Change {0}’s email
 messages__common_phone__heading = What is {0}’s phone number?
+messages__individual_phone__title = What is the person’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
 messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
-
+messages__phone_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
 
 
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
@@ -1597,19 +1598,7 @@ messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell u
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
 messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
 
-messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
-messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
-messages__whatYouWillNeedEstablisherCompanyContact__lede = You will need to tell us the company’s:
-messages__whatYouWillNeedEstablisherCompanyContact__item1 = contact email address
-messages__whatYouWillNeedEstablisherCompanyContact__item2 = contact phone number
-
 messages__contactDetailsFor = Contact details for {0}
-
-messages__whatYouWillNeedTrusteeIndividualContact__title = Contact details
-messages__whatYouWillNeedTrusteeIndividualContact__h1 = Contact details for {0}
-messages__whatYouWillNeedTrusteeIndividualContact__p1 = You will need to tell us the trustee’s:
-messages__whatYouWillNeedTrusteeIndividualContact__item1 = contact email address
-messages__whatYouWillNeedTrusteeIndividualContact__item2 = contact phone number
 
 messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors for {0}
@@ -1862,11 +1851,6 @@ messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, an
 messages__partnershipHasPaye__title = Does the partnership have an employer PAYE reference?
 messages__partnershipHasPaye__error__required = Select whether the partnership has an employer PAYE number
 
-messages__whatYouWillNeedTrusteePartnershipContact__title  = Contact details
-messages__whatYouWillNeedTrusteePartnershipContact__h1 = Contact details for {0}
-messages__whatYouWillNeedTrusteePartnershipContact__p1 = You will need to tell us the partnership’s:
-messages__whatYouWillNeedTrusteePartnershipContact__item1 = contact email address
-messages__whatYouWillNeedTrusteePartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
 messages__whatYouWillNeedPartnershipDetails__title = Partnership details
@@ -1880,3 +1864,8 @@ messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (yo
 messages__establisherName__title = What is the establisher’s name?
 messages__establisherName__heading = What is the establisher’s name?
 
+messages__whatYouWillNeedContact__title = Contact details
+messages__whatYouWillNeedContact__h1 = {0}’s contact details
+messages__whatYouWillNeedContact__p1 = You will need to tell us the {0}’s:
+messages__whatYouWillNeedContact__item1 = contact email address
+messages__whatYouWillNeedContact__item2 = contact phone number

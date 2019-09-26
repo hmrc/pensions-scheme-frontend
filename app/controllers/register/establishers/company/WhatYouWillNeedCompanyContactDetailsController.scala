@@ -25,7 +25,8 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
+import views.html.register.whatYouWillNeedContactDetails
+import controllers.register.establishers.company.routes.CompanyEmailController
 
 import scala.concurrent.Future
 
@@ -35,15 +36,15 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction
-                                                              ) extends FrontendController with I18nSupport with Retrievals{
+                                                              ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val href = controllers.register.establishers.company.routes.CompanyEmailController.onSubmit(mode, srn, index)
-      CompanyDetailsId(index).retrieve.right.map { details =>
-        Future.successful(
-          Ok(whatYouWillNeedCompanyContactDetails(appConfig, existingSchemeName, href, srn, details.companyName)))
-      }
-  }
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val href = CompanyEmailController.onSubmit(mode, srn, index)
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          Future.successful(
+            Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, details.companyName)))
+        }
+    }
 }
