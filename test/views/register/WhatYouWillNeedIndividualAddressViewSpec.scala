@@ -26,12 +26,11 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedAddress"
   private val testUser = "test name"
-  private val token = messages("messages__theTrustee")
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig,
-    Some("testScheme"), href, None, testUser, token)(fakeRequest, messages)
+    Some("testScheme"), href, None, testUser)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
@@ -39,13 +38,13 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
     "display the correct p1" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__p1", token))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__p1", testUser))
     }
 
     "display the correct bullet points" in {
       val doc = asDocument(createView())
       assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item1"))
-      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item2", token))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item2", testUser))
     }
 
     behave like pageWithSubmitButton(createView, Some(href))

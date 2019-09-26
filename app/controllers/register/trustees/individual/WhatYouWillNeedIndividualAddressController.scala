@@ -45,6 +45,6 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           name =>
             val trusteeName = name.fullName
             val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))}
+            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, trusteeName)))}
     }
 }

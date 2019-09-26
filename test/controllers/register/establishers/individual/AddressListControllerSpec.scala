@@ -21,9 +21,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
-import models.person.PersonDetails
-import models.{Index, NormalMode, UniqueTaxReference}
-import org.joda.time.LocalDate
+import models.{Index, NormalMode, UniqueTaxReference, person}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -31,6 +29,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{Enumerable, FakeNavigator, MapFormats}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -47,9 +46,17 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     address("test post code 1"),
     address("test post code 2")
   )
+  val validDataNoAddresses: JsObject = Json.obj(
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherNameId.toString ->
+          person.PersonName("test first name", "test last name", false),
+        UniqueTaxReferenceId.toString ->
+          UniqueTaxReference.Yes("1234567891"))
+    ))
 
   def controller(
-                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
                   dataCacheConnector: UserAnswersService = FakeUserAnswersService
                 ): AddressListController =
     new AddressListController(
@@ -69,7 +76,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       AddressListViewModel(
         routes.AddressListController.onSubmit(NormalMode, firstIndex, None),
         routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
-        addresses
+        addresses,
+        heading = Message("messages__dynamic_whatIsAddress", establisherName)
       ),
       None
     )(fakeRequest, messages).toString
@@ -85,8 +93,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   val validData: JsObject = Json.obj(
     "establishers" -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString ->
-          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
+        EstablisherNameId.toString ->
+          person.PersonName("test first name", "test last name", false),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PostCodeLookupId.toString -> addresses)
@@ -102,7 +110,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     }
 
     "redirect to Address look up page when no addresses are present after lookup" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validDataNoAddresses))).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(

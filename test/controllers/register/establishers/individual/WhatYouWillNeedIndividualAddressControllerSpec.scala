@@ -39,7 +39,7 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
 
   private def viewAsString(): String =
     whatYouWillNeedIndividualAddress(
-      frontendAppConfig, None, href, None, "Test Name", Message("messages__thePerson")
+      frontendAppConfig, None, href, None, "Test Name"
     )(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {

@@ -17,7 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], name: String, token: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], name: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__whatYouWillNeedAddress__title"),
@@ -30,7 +30,7 @@
 
     <ul class="list list-bullet">
         <li>@messages("messages__whatYouWillNeedAddress__item1")</li>
-        <li>@messages("messages__whatYouWillNeedAddress__item2", token)</li>
+        <li>@messages("messages__whatYouWillNeedAddress__item2", name)</li>
     </ul>
 
     @components.button_link("site.continue", href.url, "submit")

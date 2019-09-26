@@ -20,18 +20,18 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressListController => GenericAddressListController}
-import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherNameId, PostCodeLookupId}
+import identifiers.register.establishers.individual.{AddressId, AddressListId, PostCodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddressListController @Inject()(val appConfig: FrontendAppConfig,
                                       val messagesApi: MessagesApi,
@@ -46,28 +46,31 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map(get)
+      retrieveEstablisherName(index) { establisherName => viewmodel(mode, index, srn, establisherName).right.map(get)
+      }
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map { vm => post(vm, AddressListId(index), AddressId(index), mode)
+      retrieveEstablisherName(index) { establisherName =>
+        viewmodel(mode, index, srn, establisherName).right.map { vm => post(vm, AddressListId(index), AddressId(index), mode)
+        }
       }
   }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = {
-    Retrieval(
-      implicit request =>
-        (PostCodeLookupId(index) and EstablisherNameId(index)).retrieve.right.map {
-          case addresses ~ name =>
-            AddressListViewModel(
-              postCall = routes.AddressListController.onSubmit(mode, index, srn),
-              manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
-              addresses = addresses,
-              heading = Message("messages__dynamic_whatIsAddress", name.fullName),
-              srn = srn
-            )
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], establisherName: String)(
+      implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    PostCodeLookupId(index).retrieve.right
+      .map { addresses =>
+        AddressListViewModel(
+          postCall = routes.AddressListController.onSubmit(mode, index, srn),
+          manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
+          addresses = addresses,
+          srn = srn,
+          heading = Message("messages__dynamic_whatIsAddress", establisherName)
+        )
       }
-    )
+      .left
+      .map(_ => Future.successful(Redirect(routes.PostCodeLookupController.onPageLoad(mode, index, srn))))
   }
 }
