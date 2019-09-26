@@ -16,21 +16,22 @@
 
 package identifiers.register.establishers.partnership
 
+import base.SpecBase
 import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models._
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
+import viewmodels.AnswerRow
 
-class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 
@@ -115,21 +116,23 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
   "cya" when {
 
     val onwardUrl = "onwardUrl"
-
-    def answers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
+    val name = "test partnership name"
+    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+    def answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).asOpt.value
+      .set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.value
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipAddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__partnership__checkYourAnswers__addressYears",
+            messages("messages__partnershipAddressYears__heading", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__partnership__address_years")))
+              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }
@@ -140,14 +143,14 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__partnership__checkYourAnswers__addressYears",
+            messages("messages__partnershipAddressYears__heading", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__partnership__address_years")))
+              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }
@@ -156,9 +159,9 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
+        PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }

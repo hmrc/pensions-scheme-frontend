@@ -20,14 +20,14 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models.address.Address
 import models.requests.DataRequest
-import models.{Link, NormalMode, UpdateMode}
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipPreviousAddressIdSpec extends SpecBase {
 
@@ -35,17 +35,17 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      "messages__common__cya__previous_address",
+      Message("messages__previousAddressFor", name),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name))))
     ))
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow("messages__common__cya__previous_address",
+    AnswerRow(Message("messages__previousAddressFor", name),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partnership__previous_address")))))
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name))))))
 
   "cya" when {
 
@@ -75,7 +75,8 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
+          val answersWithNoIsThisPreviousAddress = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).asOpt.value
+            .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
           PartnershipPreviousAddressId(index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
@@ -94,6 +95,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
 
 object PartnershipPreviousAddressIdSpec extends OptionValues {
   private val index = 0
+  private val name = "test partnership name"
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
   private val address = Address(
     "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
@@ -114,5 +116,6 @@ object PartnershipPreviousAddressIdSpec extends OptionValues {
 
   private val onwardUrl = "onwardUrl"
 
-  private val answers: UserAnswers = UserAnswers().set(PartnershipPreviousAddressId(index))(address).asOpt.value
+  private val answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).asOpt.value
+    .set(PartnershipPreviousAddressId(index))(address).asOpt.value
 }

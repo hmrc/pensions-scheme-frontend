@@ -19,9 +19,11 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.CountryOptions
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import viewmodels.AnswerRow
 
 case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
@@ -30,6 +32,19 @@ case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
 object PartnershipAddressId {
   override def toString: String = "partnershipAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipAddressId] =
-    AddressCYA[PartnershipAddressId](changeAddress = "messages__visuallyhidden__partnership__address")()
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressId] =
+
+    new CheckYourAnswers[PartnershipAddressId] {
+      override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val label = messages("messages__addressFor", establisherName)
+        val changeAddress = messages("messages__visuallyhidden__dynamic_address", establisherName)
+
+        AddressCYA(
+          label = label,
+          changeAddress = changeAddress
+        )().row(id)(changeUrl, ua)
+      }
+      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+    }
 }
