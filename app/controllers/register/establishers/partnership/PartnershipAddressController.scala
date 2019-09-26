@@ -31,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.CountryOptions
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -41,7 +40,7 @@ class PartnershipAddressController @Inject()(
                                               val appConfig: FrontendAppConfig,
                                               val messagesApi: MessagesApi,
                                               val userAnswersService: UserAnswersService,
-                                              @EstablisherPartnership val navigator: Navigator,
+                                              val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
