@@ -35,14 +35,14 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      Message("messages__previousAddressFor", name),
+      Message("messages__previousAddress__cya", name),
       addressAnswer(address),
       answerIsMessageKey = false,
       Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name))))
     ))
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow(Message("messages__previousAddressFor", name),
+    AnswerRow(Message("messages__previousAddress__cya", name),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name))))))
