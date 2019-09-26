@@ -17,35 +17,65 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.EmailAddressController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.register.establishers.individual.routes.EstablisherEmailController
+import forms.EmailFormProvider
+import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherEmailController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
+class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           override val userAnswersService: UserAnswersService,
                                            allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction
-                                         )(implicit val ec: ExecutionContext) extends I18nSupport {
+                                           requireData: DataRequiredAction,
+                                           val navigator: Navigator,
+                                           formProvider: EmailFormProvider
+                                          )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map {
+          name =>
+            CommonFormWithHintViewModel(
+              EstablisherEmailController.onSubmit(mode, index, srn),
+              Message("messages__individual_email__title"),
+              Message("messages__common_email__heading", name.fullName),
+              Some(Message("messages__email_dynamic__hint", name.fullName)),
+              srn = srn
+            )
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).retrieve.right.map {
+          vm =>
+            get(EstablisherEmailId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).retrieve.right.map {
+          vm =>
+            post(EstablisherEmailId(index), mode, form, vm, None)
+        }
+    }
 }
