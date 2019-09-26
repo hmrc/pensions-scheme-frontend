@@ -39,14 +39,13 @@ class EstablisherPhoneIdSpec extends SpecBase {
 
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(EstablisherPhoneId(0))(phone).flatMap(
               _.set(EstablisherNameId(0))(personName)).asOpt.value, PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
-          EstablisherPhoneId(0).row(onwardUrl, mode) must equal(Seq(
+          EstablisherPhoneId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__individual_phone__title", personName.fullName),
+              Message("messages__common_phone__heading", personName.fullName),
               Seq(phone),
               answerIsMessageKey = false,
               Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone_number", personName.fullName))))

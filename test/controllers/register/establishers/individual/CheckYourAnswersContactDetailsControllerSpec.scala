@@ -45,6 +45,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val establisherName = PersonName("test", "name")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val email = "test@test.com"
+  private val phone = "1234"
 
   private val fullAnswers = UserAnswers().establishersIndividualName(index, establisherName).
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
@@ -57,16 +58,16 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       messages("messages__common_email__heading", establisherName.fullName),
       Seq(email),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherEmailController.onPageLoad(mode, index, srn).url,
-        Some(messages("messages__visuallyhidden__dynamic_email", establisherName.fullName))))
+      Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), index, srn).url,
+        Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName.fullName))))
     )
 
     val phoneAnswerRow = AnswerRow(
-      messages("messages__common_email__heading", establisherName.fullName),
-      Seq(email),
+      messages("messages__common_phone__heading", establisherName.fullName),
+      Seq(phone),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherPhoneController.onPageLoad(mode, index, srn).url,
-        Some(messages("messages__visuallyhidden__dynamic_email", establisherName.fullName))))
+      Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url,
+        Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName.fullName))))
     )
 
     Seq(AnswerSection(None, Seq(emailAnswerRow, phoneAnswerRow)))

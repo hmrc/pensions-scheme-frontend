@@ -38,7 +38,7 @@ object EstablisherEmailId {
     override def row(id: EstablisherEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages("messages__thePerson"))(_.fullName)
 
-      val label: String = messages("messages__individual_email__title", establisherName)
+      val label: String = messages("messages__common_email__heading", establisherName)
 
       val hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName))
 

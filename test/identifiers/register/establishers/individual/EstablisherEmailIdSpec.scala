@@ -44,7 +44,7 @@ class EstablisherEmailIdSpec extends SpecBase {
         "return answers rows with change links" in {
           EstablisherEmailId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__individual_email__title", personName.fullName),
+              Message("messages__common_email__heading", personName.fullName),
               Seq(email),
               answerIsMessageKey = false,
               Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email_address", personName.fullName))))
