@@ -77,7 +77,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         routes.AddressListController.onSubmit(NormalMode, firstIndex, None),
         routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
         addresses,
-        heading = Message("messages__dynamic_whatIsAddress", establisherName)
+        heading = Message("messages__dynamic_whatIsAddress", establisherName),
+        title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve)
       ),
       None
     )(fakeRequest, messages).toString

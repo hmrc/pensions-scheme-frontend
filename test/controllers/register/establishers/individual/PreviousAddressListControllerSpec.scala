@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
@@ -71,8 +71,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex, None),
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
         previousAddresses,
-        title = Message("messages__select_the_previous_address__title"),
-        heading = Message("messages__select_the_previous_address__title")
+        title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual").resolve),
+        heading = Message("messages__dynamic_whatWasPreviousAddress", establisherName)
       ),
       None
     )(fakeRequest, messages).toString
@@ -89,8 +89,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
   val validData: JsObject = Json.obj(
     "establishers" -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString ->
-          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
+        EstablisherNameId.toString ->
+          PersonName("test first name", "test last name", false),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PreviousPostCodeLookupId.toString -> previousAddresses)

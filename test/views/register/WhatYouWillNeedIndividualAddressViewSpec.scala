@@ -34,7 +34,12 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__addressFor", testUser))
+    normalPageWithTitle(
+      createView,
+      messageKeyPrefix,
+      messages("messages__addressFor", messages("messages__theIndividual").capitalize),
+      messages("messages__addressFor", testUser)
+    )
 
     "display the correct p1" in {
       val doc = asDocument(createView())
