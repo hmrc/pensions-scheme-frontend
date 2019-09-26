@@ -67,7 +67,8 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
           manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
           srn = srn,
-          heading = Message("messages__dynamic_whatIsAddress", establisherName)
+          heading = Message("messages__dynamic_whatIsAddress", establisherName),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve)
         )
       }
       .left

@@ -20,7 +20,7 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], name: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedAddress__title"),
+    title = messages("messages__addressFor", messages("messages__theIndividual").capitalize),
     appConfig = appConfig,
     bodyClasses = None
 ) {

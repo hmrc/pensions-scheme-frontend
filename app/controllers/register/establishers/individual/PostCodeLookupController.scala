@@ -59,7 +59,7 @@ class PostCodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.PostCodeLookupController.onSubmit(mode, index, srn),
               routes.AddressController.onPageLoad(mode, index, srn),
-              title = Message(title),
+              title = Message("messages__establisher_individual_address__heading", Message("messages__theIndividual").resolve),
               heading = Message("messages__establisher_individual_address__heading", details.fullName),
               subHeading = Some(details.fullName),
               srn = srn

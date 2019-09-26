@@ -51,7 +51,6 @@ class AddressController @Inject()(
                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.AddressController.onSubmit _
-  private[controllers] val title: Message = "messages__establisher_individual_address__title"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisher_individual_address_lede"
 
@@ -61,7 +60,7 @@ class AddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(heading, Message("messages__theIndividual").resolve),
       heading = Message(heading, name),
       srn = srn
     )
