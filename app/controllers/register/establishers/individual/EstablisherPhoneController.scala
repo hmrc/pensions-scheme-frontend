@@ -17,35 +17,65 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.PhoneNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.register.establishers.individual.routes.EstablisherPhoneController
+import forms.PhoneFormProvider
+import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherPhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{NotImplemented, Redirect}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
 import scala.concurrent.ExecutionContext
 
-class EstablisherPhoneController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersIndividual val navigator: Navigator,
+class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
+                                           override val userAnswersService: UserAnswersService,
                                            allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction
-                                         )(implicit val ec: ExecutionContext) extends I18nSupport {
+                                           requireData: DataRequiredAction,
+                                           val navigator: Navigator,
+                                           formProvider: PhoneFormProvider
+                                          )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map {
+          name =>
+            CommonFormWithHintViewModel(
+              EstablisherPhoneController.onSubmit(mode, index, srn),
+              Message("messages__individual_phone__title"),
+              Message("messages__common_phone__heading", name.fullName),
+              Some(Message("messages__phone_dynamic__hint", name.fullName)),
+              srn = srn
+            )
+        }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData) {
-    implicit request => Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(EstablisherPhoneId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            post(EstablisherPhoneId(index), mode, form, vm)
+        }
+    }
 }

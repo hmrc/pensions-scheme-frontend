@@ -99,8 +99,13 @@ package object utils {
     }
 
     //Establishers Individual
+
     def establishersIndividualAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.individual.AddressId(index))(address).asOpt.value
+    }
+
+    def establishersIndividualAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.individual.AddressYearsId(index))(addressYears).asOpt.value
     }
 
     def trusteesIndividualAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
@@ -117,6 +122,10 @@ package object utils {
 
     def establishersIndividualPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersIndividualName(index: Int, name: PersonName): UserAnswers = {
+      answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
     }
 
     // Establishers company

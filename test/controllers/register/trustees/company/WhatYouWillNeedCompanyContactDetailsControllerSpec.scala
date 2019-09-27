@@ -17,40 +17,50 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
-import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import controllers.register.trustees.company.routes.CompanyEmailController
+import models._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import viewmodels.Message
-import views.html.register.trustees.company.whatYouWillNeedCompanyContactDetails
+import utils.UserAnswers
+import views.html.register.whatYouWillNeedContactDetails
 
-class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+  private val trusteeName = CompanyDetails("Test Company")
+  private val index = 0
+  private val srn = Some("srn")
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): WhatYouWillNeedCompanyContactDetailsController =
-    new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
-    )
+  private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, index, srn)
 
-  lazy val href = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
-
-  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None, Message("messages__whatYouWillNeedEstablisherCompanyContact__h1", "test company name"))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, trusteeName.companyName)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
+    "in Subscription" must {
+      "return the correct view on a GET" in {
+        running(_.overrides(
+          modules(UserAnswers().trusteesCompanyDetails(index, trusteeName).dataRetrievalAction, featureSwitchEnabled = true): _*
+        )) { app =>
+          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
+          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
-    "on a GET" must {
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString()
+        }
+      }
+    }
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+    "in Variation" must {
+      "return the correct view on a GET" in {
+        running(_.overrides(
+          modules(UserAnswers().trusteesCompanyDetails(index, trusteeName).dataRetrievalAction, featureSwitchEnabled = true): _*
+        )) { app =>
+          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
+          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(UpdateMode, srn)
+        }
       }
     }
   }

@@ -14,37 +14,36 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
-import controllers.register.establishers.company.routes.CompanyEmailController
-import models._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import controllers.register.establishers.individual.routes.EstablisherEmailController
+import models.{Mode, NormalMode, UpdateMode}
+import models.person.PersonName
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.register.whatYouWillNeedContactDetails
 
-class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSpecBase {
 
-  private val establisherName = CompanyDetails("Test Company")
+  private val establisherName = PersonName("Test", "Name")
   private val index = 0
   private val srn = Some("srn")
 
-  private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
+  private def onwardRoute(mode: Mode, srn: Option[String]): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
 
   private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.companyName)(fakeRequest, messages).toString
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.fullName)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedCompanyContactDetailsController" when {
+  "WhatYouWillNeedIndividualContactDetailsController" when {
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().establishersIndividualName(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
         )) { app =>
-          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
+          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()
@@ -55,10 +54,10 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().establishersIndividualName(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
         )) { app =>
-          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(UpdateMode, srn, index)(fakeRequest)
+          val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
+          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(UpdateMode, srn)
@@ -67,4 +66,3 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     }
   }
 }
-

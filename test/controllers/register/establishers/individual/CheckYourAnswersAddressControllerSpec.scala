@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register.establishers.individual
 
 import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import models.Mode.checkMode
-import models._
 import models.address.Address
 import models.person.PersonName
+import models._
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils._
+import play.api.test.Helpers.{contentAsString, running, status, _}
 import utils.annotations.NoSuspendedCheck
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
-  import CheckYourAnswersIndividualAddressControllerSpec._
+  import CheckYourAnswersAddressControllerSpec._
 
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
@@ -43,7 +43,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
         "Normal MOde" in {
           val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
 
-          val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
+          val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK
@@ -64,7 +64,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
           )) {
             app =>
 
-              val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
+              val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
               status(result) mustBe OK
@@ -78,58 +78,58 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
 
 }
 
-object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
+object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
   val srn = Some("test-srn")
-  val trusteeName = "First Last"
+  val establisherName = "First Last"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def trusteeAddressRoute(mode: Mode, srn: Option[String]): String =
-    routes.TrusteeAddressController.onPageLoad(mode, index, srn).url
+  private def establisherAddressRoute(mode: Mode, srn: Option[String]): String =
+    routes.AddressController.onPageLoad(mode, index, srn).url
 
-  private def trusteeAddressYearsRoute(mode: Mode, srn: Option[String]): String =
-    routes.TrusteeAddressYearsController.onPageLoad(mode, index, srn).url
+  private def establisherAddressYearsRoute(mode: Mode, srn: Option[String]): String =
+    routes.AddressYearsController.onPageLoad(mode, index, srn).url
 
-  private def trusteePreviousAddressRoute(mode: Mode, srn: Option[String]): String =
-    routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn).url
+  private def establisherPreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+    routes.PreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = UserAnswers().
-    trusteeName(index, PersonName("First", "Last")).
-    trusteesAddress(index, address).
-    trusteesIndividualAddressYears(index, addressYearsUnderAYear).
-    trusteesPreviousAddress(index, previousAddress)
+    establishersIndividualName(index, PersonName("First", "Last")).
+    establishersIndividualAddress(index, address).
+    establishersIndividualAddressYears(index, addressYearsUnderAYear).
+    establishersIndividualPreviousAddress(index, previousAddress)
 
   def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__trusteeAddress", trusteeName),
+    Message("messages__addressFor", establisherName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
-    Some(Link("site.change", trusteeAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__visuallyhidden__dynamic_address", trusteeName)))
+    Some(Link("site.change", establisherAddressRoute(checkMode(mode), srn),
+      Some(Message("messages__visuallyhidden__dynamic_address", establisherName)))
     ))
 
   def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__trusteeAddressYears__heading", trusteeName),
+    Message("messages__addressYears", establisherName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
-    Some(Link("site.change", trusteeAddressYearsRoute(checkMode(mode), srn),
-      Some(Message("messages__visuallyhidden__dynamic_addressYears", trusteeName))))
+    Some(Link("site.change", establisherAddressYearsRoute(checkMode(mode), srn),
+      Some(Message("messages__visuallyhidden__dynamic_addressYears", establisherName))))
   )
 
   def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
-    Message("messages__trusteePreviousAddress", trusteeName),
+    Message("messages__previousAddressFor", establisherName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
-    Some(Link("site.change", trusteePreviousAddressRoute(checkMode(mode), srn),
-      Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
+    Some(Link("site.change", establisherPreviousAddressRoute(checkMode(mode), srn),
+      Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName))))
   )
 
   def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
@@ -142,3 +142,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     )(fakeRequest, messages).toString
 
 }
+
+
+
+
