@@ -173,7 +173,7 @@ trait AllSpokes  {
     override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
       establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index, srn)
 
-    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyContactDetailsComplete(index)
+    override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherIndividualContactDetailsComplete(index)
   }
 
   case object EstablisherPartnershipDetails extends DetailsSpoke {
@@ -188,7 +188,7 @@ trait AllSpokes  {
 
   case object EstablisherPartnershipAddress extends AddressSpoke {
     override def addLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, srn, index)
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index, srn)
 
     override def changeLinkUrl(mode: Mode, srn: Option[String], index: Int): Call =
       establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)

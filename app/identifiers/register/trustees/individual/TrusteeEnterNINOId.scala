@@ -16,7 +16,6 @@
 
 package identifiers.register.trustees.individual
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
@@ -38,8 +37,7 @@ object TrusteeEnterNINOId {
 
   override lazy val toString: String = "trusteeNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions,
-                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeEnterNINOId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[TrusteeEnterNINOId] = {
 
     new CheckYourAnswers[TrusteeEnterNINOId] {
 

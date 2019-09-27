@@ -388,7 +388,7 @@ messages__trustee_company_contact_details__title = Enter the company’s contact
 messages__trustee_company_contact_details__heading = Enter the company’s contact details
 
 messages__trustee_company_trading-time__title = Has the company been trading for at least 1 year?
-messages__trustee_partnership_trading-time__title = Has the partnership been trading for at least 1 year?
+messages__partnership_trading_time__title = Has the partnership been trading for at least 1 year?
 
 messages__trustee_contact_details__title = Enter the trustee’s contact details
 messages__trustee_contact_details__heading = Enter the trustee’s contact details
@@ -615,8 +615,8 @@ messages__directorAddressPostcodeLookup__lede = This is usually the director’s
 messages__directorDOB__title = What is the director’s date of birth?
 messages__directorDOB__heading = What is {0}’s date of birth?
 
-messages__DOB__title = What is the date of birth for {0}?
-messages__DOB__heading = What is the date of birth for {0}?
+messages__DOB__title = What is {0}’s date of birth?
+messages__DOB__heading = What is {0}’s date of birth?
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
@@ -1028,8 +1028,8 @@ messages__partner_no_nino = Tell us why the partner does not have a National Ins
 messages__error__has_nino_partner = Select yes if the partner has a National Insurance number
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
-messages__common_nino__title = What is the person’s National Insurance number?
-messages__common_nino__h1 = What is the National Insurance number for {0}?
+messages__common_nino__title = What is {0}’s National Insurance number?
+messages__common_nino__h1 = What is {0}’s National Insurance number?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
@@ -1238,7 +1238,9 @@ messages__visuallyhidden__dynamic_address = the address for {0}
 messages__visuallyhidden__dynamic_addressYears = whether {0} has used this address for at least 1 year
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
+messages__visuallyhidden__dynamic_email_address = {0}’s email address
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
+messages__visuallyhidden__dynamic_phone_number = {0}’s phone number
 messages__visuallyhidden__dynamic_dob = the date of birth for {0}
 messages__visuallyhidden__dynamic_hasNino = whether {0} has a National Insurance number
 messages__visuallyhidden__dynamic_nino = the National Insurance number for {0}
@@ -1250,7 +1252,7 @@ messages__visuallyhidden__dynamic_company__dormant = whether {0} has been dorman
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 
-messages__dynamic_whatIsUTR = What is the UTR for {0}?
+messages__dynamic_whatIsUTR = What is {0}’s UTR?
 messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
@@ -1604,14 +1606,17 @@ messages__whatYouWillNeedDirectors__title = Directors
 messages__whatYouWillNeedDirectors__h1 = Directors for {0}
 messages__whatYouWillNeedDirectors__p1 = We need to know about every director associated with the company you’re registering.
 messages__whatYouWillNeedDirectors__p2 = You will need to tell us each director’s:
-messages__whatYouWillNeedDirectors__item1 = name
-messages__whatYouWillNeedDirectors__item2 = date of birth
-messages__whatYouWillNeedDirectors__item3 = National Insurance number
-messages__whatYouWillNeedDirectors__item4 = Unique Taxpayer Reference(UTR)
-messages__whatYouWillNeedDirectors__item5 = current address
-messages__whatYouWillNeedDirectors__item6 = previous address if they have not been at their current address for at least 1 year
-messages__whatYouWillNeedDirectors__item7 = contact email address
-messages__whatYouWillNeedDirectors__item8 = contact phone number
+messages__whatYouWillNeed__item1 = name
+messages__whatYouWillNeed__item2 = date of birth
+messages__whatYouWillNeed__item3 = National Insurance number
+messages__whatYouWillNeed__item4 = Unique Taxpayer Reference(UTR)
+messages__whatYouWillNeed__item5 = current address
+messages__whatYouWillNeed__item6 = previous address if they have not been at their current address for at least 1 year
+messages__whatYouWillNeed__item7 = contact email address
+messages__whatYouWillNeed__item8 = contact phone number
+messages__whatYouWillNeedPartners__title = Partners
+messages__whatYouWillNeedPartners__h1 = Partners
+messages__whatYouWillNeedPartners__p1 = For every partner, you will need to tell us the partner’s:
 
 messages__whatYouWillNeedTrusteeCompany__title = Company details
 messages__whatYouWillNeedTrusteeCompany__h1 = Company details for {0}
@@ -1821,11 +1826,11 @@ messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
 messages__establisherConfirmAddress__title = Confirm the establisher’s address
-messages__establisherConfirmAddress__cya_label = {0}’s address
+messages__address__cya = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
 messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
-messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__previousAddress__cya = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
 messages__director_email__title =  What is the director’s email address?
@@ -1866,6 +1871,6 @@ messages__establisherName__heading = What is the establisher’s name?
 
 messages__whatYouWillNeedContact__title = Contact details
 messages__whatYouWillNeedContact__h1 = {0}’s contact details
-messages__whatYouWillNeedContact__p1 = You will need to tell us the {0}’s:
+messages__whatYouWillNeedContact__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
