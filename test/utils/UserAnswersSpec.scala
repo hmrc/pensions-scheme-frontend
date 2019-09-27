@@ -243,7 +243,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         PartnerEntityNonHnS(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
         PartnerEntityNonHnS(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
-      val result = userAnswers.allPartners(0)
+      val result = userAnswers.allPartners(0, false)
 
       result.size mustEqual 3
       result mustBe partnerEntities

@@ -31,7 +31,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete}
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
@@ -186,7 +186,8 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form) = confirmDeletePartner(
