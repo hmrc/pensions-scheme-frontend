@@ -34,13 +34,20 @@ class WhatYouWillNeedPartnershipAddressViewSpec extends ViewBehaviours {
 
   "whatYouWillNeedPartnershipAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__addressFor", testUser))
+    //behave like normalPage(createView, messageKeyPrefix, messages("messages__addressFor", testUser))
+
+    normalPageWithTitle(
+      createView,
+      messageKeyPrefix,
+      title = messages("messages__addressFor", messages("messages__thePartnership")).capitalize,
+      messages("messages__addressFor", testUser)
+    )
 
     "display the correct p1 and bullet points" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteePartnershipAddress__p1"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteePartnershipAddress__p1", testUser))
       assertContainsText(doc, messages("messages__whatYouWillNeedTrusteePartnershipAddress__item1"))
-      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteePartnershipAddress__item2"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteePartnershipAddress__item2", testUser))
     }
 
     behave like pageWithSubmitButton(createView, action = Some(href))

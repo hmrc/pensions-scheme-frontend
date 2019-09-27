@@ -41,8 +41,8 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
   val index = Index(0)
   val partnershipName = "test partnership name"
   val schemeName = "test scheme name"
-  val previousAddressTitle = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
+  val previousAddressTitle = messages("messages__common__selectPreviousAddress__h1", messages("messages__thePartnership"))
+  val previousAddressHeading = messages("messages__common__selectPreviousAddress__h1", partnershipName)
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
