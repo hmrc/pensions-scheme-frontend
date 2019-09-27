@@ -16,13 +16,12 @@
 
 package identifiers.register.establishers.individual
 
-import config.FeatureSwitchManagementService
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
 import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.{CountryOptions, Toggles, UserAnswers}
+import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
@@ -47,8 +46,7 @@ case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
 object AddressYearsId {
   override lazy val toString: String = "addressYears"
 
-  implicit def cya(implicit messages: Messages, ua: UserAnswers,
-                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[AddressYearsId] =
+  implicit def cya(implicit messages: Messages, ua: UserAnswers): CheckYourAnswers[AddressYearsId] =
     new CheckYourAnswers[AddressYearsId] {
       override def row(id: AddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val name = (index: Int) => ua.get(EstablisherNameId(index)).map(_.fullName)
