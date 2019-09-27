@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels.Message
-import views.html.register.{whatYouWillNeedAddress, whatYouWillNeedPartnershipAddress}
+import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
 
