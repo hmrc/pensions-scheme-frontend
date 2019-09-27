@@ -17,36 +17,52 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
-import models.{Index, NormalMode}
+import controllers.register.establishers.company.routes.CompanyEmailController
+import models._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.register.establishers.company.whatYouWillNeedCompanyContactDetails
+import utils.UserAnswers
+import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedCompanyContactDetailsController =
-    new WhatYouWillNeedCompanyContactDetailsController(frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
-    )
+  private val establisherName = CompanyDetails("Test Company")
+  private val index = 0
+  private val srn = Some("srn")
 
-  lazy val href = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
+  private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
 
-  def viewAsString(): String = whatYouWillNeedCompanyContactDetails(frontendAppConfig, None, href, None, "test company name")(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.companyName)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
+    "in Subscription" must {
+      "return the correct view on a GET" in {
+        running(_.overrides(
+          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+        )) { app =>
+          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
+          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
 
-    "on a GET" must {
-      "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString()
+        }
+      }
+    }
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+    "in Variation" must {
+      "return the correct view on a GET" in {
+        running(_.overrides(
+          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+        )) { app =>
+          val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
+          val result = controller.onPageLoad(UpdateMode, srn, index)(fakeRequest)
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(UpdateMode, srn)
+        }
       }
     }
   }
