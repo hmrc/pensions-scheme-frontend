@@ -1823,11 +1823,11 @@ messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
 messages__establisherConfirmAddress__title = Confirm the establisher’s address
-messages__establisherConfirmAddress__cya_label = {0}’s address
+messages__address__cya = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
 messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
-messages__establisherPreviousConfirmAddress__cya_label = {0}’s previous address
+messages__previousAddress__cya = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
 messages__director_email__title =  What is the director’s email address?

@@ -153,10 +153,6 @@ package object utils {
       answers.set(establishers.company.HasBeenTradingCompanyId(index))(hasBeenTrading).asOpt.value
     }
 
-    def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
-      answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
-    }
-
     def establishersCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.company.CompanyAddressId(index))(address).asOpt.value
     }
@@ -196,8 +192,24 @@ package object utils {
 
     // Establishers partnership
 
+    def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
+    }
+
     def establishersPartnershipPreviousAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
+    }
+
+    def establisherPartnershipAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipAddressId(index))(address).asOpt.value
+    }
+
+    def establisherPartnershipAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipAddressYearsId(index))(addressYears).asOpt.value
+    }
+
+    def establisherPartnershipTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipHasBeenTradingId(index))(hasBeenTrading).asOpt.value
     }
 
     // Trustees company
