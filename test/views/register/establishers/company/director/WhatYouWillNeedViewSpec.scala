@@ -26,18 +26,25 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedDirectors"
+  private val messageKeyPrefix2 = "whatYouWillNeed"
 
   private val companyName = "test company name"
 
   private val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
 
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable =
+    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName), messageKeys:_*)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName))
+
+    "display the correct guidance" in {
+      val doc = asDocument(createView())
+      for (key <- messageKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix2}_$key"))
+    }
 
     behave like pageWithSubmitButton(createView)
 
