@@ -25,7 +25,7 @@ import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablishe
 import models.Mode.journeyMode
 import models._
 import models.requests.IdentifiedRequest
-import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualDetailsNavigator}
+import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -36,14 +36,17 @@ class EstablishersIndividualFeatureSwitchNavigator @Inject()(
                                                           featureSwitchService: FeatureSwitchManagementService,
                                                           oldNavigator: EstablishersIndividualNavigatorOld,
                                                           detailsNavigator: EstablishersIndividualDetailsNavigator,
-                                                          addressNavigator: EstablishersIndividualAddressNavigator
+                                                          addressNavigator: EstablishersIndividualAddressNavigator,
+                                                          contactDetailsNavigator: EstablishersIndividualContactDetailsNavigator
                                                         ) extends Navigator {
 
   override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])(implicit ex: IdentifiedRequest,
                                                                                                            ec: ExecutionContext,
                                                                                                            hc: HeaderCarrier): Option[Call] = {
     if (featureSwitchService.get(Toggles.isHnSEnabled)) {
-      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        addressNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+        contactDetailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }

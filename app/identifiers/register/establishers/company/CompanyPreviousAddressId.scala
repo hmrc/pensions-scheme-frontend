@@ -37,7 +37,7 @@ object CompanyPreviousAddressId {
     new CheckYourAnswersCompany[CompanyPreviousAddressId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__establisherPreviousConfirmAddress__cya_label")
+        dynamicMessage(index, ua, "messages__previousAddress__cya")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_previousAddress")

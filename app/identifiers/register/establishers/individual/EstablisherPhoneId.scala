@@ -18,7 +18,12 @@ package identifiers.register.establishers.individual
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class EstablisherPhoneId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ "contactDetails" \ EstablisherPhoneId.toString
@@ -26,4 +31,23 @@ case class EstablisherPhoneId(index: Int) extends TypedIdentifier[String] {
 
 object EstablisherPhoneId {
   override def toString: String = "phoneNumber"
+
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherPhoneId] = new
+      CheckYourAnswers[EstablisherPhoneId] {
+
+    override def row(id: EstablisherPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages("messages__thePerson"))(_.fullName)
+
+      val label: String = messages("messages__common_phone__heading", establisherName)
+
+      val hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName))
+
+      StringCYA(
+        Some(label),
+        hiddenLabel
+      )().row(id)(changeUrl, userAnswers)
+    }
+
+    override def updateRow(id: EstablisherPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+  }
 }

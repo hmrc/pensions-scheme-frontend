@@ -50,7 +50,7 @@ class EstablisherNinoNewController @Inject()(
   private def viewmodel(personDetails: PersonDetails, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
-      title = Message("messages__common_nino__title"),
+      title = Message("messages__common_nino__title", Message("messages__thePerson").resolve),
       heading = Message("messages__common_nino__h1", personDetails.fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn
