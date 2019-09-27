@@ -128,6 +128,14 @@ package object utils {
       answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
     }
 
+    def establishersIndividualEmail(index: Int, email: String): UserAnswers = {
+      answers.set(establishers.individual.EstablisherEmailId(index))(email).asOpt.value
+    }
+
+    def establishersIndividualPhone(index: Int, phone: String): UserAnswers = {
+      answers.set(establishers.individual.EstablisherPhoneId(index))(phone).asOpt.value
+    }
+
     // Establishers company
     def establisherCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value

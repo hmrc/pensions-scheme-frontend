@@ -17,31 +17,53 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherPhoneId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.NotImplemented
 import play.api.mvc.{Action, AnyContent}
-import services.UserAnswersService
-import utils.annotations.{EstablishersIndividual, NoSuspendedCheck}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
+import viewmodels.AnswerSection
+import views.html.checkYourAnswers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersContactDetailsController @Inject()(
-                                                            val appConfig: FrontendAppConfig,
-                                                            val messagesApi: MessagesApi,
-                                                            val userAnswersService: UserAnswersService,
-                                                            @EstablishersIndividual val navigator: Navigator,
-                                                            authenticate: AuthAction,
-                                                            getData: DataRetrievalAction,
-                                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                                            requireData: DataRequiredAction
-                                                          )(implicit val ec: ExecutionContext) extends I18nSupport {
+class CheckYourAnswersContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
+                                                         val messagesApi: MessagesApi,
+                                                         authenticate: AuthAction,
+                                                         getData: DataRetrievalAction,
+                                                         @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                         requireData: DataRequiredAction,
+                                                         implicit val countryOptions: CountryOptions,
+                                                         allowChangeHelper: AllowChangeHelper
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-      implicit request => NotImplemented("Not implemented: " + this.getClass.toString)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val notNewEstablisher = !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
+        val contactDetails = AnswerSection(
+          None,
+          EstablisherEmailId(index).row(routes.EstablisherEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherPhoneId(index).row(routes.EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        )
+
+        Future.successful(Ok(checkYourAnswers(
+          appConfig,
+          Seq(contactDetails),
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || notNewEstablisher,
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
     }
 }
