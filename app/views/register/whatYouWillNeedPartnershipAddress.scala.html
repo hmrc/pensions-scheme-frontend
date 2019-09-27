@@ -20,17 +20,17 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], partnershipName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedAddress__title"),
+    title = messages("messages__addressFor", messages("messages__thePartnership")).capitalize,
     appConfig = appConfig,
     bodyClasses = None
 ) {
     @components.heading(headingKey = messages("messages__addressFor", partnershipName))
 
-    <p>@messages("messages__whatYouWillNeedTrusteePartnershipAddress__p1")</p>
+    <p>@messages("messages__whatYouWillNeedTrusteePartnershipAddress__p1", partnershipName)</p>
 
     <ul class="list list-bullet">
         <li>@messages("messages__whatYouWillNeedTrusteePartnershipAddress__item1")</li>
-        <li>@messages("messages__whatYouWillNeedTrusteePartnershipAddress__item2")</li>
+        <li>@messages("messages__whatYouWillNeedTrusteePartnershipAddress__item2", partnershipName)</li>
     </ul>
 
     @components.button_link("site.continue", href.url, "submit")

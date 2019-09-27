@@ -1576,7 +1576,7 @@ messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if
 messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
 
 messages__whatYouWillNeedAddress__title = Address
-messages__addressFor = Address for {0}
+messages__addressFor = {0}’s address
 messages__previousAddressFor = Previous address for {0}
 messages__addressYears = Has {0} used this address for at least 1 year?
 
@@ -1592,9 +1592,9 @@ messages__whatYouWillNeedAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedAddress__item1 = current address
 messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at the current address for less than 1 year
 
-messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us the partnership’s:
+messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
-messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if the partnership has been at the current address for less than 1 year
+messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if {0} has been at the current address for less than 1 year
 
 messages__whatYouWillNeedEstablisherCompanyContact__title = Contact details
 messages__whatYouWillNeedEstablisherCompanyContact__h1 = Contact details for {0}
@@ -1677,6 +1677,7 @@ messages__theDirector = the director
 messages__theCompany = the company
 messages__thePartnership = the partnership
 messages__thePerson = the person
+messages__theIndividual = the individual
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
