@@ -615,8 +615,8 @@ messages__directorAddressPostcodeLookup__lede = This is usually the director’s
 messages__directorDOB__title = What is the director’s date of birth?
 messages__directorDOB__heading = What is {0}’s date of birth?
 
-messages__DOB__title = What is the date of birth for {0}?
-messages__DOB__heading = What is the date of birth for {0}?
+messages__DOB__title = What is {0}’s date of birth?
+messages__DOB__heading = What is {0}’s date of birth?
 
 messages__addressPostcodeLookup__heading = What is {0}’s postcode?
 
@@ -1028,8 +1028,8 @@ messages__partner_no_nino = Tell us why the partner does not have a National Ins
 messages__error__has_nino_partner = Select yes if the partner has a National Insurance number
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
-messages__common_nino__title = What is the person’s National Insurance number?
-messages__common_nino__h1 = What is the National Insurance number for {0}?
+messages__common_nino__title = What is {0}’s National Insurance number?
+messages__common_nino__h1 = What is {0}’s National Insurance number?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
@@ -1238,7 +1238,9 @@ messages__visuallyhidden__dynamic_address = the address for {0}
 messages__visuallyhidden__dynamic_addressYears = whether {0} has used this address for at least 1 year
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
 messages__visuallyhidden__dynamic_email = the email address for {0}
+messages__visuallyhidden__dynamic_email_address = {0}’s email address
 messages__visuallyhidden__dynamic_phone = the phone number for {0}
+messages__visuallyhidden__dynamic_phone_number = {0}’s phone number
 messages__visuallyhidden__dynamic_dob = the date of birth for {0}
 messages__visuallyhidden__dynamic_hasNino = whether {0} has a National Insurance number
 messages__visuallyhidden__dynamic_nino = the National Insurance number for {0}
@@ -1250,7 +1252,7 @@ messages__visuallyhidden__dynamic_company__dormant = whether {0} has been dorman
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 
-messages__dynamic_whatIsUTR = What is the UTR for {0}?
+messages__dynamic_whatIsUTR = What is {0}’s UTR?
 messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
@@ -1869,6 +1871,6 @@ messages__establisherName__heading = What is the establisher’s name?
 
 messages__whatYouWillNeedContact__title = Contact details
 messages__whatYouWillNeedContact__h1 = {0}’s contact details
-messages__whatYouWillNeedContact__p1 = You will need to tell us the {0}’s:
+messages__whatYouWillNeedContact__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
