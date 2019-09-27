@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company.director
+package views.register.establishers.partnership.partner
 
-import controllers.register.establishers.company.director.routes.DirectorNameController
+import controllers.register.establishers.partnership.partner.routes._
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.director.whatYouWillNeed
+import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "whatYouWillNeedDirectors"
+  private val messageKeyPrefix = "whatYouWillNeedPartners"
   private val messageKeyPrefix2 = "whatYouWillNeed"
 
-  private val companyName = "test company name"
-
-  private val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+  private val href: Call = PartnerNameController.onPageLoad(NormalMode, 0, 0, None)
 
   private def createView: () => HtmlFormat.Appendable =
-    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
+    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 
-  "WhatYouWillNeedCompanyDetails view" must {
+  "WhatYouWillNeedPartners view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
     "display the correct guidance" in {
       val doc = asDocument(createView())
