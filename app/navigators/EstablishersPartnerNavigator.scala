@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.EstablishersOrTrusteesChangedId
@@ -26,10 +26,13 @@ import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig) extends AbstractNavigator {
+                                             appConfig: FrontendAppConfig,
+                                             fs: FeatureSwitchManagementService) extends AbstractNavigator {
+
+  private def isHnsEnabled = fs.get(Toggles.isHnSEnabled)
   //scalastyle:off cyclomatic.complexity
   private def checkYourAnswers(establisherIndex: Int, partnerIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(mode, establisherIndex, partnerIndex, srn))
@@ -162,17 +165,17 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addPartnerRoutes(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-    val partners = answers.allPartnersAfterDelete(index)
+    val partners = answers.allPartnersAfterDelete(index, isHnsEnabled)
 
     if (partners.isEmpty) {
       NavigateTo.dontSave(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
-        mode, index, answers.allPartners(index).size, srn))
+        mode, index, answers.allPartners(index, isHnsEnabled).size, srn))
     }
     else if (partners.lengthCompare(appConfig.maxPartners) < 0) {
       answers.get(AddPartnersId(index)) match {
         case Some(true) =>
           NavigateTo.dontSave(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
-            index, answers.allPartners(index).size, srn))
+            index, answers.allPartners(index, isHnsEnabled).size, srn))
         case Some(false) =>
           mode match {
             case CheckMode | NormalMode =>

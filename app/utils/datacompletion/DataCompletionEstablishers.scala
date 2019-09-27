@@ -18,6 +18,7 @@ package utils.datacompletion
 
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.partnership._
+import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
 import models.{Mode, NormalMode}
@@ -128,7 +129,7 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneNumberId(index))
 
-  def isEstablisherPartnershipCompleteNonHns(index: Int, mode: Mode): Boolean =
+  def isEstablisherPartnershipCompleteNonHns(index: Int): Boolean =
     isListComplete(Seq(
       get(PartnershipDetailsId(index)).isDefined,
       get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
@@ -138,13 +139,46 @@ trait DataCompletionEstablishers extends DataCompletion {
       get(PartnershipContactDetailsId(index)).isDefined
     ))
 
-  def isEstablisherPartnershipComplete(index: Int, mode: Mode, isHnSEnabled: Boolean): Boolean =
+  def isEstablisherPartnershipComplete(index: Int, isHnSEnabled: Boolean): Boolean =
     if (isHnSEnabled)
       isComplete(Seq(
         isEstablisherPartnershipDetailsComplete(index),
         isEstablisherPartnershipAddressComplete(index),
         isEstablisherPartnershipContactDetailsComplete(index))).getOrElse(false)
     else
-      isEstablisherPartnershipCompleteNonHns(index, mode)
+      isEstablisherPartnershipCompleteNonHns(index)
+
+  def isEstablisherPartnershipAndPartnersComplete(index: Int, isHnSEnabled: Boolean): Boolean = {
+    val allPartners = allPartnersAfterDelete(index, isHnSEnabled)
+    val allPartnersCompleted = allPartners.nonEmpty & allPartners.forall(_.isCompleted)
+    val isPartnershipComplete = isEstablisherPartnershipComplete(index, isHnSEnabled)
+    allPartnersCompleted & isPartnershipComplete
+  }
+
+  //PARTNERS
+
+  def isPartnerDetailsComplete(estIndex: Int, parIndex: Int): Option[Boolean] =
+    isComplete(Seq(
+      Some(get(PartnerDOBId(estIndex, parIndex)).isDefined),
+      isAnswerComplete(PartnerHasNINOId(estIndex, parIndex), PartnerNewNinoId(estIndex, parIndex), Some(PartnerNoNINOReasonId(estIndex, parIndex))),
+      isAnswerComplete(PartnerHasUTRId(estIndex, parIndex), PartnerUTRId(estIndex, parIndex), Some(PartnerNoUTRReasonId(estIndex, parIndex)))
+    ))
+
+  def isPartnerCompleteHnS(estIndex: Int, parIndex: Int): Boolean =
+    isComplete(Seq(
+      isPartnerDetailsComplete(estIndex, parIndex),
+      isAddressComplete(PartnerAddressId(estIndex, parIndex), PartnerPreviousAddressId(estIndex, parIndex),
+        PartnerAddressYearsId(estIndex, parIndex), None),
+      isContactDetailsComplete(PartnerEmailId(estIndex, parIndex), PartnerPhoneId(estIndex, parIndex)))).getOrElse(false)
+
+  def isPartnerCompleteNonHnS(estIndex: Int, parIndex: Int): Boolean =
+    isListComplete(Seq(
+      get(PartnerDetailsId(estIndex, parIndex)).isDefined,
+      get(PartnerNinoId(estIndex, parIndex)).isDefined | get(PartnerNewNinoId(estIndex, parIndex)).isDefined,
+      get(PartnerUniqueTaxReferenceId(estIndex, parIndex)).isDefined | get(PartnerUTRId(estIndex, parIndex)).isDefined,
+      isAddressComplete(PartnerAddressId(estIndex, parIndex), PartnerPreviousAddressId(estIndex, parIndex),
+        PartnerAddressYearsId(estIndex, parIndex), None).getOrElse(false),
+      get(PartnerContactDetailsId(estIndex, parIndex)).isDefined
+    ))
 
 }

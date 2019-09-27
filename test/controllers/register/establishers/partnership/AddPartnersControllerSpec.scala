@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
 import models.person.PersonDetails
-import models.register.PartnerEntity
+import models.register.PartnerEntityNonHnS
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -66,7 +66,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
-  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
+  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntityNonHnS] = Nil) =
     addPartners(
       frontendAppConfig,
       form,
@@ -116,7 +116,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+            Seq(PartnerEntityNonHnS(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -145,7 +145,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+        Seq(PartnerEntityNonHnS(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
     "redirect to the next page when maximum partners exist and the user submits" in {
@@ -160,9 +160,9 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     "populate the view with partners when they exist" in {
       val partners = Seq(johnDoe, joeBloggs)
       val partnersViewModel = Seq(
-        PartnerEntity(
+        PartnerEntityNonHnS(
           PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntity(
+        PartnerEntityNonHnS(
           PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)

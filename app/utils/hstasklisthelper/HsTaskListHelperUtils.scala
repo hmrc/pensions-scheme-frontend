@@ -82,7 +82,7 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       createSpoke(answers, EstablisherPartnershipDetails, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherPartnershipAddress, mode, srn, name, index, isEstablisherNew),
       createSpoke(answers, EstablisherPartnershipContactDetails, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherPartnershipPartner, mode, srn, name, index, isEstablisherNew)
+      createDirectorPartnerSpoke(answers.allPartnersAfterDelete(index, true), EstablisherPartnershipPartner, mode, srn, name, index)
     )
   }
 

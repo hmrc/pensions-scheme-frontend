@@ -21,7 +21,7 @@ import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import models.NormalMode
 import models.person.PersonDetails
-import models.register.PartnerEntity
+import models.register.PartnerEntityNonHnS
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
@@ -42,10 +42,10 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   val form = new AddPartnersFormProvider()()
-  private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
-  private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
+  private val johnDoeEntity = PartnerEntityNonHnS(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
+  private val joeBloggsEntity = PartnerEntityNonHnS(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
 
-  private def createView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+  private def createView(partners: Seq[PartnerEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     () =>
       addPartners(
         frontendAppConfig,
@@ -58,7 +58,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         None
       )(fakeRequest, messages)
 
-  private def createUpdateView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+  private def createUpdateView(partners: Seq[PartnerEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     () =>
       addPartners(
         frontendAppConfig,
@@ -71,7 +71,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         Some("srn")
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+  private def createViewUsingForm(partners: Seq[PartnerEntityNonHnS] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
       addPartners(
         frontendAppConfig,
@@ -118,7 +118,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       submit.first().text() mustBe messages("messages__addPartners_add_partner")
     }
 
-    val partners: Seq[PartnerEntity] = Seq(johnDoeEntity, joeBloggsEntity)
+    val partners: Seq[PartnerEntityNonHnS] = Seq(johnDoeEntity, joeBloggsEntity)
 
     behave like entityList(createView(), createView(partners), partners, frontendAppConfig, noOfListItems = partners.size)
 

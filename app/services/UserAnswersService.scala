@@ -37,7 +37,7 @@ import models.{Mode, _}
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.UserAnswers
+import utils.{Toggles, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,6 +54,7 @@ trait UserAnswersService {
   protected def appConfig: FrontendAppConfig
 
   protected def fs: FeatureSwitchManagementService
+  private def isHnsEnabled = fs.get(Toggles.isHnSEnabled)
 
   case object MissingSrnNumber extends Exception
 
@@ -180,11 +181,11 @@ trait UserAnswersService {
         case IsPartnerCompleteId(partnershipIndex, _) =>
           setIsEstablisherComplete(
             ua,
-            ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted),
+            ua.allPartnersAfterDelete(partnershipIndex, isHnsEnabled).forall(_.isCompleted),
             IsEstablisherPartnershipCompleteId(partnershipIndex),
             partnershipIndex
           )
-        case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted) =>
+        case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex, isHnsEnabled).forall(_.isCompleted) =>
           ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
         case _ => ua
       }

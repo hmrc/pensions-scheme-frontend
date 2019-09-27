@@ -49,7 +49,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         case partnershipDetails =>
-          val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
+          val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index, false).map(_.name)
 
           Future.successful(Ok(partnershipReview(appConfig,
             index,
@@ -65,7 +65,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val allPartners = request.userAnswers.allPartnersAfterDelete(index)
+      val allPartners = request.userAnswers.allPartnersAfterDelete(index, false)
       val allPartnersCompleted = allPartners.nonEmpty & (allPartners.count(!_.isCompleted) == 0)
 
       val isPartnershipComplete = request.userAnswers.get(IsPartnershipCompleteId(index)).getOrElse(false)

@@ -140,32 +140,90 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
 
     "isEstablisherPartnershipComplete with hns toggle on" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, mode, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, true) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isEstablisherPartnershipComplete(2, mode, true) mustBe true
+        UserAnswers(userAnswersCompleted).isEstablisherPartnershipComplete(2, true) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, mode, true) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, true) mustBe false
       }
     }
 
     "isEstablisherPartnershipComplete with hns toggle off" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, mode, false) mustBe false
+        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, false) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherPartnershipComplete(2, mode, false) mustBe true
+        UserAnswers(userAnswersCompletedNonHnS).isEstablisherPartnershipComplete(2, false) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, mode, false) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, false) mustBe false
       }
     }
 
+  }
+
+  "Establisher Partner completion status should be returned correctly" when {
+    "isEstablisherPartnerDetailsComplete" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerDetailsComplete(2, 0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isPartnerDetailsComplete(2, 0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isPartnerDetailsComplete(2, 0) mustBe Some(false)
+      }
+    }
+
+    "isEstablisherPartnerCompleteHnS" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerCompleteHnS(2, 0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isPartnerCompleteHnS(2, 0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isPartnerCompleteHnS(2, 0) mustBe Some(false)
+      }
+    }
+
+    "isEstablisherPartnerCompleteNonHnS" must {
+      "return None when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerCompleteNonHnS(2, 0) mustBe None
+      }
+
+      "return Some(true) when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isPartnerCompleteNonHnS(2, 0) mustBe Some(true)
+      }
+
+      "return Some(false) when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isPartnerCompleteNonHnS(2, 0) mustBe Some(false)
+      }
+    }
+
+      "isEstablisherPartnershipAndPartnerComplete for toggle on" must {
+        "return None when all answers are missing" in {
+          UserAnswers(userAnswersUninitiated).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe None
+        }
+
+        "return Some(true) when all answers are present" in {
+          UserAnswers(userAnswersCompleted).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe Some(true)
+        }
+
+        "return Some(false) when some answer is missing" in {
+          UserAnswers(userAnswersInProgress).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe Some(false)
+        }
+    }
   }
 
   "Establisher Individual completion status should be returned correctly" when {

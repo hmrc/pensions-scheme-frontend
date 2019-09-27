@@ -84,7 +84,7 @@ class PartnerDetailsController @Inject()(
               userAnswersService.upsert(mode, srn, answers.json).flatMap {
                 cacheMap =>
                   val userAnswers = UserAnswers(cacheMap)
-                  val allPartners = userAnswers.allPartnersAfterDelete(establisherIndex)
+                  val allPartners = userAnswers.allPartnersAfterDelete(establisherIndex, false)
                   val allPartnersCompleted = allPartners.count(_.isCompleted) == allPartners.size
 
                   if (allPartnersCompleted) {

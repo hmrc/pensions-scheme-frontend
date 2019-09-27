@@ -239,9 +239,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         .get
 
       val partnerEntities = Seq(
-        PartnerEntity(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        PartnerEntity(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntity(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+        PartnerEntityNonHnS(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
+        PartnerEntityNonHnS(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
+        PartnerEntityNonHnS(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
       val result = userAnswers.allPartners(0)
 
