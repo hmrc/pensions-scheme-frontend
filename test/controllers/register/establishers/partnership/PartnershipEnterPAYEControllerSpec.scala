@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import forms.{PayeFormProvider, PayeVariationsFormProvider}
-import models.{CheckUpdateMode, Index, NormalMode}
+import controllers.actions._
+import forms.PayeVariationsFormProvider
+import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -30,10 +30,9 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
-import views.html.{paye, payeVariations}
+import views.html.payeVariations
 
 import scala.concurrent.Future
 
@@ -80,9 +79,9 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
 
   val viewModel = PayeViewModel(
     routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__common_partnershipPaye__title"),
-    heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
-    hint = Some(Message("messages__payeVariations__hint")),
+    title = Message("messages__partnership_enter_paye__title"),
+    heading = Message("messages__enter_paye__heading", partnershipName),
+    hint = Some(Message("messages__enter_paye__hint")),
     srn = srn,
     entityName = Some(partnershipName)
   )

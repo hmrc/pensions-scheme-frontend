@@ -30,9 +30,8 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
 import scala.concurrent.Future
@@ -67,8 +66,8 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with MustMatc
 }
 
 object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSpec {
-
-  val form = new EnterVATFormProvider()("test partnership name")
+  private val partnershipName = "test partnership name"
+  val form = new EnterVATFormProvider()(partnershipName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 
@@ -76,9 +75,9 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
 
   val viewModel = EnterVATViewModel(
     routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__common_partnershipVat__title"),
-    heading = Message("messages__dynamic_whatIsVAT", "test partnership name"),
-    hint = Message("messages__enterVAT__hint", "test partnership name"),
+    title = Message("messages__enterVAT__partnership_title"),
+    heading = Message("messages__enterVAT__heading", partnershipName),
+    hint = Message("messages__enterVAT__hint", partnershipName),
     subHeading = None,
     srn = srn
   )

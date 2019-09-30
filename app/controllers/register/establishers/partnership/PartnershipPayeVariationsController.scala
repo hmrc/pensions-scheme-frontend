@@ -50,9 +50,9 @@ class PartnershipPayeVariationsController @Inject()(
 
     PayeViewModel(
       postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
-      title = Message("messages__common_partnershipPaye__title"),
-      heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
-      hint = Some(Message("messages__payeVariations__hint")),
+      title = Message("messages__partnership_enter_paye__title"),
+      heading = Message("messages__enter_paye__heading", partnershipName),
+      hint = Some(Message("messages__enter_paye__hint")),
       srn = srn,
       entityName = Some(partnershipName)
     )

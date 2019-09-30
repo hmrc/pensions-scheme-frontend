@@ -428,6 +428,8 @@ messages__company_trustee_address_years__heading = Has {0} used this contact add
 
 messages__company_trustee_address_years__h1 =  Has {0} used this contact address for at least 1 year?
 
+messages__enter_utr__heading = What is {0}’s UTR?
+
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -1229,11 +1231,14 @@ messages__visuallyhidden__partnership__dormant = whether the partnership been do
 
 messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference (UTR)
 messages__visuallyhidden__dynamic_utr = the UTR for {0}
+messages__visuallyhidden__dynamic_unique_taxpayer_reference = {0}’s UTR
 messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
 messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
 messages__visuallyhidden__dynamic_vat = the VAT registration number for {0}
+messages__visuallyhidden__dynamic_vat_number = {0}’s VAT registration number
 messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
 messages__visuallyhidden__dynamic_paye = the employer PAYE reference for {0}
+messages__visuallyhidden__dynamic_paye_reference = {0}’s employer PAYE reference
 messages__visuallyhidden__dynamic_address = the address for {0}
 messages__visuallyhidden__dynamic_addressYears = whether {0} has used this address for at least 1 year
 messages__visuallyhidden__dynamic_previousAddress = the previous address for {0}
@@ -1738,17 +1743,18 @@ messages__enterVAT__partnership_title = What is the partnership’s VAT registra
 messages__enterVAT__heading = What is {0}’s VAT registration number?
 messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 
+messages__enter_paye__heading = What is {0}’s employer PAYE reference?
+messages__partnership_enter_paye__title = What is the partnership’s employer PAYE reference?
+messages__enter_paye__hint = For example, 123/AB456
+messages__enter_paye__p1 = You can tell us any employer PAYE reference if {0} has more then one.
+
 messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
 messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
 
-messages__payeVariations__company_title = What is the company’s employer PAYE reference?
-messages__payeVariations__partnership_title = What is the partnership’s employer PAYE reference?
-messages__payeVariations__heading = What is {0}’s employer PAYE reference?
-messages__payeVariations__hint = For example, 123/AB456
-messages__payeVariations__p1 = You can tell us any employer PAYE reference if {0} has more then one.
-messages__payeVariations__error_invalid = Enter {0}’s employer PAYE reference in the correct format
-messages__payeVariations__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
-messages__payeVariations__error_required = Enter an employer PAYE reference
+messages__company_enter_paye__title = What is the company’s employer PAYE reference?
+messages__enter_paye__error_invalid = Enter {0}’s employer PAYE reference in the correct format
+messages__enter_paye__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
+messages__enter_paye__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter a Unique Taxpayer Reference (UTR)
 messages__utr__error_maxLength = Unique Taxpayer Reference (UTR) must be 10 numbers
@@ -1854,7 +1860,7 @@ messages__partnershipHasPaye__error__required = Select whether the partnership h
 messages__partnership_email__title =  What is the partnership’s email address?
 
 messages__whatYouWillNeedPartnershipDetails__title = Partnership details
-messages__whatYouWillNeedPartnershipDetails__h1 = Partnership details for {0}
+messages__whatYouWillNeedPartnershipDetails__h1 = {0}’s partnership details
 messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one

@@ -46,8 +46,8 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
 
   private val viewModel = UTRViewModel(
     postCall = routes.PartnershipUTRController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__common_partnershipUtr__title"),
-    heading = Message("messages__dynamic_whatIsUTR", partnershipDetails.name),
+    title = Message("messages__partnershipUtr__title"),
+    heading = Message("messages__enter_utr__heading", partnershipDetails.name),
     hint = Message("messages_utr__hint"),
     srn = srn
   )

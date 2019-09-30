@@ -37,8 +37,8 @@ object PartnershipPayeVariationsId {
 
       def getLabel(index: Int, ua: UserAnswers): (String, String) = {
         val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__dynamic_whatIsPAYE", partnershipName),
-          messages("messages__visuallyhidden__dynamic_paye", partnershipName))
+        (messages("messages__enter_paye__heading", partnershipName),
+          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       }
 
       override def row(id: PartnershipPayeVariationsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
@@ -50,7 +50,7 @@ object PartnershipPayeVariationsId {
         val (label, hiddenLabel) = getLabel(id.index, ua)
         ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().row(id)(changeUrl, ua)
+            row(id)(changeUrl, ua)
           case _ =>
             ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
         }

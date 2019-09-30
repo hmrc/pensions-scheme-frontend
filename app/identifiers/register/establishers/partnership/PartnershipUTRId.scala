@@ -40,8 +40,8 @@ object PartnershipUTRId {
 
     def getLabel(index: Int, ua: UserAnswers): (String, String) = {
       val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-      (messages("messages__dynamic_whatIsUTR", partnershipName),
-        messages("messages__visuallyhidden__dynamic_utr", partnershipName))
+      (messages("messages__enter_utr__heading", partnershipName),
+        messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName))
     }
 
     new CheckYourAnswers[PartnershipUTRId] {

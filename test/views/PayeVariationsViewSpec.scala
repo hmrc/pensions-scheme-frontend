@@ -28,16 +28,16 @@ import views.html.payeVariations
 
 class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
-  val messageKeyPrefix = "payeVariations"
+  val messageKeyPrefix = "enter_paye"
   val postCall = Call("GET", "/")
   val companyName = "test company name"
   val form = new PayeVariationsFormProvider()(companyName)
 
   private def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = postCall,
-    title = Message("messages__payeVariations__company_title"),
-    heading = Message("messages__payeVariations__heading"),
-    hint = Some(Message("messages__payeVariations__hint")),
+    title = Message("messages__company_enter_paye__title"),
+    heading = Message("messages__enter_paye__heading", companyName),
+    hint = Some(Message("messages__enter_paye__hint")),
     srn = srn,
     entityName = Some(companyName)
   )
@@ -53,7 +53,7 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   "Paye view" when {
     "rendered" must {
-      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading", companyName))
 
       behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
@@ -62,7 +62,7 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
       "display correct p1" in {
         val doc = asDocument(createView()())
-        doc must haveDynamicText(Message("messages__payeVariations__p1", companyName))
+        doc must haveDynamicText(Message("messages__enter_paye__p1", companyName))
       }
     }
   }

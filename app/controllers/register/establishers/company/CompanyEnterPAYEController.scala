@@ -50,9 +50,9 @@ class CompanyEnterPAYEController @Inject()(
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__payeVariations__company_title"),
-      heading = Message("messages__payeVariations__heading", companyName),
-      hint = Some(Message("messages__payeVariations__hint")),
+      title = Message("messages__company_enter_paye__title"),
+      heading = Message("messages__enter_paye__heading", companyName),
+      hint = Some(Message("messages__enter_paye__hint")),
       srn = srn,
       entityName = Some(companyName)
     )

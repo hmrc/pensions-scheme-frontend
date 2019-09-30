@@ -160,12 +160,12 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        addLink(messages("messages__dynamic_whatIsUTR", partnershipName), partnershipUTRRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
-        addLink(messages("messages__dynamic_whatIsVAT", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_vat", partnershipName)),
-        addLink(messages("messages__dynamic_whatIsPAYE", partnershipName), partnershipPayeVariationsRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_paye", partnershipName))
+        addLink(messages("messages__enter_utr__heading", partnershipName), partnershipUTRRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName)),
+        addLink(messages("messages__enterVAT__heading", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)),
+        addLink(messages("messages__enter_paye__heading", partnershipName), partnershipPayeVariationsRoute(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       )
     ))
 
@@ -176,16 +176,16 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       Seq(
         booleanChangeLink(messages("messages__partnershipHasUtr__heading", partnershipName), hasPartnershipUTRRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__dynamic_whatIsUTR", partnershipName), partnershipUTRRoute(mode, srn), utr,
-          messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
+        stringChangeLink(messages("messages__enter_utr__heading", partnershipName), partnershipUTRRoute(mode, srn), utr,
+          messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName)),
         booleanChangeLink(messages("messages__vat__heading", partnershipName), hasPartnershipVatRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),
-        stringChangeLink(messages("messages__dynamic_whatIsVAT", partnershipName), partnershipEnterVATRoute(mode, srn), vat,
-          messages("messages__visuallyhidden__dynamic_vat", partnershipName)),
+        stringChangeLink(messages("messages__enterVAT__heading", partnershipName), partnershipEnterVATRoute(mode, srn), vat,
+          messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)),
         booleanChangeLink(messages("messages__hasPaye__h1", partnershipName), hasPartnershipPayeRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName)),
-        stringChangeLink(messages("messages__dynamic_whatIsPAYE", partnershipName), partnershipPayeVariationsRoute(mode, srn), paye,
-          messages("messages__visuallyhidden__dynamic_paye", partnershipName))
+        stringChangeLink(messages("messages__enter_paye__heading", partnershipName), partnershipPayeVariationsRoute(mode, srn), paye,
+          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       )
     ))
 
@@ -194,9 +194,9 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        stringNoLink(messages("messages__dynamic_whatIsUTR", partnershipName), utr),
-        stringNoLink(messages("messages__dynamic_whatIsVAT", partnershipName), vat),
-        stringNoLink(messages("messages__dynamic_whatIsPAYE", partnershipName), paye)
+        stringNoLink(messages("messages__enter_utr__heading", partnershipName), utr),
+        stringNoLink(messages("messages__enterVAT__heading", partnershipName), vat),
+        stringNoLink(messages("messages__enter_paye__heading", partnershipName), paye)
       )
     ))
 
