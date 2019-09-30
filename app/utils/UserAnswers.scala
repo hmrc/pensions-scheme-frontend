@@ -21,8 +21,8 @@ import identifiers.register.establishers.company.director.{DirectorNameId, IsNew
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId, PartnerNameId}
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}

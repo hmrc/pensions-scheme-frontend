@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId}
 import javax.inject.Inject
@@ -70,7 +69,6 @@ class PartnerDetailsController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(
@@ -83,22 +81,9 @@ class PartnerDetailsController @Inject()(
 
               userAnswersService.upsert(mode, srn, answers.json).flatMap {
                 cacheMap =>
-                  val userAnswers = UserAnswers(cacheMap)
-                  val allPartners = userAnswers.allPartnersAfterDelete(establisherIndex, false)
-                  val allPartnersCompleted = allPartners.count(_.isCompleted) == allPartners.size
-
-                  if (allPartnersCompleted) {
-                    Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, userAnswers)))
-                  } else {
-                    userAnswers.upsert(IsEstablisherCompleteId(establisherIndex))(false) { answers =>
-                      userAnswersService.upsert(mode, srn, answers.json).map { json =>
-                        Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, UserAnswers(json), srn))
-                      }
-                    }
-                  }
+                  Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, UserAnswers(cacheMap))))
               }
             }
           )
-        }
     }
 }

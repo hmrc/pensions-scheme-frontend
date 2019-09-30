@@ -27,8 +27,6 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   self: AllSpokes =>
 
-  protected val isHnSPhase2Enabled: Boolean
-
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,
                   mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {

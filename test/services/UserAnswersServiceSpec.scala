@@ -21,9 +21,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, partner}
 import identifiers.register.trustees
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
@@ -31,9 +28,7 @@ import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddres
 import models.AddressYears.{OverAYear, UnderAYear}
 import models._
 import models.address.Address
-import models.person.PersonDetails
 import models.requests.DataRequest
-import org.joda.time.LocalDate
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -288,49 +283,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
   }
 
-  ".setCompleteForAddress" must {
 
-    "return correct user answers with establisher complete flag and partnership complete flag if partnership is complete and all partners are complete" in {
-      val answers = UserAnswers().set(IsPartnerCompleteId(0, 0))(true).flatMap(
-        _.set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
-      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(
-        _.set(IsPartnershipCompleteId(0))(true)).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsPartnershipCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with only partnership complete flag if partnership is complete and all partners are not complete" in {
-      val answers = UserAnswers().set(IsPartnerCompleteId(0, 0))(false).flatMap(
-        _.set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate()))).asOpt.value
-      val expectedAnswers = answers.set(IsPartnershipCompleteId(0))(true).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsPartnershipCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with establisher complete flag if partnership is complete and all partners are complete" in {
-      val answers = UserAnswers().set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())).flatMap(
-        _.set(IsPartnershipCompleteId(0))(true)
-      ).asOpt.value
-      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).flatMap(_.set(IsPartnerCompleteId(0, 0))(true)).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(partner.IsPartnerCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return correct user answers with only partner complete flag if partnership is not complete but all partners are complete" in {
-      val answers = UserAnswers().set(PartnerDetailsId(0, 0))(PersonDetails("sr", None, "test", new LocalDate())
-      ).asOpt.value
-      val expectedAnswers = answers.set(partner.IsPartnerCompleteId(0, 0))(true).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(partner.IsPartnerCompleteId(0, 0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-
-    "return the user answers with establisher complete flag if establisher individual is complete" in {
-      val answers = UserAnswers(Json.obj())
-      val expectedAnswers = answers.set(IsEstablisherCompleteId(0))(true).asOpt.value
-
-      testServiceEstAndTrustees.setCompleteForAddress(Some(IsEstablisherCompleteId(0)), answers, UpdateMode, Some(srn)) mustEqual expectedAnswers
-    }
-  }
 
   "setAddressCompleteFlagAfterPreviousAddress" when {
     "in UpdateMode" must {

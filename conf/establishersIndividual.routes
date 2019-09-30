@@ -60,7 +60,6 @@ GET         /:index/individual/change/establishers-address-manual               
 POST        /:index/individual/change/establishers-address-manual                        controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/:mode/establishers-address-manual/:srn                    controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/individual/:mode/establishers-address-manual/:srn                    controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-GET         /:index/individual/:mode/establishers-address-manual-link/:srn               controllers.register.establishers.individual.AddressController.onClick(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/update/is-this-previous-address/:srn                      controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onPageLoad(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])
 POST        /:index/individual/update/is-this-previous-address/:srn                      controllers.register.establishers.individual.IndividualConfirmPreviousAddressController.onSubmit(mode: Mode = CheckUpdateMode, index:Index, srn: Option[String])

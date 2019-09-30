@@ -111,15 +111,4 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
     }
   }
 
-  protected def clear(id: TypedIdentifier[Address],
-                      selectedId: TypedIdentifier[TolerantAddress],
-                      mode: Mode, srn: Option[String], manualCall: Call)(implicit request: DataRequest[AnyContent]): Future[Result] =
-    if (mode == CheckUpdateMode || mode == UpdateMode) {
-      userAnswersService.remove(mode, srn, id).flatMap (_ =>
-        userAnswersService.remove(mode, srn, selectedId).map (_ =>
-          Redirect(manualCall)))
-    } else {
-      Future.successful(Redirect(manualCall))
-    }
-
 }

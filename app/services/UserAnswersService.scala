@@ -19,12 +19,12 @@ package services
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
 import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{IsPartnershipCompleteId => IsEstablisherPartnershipCompleteId, PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
@@ -178,27 +178,8 @@ trait UserAnswersService {
     addressCompletedId.fold(answers) { changeId =>
       val ua = answers.set(changeId)(true).asOpt.getOrElse(answers)
       changeId match {
-        case IsPartnerCompleteId(partnershipIndex, _) =>
-          setIsEstablisherComplete(
-            ua,
-            ua.allPartnersAfterDelete(partnershipIndex, isHnsEnabled).forall(_.isCompleted),
-            IsEstablisherPartnershipCompleteId(partnershipIndex),
-            partnershipIndex
-          )
-        case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex, isHnsEnabled).forall(_.isCompleted) =>
-          ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
         case _ => ua
       }
-    }
-  }
-
-  private def setIsEstablisherComplete(userAnswers: UserAnswers, allDirectorOrPartnerComplete: Boolean,
-                                       completeId: TypedIdentifier[Boolean], index: Int) = {
-    val partnershipCompleted = userAnswers.get(completeId).contains(true)
-    if (allDirectorOrPartnerComplete && partnershipCompleted) {
-      userAnswers.set(IsEstablisherCompleteId(index))(true).asOpt.getOrElse(userAnswers)
-    } else {
-      userAnswers
     }
   }
 
@@ -215,12 +196,6 @@ trait UserAnswersService {
   }
 
   def getCompleteId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
-    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherPartnershipCompleteId(index))
-    case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
-    case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
-    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherPartnershipCompleteId(index))
-    case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
-    case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
     case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
     case _ => None
   }

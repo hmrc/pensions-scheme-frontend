@@ -19,8 +19,8 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.establishers.partnership.{IsPartnershipCompleteId, PartnershipDetailsId, PartnershipReviewId}
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipReviewId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.AllowChangeHelper
-import utils.annotations.{EstablisherPartnership, NoSuspendedCheck, TaskList}
+import utils.annotations.{EstablisherPartnership, NoSuspendedCheck}
 import views.html.register.establishers.partnership.partnershipReview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,19 +65,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val allPartners = request.userAnswers.allPartnersAfterDelete(index, false)
-      val allPartnersCompleted = allPartners.nonEmpty & (allPartners.count(!_.isCompleted) == 0)
-
-      val isPartnershipComplete = request.userAnswers.get(IsPartnershipCompleteId(index)).getOrElse(false)
-
-      if (allPartnersCompleted & isPartnershipComplete) {
-        userAnswersService.setCompleteFlag(mode, srn, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
-          Redirect(navigator.nextPage(PartnershipReviewId(index), mode, request.userAnswers, srn))
-        }
-      }
-      else {
         Future.successful(Redirect(navigator.nextPage(PartnershipReviewId(index), mode, request.userAnswers, srn)))
-      }
   }
 
 }

@@ -170,8 +170,8 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
 
   "Establisher Partner completion status should be returned correctly" when {
     "isEstablisherPartnerDetailsComplete" must {
-      "return None when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isPartnerDetailsComplete(2, 0) mustBe None
+      "return Some(false) when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerDetailsComplete(2, 0) mustBe Some(false)
       }
 
       "return Some(true) when all answers are present" in {
@@ -184,44 +184,44 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
     }
 
     "isEstablisherPartnerCompleteHnS" must {
-      "return None when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isPartnerCompleteHnS(2, 0) mustBe None
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerCompleteHnS(2, 0) mustBe false
       }
 
-      "return Some(true) when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isPartnerCompleteHnS(2, 0) mustBe Some(true)
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompleted).isPartnerCompleteHnS(2, 0) mustBe true
       }
 
-      "return Some(false) when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isPartnerCompleteHnS(2, 0) mustBe Some(false)
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isPartnerCompleteHnS(2, 0) mustBe false
       }
     }
 
     "isEstablisherPartnerCompleteNonHnS" must {
-      "return None when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isPartnerCompleteNonHnS(2, 0) mustBe None
+      "return false when all answers are missing" in {
+        UserAnswers(userAnswersUninitiated).isPartnerCompleteNonHnS(2, 0) mustBe false
       }
 
-      "return Some(true) when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isPartnerCompleteNonHnS(2, 0) mustBe Some(true)
+      "return true when all answers are present" in {
+        UserAnswers(userAnswersCompletedNonHnS).isPartnerCompleteNonHnS(2, 0) mustBe true
       }
 
-      "return Some(false) when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isPartnerCompleteNonHnS(2, 0) mustBe Some(false)
+      "return false when some answer is missing" in {
+        UserAnswers(userAnswersInProgress).isPartnerCompleteNonHnS(2, 0) mustBe false
       }
     }
 
       "isEstablisherPartnershipAndPartnerComplete for toggle on" must {
-        "return None when all answers are missing" in {
-          UserAnswers(userAnswersUninitiated).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe None
+        "return false when all answers are missing" in {
+          UserAnswers(userAnswersUninitiated).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe false
         }
 
-        "return Some(true) when all answers are present" in {
-          UserAnswers(userAnswersCompleted).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe Some(true)
+        "return true when all answers are present" in {
+          UserAnswers(userAnswersCompleted).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe true
         }
 
-        "return Some(false) when some answer is missing" in {
-          UserAnswers(userAnswersInProgress).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe Some(false)
+        "return false when some answer is missing" in {
+          UserAnswers(userAnswersInProgress).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe false
         }
     }
   }
@@ -287,7 +287,7 @@ object DataCompletionEstablishersSpec extends JsonFileReader with DataCompletion
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
 
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
+  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payloadNonHns.json")
 
   private val emptyAnswers = UserAnswers()
 }
