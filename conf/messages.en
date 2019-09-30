@@ -1626,10 +1626,8 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it 
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
-messages__whatYouWillNeedIndividual__title = Details
-messages__whatYouWillNeedIndividual__h1 = Details for {0}
-messages__generic_whatYouWillNeedIndividual__heading = {0}’s details
-messages__generic_whatYouWillNeedIndividual__title = The Individual’s details
+messages__whatYouWillNeedIndividual__title = The Individual’s details
+messages__whatYouWillNeedIndividual__h1 = {0}’s details
 messages__whatYouWillNeedIndividual__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedIndividual__item1 = date of birth
 messages__whatYouWillNeedIndividual__item2 = National Insurance number, or reason why they do not have one
