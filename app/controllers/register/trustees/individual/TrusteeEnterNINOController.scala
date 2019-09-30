@@ -49,7 +49,7 @@ class TrusteeEnterNINOController @Inject()(
     NinoViewModel(
       postCall(mode, Index(index), srn),
       title = Message("messages__trustee__individual__nino__title"),
-      heading = Message("messages__trustee__individual__nino__heading", fullName),
+      heading = Message("messages__enterNino", fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn
     )

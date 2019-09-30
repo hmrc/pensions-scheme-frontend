@@ -51,7 +51,7 @@ class PartnershipNoUTRReasonController @Inject()(
     ReasonViewModel(
       postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__partnershipNoUtr__title"),
-      heading = Message("messages__noGenericUtr__heading", partnershipName),
+      heading = Message("messages__whyNoUTR", partnershipName),
       srn = srn
     )
 

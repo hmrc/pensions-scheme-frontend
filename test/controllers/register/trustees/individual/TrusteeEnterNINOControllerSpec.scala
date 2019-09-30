@@ -134,7 +134,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),
       title = messages("messages__trustee__individual__nino__title"),
-      heading = messages("messages__trustee__individual__nino__heading", trusteeName),
+      heading = messages("messages__enterNino", trusteeName),
       hint = "messages__common__nino_hint",
       srn = srn
     )

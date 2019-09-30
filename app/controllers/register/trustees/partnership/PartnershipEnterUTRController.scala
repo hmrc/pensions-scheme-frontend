@@ -49,7 +49,7 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
     UTRViewModel(
       postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__partnershipUtr__title"),
-      heading = Message("messages__trusteeUtr__h1", partnershipName),
+      heading = Message("messages__enterUTR", partnershipName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

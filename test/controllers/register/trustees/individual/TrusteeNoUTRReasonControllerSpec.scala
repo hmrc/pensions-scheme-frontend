@@ -48,8 +48,8 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
   private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noGenericUtr__title", Message("messages__theTrustee").resolve),
-    heading = Message("messages__noGenericUtr__heading", "Test Name"),
+    title = Message("messages__whyNoUTR", Message("messages__theTrustee").resolve),
+    heading = Message("messages__whyNoUTR", "Test Name"),
     srn = None
   )
 

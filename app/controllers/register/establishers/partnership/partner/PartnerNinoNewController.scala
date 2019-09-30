@@ -51,7 +51,7 @@ class PartnerNinoNewController @Inject()(
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
       title = Message("messages__partner_yes_nino__title"),
-      heading = Message("messages__common_nino__h1", personDetails.fullName),
+      heading = Message("messages__enterNino", personDetails.fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn
     )

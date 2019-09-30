@@ -40,15 +40,16 @@ import scala.concurrent.Future
 
 class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSugar {
 
+  val name = "Test Name"
   private val formProvider = new ReasonFormProvider()
-  private val form = formProvider("messages__reason__error_utrRequired", "Test Name")
+  private val form = formProvider("messages__reason__error_utrRequired", name)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   private val postCall = controllers.register.establishers.individual.routes.EstablisherNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = messages("messages__whyPersonNoUTR"),
-    heading = Message("messages__noGenericUtr__heading", "Test Name"),
+    title = messages("messages__whyNoUTR", Message("messages__theIndividual").resolve),
+    heading = Message("messages__whyNoUTR", name),
     srn = None
   )
 

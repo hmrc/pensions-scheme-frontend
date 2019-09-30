@@ -87,7 +87,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     val viewmodel = NinoViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
       title = messages("messages__director_yes_nino__title"),
-      heading = messages("messages__common_nino__h1", directorName),
+      heading = messages("messages__enterNino", directorName),
       hint = messages("messages__common__nino_hint"),
       srn = None
     )

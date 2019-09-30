@@ -49,7 +49,7 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
     UTRViewModel(
       postCall = routes.TrusteeEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__trusteeUtr__title"),
-      heading = Message("messages__trusteeUtr__h1", trusteeName),
+      heading = Message("messages__enterUTR", trusteeName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

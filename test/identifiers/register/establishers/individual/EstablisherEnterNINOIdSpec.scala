@@ -27,25 +27,25 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-class EstablisherNewNinoIdSpec extends SpecBase {
+class EstablisherEnterNINOIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__common_nino__h1", messages("messages__thePerson")), List("nino"), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_nino", messages("messages__thePerson"))))))
+    AnswerRow(messages("messages__enterNino", messages("messages__theIndividual")), List("nino"), false, Some(Link("site.change", onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", messages("messages__theIndividual"))))))
   )
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(EstablisherNewNinoId(0))(ReferenceValue("nino")).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(EstablisherEnterNINOId(0))(ReferenceValue("nino")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        EstablisherNewNinoId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        EstablisherEnterNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -56,7 +56,7 @@ class EstablisherNewNinoIdSpec extends SpecBase {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -66,26 +66,26 @@ class EstablisherNewNinoIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__common_nino__h1", messages("messages__thePerson")), List("nino"), false, None)
+        EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(messages("messages__enterNino", messages("messages__theIndividual")), List("nino"), false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
-        val answers = UserAnswers().set(EstablisherNewNinoId(0))(ReferenceValue("nino", true)).asOpt.get
+        val answers = UserAnswers().set(EstablisherEnterNINOId(0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
-        EstablisherNewNinoId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__common_nino__h1", messages("messages__thePerson")), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", messages("messages__thePerson"))))))))
+        EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+          AnswerRow(messages("messages__enterNino", messages("messages__theIndividual")), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", messages("messages__theIndividual"))))))))
       }
     }
   }

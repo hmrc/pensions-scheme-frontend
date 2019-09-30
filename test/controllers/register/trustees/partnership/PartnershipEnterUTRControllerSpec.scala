@@ -84,7 +84,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   val viewModel = UTRViewModel(
     routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),
     title = Message("messages__partnershipUtr__title"),
-    heading = Message("messages__trusteeUtr__h1", "test partnership name"),
+    heading = Message("messages__enterUTR", "test partnership name"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )

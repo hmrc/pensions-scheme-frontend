@@ -36,7 +36,7 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
   private val personDetails = PersonName("first", "last")
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = Message("messages__genericHasNino__h1", personDetails.fullName).resolve,
+      label = Message("messages__hasNino", personDetails.fullName).resolve,
       answer = Seq("site.no"),
       answerIsMessageKey = true,
       changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
@@ -46,7 +46,7 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
   "Cleanup" when {
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(EstablisherHasNINOId(0))(hasNino)
-      .flatMap(_.set(EstablisherNewNinoId(0))(ReferenceValue("test-nino", isEditable = true)))
+      .flatMap(_.set(EstablisherEnterNINOId(0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(EstablisherNoNINOReasonId(0))("reason"))
       .asOpt.value
 
@@ -55,7 +55,7 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
       val result: UserAnswers = answers().set(EstablisherHasNINOId(0))(false).asOpt.value
 
       "remove the data for `EstablisherNino`" in {
-        result.get(EstablisherNewNinoId(0)) mustNot be(defined)
+        result.get(EstablisherEnterNINOId(0)) mustNot be(defined)
       }
     }
 

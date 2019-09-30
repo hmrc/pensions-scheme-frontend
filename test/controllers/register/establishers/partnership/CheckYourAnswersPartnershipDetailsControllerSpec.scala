@@ -160,7 +160,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        addLink(messages("messages__dynamic_whatIsUTR", partnershipName), partnershipUTRRoute(UpdateMode, srn),
+        addLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
         addLink(messages("messages__dynamic_whatIsVAT", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_vat", partnershipName)),
@@ -176,7 +176,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       Seq(
         booleanChangeLink(messages("messages__partnershipHasUtr__heading", partnershipName), hasPartnershipUTRRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__dynamic_whatIsUTR", partnershipName), partnershipUTRRoute(mode, srn), utr,
+        stringChangeLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(mode, srn), utr,
           messages("messages__visuallyhidden__dynamic_utr", partnershipName)),
         booleanChangeLink(messages("messages__vat__heading", partnershipName), hasPartnershipVatRoute(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),
@@ -194,7 +194,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        stringNoLink(messages("messages__dynamic_whatIsUTR", partnershipName), utr),
+        stringNoLink(messages("messages__enterUTR", partnershipName), utr),
         stringNoLink(messages("messages__dynamic_whatIsVAT", partnershipName), vat),
         stringNoLink(messages("messages__dynamic_whatIsPAYE", partnershipName), paye)
       )
@@ -208,7 +208,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       Seq(
         booleanChangeLink(messages("messages__partnershipHasUtr__heading", partnershipName), hasPartnershipUTRRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__noGenericUtr__heading", partnershipName), noPartnershipUTRRoute(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoUTR", partnershipName), noPartnershipUTRRoute(mode, srn), reason,
           messages("messages__visuallyhidden__dynamic_noUtrReason", partnershipName)),
         booleanChangeLink(messages("messages__vat__heading", partnershipName), hasPartnershipVatRoute(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),

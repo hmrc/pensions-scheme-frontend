@@ -140,9 +140,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(trusteeDob)),
-        addLink(messages("messages__trustee__individual__nino__heading", name), nino(UpdateMode, srn),
+        addLink(messages("messages__enterNino", name), nino(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_nino", name)),
-        addLink(messages("messages__trusteeUtr__h1", name), utr(UpdateMode, srn),
+        addLink(messages("messages__enterUTR", name), utr(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_utr", name)))
     ))
 
@@ -151,8 +151,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(trusteeDob)),
-        stringLink(messages("messages__trustee__individual__nino__heading", name), nino),
-        stringLink(messages("messages__trusteeUtr__h1", name), utr)
+        stringLink(messages("messages__enterNino", name), nino),
+        stringLink(messages("messages__enterUTR", name), utr)
       )
     ))
 
@@ -163,13 +163,13 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       Seq(
         stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_dob", name)),
-        booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasNino", name), hasNino(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__trustee__individual__nino__heading", name), nino(mode, srn), nino,
+        stringChangeLink(messages("messages__enterNino", name), nino(mode, srn), nino,
           messages("messages__visuallyhidden__dynamic_nino", name)),
         booleanChangeLink(messages("messages__dynamic_hasUtr", name), hasUtr(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__trusteeUtr__h1", name), utr(mode, srn), utr,
+        stringChangeLink(messages("messages__enterUTR", name), utr(mode, srn), utr,
           messages("messages__visuallyhidden__dynamic_utr", name))
       )
       )
@@ -183,13 +183,13 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       Seq(
         stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_dob", name)),
-        booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasNino", name), hasNino(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__noGenericNino__heading", name), noNinoReason(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoNINO", name), noNinoReason(mode, srn), reason,
           messages("messages__visuallyhidden__dynamic_noNinoReason", name)),
         booleanChangeLink(messages("messages__dynamic_hasUtr", name), hasUtr(mode, srn), value = false,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__noGenericUtr__heading", name), noUtrReason(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoUTR", name), noUtrReason(mode, srn), reason,
           messages("messages__visuallyhidden__dynamic_noUtrReason", name))
       )
     ))

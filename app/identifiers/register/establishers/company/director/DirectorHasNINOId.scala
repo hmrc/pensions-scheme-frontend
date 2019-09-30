@@ -49,7 +49,7 @@ object DirectorHasNINOId {
     new CheckYourAnswersDirectors[DirectorHasNINOId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__nino")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasNino")
 
       private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasNino")

@@ -51,7 +51,7 @@ class CompanyEnterUTRController @Inject()(
     UTRViewModel(
       postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
       title = Message("messages__companyUtr__title"),
-      heading = Message("messages__companyUtr__heading", companyName),
+      heading = Message("messages__enterUTR", companyName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

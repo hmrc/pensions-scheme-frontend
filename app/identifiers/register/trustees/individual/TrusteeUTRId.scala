@@ -41,7 +41,7 @@ object TrusteeUTRId {
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeUTRId] = {
 
     def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int): String = messages("messages__trusteeUtr__h1", trusteeName(index))
+    def label(index: Int): String = messages("messages__enterUTR", trusteeName(index))
     def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_utr", trusteeName(index))
 
     new CheckYourAnswers[TrusteeUTRId] {

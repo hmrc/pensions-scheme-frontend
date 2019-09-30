@@ -49,8 +49,8 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__noGenericUtr__title", Message("messages__theTrustee").resolve),
-      heading = Message("messages__noGenericUtr__heading", trusteeName),
+      title = Message("messages__whyNoUTR", Message("messages__theTrustee").resolve),
+      heading = Message("messages__whyNoUTR", trusteeName),
       srn = srn
     )
   }

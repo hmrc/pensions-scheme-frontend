@@ -31,7 +31,7 @@ case class EstablisherHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true)  => userAnswers.remove(EstablisherNoNINOReasonId(index))
-      case Some(false) => userAnswers.remove(EstablisherNewNinoId(index))
+      case Some(false) => userAnswers.remove(EstablisherEnterNINOId(index))
       case _           => super.cleanup(value, userAnswers)
     }
   }
@@ -43,7 +43,7 @@ object EstablisherHasNINOId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasNINOId] = {
 
     def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int): Option[String] = Some(messages("messages__genericHasNino__h1", establisherName(index)))
+    def label(index: Int): Option[String] = Some(messages("messages__hasNino", establisherName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", establisherName(index)))
 
     new CheckYourAnswers[EstablisherHasNINOId] {

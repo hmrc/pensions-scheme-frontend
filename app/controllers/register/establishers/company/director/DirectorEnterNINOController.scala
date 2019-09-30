@@ -52,7 +52,7 @@ class DirectorEnterNINOController @Inject()(
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
       title = Message("messages__director_yes_nino__title"),
-      heading = Message("messages__common_nino__h1", name),
+      heading = Message("messages__enterNino", name),
       hint = hint,
       srn = srn
     )

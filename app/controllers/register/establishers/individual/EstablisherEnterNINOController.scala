@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNewNinoId}
+import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId}
 import javax.inject.Inject
 import models.person.PersonName
 import models.{Index, Mode}
@@ -48,8 +48,8 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
   private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
-      title = Message("messages__common_nino__title", Message("messages__thePerson").resolve),
-      heading = Message("messages__common_nino__h1", personDetails.fullName),
+      title = Message("messages__enterNino", Message("messages__theIndividual").resolve),
+      heading = Message("messages__enterNino", personDetails.fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn
     )
@@ -59,7 +59,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
       implicit request =>
         EstablisherNameId(index).retrieve.right.map {
           details =>
-            get(EstablisherNewNinoId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
+            get(EstablisherEnterNINOId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
         }
     }
 
@@ -67,7 +67,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       EstablisherNameId(index).retrieve.right.map {
         details =>
-          post(EstablisherNewNinoId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
+          post(EstablisherEnterNINOId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
       }
   }
 

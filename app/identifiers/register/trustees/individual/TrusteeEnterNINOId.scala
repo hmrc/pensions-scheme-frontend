@@ -45,7 +45,7 @@ object TrusteeEnterNINOId {
           userAnswers.get(TrusteeNameId(index)).map(_.fullName)
 
       def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
-      def label(index: Int): String = messages("messages__trustee__individual__nino__heading", trusteeName(index))
+      def label(index: Int): String = messages("messages__enterNino", trusteeName(index))
       def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_nino", trusteeName(index))
 
       override def row(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

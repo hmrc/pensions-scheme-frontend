@@ -51,7 +51,7 @@ class DirectorEnterUTRController @Inject()(
     UTRViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__directorUtr__title"),
-      heading = Message("messages__directorUtr__heading", directorName),
+      heading = Message("messages__enterUTR", directorName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

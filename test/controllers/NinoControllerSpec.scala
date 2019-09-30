@@ -42,8 +42,8 @@ class NinoControllerSpec extends ControllerSpecBase {
 
   val viewmodel = NinoViewModel(
     postCall = Call("POST", "/"),
-    title = Message("messages__common_nino__title", Message("messages__thePerson").resolve),
-    heading = Message("messages__common_nino__h1"),
+    title = Message("messages__enterNino", Message("messages__thePerson").resolve),
+    heading = Message("messages__enterNino"),
     hint = Message("messages__common__nino_hint"),
     srn = None
   )

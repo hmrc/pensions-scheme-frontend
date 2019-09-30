@@ -90,7 +90,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
     val viewmodel = NinoViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
       title = messages("messages__partner_yes_nino__title"),
-      heading = messages("messages__common_nino__h1", partnerName),
+      heading = messages("messages__enterNino", partnerName),
       hint = messages("messages__common__nino_hint"),
       srn = None
     )

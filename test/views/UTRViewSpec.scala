@@ -35,7 +35,7 @@ class UTRViewSpec extends QuestionViewBehaviours[ReferenceValue] {
   def viewmodel(srn:Option[String]): UTRViewModel = UTRViewModel(
     postCall = postCall,
     title = Message("messages__companyUtr__title"),
-    heading = Message("messages__companyUtr__heading"),
+    heading = Message("messages__enterUTR"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )
@@ -49,7 +49,7 @@ class UTRViewSpec extends QuestionViewBehaviours[ReferenceValue] {
   "UTR view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix,
-        pageHeader = messages(s"messages__${messageKeyPrefix}__heading"), "_guidance1", "_guidance2")
+        pageHeader = messages(s"messages__enterUTR"), "_guidance1", "_guidance2")
 
       behave like pageWithReturnLinkAndSrn(createView(), getReturnLinkWithSrn)
 

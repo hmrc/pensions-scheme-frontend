@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val establisherNinoRow = mode match {
         case UpdateMode | CheckUpdateMode if !userAnswers.get(IsEstablisherNewId(index)).getOrElse(false) =>
-          EstablisherNewNinoId(index).row(routes.EstablisherNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          EstablisherEnterNINOId(index).row(routes.EstablisherNinoNewController.onPageLoad(checkMode(mode), index, srn).url, mode)
         case _ =>
           EstablisherNinoId(index).row(routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
       }

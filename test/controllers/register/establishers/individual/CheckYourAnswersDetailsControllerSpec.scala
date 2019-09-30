@@ -120,7 +120,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     .set(EstablisherNameId(0))(establisherName).flatMap(
     _.set(EstablisherDOBId(0))(establisherDob).flatMap(
       _.set(EstablisherHasNINOId(0))(true).flatMap(
-        _.set(EstablisherNewNinoId(0))(ReferenceValue(nino)).flatMap(
+        _.set(EstablisherEnterNINOId(0))(ReferenceValue(nino)).flatMap(
           _.set(EstablisherHasUTRId(0))(true).flatMap(
             _.set(EstablisherUTRId(0))(ReferenceValue(utr))
           ))))).asOpt.value
@@ -144,10 +144,10 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(establisherDob)),
-        addLink(messages("messages__common_nino__h1", name), nino(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_nino", name)),
-        addLink(messages("messages__dynamic_whatIsUTR", name), utr(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_utr", name))
+        addLink(messages("messages__enterNino", name), nino(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
+        addLink(messages("messages__enterUTR", name), utr(UpdateMode, srn),
+          messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
     ))
 
@@ -156,8 +156,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(establisherDob)),
-        stringLink(messages("messages__common_nino__h1", name), nino),
-        stringLink(messages("messages__dynamic_whatIsUTR", name), utr)
+        stringLink(messages("messages__enterNino", name), nino),
+        stringLink(messages("messages__enterUTR", name), utr)
       )
     ))
 
@@ -167,15 +167,15 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       None,
       Seq(
         stringChangeLink(messages("messages__DOB__heading", name), dob(mode, srn), DateHelper.formatDate(establisherDob),
-          messages("messages__visuallyhidden__dynamic_dob", name)),
-        booleanChangeLink(messages("messages__genericHasNino__h1", name), hasNino(mode, srn), value = true,
+          messages("messages__visuallyhidden__dynamic_date_of_birth", name)),
+        booleanChangeLink(messages("messages__hasNino", name), hasNino(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__common_nino__h1", name), nino(mode, srn), nino,
-          messages("messages__visuallyhidden__dynamic_nino", name)),
-        booleanChangeLink(messages("messages__dynamic_hasUtr", name), hasUtr(mode, srn), value = true,
+        stringChangeLink(messages("messages__enterNino", name), nino(mode, srn), nino,
+          messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
+        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, srn), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__dynamic_whatIsUTR", name), utr(mode, srn), utr,
-          messages("messages__visuallyhidden__dynamic_utr", name))
+        stringChangeLink(messages("messages__enterUTR", name), utr(mode, srn), utr,
+          messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
     ))
 
@@ -189,27 +189,27 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
           label = messages("messages__DOB__heading", name),
           changeUrl = dob(mode, srn),
           ansOrReason = DateHelper.formatDate(establisherDob),
-          hiddenLabel = messages("messages__visuallyhidden__dynamic_dob", name)
+          hiddenLabel = messages("messages__visuallyhidden__dynamic_date_of_birth", name)
         ),
         booleanChangeLink(
-          label = messages("messages__genericHasNino__h1", name),
+          label = messages("messages__hasNino", name),
           changeUrl = hasNino(mode, srn),
           value = false,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_hasNino", name)
         ),
         stringChangeLink(
-          label = messages("messages__noGenericNino__heading", name),
+          label = messages("messages__whyNoNINO", name),
           changeUrl = noNinoReason(mode, srn), ansOrReason = reason,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_noNinoReason", name)
         ),
         booleanChangeLink(
-          label = messages("messages__dynamic_hasUtr", name),
+          label = messages("messages__hasUTR", name),
           changeUrl = hasUtr(mode, srn),
           value = false,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_hasUtr", name)
         ),
         stringChangeLink(
-          label = messages("messages__noGenericUtr__heading", name),
+          label = messages("messages__whyNoUTR", name),
           changeUrl = noUtrReason(mode, srn),
           ansOrReason = reason,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_noUtrReason", name)
