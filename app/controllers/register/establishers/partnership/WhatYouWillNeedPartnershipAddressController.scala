@@ -25,7 +25,8 @@ import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.whatYouWillNeedPartnershipAddress
+import viewmodels.Message
+import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,8 @@ class WhatYouWillNeedPartnershipAddressController  @Inject()(val appConfig: Fron
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedPartnershipAddress(appConfig, existingSchemeName, href, srn, partnershipName)))
+            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, partnershipName,
+              Message("messages__thePartnership"))))
         }
     }
 }
