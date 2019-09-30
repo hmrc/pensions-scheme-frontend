@@ -27,7 +27,7 @@ import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablishe
 import models.Mode._
 import models._
 import models.requests.IdentifiedRequest
-import navigators.establishers.partnership.EstablisherPartnershipDetailsNavigator
+import navigators.establishers.partnership.{EstablisherPartnershipDetailsNavigator, EstablishersPartnershipAddressNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -37,7 +37,8 @@ import scala.concurrent.ExecutionContext
 class EstablisherPartnershipFeatureSwitchNavigator @Inject()(
                                                               featureSwitchService: FeatureSwitchManagementService,
                                                               oldNavigator: EstablishersPartnershipNavigatorOld,
-                                                              detailsNavigator: EstablisherPartnershipDetailsNavigator
+                                                              detailsNavigator: EstablisherPartnershipDetailsNavigator,
+                                                              addressNavigator: EstablishersPartnershipAddressNavigator
                                                             ) extends Navigator {
 
   override def nextPageOptional(id: Identifier,
@@ -48,7 +49,8 @@ class EstablisherPartnershipFeatureSwitchNavigator @Inject()(
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier): Option[Call] =
     if (featureSwitchService.get(Toggles.isHnSEnabled)) {
-      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn)
+      detailsNavigator.nextPageOptional(id, mode, userAnswers, srn) orElse
+      addressNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
