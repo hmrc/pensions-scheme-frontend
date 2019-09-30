@@ -1860,8 +1860,8 @@ messages__partnershipHasPaye__error__required = Select whether the partnership h
 
 messages__partnership_email__title =  What is the partnership’s email address?
 
-messages__whatYouWillNeedPartnershipDetails__title = Partnership details
-messages__whatYouWillNeedPartnershipDetails__h1 = {0}’s partnership details
+messages__whatYouWillNeedPartnershipDetails__title = The Partnership’s details
+messages__whatYouWillNeedPartnershipDetails__h1 = {0}’s details
 messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
