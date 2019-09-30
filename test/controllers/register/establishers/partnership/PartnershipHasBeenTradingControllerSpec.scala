@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasBeenTradingFormProvider
-import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership._
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.partnership._
 import models.address.{Address, TolerantAddress}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
@@ -41,7 +41,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   private val srn = None
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, srn),
+    controllers.register.establishers.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, srn),
     title = Message("messages__partnership_trading_time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test partnership name"),
     hint = None
@@ -49,9 +49,9 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   val tolerantAddress = TolerantAddress(None, None, None, None, None, None)
   val address = Address("line 1", "line 2", None, None, None, "GB")
 
-  private def getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+  private def getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
-      TrusteesId.toString -> Json.arr(
+      EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
           PartnershipHasBeenTradingId.toString -> hasBeenTrading,
@@ -63,7 +63,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     ))
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasBeenTradingController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnershipHasBeenTradingController =
     new PartnershipHasBeenTradingController(
       frontendAppConfig,
       messagesApi,
@@ -111,7 +111,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     "clean up previous address, if user changes answer from yes to no" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller(getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -123,7 +123,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
 
     "not clean up for previous address, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteePartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

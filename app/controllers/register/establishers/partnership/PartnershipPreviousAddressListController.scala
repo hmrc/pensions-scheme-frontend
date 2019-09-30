@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -38,7 +37,7 @@ class PartnershipPreviousAddressListController @Inject()(
                                                           val appConfig: FrontendAppConfig,
                                                           val messagesApi: MessagesApi,
                                                           val userAnswersService: UserAnswersService,
-                                                          @EstablisherPartnership val navigator: Navigator,
+                                                          val navigator: Navigator,
                                                           authenticate: AuthAction,
                                                           getData: DataRetrievalAction,
                                                           allowAccess: AllowAccessActionProvider,
