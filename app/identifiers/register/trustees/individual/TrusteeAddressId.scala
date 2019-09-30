@@ -16,7 +16,6 @@
 
 package identifiers.register.trustees.individual
 
-import config.FeatureSwitchManagementService
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
@@ -33,8 +32,7 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
-                   featureSwitchManagementService: FeatureSwitchManagementService): CheckYourAnswers[TrusteeAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val name = (index: Int) =>

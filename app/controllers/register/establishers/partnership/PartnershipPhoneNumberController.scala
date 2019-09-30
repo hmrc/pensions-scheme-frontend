@@ -17,28 +17,64 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.PhoneNumberController
 import controllers.actions._
+import forms.PhoneFormProvider
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPhoneNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnershipPhoneNumberController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnershipPhoneNumberController @Inject()(val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
+                                                 override val userAnswersService: UserAnswersService,
                                                  allowAccess: AllowAccessActionProvider,
-                                                 requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+                                                 requireData: DataRequiredAction,
+                                                 override val navigator: Navigator,
+                                                 formProvider: PhoneFormProvider
+                                                )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  protected val form: Form[String] = formProvider()
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad())
-  }
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.PartnershipPhoneNumberController.onSubmit(mode, index, srn),
+              Message("messages__partnership_phone__title"),
+              Message("messages__common_phone__heading", details.name),
+              Some(Message("messages__phone__hint")),
+              srn = srn
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(PartnershipPhoneNumberId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            post(PartnershipPhoneNumberId(index), mode, form, vm)
+        }
+    }
 }

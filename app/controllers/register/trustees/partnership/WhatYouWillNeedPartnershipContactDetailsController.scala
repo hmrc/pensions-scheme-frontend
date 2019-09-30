@@ -25,8 +25,7 @@ import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipContactDetails
+import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,13 +42,8 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
-            val viewModel = CommonFormWithHintViewModel(
-              postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn),
-              title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
-              heading = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", partnershipName),
-              srn = srn
-            )
-            Future.successful(Ok(whatYouWillNeedPartnershipContactDetails(appConfig, existingSchemeName, viewModel)))
+            val href = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn)
+            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, partnershipName)))
         }
     }
 }

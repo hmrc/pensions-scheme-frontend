@@ -23,7 +23,8 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
-import views.html.register.whatYouWillNeedPartnershipAddress
+import viewmodels.Message
+import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
 
@@ -33,7 +34,8 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
   private def href: Call = controllers.register.establishers.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
   private def viewAsString(): String =
-    whatYouWillNeedPartnershipAddress(frontendAppConfig, None, href, None, establisherPartnership.name)(fakeRequest, messages).toString
+    whatYouWillNeedAddress(frontendAppConfig, None, href, None, establisherPartnership.name,
+      Message("messages__thePartnership"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipAddressController" when {
 

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package views.register.trustees.partnership
+package views.register
 
 import models.NormalMode
 import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.partnership.whatYouWillNeedPartnershipContactDetails
+import views.html.register.whatYouWillNeedPartnershipContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "whatYouWillNeedTrusteePartnershipContact"
+  private val messageKeyPrefix = "whatYouWillNeedPartnershipContact"
   private val index = 0
-  private val pageHeader = Message("messages__whatYouWillNeedTrusteePartnershipContact__h1", "test partnership")
+  private val pageHeader = Message("messages__whatYouWillNeedPartnershipContact__h1", "test partnership")
 
   def createView(): HtmlFormat.Appendable = whatYouWillNeedPartnershipContactDetails(
     frontendAppConfig,
     Some("testScheme"),
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
-      title = Message("messages__whatYouWillNeedTrusteePartnershipContact__title"),
+      title = Message("messages__whatYouWillNeedPartnershipContact__title"),
       heading = pageHeader,
       srn = None
     ))(fakeRequest, messages)
