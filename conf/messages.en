@@ -277,7 +277,7 @@ messages__error__company_name_invalid = The company name contains invalid charac
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 55 characters
 messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
-messages__establisher_address_years__title = Has {0} used this contact address for at least 1 year?
+messages__establisher_address_years__title = Has {0} used this address for at least 1 year?
 messages__establisher_address_years__formError = Select yes if {0} has been at this contact address for at least 1 year
 messages__common__under_a_year = No
 messages__common__over_a_year = Yes
@@ -419,14 +419,14 @@ messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique 
 messages__common__enrol_test__title = Enrol PSA to access Scheme Reg
 messages__common__psa_name = PSA Name
 
-messages__company_address_years__title =  Has the establisher used this contact address for at least 1 year?
-messages__company_address_years__h1 = Has {0} used this contact address for at least 1 year?
+messages__company_address_years__title =  Has the establisher used this address for at least 1 year?
+messages__company_address_years__h1 = Has {0} used this address for at least 1 year?
 messages__company_address_years__form_error = Select yes if {0} has used this registered address for at least 1 year
 
-messages__company_trustee_address_years__title =  Has the company used this contact address for at least 1 year?
-messages__company_trustee_address_years__heading = Has {0} used this contact address for at least 1 year?
+messages__company_trustee_address_years__title =  Has the company used this address for at least 1 year?
+messages__company_trustee_address_years__heading = Has {0} used this address for at least 1 year?
 
-messages__company_trustee_address_years__h1 =  Has {0} used this contact address for at least 1 year?
+messages__company_trustee_address_years__h1 =  Has {0} used this address for at least 1 year?
 
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
@@ -567,10 +567,10 @@ messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-messages__director_address_years__title = Has {0} been at this address for at least 1 year?
-messages__director_address_years__heading = Has {0} been at this address for at least 1 year?
-messages__director_address_years__cya = Has the director been at their address for at least 1 year?
-messages__director_address_years__form_error = Select yes if {0} has used this contact address for at least 1 year
+messages__director_address_years__title = Has {0} used this address for at least 1 year?
+messages__director_address_years__heading = Has {0} used this address for at least 1 year?
+messages__director_address_years__cya = Has the director used this address for at least 1 year?
+messages__director_address_years__form_error = Select yes if {0} has used this address for at least 1 year
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number
@@ -768,8 +768,8 @@ messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Ta
 messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
-messages__trusteeAddressYears__title = Has {0} used this contact address for at least 1 year?
-messages__trusteeAddressYears__heading = Has {0} used this contact address for at least 1 year?
+messages__trusteeAddressYears__title = Has {0} used this address for at least 1 year?
+messages__trusteeAddressYears__heading = Has {0} used this address for at least 1 year?
 messages__trusteeAddressYears__error_required = Select yes if {0} has been at this contact address for at least 1 year
 
 messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
@@ -1056,9 +1056,9 @@ messages__partnerPreviousAddress__heading = Enter the partner’s previous addre
 messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 
-messages__partner_address_years__title = Has {0} used this contact address for at least 1 year?
-messages__partner_address_years__heading = Has {0} used this contact address for at least 1 year?
-messages__partner_address_years__formError = Select yes if {0} has used this contact address for at least 1 year
+messages__partner_address_years__title = Has {0} used this address for at least 1 year?
+messages__partner_address_years__heading = Has {0} used this address for at least 1 year?
+messages__partner_address_years__formError = Select yes if {0} has used this address for at least 1 year
 messages__partner_address_years__cya = How long has the partner lived at this address?
 
 messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
