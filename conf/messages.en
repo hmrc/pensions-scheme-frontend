@@ -432,6 +432,7 @@ messages__enter_utr__heading = What is {0}’s UTR?
 
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
+messages__common__partnership_name = Partnership name
 messages__common__vat = VAT Registration number (optional)
 messages__common__vat_yes = Enter VAT number
 messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789

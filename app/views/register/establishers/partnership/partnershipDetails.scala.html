@@ -24,7 +24,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__partnershipDetails__title"),
+    title = messages("messages__partnershipName__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,11 +32,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = messages("messages__partnershipDetails__heading"))
+        @components.heading(headingKey = messages("messages__partnershipName__heading"))
 
         @components.input_text(
             field = form("partnershipName"),
-            label = messages("messages__partnershipDetails__label")
+            label = messages("messages__common__partnership_name"),
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button()
