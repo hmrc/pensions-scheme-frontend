@@ -52,7 +52,6 @@ class PartnershipPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -82,7 +81,7 @@ class PartnershipPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(heading, Message("messages__thePartnership").resolve),
       heading = Message(heading, name),
       srn = srn
     )

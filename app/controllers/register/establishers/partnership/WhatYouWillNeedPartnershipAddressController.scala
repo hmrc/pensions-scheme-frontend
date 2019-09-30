@@ -44,8 +44,7 @@ class WhatYouWillNeedPartnershipAddressController  @Inject()(val appConfig: Fron
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, partnershipName,
-              Message("messages__thePartnership"))))
+            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
         }
     }
 }
