@@ -37,16 +37,18 @@ abstract class HsTaskListHelper(answers: UserAnswers,
                                )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
   override val isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
-
+  protected val schemeName = answers.get(SchemeNameId).getOrElse("")
   protected val beforeYouStartLinkText: String
-  protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text")
-  protected lazy val aboutMembersAddLinkText: String = messages("messages__schemeTaskList__about_members_link_text_add")
-  protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  protected lazy val aboutBenefitsAndInsuranceAddLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
-  protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text")
-  protected lazy val aboutBankDetailsAddLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text_add")
-  protected lazy val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text")
-  protected lazy val workingKnowledgeAddLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text_add")
+
+
+  protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
+  protected lazy val aboutMembersAddLinkText: String = messages("messages__schemeTaskList__about_members_link_text_add", schemeName)
+  protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
+  protected lazy val aboutBenefitsAndInsuranceAddLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
+  protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
+  protected lazy val aboutBankDetailsAddLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)
+  protected lazy val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__change_details", schemeName)
+  protected lazy val workingKnowledgeAddLinkText: String = messages("messages__schemeTaskList__add_details", schemeName)
   protected lazy val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
   protected lazy val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   protected lazy val companyLinkText: String = messages("messages__schemeTaskList__company_link")

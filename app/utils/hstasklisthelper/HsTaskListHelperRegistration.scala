@@ -28,10 +28,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
                                    featureSwitchManagementService: FeatureSwitchManagementService
                                   )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
 
-  override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text")
 
+  override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text", schemeName)
   def taskList: SchemeDetailsTaskList = {
-    val schemeName = answers.get(SchemeNameId).getOrElse("")
+
     SchemeDetailsTaskList(
       SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
