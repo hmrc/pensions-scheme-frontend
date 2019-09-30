@@ -42,8 +42,10 @@ abstract class HsTaskListHelper(answers: UserAnswers,
 
 
   protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
+  protected lazy val aboutMembersViewLinkText: String = messages("messages__schemeTaskList__about_members_link_text_view", schemeName)
   protected lazy val aboutMembersAddLinkText: String = messages("messages__schemeTaskList__about_members_link_text_add", schemeName)
   protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
+  protected lazy val aboutBenefitsAndInsuranceViewLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName)
   protected lazy val aboutBenefitsAndInsuranceAddLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
   protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
   protected lazy val aboutBankDetailsAddLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)

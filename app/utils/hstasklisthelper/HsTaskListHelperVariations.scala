@@ -67,11 +67,11 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
-      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+      case Some(true) => Link(aboutMembersViewLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
+      case _ => Link(aboutMembersViewLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
+    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceViewLinkText,
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
 
     Seq(SchemeDetailsTaskListSection(None, membersLink, None),
