@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.register.whatYouWillNeedPartnershipContactDetails
+import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
   private val index = 0
@@ -32,15 +32,13 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
 
   def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedPartnershipContactDetails(
+  def viewAsString(): String = whatYouWillNeedContactDetails(
     frontendAppConfig,
     None,
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
-      title = Message("messages__whatYouWillNeedPartnershipContact__title"),
-      heading = Message("messages__whatYouWillNeedPartnershipContact__h1", trusteePartnership.name),
-      srn = None
-    ))(fakeRequest, messages).toString
+    controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
+    None,
+    trusteePartnership.name
+    )(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipContactDetailsController" when {
 
