@@ -38,8 +38,6 @@ class PartnershipEmailIdSpec extends SpecBase {
       UserAnswers().set(PartnershipEmailId(index))(email).asOpt.value
         .establisherPartnershipDetails(index, partnershipDetails), PsaId("A0000000"))
 
-    implicit val userAnswers: UserAnswers = request.userAnswers
-
     Seq(NormalMode, UpdateMode).foreach { mode =>
 
       s"in ${mode.toString} mode" must {

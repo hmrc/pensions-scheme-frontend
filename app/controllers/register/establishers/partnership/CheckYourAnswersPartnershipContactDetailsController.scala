@@ -48,8 +48,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        val notNewEstablisher = !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
+        val notNewEstablisher = !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
         val contactDetailsSection = AnswerSection(
           None,
           PartnershipEmailId(index).row(routes.PartnershipEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
