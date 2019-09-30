@@ -44,7 +44,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -54,7 +54,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -78,7 +78,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__partnership_enter_paye__title"),
     heading = Message("messages__enter_paye__heading", partnershipName),
     hint = Some(Message("messages__enter_paye__hint")),

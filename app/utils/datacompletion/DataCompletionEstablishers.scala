@@ -115,9 +115,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId(index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
       )
     )
 
@@ -131,9 +131,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipCompleteNonHns(index: Int, mode: Mode): Boolean =
     isListComplete(Seq(
       get(PartnershipDetailsId(index)).isDefined,
-      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
+      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipEnterUTRId(index)).isDefined,
       get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
-      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
+      get(PartnershipPayeId(index)).isDefined | get(PartnershipEnterPAYEId(index)).isDefined,
       isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
       get(PartnershipContactDetailsId(index)).isDefined
     ))

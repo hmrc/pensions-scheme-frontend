@@ -25,18 +25,18 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class PartnershipUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipUTRId.toString
+case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipEnterUTRId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnershipNoUTRReasonId(this.index))
 }
 
-object PartnershipUTRId {
+object PartnershipEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipUTRId] = {
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
 
     def getLabel(index: Int, ua: UserAnswers): (String, String) = {
       val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
@@ -44,19 +44,19 @@ object PartnershipUTRId {
         messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName))
     }
 
-    new CheckYourAnswers[PartnershipUTRId] {
-      override def row(id: PartnershipUTRId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+    new CheckYourAnswers[PartnershipEnterUTRId] {
+      override def row(id: PartnershipEnterUTRId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, ua)
-        ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().row(id)(changeUrl, ua)
+        ReferenceValueCYA[PartnershipEnterUTRId](label, hiddenLabel)().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: PartnershipUTRId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: PartnershipEnterUTRId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, ua)
         ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, ua)
           case _ =>
-            ReferenceValueCYA[PartnershipUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
+            ReferenceValueCYA[PartnershipEnterUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
         }
       }
     }

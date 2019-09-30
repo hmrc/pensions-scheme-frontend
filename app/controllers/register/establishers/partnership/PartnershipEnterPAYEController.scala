@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.PayeVariationsController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeVariationsFormProvider
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPayeVariationsId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId}
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -33,7 +33,7 @@ import viewmodels.{Message, PayeViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipPayeVariationsController @Inject()(
+class PartnershipEnterPAYEController @Inject()(
                                                      val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      override val userAnswersService: UserAnswersService,
@@ -49,7 +49,7 @@ class PartnershipPayeVariationsController @Inject()(
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
 
     PayeViewModel(
-      postCall = routes.PartnershipPayeVariationsController.onSubmit(mode, index, srn),
+      postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__partnership_enter_paye__title"),
       heading = Message("messages__enter_paye__heading", partnershipName),
       hint = Some(Message("messages__enter_paye__hint")),
@@ -62,7 +62,7 @@ class PartnershipPayeVariationsController @Inject()(
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            get(PartnershipPayeVariationsId(index), form(details.name), viewmodel(mode, index, srn, details.name))
+            get(PartnershipEnterPAYEId(index), form(details.name), viewmodel(mode, index, srn, details.name))
         }
     }
 
@@ -70,7 +70,7 @@ class PartnershipPayeVariationsController @Inject()(
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         details =>
-          post(PartnershipPayeVariationsId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
+          post(PartnershipEnterPAYEId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
       }
   }
 }
