@@ -21,21 +21,29 @@ import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
+import views.html.register.establishers.individual.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeedIndividual"
+  val messageKeyPrefix = "generic_whatYouWillNeedIndividual"
   val establisherName = "Test Name"
 
   lazy val href: Call = routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () =>
+    whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, establisherName)(fakeRequest, messages)
 
-  "whatYouWillNeedEstablisherIndividualDetails view" must {
+  "WhatYouWillNeedIndividualDetailsView" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", establisherName),
-      "_item1", "_item2", "_item3")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", establisherName))
+
+    "display the correct p1 and bullet points" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedIndividual__p1", establisherName))
+      assertContainsText(doc, messages("messages__whatYouWillNeedIndividual__item1"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedIndividual__item2"))
+      assertContainsText(doc, messages("messages__whatYouWillNeedIndividual__item3"))
+    }
 
     behave like pageWithSubmitButton(createView)
 
