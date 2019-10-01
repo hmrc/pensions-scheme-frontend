@@ -58,7 +58,7 @@ trait AllSpokes {
       )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_details", name),
+      changeContent( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -78,7 +78,7 @@ trait AllSpokes {
     )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_address", name),
+      changeContent( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -98,7 +98,7 @@ trait AllSpokes {
     )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_contact", name),
+      changeContent( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       addLinkUrl(mode, srn, index).url
     )
   }
