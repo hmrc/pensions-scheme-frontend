@@ -1336,8 +1336,11 @@ messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
 
 messages__schemeTaskList__change_details = Change details for {0}
+messages__schemeTaskList__view_details = View details for {0}
 messages__schemeTaskList__change_address = Change address for {0}
+messages__schemeTaskList__view_address = View address for {0}
 messages__schemeTaskList__change_contact = Change contact details for {0}
+messages__schemeTaskList__view_contact = View contact details for {0}
 
 messages__schemeTaskList__continue_details = Continue adding details for {0}
 messages__schemeTaskList__continue_address = Continue adding address for {0}
@@ -1347,7 +1350,9 @@ messages__schemeTaskList__add_directors = Add directors for {0}
 messages__schemeTaskList__add_partners = Add partners for {0}
 
 messages__schemeTaskList__change_directors = Change directors for {0}
+messages__schemeTaskList__view_directors = View directors for {0}
 messages__schemeTaskList__change_partners = Change partners for {0}
+messages__schemeTaskList__view_partners = View partners for {0}
 
 messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s details
 messages__schemeTaskList__sectionIndividual_change_address = Change {0}’s address

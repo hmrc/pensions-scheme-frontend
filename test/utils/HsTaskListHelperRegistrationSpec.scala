@@ -22,6 +22,9 @@ import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models._
 import models.person.PersonDetails
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
+import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
@@ -190,6 +193,40 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "trustees" must {
 
     behave like trusteesSectionHnS(NormalMode, None)
+
+    "return the seq of trustees sub sections when all spokes are completed" in {
+      val userAnswers = allAnswersHnS
+      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
+      helper.trustees(userAnswers, NormalMode, None) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(NormalMode, 0, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
+                trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true))
+            ), Some("test company")),
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
+              trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
+                trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(NormalMode, 1, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
+                trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true))
+            ), Some("firstName lastName")),
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
+              trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
+                trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(NormalMode, 2, None).url), Some(true)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
+                trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true))
+            ), Some("test partnership"))
+        )
+    }    
+    
   }
 
   "declaration" must {

@@ -144,39 +144,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
             ), Some("test company"))
         )
     }
-
-    "return the seq of trustees sub sections when all spokes are completed" in {
-      val userAnswers = allAnswersHnS
-      val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
-      helper.trustees(userAnswers, mode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(Some(true)))
-            ), Some("test company")),
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-              trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 1, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 1, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 1, srn).url), modeBasedCompletion(Some(true)))
-            ), Some("firstName lastName")),
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
-              trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
-                trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(Some(true))),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
-                trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(Some(true)))
-            ), Some("test partnership"))
-        )
-    }
   }
 
   protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
