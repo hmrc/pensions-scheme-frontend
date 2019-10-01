@@ -1025,7 +1025,6 @@ messages__error__has_nino_partner = Select yes if the partner has a National Ins
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
 
 messages__enterNino = What is {0}’s National Insurance number?
-messages__enterNino__title = What is {0}’s National Insurance number?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
 messages__director_yes_nino__title = What is the director’s National Insurance number?
@@ -1626,8 +1625,7 @@ messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it 
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 messages__whatYouWillNeedTrusteeCompany__p2 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
 
-messages__whatYouWillNeedIndividual__title = The Individual’s details
-messages__whatYouWillNeedIndividual__h1 = {0}’s details
+messages__individualDetailsFor = {0}’s details
 messages__whatYouWillNeedIndividual__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedIndividual__item1 = date of birth
 messages__whatYouWillNeedIndividual__item2 = National Insurance number, or reason why they do not have one
