@@ -21,12 +21,12 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__companyDetailsFor", messages("messages__theCompany")).capitalize,
+    title = messages("messages__detailsFor", messages("messages__theCompany")).capitalize,
     appConfig = appConfig,
     bodyClasses = None
 ) {
 
-    @components.heading(headingKey = messages("messages__companyDetailsFor", companyName))
+    @components.heading(headingKey = messages("messages__detailsFor", companyName))
 
     <p>@messages("messages__whatYouWillNeedEstablisherCompany__lede", companyName)</p>
 

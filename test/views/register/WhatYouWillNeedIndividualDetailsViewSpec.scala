@@ -37,8 +37,8 @@ class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
   "WhatYouWillNeedIndividualDetailsView" must {
 
     behave like normalPageWithTitle(createView, messageKeyPrefix,
-      messages("messages__individualDetailsFor", messages("messages__theIndividual")).capitalize,
-      Message(s"messages__individualDetailsFor", establisherName),
+      messages("messages__detailsFor", messages("messages__theIndividual")).capitalize,
+      Message(s"messages__detailsFor", establisherName),
       "_item1", "_item2", "_item3")
 
     behave like pageWithSubmitButton(createView)

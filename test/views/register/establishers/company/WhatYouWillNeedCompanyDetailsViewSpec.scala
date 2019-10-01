@@ -35,8 +35,8 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
   "WhatYouWillNeedCompanyDetails view" must {
 
     behave like normalPageWithTitle(createView, messageKeyPrefix,
-      messages("messages__companyDetailsFor", token),
-      messages("messages__companyDetailsFor", companyName),
+      messages("messages__detailsFor", token),
+      messages("messages__detailsFor", companyName),
       "_item1", "_item2", "_item3", "_item4", "_p1")
 
     "display the correct lede" in {

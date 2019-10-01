@@ -24,9 +24,9 @@ import viewmodels.Message
 
 class PayeVariationsFormProviderSpec extends PayeBehaviours with SpecBase{
 
-  private val requiredPayeKey = "messages__enter_paye__error_required"
-  private val payeLengthKey = Message("messages__enter_paye__error_length", "test company").resolve
-  private val invalidPayeKey = Message("messages__enter_paye__error_invalid", "test company").resolve
+  private val requiredPayeKey = "messages__enterPAYE__error_required"
+  private val payeLengthKey = Message("messages__enterPAYE__error_length", "test company").resolve
+  private val invalidPayeKey = Message("messages__enterPAYE__error_invalid", "test company").resolve
 
   "A form with Paye" should {
     val mapping = payeStringMapping(

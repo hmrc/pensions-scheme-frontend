@@ -50,7 +50,7 @@ class CompanyEnterPAYEController @Inject()(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
       heading = Message("messages__enterPAYE", companyName),
-      hint = Some(Message("messages__enter_paye__hint")),
+      hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,
       entityName = Some(companyName)
     )

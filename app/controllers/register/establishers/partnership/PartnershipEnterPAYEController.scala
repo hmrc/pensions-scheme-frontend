@@ -52,7 +52,7 @@ class PartnershipEnterPAYEController @Inject()(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
       heading = Message("messages__enterPAYE", partnershipName),
-      hint = Some(Message("messages__enter_paye__hint")),
+      hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,
       entityName = Some(partnershipName)
     )

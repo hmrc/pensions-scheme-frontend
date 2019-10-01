@@ -37,7 +37,7 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     postCall = postCall,
     title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
     heading = Message("messages__enterPAYE", companyName),
-    hint = Some(Message("messages__enter_paye__hint")),
+    hint = Some(Message("messages__enterPAYE__hint")),
     srn = srn,
     entityName = Some(companyName)
   )
@@ -64,7 +64,7 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
       "display correct p1" in {
         val doc = asDocument(createView()())
-        doc must haveDynamicText(Message("messages__enter_paye__p1", companyName))
+        doc must haveDynamicText(Message("messages__enterPAYE__p1", companyName))
       }
     }
   }

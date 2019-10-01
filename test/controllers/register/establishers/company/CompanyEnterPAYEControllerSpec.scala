@@ -80,7 +80,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
     routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
     heading = Message("messages__enterPAYE", "test company name"),
-    hint = Some(Message("messages__enter_paye__hint")),
+    hint = Some(Message("messages__enterPAYE__hint")),
     srn = srn,
     entityName = Some("test company name")
   )

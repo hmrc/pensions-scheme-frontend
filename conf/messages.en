@@ -427,8 +427,6 @@ messages__company_trustee_address_years__heading = Has {0} used this address for
 
 messages__company_trustee_address_years__h1 =  Has {0} used this address for at least 1 year?
 
-messages__enter_utr__heading = What is {0}’s UTR?
-
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__partnership_name = Partnership name
@@ -1561,7 +1559,7 @@ uKBankDetails.hns_checkYourAnswersLabel = What are the bank account details for 
 messages__visuallyhidden__hns_uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
-messages__companyDetailsFor = {0}’s details
+messages__detailsFor = {0}’s details
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us {0}’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
@@ -1616,7 +1614,6 @@ messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR)
 messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it has one
 messages__whatYouWillNeedTrusteeCompany__item4 = employer PAYE reference, if it has one
 
-messages__individualDetailsFor = {0}’s details
 messages__whatYouWillNeedIndividual__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedIndividual__item1 = date of birth
 messages__whatYouWillNeedIndividual__item2 = National Insurance number, or reason why they do not have one
@@ -1723,15 +1720,15 @@ messages__enterVAT = What is {0}’s VAT registration number?
 messages__enterVAT__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 
 messages__enterPAYE = What is {0}’s employer PAYE reference?
-messages__enter_paye__hint = For example, 123/AB456
-messages__enter_paye__p1 = You can tell us any employer PAYE reference if {0} has more then one.
+messages__enterPAYE__hint = For example, 123/AB456
+messages__enterPAYE__p1 = You can tell us any employer PAYE reference if {0} has more then one.
 
 messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
 messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
 
-messages__enter_paye__error_invalid = Enter {0}’s employer PAYE reference in the correct format
-messages__enter_paye__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
-messages__enter_paye__error_required = Enter an employer PAYE reference
+messages__enterPAYE__error_invalid = Enter {0}’s employer PAYE reference in the correct format
+messages__enterPAYE__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
+messages__enterPAYE__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter a Unique Taxpayer Reference (UTR)
 messages__utr__error_maxLength = Unique Taxpayer Reference (UTR) must be 10 numbers
@@ -1813,8 +1810,6 @@ messages__whatYouWillNeedPartnershipContact__item1 = contact email address
 messages__whatYouWillNeedPartnershipContact__item2 = contact phone number
 messages__partnership_email__title =  What is the partnership’s email address?
 
-messages__whatYouWillNeedPartnershipDetails__title = The Partnership’s details
-messages__whatYouWillNeedPartnershipDetails__h1 = {0}’s details
 messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedPartnershipDetails__item1 = Unique Taxpayer Reference (UTR), or reason why it does not have one
