@@ -61,7 +61,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         case _ =>
           EstablisherNinoId(index).row(routes.EstablisherNinoController.onPageLoad(checkMode(mode), index, srn).url, mode)
       }
-
       val sections = Seq(
         AnswerSection(None,
           EstablisherDetailsId(index).row(

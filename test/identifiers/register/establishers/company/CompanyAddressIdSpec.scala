@@ -63,7 +63,7 @@ class CompanyAddressIdSpec extends SpecBase {
 
           CompanyAddressId(0).row(onwardUrl, mode) must equal(Seq(
             AnswerRow(
-              Message("messages__establisherConfirmAddress__cya_label", "test company"),
+              Message("messages__address__cya", "test company"),
               addressAnswer(address),
               false,
               Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_address", companyName))))

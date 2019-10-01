@@ -42,7 +42,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__trustee_partnership_trading-time__title"),
+    title = Message("messages__partnership_trading_time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test partnership name"),
     hint = None
   )
