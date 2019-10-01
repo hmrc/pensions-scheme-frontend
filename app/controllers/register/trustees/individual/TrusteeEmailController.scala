@@ -52,7 +52,7 @@ class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
           details =>
             CommonFormWithHintViewModel(
               routes.TrusteeEmailController.onSubmit(mode, index, srn),
-              Message("messages__enterEmail", Message("messages__common__address_years__trustee").resolve),
+              Message("messages__enterEmail", Message("messages__theIndividual").resolve),
               Message("messages__enterEmail", details.fullName),
               Some(Message("messages__email__hint")),
               srn = srn

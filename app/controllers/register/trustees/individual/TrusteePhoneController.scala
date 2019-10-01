@@ -54,7 +54,7 @@ class TrusteePhoneController @Inject()(
           details =>
             CommonFormWithHintViewModel(
               routes.TrusteePhoneController.onSubmit(mode, index, srn),
-              Message("messages__enterPhoneNumber", Message("messages__common__address_years__trustee").resolve),
+              Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
               Message("messages__enterPhoneNumber", details.fullName),
               Some(Message("messages__phone__hint")),
               srn = srn

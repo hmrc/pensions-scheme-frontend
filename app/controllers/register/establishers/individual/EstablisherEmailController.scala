@@ -53,7 +53,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
           name =>
             CommonFormWithHintViewModel(
               EstablisherEmailController.onSubmit(mode, index, srn),
-              Message("messages__individual_email__title"),
+              Message("messages__enterEmail", Message("messages__theIndividual").resolve),
               Message("messages__enterEmail", name.fullName),
               Some(Message("messages__email_dynamic__hint", name.fullName)),
               srn = srn

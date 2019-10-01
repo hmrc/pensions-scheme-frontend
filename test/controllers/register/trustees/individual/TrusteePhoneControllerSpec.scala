@@ -59,7 +59,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
       form,
       CommonFormWithHintViewModel(
         routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__enterPhoneNumber", Message("messages__common__address_years__trustee").resolve),
+        Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
         Message("messages__enterPhoneNumber", "first last"),
         Some(Message("messages__phone__hint")),
         None

@@ -56,7 +56,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       form,
       CommonFormWithHintViewModel(
         routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
-        Message("messages__establisher_phone__title"),
+        Message("messages__enterPhoneNumber", Message("messages__theCompany").resolve),
         Message("messages__enterPhoneNumber", "test company name"),
         Some(Message("messages__phone__hint")),
         None
