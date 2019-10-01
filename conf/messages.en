@@ -1671,6 +1671,7 @@ messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
 messages__thePartnership = the partnership
+messages__thePartner = the partner
 messages__thePerson = the person
 messages__theIndividual = the individual
 
@@ -1880,3 +1881,5 @@ messages__whatYouWillNeedContact__h1 = {0}’s contact details
 messages__whatYouWillNeedContact__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
+
+messages__hasPartnerUtr__title = Does the partner have a UTR?
