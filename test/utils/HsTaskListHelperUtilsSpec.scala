@@ -444,11 +444,11 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
 
   private def expectedCompletedTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] =
     Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
+    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
+    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
+    EntitySpoke(Link(changeOrView(srn, "test partnership", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 }
