@@ -296,6 +296,9 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   protected def answersComplete = UserAnswers(readJsonFromFile("/payload.json"))
   protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
 
+  private def changeOrView(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
+    messages(if(srn.isDefined) variationsKey else registrationKey, name)
+
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 
   def subscriptionHelper: HsTaskListHelper = new HsTaskListHelperRegistration(UserAnswers(), fakeFeatureSwitch)
@@ -431,15 +434,16 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
     )
 
   def expectedCompletedTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test individual"),
+    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test individual"),
+    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test individual"),
+    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_contact","messages__schemeTaskList__view_contact"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 
-  def expectedCompletedTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
+  private def expectedCompletedTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] =
+    Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),

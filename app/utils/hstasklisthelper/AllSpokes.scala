@@ -33,7 +33,7 @@ trait AllSpokes {
   implicit val messages: Messages
 
   trait Spoke {
-    protected def changeMessageKey(name:String, srn:Option[String], registration: =>String, variations: =>String):String =
+    protected def changeContent(name:String, srn:Option[String], registration: =>String, variations: =>String):String =
       messages(if (srn.isDefined) variations else registration, name)
 
     def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
@@ -53,7 +53,7 @@ trait AllSpokes {
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link =
       Link(
-        changeMessageKey( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+        changeContent( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
         changeLinkUrl(mode, srn, index).url
       )
 
@@ -73,7 +73,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeMessageKey( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+      changeContent( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       changeLinkUrl(mode, srn, index).url
     )
 
@@ -93,7 +93,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeMessageKey( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+      changeContent( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       changeLinkUrl(mode, srn, index).url
     )
 
@@ -141,7 +141,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeMessageKey( name, srn, "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
+      changeContent( name, srn, "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
       establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index).url
     )
 
@@ -218,7 +218,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeMessageKey( name, srn, "messages__schemeTaskList__change_partners", "messages__schemeTaskList__view_partners"),
+      changeContent( name, srn, "messages__schemeTaskList__change_partners", "messages__schemeTaskList__view_partners"),
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index, srn).url
     )
 
