@@ -90,7 +90,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
-    title = Message("messages__partnershipPostcodeLookup__title"),
+    title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership").resolve),
     heading = Message("messages__partnershipPostcodeLookup__heading", partnershipDetails.name),
     subHeading = Some(partnershipDetails.name)
   )
@@ -116,7 +116,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator),
+      bind(classOf[Navigator]).toInstance(fakeNavigator),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {

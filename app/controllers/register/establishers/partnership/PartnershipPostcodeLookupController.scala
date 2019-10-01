@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -40,7 +39,7 @@ class PartnershipPostcodeLookupController @Inject()(
                                                      override val messagesApi: MessagesApi,
                                                      val userAnswersService: UserAnswersService,
                                                      override val addressLookupConnector: AddressLookupConnector,
-                                                     @EstablisherPartnership override val navigator: Navigator,
+                                                     override val navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
@@ -49,7 +48,6 @@ class PartnershipPostcodeLookupController @Inject()(
                                                    )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
-  private val title: Message = "messages__partnershipPostcodeLookup__title"
   private val hint: Message = "messages__partnershipPostcodeLookup__hint"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -75,7 +73,7 @@ class PartnershipPostcodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
-              title = Message(title),
+              title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership").resolve),
               heading = Message("messages__partnershipPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn

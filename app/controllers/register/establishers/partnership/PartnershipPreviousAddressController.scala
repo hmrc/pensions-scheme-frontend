@@ -31,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.CountryOptions
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -41,7 +40,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                       val appConfig: FrontendAppConfig,
                                                       val messagesApi: MessagesApi,
                                                       val userAnswersService: UserAnswersService,
-                                                      @EstablisherPartnership val navigator: Navigator,
+                                                      val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       allowAccess: AllowAccessActionProvider,
@@ -53,7 +52,6 @@ class PartnershipPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -83,7 +81,7 @@ class PartnershipPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(heading, Message("messages__thePartnership").resolve),
       heading = Message(heading, name),
       srn = srn
     )

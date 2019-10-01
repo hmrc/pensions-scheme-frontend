@@ -32,7 +32,7 @@ case class PartnershipPhoneNumberId(index: Int) extends TypedIdentifier[String] 
 object PartnershipPhoneNumberId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[PartnershipPhoneNumberId] = new
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPhoneNumberId] = new
       CheckYourAnswers[PartnershipPhoneNumberId] {
 
     override def row(id: PartnershipPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
