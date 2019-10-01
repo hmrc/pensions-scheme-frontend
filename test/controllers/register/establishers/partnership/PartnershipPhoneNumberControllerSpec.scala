@@ -50,8 +50,8 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
       form,
       CommonFormWithHintViewModel(
         routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__partnership_phone__title"),
-        Message("messages__common_phone__heading", establisherPartnershipDetails.name),
+        Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
+        Message("messages__enterPhoneNumber", establisherPartnershipDetails.name),
         Some(Message("messages__phone__hint")),
         None
       ),

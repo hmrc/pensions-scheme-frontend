@@ -52,7 +52,7 @@ class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSuga
       CommonFormWithHintViewModel(
         EstablisherPhoneController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__individual_phone__title"),
-        Message("messages__common_phone__heading", establisherName.fullName),
+        Message("messages__enterPhoneNumber", establisherName.fullName),
         Some(Message("messages__phone_dynamic__hint", establisherName.fullName)),
         None
       ),

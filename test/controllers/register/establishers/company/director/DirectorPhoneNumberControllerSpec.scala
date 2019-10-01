@@ -61,7 +61,7 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
       CommonFormWithHintViewModel(
         routes.DirectorPhoneNumberController.onSubmit(NormalMode, firstIndex, firstIndex, None),
         Message("messages__director_phone__title"),
-        Message("messages__common_phone__heading", "first last"),
+        Message("messages__enterPhoneNumber", "first last"),
         Some(Message("messages__phone__hint")),
         None
       ),

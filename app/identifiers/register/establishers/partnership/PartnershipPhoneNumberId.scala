@@ -36,9 +36,9 @@ object PartnershipPhoneNumberId {
       CheckYourAnswers[PartnershipPhoneNumberId] {
 
     override def row(id: PartnershipPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val establisherName: String = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
-      val label = messages("messages__common_phone__heading", establisherName)
-      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone", establisherName))
+      val establisherName: String = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
+      val label = messages("messages__enterPhoneNumber", establisherName)
+      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName))
 
       StringCYA(
         Some(label),

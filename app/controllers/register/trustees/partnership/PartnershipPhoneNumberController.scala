@@ -52,8 +52,8 @@ class PartnershipPhoneNumberController @Inject()(val appConfig: FrontendAppConfi
           details =>
             CommonFormWithHintViewModel(
               routes.PartnershipPhoneNumberController.onSubmit(mode, index, srn),
-              Message("messages__partnership_phone__title"),
-              Message("messages__common_phone__heading", details.name),
+              Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
+              Message("messages__enterPhoneNumber", details.name),
               Some(Message("messages__phone__hint")),
               srn = srn
             )

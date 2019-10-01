@@ -61,8 +61,8 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       form,
       CommonFormWithHintViewModel(
         routes.TrusteeEmailController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__common_email__heading", Message("messages__common__address_years__trustee").resolve),
-        Message("messages__common_email__heading", "first last"),
+        Message("messages__enterEmail", Message("messages__common__address_years__trustee").resolve),
+        Message("messages__enterEmail", "first last"),
         Some(Message("messages__email__hint")),
         None
       ),

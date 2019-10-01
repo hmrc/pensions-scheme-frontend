@@ -55,7 +55,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
-      messages("messages__common_email__heading", establisherName.fullName),
+      messages("messages__enterEmail", establisherName.fullName),
       Seq(email),
       answerIsMessageKey = false,
       Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), index, srn).url,
@@ -63,7 +63,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     )
 
     val phoneAnswerRow = AnswerRow(
-      messages("messages__common_phone__heading", establisherName.fullName),
+      messages("messages__enterPhoneNumber", establisherName.fullName),
       Seq(phone),
       answerIsMessageKey = false,
       Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url,

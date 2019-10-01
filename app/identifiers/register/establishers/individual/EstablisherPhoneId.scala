@@ -36,9 +36,9 @@ object EstablisherPhoneId {
       CheckYourAnswers[EstablisherPhoneId] {
 
     override def row(id: EstablisherPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages("messages__thePerson"))(_.fullName)
+      val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages("messages__theIndividual"))(_.fullName)
 
-      val label: String = messages("messages__common_phone__heading", establisherName)
+      val label: String = messages("messages__enterPhoneNumber", establisherName)
 
       val hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName))
 

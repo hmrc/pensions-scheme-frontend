@@ -50,14 +50,14 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
-        Some(messages("messages__common_email__heading", partnershipDetails.name)),
-        Some(messages("messages__visuallyhidden__dynamic_email", partnershipDetails.name))
+        Some(messages("messages__enterEmail", partnershipDetails.name)),
+        Some(messages("messages__visuallyhidden__dynamic_email_address", partnershipDetails.name))
       )().row(PartnershipEmailId(index))(
         routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
 
         StringCYA[PartnershipPhoneId](
-          Some(messages("messages__common_phone__heading", partnershipDetails.name)),
-          Some(messages("messages__visuallyhidden__dynamic_phone", partnershipDetails.name))
+          Some(messages("messages__enterPhoneNumber", partnershipDetails.name)),
+          Some(messages("messages__visuallyhidden__dynamic_phone_number", partnershipDetails.name))
         )().row(PartnershipPhoneId(index))(
           routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
     ))
