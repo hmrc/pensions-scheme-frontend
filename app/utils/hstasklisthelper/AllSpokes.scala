@@ -29,10 +29,13 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.UserAnswers
 
-trait AllSpokes  {
+trait AllSpokes {
   implicit val messages: Messages
 
   trait Spoke {
+    protected def changeMessageKey(name:String, srn:Option[String], registration: =>String, variations: =>String):String =
+      messages(if (srn.isDefined) variations else registration, name)
+
     def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
     def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
     def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
@@ -48,10 +51,11 @@ trait AllSpokes  {
       addLinkUrl(mode, srn, index).url
     )
 
-    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_details", name),
-      changeLinkUrl(mode, srn, index).url
-    )
+    override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link =
+      Link(
+        changeMessageKey( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+        changeLinkUrl(mode, srn, index).url
+      )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
       messages("messages__schemeTaskList__change_details", name),
@@ -69,7 +73,7 @@ trait AllSpokes  {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_address", name),
+      changeMessageKey( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       changeLinkUrl(mode, srn, index).url
     )
 
@@ -89,7 +93,7 @@ trait AllSpokes  {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_contact", name),
+      changeMessageKey( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       changeLinkUrl(mode, srn, index).url
     )
 
@@ -129,7 +133,7 @@ trait AllSpokes  {
     override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherCompanyContactDetailsComplete(index)
   }
 
-  case object EstablisherCompanyDirectors extends Spoke{
+  case object EstablisherCompanyDirectors extends Spoke {
 
     override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
       messages("messages__schemeTaskList__add_directors", name),
@@ -137,7 +141,7 @@ trait AllSpokes  {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_directors", name),
+      changeMessageKey( name, srn, "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
       establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index).url
     )
 
@@ -206,7 +210,7 @@ trait AllSpokes  {
     override def completeFlag(answers: UserAnswers, index: Int, mode: Mode): Option[Boolean] = answers.isEstablisherPartnershipContactDetailsComplete(index)
   }
 
-  case object EstablisherPartnershipPartner extends Spoke{
+  case object EstablisherPartnershipPartner extends Spoke {
 
     override def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
       messages("messages__schemeTaskList__add_partners", name),
