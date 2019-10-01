@@ -36,7 +36,7 @@ object PartnershipEnterPAYEId {
     new CheckYourAnswers[PartnershipEnterPAYEId] {
 
       def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-      def label(index: Int) = messages("messages__enter_paye__heading", trusteeName(index))
+      def label(index: Int) = messages("messages__enterPAYE", trusteeName(index))
       def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_paye_reference", trusteeName(index))
 
       override def row(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

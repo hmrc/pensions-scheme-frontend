@@ -48,7 +48,7 @@ object DirectorHasUTRId {
     new CheckYourAnswersDirectors[DirectorHasUTRId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasDirectorUtr__cya")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasUTR")
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasUtr")

@@ -48,8 +48,8 @@ class EstablisherUTRController @Inject()(override val appConfig: FrontendAppConf
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.EstablisherUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__personUTR__title"),
-      heading = Message("messages__dynamic_whatIsUTR", companyName),
+      title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
+      heading = Message("messages__enterUTR", companyName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

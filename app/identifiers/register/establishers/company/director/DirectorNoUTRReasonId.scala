@@ -39,7 +39,7 @@ object DirectorNoUTRReasonId {
     new CheckYourAnswersDirectors[DirectorNoUTRReasonId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__noDirectorUtr__heading")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__whyNoUTR")
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")

@@ -29,7 +29,7 @@ class DirectorHasNINOIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = Message("messages__genericHasNino__title", personDetails.fullName),
+      label = Message("messages__hasNINO", personDetails.fullName),
       answer = Seq("false"),
       answerIsMessageKey = false,
       changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__trustee__nino_yes_no", personDetails.fullName).resolve)))

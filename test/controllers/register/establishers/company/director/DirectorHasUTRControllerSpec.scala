@@ -86,8 +86,8 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
   private val postCall = routes.DirectorHasUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasDirectorUtr__title"),
-    heading = Message("messages__hasDirectorUtr__h1", "first last"),
+    title = Message("messages__hasUTR", Message("messages__theDirector").resolve),
+    heading = Message("messages__hasUTR", "first last"),
     hint = Some(Message("messages__hasUtr__p1"))
   )
 

@@ -46,7 +46,7 @@ object PartnershipHasPAYEId {
     new CheckYourAnswers[PartnershipHasPAYEId] {
       override def row(id: PartnershipHasPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__hasPaye__h1", partnershipName))
+        val label = Some(messages("messages__hasPAYE", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName))
 
         BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)

@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterNINOId}
+import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
 import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -31,7 +31,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
-import viewmodels.NinoViewModel
+import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 //scalastyle:off magic.number
@@ -86,9 +86,9 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
-      title = messages("messages__director_yes_nino__title"),
-      heading = messages("messages__common_nino__h1", directorName),
-      hint = messages("messages__common__nino_hint"),
+      title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
+      heading = Message("messages__enterNINO", directorName),
+      hint = Message("messages__common__nino_hint"),
       srn = None
     )
 

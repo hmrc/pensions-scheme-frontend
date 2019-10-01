@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNewNinoId}
+import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherEnterNINOId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -103,7 +103,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherNameId.toString -> establisherIndividualName,
-        EstablisherNewNinoId.toString -> Json.obj(
+        EstablisherEnterNINOId.toString -> Json.obj(
           "value" -> "CS700100A"
         )
       )
@@ -138,8 +138,8 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
     val vm = NinoViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, srn),
-      title = messages("messages__common_nino__title", messages("messages__thePerson")),
-      heading = messages("messages__common_nino__h1", establisherName),
+      title = messages("messages__enterNINO", messages("messages__theIndividual")),
+      heading = messages("messages__enterNINO", establisherName),
       hint = messages("messages__common__nino_hint"),
       srn = srn
     )

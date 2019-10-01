@@ -70,7 +70,7 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
       "for existing establisher" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__enter_utr__heading", name), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__enterUTR", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
               Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
             )))
@@ -104,12 +104,12 @@ object PartnershipEnterUTRIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__enter_utr__heading", name), List(utr), answerIsMessageKey = false, Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__enterUTR", name), List(utr), answerIsMessageKey = false, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__enter_utr__heading", name), List(utr), answerIsMessageKey = false, None))
+    AnswerRow(messages("messages__enterUTR", name), List(utr), answerIsMessageKey = false, None))
 
   private def ua: UserAnswers = UserAnswers(Json.obj())
     .establisherPartnershipDetails(index = 0, PartnershipDetails(name))

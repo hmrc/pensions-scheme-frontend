@@ -80,7 +80,7 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherIndividualDetailsComplete(establisherIndex: Int): Option[Boolean] =
     isComplete(Seq(
       isAnswerComplete(EstablisherDOBId(establisherIndex)),
-      isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherNewNinoId(establisherIndex), Some(EstablisherNoNINOReasonId(establisherIndex))),
+      isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherEnterNINOId(establisherIndex), Some(EstablisherNoNINOReasonId(establisherIndex))),
       isAnswerComplete(EstablisherHasUTRId(establisherIndex), EstablisherUTRId(establisherIndex), Some(EstablisherNoUTRReasonId(establisherIndex)))
     ))
 
@@ -102,7 +102,7 @@ trait DataCompletionEstablishers extends DataCompletion {
     } else {
       isListComplete(Seq(
         get(EstablisherDetailsId(index)).isDefined,
-        get(EstablisherNinoId(index)).isDefined | get(EstablisherNewNinoId(index)).isDefined,
+        get(EstablisherNinoId(index)).isDefined | get(EstablisherEnterNINOId(index)).isDefined,
         get(UniqueTaxReferenceId(index)).isDefined | get(EstablisherUTRId(index)).isDefined,
         isAddressComplete(AddressId(index), PreviousAddressId(index),
           AddressYearsId(index), None).getOrElse(false),

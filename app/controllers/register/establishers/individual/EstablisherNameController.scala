@@ -31,7 +31,6 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-import utils.annotations.EstablishersIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -51,10 +50,10 @@ class EstablisherNameController @Inject()(
 
   private val form = formProvider("messages__error__establisher")
 
-  def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
-    title = Message("messages__establisherName__title"),
-    heading = Message("messages__establisherName__heading"),
+    title = Message("messages__individualName__title"),
+    heading = Message("messages__individualName__heading"),
     srn = srn
   )
 

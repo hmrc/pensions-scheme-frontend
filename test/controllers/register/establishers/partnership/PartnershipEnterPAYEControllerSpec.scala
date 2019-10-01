@@ -79,8 +79,8 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
 
   val viewModel = PayeViewModel(
     routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__partnership_enter_paye__title"),
-    heading = Message("messages__enter_paye__heading", partnershipName),
+    title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
+    heading = Message("messages__enterPAYE", partnershipName),
     hint = Some(Message("messages__enter_paye__hint")),
     srn = srn,
     entityName = Some(partnershipName)

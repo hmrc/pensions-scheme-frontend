@@ -34,10 +34,10 @@ class HasVatViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   val form = new HasReferenceNumberFormProvider()("messages__hasCompanyVat__error__required", "ABC")
   val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, None, Index(0))
 
-  def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
+  private def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyVat__title"),
-    heading = Message("messages__hasCompanyVat__h1", "ABC"),
+    title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasVAT", "ABC"),
     hint = Some(Message("messages__hasCompanyVat__p1")),
     srn = srn
   )

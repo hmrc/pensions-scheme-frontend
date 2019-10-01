@@ -35,8 +35,8 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   private def viewmodel(srn:Option[String]) = PayeViewModel(
     postCall = postCall,
-    title = Message("messages__company_enter_paye__title"),
-    heading = Message("messages__enter_paye__heading", companyName),
+    title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
+    heading = Message("messages__enterPAYE", companyName),
     hint = Some(Message("messages__enter_paye__hint")),
     srn = srn,
     entityName = Some(companyName)
@@ -53,7 +53,9 @@ class PayeVariationsViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   "Paye view" when {
     "rendered" must {
-      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading", companyName))
+      behave like normalPageWithTitle(createView(), messageKeyPrefix,
+        title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
+        pageHeader = Message("messages__enterPAYE", companyName))
 
       behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 

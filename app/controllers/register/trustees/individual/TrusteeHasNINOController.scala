@@ -47,8 +47,8 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(mode, index, srn),
-      title = Message("messages__genericHasNino__title", Message("messages__theTrustee").resolve),
-      heading = Message("messages__genericHasNino__h1", personName),
+      title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
+      heading = Message("messages__hasNINO", personName),
       hint = None,
       srn = srn
     )
