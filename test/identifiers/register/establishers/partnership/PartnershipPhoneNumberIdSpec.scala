@@ -41,7 +41,6 @@ class PartnershipPhoneNumberIdSpec extends SpecBase {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
               .set(PartnershipPhoneNumberId(index))(phone).asOpt.value, PsaId("A0000000"))
-          implicit val userAnswers: UserAnswers = request.userAnswers
 
           PartnershipPhoneNumberId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(

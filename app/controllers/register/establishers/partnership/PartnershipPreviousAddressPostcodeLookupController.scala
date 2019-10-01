@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -40,7 +39,7 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     override val messagesApi: MessagesApi,
                                                                     val userAnswersService: UserAnswersService,
                                                                     override val addressLookupConnector: AddressLookupConnector,
-                                                                    @EstablisherPartnership override val navigator: Navigator,
+                                                                    override val navigator: Navigator,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
                                                                     allowAccess: AllowAccessActionProvider,
