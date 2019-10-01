@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.establishers.partnership
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
+import config.FeatureSwitchManagementService
 import models.address.Address
 import models.requests.DataRequest
-import models.{CompanyDetails, Link, NormalMode, UpdateMode}
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class CompanyAddressIdSpec extends SpecBase {
-
-  private val companyName = "test company"
+class PartnershipAddressIdSpec extends SpecBase {
 
   "cya" when {
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
@@ -53,20 +50,22 @@ class CompanyAddressIdSpec extends SpecBase {
     }
 
     val onwardUrl = "onwardUrl"
-    Seq(NormalMode, UpdateMode).foreach{ mode =>
+    Seq(NormalMode, UpdateMode).foreach { mode =>
 
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().set(CompanyAddressId(0))(address).flatMap(
-              _.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+            UserAnswers().set(PartnershipAddressId(0))(address).flatMap(
+              _.set(PartnershipDetailsId(0))(PartnershipDetails("test name"))).asOpt.value, PsaId("A0000000"))
+          implicit val ua: UserAnswers = request.userAnswers
+          implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
 
-          CompanyAddressId(0).row(onwardUrl, mode) must equal(Seq(
+          PartnershipAddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__address__cya", "test company"),
+              Message("messages__address__cya", "test name"),
               addressAnswer(address),
-              false,
-              Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
+              answerIsMessageKey = false,
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_address", "test name"))))
             )))
         }
       }

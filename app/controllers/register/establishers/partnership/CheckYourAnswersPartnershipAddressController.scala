@@ -17,24 +17,56 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipHasBeenTradingId, PartnershipPreviousAddressId}
 import javax.inject.Inject
+import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{AllowChangeHelper, CountryOptions, Enumerable}
 import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import viewmodels.AnswerSection
+import views.html.checkYourAnswers
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: FrontendAppConfig,
                                                              override val messagesApi: MessagesApi,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                                             requireData: DataRequiredAction
-                                                            ) extends FrontendController with I18nSupport {
+                                                             requireData: DataRequiredAction,
+                                                             implicit val countryOptions: CountryOptions,
+                                                             allowChangeHelper: AllowChangeHelper
+                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val answerSections = Seq(AnswerSection(
+          None,
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipHasBeenTradingId(index).row(routes.PartnershipHasBeenTradingController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+        ))
+
+        Future.successful(Ok(checkYourAnswers(
+          appConfig,
+          answerSections,
+          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          existingSchemeName,
+          mode = mode,
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          srn = srn
+        )))
+
+    }
 }

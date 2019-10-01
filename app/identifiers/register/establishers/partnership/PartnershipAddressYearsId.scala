@@ -19,8 +19,9 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 import viewmodels.AnswerRow
 
@@ -41,20 +42,23 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override def toString: String = "partnershipAddressYears"
 
-  val label = "messages__partnership__checkYourAnswers__addressYears"
-  val changeAddressYears = "messages__visuallyhidden__partnership__address_years"
-
-  implicit val cya: CheckYourAnswers[PartnershipAddressYearsId] = {
-
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswers[PartnershipAddressYearsId] {
-      override def row(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val label = messages("messages__partnershipAddressYears__heading", establisherName)
+        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", establisherName)
 
-      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+        AddressYearsCYA(
+          label = label,
+          changeAddressYears = changeAddressYears
+        )().row(id)(changeUrl, ua)
+      }
+
+      override def updateRow(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        ua.get(IsEstablisherNewId(id.index)) match {
+          case Some(true) => row(id)(changeUrl, ua)
+          case _ => Nil
         }
     }
-  }
 }

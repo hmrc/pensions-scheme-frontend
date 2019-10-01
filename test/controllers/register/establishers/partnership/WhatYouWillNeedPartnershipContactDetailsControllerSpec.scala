@@ -14,38 +14,40 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.partnership
+package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{NormalMode, PartnershipDetails}
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
-import viewmodels.Message
-import views.html.register.whatYouWillNeedAddress
+import views.html.register.whatYouWillNeedContactDetails
 
-class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
+class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
+  private val index = 0
+  private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  private val index  = 0
-  private val trusteePartnership = PartnershipDetails("partnership Name")
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
 
-  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
+  def viewAsString(): String = whatYouWillNeedContactDetails(
+    frontendAppConfig,
+    None,
+    controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
+    None,
+    establisherPartnership.name)(fakeRequest, messages).toString
 
-  private def viewAsString(): String =
-    whatYouWillNeedAddress(frontendAppConfig, None, href, None, trusteePartnership.name, Message("messages__thePartnership"))(fakeRequest, messages).toString
-
-  "WhatYouWillNeedPartnershipAddressController" when {
+  "WhatYouWillNeedPartnershipContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
-          val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipAddressController]
+          val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK

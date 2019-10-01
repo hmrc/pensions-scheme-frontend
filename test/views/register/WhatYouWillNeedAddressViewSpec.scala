@@ -20,9 +20,9 @@ import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.whatYouWillNeedIndividualAddress
+import views.html.register.whatYouWillNeedAddress
 
-class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
+class WhatYouWillNeedAddressViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedAddress"
   private val testUser = "test name"
@@ -30,12 +30,17 @@ class WhatYouWillNeedIndividualAddressViewSpec extends ViewBehaviours {
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualAddress(frontendAppConfig,
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedAddress(frontendAppConfig,
     Some("testScheme"), href, None, testUser, token)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__addressFor", testUser))
+    behave like normalPageWithTitle(
+      createView,
+      messageKeyPrefix,
+      messages("messages__addressFor", token).capitalize,
+      messages("messages__addressFor", testUser)
+    )
 
     "display the correct p1" in {
       val doc = asDocument(createView())
