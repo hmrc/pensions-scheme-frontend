@@ -50,7 +50,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
       form,
       CommonFormWithHintViewModel(
         EstablisherEmailController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__enterEmail", Message("messages__theCompany").resolve),
+        Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", establisherName.fullName),
         Some(Message("messages__email_dynamic__hint", establisherName.fullName)),
         None
