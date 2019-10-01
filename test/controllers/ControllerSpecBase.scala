@@ -23,7 +23,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{AdviserNameId, SchemeNameId}
@@ -186,6 +186,22 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             Json.obj(
               PartnerDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
                 new LocalDate(1990, 2, 2))
+            )
+          )
+        )
+      )
+    ))
+  )
+
+  def getMandatoryPartner: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          PartnershipDetailsId.toString ->
+            PartnershipDetails("test partnership name"),
+          "partner" -> Json.arr(
+            Json.obj(
+              PartnerNameId.toString -> PersonName("first", "last")
             )
           )
         )

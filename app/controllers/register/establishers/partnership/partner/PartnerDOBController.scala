@@ -18,27 +18,65 @@ package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.dateOfBirth.DateOfBirthController
+import forms.DOBFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import navigators.Navigator
+import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Call}
+import services.UserAnswersService
+import viewmodels.Message
+import viewmodels.dateOfBirth.DateOfBirthViewModel
 
-class PartnerDOBController @Inject()(appConfig: FrontendAppConfig,
-                                     override val messagesApi: MessagesApi,
-                                     authenticate: AuthAction,
-                                     getData: DataRetrievalAction,
-                                     allowAccess: AllowAccessActionProvider,
-                                     requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+import scala.concurrent.ExecutionContext
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
+class PartnerDOBController @Inject()(
+                                      val appConfig: FrontendAppConfig,
+                                      override val messagesApi: MessagesApi,
+                                      val userAnswersService: UserAnswersService,
+                                      val navigator: Navigator,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      allowAccess: AllowAccessActionProvider,
+                                      requireData: DataRequiredAction,
+                                      formProvider: DOBFormProvider
+                                    )(implicit val ec: ExecutionContext) extends DateOfBirthController {
+
+  val form: Form[LocalDate] = formProvider()
+
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
+      srn = srn,
+      token = token
+    )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        get(
+          PartnerDOBId(establisherIndex, partnerIndex),
+          PartnerNameId(establisherIndex, partnerIndex),
+          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner").resolve),
+          mode
+        )
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        post(
+          PartnerDOBId(establisherIndex, partnerIndex),
+          PartnerNameId(establisherIndex, partnerIndex),
+          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner").resolve),
+          mode
+        )
+    }
 }
