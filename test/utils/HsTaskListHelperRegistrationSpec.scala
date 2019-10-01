@@ -18,10 +18,14 @@ package utils
 
 import config.FeatureSwitchManagementService
 import identifiers._
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import models._
+import models.person.PersonDetails
+import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
-import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListSection}
+import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
@@ -32,7 +36,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "h1" must {
     "display appropriate heading" in {
       val name = "scheme name 1"
-      val userAnswers = UserAnswers().set(SchemeNameId)(name).asOpt.value
+      val userAnswers = ua.set(SchemeNameId)(name).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.taskList.h1 mustBe name
     }
@@ -40,7 +44,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "h2" must {
     "display appropriate text" in {
-      val userAnswers = UserAnswers()
+      val userAnswers = ua
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.taskList.h2 mustBe messages("messages__scheme_details__title")
     }
@@ -48,7 +52,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "h3" must {
     "display Before You Start" in {
-      val userAnswers = UserAnswers()
+      val userAnswers = ua
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__before_you_start_header"))
     }
@@ -57,7 +61,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "about header" must {
     "display About Scheme name" in {
       val schemeName = "test scheme"
-      val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
+      val userAnswers = ua.set(SchemeNameId)(schemeName).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
     }
@@ -65,7 +69,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "page title" must {
     "display Pension scheme details" in {
-      val userAnswers = UserAnswers()
+      val userAnswers = ua
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
     }
@@ -83,7 +87,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "aboutSection " must {
     "return the the Seq of members, bank details and benefits section with " +
       "links of the first pages of individual sub sections when not completed " in {
-      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(false).flatMap(
+      val userAnswers = ua.set(IsAboutMembersCompleteId)(false).flatMap(
         _.set(IsAboutBankDetailsCompleteId)(false).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
         )
@@ -102,7 +106,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the the Seq of members, bank details and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
-      val userAnswers = UserAnswers().set(IsAboutMembersCompleteId)(true).flatMap(
+      val userAnswers = ua.set(IsAboutMembersCompleteId)(true).flatMap(
         _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
           _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
         )
@@ -122,13 +126,13 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "workingKnowledgeSection " must {
     "not display when do you have working knowledge is true " in {
-      val userAnswers = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+      val userAnswers = ua.set(DeclarationDutiesId)(true).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
       helper.workingKnowledgeSection(userAnswers) mustBe None
     }
 
     "display and link should go to what you will need page when do you have working knowledge is false and section not completed " in {
-      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
+      val userAnswers = ua.set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(false)
       ).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
@@ -138,7 +142,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "display and link should go to cya page when do you have working knowledge is false and section is completed " in {
-      val userAnswers = UserAnswers().set(DeclarationDutiesId)(false).flatMap(
+      val userAnswers = ua.set(DeclarationDutiesId)(false).flatMap(
         _.set(IsWorkingKnowledgeCompleteId)(true)
       ).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers, fakeFeatureManagementService)
@@ -150,7 +154,22 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
   "addEstablisherHeader " must {
 
-    behave like addEstablisherHeader(NormalMode, None)
+    "return the link to establisher kind page when no establishers are added " in {
+      val userAnswers = ua
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers(isHnS2Enabled, NormalMode).size, None).url)), None)
+    }
+
+    "return the link to add establisher page when establishers are added" in {
+      val userAnswers = ua.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(IsEstablisherCompleteId(0))(true).asOpt.value
+      val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
+      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
+        SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url)), None)
+    }
   }
 
   "addTrusteeHeader " must {
@@ -158,7 +177,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like addTrusteeHeader(NormalMode, None)
 
     "not display when do you have any trustees is false " in {
-      val userAnswers = UserAnswers().set(HaveAnyTrusteesId)(false).asOpt.value
+      val userAnswers = ua.set(HaveAnyTrusteesId)(false).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
     }
