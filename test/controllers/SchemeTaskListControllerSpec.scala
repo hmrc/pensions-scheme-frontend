@@ -53,8 +53,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
+        contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
 
-        contentAsString(result) contains schemeDetailsTL.pageTitle mustBe true
       }
     }
 
@@ -191,17 +191,18 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
 
   val srnValue = "S1000000456"
   val srn      = Some(srnValue)
+  val schemeName = "test scheme"
 
   private val userAnswersJson                           = readJsonFromFile("/payload.json")
   private val userAnswersJsonRejected                   = readJsonFromFile("/payloadRejected.json")
   private val userAnswers                               = new FakeDataRetrievalAction(Some(userAnswersJson))
   private val userAnswersRejected                       = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
-  private lazy val beforeYouStartLinkText               = messages("messages__schemeTaskList__before_you_start_link_text")
-  private lazy val addEstablisherLinkText               = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val aboutMembersAddLinkText              = messages("messages__schemeTaskList__about_members_link_text_add")
-  private lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add")
-  private lazy val aboutBankDetailsAddLinkText          = messages("messages__schemeTaskList__about_bank_details_link_text_add")
-  private lazy val addTrusteesLinkText                  = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  private lazy val beforeYouStartLinkText               = messages("messages__schemeTaskList__before_you_start_link_text", schemeName)
+  private lazy val addEstablisherLinkText               = messages("messages__schemeTaskList__sectionEstablishers_add_link", schemeName)
+  private lazy val aboutMembersAddLinkText              = messages("messages__schemeTaskList__about_members_link_text_add", schemeName)
+  private lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
+  private lazy val aboutBankDetailsAddLinkText          = messages("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)
+  private lazy val addTrusteesLinkText                  = messages("messages__schemeTaskList__sectionTrustees_add_link", schemeName)
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
     SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
