@@ -42,9 +42,8 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
-            val nextPageHref = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn)
-
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, nextPageHref, srn, partnershipName)))
+            val href = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn)
+            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, partnershipName)))
         }
     }
 }

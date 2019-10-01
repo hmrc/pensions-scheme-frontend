@@ -20,13 +20,16 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class PartnerNewNinoId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNinoId.toString
+
+  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    userAnswers.remove(PartnerNoNINOReasonId(establisherIndex, partnerIndex))
 }
 
 object PartnerNewNinoId {

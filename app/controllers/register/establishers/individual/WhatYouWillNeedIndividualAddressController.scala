@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import viewmodels.Message
-import views.html.register.whatYouWillNeedIndividualAddress
+import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +45,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           establisherName =>
             val name = establisherName.fullName
             val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedIndividualAddress(appConfig, existingSchemeName, href, srn, name)))
+            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, name, Message("messages__thePerson"))))
         }
     }
 }

@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -37,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  val userAnswersService: UserAnswersService,
-                                                 @EstablisherPartnership override val navigator: Navigator,
+                                                 override val navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
@@ -65,7 +64,9 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
         postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
-        srn = srn
+        srn = srn,
+        title = Message("messages__establisherSelectAddress__h1", Message("messages__common__partnership").resolve),
+        heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name)
       )
     }.left.map(_ =>
       Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
