@@ -218,7 +218,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      messages("messages__schemeTaskList__change_partners", name),
+      changeMessageKey( name, srn, "messages__schemeTaskList__change_partners", "messages__schemeTaskList__view_partners"),
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index, srn).url
     )
 
