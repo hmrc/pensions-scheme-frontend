@@ -74,7 +74,7 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow(messages("messages__trusteeUtr__h1", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_utr", name))
+              Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteePartnershipDetails(index = 0, PartnershipDetails(name)), PsaId("A0000000"))
@@ -110,7 +110,7 @@ object PartnershipEnterUTRIdSpec extends SpecBase {
 
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
+      Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(

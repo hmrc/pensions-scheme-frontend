@@ -34,7 +34,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
   private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__enterVAT__heading", partnershipName),List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_vat", partnershipName)))))
+      Some(messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)))))
   )
 
   private val ua = UserAnswers()
@@ -89,7 +89,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(messages("messages__enterVAT__heading", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat", partnershipName)))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)))))))
       }
     }
   }
