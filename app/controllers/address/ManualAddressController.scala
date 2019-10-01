@@ -91,11 +91,8 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
             userAnswersService.upsert(mode, viewModel.srn, updatedAddress.json).flatMap {
               cacheMap =>
-                userAnswersService.setAddressCompleteFlagAfterPreviousAddress(mode, viewModel.srn, id, UserAnswers(cacheMap)).map {
-                  answers =>
                     auditEvent.foreach(auditService.sendEvent(_))
-                    Redirect(navigator.nextPage(id, mode, answers, viewModel.srn))
-                }
+                   Future.successful(Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn)))
             }
           }
       }
