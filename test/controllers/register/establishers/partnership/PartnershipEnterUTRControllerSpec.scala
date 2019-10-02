@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import identifiers.register.establishers.partnership.PartnershipUTRId
+import identifiers.register.establishers.partnership.PartnershipEnterUTRId
 import models.{Index, NormalMode, PartnershipDetails, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -45,9 +45,9 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
 
   private val viewModel = UTRViewModel(
-    postCall = routes.PartnershipUTRController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__common_partnershipUtr__title"),
-    heading = Message("messages__dynamic_whatIsUTR", partnershipDetails.name),
+    postCall = routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),
+    title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
+    heading = Message("messages__enterUTR", partnershipDetails.name),
     hint = Message("messages_utr__hint"),
     srn = srn
   )
@@ -60,7 +60,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
       "return OK and the correct view" in {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
           app =>
-            val controller = app.injector.instanceOf[PartnershipUTRController]
+            val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
             status(result) mustBe OK
@@ -70,10 +70,10 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
 
       "return OK and the correct view where question already answered" in {
         val testUtr = ReferenceValue(dummyUtr)
-        running(_.overrides(modules(fullAnswers.set(PartnershipUTRId(index))(testUtr).asOpt.value.dataRetrievalAction,
+        running(_.overrides(modules(fullAnswers.set(PartnershipEnterUTRId(index))(testUtr).asOpt.value.dataRetrievalAction,
           featureSwitchEnabled = true): _*)) {
           app =>
-            val controller = app.injector.instanceOf[PartnershipUTRController]
+            val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
             status(result) mustBe OK
@@ -90,7 +90,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
             ): _*)) {
           app =>
-            val controller = app.injector.instanceOf[PartnershipUTRController]
+            val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", dummyUtr))
             val result = controller.onSubmit(NormalMode, index, None)(postRequest)
 
@@ -106,7 +106,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
             ): _*)) {
           app =>
-            val controller = app.injector.instanceOf[PartnershipUTRController]
+            val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "invalid value"))
             val boundForm = form.bind(Map("utr" -> "invalid value"))
             val result = controller.onSubmit(NormalMode, index, None)(postRequest)

@@ -25,34 +25,34 @@ import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
-case class PartnershipPayeVariationsId(index: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipPayeVariationsId.toString
+case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipEnterPAYEId.toString
 }
 
-object PartnershipPayeVariationsId {
+object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipPayeVariationsId] = {
-    new CheckYourAnswers[PartnershipPayeVariationsId] {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+    new CheckYourAnswers[PartnershipEnterPAYEId] {
 
       def getLabel(index: Int, ua: UserAnswers): (String, String) = {
         val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__dynamic_whatIsPAYE", partnershipName),
-          messages("messages__visuallyhidden__dynamic_paye", partnershipName))
+        (messages("messages__enterPAYE", partnershipName),
+          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       }
 
-      override def row(id: PartnershipPayeVariationsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: PartnershipEnterPAYEId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, ua)
-        ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().row(id)(changeUrl, ua)
+        ReferenceValueCYA[PartnershipEnterPAYEId](label, hiddenLabel)().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: PartnershipPayeVariationsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: PartnershipEnterPAYEId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, ua)
         ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().row(id)(changeUrl, ua)
+            row(id)(changeUrl, ua)
           case _ =>
-            ReferenceValueCYA[PartnershipPayeVariationsId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label, hiddenLabel)().updateRow(id)(changeUrl, ua)
         }
       }
     }

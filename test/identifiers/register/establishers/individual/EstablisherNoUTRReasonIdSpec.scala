@@ -35,7 +35,7 @@ class EstablisherNoUTRReasonIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = messages("messages__noGenericUtr__heading", name.fullName),
+      label = messages("messages__whyNoUTR", name.fullName),
       answer = List(reason),
       answerIsMessageKey = false,
       changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_noUtrReason", name.fullName))))

@@ -18,13 +18,12 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.PersonDetailsFormProvider
+import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId}
-import models.person.PersonDetails
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
+import models.person.PersonName
 import models.{Index, NormalMode, PartnershipDetails}
-import org.joda.time.LocalDate
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -33,17 +32,25 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
-import views.html.register.establishers.partnership.partner.partnerDetails
+import utils.{FakeNavigator, UserAnswers}
+import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.personName
 
 import scala.concurrent.Future
 
-class PartnerDetailsControllerSpec extends ControllerSpecBase {
+//scalastyle:off magic.number
 
-  import PartnerDetailsControllerSpec._
+class PartnerNameControllerSpec extends ControllerSpecBase {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnerDetailsController =
-    new PartnerDetailsController(
+  import PartnerNameControllerSpec._
+
+  private val viewmodel = CommonFormWithHintViewModel(
+    routes.PartnerNameController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+    title = Message("messages__partnerName__title"),
+    heading = Message("messages__partnerName__heading"))
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnerNameController =
+    new PartnerNameController(
       frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
@@ -52,26 +59,18 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      mockSectionComplete)
-  def submitUrl: Call = controllers.register.establishers.partnership.partner.routes.
-    PartnerDetailsController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)
+      formProvider)
 
-  def viewAsString(form: Form[_] = form): String = partnerDetails(
+
+  def viewAsString(form: Form[_] = form): String = personName(
     frontendAppConfig,
     form,
-    NormalMode,
-    firstEstablisherIndex,
-    firstPartnerIndex,
-    None,
-    submitUrl,
-    None
-  )(fakeRequest, messages).toString
+    viewmodel,
+    None)(fakeRequest, messages).toString
 
-  private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
-    ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+  private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"))
 
-  "PartnerDetails Controller" must {
+  "PartnerName Controller" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
@@ -87,8 +86,8 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
             PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
             "partner" -> Json.arr(
               Json.obj(
-                PartnerDetailsId.toString ->
-                  PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
+                "partnerDetails" ->
+                  PersonName("First Name", "Last Name")
               )
             )
           )
@@ -98,14 +97,16 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(PersonName("First Name", "Last Name")))
     }
 
     "redirect to the next page when valid data is submitted" in {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            PartnershipDetailsId.toString -> PartnershipDetails(partnershipName))
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
+          )
         )
       )
 
@@ -116,13 +117,57 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when no data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "returns a Bad Request and errors when invalid data is submitted" in {
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
+          )
+        )
+      )
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
+
+      val boundForm = form.bind(Map("firstName" -> "01", "lastName" -> "?&^%$£"))
+
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "returns a Bad Request and errors when max length has been exceeded" in {
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
+          )
+        )
+      )
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "tencharacter" * 3), ("lastName", "tencharacter" * 3))
+
+      val boundForm = form.bind(Map("firstName" -> "tencharactertencharactertencharacter", "lastName" -> "tencharactertencharactertencharacter"))
+
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      status(result) mustBe BAD_REQUEST
+
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
@@ -140,18 +185,11 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to session expired from a GET when the index is invalid for establisher" in {
-      val result = controller().onPageLoad(NormalMode, invalidIndex, firstPartnerIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "save the isNewPartner flag and set the establisher as not complete when the new partner is being added" in {
-      reset(mockSectionComplete, mockUserAnswersService)
-      val validData = UserAnswers().set(PartnershipDetailsId(firstEstablisherIndex))(PartnershipDetails("test company name")).flatMap(
-        _.set(PartnerDetailsId(firstEstablisherIndex, firstPartnerIndex))(
-          PersonDetails("testFirstName", None, "testLastName", new LocalDate(year, month, day))).flatMap(
+    "save the isNewPartner flag when the new partner is being added" in {
+      reset(mockUserAnswersService)
+      val validData = UserAnswers().set(PartnershipDetailsId(firstEstablisherIndex))(PartnershipDetails("test partnership name")).flatMap(
+        _.set(PartnerNameId(firstEstablisherIndex, firstPartnerIndex))(
+          PersonName("testFirstName", "testLastName")).flatMap(
           _.set(IsNewPartnerId(firstEstablisherIndex, firstPartnerIndex))(true)
         )
       ).asOpt.value.json
@@ -166,21 +204,15 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
   }
 }
 
-object PartnerDetailsControllerSpec extends MockitoSugar {
+object PartnerNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider: PersonDetailsFormProvider = new PersonDetailsFormProvider()
-  val form: Form[PersonDetails] = formProvider()
+  private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
+  private val form: Form[PersonName] = formProvider("messages__error__partner")
 
-  val firstEstablisherIndex: Index = Index(0)
-  val firstPartnerIndex: Index = Index(0)
-  val invalidIndex: Index = Index(10)
+  private val firstEstablisherIndex: Index = Index(0)
+  private val firstPartnerIndex: Index = Index(0)
 
-  val partnershipName: String = "test partnership name"
-  val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  val mockSectionComplete: SectionComplete = mock[SectionComplete]
-
-  val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
-  val year: Int = LocalDate.now().getYear - 20
+  private val partnershipName: String = "test partnership name"
+  private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 }

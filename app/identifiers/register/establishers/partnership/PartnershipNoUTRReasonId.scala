@@ -38,7 +38,7 @@ object PartnershipNoUTRReasonId {
     new CheckYourAnswers[PartnershipNoUTRReasonId] {
       override def row(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__noGenericUtr__heading", partnershipName))
+        val label = Some(messages("messages__whyNoUTR", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", partnershipName))
 
         StringCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)

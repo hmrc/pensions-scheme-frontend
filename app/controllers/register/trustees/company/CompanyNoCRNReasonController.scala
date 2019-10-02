@@ -48,8 +48,8 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__companyNoCompanyNumber__establisher__title"),
-      heading = Message("messages__noCompanyNumber__establisher__heading", companyName),
+      title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
+      heading = Message("messages__whyNoCRN", companyName),
       srn = srn
     )
   }

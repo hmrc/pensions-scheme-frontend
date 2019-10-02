@@ -36,7 +36,7 @@ object CompanyNoUTRReasonId {
 
     new CheckYourAnswersCompany[CompanyNoUTRReasonId] {
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__noCompanyUtr__heading")
+        dynamicMessage(index, ua, "messages__whyNoUTR")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noUtrReason")

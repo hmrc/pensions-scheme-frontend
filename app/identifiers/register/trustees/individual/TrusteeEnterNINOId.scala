@@ -41,12 +41,12 @@ object TrusteeEnterNINOId {
 
     new CheckYourAnswers[TrusteeEnterNINOId] {
 
-      val name = (index: Int) =>
+      private val name = (index: Int) =>
           userAnswers.get(TrusteeNameId(index)).map(_.fullName)
 
-      def trusteeName(index: Int) = name(index).getOrElse(messages("messages__theTrustee"))
-      def label(index: Int): String = messages("messages__trustee__individual__nino__heading", trusteeName(index))
-      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_nino", trusteeName(index))
+      def trusteeName(index: Int): String = name(index).getOrElse(messages("messages__theTrustee"))
+      def label(index: Int): String = messages("messages__enterNINO", trusteeName(index))
+      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_national_insurance_number", trusteeName(index))
 
       override def row(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)

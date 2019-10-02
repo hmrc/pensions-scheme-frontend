@@ -17,12 +17,12 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import models.register.PartnerEntity
+@import models.register.Partner
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
-    partners: Seq[PartnerEntity],
+    partners: Seq[Partner[_]],
     postUrl: Call,
     schemeName: Option[String],
     viewOnly: Boolean,

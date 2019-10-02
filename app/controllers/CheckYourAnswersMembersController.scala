@@ -66,7 +66,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsAboutMembersCompleteId, request.userAnswers, value = true) map { _ =>
+      userAnswersService.save(mode, srn, IsAboutMembersCompleteId, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }

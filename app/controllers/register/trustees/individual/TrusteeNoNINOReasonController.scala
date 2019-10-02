@@ -59,8 +59,8 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoNINOReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__noNinoReason__trustee_title"),
-      heading = Message("messages__noGenericNino__heading", name),
+      title = Message("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+      heading = Message("messages__whyNoNINO", name),
       srn = srn
     )
   }

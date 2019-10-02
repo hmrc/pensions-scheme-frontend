@@ -46,7 +46,7 @@ object HasCompanyVATId {
     new CheckYourAnswersCompany[HasCompanyVATId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__hasCompanyVat__h1")
+        dynamicMessage(index, ua, "messages__hasVAT")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasVat")

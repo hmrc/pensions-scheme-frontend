@@ -50,8 +50,8 @@ class CompanyNoUTRReasonController @Inject()(
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__noCompanyUtr__title"),
-      heading = Message("messages__noCompanyUtr__heading", companyName),
+      title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
+      heading = Message("messages__whyNoUTR", companyName),
       srn = srn
     )
 

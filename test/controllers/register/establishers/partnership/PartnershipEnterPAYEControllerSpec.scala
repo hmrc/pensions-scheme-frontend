@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership
 
 import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import forms.{PayeFormProvider, PayeVariationsFormProvider}
-import models.{CheckUpdateMode, Index, NormalMode}
+import controllers.actions._
+import forms.PayeVariationsFormProvider
+import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -30,10 +30,9 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablisherPartnership
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
-import views.html.{paye, payeVariations}
+import views.html.payeVariations
 
 import scala.concurrent.Future
 
@@ -45,7 +44,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -55,7 +54,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("paye", "123456789"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -79,10 +78,10 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = PayeViewModel(
-    routes.PartnershipPayeVariationsController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__common_partnershipPaye__title"),
-    heading = Message("messages__dynamic_whatIsPAYE", partnershipName),
-    hint = Some(Message("messages__payeVariations__hint")),
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
+    heading = Message("messages__enterPAYE", partnershipName),
+    hint = Some(Message("messages__enterPAYE__hint")),
     srn = srn,
     entityName = Some(partnershipName)
   )

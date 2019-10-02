@@ -19,11 +19,9 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers._
-import identifiers.register.establishers.{IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
 import models.{NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
 class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
@@ -65,8 +63,6 @@ object VariationsNavigatorSpec extends SpecBase with OptionValues {
 
   val noMoreChangesWithComplete = UserAnswers().set(AnyMoreChangesId)(false).flatMap(
     _.set(BenefitsSecuredByInsuranceId)(false).flatMap(
-    _.set(IsEstablisherCompleteId(0))(true)).flatMap(
-    _.set(IsEstablisherAddressCompleteId(0))(true)).flatMap(
     _.set(InsuranceDetailsChangedId)(true)
   )).asOpt.value
 

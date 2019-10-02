@@ -75,7 +75,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      userAnswersService.setCompleteFlag(mode, srn, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
+      userAnswersService.save(mode, srn, IsAboutBenefitsAndInsuranceCompleteId, value = true) map { _ =>
         Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       }
   }

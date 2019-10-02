@@ -78,8 +78,8 @@ object DirectorUTRControllerSpec extends DirectorUTRControllerSpec {
 
   val viewModel = UTRViewModel(
     routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
-    title = Message("messages__directorUtr__title"),
-    heading = Message("messages__directorUtr__heading", "first last"),
+    title = Message("messages__enterUTR", Message("messages__theDirector").resolve),
+    heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )

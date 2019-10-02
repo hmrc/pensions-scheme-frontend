@@ -51,8 +51,8 @@ class DirectorEnterNINOController @Inject()(
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-      title = Message("messages__director_yes_nino__title"),
-      heading = Message("messages__common_nino__h1", name),
+      title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
+      heading = Message("messages__enterNINO", name),
       hint = hint,
       srn = srn
     )

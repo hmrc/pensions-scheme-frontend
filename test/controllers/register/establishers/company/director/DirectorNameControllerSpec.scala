@@ -19,9 +19,9 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonNameFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -59,8 +59,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      mockSectionComplete)
+      formProvider)
 
 
   def viewAsString(form: Form[_] = form): String = personName(
@@ -186,8 +185,8 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "save the isNewDirector flag and set the establisher as not complete when the new director is being added" in {
-      reset(mockSectionComplete, mockUserAnswersService)
+    "save the isNewDirector flag when the new director is being added" in {
+      reset(mockUserAnswersService)
       val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
         _.set(DirectorNameId(firstEstablisherIndex, firstDirectorIndex))(
           PersonName("testFirstName", "testLastName")).flatMap(
@@ -196,10 +195,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       ).asOpt.value.json
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val userAnswers = UserAnswers(validData)
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
@@ -219,5 +215,4 @@ object DirectorNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val companyName: String = "test company name"
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private val mockSectionComplete: SectionComplete = mock[SectionComplete]
 }
