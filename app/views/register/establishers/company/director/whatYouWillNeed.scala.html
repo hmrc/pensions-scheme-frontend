@@ -30,15 +30,13 @@
 )
 
 @main_template(
-    title = messages("messages__whatYouWillNeedDirectors__title"),
+    title = messages("messages__directorsFor", messages("messages__theCompany")),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(messages("messages__whatYouWillNeedDirectors__h1", companyName))
+    @components.heading(messages("messages__directorsFor", companyName))
 
     @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
-
-    @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p2"))
 
 
     <ul class="list list-bullet">

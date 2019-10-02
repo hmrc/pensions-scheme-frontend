@@ -20,17 +20,17 @@ import controllers.register.establishers.company.director.routes.DirectorNameCon
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "whatYouWillNeedDirectors"
-  private val messageKeyPrefix2 = "whatYouWillNeed"
+  private val messageKeyPrefix = "whatYouWillNeed"
 
   private val companyName = "test company name"
 
-  private val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+  private val href: Call = DirectorNameController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)
 
   private def createView: () => HtmlFormat.Appendable =
     () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
@@ -39,11 +39,18 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", companyName))
+    behave like normalPageWithTitle(createView, messageKeyPrefix,
+      Message("messages__directorsFor", Message("messages__theCompany").resolve),
+      Message("messages__directorsFor", companyName))
 
     "display the correct guidance" in {
       val doc = asDocument(createView())
-      for (key <- messageKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix2}_$key"))
+      for (key <- messageKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix}_$key"))
+    }
+
+    "display the correct paragraph" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedDirectors__p1"))
     }
 
     behave like pageWithSubmitButton(createView)
