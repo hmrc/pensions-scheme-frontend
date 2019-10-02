@@ -78,8 +78,8 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val viewModel = UTRViewModel(
     routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
-    title = Message("messages__companyUtr__title"),
-    heading = Message("messages__companyUtr__heading", "test company name"),
+    title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
+    heading = Message("messages__enterUTR", "test company name"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )

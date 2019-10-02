@@ -44,7 +44,7 @@ object PartnershipHasPAYEId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasPAYEId] = {
 
     def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-    def label(index: Int) = Some(messages("messages__hasPaye__h1", trusteeName(index)))
+    def label(index: Int) = Some(messages("messages__hasPAYE", trusteeName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasPaye", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipHasPAYEId] {

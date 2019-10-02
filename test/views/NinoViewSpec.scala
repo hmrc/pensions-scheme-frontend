@@ -27,7 +27,7 @@ import views.html.nino
 
 class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
-  val messageKeyPrefix = "common_nino"
+  val messageKeyPrefix = "enterNino"
 
   val form = new NINOFormProvider()("Mark")
 
@@ -35,8 +35,8 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   private def viewmodel(srn: Option[String]) = NinoViewModel(
     postCall = Call("POST", "/"),
-    title = Message("messages__common_nino__title", Message("messages__thePerson").resolve),
-    heading = Message("messages__common_nino__h1", testName),
+    title = Message("messages__enterNINO", Message("messages__thePerson").resolve),
+    heading = Message("messages__enterNINO", testName),
     hint = Message("messages__common__nino_hint"),
     srn = srn
   )
@@ -53,7 +53,9 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
   "Nino view" when {
 
     "rendered" must {
-      behave like normalPageWithDynamicTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__h1", testName), messages("messages__thePerson"))
+      behave like normalPageWithTitle(createView(), messageKeyPrefix,
+        title =  messages("messages__enterNINO", messages("messages__thePerson")),
+        pageHeader = messages(s"messages__enterNINO", testName))
 
       behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, Call("POST", "/").url,
         "nino")

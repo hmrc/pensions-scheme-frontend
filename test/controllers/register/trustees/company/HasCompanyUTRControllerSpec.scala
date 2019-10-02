@@ -41,8 +41,8 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.trustees.company.routes.HasCompanyUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyUtr__title"),
-    heading = Message("messages__hasCompanyUtr__h1", "test company name"),
+    title = Message("messages__hasUTR", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasUTR", "test company name"),
     hint = Some(Message("messages__hasUtr__p1"))
   )
 

@@ -34,7 +34,7 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
 
   "cleanup" when {
     "`PartnershipUTR` changed to a new value" must {
-      val result = ua.set(PartnershipUTRId(0))(ReferenceValue("value")).asOpt.value
+      val result = ua.set(PartnershipEnterUTRId(0))(ReferenceValue("value")).asOpt.value
 
       "remove the data for `PartnershipNoUTRReasonId`" in {
         result.get(PartnershipNoUTRReasonId(0)) mustNot be(defined)
@@ -46,13 +46,13 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
 
     def answers(isEditable: Boolean = false): UserAnswers = UserAnswers()
       .establisherPartnershipDetails(index = 0, PartnershipDetails(name))
-      .set(PartnershipUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
+      .set(PartnershipEnterUTRId(0))(ReferenceValue(utr, isEditable)).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
-        PartnershipUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnershipEnterUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -63,33 +63,33 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+          PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
 
       "for existing establisher" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__dynamic_whatIsUTR", name), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__enterUTR", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_utr", name))
+              Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().establisherPartnershipDetails(index = 0, PartnershipDetails(name)), PsaId("A0000000"))
 
-          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
+          PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
 
-          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
+          PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
 
-          PartnershipUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
+          PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }
       }
     }
@@ -104,12 +104,12 @@ object PartnershipEnterUTRIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__dynamic_whatIsUTR", name), List(utr), answerIsMessageKey = false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
+    AnswerRow(messages("messages__enterUTR", name), List(utr), answerIsMessageKey = false, Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__dynamic_whatIsUTR", name), List(utr), answerIsMessageKey = false, None))
+    AnswerRow(messages("messages__enterUTR", name), List(utr), answerIsMessageKey = false, None))
 
   private def ua: UserAnswers = UserAnswers(Json.obj())
     .establisherPartnershipDetails(index = 0, PartnershipDetails(name))

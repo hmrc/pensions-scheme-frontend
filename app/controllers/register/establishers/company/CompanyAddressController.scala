@@ -86,11 +86,4 @@ class CompanyAddressController @Inject()(
       }
   }
 
-  def onClick(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        clear(CompanyAddressId(index), CompanyAddressListId(index), mode, srn,
-          routes.CompanyAddressController.onPageLoad(mode, srn, index))
-    }
-
 }

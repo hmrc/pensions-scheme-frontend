@@ -46,7 +46,7 @@ object HasCompanyPAYEId {
     new CheckYourAnswersCompany[HasCompanyPAYEId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__hasPaye__h1")
+        dynamicMessage(index, ua, "messages__hasPAYE")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasPaye")

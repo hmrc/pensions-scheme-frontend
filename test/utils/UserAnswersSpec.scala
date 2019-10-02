@@ -22,9 +22,9 @@ import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership._
-import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, IsPartnerCompleteId, PartnerDetailsId}
-import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.trustees.company.{CompanyEnterVATId, CompanyEnterPAYEId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerAddressId, PartnerAddressYearsId, PartnerContactDetailsId, PartnerDetailsId, PartnerNameId, PartnerNinoId, PartnerPreviousAddressId, PartnerUniqueTaxReferenceId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
+import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterVATId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{company => _, _}
 import models._
@@ -229,21 +229,18 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   ".allPartners" must {
 
     "return a map of partner names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
-      val userAnswers = UserAnswers()
-        .set(PartnerDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
-        .flatMap(_.set(IsPartnerCompleteId(0, 0))(true))
-        .flatMap(_.set(IsPartnerCompleteId(0, 1))(false))
-        .flatMap(_.set(PartnerDetailsId(0, 1))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true)))
-        .flatMap(_.set(PartnerDetailsId(0, 2))(PersonDetails("First", None, "Last", LocalDate.now)))
-        .flatMap(_.set(IsNewPartnerId(0, 0))(true))
+      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+        .set(PartnerNameId(2, 1))(PersonName("Partner", "One", isDeleted = true))
+        .flatMap(_.set(PartnerNameId(2, 2))(PersonName("Partner", "One")))
+        .flatMap(_.set(IsNewPartnerId(2, 0))(true))
         .get
 
       val partnerEntities = Seq(
-        PartnerEntity(PartnerDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        PartnerEntity(PartnerDetailsId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntity(PartnerDetailsId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+        PartnerEntity(PartnerNameId(2, 0), "Partner One", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
+        PartnerEntity(PartnerNameId(2, 1), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
+        PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
-      val result = userAnswers.allPartners(0)
+      val result = userAnswers.allPartners(2, isHnSEnabled = true)
 
       result.size mustEqual 3
       result mustBe partnerEntities
@@ -459,8 +456,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         val establisherCompleted = establisherPartnership
           .trusteesCompanyPhone(0, "12345")
           .trusteesCompanyEmail(0, "z@z.z")
-          .set(IsEstablisherCompleteId(0))(true).flatMap(
-          _.set(IsPartnerCompleteId(0,0))(true)).asOpt.get
+
         establisherCompleted.areVariationChangesCompleted() mustBe true
       }
     }
@@ -516,6 +512,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
 
   private val crn = CompanyRegistrationNumber.Yes("test-crn")
   private val utr = UniqueTaxReference.Yes("test-utr")
+  private val nino = Nino.Yes("test-nino")
 
   private val newCrn = "test-crn"
   private val newUtr = "test-utr"
@@ -559,5 +556,11 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     .flatMap(_.set(PartnershipPreviousAddressId(0))(previousAddress))
     .flatMap(_.set(PartnershipContactDetailsId(0))(contactDetails))
     .flatMap(_.set(PartnerDetailsId(0, 0))(PersonDetails("par1", None, "", LocalDate.now)))
+    .flatMap(_.set(PartnerNinoId(0, 0))(nino))
+    .flatMap(_.set(PartnerUniqueTaxReferenceId(0, 0))(utr))
+    .flatMap(_.set(PartnerAddressId(0, 0))(address))
+    .flatMap(_.set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear))
+    .flatMap(_.set(PartnerPreviousAddressId(0, 0))(previousAddress))
+    .flatMap(_.set(PartnerContactDetailsId(0, 0))(contactDetails))
     .asOpt.value
 }

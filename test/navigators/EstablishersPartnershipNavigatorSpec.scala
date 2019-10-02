@@ -81,7 +81,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipConfirmPreviousAddressId(0), emptyAnswers, defaultPage, false, Some(sessionExpired), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressYes, defaultPage, false, Some(anyMoreChanges), false),
     (PartnershipConfirmPreviousAddressId(0), confirmPreviousAddressNo, defaultPage, false, Some(partnershipPaPostCodeLookup(checkMode(UpdateMode))), false),
-    (PartnershipPayeVariationsId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(UpdateMode), emptyAnswers)), true),
+    (PartnershipEnterPAYEId(0), emptyAnswers, none, true, Some(exitJourney(checkMode(UpdateMode), emptyAnswers)), true),
     (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
     (PartnershipAddressId(0), newEstablisher, partnershipAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )

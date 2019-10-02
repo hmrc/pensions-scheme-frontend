@@ -21,7 +21,7 @@ import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -46,10 +46,8 @@ sealed trait Entity[ID] {
   def index: Int
 }
 
-sealed trait Director[T] extends Entity[T]
-
 case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
-                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Director[DirectorNameId] {
+                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[DirectorNameId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] =  (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
       id.establisherIndex, id.directorIndex, mode, srn).url)
@@ -74,8 +72,36 @@ case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
   override def index: Int = id.directorIndex
 }
 
-case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean,
-                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Entity[PartnerDetailsId] {
+sealed trait Partner[T] extends Entity[T]
+
+case class PartnerEntityNonHnS(id: PartnerDetailsId, name: String, isDeleted: Boolean,
+                               isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerDetailsId] {
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
+    case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
+      mode, id.establisherIndex, id.partnerIndex, srn).url)
+    case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
+      mode, id.establisherIndex, id.partnerIndex, srn).url)
+    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
+      mode, id.establisherIndex, id.partnerIndex, srn).url)
+  }
+
+  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
+          mode, id.establisherIndex, id.partnerIndex, srn).url)
+      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
+        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
+          mode, id.establisherIndex, id.partnerIndex, srn).url)
+      case _ => None
+    }
+  }
+
+  override def index: Int = id.partnerIndex
+}
+
+case class PartnerEntity(id: PartnerNameId, name: String, isDeleted: Boolean,
+                               isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerNameId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
     case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
       mode, id.establisherIndex, id.partnerIndex, srn).url)

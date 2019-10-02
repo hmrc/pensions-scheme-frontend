@@ -58,11 +58,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "on Page load in UpdateMode" must {
       "return OK and the correct view for vat if not new establisher" in {
         val answers = UserAnswers().set(PartnershipEnterVATId(firstIndex))(ReferenceValue("098765432")).flatMap(
-          _.set(PartnershipPayeVariationsId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
+          _.set(PartnershipEnterPAYEId(firstIndex))(ReferenceValue("12345678"))).asOpt.value
         implicit val request = FakeDataRequest(answers)
         val expectedCompanyDetailsSection = partnershipDetailsSection(
           PartnershipEnterVATId(firstIndex).row(partnershipEnterVATRoute, UpdateMode) ++
-            PartnershipPayeVariationsId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode))
+            PartnershipEnterPAYEId(firstIndex).row(partnershipPayeVariationsRoute, UpdateMode))
 
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, srn)(request)
 
@@ -94,11 +94,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
-      "mark establisher partnership as complete" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
-        status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.verify(IsPartnershipCompleteId(firstIndex), true)
-      }
     }
   }
 }
@@ -112,7 +107,7 @@ object CheckYourAnswersControllerSpec extends CheckYourAnswersControllerSpec {
   private def partnershipVatRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipVatController.onPageLoad(mode, firstIndex, srn).url
   private lazy val partnershipEnterVATRoute = routes.PartnershipEnterVATController.onPageLoad(CheckMode, firstIndex, None).url
   private def partnershipPayeRoute(mode: Mode = CheckMode, srn: Option[String] = None) = routes.PartnershipPayeController.onPageLoad(mode, firstIndex, srn).url
-  private lazy val partnershipPayeVariationsRoute = routes.PartnershipPayeVariationsController.onPageLoad(CheckMode, firstIndex, None).url
+  private lazy val partnershipPayeVariationsRoute = routes.PartnershipEnterPAYEController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipUniqueTaxReferenceRoute = routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex, None).url
   private lazy val partnershipDetailsRoute = routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex, None).url
 
