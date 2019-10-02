@@ -78,10 +78,9 @@ class PartnerDetailsController @Inject()(
             value => {
               val answers = request.userAnswers.set(IsNewPartnerId(establisherIndex, partnerIndex))(true).flatMap(
                 _.set(PartnerDetailsId(establisherIndex, partnerIndex))(value)).asOpt.getOrElse(request.userAnswers)
-
               userAnswersService.upsert(mode, srn, answers.json).flatMap {
                 cacheMap =>
-                  Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, UserAnswers(cacheMap))))
+                  Future.successful(Redirect(navigator.nextPage(PartnerDetailsId(establisherIndex, partnerIndex), mode, UserAnswers(cacheMap), srn)))
               }
             }
           )
