@@ -46,8 +46,7 @@ class DirectorNameController @Inject()(
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
-                                        formProvider: PersonNameFormProvider,
-                                        sectionComplete: SectionComplete
+                                        formProvider: PersonNameFormProvider
                                       )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider("messages__error__director")
