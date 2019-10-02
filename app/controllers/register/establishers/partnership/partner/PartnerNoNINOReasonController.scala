@@ -18,27 +18,59 @@ package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.{ReasonController, Retrievals}
+import forms.ReasonFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNoNINOReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import utils.Enumerable
+import viewmodels.{Message, ReasonViewModel}
 
-class PartnerNoNINOReasonController @Inject()(appConfig: FrontendAppConfig,
-                                              override val messagesApi: MessagesApi,
-                                              authenticate: AuthAction,
-                                              getData: DataRetrievalAction,
-                                              allowAccess: AllowAccessActionProvider,
-                                              requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+import scala.concurrent.ExecutionContext
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
+class PartnerNoNINOReasonController @Inject()(
+                                               override val appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               override val userAnswersService: UserAnswersService,
+                                               override val navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction,
+                                               formProvider: ReasonFormProvider
+                                             )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
+
+  private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.PartnerNoNINOReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+      title = Message("messages__noNinoReason__partner_title"),
+      heading = Message("messages__noGenericNino__heading", name),
+      srn = srn
+    )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { name =>
+          get(PartnerNoNINOReasonId(establisherIndex, partnerIndex),
+            viewModel(mode, establisherIndex, partnerIndex, srn, name.fullName), form(name.fullName))
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { name =>
+          post(PartnerNoNINOReasonId(establisherIndex, partnerIndex), mode,
+            viewModel(mode, establisherIndex, partnerIndex, srn, name.fullName), form(name.fullName))
+        }
+    }
+
 }
