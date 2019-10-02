@@ -36,7 +36,7 @@ class TrusteeDOBIdSpec extends SpecBase {
   val date = new LocalDate()
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__DOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_dob", "Test Name")))))
+      Some(messages("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))
   )
 
   "cya" when {

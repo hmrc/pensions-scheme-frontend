@@ -31,7 +31,7 @@ case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) => userAnswers.remove(PartnershipNoUTRReasonId(index))
-      case Some(false) => userAnswers.remove(PartnershipUTRId(index))
+      case Some(false) => userAnswers.remove(PartnershipEnterUTRId(index))
       case _ => super.cleanup(value, userAnswers)
     }
   }
@@ -45,7 +45,7 @@ object PartnershipHasUTRId {
     new CheckYourAnswers[PartnershipHasUTRId] {
       override def row(id: PartnershipHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__partnershipHasUtr__heading", partnershipName))
+        val label = Some(messages("messages__hasUTR", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName))
 
         BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)

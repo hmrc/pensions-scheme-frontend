@@ -80,8 +80,8 @@ object CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   val viewmodel = ReasonViewModel(
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, index, None),
-    title = Message("messages__noCompanyUtr__title"),
-    heading = Message("messages__noCompanyUtr__heading", companyName)
+    title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
+    heading = Message("messages__whyNoUTR", companyName)
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyNoUTRReasonController =

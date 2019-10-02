@@ -18,14 +18,14 @@ package identifiers.register.establishers.individual
 
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
-import models.{Link, NormalMode, UpdateMode}
 import models.person.PersonName
 import models.requests.DataRequest
+import models.{Link, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 class EstablisherNoNINOReasonIdSpec extends SpecBase {
@@ -34,7 +34,7 @@ class EstablisherNoNINOReasonIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__noGenericNino__heading", name),List("reason"),false,Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__whyNoNINO", name),List("reason"),false,Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_noNinoReason", name)))))
   )
 

@@ -42,8 +42,8 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__partnershipHasPaye__title"),
-    heading = Message("messages__hasPaye__h1", "test partnership name"),
+    title = Message("messages__hasPAYE", Message("messages__thePartnership").resolve),
+    heading = Message("messages__hasPAYE", "test partnership name"),
     hint = Some(Message("messages__hasPaye__p1")),
     formFieldName = Some("hasPaye")
   )

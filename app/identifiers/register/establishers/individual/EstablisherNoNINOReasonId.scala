@@ -37,7 +37,7 @@ object EstablisherNoNINOReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoNINOReasonId] = {
 
     def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__noGenericNino__heading", establisherName(index)))
+    def label(index: Int) = Some(messages("messages__whyNoNINO", establisherName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", establisherName(index)))
 
     new CheckYourAnswers[EstablisherNoNINOReasonId] {

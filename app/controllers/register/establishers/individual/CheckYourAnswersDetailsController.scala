@@ -58,7 +58,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           None,
           EstablisherDOBId(index).row(routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           EstablisherHasNINOId(index).row(routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherNewNinoId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode)++
+          EstablisherEnterNINOId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode)++
           EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)++
           EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)++

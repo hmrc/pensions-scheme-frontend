@@ -37,7 +37,7 @@ object EstablisherNoUTRReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoUTRReasonId] = {
 
     def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__noGenericUtr__heading", establisherName(index)))
+    def label(index: Int) = Some(messages("messages__whyNoUTR", establisherName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", establisherName(index)))
 
     new CheckYourAnswers[EstablisherNoUTRReasonId] {

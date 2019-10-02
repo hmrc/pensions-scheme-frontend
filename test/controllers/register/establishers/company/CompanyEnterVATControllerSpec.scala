@@ -77,8 +77,8 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
 
   val viewModel = EnterVATViewModel(
     routes.CompanyEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__enterVAT__company_title"),
-    heading = Message("messages__enterVAT__heading", "test company name"),
+    title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
+    heading = Message("messages__enterVAT", "test company name"),
     hint = Message("messages__enterVAT__hint", "test company name"),
     subHeading = None,
     srn = srn

@@ -81,7 +81,7 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherIndividualDetailsComplete(establisherIndex: Int): Option[Boolean] =
     isComplete(Seq(
       isAnswerComplete(EstablisherDOBId(establisherIndex)),
-      isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherNewNinoId(establisherIndex), Some(EstablisherNoNINOReasonId(establisherIndex))),
+      isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherEnterNINOId(establisherIndex), Some(EstablisherNoNINOReasonId(establisherIndex))),
       isAnswerComplete(EstablisherHasUTRId(establisherIndex), EstablisherUTRId(establisherIndex), Some(EstablisherNoUTRReasonId(establisherIndex)))
     ))
 
@@ -103,7 +103,7 @@ trait DataCompletionEstablishers extends DataCompletion {
     } else {
       isListComplete(Seq(
         get(EstablisherDetailsId(index)).isDefined,
-        get(EstablisherNinoId(index)).isDefined | get(EstablisherNewNinoId(index)).isDefined,
+        get(EstablisherNinoId(index)).isDefined | get(EstablisherEnterNINOId(index)).isDefined,
         get(UniqueTaxReferenceId(index)).isDefined | get(EstablisherUTRId(index)).isDefined,
         isAddressComplete(AddressId(index), PreviousAddressId(index),
           AddressYearsId(index), None).getOrElse(false),
@@ -116,9 +116,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId(index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipPayeVariationsId(index), None)
+        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
       )
     )
 
@@ -132,9 +132,9 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isEstablisherPartnershipCompleteNonHns(index: Int): Boolean =
     isListComplete(Seq(
       get(PartnershipDetailsId(index)).isDefined,
-      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipUTRId(index)).isDefined,
+      get(PartnershipUniqueTaxReferenceID(index)).isDefined | get(PartnershipEnterUTRId(index)).isDefined,
       get(PartnershipVatId(index)).isDefined | get(PartnershipEnterVATId(index)).isDefined,
-      get(PartnershipPayeId(index)).isDefined | get(PartnershipPayeVariationsId(index)).isDefined,
+      get(PartnershipPayeId(index)).isDefined | get(PartnershipEnterPAYEId(index)).isDefined,
       isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index), None).getOrElse(false),
       get(PartnershipContactDetailsId(index)).isDefined
     ))

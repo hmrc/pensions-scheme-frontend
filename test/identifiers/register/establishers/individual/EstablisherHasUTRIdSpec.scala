@@ -115,7 +115,7 @@ object EstablisherHasUTRIdSpec extends SpecBase {
 
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = messages("messages__dynamic_hasUtr", name.fullName),
+      label = messages("messages__hasUTR", name.fullName),
       answer = List("site.yes"),
       answerIsMessageKey = true,
       changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_hasUtr", name.fullName))))

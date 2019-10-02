@@ -26,18 +26,18 @@ import views.html.register.establishers.partnership.partnershipDetails
 
 class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetails] {
 
-  val messageKeyPrefix = "partnershipDetails"
+  private val messageKeyPrefix = "partnershipName"
 
   override val form = new PartnershipDetailsFormProvider()()
-  val firstIndex = Index(1)
+  private val firstIndex = Index(1)
 
-  val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
-  def createView(): () => HtmlFormat.Appendable = () =>
+  private val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
+  private def createView(): () => HtmlFormat.Appendable = () =>
     partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
-  def createUpdateView(): () => HtmlFormat.Appendable = () =>
+  private def createUpdateView(): () => HtmlFormat.Appendable = () =>
     partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+  private def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
   "PartnershipDetails view" must {

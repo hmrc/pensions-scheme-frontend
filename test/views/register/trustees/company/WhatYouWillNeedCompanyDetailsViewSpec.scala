@@ -22,7 +22,9 @@ import views.behaviours.ViewBehaviours
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
-  val pageHeading = "page heading"
+  val messageKeyPrefix = "whatYouWillNeedTrusteeCompany"
+  private val companyName = "test company"
+  private val token = messages("messages__theCompany").capitalize
 
   lazy val href = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
@@ -31,16 +33,20 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
     Some("testScheme"),
     href,
     None,
-    pageHeading
+    companyName
   )(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(
-      createView,
-      "whatYouWillNeedTrusteeCompany",
-      pageHeading,
-      "_p1", "_item1", "_item2", "_item3", "_item4", "_p2")
+    behave like normalPageWithTitle(createView, messageKeyPrefix,
+      messages("messages__detailsFor", token),
+      messages("messages__detailsFor", companyName),
+      "_item1", "_item2", "_item3", "_item4")
+
+    "display the correct lede" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedTrusteeCompany__p1", companyName))
+    }
 
     behave like pageWithSubmitButton(createView)
 

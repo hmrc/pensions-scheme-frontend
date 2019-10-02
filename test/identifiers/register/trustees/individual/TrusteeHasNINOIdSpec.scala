@@ -36,7 +36,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
   private val personDetails = PersonName("first", "last")
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = Message("messages__genericHasNino__h1", personDetails.fullName).resolve,
+      label = Message("messages__hasNINO", personDetails.fullName).resolve,
       answer = Seq("site.no"),
       answerIsMessageKey = true,
       changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))

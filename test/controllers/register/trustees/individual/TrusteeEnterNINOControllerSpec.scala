@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
+import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeNameId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -29,7 +29,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeNavigator, UserAnswers}
-import viewmodels.NinoViewModel
+import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
@@ -133,8 +133,8 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),
-      title = messages("messages__trustee__individual__nino__title"),
-      heading = messages("messages__trustee__individual__nino__heading", trusteeName),
+      title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
+      heading = Message("messages__enterNINO", trusteeName),
       hint = "messages__common__nino_hint",
       srn = srn
     )
