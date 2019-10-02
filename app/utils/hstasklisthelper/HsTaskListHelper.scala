@@ -36,7 +36,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
                                 featureSwitchManagementService: FeatureSwitchManagementService
                                )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
-  def isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
+  protected def isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
 
   protected val beforeYouStartLinkText: String
   protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text")
