@@ -45,8 +45,8 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
 
   private val viewmodel = CommonFormWithHintViewModel(
     routes.EstablisherNameController.onSubmit(NormalMode, index, None),
-    title = Message("messages__establisherName__title"),
-    heading = Message("messages__establisherName__heading"))
+    title = Message("messages__individualName__title"),
+    heading = Message("messages__individualName__heading"))
 
   def viewAsString(form: Form[_] = form): String = personName(
     frontendAppConfig,

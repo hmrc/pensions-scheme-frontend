@@ -36,8 +36,9 @@ abstract class HsTaskListHelper(answers: UserAnswers,
                                 featureSwitchManagementService: FeatureSwitchManagementService
                                )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
-  override val isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
-  protected val schemeName = answers.get(SchemeNameId).getOrElse("")
+  protected val schemeName: String = answers.get(SchemeNameId).getOrElse("")
+  protected def isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
+
   protected val beforeYouStartLinkText: String
 
 
@@ -127,8 +128,6 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   private[utils] def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-
-
 
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(

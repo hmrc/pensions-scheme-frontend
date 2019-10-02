@@ -29,7 +29,8 @@ class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
   private val index = 0
   private val partnershipName = "test partnership"
   private val nextPageUrl = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
-  private val pageHeader = Message(s"messages__${messageKeyPrefix}__h1", partnershipName)
+  private val pageHeader = Message("messages__detailsFor", partnershipName)
+  private val title = Message("messages__detailsFor", Message("messages__thePartnership").resolve.capitalize)
 
   def createView(): HtmlFormat.Appendable = whatYouWillNeedPartnershipDetails(
     frontendAppConfig,
@@ -41,7 +42,7 @@ class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
 
   "whatYouWillNeedTrusteePartnershipDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, pageHeader,
+    behave like normalPageWithTitle(createView, messageKeyPrefix, title, pageHeader,
       expectedGuidanceKeys = "_item1", "_item2")
 
     "display the dynamic paragraph and bullet points" in {

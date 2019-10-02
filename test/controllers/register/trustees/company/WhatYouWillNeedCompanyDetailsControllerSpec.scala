@@ -38,10 +38,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
   lazy val postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
-  def viewAsString(): String = {
-    val header = Message("messages__whatYouWillNeedTrusteeCompany__h1", "test company name")
-    whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None, header)(fakeRequest, messages).toString
-  }
+  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None, "test company name")(fakeRequest, messages).toString
 
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {

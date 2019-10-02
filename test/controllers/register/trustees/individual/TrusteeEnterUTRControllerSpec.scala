@@ -76,8 +76,8 @@ object TrusteeEnterUTRControllerSpec extends TrusteeEnterUTRControllerSpec {
 
   val viewModel = UTRViewModel(
     routes.TrusteeEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__trusteeUtr__title"),
-    heading = Message("messages__trusteeUtr__h1", "Test Name"),
+    title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
+    heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )

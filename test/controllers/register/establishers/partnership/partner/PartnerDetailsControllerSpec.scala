@@ -16,13 +16,12 @@
 
 package controllers.register.establishers.partnership.partner
 
-import services.UserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import forms.register.PersonDetailsFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
@@ -33,6 +32,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.UserAnswersService
 import utils.{FakeNavigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
@@ -147,13 +147,6 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to session expired from a POST when the index is invalid for establisher" in {
-      val result = controller().onSubmit(NormalMode, invalidIndex, firstPartnerIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "save the isNewPartner flag and set the establisher as not complete when the new partner is being added" in {
       reset(mockSectionComplete, mockUserAnswersService)
       val validData = UserAnswers().set(PartnershipDetailsId(firstEstablisherIndex))(PartnershipDetails("test company name")).flatMap(
@@ -164,10 +157,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
       ).asOpt.value.json
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val userAnswers = UserAnswers(validData)
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER

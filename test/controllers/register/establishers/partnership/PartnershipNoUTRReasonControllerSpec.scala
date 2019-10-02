@@ -45,8 +45,8 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val viewModel = ReasonViewModel(
     postCall = routes.PartnershipNoUTRReasonController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__partnershipNoUtr__title"),
-    heading = Message("messages__noGenericUtr__heading", partnershipDetails.name),
+    title = Message("messages__whyNoUTR", Message("messages__thePartnership").resolve),
+    heading = Message("messages__whyNoUTR", partnershipDetails.name),
     srn = srn
   )
 

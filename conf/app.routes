@@ -151,9 +151,6 @@ POST        /change/confirm-address                                  controllers
 GET         /:mode/confirm-address/:srn                              controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode, srn: Option[String])
 POST        /:mode/confirm-address/:srn                              controllers.InsurerConfirmAddressController.onSubmit(mode: Mode, srn: Option[String])
 
-GET         /confirm-address-link                                    controllers.InsurerConfirmAddressController.onClick(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /:mode/confirm-address-link/:srn                         controllers.InsurerConfirmAddressController.onClick(mode: Mode, srn: Option[String])
-
 GET         /check-your-answers-before-start                         controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST        /check-your-answers-before-start                         controllers.CheckYourAnswersBeforeYouStartController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-before-start/:srn              controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode, srn: Option[String])

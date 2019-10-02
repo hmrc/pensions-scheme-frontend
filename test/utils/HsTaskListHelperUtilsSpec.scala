@@ -355,8 +355,8 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
-      controllers.register.establishers.partnership.partner.routes.WhatYouWillNeedPartnerController.onPageLoad(mode, 2, srn).url), None)
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_partners", partnershipName),
+      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
   def expectedCompletedEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
@@ -366,8 +366,8 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
       establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(dynamicContentForChangeLink(srn,  partnershipName, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
-      controllers.register.establishers.partnership.partner.routes.WhatYouWillNeedPartnerController.onPageLoad(mode, 2, srn).url), None)
+    EntitySpoke(Link(messages("messages__schemeTaskList__change_partners", partnershipName),
+      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 
   def expectedAddTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(

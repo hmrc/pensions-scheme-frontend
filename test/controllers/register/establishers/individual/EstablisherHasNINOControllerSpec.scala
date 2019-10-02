@@ -22,6 +22,7 @@ import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.EstablisherHasNINOId
 import models.{Index, NormalMode}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -30,16 +31,17 @@ import views.html.hasUtr
 
 class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
-  private def onwardRoute  = controllers.routes.IndexController.onPageLoad()
+  private val name = "Test Name"
+  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad()
   private val formProvider = new HasUTRFormProvider()
-  private val form         = formProvider("messages__genericHasNino__error__required", "test company name")
+  private val form         = formProvider("messages__genericHasNino__error__required", name)
   private val index        = Index(0)
   private val srn          = None
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasPersonNINO__title"),
-    heading = Message("messages__genericHasNino__h1", "Test Name"),
+    title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
+    heading = Message("messages__hasNINO", name),
     hint = None
   )
 
@@ -56,7 +58,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasUtr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = hasUtr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "EstablisherHasNINOController" must {
 
@@ -74,7 +76,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(EstablisherHasNINOId(index), true)
+      FakeUserAnswersService.verify(EstablisherHasNINOId(index), value = true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

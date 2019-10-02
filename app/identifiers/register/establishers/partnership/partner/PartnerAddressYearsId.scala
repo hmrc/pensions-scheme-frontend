@@ -17,7 +17,7 @@
 package identifiers.register.establishers.partnership.partner
 
 import identifiers._
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
@@ -34,10 +34,6 @@ case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) exten
         userAnswers.remove(PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex))
           .flatMap(_.remove(PartnerPreviousAddressId(establisherIndex, partnerIndex)))
           .flatMap(_.remove(PartnerPreviousAddressListId(establisherIndex, partnerIndex)))
-      case Some(AddressYears.UnderAYear) =>
-        userAnswers.set(IsPartnerCompleteId(establisherIndex, partnerIndex))(false).flatMap(
-          _.set(IsEstablisherCompleteId(establisherIndex))(false)
-        )
       case _ => super.cleanup(value, userAnswers)
     }
   }

@@ -48,8 +48,8 @@ class PartnershipEnterVATController @Inject()(
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__common_partnershipVat__title"),
-      heading = Message("messages__dynamic_whatIsVAT", partnershipName),
+      title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
+      heading = Message("messages__enterVAT", partnershipName),
       hint = Message("messages__enterVAT__hint", partnershipName),
       subHeading = None,
       srn = srn

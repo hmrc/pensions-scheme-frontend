@@ -83,7 +83,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNoNino)
-          EstablisherNewNinoId(firstIndex).row(
+          EstablisherEnterNINOId(firstIndex).row(
             controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url,
             UpdateMode)
         }
@@ -97,7 +97,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       "return OK and display no add/change link but do display new nino for UpdateMode where a new nino has already been entered" in {
         val expectedNinoRow = {
           implicit val request: FakeDataRequest = FakeDataRequest(individualAnswersWithNewNino)
-          EstablisherNewNinoId(firstIndex).row(
+          EstablisherEnterNINOId(firstIndex).row(
             controllers.register.establishers.individual.routes.EstablisherNinoNewController.onPageLoad(CheckUpdateMode, firstIndex, Some("srn")).url,
             UpdateMode)
         }

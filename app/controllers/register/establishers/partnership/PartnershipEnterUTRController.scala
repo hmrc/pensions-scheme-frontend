@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipUTRId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
 import javax.inject.Inject
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -32,24 +32,24 @@ import viewmodels.{Message, UTRViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         override val userAnswersService: UserAnswersService,
-                                         override val navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
-                                         requireData: DataRequiredAction,
-                                         formProvider: UTRFormProvider
+class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              override val userAnswersService: UserAnswersService,
+                                              override val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: UTRFormProvider
                                         )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): UTRViewModel = {
     UTRViewModel(
-      postCall = routes.PartnershipUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__common_partnershipUtr__title"),
-      heading = Message("messages__dynamic_whatIsUTR", partnershipName),
+      postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
+      title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
+      heading = Message("messages__enterUTR", partnershipName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )
@@ -59,7 +59,7 @@ class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConf
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
-          get(PartnershipUTRId(index), viewModel(mode, index, srn, details.name), form)
+          get(PartnershipEnterUTRId(index), viewModel(mode, index, srn, details.name), form)
         }
     }
 
@@ -67,7 +67,7 @@ class PartnershipUTRController @Inject()(override val appConfig: FrontendAppConf
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
-          post(PartnershipUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
+          post(PartnershipEnterUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
         }
     }
 }

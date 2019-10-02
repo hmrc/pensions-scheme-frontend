@@ -17,14 +17,13 @@
 package utils
 
 import config.FeatureSwitchManagementService
-import identifiers._
-import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import models._
-import models.person.PersonDetails
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
+import identifiers._
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models._
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
@@ -32,7 +31,7 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHead
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
-  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(true)
   override val createTaskListHelper:
     (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper = (ua, fs) => new HsTaskListHelperRegistration(ua, fs)
 
@@ -167,7 +166,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the link to add establisher page when establishers are added" in {
       val userAnswers = userAnswersWithSchemeName.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsEstablisherCompleteId(0))(true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
@@ -195,7 +193,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like trusteesSectionHnS(NormalMode, None)
 
     "return the seq of trustees sub sections when all spokes are completed" in {
-      val userAnswers = allAnswersHnS
+      val userAnswers = allAnswers
       val helper = createTaskListHelper(userAnswers, new FakeFeatureSwitchManagementService(true))
       helper.trustees(userAnswers, NormalMode, None) mustBe
         Seq(

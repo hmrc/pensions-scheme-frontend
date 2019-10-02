@@ -84,9 +84,4 @@ class PartnershipAddressController @Inject()(
       srn = srn
     )
 
-  def onClick(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      clear(PartnershipAddressId(index), PartnershipAddressListId(index), mode, srn, routes.PartnershipAddressController.onPageLoad(mode, index, srn))
-  }
-
 }

@@ -37,7 +37,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       val result = ua(true).set(PartnershipHasPAYEId(0))(value = false).asOpt.value
 
       "remove the data for `PartnershipEnterPAYEId`" in {
-        result.get(PartnershipPayeVariationsId(0)) mustNot be(defined)
+        result.get(PartnershipEnterPAYEId(0)) mustNot be(defined)
       }
     }
 
@@ -45,7 +45,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
       val result = ua(false).set(PartnershipHasPAYEId(0))(value = true).asOpt.value
 
       "not remove the data for `PartnershipEnterPAYEId`" in {
-        result.get(PartnershipPayeVariationsId(0)) must be(defined)
+        result.get(PartnershipEnterPAYEId(0)) must be(defined)
       }
     }
   }
@@ -90,13 +90,13 @@ object PartnershipHasPAYEIdSpec extends SpecBase {
   val name = "test partnership name"
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasPaye__h1", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__hasPAYE", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
   )
 
   private def ua(v:Boolean): UserAnswers = UserAnswers(Json.obj())
     .set(PartnershipHasPAYEId(0))(v)
-    .flatMap(_.set(PartnershipPayeVariationsId(0))(ReferenceValue("value")))
+    .flatMap(_.set(PartnershipEnterPAYEId(0))(ReferenceValue("value")))
     .asOpt
     .value
 }
