@@ -60,12 +60,12 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__thePerson").resolve), mode)
+        get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__thePerson").resolve), mode)
+        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
     }
 }

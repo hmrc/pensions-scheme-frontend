@@ -20,7 +20,7 @@ import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeEnterNINOId}
+import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -48,8 +48,8 @@ class TrusteeEnterNINOController @Inject()(
   private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
-      title = Message("messages__trustee__individual__nino__title"),
-      heading = Message("messages__trustee__individual__nino__heading", fullName),
+      title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
+      heading = Message("messages__enterNINO", fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn
     )

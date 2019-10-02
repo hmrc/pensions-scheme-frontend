@@ -20,28 +20,36 @@ import controllers.register.establishers.partnership.partner.routes._
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
-  private val messageKeyPrefix = "whatYouWillNeedPartners"
-  private val messageKeyPrefix2 = "whatYouWillNeed"
+  private val messageKeyPrefix = "whatYouWillNeed"
+  private val partnershipName = "test partnership name"
 
-  private val href: Call = PartnerNameController.onPageLoad(NormalMode, 0, 0, None)
+  private val href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
   private def createView: () => HtmlFormat.Appendable =
-    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, href)(fakeRequest, messages)
+    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, partnershipName, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 
   "WhatYouWillNeedPartners view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
+    behave like normalPageWithTitle(createView, messageKeyPrefix,
+      Message("messages__partnersFor", Message("messages__thePartnership").resolve),
+      Message("messages__partnersFor", partnershipName))
 
     "display the correct guidance" in {
       val doc = asDocument(createView())
-      for (key <- messageKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix2}_$key"))
+      for (key <- messageKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix}_$key"))
+    }
+
+    "display the correct paragraph" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedPartners__p1"))
     }
 
     behave like pageWithSubmitButton(createView)

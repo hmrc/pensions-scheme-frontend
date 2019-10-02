@@ -18,21 +18,20 @@ package identifiers.register.establishers.individual
 
 import base.SpecBase
 import config.FeatureSwitchManagementService
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
-import models.{AddressYears, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.i18n.MessagesApi
+import models.{AddressYears, Link, NormalMode, UpdateMode}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels.{AnswerRow, Message}
-import utils.checkyouranswers.Ops._
 
 class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -43,7 +42,6 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
       .flatMap(_.set(PreviousPostCodeLookupId(0))(Seq.empty))
       .flatMap(_.set(PreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(PreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-      .flatMap(_.set(IsEstablisherCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -61,10 +59,6 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
       "remove the data for `PreviousAddressList`" in {
         result.get(PreviousAddressListId(0)) mustNot be(defined)
       }
-
-      "do not change the value of IsEstablisherCompleteId" in {
-        result.get(IsEstablisherCompleteId(0)).value mustBe true
-      }
     }
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -74,12 +68,7 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
         .flatMap(_.set(PreviousPostCodeLookupId(0))(Seq.empty))
         .flatMap(_.set(PreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
         .flatMap(_.set(PreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
-        .flatMap(_.set(IsEstablisherCompleteId(0))(true))
         .asOpt.value.set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-
-      "set the value of IsEstablisherCompleteId to false" in {
-        result.get(IsEstablisherCompleteId(0)).value mustBe false
-      }
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(PreviousPostCodeLookupId(0)) mustBe defined

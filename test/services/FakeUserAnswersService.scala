@@ -53,17 +53,6 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     Future.successful(Json.obj())
   }
 
-  override def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
-                                                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-
-    val addressCompletedId = getCompleteId[Address](id)
-
-    addressCompletedId.fold(Future.successful(userAnswers)) {
-      id =>
-        data += (id.toString -> Json.toJson(true))
-        Future.successful(UserAnswers())
-    }
-  }
 
   override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
                                  (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
@@ -72,14 +61,6 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
         data += ("fakeExistingAddressId" -> Json.toJson(address))
         userAnswers
     }
-  }
-
-  override def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
-                                               (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier,
-                                                request: DataRequest[AnyContent]): Future[UserAnswers] =
-  {
-    data += (id.toString -> Json.toJson(value))
-    Future.successful(UserAnswers())
   }
 
   override def upsert(mode: Mode, srn: Option[String], value: JsValue)
@@ -116,7 +97,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
   }
 
   def userAnswer: UserAnswers = {
-    UserAnswers(data.get("userAnswer").getOrElse(Json.obj()))
+    UserAnswers(data.getOrElse("userAnswer", Json.obj()))
   }
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {

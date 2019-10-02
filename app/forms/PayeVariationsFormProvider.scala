@@ -30,9 +30,9 @@ class PayeVariationsFormProvider @Inject() extends PayeMapping {
     Form(
       mapping(
         "paye" -> payeStringMapping(
-          requiredPayeKey = "messages__payeVariations__error_required",
-          payeLengthKey = Message("messages__payeVariations__error_length", name),
-          invalidPayeKey = Message("messages__payeVariations__error_invalid", name)
+          requiredPayeKey = "messages__enterPAYE__error_required",
+          payeLengthKey = Message("messages__enterPAYE__error_length", name),
+          invalidPayeKey = Message("messages__enterPAYE__error_invalid", name)
         )
       )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )

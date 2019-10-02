@@ -48,7 +48,7 @@ object HasCompanyCRNId {
     new CheckYourAnswersCompany[HasCompanyCRNId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__hasCompanyNumber__h1")
+        dynamicMessage(index, ua, "messages__hasCRN")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasCrn")

@@ -19,9 +19,9 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonNameFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers.{eq => eqTo, _}
@@ -198,8 +198,6 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockUserAnswersService.setCompleteFlag(any(), any(), eqTo(IsEstablisherCompleteId(0)),
-        eqTo(userAnswers), eqTo(false))(any(), any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER

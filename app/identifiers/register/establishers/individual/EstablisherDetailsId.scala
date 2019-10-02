@@ -17,12 +17,10 @@
 package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonDetails
-import models.requests.DataRequest
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import play.api.mvc.AnyContent
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.PersonalDetailsCYA
@@ -34,9 +32,6 @@ case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetail
 
 object EstablisherDetailsId {
   override lazy val toString: String = "establisherDetails"
-
-  def isComplete(index: Int)(implicit request: DataRequest[AnyContent]): Option[Boolean] =
-    request.userAnswers.get[Boolean](JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString)
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[EstablisherDetailsId] = {
     new CheckYourAnswers[EstablisherDetailsId] {

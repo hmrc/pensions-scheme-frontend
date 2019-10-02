@@ -33,8 +33,8 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__payeVariations__heading", partnershipName),List("paye"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))
+    AnswerRow(messages("messages__enterPAYE", partnershipName),List("paye"),false,Some(Link("site.change",onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))
   )
 
   private val ua = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
@@ -70,7 +70,7 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__payeVariations__heading", partnershipName),List("paye"),false,None)
+          AnswerRow(messages("messages__enterPAYE", partnershipName),List("paye"),false,None)
         ))
       }
 
@@ -87,8 +87,8 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterPAYEId(0).row(onwardUrl, CheckUpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__payeVariations__heading", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye", partnershipName)))))))
+          AnswerRow(messages("messages__enterPAYE", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))))
       }
     }
   }

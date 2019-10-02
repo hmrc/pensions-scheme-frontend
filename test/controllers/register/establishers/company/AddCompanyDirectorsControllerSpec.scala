@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
 import models.person.PersonName
-import models.register.{Director, DirectorEntity}
+import models.register.{DirectorEntity}
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
@@ -58,7 +58,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[Director[_]] = Nil, enableSubmission: Boolean = false) =
+  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil, enableSubmission: Boolean = false) =
     addCompanyDirectors(
       frontendAppConfig,
       form,

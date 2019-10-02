@@ -16,11 +16,10 @@
 
 package controllers.register.establishers.individual
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.{EstablishersId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId}
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import models.person.PersonDetails
 import models.{AddressYears, Index, NormalMode, UpdateMode}
@@ -29,6 +28,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -115,7 +115,6 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)).value mustBe true
     }
 
     "redirect to the next page when valid data is submitted with under_a_year" in {
@@ -124,7 +123,6 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(firstIndex)) mustBe Some(false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

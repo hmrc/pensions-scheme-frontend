@@ -48,7 +48,7 @@ object HasCompanyUTRId {
     new CheckYourAnswersCompany[HasCompanyUTRId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__hasCompanyUtr__h1")
+        dynamicMessage(index, ua, "messages__hasUTR")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasUtr")

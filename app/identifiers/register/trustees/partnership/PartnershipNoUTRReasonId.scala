@@ -37,7 +37,7 @@ object PartnershipNoUTRReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipNoUTRReasonId] = {
 
     def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-    def label(index: Int) = Some(messages("messages__noGenericUtr__heading", trusteeName(index)))
+    def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipNoUTRReasonId] {

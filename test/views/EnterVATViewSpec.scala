@@ -34,9 +34,9 @@ class EnterVATViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   def viewModel(srn:Option[String]): EnterVATViewModel = EnterVATViewModel(
     postCall = postCall,
-    title = Message("messages__enterVAT__company_title"),
-    heading = Message("messages__enterVAT__heading"),
-    hint = Message("messages__enterVAT__hint"),
+    title = Message(s"messages__$messageKeyPrefix"),
+    heading = Message(s"messages__$messageKeyPrefix"),
+    hint = Message(s"messages__${messageKeyPrefix}__hint"),
     subHeading = None,
     srn = srn
   )
@@ -49,7 +49,9 @@ class EnterVATViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   "Vat Variations view" when {
     "rendered" must {
-      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+      behave like normalPageWithTitle(createView(), messageKeyPrefix,
+        title = Message(s"messages__$messageKeyPrefix"),
+        pageHeader = Message(s"messages__$messageKeyPrefix"))
 
       behave like pageWithReturnLinkAndSrn(createView(), getReturnLinkWithSrn)
 

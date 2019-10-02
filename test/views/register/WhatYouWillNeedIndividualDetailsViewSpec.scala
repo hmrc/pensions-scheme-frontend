@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package views.register.establishers.individual
+package views.register
 
 import controllers.register.establishers.individual.routes
 import models.NormalMode
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
-import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
+import views.html.register.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
 
@@ -30,11 +31,14 @@ class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
 
   lazy val href: Call = routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None)
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () =>
+    whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, establisherName)(fakeRequest, messages)
 
-  "whatYouWillNeedEstablisherIndividualDetails view" must {
+  "WhatYouWillNeedIndividualDetailsView" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", establisherName),
+    behave like normalPageWithTitle(createView, messageKeyPrefix,
+      messages("messages__detailsFor", messages("messages__theIndividual")).capitalize,
+      Message(s"messages__detailsFor", establisherName),
       "_item1", "_item2", "_item3")
 
     behave like pageWithSubmitButton(createView)

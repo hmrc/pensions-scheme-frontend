@@ -60,14 +60,14 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theTrustee").resolve), mode)
+        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
     }
 
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theTrustee").resolve), mode)
+        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
     }
 
 }

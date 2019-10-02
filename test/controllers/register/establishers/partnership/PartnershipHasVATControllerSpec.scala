@@ -43,8 +43,8 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasVATController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__vat__title", Message("messages__common__partnership").resolve),
-    heading = Message("messages__vat__heading", partnershipDetails.name),
+    title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
+    heading = Message("messages__hasVAT", partnershipDetails.name),
     hint = None,
     srn = srn
   )

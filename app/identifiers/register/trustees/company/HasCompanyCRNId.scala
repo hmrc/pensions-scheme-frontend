@@ -52,7 +52,7 @@ object HasCompanyCRNId {
       }
 
     def label(index: Int) =
-      Some(messages("messages__hasCompanyNumber__h1", companyName(index)))
+      Some(messages("messages__hasCRN", companyName(index)))
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasCrn", companyName(index)))
 

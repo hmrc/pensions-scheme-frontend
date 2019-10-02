@@ -50,8 +50,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
-      title = Message("messages__companyPayeRef__title"),
-      heading = Message("messages__hasPaye__h1", companyName),
+      title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
+      heading = Message("messages__hasPAYE", companyName),
       hint = Some(Message("messages__hasPaye__p1")),
       srn = srn,
       formFieldName = Some("hasPaye")

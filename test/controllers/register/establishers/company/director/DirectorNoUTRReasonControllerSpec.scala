@@ -83,7 +83,7 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val viewModel = ReasonViewModel(
     postCall,
     title = Message("messages__noDirectorUtr__title"),
-    heading = Message("messages__noDirectorUtr__heading", "first last"),
+    heading = Message("messages__whyNoUTR", "first last"),
     srn = srn
   )
 

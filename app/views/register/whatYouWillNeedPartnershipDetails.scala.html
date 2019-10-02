@@ -20,11 +20,11 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedPartnershipDetails__title"),
+    title = messages("messages__detailsFor", messages("messages__thePartnership")).capitalize,
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(headingKey = messages("messages__whatYouWillNeedPartnershipDetails__h1", partnershipName))
+    @components.heading(headingKey = messages("messages__detailsFor", partnershipName))
 
     <p>@messages("messages__whatYouWillNeedPartnershipDetails__p1", partnershipName)</p>
 

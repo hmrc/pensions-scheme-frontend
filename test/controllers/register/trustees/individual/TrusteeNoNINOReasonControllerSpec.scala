@@ -40,8 +40,8 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noNinoReason__trustee_title"),
-    heading = Message("messages__noGenericNino__heading", name),
+    title = Message("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+    heading = Message("messages__whyNoNINO", name),
     srn = srn
   )
 
