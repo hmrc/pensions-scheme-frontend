@@ -33,8 +33,8 @@ trait AllSpokes {
   implicit val messages: Messages
 
   trait Spoke {
-    protected def changeContent(name:String, srn:Option[String], registration: =>String, variations: =>String):String =
-      messages(if (srn.isDefined) variations else registration, name)
+    protected def dynamicContentForChangeLink(name:String, srn:Option[String], registrationMessageKey: =>String, variationsMessageKey: =>String):String =
+      messages(if (srn.isDefined) variationsMessageKey else registrationMessageKey, name)
 
     def addLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
     def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link
@@ -53,12 +53,12 @@ trait AllSpokes {
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link =
       Link(
-        changeContent( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+        dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
         changeLinkUrl(mode, srn, index).url
       )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -73,12 +73,12 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       changeLinkUrl(mode, srn, index).url
     )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -93,12 +93,12 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       changeLinkUrl(mode, srn, index).url
     )
 
     override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       addLinkUrl(mode, srn, index).url
     )
   }
@@ -141,7 +141,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
       establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index).url
     )
 
@@ -218,7 +218,7 @@ trait AllSpokes {
     )
 
     override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Int): Link = Link(
-      changeContent( name, srn, "messages__schemeTaskList__change_partners", "messages__schemeTaskList__view_partners"),
+      dynamicContentForChangeLink( name, srn, "messages__schemeTaskList__change_partners", "messages__schemeTaskList__view_partners"),
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index, srn).url
     )
 
