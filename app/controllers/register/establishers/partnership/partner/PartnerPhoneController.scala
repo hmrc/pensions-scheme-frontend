@@ -17,28 +17,68 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
+import controllers.PhoneNumberController
 import controllers.actions._
+import forms.PhoneFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnerPhoneController @Inject()(appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+import scala.concurrent.ExecutionContext
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+class PartnerPhoneController @Inject()(
+                                        val appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        override val userAnswersService: UserAnswersService,
+                                        allowAccess: AllowAccessActionProvider,
+                                        requireData: DataRequiredAction,
+                                        val navigator: Navigator,
+                                        formProvider: PhoneFormProvider
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+
+  protected val form: Form[String] = formProvider()
+
+  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, partnerIndex: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.PartnerPhoneController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              Message("messages__common_phone__heading", Message("messages__thePartner").resolve),
+              Message("messages__common_phone__heading", details.fullName),
+              Some(Message("messages__phone__hint")),
+              srn = srn
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.right.map {
+          vm =>
+            get(PartnerPhoneId(establisherIndex, partnerIndex), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.right.map {
+          vm =>
+            post(PartnerPhoneId(establisherIndex, partnerIndex), mode, form, vm)
+        }
+    }
+
 }
