@@ -209,7 +209,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
           answersIncomplete, NormalMode, None, "test partnership", 2
         ) mustBe expectedInProgressTrusteePartnershipSpokes(NormalMode, None)
       }
-      
+
       "in subscription journey when all spokes are complete" in {
         subscriptionHelper.getTrusteePartnershipSpokes(
           answersComplete, NormalMode, None, "test partnership", 2
@@ -296,7 +296,7 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   protected def answersComplete = UserAnswers(readJsonFromFile("/payload.json"))
   protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
 
-  private def changeOrView(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
+  private def dynamicContentForChangeLink(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
     messages(if(srn.isDefined) variationsKey else registrationKey, name)
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
@@ -316,24 +316,24 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   )
 
   def expectedInProgressSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_directors", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
   )
 
   def expectedCompletedSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_directors", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
       controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true)))
   )
 
@@ -349,22 +349,22 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   )
 
   def expectedInProgressEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,partnershipName, "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, 2).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
       controllers.register.establishers.partnership.partner.routes.WhatYouWillNeedPartnerController.onPageLoad(mode, 2, srn).url), None)
   )
 
   def expectedCompletedEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,partnershipName,"messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", partnershipName),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,  partnershipName, "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
     EntitySpoke(Link(messages("messages__schemeTaskList__add_partners", partnershipName),
       controllers.register.establishers.partnership.partner.routes.WhatYouWillNeedPartnerController.onPageLoad(mode, 2, srn).url), None)
@@ -398,68 +398,64 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
   )
 
   def expectedInProgressTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
   def expectedInProgressTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-      EntitySpoke(Link(changeOrView(srn,"test individual", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+      EntitySpoke(Link(
+        dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-      EntitySpoke(Link(changeOrView(srn,"test individual", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-      EntitySpoke(Link(changeOrView(srn,"test individual", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+      EntitySpoke(
+        Link(
+          dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))
+    ),
+    EntitySpoke(
+      Link(dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
-  // WE ARE HERE
-
   def expectedInProgressTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))
+    ),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))
+    ),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
   )
 
-//  def expectedInProgressTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-//    EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
-//      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-//    EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
-//      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-//    EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
-//      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
-//  )
-
   def expectedCompletedTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(changeOrView(srn,"test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn,"test company","messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
     )
 
   def expectedCompletedTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn,"test individual","messages__schemeTaskList__change_contact","messages__schemeTaskList__view_contact"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_contact","messages__schemeTaskList__view_contact"),
       trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 
   private def expectedCompletedTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] =
     Seq(
-    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn,"test partnership", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(Link(changeOrView(srn, "test partnership", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
+    EntitySpoke(Link(dynamicContentForChangeLink(srn, "test partnership", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
   )
 }

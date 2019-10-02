@@ -39,6 +39,7 @@ import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import utils.HsTaskListHelperUtilsSpec.messages
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
@@ -278,6 +279,10 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
   }
 
   override def establishersSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+
+    def dynamicContentForChangeLink(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
+    messages(if(srn.isDefined) variationsKey else registrationKey, name)
+
     def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
 
     "return the seq of establishers sub sections" in {
@@ -287,7 +292,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+              EntitySpoke(Link(dynamicContentForChangeLink(srn, "test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
               EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
