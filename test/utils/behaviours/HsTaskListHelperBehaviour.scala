@@ -43,8 +43,7 @@ import viewmodels._
 
 trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
   protected val schemeName = "scheme"
-  protected val ua:UserAnswers = UserAnswers().
-    set(SchemeNameId)(schemeName).asOpt.value
+  protected val userAnswersWithSchemeName:UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
   protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text", schemeName)
   protected lazy val schemeInfoLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")
@@ -68,7 +67,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected lazy val deleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_delete_link")
   protected lazy val deleteTrusteesAdditionalInfo: String = messages("messages__schemeTaskList__sectionTrustees_delete_additional_text")
   protected lazy val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
-  val deletedEstablishers = ua.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
+  val deletedEstablishers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
     _.set(IsEstablisherCompleteId(0))(false).flatMap(
       _.set(IsEstablisherNewId(0))(true).flatMap(
         _.set(establisherCompanyPath.CompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
@@ -87,14 +86,14 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     def link(target: String) = Link(linkContent, target)
 
     "return the link to scheme name page when not completed " in {
-      val userAnswers = ua.set(IsBeforeYouStartCompleteId)(false).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(false).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.beforeYouStartLink(userAnswers, mode, srn) mustBe
         link(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
-      val userAnswers = ua.set(IsBeforeYouStartCompleteId)(true).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.beforeYouStartLink(userAnswers, mode, srn) mustBe link(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
@@ -147,7 +146,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   }
 
   protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
-    ua.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+    userAnswersWithSchemeName.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
       _.set(IsEstablisherNewId(0))(true).flatMap(
         _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablisher).flatMap(
           _.set(establisherCompanyPath.HasCompanyPAYEId(0))(false).flatMap(
@@ -161,7 +160,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     val fsm:FakeFeatureSwitchManagementService = fakeFeatureManagementService
 
     s"display and link should go to trustee kind page when do you have any trustees is true and no trustees are added" in {
-      val userAnswers = ua.set(HaveAnyTrusteesId)(true).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(addLinkText,
@@ -170,7 +169,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "display and link should go to add trustees page when do you have any trustees is not present" +
       s"and trustees are added and completed" in {
-      val userAnswers = ua.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName")).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName")).asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(changeLinkText,
@@ -179,7 +178,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
     "display and link should go to add trustees page and status is not completed when do you have any trustees is not present" +
       s"and trustees are added and not completed" in {
-      val userAnswers = ua.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName"))
+      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName"))
        .asOpt.value
       val helper = createTaskListHelper(userAnswers, fsm)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
@@ -195,7 +194,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                        changeLinkText:String = changeTrusteesLinkText): Unit = {
 
     "display correct link data when 2 trustees exist " in {
-      val userAnswers = ua
+      val userAnswers = userAnswersWithSchemeName
         .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
         .set(TrusteeNameId(1))(PersonName("firstName",  "lastName")).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
@@ -205,7 +204,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
 
     "display correct link data when trustee is optional and no trustee exists " in {
-      val userAnswers = ua.set(HaveAnyTrusteesId)(true).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
         .set(SchemeTypeId)(SchemeType.BodyCorporate).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
@@ -214,7 +213,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
 
     "display correct link data when trustee is mandatory and no trustees exists " in {
-      val userAnswers = ua.set(HaveAnyTrusteesId)(true).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
         .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
       val helper = createTaskListHelper(userAnswers, fakeFeatureManagementService)
       helper.addTrusteeHeader(userAnswers, mode, srn).value mustBe
@@ -305,7 +304,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 //
 //
 //    "not have link when do you have any trustees is true but no trustees are added" in {
-//      val userAnswers = ua.set(IsBeforeYouStartCompleteId)(true).flatMap(
+//      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(true).flatMap(
 //        _.set(IsAboutMembersCompleteId)(true).flatMap(
 //          _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
 //            _.set(IsAboutBenefitsAndInsuranceCompleteId)(true).flatMap(
@@ -339,7 +338,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
                             isChangedEstablishersTrustees: Boolean = true
                            ): JsResult[UserAnswers] = {
 
-    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, ua
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, userAnswersWithSchemeName
       .set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
       _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
         _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
@@ -368,11 +367,11 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
   protected def allAnswersIncomplete: UserAnswers = UserAnswers(readJsonFromFile("/payloadInProgress.json")) //"/payloadIncomplete.json"
 
   protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
-    ua.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
+    userAnswersWithSchemeName.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company", false)).flatMap(
       _.set(IsTrusteeNewId(0))(true)).asOpt.value
 
   protected def allTrustees(isCompleteTrustees: Boolean = true): UserAnswers = {
-    setTrusteeCompletionStatus(isCompleteTrustees, 0, ua.set(TrusteeNameId(0))(PersonName("firstName", "lastName"))
+    setTrusteeCompletionStatus(isCompleteTrustees, 0, userAnswersWithSchemeName.set(TrusteeNameId(0))(PersonName("firstName", "lastName"))
       .flatMap(
         _.set(IsTrusteeNewId(0))(true).flatMap(
             _.set(trusteesCompany.HasCompanyVATId(0))(false).flatMap(
@@ -390,7 +389,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
   protected def allTrusteesIndividual(isCompleteTrustees: Boolean = true): UserAnswers = {
     setTrusteeCompletionStatus(
-      isCompleteTrustees, 0, ua
+      isCompleteTrustees, 0, userAnswersWithSchemeName
         .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
         _.set(IsTrusteeNewId(0))(true)
       ).asOpt.value
