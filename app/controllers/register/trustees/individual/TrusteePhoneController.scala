@@ -56,7 +56,7 @@ class TrusteePhoneController @Inject()(
               routes.TrusteePhoneController.onSubmit(mode, index, srn),
               Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
               Message("messages__enterPhoneNumber", details.fullName),
-              Some(Message("messages__phone__hint")),
+              Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
         }

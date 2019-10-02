@@ -63,7 +63,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.TrusteeEmailController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", "first last"),
-        Some(Message("messages__email__hint")),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None

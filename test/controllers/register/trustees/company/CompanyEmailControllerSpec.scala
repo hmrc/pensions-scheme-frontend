@@ -58,7 +58,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.CompanyEmailController.onSubmit(NormalMode,firstIndex, None),
         Message("messages__trustee_email__title"),
         Message("messages__enterEmail", "test company name"),
-        Some(Message("messages__email__hint")),
+        Some(Message("messages__contact_details__hint", "test company name")),
         None
       ),
       None

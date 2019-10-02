@@ -61,7 +61,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
         routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
         Message("messages__enterPhoneNumber", "first last"),
-        Some(Message("messages__phone__hint")),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None

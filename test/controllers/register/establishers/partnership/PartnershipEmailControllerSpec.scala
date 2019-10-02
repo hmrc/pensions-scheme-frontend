@@ -50,7 +50,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
         routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterEmail", Message("messages__thePartnership").resolve),
         Message("messages__enterEmail", establisherPartnershipDetails.name),
-        Some(Message("messages__email__hint")),
+        Some(Message("messages__contact_details__hint", establisherPartnershipDetails.name)),
         None
       ),
       None

@@ -52,7 +52,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
         EstablisherEmailController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", establisherName.fullName),
-        Some(Message("messages__email_dynamic__hint", establisherName.fullName)),
+        Some(Message("messages__contact_details__hint", establisherName.fullName)),
         None
       ),
       None

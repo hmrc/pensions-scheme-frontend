@@ -34,7 +34,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
     postCall = Call("GET", "www.example.com"),
     Message("messages__trustee_email__title"),
     Message("messages__enterEmail", companyName),
-    Some(Message("messages__email__hint")),
+    Some(Message("messages__contact_details__hint", companyName)),
     None
   )
 
@@ -49,7 +49,7 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
     messages("messages__enterEmail", companyName))
 
   "have correct hint text" in {
-    assertContainsText(asDocument(createView()),messages("messages__email__hint"))
+    assertContainsText(asDocument(createView()), messages("messages__contact_details__hint", companyName))
   }
 
   behave like pageWithTextFields(

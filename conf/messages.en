@@ -110,7 +110,6 @@ messages__common_email__visually_hidden_change_label = Change {0}’s email
 messages__enterPhoneNumber = What is {0}’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
 messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
-messages__phone_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
 
 
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
@@ -1743,11 +1742,9 @@ messages__whyNoNINO = Why does {0} not have a National Insurance number?
 
 messages__trustee_phone__title =  What is the company’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
-messages__phone__hint = We will only use this to contact about pension scheme administration.
 
 messages__trustee_email__title =  What is the company’s email address?
-messages__email__hint = We will only use this to contact about pension scheme administration.
-messages__email_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
+messages__contact_details__hint = We will only use this to contact {0} about pension scheme administration.
 
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a National Insurance number?

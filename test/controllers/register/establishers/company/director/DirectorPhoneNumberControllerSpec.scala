@@ -62,7 +62,7 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
         routes.DirectorPhoneNumberController.onSubmit(NormalMode, firstIndex, firstIndex, None),
         Message("messages__director_phone__title"),
         Message("messages__enterPhoneNumber", "first last"),
-        Some(Message("messages__phone__hint")),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None

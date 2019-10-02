@@ -54,7 +54,7 @@ class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
               routes.TrusteeEmailController.onSubmit(mode, index, srn),
               Message("messages__enterEmail", Message("messages__theIndividual").resolve),
               Message("messages__enterEmail", details.fullName),
-              Some(Message("messages__email__hint")),
+              Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
         }

@@ -55,7 +55,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
               routes.DirectorEmailController.onSubmit(mode, establisherIndex, directorIndex, srn),
               Message("messages__director_email__title"),
               Message("messages__enterEmail", details.fullName),
-              Some(Message("messages__email__hint")),
+              Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
         }

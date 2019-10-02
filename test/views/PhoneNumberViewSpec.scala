@@ -34,7 +34,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     postCall = Call("GET", "www.example.com"),
     Message("messages__trustee_phone__title"),
     Message("messages__enterPhoneNumber", companyName),
-    Some(Message("messages__phone__hint")),
+    Some(Message("messages__contact_details__hint", companyName)),
     None
   )
 
@@ -46,7 +46,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
   behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__trustee_phone__title"), messages("messages__enterPhoneNumber", companyName))
 
   "have correct hint text" in {
-    assertContainsText(asDocument(createView()),messages("messages__phone__hint"))
+    assertContainsText(asDocument(createView()), messages("messages__contact_details__hint", companyName))
   }
 
   behave like pageWithTextFields(

@@ -63,7 +63,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
         routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
         Message("messages__director_email__title"),
         Message("messages__enterEmail", "first last"),
-        Some(Message("messages__email__hint")),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None

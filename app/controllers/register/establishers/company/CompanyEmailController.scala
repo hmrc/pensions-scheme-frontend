@@ -55,7 +55,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
               routes.CompanyEmailController.onSubmit(mode, srn, index),
               Message("messages__enterEmail", Message("messages__theCompany").resolve),
               Message("messages__enterEmail", details.companyName),
-              Some(Message("messages__email__hint")),
+              Some(Message("messages__contact_details__hint", details.companyName)),
               srn = srn
             )
         }

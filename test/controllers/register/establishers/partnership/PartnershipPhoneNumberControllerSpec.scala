@@ -52,7 +52,7 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
         routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
         Message("messages__enterPhoneNumber", establisherPartnershipDetails.name),
-        Some(Message("messages__phone__hint")),
+        Some(Message("messages__contact_details__hint", establisherPartnershipDetails.name)),
         None
       ),
       None
