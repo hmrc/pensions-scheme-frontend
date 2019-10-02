@@ -84,7 +84,6 @@ GET        /:index/partnership/change/confirm-address                           
 POST       /:index/partnership/change/confirm-address                                           controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
 GET        /:index/partnership/:mode/confirm-address/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST       /:index/partnership/:mode/confirm-address/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-GET       /:index/partnership/:mode/confirm-address-link/:srn                                       controllers.register.establishers.partnership.PartnershipAddressController.onClick(mode: Mode, index: Index, srn: Option[String])
 
 GET        /:index/partnership/time-at-address                                                          controllers.register.establishers.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST       /:index/partnership/time-at-address                                                          controllers.register.establishers.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)

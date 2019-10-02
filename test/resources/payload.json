@@ -212,23 +212,24 @@
         "emailAddress": "r@r.r",
         "phoneNumber": "123456"
       },
-      "isPartnershipCompleteId": true,
       "partner": [
         {
           "isNewPartner": true,
           "partnerDetails": {
             "firstName": "Partner",
             "lastName": "One",
-            "date": "2001-01-01",
             "isDeleted": false
           },
+          "dateOfBirth": "2001-01-01",
+          "hasNino": true,
           "partnerNino": {
-            "hasNino": true,
-            "nino": "AB123456C"
+            "value": "AB123456C",
+            "isEditable": false
           },
-          "partnerUniqueTaxReference": {
-            "hasUtr": true,
-            "utr": "1234567890"
+          "hasUtr": true,
+          "utr": {
+            "value": "1234567890",
+            "isEditable": false
           },
           "partnerAddressId": {
             "addressLine1": "10 Other Place",
@@ -242,11 +243,9 @@
           "partnerContactDetails": {
             "emailAddress": "e@e.e",
             "phoneNumber": "1234567"
-          },
-          "isPartnerComplete": true
+          }
         }
-      ],
-      "isEstablisherComplete": true
+      ]
     }
   ],
   "trustees": [

@@ -17,29 +17,24 @@
 package utils
 
 import config.FeatureSwitchManagementService
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.establishers.{EstablisherKindId, IsEstablisherAddressCompleteId, IsEstablisherCompleteId, IsEstablisherNewId}
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models._
 import models.person.{PersonDetails, PersonName}
-import models.register.SchemeType
-import models.register.establishers.EstablisherKind.Indivdual
 import org.joda.time.LocalDate
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
   private val srn = Some("test-srn")
-  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(true)
 
   override val createTaskListHelper: (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper =
     (ua, fs) => new HsTaskListHelperVariations(ua, viewOnly = false, srn = srn, fs)
@@ -63,8 +58,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
               _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
                 _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
                   _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
-                    _.set(IsEstablisherCompleteId(0))(isCompleteEstablishers)).flatMap(
-                    _.set(IsEstablisherAddressCompleteId(0))(isCompleteEstablishers)).flatMap(
                     _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
                       _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
                   )
@@ -186,7 +179,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
     "not display an add link when scheme is locked and establishers exist 2222" in {
       val userAnswers = UserAnswers().set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
-        .set(IsEstablisherCompleteId(0))(true).asOpt.value
+
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn, fakeFeatureManagementService)
       helper.taskList.addEstablisherHeader mustBe None
     }
@@ -273,7 +266,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
     }
 
     s"have link when all the sections are completed" in {
-      val userAnswers =  allAnswersHnS.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
+      val userAnswers =  allAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fsm), userAnswers,
         Some(controllers.routes.VariationDeclarationController.onPageLoad(srn).url))
     }
@@ -334,15 +327,11 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
     "return the seq of establishers sub sections after filtering out deleted establishers" in {
       val userAnswers = UserAnswers().set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
-        _.set(IsEstablisherCompleteId(0))(false).flatMap(
           _.set(IsEstablisherNewId(0))(true).flatMap(
             _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-              _.set(IsEstablisherCompleteId(1))(true).flatMap(
                 _.set(IsEstablisherNewId(1))(true).flatMap(
                   _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                    _.set(IsEstablisherNewId(2))(true)).flatMap(
-                    _.set(IsEstablisherCompleteId(2))(false)
-                  ))))))).asOpt.value
+                    _.set(IsEstablisherNewId(2))(true)))))).asOpt.value
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"), fakeFeatureManagementService)
       helper.establishers(userAnswers, UpdateMode, srn) mustBe
         Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
