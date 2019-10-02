@@ -124,6 +124,11 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
         }
       }
 
+      "remove spaces" in {
+        val actual = testForm.bind(Map(fieldName -> "  123 456 7890 "))
+        actual.errors.isEmpty mustBe true
+      }
+
       behave like fieldWithRegex(
         testForm,
         fieldName,

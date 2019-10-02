@@ -19,7 +19,7 @@ package forms.mappings
 trait Transforms {
 
   def vatRegistrationNumberTransform(value: String): String = {
-    strip(value).replaceAll("^[gG][bB]", "")
+    noSpaceWithUpperCaseTransform(value).replaceAll("^[gG][bB]", "")
   }
 
   def noTransform(value: String): String = {
