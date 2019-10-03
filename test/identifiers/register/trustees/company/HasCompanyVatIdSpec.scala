@@ -34,7 +34,7 @@ class HasCompanyVatIdSpec extends SpecBase {
   val name = "test company name"
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasCompanyVat__h1", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__hasVAT", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_hasVat", name)))))
   )
 

@@ -22,6 +22,7 @@ import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.EstablisherHasUTRId
 import models.{Index, NormalMode}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -30,16 +31,17 @@ import views.html.hasUtr
 
 class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
-  private def onwardRoute  = controllers.routes.IndexController.onPageLoad()
+  private val name = "Test Name"
+  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad()
   private val formProvider = new HasUTRFormProvider()
-  private val form         = formProvider("messages__hasUTR__error__required", "test company name")
+  private val form         = formProvider("messages__hasUTR__error__required", name)
   private val index        = Index(0)
   private val srn          = None
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasPersonUTR__title"),
-    heading = Message("messages__dynamic_hasUtr", "Test Name"),
+    title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
+    heading = Message("messages__hasUTR", name),
     hint = Some(Message("messages__hasUtr__p1"))
   )
 

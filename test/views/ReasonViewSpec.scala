@@ -33,8 +33,8 @@ class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
   def viewmodel(srn:Option[String]): ReasonViewModel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noCompanyUtr__title"),
-    heading = Message("messages__noCompanyUtr__heading"),
+    title = Message("messages__whyNoUTR"),
+    heading = Message("messages__whyNoUTR"),
     srn = srn
   )
 
@@ -46,7 +46,9 @@ class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
   "Reason view" when {
     "rendered" must {
-      behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+      behave like normalPageWithTitle(createView(), messageKeyPrefix,
+        title = Message("messages__whyNoUTR"),
+        pageHeader = Message("messages__whyNoUTR"))
 
       behave like pageWithReturnLinkAndSrn(createView(), getReturnLinkWithSrn)
 

@@ -25,15 +25,16 @@ class WhatYouWillNeedContactDetailsViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedContact"
   private val entityName = "Test Entity"
-  private val heading = Message("messages__whatYouWillNeedContact__h1", entityName)
+  private val heading = Message("messages__contactDetailsFor", entityName)
+  private val title = Message("messages__contactDetailsFor", Message("messages__theIndividual").resolve.capitalize)
   private val href = controllers.routes.IndexController.onPageLoad()
 
   private def createView(): HtmlFormat.Appendable =
-    whatYouWillNeedContactDetails(frontendAppConfig, Some("testScheme"), href, None, entityName)(fakeRequest, messages)
+    whatYouWillNeedContactDetails(frontendAppConfig, Some("testScheme"), href, None, entityName, Message("messages__theIndividual"))(fakeRequest, messages)
 
   "WhatYouWillNeedContactDetailsView" must {
 
-    behave like normalPage(createView, messageKeyPrefix, heading,
+    behave like normalPageWithTitle(createView, messageKeyPrefix, title, heading,
       expectedGuidanceKeys = "_item1", "_item2")
 
     "display the correct p1" in {

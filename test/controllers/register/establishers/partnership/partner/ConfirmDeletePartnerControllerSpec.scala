@@ -16,22 +16,22 @@
 
 package controllers.register.establishers.partnership.partner
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.{Index, NormalMode, PartnershipDetails, UpdateMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete}
+import services.FakeUserAnswersService
+import utils.{FakeFeatureSwitchManagementService, FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
@@ -114,27 +114,6 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
-    "set the establisher as not complete when partners are deleted" in {
-      FakeSectionComplete.reset()
-      val validData: JsObject = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
-            "partner" -> Json.arr(
-              Json.obj(
-                PartnerDetailsId.toString ->
-                  PersonDetails("John", None, "Doe", LocalDate.now())
-              )
-            )
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
-      status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(IsEstablisherCompleteId(0)) mustBe Some(false)
-    }
   }
 
 }
@@ -186,7 +165,8 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider
+      formProvider,
+      new FakeFeatureSwitchManagementService(false)
     )
 
   private def viewAsString(form: Form[_] = form) = confirmDeletePartner(

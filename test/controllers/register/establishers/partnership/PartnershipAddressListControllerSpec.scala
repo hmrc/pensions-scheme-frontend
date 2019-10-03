@@ -198,7 +198,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
       routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
-      title = Message("messages__establisherSelectAddress__h1", Message("messages__common__partnership").resolve),
+      title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
       heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name)
     )
   }

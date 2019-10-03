@@ -97,7 +97,6 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
       .flatMap(_.remove(PartnershipPreviousAddressListId(index)))
       .flatMap(_.remove(PartnershipPreviousAddressId(index)))
       .flatMap(_.remove(PartnershipContactDetailsId(index)))
-      .flatMap(_.remove(IsPartnershipCompleteId(index)))
       .flatMap(removeAllPartners)
   }
 

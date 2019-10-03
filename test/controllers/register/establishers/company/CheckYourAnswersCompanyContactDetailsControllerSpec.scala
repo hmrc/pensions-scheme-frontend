@@ -50,13 +50,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     val userAnswers = request.userAnswers
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
-        messages("messages__common_email__heading", companyDetails.companyName)),
-        Some(messages("messages__visuallyhidden__dynamic_email", name)))().row(CompanyEmailId(index))(
+        messages("messages__enterEmail", companyDetails.companyName)),
+        Some(messages("messages__visuallyhidden__dynamic_email_address", name)))().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
-          messages("messages__common_phone__heading", companyDetails.companyName)),
-          Some(messages("messages__visuallyhidden__dynamic_phone", name)))().row(CompanyPhoneId(index))(
+          messages("messages__enterPhoneNumber", companyDetails.companyName)),
+          Some(messages("messages__visuallyhidden__dynamic_phone_number", name)))().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers)
     ))
   }

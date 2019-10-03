@@ -149,11 +149,6 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(UserAnswers().json)
 
-          when(userAnswersService.setAddressCompleteFlagAfterAddressYear(
-            eqTo(NormalMode), eqTo(None),
-            eqTo(FakeIdentifier), any(), any())(any(), any(), any())
-          ) thenReturn Future.successful(UserAnswers())
-
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> AddressYears.OverAYear.toString
           )

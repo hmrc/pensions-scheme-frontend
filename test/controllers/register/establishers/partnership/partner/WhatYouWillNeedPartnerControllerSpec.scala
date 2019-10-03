@@ -27,8 +27,8 @@ import play.api.test.Helpers._
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedPartnerController =
+  private val partnershipName = "test partnership name"
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): WhatYouWillNeedPartnerController =
     new WhatYouWillNeedPartnerController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -37,11 +37,11 @@ class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with Mocki
       new DataRequiredActionImpl
     )
 
-  val href: Call = PartnerNameController.onPageLoad(NormalMode, 0, 0, None)
+  private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, partnershipName, href)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedCompanyDetailsControllerSpec" when {
+  "WhatYouWillNeedPartnerControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {

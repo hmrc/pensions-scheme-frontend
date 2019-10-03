@@ -45,7 +45,7 @@ class EstablisherPhoneIdSpec extends SpecBase {
 
           EstablisherPhoneId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__common_phone__heading", personName.fullName),
+              Message("messages__enterPhoneNumber", personName.fullName),
               Seq(phone),
               answerIsMessageKey = false,
               Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone_number", personName.fullName))))

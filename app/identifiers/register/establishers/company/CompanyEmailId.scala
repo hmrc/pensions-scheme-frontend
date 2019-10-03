@@ -36,10 +36,10 @@ object CompanyEmailId {
       CheckYourAnswersCompany[CompanyEmailId] {
 
     private def label(index : Int, ua : UserAnswers) : String =
-      dynamicMessage(index, ua, "messages__common_email__heading")
+      dynamicMessage(index, ua, "messages__enterEmail")
 
     private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
-      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email")
+      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address")
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
       StringCYA(Some(label(id.index, userAnswers)), Some(messages(hiddenLabel(id.index, userAnswers))))()

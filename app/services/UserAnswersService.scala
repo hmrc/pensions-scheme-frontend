@@ -19,18 +19,23 @@ package services
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId}
+import identifiers.register.establishers.company.{CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId}
+import identifiers.register.establishers.individual.{PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{IsPartnershipCompleteId => IsEstablisherPartnershipCompleteId, PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
-import identifiers.register.establishers.{IsEstablisherCompleteId, IsEstablisherNewId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId}
+import identifiers.register.establishers.partnership.{PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TruesteeIndividualAddressYearsId, TrusteePreviousAddressId => TruesteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TruesteePartnershipAddressYearsId, PartnershipPreviousAddressId => TruesteePartnershipPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId}
+import identifiers.register.trustees.company.{CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId}
+import identifiers.register.trustees.individual.{TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
+import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId}
+import identifiers.register.trustees.partnership.{PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
 import javax.inject.{Inject, Singleton}
-import models.AddressYears.OverAYear
 import models.address.Address
 import models.requests.DataRequest
 import models.{Mode, _}
@@ -76,9 +81,9 @@ trait UserAnswersService {
                                        hc: HeaderCarrier,
                                        request: DataRequest[AnyContent]): Future[JsValue] = {
     mode match {
-      case NormalMode | CheckMode => {
+      case NormalMode | CheckMode =>
         subscriptionCacheConnector.save(request.externalId, id, value)
-      }
+      
       case UpdateMode | CheckUpdateMode =>
         val answers = request.userAnswers
           .set(id)(value).flatMap {
@@ -131,76 +136,6 @@ trait UserAnswersService {
     case _ => Future.failed(MissingSrnNumber)
   }
 
-  def setCompleteFlag(mode: Mode, srn: Option[String], id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
-                     (implicit fmt: Format[Boolean], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-    save(mode, srn, id, value) map UserAnswers
-  }
-
-  def setAddressCompleteFlagAfterAddressYear(mode: Mode, srn: Option[String], id: TypedIdentifier[AddressYears],
-                                             addressYears: AddressYears, userAnswers: UserAnswers)
-                                            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-
-    if (mode == UpdateMode || mode == CheckUpdateMode) {
-      getIsNewId(id).map { newId =>
-        (userAnswers.get(newId), addressYears) match {
-          case (Some(false) | None, OverAYear) =>
-            val addressCompletedId = getCompleteId[AddressYears](id)
-            upsert(mode, srn, setCompleteForAddress(addressCompletedId, userAnswers, mode, srn).json).map(UserAnswers)
-          case _ =>
-            Future.successful(userAnswers)
-        }
-      }.getOrElse(Future.successful(userAnswers))
-    } else {
-      Future.successful(userAnswers)
-    }
-  }
-
-  def setAddressCompleteFlagAfterPreviousAddress(mode: Mode, srn: Option[String], id: TypedIdentifier[Address], userAnswers: UserAnswers)
-                                                (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[UserAnswers] = {
-    if (mode == UpdateMode || mode == CheckUpdateMode) {
-      getIsNewId(id).map { newId =>
-        userAnswers.get(newId) match {
-          case Some(false) | None =>
-            val addressCompletedId = getCompleteId[Address](id)
-            upsert(mode, srn, setCompleteForAddress(addressCompletedId, userAnswers, mode, srn).json).map(UserAnswers)
-          case _ =>
-            Future.successful(userAnswers)
-        }
-      }.getOrElse(Future.successful(userAnswers))
-    } else {
-      Future.successful(userAnswers)
-    }
-  }
-
-  private[services] def setCompleteForAddress(addressCompletedId: Option[TypedIdentifier[Boolean]], answers: UserAnswers,
-                                              mode: Mode, srn: Option[String])(implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
-    addressCompletedId.fold(answers) { changeId =>
-      val ua = answers.set(changeId)(true).asOpt.getOrElse(answers)
-      changeId match {
-        case IsPartnerCompleteId(partnershipIndex, _) =>
-          setIsEstablisherComplete(
-            ua,
-            ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted),
-            IsEstablisherPartnershipCompleteId(partnershipIndex),
-            partnershipIndex
-          )
-        case IsEstablisherPartnershipCompleteId(partnershipIndex) if ua.allPartnersAfterDelete(partnershipIndex).forall(_.isCompleted) =>
-          ua.set(IsEstablisherCompleteId(partnershipIndex))(true).asOpt.getOrElse(ua)
-        case _ => ua
-      }
-    }
-  }
-
-  private def setIsEstablisherComplete(userAnswers: UserAnswers, allDirectorOrPartnerComplete: Boolean,
-                                       completeId: TypedIdentifier[Boolean], index: Int) = {
-    val partnershipCompleted = userAnswers.get(completeId).contains(true)
-    if (allDirectorOrPartnerComplete && partnershipCompleted) {
-      userAnswers.set(IsEstablisherCompleteId(index))(true).asOpt.getOrElse(userAnswers)
-    } else {
-      userAnswers
-    }
-  }
-
   def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
     val existingAddressPathNode = List(KeyPathNode("existingCurrentAddress"))
@@ -213,29 +148,18 @@ trait UserAnswersService {
     }
   }
 
-  def getCompleteId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
-    case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherPartnershipCompleteId(index))
-    case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherCompleteId(index))
-    case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
-    case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherPartnershipCompleteId(index))
-    case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherCompleteId(index))
-    case PartnerPreviousAddressId(establisherIndex, partnerIndex) => Some(IsPartnerCompleteId(establisherIndex, partnerIndex))
-    case InsurerConfirmAddressId => Some(IsAboutBenefitsAndInsuranceCompleteId)
-    case _ => None
-  }
-
   def getIsNewId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
-    case TruesteeCompanyAddressYearsId(index) => Some(IsTrusteeNewId(index))
-    case TruesteePartnershipAddressYearsId(index) => Some(IsTrusteeNewId(index))
-    case TruesteeIndividualAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case TrusteeCompanyAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case TrusteePartnershipAddressYearsId(index) => Some(IsTrusteeNewId(index))
+    case TrusteeIndividualAddressYearsId(index) => Some(IsTrusteeNewId(index))
     case EstablisherCompanyAddressYearsId(index) => Some(IsEstablisherNewId(index))
     case EstablisherPartnershipAddressYearsId(index) => Some(IsEstablisherNewId(index))
     case EstablisherIndividualAddressYearsId(index) => Some(IsEstablisherNewId(index))
     case PartnerAddressYearsId(establisherIndex, partnerIndex) => Some(IsNewPartnerId(establisherIndex, partnerIndex))
     case DirectorAddressYearsId(establisherIndex, directorIndex) => Some(IsNewDirectorId(establisherIndex, directorIndex))
-    case TruesteeCompanyPreviousAddressId(index) => Some(IsTrusteeNewId(index))
-    case TruesteePartnershipPreviousAddressId(index) => Some(IsTrusteeNewId(index))
-    case TruesteeIndividualPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case TrusteeCompanyPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case TrusteePartnershipPreviousAddressId(index) => Some(IsTrusteeNewId(index))
+    case TrusteeIndividualPreviousAddressId(index) => Some(IsTrusteeNewId(index))
     case EstablisherCompanyPreviousAddressId(index) => Some(IsEstablisherNewId(index))
     case EstablisherPartnershipPreviousAddressId(index) => Some(IsEstablisherNewId(index))
     case EstablisherIndividualPreviousAddressId(index) => Some(IsEstablisherNewId(index))

@@ -36,12 +36,12 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_utr", name)))))
+    AnswerRow(messages("messages__enterUTR", name), List(utr), false, Some(Link("site.change", onwardUrl,
+      Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__trusteeUtr__h1", name), List(utr), false, None))
+    AnswerRow(messages("messages__enterUTR", name), List(utr), false, None))
 
 
   "Cleanup" when {
@@ -84,9 +84,9 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
       "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__trusteeUtr__h1", name), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(messages("messages__enterUTR", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_utr", name))
+              Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers()

@@ -63,7 +63,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, 0, None),
       post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel(NormalMode, index, None, Message("messages__thePerson").resolve),
+      viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual").resolve),
       mode = NormalMode,
       requiredData = getMandatoryEstablisherHns,
       validData = validData,

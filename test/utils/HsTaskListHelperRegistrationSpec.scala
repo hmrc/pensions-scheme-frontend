@@ -25,7 +25,7 @@ import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListSect
 
 class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
-  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(false)
+  private val fakeFeatureManagementService = new FakeFeatureSwitchManagementService(true)
   override val createTaskListHelper:
     (UserAnswers, FeatureSwitchManagementService) => HsTaskListHelper = (ua, fs) => new HsTaskListHelperRegistration(ua, fs)
 

@@ -43,7 +43,7 @@ object CompanyNoCRNReasonId {
       }
 
     def label(index: Int) =
-      Some(messages("messages__noCompanyNumber__establisher__heading", companyName(index)))
+      Some(messages("messages__whyNoCRN", companyName(index)))
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
 

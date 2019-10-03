@@ -144,16 +144,17 @@
           "partnerDetails": {
             "firstName": "Partner",
             "lastName": "One",
-            "date": "2001-01-01",
             "isDeleted": false
           },
-          "partnerNino": {
-            "hasNino": true,
-            "nino": "AB123456C"
+          "hasNino": true,
+           "nino": {
+              "value" : "AB123456C",
+              "isEditable" : false
           },
-          "partnerUniqueTaxReference": {
-            "hasUtr": true,
-            "utr": "1234567890"
+          "hasUtr": true,
+          "utr": {
+            "value": "1234567890",
+            "isEditable" : false
           },
           "partnerAddressId": {
             "addressLine1": "10 Other Place",

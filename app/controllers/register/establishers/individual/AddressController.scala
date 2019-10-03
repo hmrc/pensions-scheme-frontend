@@ -86,9 +86,4 @@ class AddressController @Inject()(
           )
       }
   }
-
-  def onClick(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      clear(AddressId(index), AddressListId(index), mode, srn, routes.AddressController.onPageLoad(mode, index, srn))
-  }
 }
