@@ -16,18 +16,18 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNewNinoId}
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId, PartnerNewNinoId}
 import javax.inject.Inject
-import models.person.PersonDetails
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import utils.Toggles
 import utils.annotations.EstablishersPartner
 import viewmodels.{Message, NinoViewModel}
 
@@ -42,29 +42,39 @@ class PartnerNinoNewController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          val formProvider: NINOFormProvider
+                                          val formProvider: NINOFormProvider,
+                                          fs: FeatureSwitchManagementService
                                         )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
 
-  private def viewmodel(personDetails: PersonDetails, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
-      title = Message("messages__partner_yes_nino__title"),
-      heading = Message("messages__enterNINO", personDetails.fullName),
+      title = Message("messages__enterNINO", Message("messages__thePartner").resolve),
+      heading = Message("messages__enterNINO", name),
       hint = Message("messages__common__nino_hint"),
       srn = srn
     )
 
+  private val partnerName: (Index, Index) => Retrieval[String] = (establisherIndex, partnerIndex) => Retrieval {
+    implicit request =>
+      if(fs.get(Toggles.isHnSEnabled)) {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
+      } else {
+        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
+      }
+  }
+
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
-          details =>
+        partnerName(establisherIndex, partnerIndex).retrieve.right.map {
+          name =>
             get(
               PartnerNewNinoId(establisherIndex, partnerIndex),
-              formProvider(details.fullName),
-              viewmodel(details, establisherIndex, partnerIndex, mode, srn)
+              formProvider(name),
+              viewmodel(name, establisherIndex, partnerIndex, mode, srn)
             )
         }
     }
@@ -72,13 +82,13 @@ class PartnerNinoNewController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
-        details =>
+      partnerName(establisherIndex, partnerIndex).retrieve.right.map {
+        name =>
           post(
             PartnerNewNinoId(establisherIndex, partnerIndex),
             mode,
-            formProvider(details.fullName),
-            viewmodel(details, establisherIndex, partnerIndex, mode, srn)
+            formProvider(name),
+            viewmodel(name, establisherIndex, partnerIndex, mode, srn)
           )
       }
   }
