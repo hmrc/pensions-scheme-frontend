@@ -18,6 +18,8 @@ package forms.mappings
 
 trait Transforms {
 
+  private val validCharacterRange = 'a' to 'z'
+
   def vatRegistrationNumberTransform(value: String): String = {
     noSpaceWithUpperCaseTransform(value).replaceAll("^[gG][bB]", "")
   }
@@ -31,8 +33,14 @@ trait Transforms {
   }
 
   def noSpaceWithUpperCaseTransform(value: String): String = {
-    strip(value).toUpperCase
+    toUpperCaseAlphaOnly(strip(value))
   }
+
+  def toUpperCaseAlphaOnly(value: String): String =
+    value.map {
+      case c if validCharacterRange.contains(c) => c.toUpper
+      case c                                    => c
+    }
 
   def payeTransform(value: String): String = {
     noSpaceWithUpperCaseTransform(value).replaceAll("[\\\\/]", "").trim

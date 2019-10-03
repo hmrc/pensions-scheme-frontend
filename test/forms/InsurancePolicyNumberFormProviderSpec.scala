@@ -22,22 +22,27 @@ import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
 class InsurancePolicyNumberFormProviderSpec extends StringFieldBehaviours with Constraints {
-  val validData: Map[String, String] = Map(
-    "policyNumber" -> "test policy number")
-  val form = new InsurancePolicyNumberFormProvider()()
+  val validData: Map[String, String] = Map("policyNumber" -> "test policy number")
+  val form                           = new InsurancePolicyNumberFormProvider()()
 
-  ".policyNumber" must {
+  "policyNumber" must {
     val validMaxLength = 55
-    val fieldName = "policyNumber"
-    val requiredKey = "messages__error__insurance_policy_number"
-    val lengthKey = "messages__error__insurance_policy_number_length"
-    val invalidKey = "messages__error__insurance_policy_number_invalid"
+    val fieldName      = "policyNumber"
+    val requiredKey    = "messages__error__insurance_policy_number"
+    val lengthKey      = "messages__error__insurance_policy_number_length"
+    val invalidKey     = "messages__error__insurance_policy_number_invalid"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
       RegexpGen.from(regexPolicyNumber)
     )
+
+    "remove spaces and convert to upper case for valid value" in {
+      val result = form.bind(Map(fieldName -> "  a b c ÿ d e f   "))
+      result.errors mustBe empty
+      result.value mustBe Some("ABCÿDEF")
+    }
 
     behave like mandatoryField(
       form,
