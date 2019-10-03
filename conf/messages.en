@@ -1816,3 +1816,4 @@ messages__whatYouWillNeedContact__item2 = contact phone number
 
 messages__partnerName__title = What is the partner’s name?
 messages__partnerName__heading = What is the partner’s name?
+messages__hasPartnerUtr__title = Does the partner have a UTR?
