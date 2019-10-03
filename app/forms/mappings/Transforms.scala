@@ -18,29 +18,28 @@ package forms.mappings
 
 trait Transforms {
 
-  def vatRegistrationNumberTransform(value: String): String = {
+  protected def vatRegistrationNumberTransform(value: String): String = {
     noSpaceWithUpperCaseTransform(value).replaceAll("^[gG][bB]", "")
   }
 
-  def noTransform(value: String): String = {
+  protected def noTransform(value: String): String = {
     value
   }
 
-  def standardTextTransform(value: String): String = {
+  protected def standardTextTransform(value: String): String = {
     value.trim
   }
 
-  def noSpaceWithUpperCaseTransform(value: String): String = {
+  protected def noSpaceWithUpperCaseTransform(value: String): String =
     toUpperCaseAlphaOnly(strip(value))
-  }
 
-  def toUpperCaseAlphaOnly(value: String): String =
+  protected def toUpperCaseAlphaOnly(value: String): String =
     value.map {
       case c if ('a' to 'z').contains(c) => c.toUpper
       case c                                    => c
     }
 
-  def payeTransform(value: String): String = {
+  protected def payeTransform(value: String): String = {
     noSpaceWithUpperCaseTransform(value).replaceAll("[\\\\/]", "").trim
   }
 
