@@ -20,6 +20,7 @@ import forms.FormSpec
 import forms.mappings.UtrMapping
 import generators.Generators
 import models.UniqueTaxReference
+import models.UniqueTaxReference.Yes
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -124,9 +125,10 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
         }
       }
 
-      "remove spaces" in {
+      "remove spaces for valid value" in {
         val actual = testForm.bind(Map(fieldName -> "  123 456 7890 "))
         actual.errors.isEmpty mustBe true
+        actual.value mustBe Some(Yes("1234567890"))
       }
 
       behave like fieldWithRegex(
