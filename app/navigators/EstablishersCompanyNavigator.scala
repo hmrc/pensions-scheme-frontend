@@ -228,7 +228,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
               controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             } else {
-              controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+              if (mode == CheckMode || mode == NormalMode) {
+                SchemeTaskListController.onPageLoad(mode, srn)
+              } else {
+                AnyMoreChangesController.onPageLoad(srn)
+              }
             }
           }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
         } else {
