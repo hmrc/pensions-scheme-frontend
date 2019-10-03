@@ -49,8 +49,8 @@ class PartnerEnterUTRController @Inject()(
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__dynamic_whatIsUTR", Message("messages__thePartner").resolve),
-      heading = Message("messages__dynamic_whatIsUTR", partnerName),
+      title = Message("messages__enterUTR", Message("messages__thePartner").resolve),
+      heading = Message("messages__enterUTR", partnerName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

@@ -77,8 +77,8 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
 
   val viewModel = UTRViewModel(
     routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn),
-    title = Message("messages__dynamic_whatIsUTR", Message("messages__thePartner").resolve),
-    heading = Message("messages__dynamic_whatIsUTR", "first last"),
+    title = Message("messages__enterUTR", Message("messages__thePartner").resolve),
+    heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),
     srn = srn
   )
