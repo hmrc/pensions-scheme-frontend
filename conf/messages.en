@@ -78,6 +78,7 @@ messages__error__postcode_no_results = There are no addresses for that postcode
 
 messages__error__trustees = trustee’s
 messages__error__director = director’s
+messages__error__partner = partner’s
 messages__error__establisher = establisher’s
 messages__error__first_name = Enter the {0} first name
 messages__error__last_name = Enter the {0} last name
@@ -104,15 +105,12 @@ messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
 
-messages__common_email__heading = What is {0}’s email address?
-messages__individual_email__title = What is the person’s email address?
+messages__enterEmail = What is {0}’s email address?
 messages__common_company_email__visually_hidden_change_label = company email address
 messages__common_email__visually_hidden_change_label = Change {0}’s email
-messages__common_phone__heading = What is {0}’s phone number?
-messages__individual_phone__title = What is the person’s phone number?
+messages__enterPhoneNumber = What is {0}’s phone number?
 messages__common_company_phone__visually_hidden_change_label = company phone number
 messages__common_phone__visually_hidden_change_label = Change {0}’s phone number
-messages__phone_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
 
 
 messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
@@ -1016,7 +1014,6 @@ messages__error__no_nino_partner = You need to tell us why the partner does not 
 messages__enterNINO = What is {0}’s National Insurance number?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
-messages__partner_yes_nino__title = What is the partner’s National Insurance number?
 
 messages__partnerDetails__title = Enter the partner’s details
 messages__partnerDetails__heading = Enter the partner’s details
@@ -1645,8 +1642,10 @@ messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
 messages__theDirector = the director
+messages__thePartner = the partner
 messages__theCompany = the company
 messages__thePartnership = the partnership
+messages__thePartner = the partner
 messages__thePerson = the person
 messages__theIndividual = the individual
 
@@ -1744,15 +1743,10 @@ messages__whyPersonNoUTR = Why does the person not have a UTR?
 messages__whyNoNINO = Why does {0} not have a National Insurance number?
 
 messages__trustee_phone__title =  What is the company’s phone number?
-messages__establisher_phone__title =  What is the establisher’s phone number?
 messages__director_phone__title =  What is the director’s phone number?
-messages__partnership_phone__title =  What is the partnership’s phone number?
-messages__phone__hint = We will only use this to contact about pension scheme administration.
 
 messages__trustee_email__title =  What is the company’s email address?
-messages__establisher_email__title =  What is the establisher’s email address?
-messages__email__hint = We will only use this to contact about pension scheme administration.
-messages__email_dynamic__hint = We will only use this to contact {0} about pension scheme administration.
+messages__contact_details__hint = We will only use this to contact {0} about pension scheme administration.
 
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a National Insurance number?
@@ -1805,7 +1799,6 @@ messages__whatYouWillNeedPartnershipContact__h1 = Contact details for {0}
 messages__whatYouWillNeedPartnershipContact__p1 = You will need to tell us the partnership’s:
 messages__whatYouWillNeedPartnershipContact__item1 = contact email address
 messages__whatYouWillNeedPartnershipContact__item2 = contact phone number
-messages__partnership_email__title =  What is the partnership’s email address?
 
 messages__whatYouWillNeedPartnershipDetails__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedPartnershipDetails__p2 = If {0} has them, you will also need to tell us their:
@@ -1816,8 +1809,11 @@ messages__whatYouWillNeedPartnershipDetails__item3 = employer PAYE reference (yo
 messages__individualName__title = What is the individual’s name?
 messages__individualName__heading = What is the individual’s name?
 
-messages__whatYouWillNeedContact__title = Contact details
-messages__whatYouWillNeedContact__h1 = {0}’s contact details
+messages__contactDetailsFor = {0}’s contact details
 messages__whatYouWillNeedContact__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
+
+messages__partnerName__title = What is the partner’s name?
+messages__partnerName__heading = What is the partner’s name?
+messages__hasPartnerUtr__title = Does the partner have a UTR?

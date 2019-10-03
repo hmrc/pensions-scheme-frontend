@@ -18,11 +18,12 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherEmailController
-import models.{Mode, NormalMode, UpdateMode}
 import models.person.PersonName
+import models.{Mode, NormalMode, UpdateMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSpecBase {
@@ -34,7 +35,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
   private def onwardRoute(mode: Mode, srn: Option[String]): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
 
   private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.fullName)(fakeRequest, messages).toString
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
     "in Subscription" must {

@@ -27,7 +27,7 @@ case class PartnerHasUTRId(establisherIndex: Int, partnerIndex: Int) extends Typ
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) => userAnswers.remove(PartnerNoUTRReasonId(establisherIndex, partnerIndex))
-      case Some(false) => userAnswers.remove(PartnerUTRId(establisherIndex, partnerIndex))
+      case Some(false) => userAnswers.remove(PartnerEnterUTRId(establisherIndex, partnerIndex))
       case _ => super.cleanup(value, userAnswers)
     }
   }

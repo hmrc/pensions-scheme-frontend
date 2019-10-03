@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.PhoneFormProvider
+import forms.EmailFormProvider
+import identifiers.register.establishers.partnership.partner.PartnerNameId
+import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -26,20 +28,23 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeNavigator
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.phoneNumber
+import views.html.emailAddress
+import utils._
 
-class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PhoneFormProvider()
-  val form: Form[String] = formProvider()
-  val firstIndex = Index(0)
+  private val formProvider = new EmailFormProvider()
+  private val form: Form[String] = formProvider()
+  private val firstIndex = Index(0)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyPhoneController =
-    new CompanyPhoneController(frontendAppConfig,
+  private val estCompanyPartner = UserAnswers().set(PartnerNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
+
+  def controller(dataRetrievalAction: DataRetrievalAction = estCompanyPartner): PartnerEmailController =
+    new PartnerEmailController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -51,24 +56,24 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     )
 
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
+    emailAddress(
       frontendAppConfig,
       form,
       CommonFormWithHintViewModel(
-        routes.CompanyPhoneController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__trustee_phone__title"),
-        Message("messages__enterPhoneNumber", "test company name"),
-        Some(Message("messages__contact_details__hint", "test company name")),
+        routes.PartnerEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
+        Message("messages__enterEmail", Message("messages__thePartner").resolve),
+        Message("messages__enterEmail", "first last"),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None
     )(fakeRequest, messages).toString
 
-  "CompanyPhoneController" when {
+  "PartnerEmailController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -77,8 +82,8 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
     "on a POST" must {
       "redirect to relevant page" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,3 +91,4 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     }
   }
 }
+

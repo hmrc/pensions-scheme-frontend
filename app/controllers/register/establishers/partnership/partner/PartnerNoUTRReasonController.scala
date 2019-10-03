@@ -17,28 +17,60 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
+import controllers.ReasonController
 import controllers.actions._
+import forms.ReasonFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.{Message, ReasonViewModel}
 
-class PartnerNoUTRReasonController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
+                                             override val userAnswersService: UserAnswersService,
+                                             override val navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              allowAccess: AllowAccessActionProvider,
-                                             requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+                                             requireData: DataRequiredAction,
+                                             formProvider: ReasonFormProvider
+                                            )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
+  private def form(partnerName: String) = formProvider("messages__reason__error_utrRequired", partnerName)
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.PartnerNoUTRReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+      title = Message("messages__whyNoUTR", Message("messages__thePartner").resolve),
+      heading = Message("messages__whyNoUTR", partnerName),
+      srn = srn
+    )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
+          val partnerName = details.fullName
+          get(PartnerNoUTRReasonId(establisherIndex, partnerIndex), viewModel(mode, establisherIndex, partnerIndex, srn, partnerName), form(partnerName))
+        }
+    }
+
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
+          val partnerName = details.fullName
+          post(PartnerNoUTRReasonId(establisherIndex, partnerIndex), mode, viewModel(mode, establisherIndex, partnerIndex, srn, partnerName), form(partnerName))
+        }
+    }
+
 }

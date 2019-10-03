@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -32,7 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -40,17 +40,17 @@ import scala.concurrent.Future
 
 //scalastyle:off magic.number
 
-class DirectorNameControllerSpec extends ControllerSpecBase {
+class PartnerNameControllerSpec extends ControllerSpecBase {
 
-  import DirectorNameControllerSpec._
+  import PartnerNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
-    routes.DirectorNameController.onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-    title = Message("messages__directorName__title"),
-    heading = Message("messages__directorName__heading"))
+    routes.PartnerNameController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+    title = Message("messages__partnerName__title"),
+    heading = Message("messages__partnerName__heading"))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorNameController =
-    new DirectorNameController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnerNameController =
+    new PartnerNameController(
       frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
@@ -70,10 +70,10 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"))
 
-  "DirectorName Controller" must {
+  "PartnerName Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -83,10 +83,10 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString -> CompanyDetails(companyName),
-            "director" -> Json.arr(
+            PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
+            "partner" -> Json.arr(
               Json.obj(
-                "directorDetails" ->
+                "partnerDetails" ->
                   PersonName("First Name", "Last Name")
               )
             )
@@ -95,7 +95,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PersonName("First Name", "Last Name")))
     }
@@ -104,15 +104,15 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails("test company name")
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
           )
         )
       )
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -121,7 +121,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -131,8 +131,8 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails("test company name")
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
           )
         )
       )
@@ -143,7 +143,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "01", "lastName" -> "?&^%$£"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -153,8 +153,8 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails("test company name")
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("test partnership name")
           )
         )
       )
@@ -165,54 +165,54 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "tencharactertencharactertencharacter", "lastName" -> "tencharactertencharactertencharacter"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "save the isNewDirector flag when the new director is being added" in {
+    "save the isNewPartner flag when the new partner is being added" in {
       reset(mockUserAnswersService)
-      val validData = UserAnswers().set(CompanyDetailsId(firstEstablisherIndex))(CompanyDetails("test company name")).flatMap(
-        _.set(DirectorNameId(firstEstablisherIndex, firstDirectorIndex))(
+      val validData = UserAnswers().set(PartnershipDetailsId(firstEstablisherIndex))(PartnershipDetails("test partnership name")).flatMap(
+        _.set(PartnerNameId(firstEstablisherIndex, firstPartnerIndex))(
           PersonName("testFirstName", "testLastName")).flatMap(
-          _.set(IsNewDirectorId(firstEstablisherIndex, firstDirectorIndex))(true)
+          _.set(IsNewPartnerId(firstEstablisherIndex, firstPartnerIndex))(true)
         )
       ).asOpt.value.json
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
     }
   }
 }
 
-object DirectorNameControllerSpec extends ControllerSpecBase with MockitoSugar {
+object PartnerNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
-  private val form: Form[PersonName] = formProvider("messages__error__director")
+  private val form: Form[PersonName] = formProvider("messages__error__partner")
 
   private val firstEstablisherIndex: Index = Index(0)
-  private val firstDirectorIndex: Index = Index(0)
+  private val firstPartnerIndex: Index = Index(0)
 
-  private val companyName: String = "test company name"
+  private val partnershipName: String = "test partnership name"
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 }

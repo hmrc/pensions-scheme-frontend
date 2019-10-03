@@ -161,7 +161,7 @@ trait DataCompletionEstablishers extends DataCompletion {
     isComplete(Seq(
       Some(get(PartnerDOBId(estIndex, parIndex)).isDefined),
       isAnswerComplete(PartnerHasNINOId(estIndex, parIndex), PartnerNewNinoId(estIndex, parIndex), Some(PartnerNoNINOReasonId(estIndex, parIndex))),
-      isAnswerComplete(PartnerHasUTRId(estIndex, parIndex), PartnerUTRId(estIndex, parIndex), Some(PartnerNoUTRReasonId(estIndex, parIndex)))
+      isAnswerComplete(PartnerHasUTRId(estIndex, parIndex), PartnerEnterUTRId(estIndex, parIndex), Some(PartnerNoUTRReasonId(estIndex, parIndex)))
     ))
 
   def isPartnerCompleteHnS(estIndex: Int, parIndex: Int): Boolean =
@@ -175,7 +175,7 @@ trait DataCompletionEstablishers extends DataCompletion {
     isListComplete(Seq(
       get(PartnerDetailsId(estIndex, parIndex)).isDefined,
       get(PartnerNinoId(estIndex, parIndex)).isDefined | get(PartnerNewNinoId(estIndex, parIndex)).isDefined,
-      get(PartnerUniqueTaxReferenceId(estIndex, parIndex)).isDefined | get(PartnerUTRId(estIndex, parIndex)).isDefined,
+      get(PartnerUniqueTaxReferenceId(estIndex, parIndex)).isDefined | get(PartnerEnterUTRId(estIndex, parIndex)).isDefined,
       isAddressComplete(PartnerAddressId(estIndex, parIndex), PartnerPreviousAddressId(estIndex, parIndex),
         PartnerAddressYearsId(estIndex, parIndex), None).getOrElse(false),
       get(PartnerContactDetailsId(estIndex, parIndex)).isDefined

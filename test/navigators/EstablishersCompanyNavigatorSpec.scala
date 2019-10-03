@@ -74,8 +74,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyPreviousAddressId(0), newEstablisher, previousAddressRoutes( mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode))), true),
     (AddCompanyDirectorsId(0), emptyAnswers, startDirectorJourney( mode, 0), true, None, true),
     (AddCompanyDirectorsId(0), addCompanyDirectorsTrue, directorName(mode) , true, None, true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalse, taskList(mode), true, None, true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseNewDir, taskList(mode), true, None, true),
     (AddCompanyDirectorsId(0), addOneCompanyDirectors, sessionExpired, false, None, false),
     (AddCompanyDirectorsId(0), addCompanyDirectorsMoreThan10, otherDirectors(mode), true, None, true),
     (OtherDirectorsId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else taskList(mode), true, Some(taskList(mode)), true),
@@ -93,7 +91,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyNoCRNReasonId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (CompanyEnterPAYEId(0), emptyAnswers, isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
-    (CompanyAddressId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true)
+    (CompanyAddressId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalse, taskList(NormalMode), true, None, true)
   )
 
 
@@ -102,7 +101,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyAddressYearsId(0), addressYearsUnderAYear, hasBeenTrading(UpdateMode) , true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear), true),
     (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, hasBeenTrading(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
     (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))), true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseWithChanges, taskList(UpdateMode), true, None, true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseWithChanges, anyMoreChanges, true, None, true),
+    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseNewDir, anyMoreChanges, true, None, true),
     (CompanyEnterPAYEId(0), emptyAnswers, cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
     (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
     (HasCompanyPAYEId(0), establisherHasPAYE(false), cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))), true),

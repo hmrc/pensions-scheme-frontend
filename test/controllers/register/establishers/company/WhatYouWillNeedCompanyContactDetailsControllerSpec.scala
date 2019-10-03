@@ -24,6 +24,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -35,7 +36,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
   private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
 
   private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.companyName)(fakeRequest, messages).toString
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
     "in Subscription" must {

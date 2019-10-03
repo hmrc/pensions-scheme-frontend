@@ -28,6 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +51,8 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(
 
         EstablisherNameId(index).retrieve.right.map {
           name =>
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, nextPageHref, srn, name.fullName)))
+            Future.successful(Ok(
+              whatYouWillNeedContactDetails(appConfig, existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))
         }
       }
     }

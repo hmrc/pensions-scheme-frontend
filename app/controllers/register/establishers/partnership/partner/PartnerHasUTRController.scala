@@ -17,28 +17,60 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
+import controllers.HasReferenceNumberController
 import controllers.actions._
+import forms.HasReferenceNumberFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerHasUTRId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import navigators.Navigator
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnerHasUTRController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
+                                        override val userAnswersService: UserAnswersService,
+                                        override val navigator: Navigator,
                                         authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
-                                        requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: HasReferenceNumberFormProvider
+                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+      title = Message("messages__hasUTR", Message("messages__thePartner").resolve),
+      heading = Message("messages__hasUTR", personName),
+      hint = Some(Message("messages__hasUtr__p1")),
+      srn = srn
+    )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+
+  private def form(personName: String) = formProvider("messages__hasUtr__error__required", personName)
+
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            get(PartnerHasUTRId(establisherIndex, partnerIndex), form(details.fullName),
+              viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            post(PartnerHasUTRId(establisherIndex, partnerIndex), mode, form(details.fullName),
+              viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))
+        }
+    }
 }
