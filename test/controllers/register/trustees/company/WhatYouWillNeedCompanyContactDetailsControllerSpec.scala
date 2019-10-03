@@ -22,6 +22,7 @@ import models._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecBase {
@@ -33,7 +34,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
   private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, index, srn)
 
   private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, trusteeName.companyName)(fakeRequest, messages).toString
+    frontendAppConfig, None, onwardRoute(mode, srn), srn, trusteeName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
     "in Subscription" must {

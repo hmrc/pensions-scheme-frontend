@@ -66,7 +66,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, 0, None),
       post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel(NormalMode, index, None, Message("messages__theTrustee").resolve),
+      viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual").resolve),
       mode = NormalMode,
       requiredData = getMandatoryTrustee,
       validData = validData,

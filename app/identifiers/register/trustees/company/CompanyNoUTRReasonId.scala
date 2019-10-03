@@ -42,7 +42,7 @@ object CompanyNoUTRReasonId {
         case _                    => messages("messages__theCompany")
       }
 
-    def label(index: Int) = Some(messages("messages__noCompanyUtr__heading", companyName(index)))
+    def label(index: Int) = Some(messages("messages__whyNoUTR", companyName(index)))
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", companyName(index)))
 

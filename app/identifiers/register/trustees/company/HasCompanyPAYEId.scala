@@ -49,7 +49,7 @@ object HasCompanyPAYEId {
         case _                    => messages("messages__theCompany")
       }
 
-    def label(index: Int) = Some(messages("messages__hasPaye__h1", companyName(index)))
+    def label(index: Int) = Some(messages("messages__hasPAYE", companyName(index)))
 
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasPaye", companyName(index)))
 

@@ -18,13 +18,13 @@
 @import controllers.register.establishers.company.routes
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import models.register.Director
+@import models.register.DirectorEntity
 @import play.api.mvc.Call
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
-    directors: Seq[Director[_]],
+    directors: Seq[DirectorEntity],
     schemeName: Option[String],
     postCall: Call,
     viewOnly: Boolean,

@@ -37,7 +37,8 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
     None,
     controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
     None,
-    trusteePartnership.name
+    trusteePartnership.name,
+    Message("messages__thePartnership")
     )(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipContactDetailsController" when {

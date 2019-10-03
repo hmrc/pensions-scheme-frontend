@@ -48,8 +48,8 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(mode, index, srn),
-      title = Message("messages__hasCompanyCompanyNumber__title"),
-      heading = Message("messages__hasCompanyNumber__h1", companyName),
+      title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
+      heading = Message("messages__hasCRN", companyName),
       hint = Some(Message("messages__hasCompanyNumber__p1")),
       srn = srn
     )

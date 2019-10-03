@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.ControllerSpecBase
 import controllers.register.CompanyRegistrationNumberVariationsBaseController
 import forms.CompanyRegistrationNumberVariationsFormProvider
 import identifiers.TypedIdentifier
@@ -175,11 +176,12 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
 
   val firstIndex = Index(0)
   val companyName = "test company name"
+  val token = "the Company"
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__establisher__title"),
-      heading = Message("messages__companyNumber__establisher__heading", companyName),
+      title = Message("messages__enterCRN", token),
+      heading = Message("messages__enterCRN", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }

@@ -25,7 +25,7 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.trustees.individual.whatYouWillNeedIndividualDetails
+import views.html.register.whatYouWillNeedIndividualDetails
 
 import scala.concurrent.Future
 

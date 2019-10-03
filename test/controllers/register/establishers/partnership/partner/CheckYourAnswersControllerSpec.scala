@@ -134,28 +134,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     }
 
     "onSubmit" must {
-      "mark the section as complete and redirect to the next page in NormalMode" in {
+      "mark the section as complete and redirect to the next page" in {
         val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(desiredRoute.url)
-
-        FakeUserAnswersService.verify(IsPartnerCompleteId(firstIndex, firstIndex), true)
-      }
-
-      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is new" in {
-        val result = controller(newPartnerAnswers.dataRetrievalAction).onSubmit(UpdateMode, firstIndex, firstIndex, None)(request)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(desiredRoute.url)
-
-        FakeUserAnswersService.verify(IsPartnerCompleteId(firstIndex, firstIndex), true)
-      }
-
-      "mark the section as complete and redirect to the next page in UpdateMode if Establisher is not new" in {
-        val result = controller(partnerAnswers.dataRetrievalAction).onSubmit(UpdateMode, firstIndex, firstIndex, None)(request)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(desiredRoute.url)
-
-        FakeUserAnswersService.verify(IsPartnerCompleteId(firstIndex, firstIndex), true)
       }
     }
   }

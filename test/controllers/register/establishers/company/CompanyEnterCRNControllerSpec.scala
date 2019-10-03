@@ -88,8 +88,8 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__companyNumber__establisher__title"),
-      heading = Message("messages__companyNumber__establisher__heading", companyName),
+      title = Message("messages__enterCRN", Message("messages__theCompany").resolve),
+      heading = Message("messages__enterCRN", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )
   }

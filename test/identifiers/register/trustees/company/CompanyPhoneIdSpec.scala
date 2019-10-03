@@ -45,10 +45,10 @@ class CompanyPhoneIdSpec extends SpecBase {
         "return answers rows with change links" in {
           CompanyPhoneId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              label = Message("messages__common_phone__heading", companyDetails.companyName),
+              label = Message("messages__enterPhoneNumber", companyDetails.companyName),
               answer = Seq(phone),
               answerIsMessageKey = false,
-              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone", companyDetails.companyName))))
+              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_phone_number", companyDetails.companyName))))
             )))
         }
       }

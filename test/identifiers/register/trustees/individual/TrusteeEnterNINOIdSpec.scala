@@ -38,9 +38,9 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__trustee__individual__nino__heading", name),
+    AnswerRow(messages("messages__enterNINO", name),
       List("nino"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_nino", name)))))
+      Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", name)))))
   )
 
   "Cleanup" when {
@@ -85,7 +85,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__trustee__individual__nino__heading", name), List("nino"),false, None)
+          AnswerRow(messages("messages__enterNINO", name), List("nino"),false, None)
         ))
       }
 
@@ -104,8 +104,8 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__trustee__individual__nino__heading", name), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name)))))))
+          AnswerRow(messages("messages__enterNINO", name), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", name)))))))
       }
     }
   }
