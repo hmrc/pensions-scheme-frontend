@@ -49,14 +49,14 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](
-        Some(messages("messages__common_email__heading", cn)),
-        Some(messages("messages__visuallyhidden__dynamic_email", cn))
+        Some(messages("messages__enterEmail", cn)),
+        Some(messages("messages__visuallyhidden__dynamic_email_address", cn))
       )().row(CompanyEmailId(index))(
         routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](
-         Some(messages("messages__common_phone__heading", cn)),
-          Some(messages("messages__visuallyhidden__dynamic_phone", cn))
+         Some(messages("messages__enterPhoneNumber", cn)),
+          Some(messages("messages__visuallyhidden__dynamic_phone_number", cn))
         )().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
     ))

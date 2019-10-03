@@ -23,6 +23,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
@@ -36,7 +37,8 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
     None,
     controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
     None,
-    establisherPartnership.name)(fakeRequest, messages).toString
+    establisherPartnership.name,
+    Message("messages__thePartnership"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipContactDetailsController" when {
 
