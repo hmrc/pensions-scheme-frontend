@@ -1645,6 +1645,7 @@ messages__theTrustee = the trustee
 messages__theDirector = the director
 messages__theCompany = the company
 messages__thePartnership = the partnership
+messages__thePartner = the partner
 messages__thePerson = the person
 messages__theIndividual = the individual
 
