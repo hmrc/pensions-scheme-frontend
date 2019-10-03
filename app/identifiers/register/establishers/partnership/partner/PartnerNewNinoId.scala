@@ -40,10 +40,10 @@ object PartnerNewNinoId {
     new CheckYourAnswersPartners[PartnerNewNinoId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__common_nino__h1")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterNINO")
 
       private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_nino")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_national_insurance_number")
 
       override def row(id: PartnerNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[PartnerNewNinoId](label(id.establisherIndex, id.partnerIndex, userAnswers),

@@ -17,23 +17,20 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import controllers.{HasReferenceNumberController, Retrievals}
+import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
-import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorHasUTRId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -49,8 +46,8 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__hasDirectorUtr__title"),
-      heading = Message("messages__hasDirectorUtr__h1", personName),
+      title = Message("messages__hasUTR", Message("messages__theDirector").resolve),
+      heading = Message("messages__hasUTR", personName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn
     )

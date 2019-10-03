@@ -48,8 +48,8 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.TrusteeEnterUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__trusteeUtr__title"),
-      heading = Message("messages__trusteeUtr__h1", trusteeName),
+      title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
+      heading = Message("messages__enterUTR", trusteeName),
       hint = Message("messages_utr__hint"),
       srn = srn
     )

@@ -40,7 +40,7 @@ object PartnerNoNINOReasonId {
     new CheckYourAnswersPartners[PartnerNoNINOReasonId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__noGenericNino__heading")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__whyNoNINO")
 
       private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noNinoReason")

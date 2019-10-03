@@ -45,7 +45,7 @@ object PartnerHasNINOId {
     new CheckYourAnswersPartners[PartnerHasNINOId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__genericHasNino__h1")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__hasNINO")
 
       private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_hasNino")

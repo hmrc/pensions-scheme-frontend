@@ -37,7 +37,7 @@ object CompanyNoCRNReasonId {
     new CheckYourAnswersCompany[CompanyNoCRNReasonId] {
 
       private def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__noCompanyNumber__establisher__heading")
+        dynamicMessage(index, ua, "messages__whyNoCRN")
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noCrnReason")

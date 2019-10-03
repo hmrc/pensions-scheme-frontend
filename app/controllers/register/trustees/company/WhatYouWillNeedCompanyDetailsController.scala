@@ -50,10 +50,10 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
               schemeName = existingSchemeName,
               href = HasCompanyCRNController.onSubmit(mode, index, srn),
               srn = srn,
-              title = Message("messages__whatYouWillNeedTrusteeCompany__h1", companyName
+              companyName = companyName
               )
             )
-          ))
+          )
         }
   }
 }

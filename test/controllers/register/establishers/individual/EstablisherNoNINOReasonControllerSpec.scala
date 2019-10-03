@@ -40,15 +40,16 @@ import scala.concurrent.Future
 
 class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with MockitoSugar {
 
+  private val name = "Test Name"
   private val formProvider = new ReasonFormProvider()
-  private val form = formProvider("messages__reason__error_ninoRequired", "Test Name")
+  private val form = formProvider("messages__reason__error_ninoRequired", name)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   private val postCall = controllers.register.establishers.individual.routes.EstablisherNoNINOReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = messages("messages__whyPersonNoNINO"),
-    heading = Message("messages__noGenericNino__heading", "Test Name"),
+    title = messages("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+    heading = Message("messages__whyNoNINO", name),
     srn = None
   )
 

@@ -19,8 +19,9 @@ import identifiers._
 import identifiers.register._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director.DirectorNameId
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterCRNId, CompanyEnterUTRId}
+import identifiers.register.trustees.company.{CompanyEnterCRNId, CompanyEnterPAYEId, CompanyEnterUTRId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.address.{Address, TolerantAddress}
@@ -358,6 +359,12 @@ package object utils {
 
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(AdviserAddressListId)(selectedAddress).asOpt.value
+    }
+
+    //partner
+
+    def partnerName(firstIndex: Int, secondIndex: Int, name: PersonName): UserAnswers = {
+      answers.set(PartnerNameId(firstIndex, secondIndex))(name).asOpt.value
     }
 
     // Other

@@ -135,7 +135,7 @@ class EstablishersIndividualNavigatorOld @Inject()(
     from.id match {
       case EstablisherDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case EstablisherNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
-      case EstablisherNewNinoId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
+      case EstablisherEnterNINOId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
       case UniqueTaxReferenceId(index) => exitMiniJourney(index, mode, srn, from.userAnswers)
 
       case PostCodeLookupId(index) =>

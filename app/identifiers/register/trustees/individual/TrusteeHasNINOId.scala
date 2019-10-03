@@ -43,7 +43,7 @@ object TrusteeHasNINOId {
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasNINOId] = {
 
     def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int): Option[String] = Some(messages("messages__genericHasNino__h1", trusteeName(index)))
+    def label(index: Int): Option[String] = Some(messages("messages__hasNINO", trusteeName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeHasNINOId] {

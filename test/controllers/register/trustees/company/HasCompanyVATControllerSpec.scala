@@ -43,8 +43,8 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
 
   val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyVat__title"),
-    heading = Message("messages__hasCompanyVat__h1", "test company name"),
+    title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasVAT", "test company name"),
     hint = Some(Message("messages__hasCompanyVat__p1", "test company name"))
   )
 

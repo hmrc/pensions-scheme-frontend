@@ -45,7 +45,7 @@ object PartnerHasUTRId {
     new CheckYourAnswersPartners[PartnerHasUTRId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__dynamic_hasUtr")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__hasUTR")
 
       private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_hasUtr")

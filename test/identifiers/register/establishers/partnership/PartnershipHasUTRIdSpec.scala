@@ -39,7 +39,7 @@ class PartnershipHasUTRIdSpec extends SpecBase {
         .asOpt.value
 
       "remove the data for `PartnershipEnterUTRId`" in {
-        result.get(PartnershipUTRId(0)) mustNot be(defined)
+        result.get(PartnershipEnterUTRId(0)) mustNot be(defined)
       }
     }
 
@@ -92,7 +92,7 @@ object PartnershipHasUTRIdSpec extends SpecBase {
   val onwardUrl = "onwardUrl"
   val name = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__partnershipHasUtr__heading", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+    AnswerRow(messages("messages__hasUTR", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_hasUtr", name)))))
   )
 
@@ -101,7 +101,7 @@ object PartnershipHasUTRIdSpec extends SpecBase {
       EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipHasUTRId.toString -> v,
-          PartnershipUTRId.toString -> "value",
+          PartnershipEnterUTRId.toString -> "value",
           PartnershipNoUTRReasonId.toString -> "value"
         )
       )

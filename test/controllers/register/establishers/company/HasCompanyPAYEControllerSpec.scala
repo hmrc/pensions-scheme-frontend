@@ -41,8 +41,8 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, srn, index),
-    title = Message("messages__companyPayeRef__title"),
-    heading = Message("messages__hasPaye__h1", "test company name"),
+    title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasPAYE", "test company name"),
     hint = Some(Message("messages__hasPaye__p1")),
     formFieldName = Some("hasPaye")
   )

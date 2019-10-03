@@ -50,9 +50,9 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
       form,
       CommonFormWithHintViewModel(
         routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),
-        Message("messages__partnership_email__title"),
-        Message("messages__common_email__heading", trusteePartnershipDetails.name),
-        Some(Message("messages__email__hint")),
+        Message("messages__enterEmail", Message("messages__thePartnership").resolve),
+        Message("messages__enterEmail", trusteePartnershipDetails.name),
+        Some(Message("messages__contact_details__hint", trusteePartnershipDetails.name)),
         None
       ),
       None

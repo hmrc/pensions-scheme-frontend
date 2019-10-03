@@ -40,7 +40,7 @@ object PartnerDOBId {
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__DOB__heading")
 
       private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_dob")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 

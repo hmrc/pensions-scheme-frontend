@@ -45,10 +45,10 @@ class TrusteeEmailIdSpec extends SpecBase {
         "return answers rows with change links" in {
           TrusteeEmailId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__common_email__heading", personName.fullName),
+              Message("messages__enterEmail", personName.fullName),
               Seq(email),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", personName.fullName))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email_address", personName.fullName))))
             )))
         }
       }

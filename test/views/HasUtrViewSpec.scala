@@ -34,10 +34,10 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
   val form = new HasUTRFormProvider()("messages__hasCompanyUtr__error__required", "ABC")
   val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, None, Index(0))
 
-  def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
+  private def viewModel(srn : Option[String] = None) = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasCompanyUtr__title"),
-    heading = Message("messages__hasCompanyUtr__h1", "ABC"),
+    title = Message("messages__hasUTR", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasUTR", "ABC"),
     hint = Some(Message("messages__hasUtr__p1")),
     srn = srn
   )

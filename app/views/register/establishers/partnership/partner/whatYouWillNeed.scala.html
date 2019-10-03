@@ -21,6 +21,7 @@
         appConfig: FrontendAppConfig,
         schemeName: Option[String],
         srn: Option[String],
+        partnershipName: String,
         href: Call
 )(
         implicit request: Request[_],
@@ -28,11 +29,11 @@
 )
 
 @main_template(
-    title = messages("messages__whatYouWillNeedPartners__title"),
+    title = messages("messages__partnersFor", messages("messages__thePartnership")),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(messages("messages__whatYouWillNeedPartners__h1"))
+    @components.heading(messages("messages__partnersFor", partnershipName))
 
     @components.paragraph_text(messages("messages__whatYouWillNeedPartners__p1"))
 

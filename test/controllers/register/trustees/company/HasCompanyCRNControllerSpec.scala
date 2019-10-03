@@ -46,8 +46,8 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
 
   private val viewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, index, srn),
-    title = Message("messages__hasCompanyCompanyNumber__title"),
-    heading = Message("messages__hasCompanyNumber__h1", "test company name"),
+    title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
+    heading = Message("messages__hasCRN", "test company name"),
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 

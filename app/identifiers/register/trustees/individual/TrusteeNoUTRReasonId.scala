@@ -39,7 +39,7 @@ object TrusteeNoUTRReasonId {
                   ): CheckYourAnswers[TrusteeNoUTRReasonId] = {
 
     def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__noGenericUtr__heading", trusteeName(index)))
+    def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeNoUTRReasonId] {

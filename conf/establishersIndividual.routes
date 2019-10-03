@@ -1,3 +1,85 @@
+GET         /:index/individual/name                                                      controllers.register.establishers.individual.EstablisherNameController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+POST        /:index/individual/name                                                      controllers.register.establishers.individual.EstablisherNameController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/name/:srn                                           controllers.register.establishers.individual.EstablisherNameController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST        /:index/individual/:mode/name/:srn                                           controllers.register.establishers.individual.EstablisherNameController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/individual/details                                                   controllers.register.establishers.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/details/:srn                                        controllers.register.establishers.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/individual/date-of-birth                                             controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/date-of-birth                                             controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/date-of-birth                                      controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/date-of-birth                                      controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/date-of-birth/:srn                                  controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/date-of-birth/:srn                                  controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/have-national-insurance-number                            controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/have-national-insurance-number                            controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/have-national-insurance-number                     controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/have-national-insurance-number                     controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/have-national-insurance-number/:srn                 controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/have-national-insurance-number/:srn                 controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/enter-national-insurance-number                           controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String])
+POST        /:index/individual/enter-national-insurance-number                           controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String])
+GET         /:index/individual/change/enter-national-insurance-number                    controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String])
+POST        /:index/individual/change/enter-national-insurance-number                    controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String])
+GET         /:index/individual/:mode/enter-national-insurance-number/:srn                controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+POST        /:index/individual/:mode/enter-national-insurance-number/:srn                controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/individual/reason-for-no-national-insurance-number                   controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/reason-for-no-national-insurance-number                   controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/reason-for-no-national-insurance-number            controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/reason-for-no-national-insurance-number            controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/reason-for-no-national-insurance-number/:srn        controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/reason-for-no-national-insurance-number/:srn        controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/have-unique-taxpayer-reference                            controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/have-unique-taxpayer-reference                            controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/have-unique-taxpayer-reference                     controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/have-unique-taxpayer-reference                     controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/reason-for-no-unique-taxpayer-reference            controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/reason-for-no-unique-taxpayer-reference            controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/reason-for-no-unique-taxpayer-reference/:srn        controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/reason-for-no-unique-taxpayer-reference/:srn        controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/check-your-answers-details                                controllers.register.establishers.individual.CheckYourAnswersDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/check-your-answers-details/:srn                     controllers.register.establishers.individual.CheckYourAnswersDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/individual/contact-details                                           controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/contact-details/:srn                                controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+
+GET         /:index/individual/enter-email-address                                       controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/enter-email-address                                       controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/enter-email-address                                controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/enter-email-address                                controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/enter-email-address/:srn                            controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/enter-email-address/:srn                            controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/enter-phone-number                                        controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/enter-phone-number                                        controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/enter-phone-number                                 controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/enter-phone-number                                 controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/enter-phone-number/:srn                             controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/enter-phone-number/:srn                             controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+
+GET         /:index/individual/check-your-answers-contact-details                        controllers.register.establishers.individual.CheckYourAnswersContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/check-your-answers-contact-details/:srn             controllers.register.establishers.individual.CheckYourAnswersContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
+
+
+
 GET         /:index/individual/time-at-address                                           controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 POST        /:index/individual/time-at-address                                           controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/change/time-at-address                                    controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String] = None)
@@ -78,94 +160,14 @@ POST        /:index/individual/change/establishers-previous-address-manual      
 GET         /:index/individual/:mode/establishers-previous-address-manual/:srn           controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
 POST        /:index/individual/:mode/establishers-previous-address-manual/:srn           controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
-GET         /:index/individual/enter-national-insurance-number                           controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String])
-POST        /:index/individual/enter-national-insurance-number                           controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String])
-GET         /:index/individual/change/enter-national-insurance-number                    controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[String])
-POST        /:index/individual/change/enter-national-insurance-number                    controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[String])
-GET         /:index/individual/:mode/enter-national-insurance-number/:srn                controllers.register.establishers.individual.EstablisherEnterNINOController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/individual/:mode/enter-national-insurance-number/:srn                controllers.register.establishers.individual.EstablisherEnterNINOController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
 GET         /:index/individual/:mode/enter-nino/:srn                                     controllers.register.establishers.individual.EstablisherNinoNewController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 POST        /:index/individual/:mode/enter-nino/:srn                                     controllers.register.establishers.individual.EstablisherNinoNewController.onSubmit(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers                                        controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/:mode/check-your-answers/:srn                             controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 
-GET         /:index/individual/establisher-name                                          controllers.register.establishers.individual.EstablisherNameController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-POST        /:index/individual/establisher-name                                          controllers.register.establishers.individual.EstablisherNameController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/establisher-name/:srn                               controllers.register.establishers.individual.EstablisherNameController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-POST        /:index/individual/:mode/establisher-name/:srn                               controllers.register.establishers.individual.EstablisherNameController.onSubmit(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/individual/details                                                   controllers.register.establishers.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/details/:srn                                        controllers.register.establishers.individual.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/individual/date-of-birth                                             controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/date-of-birth                                             controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/date-of-birth                                      controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/date-of-birth                                      controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/date-of-birth/:srn                                  controllers.register.establishers.individual.EstablisherDOBController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/date-of-birth/:srn                                  controllers.register.establishers.individual.EstablisherDOBController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/have-national-insurance-number                            controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/have-national-insurance-number                            controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/have-national-insurance-number                     controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/have-national-insurance-number                     controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/have-national-insurance-number/:srn                 controllers.register.establishers.individual.EstablisherHasNINOController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/have-national-insurance-number/:srn                 controllers.register.establishers.individual.EstablisherHasNINOController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/reason-for-no-national-insurance-number                   controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/reason-for-no-national-insurance-number                   controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/reason-for-no-national-insurance-number            controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/reason-for-no-national-insurance-number            controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/reason-for-no-national-insurance-number/:srn        controllers.register.establishers.individual.EstablisherNoNINOReasonController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/reason-for-no-national-insurance-number/:srn        controllers.register.establishers.individual.EstablisherNoNINOReasonController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/have-unique-taxpayer-reference                            controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/have-unique-taxpayer-reference                            controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/have-unique-taxpayer-reference                     controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/have-unique-taxpayer-reference                     controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/reason-for-no-unique-taxpayer-reference            controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/reason-for-no-unique-taxpayer-reference            controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/reason-for-no-unique-taxpayer-reference/:srn        controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/reason-for-no-unique-taxpayer-reference/:srn        controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/check-your-answers-details                                controllers.register.establishers.individual.CheckYourAnswersDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/check-your-answers-details/:srn                     controllers.register.establishers.individual.CheckYourAnswersDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-
 GET         /:index/individual/address                                                   controllers.register.establishers.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/:mode/address/:srn                                        controllers.register.establishers.individual.WhatYouWillNeedIndividualAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
 
 GET         /:index/individual/check-your-answers-address                                controllers.register.establishers.individual.CheckYourAnswersAddressController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
 GET         /:index/individual/:mode/check-your-answers-address/:srn                     controllers.register.establishers.individual.CheckYourAnswersAddressController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/individual/contact-details                                           controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/contact-details/:srn                                controllers.register.establishers.individual.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])
-
-GET         /:index/individual/enter-email-address                                       controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/enter-email-address                                       controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/enter-email-address                                controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/enter-email-address                                controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/enter-email-address/:srn                            controllers.register.establishers.individual.EstablisherEmailController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/enter-email-address/:srn                            controllers.register.establishers.individual.EstablisherEmailController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/enter-phone-number                                        controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/enter-phone-number                                        controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/enter-phone-number                                 controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/enter-phone-number                                 controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/enter-phone-number/:srn                             controllers.register.establishers.individual.EstablisherPhoneController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/enter-phone-number/:srn                             controllers.register.establishers.individual.EstablisherPhoneController.onSubmit(mode: Mode,index:Index, srn: Option[String])
-
-GET         /:index/individual/check-your-answers-contact-details                        controllers.register.establishers.individual.CheckYourAnswersContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/check-your-answers-contact-details/:srn             controllers.register.establishers.individual.CheckYourAnswersContactDetailsController.onPageLoad(mode: Mode, index: Index, srn: Option[String])

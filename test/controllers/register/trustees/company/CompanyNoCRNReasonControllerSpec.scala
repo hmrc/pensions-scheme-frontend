@@ -76,8 +76,8 @@ object CompanyNoCRNReasonControllerSpec extends CompanyNoCRNReasonControllerSpec
 
   val viewModel = ReasonViewModel(
     postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, None),
-    title = Message("messages__companyNoCompanyNumber__establisher__title"),
-    heading = Message("messages__noCompanyNumber__establisher__heading", "test company name"),
+    title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
+    heading = Message("messages__whyNoCRN", "test company name"),
     srn = None
   )
 

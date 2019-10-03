@@ -25,6 +25,7 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
   private val companyName = "hifi ltd"
+  private val token = messages("messages__theCompany").capitalize
 
   private val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onPageLoad(NormalMode, None, index=Index(0))
 
@@ -33,8 +34,15 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   "WhatYouWillNeedCompanyDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__companyDetailsFor", companyName),
-      "_lede", "_item1", "_item2", "_item3", "_item4")
+    behave like normalPageWithTitle(createView, messageKeyPrefix,
+      messages("messages__detailsFor", token),
+      messages("messages__detailsFor", companyName),
+      "_item1", "_item2", "_item3", "_item4", "_p1")
+
+    "display the correct lede" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__whatYouWillNeedEstablisherCompany__lede", companyName))
+    }
 
     behave like pageWithSubmitButton(createView)
 

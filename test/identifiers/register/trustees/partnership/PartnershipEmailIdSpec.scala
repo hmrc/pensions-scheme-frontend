@@ -44,10 +44,10 @@ class PartnershipEmailIdSpec extends SpecBase {
         "return answers rows with change links" in {
           PartnershipEmailId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__common_email__heading", partnershipDetails.name),
+              Message("messages__enterEmail", partnershipDetails.name),
               Seq(email),
               answerIsMessageKey = false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", partnershipDetails.name))))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email_address", partnershipDetails.name))))
             )))
         }
       }
