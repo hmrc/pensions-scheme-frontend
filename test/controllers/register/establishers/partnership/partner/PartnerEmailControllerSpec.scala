@@ -61,9 +61,9 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       form,
       CommonFormWithHintViewModel(
         routes.PartnerEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
-        Message("messages__common_email__heading", Message("messages__thePartner").resolve),
-        Message("messages__common_email__heading", "first last"),
-        Some(Message("messages__email__hint")),
+        Message("messages__enterEmail", Message("messages__thePartner").resolve),
+        Message("messages__enterEmail", "first last"),
+        Some(Message("messages__contact_details__hint", "first last")),
         None
       ),
       None

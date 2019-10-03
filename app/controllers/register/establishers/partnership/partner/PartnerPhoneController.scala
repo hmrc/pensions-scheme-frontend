@@ -55,9 +55,9 @@ class PartnerPhoneController @Inject()(
           details =>
             CommonFormWithHintViewModel(
               routes.PartnerPhoneController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-              Message("messages__common_phone__heading", Message("messages__thePartner").resolve),
-              Message("messages__common_phone__heading", details.fullName),
-              Some(Message("messages__phone__hint")),
+              Message("messages__enterPhoneNumber", Message("messages__thePartner").resolve),
+              Message("messages__enterPhoneNumber", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
         }
