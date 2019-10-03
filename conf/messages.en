@@ -1017,7 +1017,6 @@ messages__error__no_nino_partner = You need to tell us why the partner does not 
 messages__enterNINO = What is {0}’s National Insurance number?
 messages__error__common_nino = Enter a National Insurance number
 messages__error__common_nino_invalid = Enter {0}’s National Insurance number in the correct format
-messages__partner_yes_nino__title = What is the partner’s National Insurance number?
 
 messages__partnerDetails__title = Enter the partner’s details
 messages__partnerDetails__heading = Enter the partner’s details
@@ -1646,6 +1645,7 @@ messages__hasBeen1Year = Has {0} been at their address for at least 1 year?
 messages__changeHasBeen1Year = whether {0} has been at their address for at least 1 year?
 messages__theTrustee = the trustee
 messages__theDirector = the director
+messages__thePartner = the partner
 messages__theCompany = the company
 messages__thePartnership = the partnership
 messages__thePerson = the person

@@ -22,6 +22,7 @@ import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNoNINOReasonId
 import models.{Index, NormalMode}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
 import utils.FakeNavigator
@@ -30,22 +31,22 @@ import views.html.reason
 
 class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  val formProvider = new ReasonFormProvider()
-  val name = "first last"
-  val form = formProvider("messages__reason__error_ninoRequired", name)
-  val establisherIndex, partnerIndex = Index(0)
-  val srn = None
-  val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val formProvider = new ReasonFormProvider()
+  private val name = "first last"
+  private val form = formProvider("messages__reason__error_ninoRequired", name)
+  private val establisherIndex, partnerIndex = Index(0)
+  private val srn = None
+  private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
 
-  val viewmodel = ReasonViewModel(
+  private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__noNinoReason__partner_title"),
-    heading = Message("messages__noGenericNino__heading", name),
+    title = Message("messages__whyNoNINO", Message("messages__thePartner").resolve),
+    heading = Message("messages__whyNoNINO", name),
     srn = srn
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerNoNINOReasonController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerNoNINOReasonController =
     new PartnerNoNINOReasonController(
       frontendAppConfig,
       messagesApi,
@@ -58,7 +59,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewmodel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = reason(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyCRNController" must {
 
