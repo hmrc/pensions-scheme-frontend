@@ -17,28 +17,65 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
+import controllers.EmailAddressController
 import controllers.actions._
+import forms.EmailFormProvider
+import identifiers.register.establishers.partnership.partner.{PartnerEmailId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
+import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import services.UserAnswersService
+import viewmodels.{CommonFormWithHintViewModel, Message}
 
-class PartnerEmailController @Inject()(appConfig: FrontendAppConfig,
+import scala.concurrent.ExecutionContext
+
+class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
+                                       override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction
-                                                ) extends FrontendController with I18nSupport {
+                                       requireData: DataRequiredAction,
+                                       val navigator: Navigator,
+                                       formProvider: EmailFormProvider
+                                      )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Ok(">>>>>>Not Implemented>>>>>>")
-  }
+  protected val form: Form[String] = formProvider()
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String] = None): Action[AnyContent] = Action {
-    implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
-  }
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.PartnerEmailController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              Message("messages__enterEmail", Message("messages__thePartner").resolve),
+              Message("messages__enterEmail", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
+              srn = srn
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map {
+          vm =>
+            get(PartnerEmailId(establisherIndex, partnerIndex), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map {
+          vm =>
+            post(PartnerEmailId(establisherIndex, partnerIndex), mode, form, vm, None)
+        }
+    }
+
 }
