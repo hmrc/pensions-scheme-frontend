@@ -54,8 +54,8 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
             CommonFormWithHintViewModel(
               routes.DirectorEmailController.onSubmit(mode, establisherIndex, directorIndex, srn),
               Message("messages__director_email__title"),
-              Message("messages__common_email__heading", details.fullName),
-              Some(Message("messages__email__hint")),
+              Message("messages__enterEmail", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
         }

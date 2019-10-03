@@ -25,6 +25,7 @@ import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +44,7 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, partnershipName)))
+            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
         }
     }
 }

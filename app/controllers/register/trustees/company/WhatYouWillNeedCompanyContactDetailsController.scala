@@ -25,6 +25,7 @@ import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.Future
@@ -44,7 +45,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
           case CompanyDetails(companyName, _) =>
 
             val href = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, companyName)))
+            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, companyName, Message("messages__theCompany"))))
         }
     }
 }

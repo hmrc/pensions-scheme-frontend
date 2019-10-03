@@ -36,11 +36,11 @@ object TrusteeEmailId {
       CheckYourAnswers[TrusteeEmailId] {
 
     override def row(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
 
-      def label(index: Int): String = messages("messages__common_email__heading", trusteeName(index))
+      def label(index: Int): String = messages("messages__enterEmail", trusteeName(index))
 
-      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_email", trusteeName(index)))
+      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName(index)))
 
       StringCYA(
         Some(label(id.index)),

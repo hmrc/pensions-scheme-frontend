@@ -45,10 +45,10 @@ class CompanyEmailIdSpec extends SpecBase {
         "return answers rows with change links" in {
           CompanyEmailId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              label = Message("messages__common_email__heading", companyDetails.companyName),
+              label = Message("messages__enterEmail", companyDetails.companyName),
               answer = Seq(email),
               answerIsMessageKey = false,
-              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email", companyDetails.companyName))))
+              changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_email_address", companyDetails.companyName))))
             )))
         }
       }

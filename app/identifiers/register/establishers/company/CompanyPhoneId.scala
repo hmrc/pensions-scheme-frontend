@@ -36,11 +36,11 @@ object CompanyPhoneId {
       CheckYourAnswersCompany[CompanyPhoneId] {
 
     private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
-      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_phone")
+      dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_phone_number")
 
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val companyName = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
-      val label       = "messages__common_phone__heading"
+      val companyName = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
+      val label       = "messages__enterPhoneNumber"
 
       StringCYA(Some(messages(label, companyName)), Some(hiddenLabel(id.index, userAnswers)))()
         .row(id)(changeUrl, userAnswers)

@@ -36,9 +36,9 @@ object CompanyEmailId {
       CheckYourAnswers[CompanyEmailId] {
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
-      val label = messages("messages__common_email__heading", trusteeName)
-      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_email", trusteeName))
+      val trusteeName: String = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
+      val label = messages("messages__enterEmail", trusteeName)
+      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
 
       StringCYA(
         Some(label),
