@@ -1227,6 +1227,7 @@ messages__visuallyhidden__partnership__email_address = the partnership’s email
 messages__visuallyhidden__partnership__phone_number = the partnership’s phone number
 messages__visuallyhidden__partnership__dormant = whether the partnership been dormant in the last 12 months
 
+messages__visuallyhidden__dynamic_name = the name of {0}
 messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference (UTR)
 messages__visuallyhidden__dynamic_utr = the UTR for {0}
 messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
@@ -1880,3 +1881,5 @@ messages__whatYouWillNeedContact__h1 = {0}’s contact details
 messages__whatYouWillNeedContact__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedContact__item1 = contact email address
 messages__whatYouWillNeedContact__item2 = contact phone number
+
+messages__partnerName__cya = Partner's name

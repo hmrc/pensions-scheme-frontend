@@ -21,7 +21,7 @@ import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -35,22 +35,32 @@ case class PartnerNewNinoId(establisherIndex: Int, partnerIndex: Int) extends Ty
 object PartnerNewNinoId {
   override def toString: String = "partnerNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnerNewNinoId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerNewNinoId] = {
 
-    new CheckYourAnswers[PartnerNewNinoId] {
+    new CheckYourAnswersPartners[PartnerNewNinoId] {
 
-      private val label = "messages__common__nino"
-      private val hiddenLabel = "messages__visuallyhidden__partner__nino"
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__common_nino__h1")
+
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_nino")
 
       override def row(id: PartnerNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnerNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnerNewNinoId](label(id.establisherIndex, id.partnerIndex, userAnswers),
+          hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerNewNinoId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnerNewNinoId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnerNewNinoId](label(id.establisherIndex, id.partnerIndex, userAnswers),
+              hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnerNewNinoId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnerNewNinoId](label(id.establisherIndex, id.partnerIndex, userAnswers),
+              hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

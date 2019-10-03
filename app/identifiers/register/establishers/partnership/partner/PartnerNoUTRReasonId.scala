@@ -18,7 +18,12 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.AnswerRow
 
 case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
@@ -26,6 +31,32 @@ case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extend
 
 object PartnerNoUTRReasonId {
   override def toString: String = "noNinoReason"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnerNoUTRReasonId] = {
+
+    new CheckYourAnswersPartners[PartnerNoUTRReasonId] {
+
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__noGenericUtr__heading")
+
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")
+
+      override def row(id: PartnerNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
+          Some(hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: PartnerNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
 }
 
 

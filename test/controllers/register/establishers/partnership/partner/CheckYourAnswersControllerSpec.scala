@@ -23,7 +23,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.partner._
 import models.address.Address
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, _}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
@@ -38,10 +38,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions = new FakeCountryOptions()
-  implicit val request = FakeDataRequest(partnerAnswers)
+  implicit val request = FakeDataRequest(partnerAnswersToggleOff)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach,
+                         isHnSEnabled: Boolean = false): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -52,7 +53,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
       countryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      new FakeFeatureSwitchManagementService(isHnSEnabled)
     )
 
 
@@ -99,7 +101,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       "return OK and display all the answers" in {
 
 
-        val result = controller(partnerAnswers.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersToggleOff.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
       }
@@ -127,11 +129,25 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithNoLink), Some("srn"))
       }
 
-      behave like changeableController(
-        controller(partnerAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
-      )
+      "return OK and display all the answers with yes when HnS toggle is on" in {
+
+        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes, Some("srn"))
+      }
+
+    "return OK and display all the answers with no when HnS toggle is on" in {
+
+      val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo)
     }
+
+    behave like changeableController(
+      controller(partnerAnswersNo.dataRetrievalAction, _: AllowChangeHelper)
+        .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+    )
+  }
 
     "onSubmit" must {
       "mark the section as complete and redirect to the next page" in {
@@ -158,7 +174,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private def partnerAnswersUpdateWithNewNino(isEditable: Boolean): UserAnswers = partnerDetailsAnswersUpdateWithoutNino
     .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A", isEditable)).asOpt.value
 
-  private val partnerAnswers = partnerAnswersUpdate
+  private val partnerAnswersToggleOff = partnerAnswersUpdate
     .set(PartnerUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
     .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(PartnerAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
@@ -166,7 +182,28 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .flatMap(_.set(PartnerContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
     .asOpt.value
 
-  private val newPartnerAnswers = partnerAnswers.set(IsEstablisherNewId(firstIndex))(true).asOpt.value
+  private val partnerAnswers = UserAnswers()
+    .set(PartnerNameId(firstIndex, firstIndex))(PersonName("first name", "last name"))
+    .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
+    .flatMap(_.set(PartnerAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
+    .flatMap(_.set(PartnerPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
+    .flatMap(_.set(PartnerEmailId(firstIndex, firstIndex))("test@test.com"))
+    .flatMap(_.set(PartnerPhoneId(firstIndex, firstIndex))("123456789"))
+    .asOpt.value
+
+  private val partnerAnswersYes = partnerAnswers
+    .set(PartnerHasUTRId(firstIndex, firstIndex))(true)
+    .flatMap(_.set(PartnerEnterUTRId(firstIndex, firstIndex))(ReferenceValue("utr")))
+    .flatMap(_.set(PartnerHasNINOId(firstIndex, firstIndex))(true))
+    .flatMap(_.set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("nino")))
+    .asOpt.value
+
+  private val partnerAnswersNo = partnerAnswers
+    .set(PartnerHasUTRId(firstIndex, firstIndex))(false)
+    .flatMap(_.set(PartnerNoUTRReasonId(firstIndex, firstIndex))("reason"))
+    .flatMap(_.set(PartnerHasNINOId(firstIndex, firstIndex))(false))
+    .flatMap(_.set(PartnerNoNINOReasonId(firstIndex, firstIndex))("reason"))
+    .asOpt.value
 
   private def answerRowWithAdd: AnswerRow = AnswerRow("messages__common__nino", Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
@@ -189,5 +226,23 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )
   ),
     AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
+  )
+
+  private def answerRowsYes = Seq(AnswerSection(
+    None,
+    Seq(
+      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None)
+    )
+  )
+  )
+
+  private def answerRowsNo = Seq(AnswerSection(
+    None,
+    Seq(
+      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
+      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None)
+    )
+  )
   )
 }

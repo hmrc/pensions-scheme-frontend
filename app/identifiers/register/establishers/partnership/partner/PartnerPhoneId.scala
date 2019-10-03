@@ -18,7 +18,12 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.AnswerRow
 
 case class PartnerPhoneId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ "partnerContactDetails" \ PartnerPhoneId.toString
@@ -27,6 +32,34 @@ case class PartnerPhoneId(establisherIndex: Int, partnerIndex: Int) extends Type
 
 object PartnerPhoneId {
   override def toString: String = "phoneNumber"
+
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnerPhoneId] = {
+
+    new CheckYourAnswersPartners[PartnerPhoneId] {
+
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__common_phone__heading")
+
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_phone")
+
+      override def row(id: PartnerPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
+          Some(hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
+
+
+      override def updateRow(id: PartnerPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ => StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
+            Some(hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers)), true)()
+            .updateRow(id)(changeUrl, userAnswers)
+        }
+    }
+  }
 }
 
 

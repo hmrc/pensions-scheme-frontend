@@ -19,9 +19,13 @@ package identifiers.register.establishers.partnership.partner
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.OtherPartnersId
+import models.Link
 import models.person.PersonName
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerNameId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[PersonName] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
@@ -39,5 +43,38 @@ object PartnerNameId {
     EstablishersId(establisherIndex).path \ "partner" \\ PartnerNameId.toString
 
   override def toString: String = "partnerDetails"
+
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerNameId] = {
+    new CheckYourAnswers[PartnerNameId] {
+
+      override def row(id: PartnerNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails => {
+          Seq(
+            AnswerRow(
+              "messages__partnerName__cya",
+              Seq(personDetails.fullName),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name", personDetails.fullName).resolve)))
+            )
+          )
+        }}
+
+      override def updateRow(id: PartnerNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
+              Seq(
+                AnswerRow(
+                  "messages__partnerName__cya",
+                  Seq(personDetails.fullName),
+                  answerIsMessageKey = false,
+                  None
+                )
+              )
+            }
+        }
+    }
+  }
 }
 

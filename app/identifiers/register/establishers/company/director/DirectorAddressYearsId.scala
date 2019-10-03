@@ -47,9 +47,6 @@ object DirectorAddressYearsId {
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
 
-    val name = (establisherIndex: Int, directorIndex: Int, ua: UserAnswers) =>
-        ua.get(DirectorNameId(establisherIndex, directorIndex)).map(_.fullName)
-
     new CheckYourAnswersDirectors[DirectorAddressYearsId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
