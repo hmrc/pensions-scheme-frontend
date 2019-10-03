@@ -23,8 +23,6 @@ import play.api.data.Form
 class InsurancePolicyNumberFormProvider @Inject() extends Mappings with Constraints with Transforms{
   val maxLength = 55
 
-  val xx: String => String = yy => yy.toUpperCase
-
   def apply(): Form[String] = Form(
     "policyNumber" -> text("messages__error__insurance_policy_number")
       .transform(noSpaceWithUpperCaseTransform, noTransform)
