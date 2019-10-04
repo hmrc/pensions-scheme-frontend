@@ -19,11 +19,8 @@ package identifiers.register.establishers.partnership.partner
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, ReferenceValueCYA}
-import viewmodels.AnswerRow
+import utils.UserAnswers
 
 case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterUTRId.toString
@@ -34,34 +31,6 @@ case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends T
 
 object PartnerEnterUTRId {
   override def toString: String = "utr"
-
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnerEnterUTRId] = {
-
-    new CheckYourAnswersPartners[PartnerEnterUTRId] {
-
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__dynamic_whatIsUTR")
-
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_utr")
-
-      override def row(id: PartnerEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
-          hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
-          .row(id)(changeUrl, userAnswers)
-
-
-      override def updateRow(id: PartnerEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => ReferenceValueCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
-            hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
-            .updateRow(id)(changeUrl, userAnswers)
-        }
-    }
-  }
 }
 
 

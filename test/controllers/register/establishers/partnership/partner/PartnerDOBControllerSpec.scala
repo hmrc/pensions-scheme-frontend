@@ -1,0 +1,106 @@
+/*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.register.establishers.partnership.partner
+
+import controllers.ControllerSpecBase
+import controllers.actions._
+import controllers.behaviours.DateOfBirthControllerBehaviours
+import forms.DOBFormProvider
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerId, PartnerNameId}
+import models.person.PersonName
+import models.{PartnershipDetails, Index, Mode, NormalMode}
+import org.joda.time.LocalDate
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.Form
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
+import utils.FakeNavigator
+import viewmodels.Message
+import viewmodels.dateOfBirth.DateOfBirthViewModel
+
+//scalastyle:off magic.number
+
+class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
+
+  import PartnerDOBControllerSpec._
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerDOBController =
+    new PartnerDOBController(
+      frontendAppConfig,
+      messagesApi,
+      mockUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider)
+
+  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
+      srn = srn,
+      token = token
+    )
+
+  "PartnerDOB Controller" must {
+
+    behave like dateOfBirthController(
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner").resolve),
+      mode = NormalMode,
+      requiredData = getMandatoryPartner,
+      validData = validData,
+      fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
+    )
+  }
+}
+
+object PartnerDOBControllerSpec extends MockitoSugar {
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val formProvider: DOBFormProvider = new DOBFormProvider()
+  val form: Form[LocalDate] = formProvider()
+
+  val firstEstablisherIndex: Index = Index(0)
+  val firstPartnerIndex: Index = Index(0)
+
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
+
+  val validData: JsObject = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
+        PartnerId.toString -> Json.arr(
+          Json.obj(
+            PartnerNameId.toString -> PersonName("first", "last"),
+            PartnerDOBId.toString  -> new LocalDate(year, month, day)
+          )
+        )
+      )
+    )
+  )
+}
+
+
