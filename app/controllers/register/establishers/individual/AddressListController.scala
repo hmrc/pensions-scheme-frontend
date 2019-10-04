@@ -46,16 +46,12 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      retrieveEstablisherName(index) { establisherName => viewmodel(mode, index, srn, establisherName).right.map(get)
-      }
+      retrieveEstablisherName(index) (viewmodel(mode, index, srn, _).right.map(get))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) { establisherName =>
-        viewmodel(mode, index, srn, establisherName).right.map { vm => post(vm, AddressListId(index), AddressId(index), mode)
-        }
-      }
+      retrieveEstablisherName(index) ( viewmodel(mode, index, srn, _).right.map( post(_, AddressListId(index), AddressId(index), mode)) )
   }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], establisherName: String)(

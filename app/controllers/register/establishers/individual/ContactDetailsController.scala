@@ -55,9 +55,9 @@ class ContactDetailsController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) { establisherName =>
+      retrieveEstablisherName(index) ( establisherName =>
           post(ContactDetailsId(index), mode, form, viewmodel(mode, index, establisherName, srn))
-      }
+      )
   }
 
   private def viewmodel(mode: Mode, index: Index, establisherName: String, srn: Option[String]) = ContactDetailsViewModel(

@@ -48,8 +48,7 @@ class PreviousAddressListController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      retrieveEstablisherName(index) { name => viewmodel(mode, index, srn, name).right.map(get)
-      }
+      retrieveEstablisherName(index) (viewmodel(mode, index, srn, _).right.map(get))
     }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String)(
@@ -71,9 +70,8 @@ class PreviousAddressListController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) { name =>
-        viewmodel(mode, index, srn, name).right.map { vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
-        }
-      }
+      retrieveEstablisherName(index) ( viewmodel(mode, index, srn, _)
+        .right.map ( vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode))
+      )
   }
 }
