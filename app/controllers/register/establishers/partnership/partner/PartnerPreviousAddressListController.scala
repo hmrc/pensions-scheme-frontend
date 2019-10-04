@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,
                                                       val userAnswersService: UserAnswersService,
-                                                      @EstablishersPartner override val navigator: Navigator,
+                                                      override val navigator: Navigator,
                                                       override val messagesApi: MessagesApi,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,

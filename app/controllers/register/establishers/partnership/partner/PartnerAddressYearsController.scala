@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
@@ -37,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
                                                val userAnswersService: UserAnswersService,
-                                               @EstablishersPartner val navigator: Navigator,
+                                               val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
