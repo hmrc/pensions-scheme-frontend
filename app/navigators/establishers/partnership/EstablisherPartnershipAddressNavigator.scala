@@ -29,9 +29,9 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+class EstablisherPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-  import EstablishersPartnershipAddressNavigator._
+  import EstablisherPartnershipAddressNavigator._
   //scalastyle:off cyclomatic.complexity
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index)                => PartnershipAddressListController.onPageLoad(mode, index, None)
@@ -73,7 +73,7 @@ class EstablishersPartnershipAddressNavigator @Inject()(val dataCacheConnector: 
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
-object EstablishersPartnershipAddressNavigator {
+object EstablisherPartnershipAddressNavigator {
   private def moreChanges(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
   private def isNewEstablisher(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsEstablisherNewId(index)).getOrElse(false)

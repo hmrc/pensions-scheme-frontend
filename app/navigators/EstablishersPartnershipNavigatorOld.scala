@@ -27,7 +27,7 @@ import identifiers.register.establishers.{ExistingCurrentAddressId, IsEstablishe
 import models.Mode._
 import models._
 import models.requests.IdentifiedRequest
-import navigators.establishers.partnership.{EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator, EstablishersPartnershipAddressNavigator}
+import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
@@ -38,7 +38,7 @@ class EstablisherPartnershipFeatureSwitchNavigator @Inject()(
                                                               featureSwitchService: FeatureSwitchManagementService,
                                                               oldNavigator: EstablishersPartnershipNavigatorOld,
                                                               detailsNavigator: EstablisherPartnershipDetailsNavigator,
-                                                              addressNavigator: EstablishersPartnershipAddressNavigator,
+                                                              addressNavigator: EstablisherPartnershipAddressNavigator,
                                                               contactNavigator: EstablisherPartnershipContactDetailsNavigator
                                                             ) extends Navigator {
 
