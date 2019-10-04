@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package identifiers.register.establishers.partnership.partner
 
 import base.SpecBase
@@ -10,6 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.AnswerRow
+import utils.checkyouranswers.Ops._
 
 class PartnerDOBIdSpec extends SpecBase {
 
@@ -23,35 +40,32 @@ class PartnerDOBIdSpec extends SpecBase {
 
   "cya" when {
 
-    def answers: UserAnswers = UserAnswers().set(PartnerDOBId(0))(date).flatMap(_.set(PartnerNameId(0))(PersonName("Test", "Name"))).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(PartnerDOBId(0, 0))(date).flatMap(_.set(PartnerNameId(0, 0))(PersonName("Test", "Name"))).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnerDOBId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        PartnerDOBId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for new trustee" must {
 
-      def answersNew: UserAnswers = answers.set(IsPartnerNewId(0))(true).asOpt.value
+      def answersNew: UserAnswers = answers.set(IsNewPartnerId(0, 0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        PartnerDOBId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        PartnerDOBId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
     "in update mode for existing trustee" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnerDOBId(0).row(onwardUrl, UpdateMode) must equal(Seq(
+        PartnerDOBId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, None)
         ))
       }

@@ -51,7 +51,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
-class EstablishersPartnerNavigatorOldSpec$ extends SpecBase with NavigatorBehaviour {
+class EstablishersPartnerNavigatorOldSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorOldSpec._

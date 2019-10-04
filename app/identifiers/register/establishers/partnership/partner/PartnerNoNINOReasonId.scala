@@ -33,8 +33,7 @@ case class PartnerNoNINOReasonId(establisherIndex: Int, partnerIndex: Int) exten
 object PartnerNoNINOReasonId {
   override def toString: String = "noNinoReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
+  implicit def cya(implicit messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnerNoNINOReasonId] = {
 
     new CheckYourAnswersPartners[PartnerNoNINOReasonId] {

@@ -33,17 +33,16 @@ case class PartnerEmailId(establisherIndex: Int, partnerIndex: Int) extends Type
 object PartnerEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
+  implicit def cya(implicit messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnerEmailId] = {
 
     new CheckYourAnswersPartners[PartnerEmailId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__common_email__heading")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterEmail")
 
       private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_email")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_email_address")
 
       override def row(id: PartnerEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
@@ -52,12 +51,7 @@ object PartnerEmailId {
 
 
       override def updateRow(id: PartnerEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
-            Some(hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers)), true)()
-            .updateRow(id)(changeUrl, userAnswers)
-        }
+        row(id)(changeUrl, userAnswers)
     }
   }
 }

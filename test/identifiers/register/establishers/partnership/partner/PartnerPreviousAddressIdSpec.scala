@@ -18,6 +18,7 @@ package identifiers.register.establishers.partnership.partner
 
 import base.SpecBase
 import models.address.Address
+import models.person.PersonName
 import models.requests.DataRequest
 import models.{Link, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
@@ -26,7 +27,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnerPreviousAddressIdSpec extends SpecBase {
 
@@ -34,17 +35,18 @@ class PartnerPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      "messages__common__cya__previous_address",
+      Message("messages__previousAddress__cya", partnerName),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__partner__previous_address"))))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName)))))
   )
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow("messages__common__cya__previous_address",
+    AnswerRow(
+      Message("messages__previousAddress__cya", partnerName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__partner__previous_address"))))
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName)))))
   )
 
   "cya" when {
@@ -95,6 +97,7 @@ class PartnerPreviousAddressIdSpec extends SpecBase {
 object PartnerPreviousAddressIdSpec extends OptionValues {
   private val index = 0
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
+  private val partnerName = PersonName("first", "last")
   private val address = Address(
     "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
   )

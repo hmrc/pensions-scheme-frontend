@@ -40,7 +40,7 @@ case class PartnerHasUTRId(establisherIndex: Int, partnerIndex: Int) extends Typ
 object PartnerHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnerHasUTRId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerHasUTRId] = {
 
     new CheckYourAnswersPartners[PartnerHasUTRId] {
 

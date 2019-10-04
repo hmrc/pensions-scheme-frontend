@@ -40,7 +40,7 @@ case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends Ty
 object PartnerHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnerHasNINOId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerHasNINOId] = {
 
     new CheckYourAnswersPartners[PartnerHasNINOId] {
 

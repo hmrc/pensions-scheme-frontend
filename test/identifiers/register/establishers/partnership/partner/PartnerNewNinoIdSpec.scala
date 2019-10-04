@@ -47,7 +47,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnerNewNinoId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -58,7 +58,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -67,7 +67,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
 
       "return answers rows without change links if nino is available and not editable" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", partnerName.fullName), List("nino"),false, None)
@@ -78,14 +78,14 @@ class PartnerNewNinoIdSpec extends SpecBase {
         val answers = UserAnswers().partnerName(firstIndex = 0, secondIndex = 0, partnerName).
           set(PartnerNewNinoId(0, 0))(ReferenceValue("nino", isEditable = true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", partnerName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,

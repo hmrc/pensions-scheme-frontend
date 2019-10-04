@@ -51,7 +51,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (PartnerDetailsId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex)).retrieve.right.map {
+        (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(establisherIndex, partnerIndex, srn),

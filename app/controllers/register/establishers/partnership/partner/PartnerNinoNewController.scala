@@ -69,6 +69,7 @@ class PartnerNinoNewController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
+        println("\n\n\n mode : "+Mode.jsLiteral.to(mode))
         partnerName(establisherIndex, partnerIndex).retrieve.right.map {
           name =>
             get(

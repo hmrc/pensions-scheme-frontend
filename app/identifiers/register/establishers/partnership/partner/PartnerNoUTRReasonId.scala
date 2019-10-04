@@ -31,14 +31,13 @@ case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extend
 
 object PartnerNoUTRReasonId {
   override def toString: String = "noUtrReason"
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
+  implicit def cya(implicit messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnerNoUTRReasonId] = {
 
     new CheckYourAnswersPartners[PartnerNoUTRReasonId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__noGenericUtr__heading")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__whyNoUTR")
 
       private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")

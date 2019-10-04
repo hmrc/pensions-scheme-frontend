@@ -33,17 +33,16 @@ case class PartnerPhoneId(establisherIndex: Int, partnerIndex: Int) extends Type
 object PartnerPhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
+  implicit def cya(implicit messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnerPhoneId] = {
 
     new CheckYourAnswersPartners[PartnerPhoneId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__common_phone__heading")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterPhoneNumber")
 
       private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_phone")
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_phone_number")
 
       override def row(id: PartnerPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
@@ -52,12 +51,7 @@ object PartnerPhoneId {
 
 
       override def updateRow(id: PartnerPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
-            Some(hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers)), true)()
-            .updateRow(id)(changeUrl, userAnswers)
-        }
+        row(id)(changeUrl, userAnswers)
     }
   }
 }

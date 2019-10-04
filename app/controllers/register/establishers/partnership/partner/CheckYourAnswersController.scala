@@ -52,10 +52,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
-
-      implicit val userAnswers = request.userAnswers
-
-      lazy val displayNewNino = !userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
+      lazy val displayNewNino = !request.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
 
       val partnerDetails = AnswerSection(
         Some("messages__partner__cya__details_heading"),
@@ -109,7 +106,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             .row(routes.PartnerHasUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
           PartnerEnterUTRId(establisherIndex, partnerIndex)
-            .row(routes.PartnerUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+            .row(routes.PartnerEnterUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
           PartnerNoUTRReasonId(establisherIndex, partnerIndex)
             .row(routes.PartnerNoUTRReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),

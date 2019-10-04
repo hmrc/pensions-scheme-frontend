@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -69,7 +69,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
 
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map(
+      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(
         details => PostcodeLookupViewModel(
           routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),

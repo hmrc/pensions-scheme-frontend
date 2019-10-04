@@ -33,7 +33,7 @@ case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedI
 object PartnerDOBId {
   override def toString: String = "dateOfBirth"
 
-  implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[PartnerDOBId] = {
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerDOBId] = {
     new CheckYourAnswersPartners[PartnerDOBId] {
 
       private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =

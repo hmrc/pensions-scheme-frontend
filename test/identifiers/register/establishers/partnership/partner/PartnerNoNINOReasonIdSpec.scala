@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package identifiers.register.establishers.partnership.partner
 
 import base.SpecBase
@@ -46,7 +47,7 @@ class PartnerNoNINOReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnerNoNINOReasonId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -57,7 +58,7 @@ class PartnerNoNINOReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnerNoNINOReasonId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -66,7 +67,7 @@ class PartnerNoNINOReasonIdSpec extends SpecBase {
 
       "not display an answer row for this answer" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnerNoNINOReasonId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

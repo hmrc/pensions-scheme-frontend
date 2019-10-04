@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.partnership.partner.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId, PartnerNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -61,7 +61,7 @@ class PartnerAddressController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
             get(PartnerAddressId(establisherIndex, partnerIndex),
               PartnerAddressListId(establisherIndex, partnerIndex),
@@ -72,7 +72,7 @@ class PartnerAddressController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
             val context = s"Company Partner Address: ${details.fullName}"
             post(
