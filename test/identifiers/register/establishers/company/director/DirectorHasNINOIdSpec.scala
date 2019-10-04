@@ -35,8 +35,8 @@ class DirectorHasNINOIdSpec extends SpecBase {
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
       label = Message("messages__hasNINO", personDetails.fullName),
-      answer = Seq("false"),
-      answerIsMessageKey = false,
+      answer = Seq("site.no"),
+      answerIsMessageKey = true,
       changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
     )
   )

@@ -62,7 +62,7 @@ class PartnerAddressIdSpec extends SpecBase {
 
           PartnerAddressId(0, 0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__address__cya", "test company"),
+              Message("messages__address__cya", "test partner"),
               addressAnswer(address),
               false,
               Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_address", partnerName))))

@@ -41,7 +41,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val partner = PersonDetails("first", None, "last", LocalDate.now())
 
   private val form = formProvider(Message("messages__common_error__current_address_years", partner.fullName))
   val establisherIndex = Index(0)

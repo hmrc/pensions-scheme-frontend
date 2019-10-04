@@ -43,7 +43,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
-                                           @EstablishersPartner navigator: Navigator,
+                                           navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
                                            fs: FeatureSwitchManagementService

@@ -46,12 +46,13 @@ class PartnerFeatureSwitchNavigator @Inject()(
                                 srn: Option[String])(
                                  implicit ex: IdentifiedRequest,
                                  ec: ExecutionContext,
-                                 hc: HeaderCarrier): Option[Call] =
+                                 hc: HeaderCarrier): Option[Call] = {
     if (featureSwitchService.get(Toggles.isHnSEnabled)) {
       partnerNavigator.nextPageOptional(id, mode, userAnswers, srn)
     } else {
       oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
     }
+  }
 }
 
 class EstablishersPartnerNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

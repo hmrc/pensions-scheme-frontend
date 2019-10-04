@@ -54,7 +54,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
 
-  private val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  private val partner = PersonDetails("first", None, "last", LocalDate.now())
 
   private val form = formProvider()
   private val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
@@ -115,7 +115,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
+        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardUrl)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),

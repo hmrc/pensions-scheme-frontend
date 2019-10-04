@@ -47,7 +47,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         ("Id", "UserAnswers", "Next Page"),
         row(AddPartnersId(index))(false, taskListPage(NormalMode, None)),
         row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, None), Some(addPartnersMoreThan10)),
-        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, None), Some(lessThan10Partners)),
+        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, None, partnerIndex = 1), Some(lessThan10Partners)),
         row(PartnerNameId(index, index))(somePersonNameValue, dobPage(NormalMode, None)),
         row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(NormalMode, None)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(NormalMode, None)),
@@ -104,7 +104,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         ("Id", "UserAnswers", "Next page"),
         row(AddPartnersId(index))(false, anyMoreChangesPage(srn)),
         row(AddPartnersId(index))(true, otherPartnersPage(UpdateMode, srn), Some(addPartnersMoreThan10)),
-        row(AddPartnersId(index))(true, partnerNamePage(UpdateMode, srn), Some(lessThan10Partners)),
+        row(AddPartnersId(index))(true, partnerNamePage(UpdateMode, srn, partnerIndex = 1), Some(lessThan10Partners)),
         row(PartnerNameId(index, index))(somePersonNameValue, dobPage(UpdateMode, srn)),
         row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(UpdateMode, srn)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(UpdateMode, srn)),
@@ -149,7 +149,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerAddressId(index, index))(someAddress, isThisPaPage(CheckUpdateMode, srn)),
         row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerPreviousAddressId(index, index))(someAddress, anyMoreChangesPage(srn)),
         row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
@@ -194,8 +194,8 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private def taskListPage(mode: Mode,  srn: Option[String]): Call =
     controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
-  private def partnerNamePage(mode: Mode, srn: Option[String]): Call =
-    controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, index, srn)
+  private def partnerNamePage(mode: Mode, srn: Option[String], partnerIndex: Int = index): Call =
+    controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)
 
   private def dobPage(mode: Mode, srn: Option[String]): Call =
     PartnerDOBController.onPageLoad(mode, index, index, srn)

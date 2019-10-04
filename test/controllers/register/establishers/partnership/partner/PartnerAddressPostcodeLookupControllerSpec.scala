@@ -70,7 +70,7 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
     Some("GB")
   )
 
-  val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val partner = PersonDetails("first", None, "last", LocalDate.now())
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,

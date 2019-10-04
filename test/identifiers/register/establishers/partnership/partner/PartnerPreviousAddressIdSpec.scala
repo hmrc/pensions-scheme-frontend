@@ -35,18 +35,18 @@ class PartnerPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      Message("messages__previousAddress__cya", partnerName),
+      Message("messages__previousAddress__cya", partnerName.fullName),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName)))))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName.fullName)))))
   )
 
   private val answerRowWithAddLink = Seq(
     AnswerRow(
-      Message("messages__previousAddress__cya", partnerName),
+      Message("messages__previousAddress__cya", partnerName.fullName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName)))))
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnerName.fullName)))))
   )
 
   "cya" when {
@@ -77,14 +77,18 @@ class PartnerPreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().set(PartnerConfirmPreviousAddressId(index, index))(value = false).asOpt.value
+          val answersWithNoIsThisPreviousAddress = UserAnswers().
+            partnerName(index, index, partnerName).
+            set(PartnerConfirmPreviousAddressId(index, index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
 
           PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
         }
 
         "return no answer row if there is no previous address and `is this previous address` is yes" in {
-          val answersWithYesIsThisPreviousAddress = UserAnswers().set(PartnerConfirmPreviousAddressId(index, index))(value = true).asOpt.value
+          val answersWithYesIsThisPreviousAddress = UserAnswers().
+            partnerName(index, index, partnerName).
+            set(PartnerConfirmPreviousAddressId(index, index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, PsaId("A0000000"))
 
           PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
@@ -117,5 +121,6 @@ object PartnerPreviousAddressIdSpec extends OptionValues {
 
   private val onwardUrl = "onwardUrl"
 
-  private val answers: UserAnswers = UserAnswers().set(PartnerPreviousAddressId(index, index))(address).asOpt.value
+  private val answers: UserAnswers = UserAnswers().partnerName(index, index, partnerName).
+    set(PartnerPreviousAddressId(index, index))(address).asOpt.value
 }

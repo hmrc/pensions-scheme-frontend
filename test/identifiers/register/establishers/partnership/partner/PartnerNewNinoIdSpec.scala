@@ -84,12 +84,13 @@ class PartnerNewNinoIdSpec extends SpecBase {
       }
 
       "display an add link if nino is not available" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
+          UserAnswers().partnerName(firstIndex = 0, secondIndex = 0, partnerName), PsaId("A0000000"))
 
 
         PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", partnerName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__partner__nino", partnerName.fullName)))))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", partnerName.fullName)))))))
       }
     }
   }

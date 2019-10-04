@@ -51,7 +51,8 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerAddressListId(estIndex, partnerIndex)                     => addressPage(mode, estIndex, partnerIndex, srn)
     case PartnerAddressId(estIndex, partnerIndex)                         => addressYearsPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerAddressYearsId(estIndex, partnerIndex)                 => partnerAddressYearsRoutes(mode, ua, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   => paAddressListPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   =>
+      paAddressListPage(mode, estIndex, partnerIndex, srn)
     case PartnerPreviousAddressListId(estIndex, partnerIndex)             => paAddressPage(mode, estIndex, partnerIndex, srn)
     case PartnerPreviousAddressId(estIndex, partnerIndex)                 => emailPage(mode, estIndex, partnerIndex, srn)
     case PartnerEmailId(estIndex, partnerIndex)                           => phonePage(mode, estIndex, partnerIndex, srn)
@@ -112,7 +113,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
       case (NormalMode, Some(false)) =>
         controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-      case (_, Some(true)) if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) > 0 =>
+      case (_, Some(true)) if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) >= 0 =>
         controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, estIndex, srn)
       case _ =>
         controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(

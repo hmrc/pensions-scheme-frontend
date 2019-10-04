@@ -110,43 +110,40 @@ class PartnerAddressYearsIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
         PartnerAddressYearsId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            Message("messages__hasBeen1Year", partnerName),
+            Message("messages__hasBeen1Year", partnerName.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(Message("messages__visuallyhidden__dynamic_addressYears", partnerName)))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", partnerName.fullName)))
           ))))
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new partner" must {
 
       def answersNew: UserAnswers = answers.set(IsNewPartnerId(0, 0))(true).asOpt.value
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
         PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            Message("messages__hasBeen1Year", partnerName),
+            Message("messages__hasBeen1Year", partnerName.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(Message("messages__visuallyhidden__partner__address_years", partnerName)))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", partnerName.fullName)))))
           ))
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing partner" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
+        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }
