@@ -53,7 +53,6 @@ class PartnerAddressController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = PartnerAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnerAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnerAddress__lede"
 
@@ -91,7 +90,7 @@ class PartnerAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(heading, Message("messages__thePartner").resolve),
       heading = Message(heading, name),
       srn = srn
     )

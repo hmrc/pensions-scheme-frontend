@@ -1241,6 +1241,7 @@ messages__enterUTR = What is {0}’s UTR?
 messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_whatIsName = What is {0}’s name?
+messages__dynamic_whatIsAddress = What is {0}’s address?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
