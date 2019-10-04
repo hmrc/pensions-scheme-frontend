@@ -1030,10 +1030,8 @@ messages__partner_contact__title = Enter the partner’s contact details
 messages__partner_contact__heading = Enter the partner’s contact details
 messages__partner_contact__body = These details will be used if we need to contact the partner about the pension scheme.
 
-messages__partnerPreviousAddress__title = Enter the partner’s previous address
 messages__partnerPreviousAddress__heading = Enter the partner’s previous address
 
-messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
 
 messages__partner_address_years__title = Has {0} used this address for at least 1 year?
@@ -1044,7 +1042,6 @@ messages__partner_address_years__cya = How long has the partner lived at this ad
 messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
 messages__partnerAddressPostcodeLookup__heading = What is {0}’s postcode?
 
-messages__partnerAddress__title = Enter the partner’s address
 messages__partnerAddress__heading = Enter the partner’s address
 messages__partnerAddress__lede = This is usually the residential address for this person.
 
