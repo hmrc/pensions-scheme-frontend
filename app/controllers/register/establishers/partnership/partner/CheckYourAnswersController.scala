@@ -29,10 +29,10 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{EstablishersPartner, NoSuspendedCheck}
+import utils.annotations.{NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -133,10 +133,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       else
         Seq(partnerDetails, partnerContactDetails)
 
-      Future.successful(Ok(check_your_answers_old(
+      Future.successful(Ok(checkYourAnswers(
         appConfig,
         answerSections,
-        routes.CheckYourAnswersController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+        controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
@@ -144,11 +144,5 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         srn = srn
       )))
 
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
   }
 }

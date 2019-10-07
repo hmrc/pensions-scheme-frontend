@@ -16,11 +16,11 @@
 
 package identifiers.register.establishers.partnership.partner
 
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
 import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
-case class CheckYourAnswersId(establisherIndex: Int, partnerIndex: Int) extends Identifier {
+case class CheckYourAnswersId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ CheckYourAnswersId.toString
 }
 

@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.checkMode
 import models.address.Address
@@ -32,7 +31,7 @@ import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers_old
+import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -87,10 +86,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection] = Seq(partnerDetails(NormalMode), partnerContactDetails(NormalMode)),
-                           srn: Option[String] = None) = check_your_answers_old(
+                           srn: Option[String] = None) = checkYourAnswers(
     frontendAppConfig,
     answerSection,
-    routes.CheckYourAnswersController.onSubmit(mode, firstIndex, firstIndex, srn),
+    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
     None,
     hideEditLinks = false,
     hideSaveAndContinueButton = false,
@@ -133,14 +132,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
     )
   }
-
-    "onSubmit" must {
-      "mark the section as complete and redirect to the next page" in {
-        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(request)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(desiredRoute.url)
-      }
-    }
   }
 
   "Check Your Answers Individual Details Controller " when {

@@ -107,7 +107,7 @@ case class PartnerEntity(id: PartnerNameId, name: String, isDeleted: Boolean,
       mode, id.establisherIndex, id.partnerIndex, srn).url)
     case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
       mode, id.establisherIndex, id.partnerIndex, srn).url)
-    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
+    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(
       mode, id.establisherIndex, id.partnerIndex, srn).url)
   }
 
