@@ -21,6 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
+import forms.mappings.Transforms
 import identifiers.InsurancePolicyNumberId
 import models.NormalMode
 import navigators.Navigator
@@ -33,7 +34,7 @@ import views.html.insurancePolicyNumber
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBehaviours {
+class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBehaviours with Transforms {
 
   import InsurancePolicyNumberControllerSpec._
 
@@ -60,7 +61,7 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
       saveAction(this),
       postRequest,
       InsurancePolicyNumberId,
-      policyNumber
+      noSpaceWithUpperCaseTransform(policyNumber)
     )
   }
 }

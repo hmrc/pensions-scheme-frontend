@@ -141,6 +141,11 @@ trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Co
           actual mustBe "123456789"
         }
 
+        "convert to uppercase" in {
+          val actual = vatRegistrationNumberTransform("ab12345678")
+          actual mustBe "AB12345678"
+        }
+
         "remove leading GB" in {
           val gb = Table(
             "vat",

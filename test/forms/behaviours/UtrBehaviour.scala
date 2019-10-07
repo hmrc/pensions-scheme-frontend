@@ -19,7 +19,8 @@ package forms.behaviours
 import forms.FormSpec
 import forms.mappings.UtrMapping
 import generators.Generators
-import models.UniqueTaxReference
+import models.{ReferenceValue, UniqueTaxReference}
+import models.UniqueTaxReference.Yes
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 import wolfendale.scalacheck.regexp.RegexpGen

@@ -67,11 +67,11 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
-      case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
-      case _ => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+      case Some(true) => Link(aboutMembersViewLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
+      case _ => Link(aboutMembersViewLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceLinkText,
+    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceViewLinkText,
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
 
     Seq(SchemeDetailsTaskListSection(None, membersLink, None),
@@ -119,7 +119,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
         Some(
           SchemeDetailsTaskListHeader(
             link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers(isHnSPhase2Enabled, mode).size, srn, mode)))
-      case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(changeEstablisherLinkText, srn, mode)))
+      case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(viewEstablisherLinkText, srn, mode)))
       case (false, true)  => None
     }
   }
@@ -131,7 +131,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
         link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
       case (false, false) => {
         Some(
-          SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+          SchemeDetailsTaskListHeader(None, Some(Link(viewTrusteesLinkText,
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None))
       }
       case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
