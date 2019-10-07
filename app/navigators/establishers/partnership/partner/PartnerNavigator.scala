@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner.routes._
 import controllers.routes.SessionExpiredController
 import identifiers.Identifier
-import identifiers.register.establishers.partnership.{AddPartnersId, partner}
+import identifiers.register.establishers.partnership.{AddPartnersId, OtherPartnersId, partner}
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
@@ -58,6 +58,8 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerEmailId(estIndex, partnerIndex)                           => phonePage(mode, estIndex, partnerIndex, srn)
     case PartnerPhoneId(estIndex, partnerIndex)                           => cyaPage(mode, estIndex, partnerIndex, srn)
     case ConfirmDeletePartnerId(estIndex)                                 => addPartnerPage(mode, estIndex, srn)
+    case OtherPartnersId(_) if mode == NormalMode                         => taskListPage(mode, srn)
+    case OtherPartnersId(_)                                               => anyMoreChangesPage(srn)
   }
 
   private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -113,7 +115,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
       case (NormalMode, Some(false)) =>
         controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-      case (_, Some(true)) if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) >= 0 =>
+      case _ if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) >= 0 =>
         controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, estIndex, srn)
       case _ =>
         controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(
@@ -135,6 +137,8 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 }
 
 object PartnerNavigator {
+
+  def taskListPage(mode: Mode, srn: Option[String]): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private def isNewPartner(estIndex: Int, partnerIndex: Int, ua: UserAnswers): Boolean =
     ua.get(IsNewPartnerId(estIndex, partnerIndex)).getOrElse(false)

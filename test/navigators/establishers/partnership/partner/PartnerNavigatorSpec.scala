@@ -67,7 +67,9 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, paAddressPage(NormalMode, None)),
         row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(NormalMode, None)),
         row(PartnerEmailId(index, index))(someStringValue, phonePage(NormalMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(NormalMode, None))
+        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(NormalMode, None)),
+        row(OtherPartnersId(index))(false, taskListPage(NormalMode, None)),
+        row(OtherPartnersId(index))(true, taskListPage(NormalMode, None))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
@@ -124,7 +126,9 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, paAddressPage(UpdateMode, srn)),
         row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(UpdateMode, srn)),
         row(PartnerEmailId(index, index))(someStringValue, phonePage(UpdateMode, srn)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(UpdateMode, srn))
+        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(UpdateMode, srn)),
+        row(OtherPartnersId(index))(false, anyMoreChangesPage(srn)),
+        row(OtherPartnersId(index))(true, anyMoreChangesPage(srn))
       )
 
     behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, srn)
