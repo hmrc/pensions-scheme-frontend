@@ -64,7 +64,7 @@ trait UtrMapping extends Mappings with Transforms {
                  maxLengthKey: String = "messages__utr__error_maxLength",
                  invalidKey: String = "messages__utr__error_invalid"
                       ): Mapping[String] = text(requiredKey)
-    .transform(standardTextTransform, noTransform)
+    .transform(strip, noTransform)
     .verifying(firstError(exactLength(utrMaxLength, maxLengthKey),
       regexp(regexUtr, invalidKey)))
 }
