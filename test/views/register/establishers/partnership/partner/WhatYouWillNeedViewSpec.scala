@@ -39,7 +39,7 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
   "WhatYouWillNeedPartners view" must {
 
     behave like normalPageWithTitle(createView, messageKeyPrefix,
-      Message("messages__partnersFor", Message("messages__thePartnership").resolve),
+      Message("messages__partnersFor", Message("messages__thePartnership").resolve).resolve.capitalize,
       Message("messages__partnersFor", partnershipName))
 
     "display the correct guidance" in {

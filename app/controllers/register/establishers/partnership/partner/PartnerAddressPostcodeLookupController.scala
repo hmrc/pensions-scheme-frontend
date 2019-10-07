@@ -63,7 +63,7 @@ class PartnerAddressPostcodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.PartnerAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
               routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
-              Message("messages__partnerAddressPostcodeLookup__title"),
+              Message("messages__partnerAddressPostcodeLookup__heading", Message("messages__thePartner").resolve),
               Message("messages__partnerAddressPostcodeLookup__heading", details.fullName),
               Some(details.fullName),
               srn = srn
