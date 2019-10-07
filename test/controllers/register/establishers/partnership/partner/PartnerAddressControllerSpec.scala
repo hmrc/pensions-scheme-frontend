@@ -100,7 +100,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           val viewmodel = ManualAddressViewModel(
             controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
-            Message(controller.title),
+            Message(controller.heading, Message("messages__thePartner").resolve),
             Message(controller.heading,partner.fullName)
           )
 

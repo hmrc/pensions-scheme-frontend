@@ -16,19 +16,18 @@
 
 package controllers.register.establishers.partnership.partner
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerDetailsId}
-import models.person.PersonDetails
+import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerNameId}
+import models.person.PersonName
 import models.{AddressYears, Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -41,7 +40,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  val partner = PersonDetails("first", None, "last", LocalDate.now())
+  val partner = PersonName("first", "last")
 
   private val form = formProvider(Message("messages__common_error__current_address_years", partner.fullName))
   val establisherIndex = Index(0)
@@ -79,7 +78,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
       Json.obj(
         "partner" -> Json.arr(
           Json.obj(
-            PartnerDetailsId.toString -> partner
+            PartnerNameId.toString -> partner
           )
         )
       )
@@ -105,7 +104,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
             "partner" -> Json.arr(
               Json.obj(
                 PartnerAddressYearsId.toString -> AddressYears.options.head.value.toString,
-                PartnerDetailsId.toString -> partner
+                PartnerNameId.toString -> partner
               )
             )
           )

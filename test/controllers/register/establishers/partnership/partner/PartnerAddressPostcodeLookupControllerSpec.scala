@@ -24,7 +24,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.{PersonDetails, PersonName}
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -70,12 +70,12 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
     Some("GB")
   )
 
-  val partner = PersonDetails("first", None, "last", LocalDate.now())
+  val partner = PersonName("first", "last")
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
-    Message("messages__partnerAddressPostcodeLookup__title"),
+    Message("messages__partnerAddressPostcodeLookup__heading", Message("messages__thePartner").resolve),
     Message("messages__partnerAddressPostcodeLookup__heading", partner.fullName),
     Some(partner.fullName)
   )
