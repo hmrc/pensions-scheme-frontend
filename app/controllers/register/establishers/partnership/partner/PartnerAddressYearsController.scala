@@ -21,14 +21,13 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerDetailsId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
@@ -37,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
                                                val userAnswersService: UserAnswersService,
-                                               @EstablishersPartner val navigator: Navigator,
+                                               val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -50,7 +49,7 @@ class PartnerAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
           get(PartnerAddressYearsId(establisherIndex, partnerIndex), form(partnerDetails.fullName),
             viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
         }
@@ -68,7 +67,7 @@ class PartnerAddressYearsController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
           post(
             PartnerAddressYearsId(establisherIndex, partnerIndex),
             mode,

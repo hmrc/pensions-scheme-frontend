@@ -20,17 +20,44 @@ import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
-import identifiers.EstablishersOrTrusteesChangedId
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
+import models.requests.IdentifiedRequest
+import navigators.establishers.partnership.partner.PartnerNavigator
+import play.api.mvc.Call
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Toggles, UserAnswers}
 
-class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig,
-                                             fs: FeatureSwitchManagementService) extends AbstractNavigator {
+import scala.concurrent.ExecutionContext
+
+class PartnerFeatureSwitchNavigator @Inject()(
+                                                              featureSwitchService: FeatureSwitchManagementService,
+                                                              oldNavigator: EstablishersPartnerNavigatorOld,
+                                                              partnerNavigator: PartnerNavigator
+                                                            ) extends Navigator {
+
+  override def nextPageOptional(id: Identifier,
+                                mode: Mode,
+                                userAnswers: UserAnswers,
+                                srn: Option[String])(
+                                 implicit ex: IdentifiedRequest,
+                                 ec: ExecutionContext,
+                                 hc: HeaderCarrier): Option[Call] = {
+    if (featureSwitchService.get(Toggles.isHnSEnabled)) {
+      partnerNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    } else {
+      oldNavigator.nextPageOptional(id, mode, userAnswers, srn)
+    }
+  }
+}
+
+class EstablishersPartnerNavigatorOld @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                                appConfig: FrontendAppConfig,
+                                                fs: FeatureSwitchManagementService) extends AbstractNavigator {
 
   private def isHnsEnabled = fs.get(Toggles.isHnSEnabled)
   //scalastyle:off cyclomatic.complexity

@@ -34,7 +34,7 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with MustMatch
 
   import EstablisherPartnershipAddressNavigatorSpec._
 
-  val navigator: Navigator = injector.instanceOf[EstablishersPartnershipAddressNavigator]
+  val navigator: Navigator = injector.instanceOf[EstablisherPartnershipAddressNavigator]
 
   "NormalMode" must {
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =

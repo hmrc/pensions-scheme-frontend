@@ -19,9 +19,10 @@ package identifiers.register.establishers.partnership.partner
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
+import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersPartners}
 import viewmodels.AnswerRow
 
 case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[AddressYears] {
@@ -42,18 +43,29 @@ case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) exten
 object PartnerAddressYearsId {
   override lazy val toString: String = "partnerAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] = {
-    val label: String = "messages__partner_address_years_question_cya_label"
-    val changeAddressYears: String = "messages__visuallyhidden__partner__address_years"
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerAddressYearsId] = {
 
-    new CheckYourAnswers[PartnerAddressYearsId] {
+    new CheckYourAnswersPartners[PartnerAddressYearsId] {
+
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__hasBeen1Year")
+
+
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
+
       override def row(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
-          case Some(true) => AddressYearsCYA(label, changeAddressYears)().row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label, changeAddressYears)().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
+          case _ =>
+            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

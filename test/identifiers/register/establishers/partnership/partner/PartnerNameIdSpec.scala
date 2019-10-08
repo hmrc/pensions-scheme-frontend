@@ -16,14 +16,8 @@
 
 package identifiers.register.establishers.partnership.partner
 
-import identifiers.{Identifier, TypedIdentifier}
-import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import org.scalatest.FunSuite
 
-case class CheckYourAnswersId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Nothing] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ CheckYourAnswersId.toString
-}
+class PartnerNameIdSpec extends FunSuite {
 
-object CheckYourAnswersId {
-  override def toString: String = "checkYourAnswers"
 }

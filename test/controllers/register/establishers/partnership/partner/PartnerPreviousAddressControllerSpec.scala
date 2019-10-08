@@ -50,7 +50,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
 
-  val partnerDetails = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val partnerDetails = PersonDetails("first", None, "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -87,7 +87,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val viewmodel = ManualAddressViewModel(
             controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
             countryOptions.options,
-            controller.title,
+            Message(controller.heading,Message("messages__thePartner").resolve),
             Message(controller.heading,partnerDetails.fullName)
           )
 

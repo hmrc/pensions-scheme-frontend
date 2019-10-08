@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -29,7 +29,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -40,7 +39,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val messagesApi: MessagesApi,
                                                                 val userAnswersService: UserAnswersService,
                                                                 override val addressLookupConnector: AddressLookupConnector,
-                                                                @EstablishersPartner override val navigator: Navigator,
+                                                                override val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
                                                                 allowAccess: AllowAccessActionProvider,
@@ -70,11 +69,11 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
 
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map(
+      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(
         details => PostcodeLookupViewModel(
           routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
-          Message("messages__partnerPreviousAddressPostcodeLookup__title"),
+          Message("messages__partnerPreviousAddressPostcodeLookup__heading", Message("messages__thePartner").resolve),
           Message("messages__partnerPreviousAddressPostcodeLookup__heading", details.fullName),
           Some(details.fullName),
           srn = srn

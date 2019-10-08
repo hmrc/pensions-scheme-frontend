@@ -51,12 +51,12 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 
-class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class EstablishersPartnerNavigatorOldSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
   //scalastyle:off magic.number
-  import EstablishersPartnerNavigatorSpec._
+  import EstablishersPartnerNavigatorOldSpec._
 
-  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersPartnerNavigatorOld(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
 
   private def commonRoutes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -120,7 +120,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   }
 }
 
-object EstablishersPartnerNavigatorSpec extends SpecBase with OptionValues {
+object EstablishersPartnerNavigatorOldSpec extends SpecBase with OptionValues {
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private val emptyAnswers = UserAnswers(Json.obj())

@@ -18,8 +18,13 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
+import models.Link
 import org.joda.time.LocalDate
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.{DateHelper, UserAnswers}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
+import viewmodels.AnswerRow
 
 case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
@@ -27,5 +32,47 @@ case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedI
 
 object PartnerDOBId {
   override def toString: String = "dateOfBirth"
+
+  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerDOBId] = {
+    new CheckYourAnswersPartners[PartnerDOBId] {
+
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__DOB__heading")
+
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
+
+      override def row(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+
+        userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { dob => {
+          Seq(
+            AnswerRow(
+              label(id.establisherIndex, id.partnerIndex, userAnswers),
+              Seq(DateHelper.formatDate(dob)),
+              answerIsMessageKey = false,
+              Some(Link("site.change", changeUrl, Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))))
+            )
+          )
+        }
+        }
+      }
+
+      override def updateRow(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
+          case Some(true) => row(id)(changeUrl, userAnswers)
+          case _ =>
+            userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { dob =>
+              Seq(
+                AnswerRow(
+                  label(id.establisherIndex, id.partnerIndex, userAnswers),
+                  Seq(DateHelper.formatDate(dob)),
+                  answerIsMessageKey = false,
+                  None
+                )
+              )
+            }
+        }
+    }
+  }
 }
 

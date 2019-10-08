@@ -21,14 +21,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner._
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerAddressListController @Inject()(
                                               override val appConfig: FrontendAppConfig,
                                               val userAnswersService: UserAnswersService,
-                                              @EstablishersPartner override val navigator: Navigator,
+                                              override val navigator: Navigator,
                                               override val messagesApi: MessagesApi,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
@@ -53,14 +53,16 @@ class PartnerAddressListController @Inject()(
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
-    (PartnerDetailsId(establisherIndex, partnerIndex) and PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex))
+    (PartnerNameId(establisherIndex, partnerIndex) and PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex))
       .retrieve.right.map {
       case partnerDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.PartnerAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           manualInputCall = routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
           addresses = addresses,
-          srn = srn
+          srn = srn,
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__thePartner").resolve),
+          heading = Message("messages__dynamic_whatIsAddress", partnerDetails.fullName)
         )
     }.left.map(_ => Future.successful(Redirect(
       routes.PartnerAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))))

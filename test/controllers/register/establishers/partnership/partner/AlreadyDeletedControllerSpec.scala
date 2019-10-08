@@ -30,7 +30,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
-  private val partnerName = "first middle last"
+  private val partnerName = "first last"
 
   def viewmodel: AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__partner_title"),
@@ -38,7 +38,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
     onwardRoute
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartner): AlreadyDeletedController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): AlreadyDeletedController =
     new AlreadyDeletedController(
       frontendAppConfig,
       messagesApi,

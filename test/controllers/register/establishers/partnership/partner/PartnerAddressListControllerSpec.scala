@@ -17,19 +17,18 @@
 package controllers.register.establishers.partnership.partner
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressPostcodeLookupId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressPostcodeLookupId, PartnerNameId}
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -37,7 +36,7 @@ import views.html.address.addressList
 
 class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val partnerDetails = PersonDetails("Joe", None, "Bloggs", LocalDate.now())
+  private val partnerDetails = PersonName("Joe", "Bloggs")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -59,7 +58,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
   )
   private val data =
     UserAnswers(Json.obj())
-      .set(PartnerDetailsId(0, 0))(partnerDetails)
+      .set(PartnerNameId(0, 0))(partnerDetails)
       .flatMap(_.set(PartnerAddressPostcodeLookupId(0, 0))(addresses))
       .asOpt.map(_.json)
 
@@ -190,7 +189,9 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
     AddressListViewModel(
       routes.PartnerAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
       routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
-      addresses
+      addresses,
+        title = Message("messages__dynamic_whatIsAddress", Message("messages__thePartner").resolve),
+      heading = Message("messages__dynamic_whatIsAddress", partnerDetails.fullName)
     )
   }
 

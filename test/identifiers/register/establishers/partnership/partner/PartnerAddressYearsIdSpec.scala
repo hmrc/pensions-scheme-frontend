@@ -16,8 +16,10 @@
 
 package identifiers.register.establishers.partnership.partner
 
+import base.SpecBase
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
+import models.person.PersonName
 import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -27,9 +29,9 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
-class PartnerAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnerAddressYearsIdSpec extends SpecBase {
 
   "Cleanup" must {
 
@@ -98,52 +100,50 @@ class PartnerAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
   }
 
   "cya" when {
-
+    val partnerName = PersonName("first", "last")
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(PartnerAddressYearsId(0, 0))(UnderAYear).asOpt.get
+    def answers = UserAnswers().partnerName(0, 0, partnerName).
+      set(PartnerAddressYearsId(0, 0))(UnderAYear).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnerAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(Seq(
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        PartnerAddressYearsId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__partner_address_years_question_cya_label",
+            Message("messages__hasBeen1Year", partnerName.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__partner__address_years")))
-          )))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", partnerName.fullName)))
+          ))))
       }
     }
 
-    "in update mode for new trustee - company paye" must {
+    "in update mode for new partner" must {
 
       def answersNew: UserAnswers = answers.set(IsNewPartnerId(0, 0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
-        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            "messages__partner_address_years_question_cya_label",
+            Message("messages__hasBeen1Year", partnerName.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some("messages__visuallyhidden__partner__address_years")))
-          )))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", partnerName.fullName)))))
+          ))
       }
     }
 
-    "in update mode for existing trustee - company paye" must {
+    "in update mode for existing partner" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-        implicit val userAnswers = request.userAnswers
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
+        PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }
     }
   }

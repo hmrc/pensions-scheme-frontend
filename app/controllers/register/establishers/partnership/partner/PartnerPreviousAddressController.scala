@@ -32,7 +32,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.CountryOptions
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -42,7 +41,7 @@ class PartnerPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
-                                                  @EstablishersPartner val navigator: Navigator,
+                                                  val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,
@@ -54,13 +53,12 @@ class PartnerPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__partnerPreviousAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           partner =>
             get(PartnerPreviousAddressId(establisherIndex, partnerIndex),
               PartnerPreviousAddressListId(establisherIndex, partnerIndex),
@@ -71,7 +69,7 @@ class PartnerPreviousAddressController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           partner =>
             val context = s"Partnership Partner Previous Address: ${partner.fullName}"
             post(
@@ -89,7 +87,7 @@ class PartnerPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, establisherIndex, partnerIndex, srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(heading, Message("messages__thePartner").resolve),
       heading = Message(heading, name),
       srn = srn
     )

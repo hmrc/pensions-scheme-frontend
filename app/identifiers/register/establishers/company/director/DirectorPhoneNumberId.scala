@@ -52,12 +52,7 @@ object DirectorPhoneNumberId {
 
 
       override def updateRow(id: DirectorPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => StringCYA(Some(label(id.establisherIndex, id.directorIndex, userAnswers)),
-            Some(hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers)), true)()
-            .updateRow(id)(changeUrl, userAnswers)
-        }
+        row(id)(changeUrl, userAnswers)
     }
   }
 }
