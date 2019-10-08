@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId, PreviousAddressId}
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId, IndividualConfirmPreviousAddressId, PreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -52,7 +52,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (EstablisherDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
+        (EstablisherNameId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),
