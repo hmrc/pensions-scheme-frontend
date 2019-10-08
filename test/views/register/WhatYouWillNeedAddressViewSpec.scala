@@ -44,13 +44,13 @@ class WhatYouWillNeedAddressViewSpec extends ViewBehaviours {
 
     "display the correct p1" in {
       val doc = asDocument(createView())
-      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__p1", token))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__p1", testUser))
     }
 
     "display the correct bullet points" in {
       val doc = asDocument(createView())
       assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item1"))
-      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item2", token))
+      assertContainsText(doc, messages("messages__whatYouWillNeedAddress__item2", testUser))
     }
 
     behave like pageWithSubmitButton(createView, Some(href))

@@ -444,7 +444,7 @@ messages__error__paye_length = Enter an employer PAYE number using 16 characters
 messages__error__paye_invalid = Enter an employer PAYE number using only numbers, letters or a forward slash
 messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
-messages__establisher_individual_address__title = Establisher’s address
+messages__establisher_individual_address__title = Confirm address
 messages__establisher_individual_address__heading = What is {0}’s postcode?
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
 
@@ -1240,6 +1240,8 @@ messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_whatIsName = What is {0}’s name?
 messages__dynamic_whatIsAddress = What is {0}’s address?
+messages__dynamic_hasUtr = Does {0} have a Unique Taxpayer Reference (UTR)?
+messages__dynamic_whatWasPreviousAddress = What was {0}’s previous address?
 
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
@@ -1573,7 +1575,7 @@ messages__whatYouWillNeedEstablisherCompany__p1 = You will also need to tell us 
 
 messages__whatYouWillNeedAddress__title = Address
 messages__addressFor = {0}’s address
-messages__previousAddressFor = Previous address for {0}
+messages__previousAddressFor = {0}’s previous address
 messages__addressYears = Has {0} used this address for at least 1 year?
 
 messages__whatYouWillNeedEstablisherCompanyAddress__lede = You will need to tell us the company’s:
@@ -1586,7 +1588,7 @@ messages__whatYouWillNeedTrusteeCompanyAddress__item2 = previous address if the 
 
 messages__whatYouWillNeedAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedAddress__item1 = current address
-messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at the current address for less than 1 year
+messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at their current address for less than 1 year
 
 messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address

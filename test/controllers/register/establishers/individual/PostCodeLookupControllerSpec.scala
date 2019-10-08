@@ -71,7 +71,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       PostcodeLookupViewModel(
         routes.PostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
         routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
-        Message("messages__establisher_individual_address__title"),
+        Message("messages__establisher_individual_address__heading", Message("messages__theIndividual").resolve),
         Message("messages__establisher_individual_address__heading", establisherName),
         Some(establisherName)
       ),

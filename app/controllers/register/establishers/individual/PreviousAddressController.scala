@@ -51,7 +51,8 @@ class PreviousAddressController @Inject()(
                                          )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__establisher_individual_previous_address__title"
+  private[controllers] val title: Message = Message("messages__common__confirmPreviousAddress__h1",
+    Message("messages__theIndividual").resolve)
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
 
