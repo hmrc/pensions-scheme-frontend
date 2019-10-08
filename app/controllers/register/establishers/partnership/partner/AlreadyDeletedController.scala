@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership.partner
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -42,16 +42,16 @@ class AlreadyDeletedController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
+      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
         details =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName, srn))))
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(mode, establisherIndex, details.fullName, srn))))
       }
 
   }
 
-  private def vm(establisherIndex: Index, partnerName: String, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(mode: Mode, establisherIndex: Index, partnerName: String, srn: Option[String]) = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__partner_title"),
     partnerName,
-    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(NormalMode, establisherIndex, srn)
+    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn)
   )
 }

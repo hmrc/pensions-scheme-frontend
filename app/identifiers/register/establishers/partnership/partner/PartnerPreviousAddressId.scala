@@ -19,8 +19,9 @@ package identifiers.register.establishers.partnership.partner
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
+import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPartners, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
@@ -31,17 +32,24 @@ case class PartnerPreviousAddressId(establisherIndex: Int, partnerIndex: Int) ex
 object PartnerPreviousAddressId {
   override def toString: String = "partnerPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerPreviousAddressId] = {
-    val label: String = "messages__common__cya__previous_address"
-    val changeAddress: String = "messages__visuallyhidden__partner__previous_address"
+  implicit def cya(implicit countryOptions: CountryOptions,messages: Messages): CheckYourAnswers[PartnerPreviousAddressId] = {
 
-    new CheckYourAnswers[PartnerPreviousAddressId] {
+    new CheckYourAnswersPartners[PartnerPreviousAddressId] {
+
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__previousAddress__cya")
+
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
+
       override def row(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label, changeAddress)().row(id)(changeUrl, userAnswers)
+        AddressCYA(label(id.establisherIndex, id.partnerIndex,userAnswers),
+          hiddenLabel(id.establisherIndex, id.partnerIndex,userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label,
-          changeAddress,
+        PreviousAddressCYA(label(id.establisherIndex, id.partnerIndex,userAnswers),
+          hiddenLabel(id.establisherIndex, id.partnerIndex,userAnswers),
           userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)),
           userAnswers.get(PartnerConfirmPreviousAddressId(id.establisherIndex, id.partnerIndex))
         )().updateRow(id)(changeUrl, userAnswers)

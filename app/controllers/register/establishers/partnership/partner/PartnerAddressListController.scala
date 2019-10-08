@@ -22,13 +22,14 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.partnership.partner._
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner._
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerAddressListController @Inject()(
                                               override val appConfig: FrontendAppConfig,
                                               val userAnswersService: UserAnswersService,
-                                              @EstablishersPartner override val navigator: Navigator,
+                                              override val navigator: Navigator,
                                               override val messagesApi: MessagesApi,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,

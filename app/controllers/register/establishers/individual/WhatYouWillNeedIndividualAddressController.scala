@@ -45,7 +45,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           establisherName =>
             val name = establisherName.fullName
             val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, name, Message("messages__thePerson"))))
+            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
         }
     }
 }

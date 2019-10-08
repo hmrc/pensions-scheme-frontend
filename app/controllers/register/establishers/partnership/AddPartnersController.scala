@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       @EstablishersPartner navigator: Navigator,
+                                       navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,

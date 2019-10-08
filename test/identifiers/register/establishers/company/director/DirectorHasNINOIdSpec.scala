@@ -18,9 +18,14 @@ package identifiers.register.establishers.company.director
 
 import base.SpecBase
 import models.person.PersonName
-import models.{Link, ReferenceValue}
+import models.requests.DataRequest
+import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import play.api.libs.json.Json
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, Message}
 
 class DirectorHasNINOIdSpec extends SpecBase {
@@ -30,9 +35,9 @@ class DirectorHasNINOIdSpec extends SpecBase {
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
       label = Message("messages__hasNINO", personDetails.fullName),
-      answer = Seq("false"),
-      answerIsMessageKey = false,
-      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__trustee__nino_yes_no", personDetails.fullName).resolve)))
+      answer = Seq("site.no"),
+      answerIsMessageKey = true,
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
     )
   )
 
@@ -68,6 +73,44 @@ class DirectorHasNINOIdSpec extends SpecBase {
 
       "not remove the data for `DirectorNoNinoReason`" in {
         result.get(DirectorNoNINOReasonId(0, 0)) mustBe defined
+      }
+    }
+  }
+
+  "cya" when {
+    def answers: UserAnswers =
+      UserAnswers()
+        .set(DirectorNameId(0, 0))(personDetails).asOpt.value
+        .set(DirectorHasNINOId(0, 0))(false).asOpt.value
+
+    "in normal mode" must {
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        DirectorHasNINOId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for new partner" must {
+      val updatedAnswers = answers.set(IsNewDirectorId(0, 0))(true).asOpt.value
+
+      "return answers rows with change links" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        DirectorHasNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+      }
+    }
+
+    "in update mode for existing partner" must {
+
+      "Not return answer rows" in {
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+
+        DirectorHasNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq.empty[AnswerRow])
       }
     }
   }

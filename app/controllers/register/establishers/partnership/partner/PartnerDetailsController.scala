@@ -31,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersPartner
 import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
@@ -41,7 +40,7 @@ class PartnerDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
-                                          @EstablishersPartner navigator: Navigator,
+                                          navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,

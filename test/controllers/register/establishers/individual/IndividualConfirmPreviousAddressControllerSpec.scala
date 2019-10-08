@@ -54,7 +54,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
 
   private def viewmodel = ConfirmAddressViewModel(
     postCall = routes.IndividualConfirmPreviousAddressController.onSubmit(index, srn),
-    title = Message("messages__confirmPreviousAddress__title"),
+    title = Message( "messages__confirmPreviousAddress__heading", Message("messages__theIndividual").resolve),
     heading = Message("messages__confirmPreviousAddress__heading", name),
     hint = None,
     address = testAddress,

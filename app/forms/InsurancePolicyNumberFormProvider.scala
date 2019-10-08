@@ -16,15 +16,17 @@
 
 package forms
 
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.{Constraints, Mappings, Transforms}
 import javax.inject.Inject
 import play.api.data.Form
 
-class InsurancePolicyNumberFormProvider @Inject() extends Mappings with Constraints {
+class InsurancePolicyNumberFormProvider @Inject() extends Mappings with Constraints with Transforms{
   val maxLength = 55
 
   def apply(): Form[String] = Form(
-    "policyNumber" -> text("messages__error__insurance_policy_number").verifying(
+    "policyNumber" -> text("messages__error__insurance_policy_number")
+      .transform(noSpaceWithUpperCaseTransform, noTransform)
+      .verifying(
       firstError(maxLength(maxLength, "messages__error__insurance_policy_number_length"),
         policyNumber("messages__error__insurance_policy_number_invalid")
       ))

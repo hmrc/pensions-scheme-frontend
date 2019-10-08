@@ -31,7 +31,6 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersPartner
 import utils.{SectionComplete, Toggles, UserAnswers}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
@@ -41,7 +40,7 @@ class ConfirmDeletePartnerController @Inject()(
                                                 appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
                                                 userAnswersService: UserAnswersService,
-                                                @EstablishersPartner navigator: Navigator,
+                                                navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,

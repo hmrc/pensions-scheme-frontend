@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, IndividualConfirmPreviousAddressId, PreviousAddressId}
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId, IndividualConfirmPreviousAddressId, PreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -47,17 +47,16 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
                                                 )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (EstablisherDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
+        (EstablisherNameId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),
-              title = Message(title),
+              title = Message(heading, Message("messages__theIndividual").resolve),
               heading = Message(heading, details.fullName),
               hint = None,
               address = address,

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner._
@@ -29,10 +29,10 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{EstablishersPartner, NoSuspendedCheck}
+import utils.annotations.{NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,18 +43,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
                                            userAnswersService: UserAnswersService,
-                                           @EstablishersPartner navigator: Navigator,
+                                           navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper
+                                           allowChangeHelper: AllowChangeHelper,
+                                           fs: FeatureSwitchManagementService
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
-
-      implicit val userAnswers = request.userAnswers
-
-      lazy val displayNewNino = !userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
+      lazy val displayNewNino = !request.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
 
       val partnerDetails = AnswerSection(
         Some("messages__partner__cya__details_heading"),
@@ -86,10 +84,59 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      Future.successful(Ok(check_your_answers_old(
+      val answersHnS = Seq(AnswerSection(
+        None,
+        Seq(
+          PartnerNameId(establisherIndex, partnerIndex)
+            .row(routes.PartnerNameController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerDOBId(establisherIndex, partnerIndex)
+            .row(routes.PartnerDOBController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerHasNINOId(establisherIndex, partnerIndex)
+            .row(routes.PartnerHasNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerNewNinoId(establisherIndex, partnerIndex)
+            .row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerNoNINOReasonId(establisherIndex, partnerIndex)
+            .row(routes.PartnerNoNINOReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerHasUTRId(establisherIndex, partnerIndex)
+            .row(routes.PartnerHasUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerEnterUTRId(establisherIndex, partnerIndex)
+            .row(routes.PartnerEnterUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerNoUTRReasonId(establisherIndex, partnerIndex)
+            .row(routes.PartnerNoUTRReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerAddressId(establisherIndex, partnerIndex)
+            .row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerAddressYearsId(establisherIndex, partnerIndex)
+            .row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerPreviousAddressId(establisherIndex, partnerIndex)
+            .row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerEmailId(establisherIndex, partnerIndex)
+            .row(routes.PartnerEmailController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+
+          PartnerPhoneId(establisherIndex, partnerIndex)
+            .row(routes.PartnerPhoneController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
+        ).flatten
+      ))
+
+      val answerSections = if(fs.get(Toggles.isHnSEnabled))
+        answersHnS
+      else
+        Seq(partnerDetails, partnerContactDetails)
+
+      Future.successful(Ok(checkYourAnswers(
         appConfig,
-        Seq(partnerDetails, partnerContactDetails),
-        routes.CheckYourAnswersController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+        answerSections,
+        controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
         existingSchemeName,
         mode = mode,
         hideEditLinks = request.viewOnly,
@@ -97,11 +144,5 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         srn = srn
       )))
 
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requiredData) {
-    implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(establisherIndex, partnerIndex), mode, request.userAnswers, srn))
   }
 }

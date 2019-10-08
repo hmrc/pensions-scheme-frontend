@@ -56,7 +56,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
   val year: Int = LocalDate.now().getYear
 
   val date = new LocalDate(year, month, day)
-  val partner = PersonDetails("first", Some("middle"), "last", LocalDate.now())
+  val partner = PersonDetails("first", None, "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))

@@ -98,12 +98,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      val answerSections =
-        Seq(directorAnswerSection)
-
       Future.successful(Ok(checkYourAnswers(
         appConfig,
-        answerSections,
+        Seq(directorAnswerSection),
         AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
         existingSchemeName,
         mode = mode,

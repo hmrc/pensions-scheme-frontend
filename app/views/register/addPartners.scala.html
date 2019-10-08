@@ -30,10 +30,6 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@enableSubmission = @{
-    partners.forall(_.isCompleted)
-}
-
 @main_template(
     title = messages("messages__addPartners__title"),
     appConfig = appConfig,
@@ -67,7 +63,7 @@
                     @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components.submit_button("site.save_and_continue", enableSubmission)
+                @components.submit_button("site.save_and_continue")
             }
         }
 

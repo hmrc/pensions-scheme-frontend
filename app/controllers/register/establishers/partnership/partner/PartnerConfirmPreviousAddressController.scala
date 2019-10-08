@@ -27,7 +27,6 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersPartner
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -37,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                         val messagesApi: MessagesApi,
                                                         val userAnswersService: UserAnswersService,
-                                                        @EstablishersPartner val navigator: Navigator,
+                                                        val navigator: Navigator,
                                                         authenticate: AuthAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         getData: DataRetrievalAction,
@@ -52,7 +51,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (PartnerDetailsId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex)).retrieve.right.map {
+        (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex)).retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(establisherIndex, partnerIndex, srn),

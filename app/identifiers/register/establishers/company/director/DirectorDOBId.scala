@@ -40,7 +40,7 @@ object DirectorDOBId {
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__dob")
 
       private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_dob")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: DirectorDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 

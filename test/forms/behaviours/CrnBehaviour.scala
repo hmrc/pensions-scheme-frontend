@@ -65,7 +65,7 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
       val crn = "companyRegistrationNumber.crn"
       val reason = "companyRegistrationNumber.reason"
 
-      Seq("1234567", " 1234 567 ").foreach {
+      Seq("1234567", " 12  34 567 ").foreach {
         crnNo =>
           s"bind successfully when CRN $crnNo is valid" in {
             val result = testForm.bind(Map(hasCrn -> "true", crn -> crnNo))
