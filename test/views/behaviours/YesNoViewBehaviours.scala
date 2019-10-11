@@ -36,11 +36,10 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
           val doc = asDocument(createView(form))
           val legends = doc.select("legend > span")
           legends.size mustBe expectedHintKey.map(_ => 2).getOrElse(1)
-          if (messageArgs.isEmpty) {
+          if (messageArgs.isEmpty)
             legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey")
-          } else {
+          else
             legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey", messageArgs.get)
-          }
           expectedHintKey.foreach(key =>
             legends.next.text mustBe messages(s"messages__${messageKeyPrefix}_$key")
           )
@@ -65,11 +64,11 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
       }
 
       "rendered with a value of true" must {
-        behave like answeredYesNoPage(createView, true, valueId=valueId)
+        behave like answeredYesNoPage(createView, answer = true, valueId = valueId)
       }
 
       "rendered with a value of false" must {
-        behave like answeredYesNoPage(createView, false, valueId=valueId)
+        behave like answeredYesNoPage(createView, answer = false, valueId = valueId)
       }
 
       "rendered with an error" must {
@@ -88,7 +87,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
   }
 
 
-  def answeredYesNoPage(createView: (Form[Boolean]) => HtmlFormat.Appendable, answer: Boolean, valueId:String = "value"): Unit = {
+  def answeredYesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable, answer: Boolean, valueId:String = "value"): Unit = {
 
     "have only the correct value checked" in {
       val doc = asDocument(createView(form.fill(answer)))
