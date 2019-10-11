@@ -21,12 +21,14 @@ import play.twirl.api.HtmlFormat
 
 trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
 
-  def yesNoPage(createView: (Form[Boolean]) => HtmlFormat.Appendable,
+  def yesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable,
                 messageKeyPrefix: String,
                 expectedFormAction: String,
                 legendKey: String = "_title",
                 expectedHintKey: Option[String] = None,
-                valueId:String = "value"): Unit = {
+                valueId: String = "value",
+                messageArgs: Option[String] = None
+               ): Unit = {
 
     "behave like a page with a Yes/No question" when {
       "rendered" must {
@@ -34,7 +36,11 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
           val doc = asDocument(createView(form))
           val legends = doc.select("legend > span")
           legends.size mustBe expectedHintKey.map(_ => 2).getOrElse(1)
-          legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey")
+          if (messageArgs.isEmpty) {
+            legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey")
+          } else {
+            legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey", messageArgs.get)
+          }
           expectedHintKey.foreach(key =>
             legends.next.text mustBe messages(s"messages__${messageKeyPrefix}_$key")
           )
