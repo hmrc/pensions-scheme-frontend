@@ -28,29 +28,28 @@
 
 
 <div class="form-group @if(field.hasErrors){form-field--error}">
-    <fieldset class="@fieldsetClass" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-yesno-hint"}>
-        <legend @if(legendClass.nonEmpty){class="@legendClass"} aria-hidden="true">
+    <fieldset class="@fieldsetClass" id="@{field.id}" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-yesno-hint"}>
+
+        <legend @if(legendClass.nonEmpty){class="@legendClass"}>
             <span @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>
             @if(hint.nonEmpty){
                 <span id="@{field.id}-yesno-hint" class="form-hint">@hint</span>
             }
+            @field.errors.map { error =>
+                <span class="error-notification" id="error-message-@{field.id}-input">
+                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
+                </span>
+            }
         </legend>
-        @field.errors.map { error =>
-            <span class="error-notification" id="error-message-@{field.id}-input">
-                <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
-            </span>
-        }
         <div class="multiple-choice" data-target="@if(yesAssoc.nonEmpty){@yesAssoc}">
-            <span class="visually-hidden" id="@{field.id}-label-yes" aria-hidden="true">@label @messages("site.yes")</span>
-            <input id="@{field.id}-yes" type="radio" name="@{field.id}" value="true" @if(field.value.contains("true")){checked="checked"}/>
-            <label class="block-label" for="@{field.id}-yes" aria-labelledby="@{field.id}-label-yes">
+            <input id="@{field.id}-yes" type="radio" name="@{field.id}" value="true" @if(field.value.contains("true")){checked="checked"} />
+            <label class="block-label" for="@{field.id}-yes">
                 @messages("site.yes")
             </label>
         </div>
         <div class="multiple-choice" data-target="@if(noAssoc.nonEmpty){@noAssoc}">
-            <span class="visually-hidden" id="@{field.id}-label-no" aria-hidden="true">@label @messages("site.no")</span>
-            <input id="@{field.id}-no" type="radio" name="@{field.id}" value="false" @if(field.value.contains("false")){checked="checked"}/>
-            <label class="block-label" for="@{field.id}-no" aria-labelledby="@{field.id}-label-no">
+            <input id="@{field.id}-no" type="radio" name="@{field.id}" value="false" @if(field.value.contains("false")){checked="checked"} />
+            <label class="block-label" for="@{field.id}-no">
                 @messages("site.no")
             </label>
         </div>
