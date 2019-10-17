@@ -52,7 +52,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   private val fakeAuditService = new StubSuccessfulAuditService()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): AddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
     new AddressController(
       frontendAppConfig,
       messagesApi,

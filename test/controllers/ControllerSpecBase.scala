@@ -49,7 +49,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def dontGetAnyDataViewOnly: FakeDataRetrievalAction = new FakeDataRetrievalAction(None, viewOnly = true)
 
-  def getMandatoryEstablisherHns: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+  def getMandatoryEstablisher: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
       "establishers" -> Json.arr(
         Json.obj(

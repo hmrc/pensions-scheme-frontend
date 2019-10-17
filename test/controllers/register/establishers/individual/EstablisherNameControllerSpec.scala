@@ -73,7 +73,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryEstablisherHns).build()
+      val app = applicationBuilder(getMandatoryEstablisher).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 

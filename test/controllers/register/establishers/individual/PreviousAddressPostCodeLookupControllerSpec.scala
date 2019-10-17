@@ -50,7 +50,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   val firstIndex = Index(0)
   val establisherName: String = "Test Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): PreviousAddressPostCodeLookupController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressPostCodeLookupController =
     new PreviousAddressPostCodeLookupController(
       frontendAppConfig,
       messagesApi,

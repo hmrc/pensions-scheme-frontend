@@ -46,7 +46,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private val firstIndex = Index(0)
   private val invalidIndex = Index(11)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns) =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
     new AddressYearsController(
       frontendAppConfig,
       FakeUserAnswersService,

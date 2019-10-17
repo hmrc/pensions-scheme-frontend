@@ -56,7 +56,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     ))
 
   def controller(
-                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                   dataCacheConnector: UserAnswersService = FakeUserAnswersService
                 ): AddressListController =
     new AddressListController(

@@ -50,7 +50,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
   private val firstIndex = Index(0)
   private val establisherName: String = "Test Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): PostCodeLookupController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
     new PostCodeLookupController(
       frontendAppConfig,
       messagesApi,

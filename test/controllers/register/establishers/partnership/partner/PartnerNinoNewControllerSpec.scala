@@ -40,7 +40,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
  import PartnerNinoNewControllerSpec._
 
   private val form = formProvider(partnerName)
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): PartnerNinoNewController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerNinoNewController =
     new PartnerNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 

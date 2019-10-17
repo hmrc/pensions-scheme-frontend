@@ -77,7 +77,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
   )
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): DirectorEnterNINOController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorEnterNINOController =
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 

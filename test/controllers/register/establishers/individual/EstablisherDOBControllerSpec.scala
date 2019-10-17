@@ -37,7 +37,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
 
   import EstablisherDOBControllerSpec._
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): EstablisherDOBController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherDOBController =
     new EstablisherDOBController(
       frontendAppConfig,
       messagesApi,
@@ -65,7 +65,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       post = data => controller(data).onSubmit(NormalMode, 0, None),
       viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual").resolve),
       mode = NormalMode,
-      requiredData = getMandatoryEstablisherHns,
+      requiredData = getMandatoryEstablisher,
       validData = validData,
       fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )

@@ -52,7 +52,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): PreviousAddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressController =
     new PreviousAddressController(
       frontendAppConfig,
       messagesApi,
