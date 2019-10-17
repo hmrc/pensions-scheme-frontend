@@ -39,7 +39,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -205,8 +205,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       applicationCrypto,
-      fakePensionAdminstratorConnector,
-      new FakeFeatureSwitchManagementService(true)
+      fakePensionAdminstratorConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,

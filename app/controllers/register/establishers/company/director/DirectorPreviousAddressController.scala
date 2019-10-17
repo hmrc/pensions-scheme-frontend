@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import audit.AuditService
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
@@ -31,8 +31,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import utils.CountryOptions
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -49,8 +49,7 @@ class DirectorPreviousAddressController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    val formProvider: AddressFormProvider,
                                                    val countryOptions: CountryOptions,
-                                                   val auditService: AuditService,
-                                                   featureSwitchManagementService: FeatureSwitchManagementService
+                                                   val auditService: AuditService
                                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()

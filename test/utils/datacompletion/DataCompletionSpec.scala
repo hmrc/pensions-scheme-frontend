@@ -185,13 +185,13 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     }
 
 
-    "isDirectorCompleteHnS" must {
+    "isDirectorComplete" must {
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isDirectorCompleteHnS(0, 0) mustBe true
+        UserAnswers(userAnswersCompleted).isDirectorComplete(0, 0) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isDirectorCompleteHnS(0, 0) mustBe false
+        UserAnswers(userAnswersInProgress).isDirectorComplete(0, 0) mustBe false
       }
     }
   }

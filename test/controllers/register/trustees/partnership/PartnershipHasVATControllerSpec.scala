@@ -43,7 +43,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
   "PartnershipHasVatController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryTrusteePartnership).build()
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
@@ -59,7 +59,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET where question already answered" in {
       val answered = new FakeDataRetrievalAction(Some(validTrusteePartnershipData("hasVat" -> false)))
 
-      val app = applicationBuilder(answered, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(answered).build()
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
@@ -73,7 +73,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true)
+      val app = applicationBuilder(getMandatoryTrusteePartnership)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -96,7 +96,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrusteePartnership, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryTrusteePartnership).build()
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 

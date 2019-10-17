@@ -115,11 +115,11 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
       case (NormalMode, Some(false)) =>
         controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-      case _ if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) >= 0 =>
+      case _ if ua.allPartnersAfterDelete(estIndex).lengthCompare(appConfig.maxPartners) >= 0 =>
         controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, estIndex, srn)
       case _ =>
         controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(
-          mode, estIndex, ua.allPartners(estIndex, true).size, srn)
+          mode, estIndex, ua.allPartners(estIndex).size, srn)
     }
   }
 

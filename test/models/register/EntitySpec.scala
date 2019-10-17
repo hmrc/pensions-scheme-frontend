@@ -19,7 +19,7 @@ package models.register
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -164,8 +164,8 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
   }
 
   "EstablisherIndividualEntity" must {
-    val individualEntity = EstablisherIndividualEntityNonHnS(
-      EstablisherDetailsId(index = 1),
+    val individualEntity = EstablisherIndividualEntity(
+      EstablisherNameId(index = 1),
       name = "test name",
       isDeleted = false,
       isCompleted = false,
@@ -177,65 +177,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       individualEntity.index mustEqual 1
     }
 
-    "have correct edit link when individual is incomplete" in {
+    "have no edit link" in {
       val expectedEditLink = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1, None).url
-      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have cya link when individual is complete and new" in {
-      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
-        EstablisherDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = true,
-        isNewEntity = true,
-        1
-      )
-
-      val expectedEditLink = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have reviw when individual is complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
-        EstablisherDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = true,
-        isNewEntity = false,
-        1
-      )
-
-      val expectedEditLink = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have cya when individual is complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
-        EstablisherDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = true,
-        isNewEntity = false,
-        1
-      )
-
-      val expectedEditLink = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have cya when individual is not complete and not new" in {
-      val completeIndividualEntity = EstablisherIndividualEntityNonHnS(
-        EstablisherDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = false,
-        isNewEntity = false,
-        1
-      )
-
-      val expectedEditLink = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(NormalMode, 1, None).url
-      completeIndividualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      individualEntity.editLink(NormalMode, None) mustBe None
     }
 
     "have correct delete link" in {

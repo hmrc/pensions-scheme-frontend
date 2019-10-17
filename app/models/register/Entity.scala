@@ -74,32 +74,6 @@ case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
 
 sealed trait Partner[T] extends Entity[T]
 
-case class PartnerEntityNonHnS(id: PartnerDetailsId, name: String, isDeleted: Boolean,
-                               isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-    case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-  }
-
-  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
-    mode match {
-      case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
-          mode, id.establisherIndex, id.partnerIndex, srn).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
-          mode, id.establisherIndex, id.partnerIndex, srn).url)
-      case _ => None
-    }
-  }
-
-  override def index: Int = id.partnerIndex
-}
-
 case class PartnerEntity(id: PartnerNameId, name: String, isDeleted: Boolean,
                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerNameId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
@@ -138,27 +112,6 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
         Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Company, srn).url)
       case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
         Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Company, srn).url)
-      case _ => None
-    }
-  }
-
-  override def index: Int = id.index
-}
-
-case class EstablisherIndividualEntityNonHnS(id: EstablisherDetailsId, name: String, isDeleted: Boolean,
-                                             isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
-    case (_, false) => Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, id.index, srn).url)
-  }
-
-  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
-    mode match {
-      case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
       case _ => None
     }
   }

@@ -17,18 +17,15 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
 import models.{CheckMode, Mode, NormalMode, UpdateMode}
-import utils.{Enumerable, Toggles, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                      config: FrontendAppConfig,
-                                      featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
-
-  private def isHnSEnabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
+                                      config: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
@@ -66,10 +63,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(EstablisherKind.Company) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, index))
       case Some(EstablisherKind.Indivdual) =>
-        if(isHnSEnabled)
         NavigateTo.dontSave(controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, index, srn))
-        else
-        NavigateTo.dontSave(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, index, srn))
       case Some(EstablisherKind.Partnership) =>
         NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>

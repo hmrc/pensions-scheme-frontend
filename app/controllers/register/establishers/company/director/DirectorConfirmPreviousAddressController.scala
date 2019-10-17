@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
@@ -27,8 +27,8 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import utils.CountryOptions
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CountryOptions, Toggles}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 
@@ -42,8 +42,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
                                                          allowAccess: AllowAccessActionProvider,
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
-                                                         val countryOptions: CountryOptions,
-                                                         featureSwitchManagementService: FeatureSwitchManagementService
+                                                         val countryOptions: CountryOptions
                                                 )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.DirectorConfirmPreviousAddressController.onSubmit _

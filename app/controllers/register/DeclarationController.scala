@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
@@ -40,7 +40,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Toggles, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,8 +57,7 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector,
-                                       fs: FeatureSwitchManagementService
+                                       pensionAdministratorConnector: PensionAdministratorConnector
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -87,7 +86,7 @@ class DeclarationController @Inject()(
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    val isCompany = request.userAnswers.hasCompanies(fs.get(Toggles.isHnSEnabled), NormalMode)
+    val isCompany = request.userAnswers.hasCompanies(NormalMode)
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
     val readyForRender = if (isCompany) {
@@ -111,7 +110,6 @@ class DeclarationController @Inject()(
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.allEstablishersAfterDelete(
-      fs.get(Toggles.isHnSEnabled),
       NormalMode
     ).exists { allEstablishers =>
       allEstablishers.id match {

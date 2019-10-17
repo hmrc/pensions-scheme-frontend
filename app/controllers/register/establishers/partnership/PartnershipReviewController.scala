@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
-                                            @EstablisherPartnership navigator: Navigator,
+                                            navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
@@ -49,7 +49,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         case partnershipDetails =>
-          val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index, false).map(_.name)
+          val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
           Future.successful(Ok(partnershipReview(appConfig,
             index,

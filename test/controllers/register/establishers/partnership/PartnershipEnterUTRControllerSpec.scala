@@ -58,7 +58,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   "PartnershipHasUTRController" when {
     "on a GET" must {
       "return OK and the correct view" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -70,8 +70,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
 
       "return OK and the correct view where question already answered" in {
         val testUtr = ReferenceValue(dummyUtr)
-        running(_.overrides(modules(fullAnswers.set(PartnershipEnterUTRId(index))(testUtr).asOpt.value.dataRetrievalAction,
-          featureSwitchEnabled = true): _*)) {
+        running(_.overrides(modules(fullAnswers.set(PartnershipEnterUTRId(index))(testUtr).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -85,7 +84,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
     "on a POST" must {
       "redirect to relevant page when valid data is submitted" in {
         running(_.overrides(
-          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+          modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
             ): _*)) {
@@ -101,7 +100,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
 
       "return a Bad Request and errors when invalid data is submitted" in {
         running(_.overrides(
-          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+          modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
             ): _*)) {

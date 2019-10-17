@@ -17,7 +17,6 @@
 package controllers
 
 import base.JsonFileReader
-import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceTestImpl}
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
@@ -30,9 +29,9 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.JsNull
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 import viewmodels._
-import views.html.{schemeDetailsTaskList, schemeDetailsTaskListNonHns}
+import views.html.schemeDetailsTaskList
 
 import scala.concurrent.Future
 
@@ -49,7 +48,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "accessed in NormalMode with srn as None" must {
 
       "return OK and the correct view" in {
-        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction, isHnsEnabled = true)
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
@@ -160,13 +159,12 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
 
     }
-
   }
 }
 
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers, isHnsEnabled: Boolean = false): SchemeTaskListController =
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
@@ -175,7 +173,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
       new ErrorHandler(frontendAppConfig, messagesApi),
-      new FakeFeatureSwitchManagementService(isHnsEnabled),
       fakeLockConnector,
       fakeSchemeDetailsReadOnlyCacheConnector,
       fakeUpdateCacheConnector,

@@ -23,14 +23,14 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonDetails
-import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherIndividualEntityNonHnS}
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
@@ -59,11 +59,11 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = individualEstablisherDataRetrieval
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
     "populate the view with establishers when they exist and continue button should be disabled" in {
-      val establishersAsEntities = Seq(johnDoeNonHnS, testLtd)
+      val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -74,7 +74,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoeNonHnS, testLtd))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -131,7 +131,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, toggle:Boolean = false): AddEstablisherController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -140,8 +140,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      new FakeFeatureSwitchManagementService(toggle)
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
@@ -161,15 +160,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
   private val johnDoe = EstablisherIndividualEntity(
     EstablisherNameId(0),
-    "John Doe",
-    false,
-    false,
-    true,
-    1
-  )
-
-  private val johnDoeNonHnS = EstablisherIndividualEntityNonHnS(
-    EstablisherDetailsId(0),
     "John Doe",
     false,
     false,

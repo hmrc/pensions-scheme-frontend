@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -41,8 +41,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction,
-                                                featureSwitchManagementService: FeatureSwitchManagementService
+                                                requireData: DataRequiredAction
                                               )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(directorName: String) = new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))

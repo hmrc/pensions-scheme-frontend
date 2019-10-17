@@ -16,20 +16,19 @@
 
 package controllers.register.establishers.individual
 
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import models.Mode.checkMode
+import models._
 import models.address.Address
 import models.person.PersonName
-import models._
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, running, status, _}
 import utils.annotations.NoSuspendedCheck
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers, _}
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.checkYourAnswers
 
@@ -41,7 +40,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -58,7 +57,6 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
-            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(true)),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
           )) {

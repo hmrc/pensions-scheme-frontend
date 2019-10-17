@@ -28,7 +28,7 @@ import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
@@ -76,8 +76,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      countryOptions,
-      new FakeFeatureSwitchManagementService(false)
+      countryOptions
     )
 
   def viewAsString(form: Form[_] = form): String =

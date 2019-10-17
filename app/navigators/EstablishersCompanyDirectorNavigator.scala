@@ -17,7 +17,6 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
@@ -28,8 +27,7 @@ import models._
 import utils.UserAnswers
 
 @Singleton
-class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                     featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
+class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, mode, srn))

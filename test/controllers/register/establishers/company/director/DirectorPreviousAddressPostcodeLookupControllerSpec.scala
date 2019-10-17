@@ -17,16 +17,15 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
@@ -36,7 +35,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -62,8 +61,6 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
 
-  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
-
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
@@ -83,8 +80,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
       )) {
         implicit app =>
 
@@ -125,8 +121,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[PostCodeLookupFormProvider].to(formProvider)
       )) {
         app =>
           val result = route(app, fakeRequest).get

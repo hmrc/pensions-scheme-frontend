@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherNewId
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers
 
@@ -46,8 +46,7 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   implicit val countryOptions: CountryOptions,
-                                                  allowChangeHelper: AllowChangeHelper,
-                                                  implicit val featureSwitchManagementService: FeatureSwitchManagementService
+                                                  allowChangeHelper: AllowChangeHelper
                                                  )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 

@@ -30,7 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
@@ -80,8 +80,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorEnterNINOController =
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
-      new FakeFeatureSwitchManagementService(false))
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(

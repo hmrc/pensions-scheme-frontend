@@ -16,9 +16,8 @@
 
 package controllers.register.trustees.individual
 
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
-import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import models.Mode.checkMode
 import models._
@@ -41,7 +40,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -58,7 +57,6 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
-            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(true)),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
           )) {

@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -127,8 +127,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl(),
-      new FakeFeatureSwitchManagementService(false)
+      new DataRequiredActionImpl()
     )
 
   private val viewModel =

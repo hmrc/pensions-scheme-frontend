@@ -17,7 +17,6 @@
 package identifiers.register.establishers.individual
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
 import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
@@ -30,7 +29,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
@@ -105,7 +104,6 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
 
     val onwardUrl = "onwardUrl"
     val name = "test name"
-    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
     def answers = UserAnswers().set(EstablisherNameId(0))(PersonName("test", "name")).asOpt.value
       .set(AddressYearsId(0))(UnderAYear).asOpt.value
 

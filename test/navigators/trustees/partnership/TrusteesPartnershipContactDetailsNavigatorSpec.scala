@@ -36,7 +36,7 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with MustM
  import TrusteesPartnershipContactDetailsNavigatorSpec._
   
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj())), featureSwitchEnabled = true).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
   "NormalMode" must {
     def navigationForNewTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =

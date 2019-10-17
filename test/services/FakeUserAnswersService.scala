@@ -16,7 +16,7 @@
 
 package services
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
 import models.Mode
@@ -27,7 +27,7 @@ import play.api.libs.json._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,6 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
   override protected def lockConnector: PensionSchemeVarianceLockConnector = FakeLockConnector.getConnector
   override protected def viewConnector: SchemeDetailsReadOnlyCacheConnector = FakeReadOnlyCacheConnector.getConnector
     override val appConfig: FrontendAppConfig =  FakeFrontendAppConfig.getConfig
-    override protected def fs: FeatureSwitchManagementService =  new FakeFeatureSwitchManagementService(false)
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()

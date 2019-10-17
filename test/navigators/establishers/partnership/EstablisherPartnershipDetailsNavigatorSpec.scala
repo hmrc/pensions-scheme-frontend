@@ -34,7 +34,7 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
   import EstablisherPartnershipDetailsNavigatorSpec._
 
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction, featureSwitchEnabled = true).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector.instanceOf[Navigator]
 
   "EstablishersPartnershipDetailsNavigator" when {
     "in NormalMode" must {

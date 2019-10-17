@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -36,7 +36,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -53,7 +53,6 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val form = formProvider()
 
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
@@ -95,8 +94,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
       )) { implicit app =>
 
         val request = addToken(FakeRequest(call)
@@ -135,8 +133,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[PostCodeLookupFormProvider].to(formProvider)
       )) { app =>
 
         val result = route(app, fakeRequest).get

@@ -16,19 +16,17 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId, PartnerNewNinoId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNewNinoId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.Toggles
-import utils.annotations.EstablishersPartner
 import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
@@ -42,8 +40,7 @@ class PartnerNinoNewController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          val formProvider: NINOFormProvider,
-                                          fs: FeatureSwitchManagementService
+                                          val formProvider: NINOFormProvider
                                         )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
@@ -57,24 +54,15 @@ class PartnerNinoNewController @Inject()(
       srn = srn
     )
 
-  private val partnerName: (Index, Index) => Retrieval[String] = (establisherIndex, partnerIndex) => Retrieval {
-    implicit request =>
-      if(fs.get(Toggles.isHnSEnabled)) {
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
-      } else {
-        PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
-      }
-  }
-
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        partnerName(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           name =>
             get(
               PartnerNewNinoId(establisherIndex, partnerIndex),
-              formProvider(name),
-              viewmodel(name, establisherIndex, partnerIndex, mode, srn)
+              formProvider(name.fullName),
+              viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
             )
         }
     }
@@ -82,13 +70,13 @@ class PartnerNinoNewController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      partnerName(establisherIndex, partnerIndex).retrieve.right.map {
+      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
         name =>
           post(
             PartnerNewNinoId(establisherIndex, partnerIndex),
             mode,
-            formProvider(name),
-            viewmodel(name, establisherIndex, partnerIndex, mode, srn)
+            formProvider(name.fullName),
+            viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
           )
       }
   }

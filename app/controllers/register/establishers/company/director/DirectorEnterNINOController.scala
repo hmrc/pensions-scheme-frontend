@@ -16,11 +16,11 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterNINOId}
+import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -41,8 +41,7 @@ class DirectorEnterNINOController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NINOFormProvider,
-                                           featureSwitchManagementService: FeatureSwitchManagementService
+                                           val formProvider: NINOFormProvider
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit _

@@ -41,7 +41,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -63,8 +63,6 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   )
 
   val fakeAuditService = new StubSuccessfulAuditService()
-  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
-
   val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
 
@@ -92,8 +90,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[CountryOptions].to(countryOptions)
       )) {
         implicit app =>
 
@@ -147,8 +144,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider),
-          bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+          bind[AddressFormProvider].to(formProvider)
         )) {
           implicit app =>
 

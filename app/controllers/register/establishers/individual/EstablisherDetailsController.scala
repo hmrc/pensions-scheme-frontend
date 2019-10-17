@@ -39,7 +39,7 @@ class EstablisherDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
                                               userAnswersService: UserAnswersService,
-                                              @EstablishersIndividual navigator: Navigator,
+                                              navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,

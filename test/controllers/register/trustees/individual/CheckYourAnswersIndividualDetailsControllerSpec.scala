@@ -233,8 +233,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       FakeAllowAccessProvider(),
       allowChangeHelper,
   new DataRequiredActionImpl,
-      new FakeCountryOptions,
-      new FakeFeatureSwitchManagementService(true)
+      new FakeCountryOptions
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.routes._
@@ -24,13 +24,12 @@ import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{EstablishersCompanyDirector, NoSuspendedCheck}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers

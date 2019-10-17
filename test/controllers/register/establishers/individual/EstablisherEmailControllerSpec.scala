@@ -62,7 +62,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[EstablisherEmailController]
             val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
@@ -76,7 +76,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
     "on a POST" must {
       "redirect to relevant page" in {
         running(_.overrides(
-          modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true) ++
+          modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
             ): _*)) {

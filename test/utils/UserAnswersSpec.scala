@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
 import identifiers.register.establishers.partnership._
-import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerAddressId, PartnerAddressYearsId, PartnerContactDetailsId, PartnerDetailsId, PartnerNameId, PartnerNinoId, PartnerPreviousAddressId, PartnerUniqueTaxReferenceId}
+import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
 import identifiers.register.trustees.company.{CompanyEnterPAYEId, CompanyEnterVATId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId, CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -53,7 +53,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
       )
 
-      userAnswers.allEstablishers( isHnSPhase2Enabled = true, mode) mustEqual allEstablisherEntities
+      userAnswers.allEstablishers(mode) mustEqual allEstablisherEntities
     }
 
     "return en empty sequence if there are no establishers" in {
@@ -62,7 +62,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers( isHnSPhase2Enabled, mode) mustEqual Seq.empty
+      userAnswers.allEstablishers(mode) mustEqual Seq.empty
     }
 
     "return en empty sequence if the json is invalid" in {
@@ -74,7 +74,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         )
       )
       val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers( isHnSPhase2Enabled, mode) mustEqual Seq.empty
+      userAnswers.allEstablishers(mode) mustEqual Seq.empty
     }
   }
 
@@ -112,7 +112,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3),
           establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
 
-      userAnswers.allEstablishersAfterDelete( isHnSPhase2Enabled, mode) mustEqual allEstablisherEntities
+      userAnswers.allEstablishersAfterDelete(mode) mustEqual allEstablisherEntities
     }
   }
 
@@ -122,7 +122,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val allTrusteesEntities: Seq[Trustee[_]] = Seq(
         trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
-        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true, isHnsEnabled = true),
+        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
         trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
       )
 
@@ -240,7 +240,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
         PartnerEntity(PartnerNameId(2, 1), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
         PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
 
-      val result = userAnswers.allPartners(2, isHnSEnabled = true)
+      val result = userAnswers.allPartners(2)
 
       result.size mustEqual 3
       result mustBe partnerEntities
@@ -356,7 +356,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies(mode) mustBe true
     }
 
     "return true if an establisher is a partnership" in {
@@ -367,7 +367,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies(mode) mustBe true
     }
 
     "return true if both an establisher and a trustee are companies" in {
@@ -380,7 +380,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe true
+      answers.hasCompanies(mode) mustBe true
     }
 
     "return false if no establishers or trustees are companies" in {
@@ -391,14 +391,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
           .asOpt
           .value
 
-      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe false
+      answers.hasCompanies(mode) mustBe false
     }
 
     "return false if there are no establishers or trustees" in {
       val answers =
         UserAnswers()
 
-      answers.hasCompanies( isHnSPhase2Enabled, mode) mustBe false
+      answers.hasCompanies(mode) mustBe false
     }
   }
 
@@ -406,58 +406,49 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     "checking insurance company" must {
        "return false if scheme have insurance and details are missing" in {
          val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
-         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
        }
 
        "return false if scheme have insurance is not defined" in {
          val insuranceCompanyDetails = UserAnswers()
-         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe false
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
        }
 
        "return true if scheme does not have insurance" in {
          val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
-         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
        }
 
        "return true if scheme have insurance and all the details are present" in {
-         insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
+         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
        }
      }
 
     "checking trustees" must {
       "return true if trustees are not defined" in {
-        insuranceCompanyDetails.areVariationChangesCompleted(false) mustBe true
+        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
       }
 
       "return false if trustees are not completed" in {
-        trustee.areVariationChangesCompleted(false) mustBe false
+        trustee.areVariationChangesCompleted mustBe false
       }
 
       "return true if trustees are completed" in {
         val trusteeCompleted = trustee.trusteesCompanyPhone(0, "12345")
             .trusteesCompanyEmail(0, "z@z.z")
-        trusteeCompleted.areVariationChangesCompleted(false) mustBe true
+        trusteeCompleted.areVariationChangesCompleted mustBe true
       }
     }
 
     "checking establishers" must {
-      val userAnswers = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
+      val userAnswersInprogress = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
+      val userAnswersCompleted = UserAnswers(readJsonFromFile("/payload.json"))
       "return false if establishers are not completed" in {
-        userAnswers.areVariationChangesCompleted(false) mustBe false
+        userAnswersInprogress.areVariationChangesCompleted mustBe false
       }
 
-      "return true if establishers company is completed " in {
-        val establisherCompleted = userAnswersHnS
-
-        establisherCompleted.areVariationChangesCompleted( true) mustBe true
-      }
-
-      "return true if establishers partnership is completed" in {
-        val establisherCompleted = establisherPartnership
-          .trusteesCompanyPhone(0, "12345")
-          .trusteesCompanyEmail(0, "z@z.z")
-
-        establisherCompleted.areVariationChangesCompleted() mustBe true
+      "return true if establishers are completed " in {
+        userAnswersCompleted.areVariationChangesCompleted mustBe true
       }
     }
   }
@@ -476,10 +467,8 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     }
   }
 
-  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3, isHnsEnabled: Boolean = false): Trustee[_] = {
+  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Trustee[_] = {
     trusteeKind match {
-      case TrusteeKind.Individual if isHnsEnabled =>
-        TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Individual =>
         TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
@@ -499,8 +488,6 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
       )
     )
   )
-
-  private val isHnSPhase2Enabled = true
   private val mode = NormalMode
 
   private val company = CompanyDetails("test-company-name")
@@ -543,24 +530,4 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     .set(CompanyEnterVATId(0))(ReferenceValue("vat")).asOpt.value
     .set(HasCompanyPAYEId(0))(true).asOpt.value
     .set(CompanyEnterPAYEId(0))(ReferenceValue("vat")).asOpt.value
-
-  private val userAnswersHnS = UserAnswers(readJsonFromFile("/payload.json"))
-
-  val establisherPartnership = trustee.set(EstablisherKindId(0))(EstablisherKind.Partnership)
-    .flatMap(_.set(PartnershipDetailsId(0))(PartnershipDetails("")))
-    .flatMap(_.set(PartnershipVatId(0))(Vat.No))
-    .flatMap(_.set(PartnershipPayeId(0))(Paye.No))
-    .flatMap(_.set(PartnershipUniqueTaxReferenceID(0))(utr))
-    .flatMap(_.set(PartnershipAddressId(0))(address))
-    .flatMap(_.set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear))
-    .flatMap(_.set(PartnershipPreviousAddressId(0))(previousAddress))
-    .flatMap(_.set(PartnershipContactDetailsId(0))(contactDetails))
-    .flatMap(_.set(PartnerDetailsId(0, 0))(PersonDetails("par1", None, "", LocalDate.now)))
-    .flatMap(_.set(PartnerNinoId(0, 0))(nino))
-    .flatMap(_.set(PartnerUniqueTaxReferenceId(0, 0))(utr))
-    .flatMap(_.set(PartnerAddressId(0, 0))(address))
-    .flatMap(_.set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear))
-    .flatMap(_.set(PartnerPreviousAddressId(0, 0))(previousAddress))
-    .flatMap(_.set(PartnerContactDetailsId(0, 0))(contactDetails))
-    .asOpt.value
 }

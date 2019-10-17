@@ -25,7 +25,6 @@ import controllers.register.trustees.partnership.{routes => trusteePartnershipRo
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath, partnership => establisherPartnershipPath}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath, individual => trusteeIndividualPath, partnership => trusteePartnershipPath}
-import models.address.Address
 import models.person.PersonName
 import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
 import org.scalatest.{MustMatchers, OptionValues}
@@ -242,7 +241,6 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
 
   val srn = Some("S123")
   private val partnershipName = "test partnership"
-  private val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(true)
 
   protected def establisherCompanyBlank: UserAnswers = {
     UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
@@ -301,8 +299,8 @@ object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCom
 
   def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
 
-  def subscriptionHelper: HsTaskListHelper = new HsTaskListHelperRegistration(UserAnswers(), fakeFeatureSwitch)
-  def variationsHelper(viewOnly: Boolean = false): HsTaskListHelper = new HsTaskListHelperVariations(UserAnswers(), viewOnly, srn, fakeFeatureSwitch)
+  def subscriptionHelper: HsTaskListHelper = new HsTaskListHelperRegistration(UserAnswers())
+  def variationsHelper(viewOnly: Boolean = false): HsTaskListHelper = new HsTaskListHelperVariations(UserAnswers(), viewOnly, srn)
 
   def expectedAddSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
     EntitySpoke(Link(messages("messages__schemeTaskList__add_details", "test company"),

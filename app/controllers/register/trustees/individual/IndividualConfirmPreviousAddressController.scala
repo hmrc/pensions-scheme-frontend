@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController

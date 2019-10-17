@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.IsEstablisherNewId
@@ -32,7 +31,7 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -104,9 +103,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private val config = injector.instanceOf[Configuration]
 
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
-
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   private val establisherIndex = Index(0)

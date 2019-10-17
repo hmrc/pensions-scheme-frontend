@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
@@ -47,8 +47,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete,
-                                                 formProvider: ConfirmDeleteDirectorFormProvider,
-                                                 fs: FeatureSwitchManagementService
+                                                 formProvider: ConfirmDeleteDirectorFormProvider
                                                )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()

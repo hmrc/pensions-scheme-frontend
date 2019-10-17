@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner._
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{NoSuspendedCheck}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers
@@ -45,8 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -84,7 +83,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      val answersHnS = Seq(AnswerSection(
+      val answers = Seq(AnswerSection(
         None,
         Seq(
           PartnerNameId(establisherIndex, partnerIndex)
@@ -128,14 +127,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       ))
 
-      val answerSections = if(fs.get(Toggles.isHnSEnabled))
-        answersHnS
-      else
-        Seq(partnerDetails, partnerContactDetails)
-
       Future.successful(Ok(checkYourAnswers(
         appConfig,
-        answerSections,
+        answers,
         controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
         existingSchemeName,
         mode = mode,

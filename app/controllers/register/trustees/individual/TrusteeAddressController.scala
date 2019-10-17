@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
@@ -48,8 +48,7 @@ class TrusteeAddressController @Inject()(
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
-                                          val auditService: AuditService,
-                                          fs: FeatureSwitchManagementService
+                                          val auditService: AuditService
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteeAddressController.onSubmit _

@@ -35,7 +35,7 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with MustMa
   import TrusteesIndividualContactDetailsNavigatorSpec._
 
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj())), featureSwitchEnabled = true).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
   "NormalMode" must {
     def navigationForNewTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =

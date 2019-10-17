@@ -19,10 +19,13 @@ import com.google.inject.multibindings.Multibinder
 import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
+import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator}
+import navigators.establishers.partnership.partner.PartnerNavigator
+import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
 import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
 import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator, TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
-import utils.annotations.{EstablishersPartner, _}
+import utils.annotations._
 import utils.{AllowChangeHelper, AllowChangeHelperImpl}
 
 class PODSModule extends AbstractModule {
@@ -37,7 +40,9 @@ class PODSModule extends AbstractModule {
     navigators.addBinding().to(classOf[BeforeYouStartNavigator])
     navigators.addBinding().to(classOf[EstablishersCompanyDirectorNavigator])
     navigators.addBinding().to(classOf[EstablishersCompanyNavigator])
-    navigators.addBinding().to(classOf[EstablishersIndividualFeatureSwitchNavigator])
+    navigators.addBinding().to(classOf[EstablishersIndividualDetailsNavigator])
+    navigators.addBinding().to(classOf[EstablishersIndividualAddressNavigator])
+    navigators.addBinding().to(classOf[EstablishersIndividualContactDetailsNavigator])
     navigators.addBinding().to(classOf[EstablishersNavigator])
     navigators.addBinding().to(classOf[RegisterNavigator])
     navigators.addBinding().to(classOf[TrusteesIndividualDetailsNavigator])
@@ -48,8 +53,10 @@ class PODSModule extends AbstractModule {
     navigators.addBinding().to(classOf[TrusteesPartnershipContactDetailsNavigator])
     navigators.addBinding().to(classOf[TrusteesPartnershipAddressNavigator])
     navigators.addBinding().to(classOf[TrusteesCompanyNavigator])
-    navigators.addBinding().to(classOf[EstablisherPartnershipFeatureSwitchNavigator])
-    navigators.addBinding().to(classOf[PartnerFeatureSwitchNavigator])
+    navigators.addBinding().to(classOf[EstablisherPartnershipDetailsNavigator])
+    navigators.addBinding().to(classOf[EstablisherPartnershipAddressNavigator])
+    navigators.addBinding().to(classOf[EstablisherPartnershipContactDetailsNavigator])
+    navigators.addBinding().to(classOf[PartnerNavigator])
     navigators.addBinding().to(classOf[VariationsNavigator])
     navigators.addBinding().to(classOf[WorkingKnowledgeNavigator])
 
@@ -98,20 +105,12 @@ class PODSModule extends AbstractModule {
       .to(classOf[EstablishersCompanyNavigator])
 
     bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablisherPartnership])
-      .to(classOf[EstablishersPartnershipNavigatorOld])
-
-    bind(classOf[Navigator])
       .annotatedWith(classOf[Establishers])
       .to(classOf[EstablishersNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Trustees])
       .to(classOf[TrusteesNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigatorOld])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompanyDirector])

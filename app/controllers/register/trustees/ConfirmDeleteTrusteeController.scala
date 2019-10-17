@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider

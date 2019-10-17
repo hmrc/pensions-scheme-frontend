@@ -56,7 +56,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
   "TrusteeNameController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -70,7 +70,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryTrustee).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -94,7 +94,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
 
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true)
+      val app = applicationBuilder(getEmptyData)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -111,7 +111,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -125,7 +125,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
     }
 
     "return a Bad Request and errors when no data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 

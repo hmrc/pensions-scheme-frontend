@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import config.FeatureSwitchManagementService
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -25,10 +24,9 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.address.TolerantAddress
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.Application
@@ -40,7 +38,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -119,8 +117,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).toInstance(fakeNavigator),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[PostCodeLookupFormProvider].to(formProvider),
-      bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(false))
+      bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
       app =>
         val req = request(app)

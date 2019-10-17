@@ -27,7 +27,7 @@ import models.{Mode, NormalMode, UpdateMode, person}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.mvc.Call
-import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 //scalastyle:off magic.number
 
@@ -73,7 +73,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   s"Trustees navigations " must {
     appRunning()
     val navigator: TrusteesNavigator =
-      new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(true))
+      new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode, srn)
     behave like nonMatchingNavigator(navigator)

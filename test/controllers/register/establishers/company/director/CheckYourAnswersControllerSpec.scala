@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -32,7 +31,7 @@ import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, DateHelper, FakeCountryOptions, FakeDataRequest, FakeFeatureSwitchManagementService, UserAnswers, _}
+import utils._
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.checkYourAnswers
 
@@ -41,8 +40,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
-  implicit val request: DataRequest[AnyContent]   = FakeDataRequest(directorAnswers)
-  implicit val userAnswers: UserAnswers           = request.userAnswers
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
@@ -73,10 +70,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     )(fakeRequest, messages).toString
 
   "having set up answer sections" when {
-    val request: DataRequest[AnyContent]                                        = FakeDataRequest(directorAnswersHnsEnabled)
+    val request: DataRequest[AnyContent]                                        = FakeDataRequest(directorAnswers)
     implicit val userAnswers: UserAnswers                                       = request.userAnswers
-    implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
-    def answerSectionDirectorHnSEnabled(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] =
+    def answerSectionDirector(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] =
       Seq(
         AnswerSection(
           None,
@@ -111,24 +107,24 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "onPageLoad" must {
 
       "return OK and display all the answers" in {
-        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction).onPageLoad(index, index, NormalMode, None)(request)
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, NormalMode, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerSectionDirectorHnSEnabled _, href(NormalMode, None, 0), None)
+        contentAsString(result) mustBe viewAsString(NormalMode, answerSectionDirector _, href(NormalMode, None, 0), None)
       }
 
       "return OK and display all given answers for UpdateMode" in {
-        val result = controller(directorAnswersHnsEnabled.dataRetrievalAction).onPageLoad(index, index, UpdateMode, Some("srn"))(request)
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, UpdateMode, Some("srn"))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode,
-                                                    answerSectionDirectorHnSEnabled(UpdateMode, Some("srn")),
+                                                    answerSectionDirector(UpdateMode, Some("srn")),
                                                     href(UpdateMode, Some("srn"), 0),
                                                     Some("srn"))
       }
 
       behave like changeableController(
-        controller(directorAnswersHnsEnabled.dataRetrievalAction, _: AllowChangeHelper)
+        controller(directorAnswers.dataRetrievalAction, _: AllowChangeHelper)
           .onPageLoad(index, index, NormalMode, None)(request)
       )
     }
@@ -138,32 +134,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends SpecBase {
   val index                                                    = Index(0)
   val schemeName                                               = "test scheme name"
-  def href(mode: Mode, srn: Option[String], companyIndex: Int) = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
+  def href(mode: Mode, srn: Option[String], companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
   val name                                                     = "First Name"
 
   val directorPersonDetails = PersonName("first name", "last name", false)
 
-  val directorDetailsAnswersUpdateWithoutNino = UserAnswers()
-    .set(DirectorNameId(index, index))(directorPersonDetails)
-    .asOpt
-    .value
-
-  val directorAnswersUpdate = directorDetailsAnswersUpdateWithoutNino
-    .set(DirectorEnterNINOId(index, index))(ReferenceValue("AB100100A"))
-    .flatMap(_.set(DirectorHasNINOId(index, index))(true))
-    .asOpt
-    .value
-
-  val directorAnswers = directorAnswersUpdate
-    .set(DirectorEnterUTRId(index, index))(ReferenceValue("1234567890"))
-    .flatMap(_.set(DirectorHasUTRId(index, index))(true))
-    .flatMap(_.set(DirectorAddressId(index, index))(Address("Address 1", "Address 2", None, None, None, "GB")))
-    .flatMap(_.set(DirectorAddressYearsId(index, index))(AddressYears.UnderAYear))
-    .flatMap(_.set(DirectorPreviousAddressId(index, index))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
-    .flatMap(_.set(DirectorContactDetailsId(index, index))(ContactDetails("test@test.com", "123456789")))
-    .asOpt.value
-
-  val directorAnswersHnsEnabled: UserAnswers = UserAnswers()
+  val directorAnswers: UserAnswers = UserAnswers()
     .set(DirectorNameId(index, index))(PersonName("First", "Last"))
     .flatMap(
       _.set(DirectorEnterNINOId(index, index))(ReferenceValue("AB100100A")).flatMap(

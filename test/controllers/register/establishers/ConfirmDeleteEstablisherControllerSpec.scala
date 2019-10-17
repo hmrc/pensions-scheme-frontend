@@ -16,8 +16,6 @@
 
 package controllers.register.establishers
 
-import config.FeatureSwitchManagementService
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -34,7 +32,8 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import services.FakeUserAnswersService
+import utils.FakeNavigator
 import views.html.register.establishers.confirmDeleteEstablisher
 
 class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
@@ -47,7 +46,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val data = new FakeDataRetrievalAction(Some(testData))
       val establisherIndex = Index(4)
       val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)
-      val result = controller(data, isHnsSEnabled(true)).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(postCall = postCall)
@@ -115,7 +114,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data, isHnsSEnabled(true)).onSubmit(NormalMode, Index(4), establisherKind, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(4), establisherKind, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(EstablisherNameId(4), personName.copy(isDeleted = true))
@@ -243,10 +242,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def isHnsSEnabled(toggle: Boolean): FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(toggle)
-
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         fs: FeatureSwitchManagementService = isHnsSEnabled(false)) =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -256,8 +252,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      fs
+      formProvider
     )
 
   private def viewAsString(hintText:Option[String] = None,

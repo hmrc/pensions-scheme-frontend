@@ -17,7 +17,6 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
 import identifiers.register.trustees.IsTrusteeNewId
 import models._
 import models.person.PersonName
@@ -28,13 +27,12 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
-  implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(

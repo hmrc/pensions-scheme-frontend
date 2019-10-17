@@ -87,7 +87,7 @@ class DataCompletionTrusteesSpec extends WordSpec with MustMatchers with OptionV
 
   "Trustee Individual completion status should be returned correctly" when {
 
-    "isTrusteeIndividualComplete H&S enabled" must {
+    "isTrusteeIndividualComplete" must {
       "return true when all answers are present" in {
         UserAnswers(userAnswersCompleted).isTrusteeIndividualComplete( 1) mustBe true
       }

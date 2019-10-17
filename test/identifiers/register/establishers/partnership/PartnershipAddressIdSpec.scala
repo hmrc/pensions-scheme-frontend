@@ -17,15 +17,14 @@
 package identifiers.register.establishers.partnership
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
 import models.address.Address
 import models.requests.DataRequest
 import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnershipAddressIdSpec extends SpecBase {
@@ -58,8 +57,6 @@ class PartnershipAddressIdSpec extends SpecBase {
             UserAnswers().set(PartnershipAddressId(0))(address).flatMap(
               _.set(PartnershipDetailsId(0))(PartnershipDetails("test name"))).asOpt.value, PsaId("A0000000"))
           implicit val ua: UserAnswers = request.userAnswers
-          implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
-
           PartnershipAddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
               Message("messages__address__cya", "test name"),

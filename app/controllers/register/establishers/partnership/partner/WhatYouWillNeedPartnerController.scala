@@ -40,7 +40,7 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val partnerIndex = request.userAnswers.allPartners(index, isHnSEnabled = true).size
+      val partnerIndex = request.userAnswers.allPartners(index).size
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
         Future.successful(Ok(whatYouWillNeed(
           appConfig,

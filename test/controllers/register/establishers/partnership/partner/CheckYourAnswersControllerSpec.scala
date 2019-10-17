@@ -26,7 +26,7 @@ import models.address.Address
 import models.person.{PersonDetails, PersonName}
 import models.{Index, _}
 import org.joda.time.LocalDate
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
@@ -38,11 +38,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions = new FakeCountryOptions()
-  implicit val request = FakeDataRequest(partnerAnswersToggleOff)
+  implicit val request = FakeDataRequest(partnerAnswers)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                         allowChangeHelper: AllowChangeHelper = ach,
-                         isHnSEnabled: Boolean = false): CheckYourAnswersController =
+                         allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -53,8 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
       countryOptions,
-      allowChangeHelper,
-      new FakeFeatureSwitchManagementService(isHnSEnabled)
+      allowChangeHelper
     )
 
 
@@ -96,49 +94,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     srn = srn
   )(fakeRequest, messages).toString
 
-  "CheckYourAnswersController" when {
-    "onPageLoad" must {
-      "return OK and display all the answers" in {
-        val result = controller(partnerAnswersToggleOff.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
-      }
-
-      "return OK and display all given answers for UpdateMode with add/change link when user enters nino" in {
-
-        val result = controller(partnerAnswersUpdateWithNewNino(true).dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithChangeToggleOff), Some("srn"))
-      }
-
-      "return OK and display Nino with Add link for UpdateMode when no nino returned from ETMP" in {
-
-        val result = controller(partnerDetailsAnswersUpdateWithoutNino.dataRetrievalAction).
-          onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithAddNino), Some("srn"))
-      }
-
-      "return OK and display Nino with no link for UpdateMode when nino returned from ETMP" in {
-
-        val result = controller(partnerAnswersUpdateWithNewNino(false).dataRetrievalAction).
-          onPageLoad(UpdateMode, firstIndex, firstIndex, Some("srn"))(request)
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, displayNino(answerRowWithNoLink), Some("srn"))
-      }
-
-    behave like changeableController(
-      controller(partnerAnswersNo.dataRetrievalAction, _: AllowChangeHelper)
-        .onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
-    )
-  }
-  }
-
   "Check Your Answers Individual Details Controller " when {
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request: FakeDataRequest = FakeDataRequest(partnerAnswersYes)
-        val result = controller(partnerAnswersYes.dataRetrievalAction, isHnSEnabled = true).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None)
@@ -146,7 +106,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(partnerAnswersNo)
-        val result = controller(partnerAnswersNo.dataRetrievalAction, isHnSEnabled = true).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None)
@@ -158,7 +118,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val answers = partnerAnswersYes
           .set(IsNewPartnerId(firstIndex, firstIndex))(true).asOpt.value
         val request = FakeDataRequest(answers)
-        val result = controller(answers.dataRetrievalAction, isHnSEnabled = true).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn)
@@ -166,12 +126,17 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(partnerAnswersNo)
-        val result = controller(partnerAnswersNo.dataRetrievalAction, isHnSEnabled = true).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
+        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn)
       }
     }
+
+    behave like changeableController(
+      controller(partnerAnswersNo.dataRetrievalAction, _: AllowChangeHelper)
+        .onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+    )
   }
 
 }
@@ -184,23 +149,10 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val address = Address("Address 1", "Address 2", None, None, None, "GB")
   private val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val partnerDetailsAnswersUpdateWithoutNino = UserAnswers()
+  private val partnerAnswersUpdate = UserAnswers()
     .set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .asOpt.value
-
-  private val partnerAnswersUpdate = partnerDetailsAnswersUpdateWithoutNino
     .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
-
-  private def partnerAnswersUpdateWithNewNino(isEditable: Boolean): UserAnswers = partnerDetailsAnswersUpdateWithoutNino
-    .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A", isEditable)).asOpt.value
-
-  private val partnerAnswersToggleOff = partnerAnswersUpdate
-    .set(PartnerUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890"))
-    .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(address))
-    .flatMap(_.set(PartnerAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
-    .flatMap(_.set(PartnerPreviousAddressId(firstIndex, firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "GB")))
-    .flatMap(_.set(PartnerContactDetailsId(firstIndex, firstIndex))(ContactDetails("test@test.com", "123456789")))
-    .asOpt.value
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)
@@ -284,11 +236,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )
   ))
 
-  private def answerRowWithChangeToggleOff: AnswerRow = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("AB100100A"), answerIsMessageKey = false, Some(
-    Link("site.change", routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
-      Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName)
-    ))))
-
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__addressFor", personName.fullName),
     UserAnswers().addressAnswer(address),
@@ -368,19 +315,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     Link("site.change", routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName))
     )))
-
-  private def answerRowWithNoLink: AnswerRow = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("AB100100A"), answerIsMessageKey = false, None)
-
-  private def displayNino(answerRow: AnswerRow) = Seq(AnswerSection(
-    Some("messages__partner__cya__details_heading"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None),
-      answerRow
-    )
-  ),
-    AnswerSection(Some("messages__partner__cya__contact__details_heading"), Seq())
-  )
 
   private def answerRowsYes = Seq(AnswerSection(
     None,

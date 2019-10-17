@@ -40,7 +40,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -54,7 +54,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
           val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)

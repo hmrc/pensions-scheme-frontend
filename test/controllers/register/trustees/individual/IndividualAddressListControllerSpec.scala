@@ -17,14 +17,13 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{person, Index, NormalMode}
+import models.{Index, NormalMode, person}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -32,7 +31,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -41,7 +40,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val trusteeDetails = person.PersonName("Test", "Name")
-  val trusteeName    = PersonName("Test", "Name")
+  val trusteeName = PersonName("Test", "Name")
 
   private val addresses = Seq(
     TolerantAddress(
@@ -62,121 +61,46 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
     )
   )
 
-  private def retrieval(isHnsEnabled: Boolean = false): DataRetrievalAction = {
-    if (isHnsEnabled) {
-      UserAnswers(Json.obj())
-        .set(TrusteeNameId(0))(trusteeName)
-        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses))
-        .asOpt
-        .value
-        .dataRetrievalAction
-    }
-    else {
-      UserAnswers(Json.obj())
-        .set(TrusteeNameId(0))(trusteeDetails)
-        .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses))
-        .asOpt
-        .value
-        .dataRetrievalAction
-    }
+  private def retrieval: DataRetrievalAction = {
+    UserAnswers(Json.obj())
+      .set(TrusteeNameId(0))(trusteeName)
+      .flatMap(_.set(IndividualPostCodeLookupId(0))(addresses))
+      .asOpt
+      .value
+      .dataRetrievalAction
   }
 
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
   "Individual Address List Controller" must {
-    Seq(true, false).foreach { isHnsEnabled =>
-      s"return Ok and the correct view on a Get Request $isHnsEnabled" in {
-        running(
-          _.overrides(
-            bind[AuthAction].to(FakeAuthAction),
-            bind[UserAnswersService].toInstance(FakeUserAnswersService),
-            bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
-            bind(classOf[Navigator]).toInstance(fakeNavigator),
-            bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
-          )) { implicit app =>
-          val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
-          val result  = route(app, request).value
-
-          status(result) mustBe OK
-
-          val viewModel: AddressListViewModel = addressListViewModel(addresses)
-          val form                            = new AddressListFormProvider()(viewModel.addresses)
-
-          contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
-        }
-      }
-
-      s"redirect to the next page on POST of valid data $isHnsEnabled" in {
-
-        running(
-          _.overrides(
-            bind[AuthAction].to(FakeAuthAction),
-            bind[UserAnswersService].toInstance(FakeUserAnswersService),
-            bind(classOf[Navigator]).toInstance(fakeNavigator),
-            bind[DataRetrievalAction].toInstance(retrieval(isHnsEnabled = isHnsEnabled)),
-            bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(isHnsEnabled))
-          )) { implicit app =>
-          val request =
-            addToken(
-              FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
-                .withFormUrlEncodedBody(("value", "0"))
-            )
-
-          val result = route(app, request).value
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
-      }
-    }
-
-    "redirect to Individual Post Code Lookup if no address data on a GET request" in {
-
+    s"return Ok and the correct view on a Get Request" in {
       running(
         _.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(getEmptyData),
-          bind(classOf[Navigator]).toInstance(fakeNavigator),
-          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
+          bind[DataRetrievalAction].toInstance(retrieval),
+          bind(classOf[Navigator]).toInstance(fakeNavigator)
         )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result  = route(app, request).value
+        val result = route(app, request).value
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        status(result) mustBe OK
+
+        val viewModel: AddressListViewModel = addressListViewModel(addresses)
+        val form = new AddressListFormProvider()(viewModel.addresses)
+
+        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
       }
-
     }
 
-    "redirect to Session Expired controller when no session data exists on a GET request" in {
+    s"redirect to the next page on POST of valid data" in {
 
       running(
         _.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(dontGetAnyData),
           bind(classOf[Navigator]).toInstance(fakeNavigator),
-          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
-        )) { implicit app =>
-        val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result  = route(app, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-      }
-
-    }
-
-    "redirect to Session Expired controller when no session data exists on a POST request" in {
-
-      running(
-        _.overrides(
-          bind[AuthAction].to(FakeAuthAction),
-          bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(dontGetAnyData),
-          bind(classOf[Navigator]).toInstance(fakeNavigator),
-          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
+          bind[DataRetrievalAction].toInstance(retrieval)
         )) { implicit app =>
         val request =
           addToken(
@@ -187,35 +111,93 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
-
-    }
-
-    "redirect to Individual Address Post Code Lookup if no address data on a POST request" in {
-
-      running(
-        _.overrides(
-          bind[AuthAction].to(FakeAuthAction),
-          bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(getEmptyData),
-          bind(classOf[Navigator]).toInstance(fakeNavigator),
-          bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
-        )) { implicit app =>
-        val request =
-          addToken(
-            FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
-
-        val result = route(app, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
-      }
-
     }
   }
+
+  "redirect to Individual Post Code Lookup if no address data on a GET request" in {
+
+    running(
+      _.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
+      )) { implicit app =>
+      val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+      val result = route(app, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+    }
+
+  }
+
+  "redirect to Session Expired controller when no session data exists on a GET request" in {
+
+    running(
+      _.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
+      )) { implicit app =>
+      val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+      val result = route(app, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+  }
+
+  "redirect to Session Expired controller when no session data exists on a POST request" in {
+
+    running(
+      _.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
+      )) { implicit app =>
+      val request =
+        addToken(
+          FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
+            .withFormUrlEncodedBody(("value", "0"))
+        )
+
+      val result = route(app, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+  }
+
+  "redirect to Individual Address Post Code Lookup if no address data on a POST request" in {
+
+    running(
+      _.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).toInstance(fakeNavigator)
+      )) { implicit app =>
+      val request =
+        addToken(
+          FakeRequest(routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None))
+            .withFormUrlEncodedBody(("value", "0"))
+        )
+
+      val result = route(app, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+    }
+
+  }
+
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(

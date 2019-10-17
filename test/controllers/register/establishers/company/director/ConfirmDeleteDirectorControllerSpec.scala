@@ -30,7 +30,7 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, FakeSectionComplete}
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
@@ -161,8 +161,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider,
-      new FakeFeatureSwitchManagementService(false)
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form) =
