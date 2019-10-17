@@ -19,16 +19,16 @@ package utils
 import identifiers._
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, Mode, PartnershipDetails, UpdateMode}

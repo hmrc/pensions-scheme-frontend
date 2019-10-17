@@ -26,7 +26,7 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
@@ -86,15 +86,15 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       trusteeKind match {
         case Company =>
           CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, None, srn, mode)
+            updateTrusteeKind(companyDetails.companyName, trusteeKind, index, Some(companyDetails), None, None, srn, mode)
           }
         case Individual =>
           TrusteeNameId(index).retrieve.right.map { trusteeName =>
-            updateTrusteeKind(trusteeName.fullName, trusteeKind, index, None, None, None, Some(trusteeName), srn, mode)
+            updateTrusteeKind(trusteeName.fullName, trusteeKind, index, None, None, Some(trusteeName), srn, mode)
           }
         case Partnership =>
           PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, None, Some(partnershipDetails), None, srn, mode)
+            updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, Some(partnershipDetails), None, srn, mode)
           }
       }
   }
@@ -103,7 +103,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 trusteeKind: TrusteeKind,
                                 trusteeIndex: Index,
                                 companyDetails: Option[CompanyDetails],
-                                trusteeDetailsNonHns: Option[PersonDetails],
                                 partnershipDetails: Option[PartnershipDetails],
                                 trusteeDetails: Option[PersonName],
                                 srn: Option[String],

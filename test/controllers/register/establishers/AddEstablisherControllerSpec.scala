@@ -20,9 +20,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
@@ -157,7 +157,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
 
-  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
+  private val personDetails = PersonName("John", "Doe")
   private val johnDoe = EstablisherIndividualEntity(
     EstablisherNameId(0),
     "John Doe",
@@ -183,7 +183,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     val validData = Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails,
+          EstablisherNameId.toString -> personDetails,
           IsEstablisherNewId.toString -> true
         )
       )
@@ -195,7 +195,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     val validData = Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails,
+          EstablisherNameId.toString -> personDetails,
           IsEstablisherNewId.toString -> true
         ),
         Json.obj(
@@ -203,7 +203,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
           IsEstablisherNewId.toString -> true
         ),
         Json.obj(
-          EstablisherDetailsId.toString -> deletedEstablisher,
+          EstablisherNameId.toString -> deletedEstablisher,
           IsEstablisherNewId.toString -> true
         )
       )

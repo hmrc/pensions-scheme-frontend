@@ -17,8 +17,7 @@
 package navigators.establishers.partnership.partner
 
 import base.SpecBase
-import controllers.register.establishers.partnership.partner.routes.{CheckYourAnswersController, PartnerAddressController, PartnerAddressListController, PartnerAddressPostcodeLookupController, PartnerAddressYearsController, PartnerConfirmPreviousAddressController, PartnerDOBController, PartnerEmailController, PartnerEnterUTRController, PartnerHasNINOController, PartnerHasUTRController, PartnerNinoNewController, PartnerNoNINOReasonController, PartnerNoUTRReasonController, PartnerPhoneController, PartnerPreviousAddressController, PartnerPreviousAddressListController, PartnerPreviousAddressPostcodeLookupController}
-import controllers.routes.AnyMoreChangesController
+import controllers.register.establishers.partnership.partner.routes._
 import generators.Generators
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
@@ -26,7 +25,7 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import navigators.{Navigator, NavigatorBehaviour}
 import org.joda.time.LocalDate
 import org.scalatest.MustMatchers

@@ -21,15 +21,14 @@ import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{AdviserNameId, SchemeNameId}
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{CompanyDetails, PartnershipDetails, person}
-import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
@@ -50,15 +49,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def dontGetAnyDataViewOnly: FakeDataRetrievalAction = new FakeDataRetrievalAction(None, viewOnly = true)
 
-  def getMandatoryEstablisher: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
-    Json.obj(
-      "establishers" -> Json.arr(
-        Json.obj(
-          EstablisherDetailsId.toString -> PersonDetails("test first name", None, "test last name", LocalDate.now(), false)
-        )
-      )
-    )))
-
   def getMandatoryEstablisherHns: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
       "establishers" -> Json.arr(
@@ -68,15 +58,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       )
     )))
 
-  def getMandatoryTrusteeIndividual: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
-    Json.obj(
-      "trustees" -> Json.arr(
-        Json.obj(
-          TrusteeNameId.toString ->
-            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
-        )
-      )
-    )))
 
   def getMandatoryTrustee: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
@@ -143,23 +124,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     ))
   )
 
-  def getMandatoryEstablisherCompanyDirector: FakeDataRetrievalAction = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          CompanyDetailsId.toString ->
-            CompanyDetails("test company name"),
-          "director" -> Json.arr(
-            Json.obj(
-              DirectorNameId.toString -> PersonDetails("first", Some("middle"), "last",
-                new LocalDate(1990, 2, 2))
-            )
-          )
-        )
-      )
-    ))
-  )
-
   def getMandatoryEstablisherCompanyDirectorWithDirectorName: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       EstablishersId.toString -> Json.arr(
@@ -169,23 +133,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
           "director" -> Json.arr(
             Json.obj(
               DirectorNameId.toString -> PersonName("first", "last")
-            )
-          )
-        )
-      )
-    ))
-  )
-
-  def getMandatoryEstablisherPartner: FakeDataRetrievalAction = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          PartnershipDetailsId.toString ->
-            PartnershipDetails("test partnership name"),
-          "partner" -> Json.arr(
-            Json.obj(
-              PartnerDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
-                new LocalDate(1990, 2, 2))
             )
           )
         )

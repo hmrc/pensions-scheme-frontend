@@ -17,15 +17,13 @@
 package controllers
 
 import base.CSRFRequest
-import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
+import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
-import models.{CheckUpdateMode, NormalMode}
+import models.NormalMode
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
@@ -38,8 +36,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.FakeNavigator
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
@@ -92,7 +90,6 @@ object InsurerEnterPostCodeControllerSpec extends OptionValues {
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
-  val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))

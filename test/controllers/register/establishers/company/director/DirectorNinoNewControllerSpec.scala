@@ -23,8 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
 import models._
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -55,7 +54,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorNameId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonName("First Name", "Last Name"),
               DirectorEnterNINOId.toString -> Json.obj( "value" -> "CS700100A")
           )
         )
@@ -70,7 +69,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorNameId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+              PersonName("First Name", "Last Name")
           )
         )
       )
@@ -78,7 +77,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
   )
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorEnterNINOController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): DirectorEnterNINOController =
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 

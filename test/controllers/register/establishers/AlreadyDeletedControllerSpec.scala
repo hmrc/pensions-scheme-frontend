@@ -54,10 +54,10 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   "AlreadyDeleted Establisher Controller" must {
 
     "return OK and the correct view for a GET for an individual" in {
-      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisherHns).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString("test first name test last name")
+      contentAsString(result) mustBe viewAsString("Test Name")
     }
 
     "return OK and the correct view for a GET for a company" in {

@@ -21,11 +21,11 @@ import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.person.{PersonDetails, PersonName}
+import models._
+import models.person.PersonName
 import models.register.establishers.EstablisherKind
-import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
@@ -85,7 +85,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val deletedData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            EstablisherDetailsId.toString -> deletedEstablisher
+            EstablisherNameId.toString -> deletedEstablisher
           )
         )
       )
@@ -126,7 +126,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(EstablisherDetailsId(establisherIndex))
+      FakeUserAnswersService.verifyNot(EstablisherNameId(establisherIndex))
     }
 
     "delete the establisher company on a POST" in {
@@ -205,7 +205,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
-  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
+  private val personDetails = person.PersonName("John", "Doe")
   private val personName = PersonName("John", "Doe")
   private val companyDetails = CompanyDetails("Test Ltd")
   private val partnershipDetails = PartnershipDetails("Test Partnership Ltd")
@@ -223,7 +223,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val testData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString -> personDetails
+        EstablisherNameId.toString -> personDetails
       ),
       Json.obj(
         CompanyDetailsId.toString -> companyDetails
@@ -232,7 +232,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
         PartnershipDetailsId.toString -> partnershipDetails
       ),
       Json.obj(
-        EstablisherDetailsId.toString -> deletedEstablisher
+        EstablisherNameId.toString -> deletedEstablisher
       ),
       Json.obj(
         EstablisherNameId.toString -> personName

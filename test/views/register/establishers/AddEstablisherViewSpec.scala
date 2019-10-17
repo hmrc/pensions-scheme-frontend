@@ -19,12 +19,11 @@ package views.register.establishers
 import controllers.register.establishers.routes
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
 import models.{CompanyDetails, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
@@ -43,17 +42,15 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     "Establisher Company"
   )
 
-  private val individualDetails = PersonDetails(
+  private val individualDetails = PersonName(
     "John",
-    None,
-    "Doe",
-    LocalDate.now()
+    "Doe"
   )
 
   private val userAnswers =
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
-      .flatMap(_.set(EstablisherDetailsId(1))(individualDetails))
+      .flatMap(_.set(EstablisherNameId(1))(individualDetails))
       .asOpt
       .value
 

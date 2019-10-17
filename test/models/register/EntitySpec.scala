@@ -19,7 +19,7 @@ package models.register
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -88,48 +88,9 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       partnershipEntity.index mustEqual 1
     }
 
-    "have correct edit link when company is incomplete" in {
+    "have no edit link" in {
       val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 1, None).url
-      partnershipEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have cya link when company is completed and new" in {
-      val completedCompanyEntity = EstablisherPartnershipEntity(
-        PartnershipDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = true,
-        isNewEntity = true,
-        1
-      )
-      val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 1, None).url
-      completedCompanyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have review link when company is completed and not new" in {
-      val completedPartnershipEntity = EstablisherPartnershipEntity(
-        PartnershipDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = true,
-        isNewEntity = false,
-        1
-      )
-      val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 1, None).url
-      completedPartnershipEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
-    }
-
-    "have review link when company is not completed and not new" in {
-      val completedPartnershipEntity = EstablisherPartnershipEntity(
-        PartnershipDetailsId(index = 1),
-        name = "test name",
-        isDeleted = false,
-        isCompleted = false,
-        isNewEntity = false,
-        1
-      )
-      val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(NormalMode, 1, None).url
-      completedPartnershipEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      partnershipEntity.editLink(NormalMode, None) mustBe None
     }
 
     "have correct delete link" in {
@@ -152,7 +113,7 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       companyEntity.index mustEqual 1
     }
 
-    "have correct edit link when company is incomplete" in {
+    "have no edit link" in {
       val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url
       companyEntity.editLink(NormalMode, None) mustBe None
     }
@@ -178,7 +139,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1, None).url
       individualEntity.editLink(NormalMode, None) mustBe None
     }
 

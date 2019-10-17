@@ -21,9 +21,8 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{Index, NormalMode, UniqueTaxReference}
-import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -51,7 +50,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
   )
 
   def controller(
-                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
                   dataCacheConnector: UserAnswersService = FakeUserAnswersService
                 ): PreviousAddressListController =
     new PreviousAddressListController(

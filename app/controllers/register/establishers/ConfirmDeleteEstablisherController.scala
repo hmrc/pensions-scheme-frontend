@@ -26,7 +26,7 @@ import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
@@ -107,17 +107,17 @@ class ConfirmDeleteEstablisherController @Inject()(
           case Company =>
             CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
               updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex,
-                Some(companyDetails), None, None, None, mode, srn)
+                Some(companyDetails), None, None, mode, srn)
             }
           case Indivdual =>
             EstablisherNameId(establisherIndex).retrieve.right.map { trusteeDetails =>
               updateEstablisherKind(trusteeDetails.fullName, establisherKind, establisherIndex,
-                None, None, Some(trusteeDetails), None, mode, srn)
+                None, Some(trusteeDetails), None, mode, srn)
             }
           case Partnership =>
             PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
               updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex,
-                None, None, None, Some(partnershipDetails), mode, srn)
+                None, None, Some(partnershipDetails), mode, srn)
             }
         }
     }
@@ -126,7 +126,6 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     establisherKind: EstablisherKind,
                                     establisherIndex: Index,
                                     companyDetails: Option[CompanyDetails],
-                                    establisherDetails: Option[PersonDetails],
                                     establisherName: Option[PersonName],
                                     partnershipDetails: Option[PartnershipDetails],
                                     mode: Mode,

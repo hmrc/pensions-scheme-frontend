@@ -20,10 +20,8 @@ import base.SpecBase
 import identifiers.{EstablishedCountryId, SchemeNameId, TypedIdentifier}
 import models._
 import models.address.Address
-import models.person.PersonDetails
 import models.register.DeclarationDormant
 import models.requests.DataRequest
-import org.joda.time.LocalDate
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json._
@@ -269,25 +267,6 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
       }
 
-      "personDetails" in {
-        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)), PsaId("A0000000"))
-
-        testIdentifier[PersonDetails].row(onwardUrl) must equal(Seq(
-          AnswerRow(
-            "messages__common__cya__name",
-            Seq(s"${personDetails.fullName}"),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName)))
-            )),
-          AnswerRow(
-            "messages__common__dob",
-            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
-            false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName))))
-          )))
-      }
-
       "Nino" when {
         "yes" in {
           val nino = Nino.Yes("AB700100A")
@@ -479,25 +458,6 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
 
         testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, None)))
-      }
-
-      "personDetails without change url" in {
-        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)), PsaId("A0000000"))
-
-        testIdentifier[PersonDetails].row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(
-            "messages__common__cya__name",
-            Seq(s"${personDetails.fullName}"),
-            false,
-            None
-          ),
-          AnswerRow(
-            "messages__common__dob",
-            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
-            false,
-            None
-          )))
       }
 
       "partnershipDetails without change url" in {

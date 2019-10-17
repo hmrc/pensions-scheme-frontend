@@ -20,9 +20,8 @@ import controllers.register.establishers.partnership.routes
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.NormalMode
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.PartnerEntity
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
@@ -34,8 +33,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val maxPartners = frontendAppConfig.maxPartners
 
   // scalastyle:off magic.number
-  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoe = PersonName("John", "Doe")
+  private val joeBloggs = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addPartners"

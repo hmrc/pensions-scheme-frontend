@@ -48,9 +48,9 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
   private val firstIndex = Index(0)
-  private val establisherName: String = "test first name test last name"
+  private val establisherName: String = "Test Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): PostCodeLookupController =
     new PostCodeLookupController(
       frontendAppConfig,
       messagesApi,

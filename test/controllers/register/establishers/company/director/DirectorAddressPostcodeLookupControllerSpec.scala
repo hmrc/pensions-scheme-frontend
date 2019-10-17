@@ -94,7 +94,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirectorWithDirectorName)
       )) { implicit app =>
 
         val request = addToken(FakeRequest(call)
@@ -131,7 +131,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirectorWithDirectorName),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
       )) { app =>

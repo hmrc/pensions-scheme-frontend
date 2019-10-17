@@ -20,10 +20,9 @@ import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers._
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.EstablisherNameId
 import models._
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
@@ -163,7 +162,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "return the link to add establisher page when establishers are added" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,

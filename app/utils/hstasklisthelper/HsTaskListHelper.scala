@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper
 
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{company => establisherCompany}
 import identifiers.register.trustees.MoreThanTenTrusteesId
@@ -148,7 +148,7 @@ abstract class HsTaskListHelper(answers: UserAnswers
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
-    case EstablisherDetailsId(_) | TrusteeNameId(_) => individualLinkText
+    case EstablisherNameId(_) | TrusteeNameId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 

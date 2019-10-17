@@ -19,15 +19,13 @@ package controllers.register.establishers.partnership.partner
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
@@ -36,6 +34,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -54,7 +53,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
 
-  private val partner = PersonDetails("first", None, "last", LocalDate.now())
+  private val partner = PersonName("first", "last")
 
   private val form = formProvider()
   private val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
@@ -80,7 +79,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherPartner)
+        bind[DataRetrievalAction].to(getMandatoryPartner)
       )) {
         implicit app =>
 
@@ -119,7 +118,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherPartner),
+        bind[DataRetrievalAction].to(getMandatoryPartner),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
       )) {

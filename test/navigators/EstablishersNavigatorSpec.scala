@@ -64,8 +64,6 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, None, 0)
 
-  private def individualDetails(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, 0, None)
-
   private def individualName(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, 0, None)
 
   private def partnershipDetails(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, None)

@@ -20,15 +20,11 @@ import controllers.register.establishers.company.{routes => establisherCompanyRo
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
-import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
-import models._
-import models.person.{PersonDetails, PersonName}
-import org.joda.time.LocalDate
+import models.person.PersonName
+import models.{person, _}
 import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
@@ -58,7 +54,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
             _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
               _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
                 _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-                  _.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).flatMap(
+                  _.set(EstablisherNameId(0))(person.PersonName("firstName", "lastName")).flatMap(
                     _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
                       _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
                   )
@@ -179,7 +175,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
     "return the link to add establisher page when establishers are added" in {
       val userAnswers = UserAnswers()
-        .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+        .set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.addEstablisherHeader(userAnswers, UpdateMode, srn).value mustBe
         SchemeDetailsTaskListHeader(None, Some(Link(viewEstablisherLinkText,
@@ -194,7 +190,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
     }
 
     "not display an add link when scheme is locked and establishers exist 2222" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
 
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = true, srn)
       helper.taskList.addEstablisherHeader mustBe None
@@ -339,55 +335,6 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
   }
 
   //scalastyle:off method.length
-  def establishersSection(): Unit = {
-
-    "return the seq of establishers sub sections for non deleted establishers which are all completed" in {
-      val userAnswers = allAnswers
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
-      helper.establishers(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-            controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
-            controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-
-    "return the seq of establishers sub sections for non deleted establishers which are not completed" in {
-      val userAnswers = allAnswersIncomplete
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
-      helper.establishers(userAnswers, UpdateMode, srn) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test company name"),
-            controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test individual name"),
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 1, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(
-            messages("messages__schemeTaskList__persons_details__link_text", "Test Partnership"),
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-
-    "return the seq of establishers sub sections after filtering out deleted establishers" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
-          _.set(IsEstablisherNewId(0))(true).flatMap(
-            _.set(EstablisherCompanyDetailsId(1))(CompanyDetails("test company", true)).flatMap(
-                _.set(IsEstablisherNewId(1))(true).flatMap(
-                  _.set(EstablisherPartnershipDetailsId(2))(PartnershipDetails("test partnership", false)).flatMap(
-                    _.set(IsEstablisherNewId(2))(true)))))).asOpt.value
-      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, Some("test-srn"))
-      helper.establishers(userAnswers, UpdateMode, srn) mustBe
-        Seq(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "firstName lastName"),
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(UpdateMode, 0, srn).url), None)), None),
-          SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(Link(messages("messages__schemeTaskList__persons_details__link_text", "test partnership"),
-            controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(UpdateMode, 2, srn).url), None)), None)
-        )
-    }
-  }
 }
 
 class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {

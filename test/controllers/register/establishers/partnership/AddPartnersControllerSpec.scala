@@ -20,13 +20,12 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.PartnerEntity
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -81,20 +80,20 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
   private val partnershipName = "MyCo Ltd"
 
   // scalastyle:off magic.number
-  private val johnDoeNonHns = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggsNonHns = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoeNonHns = PersonName("John", "Doe")
+  private val joeBloggsNonHns = PersonName("Joe", "Bloggs")
   private val johnDoe = PersonName("John", "Doe")
   private val joeBloggs = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   private val maxPartners = frontendAppConfig.maxPartners
 
-  private def validData(partners: PersonDetails*) = {
+  private def validData(partners: PersonName*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails(partnershipName, false),
-          "partner" -> partners.map(d => Json.obj(PartnerDetailsId.toString -> Json.toJson(d)))
+          "partner" -> partners.map(d => Json.obj(PartnerNameId.toString -> Json.toJson(d)))
         )
       )
     )

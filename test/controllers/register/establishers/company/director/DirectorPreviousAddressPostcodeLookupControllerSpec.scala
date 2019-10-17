@@ -80,7 +80,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[UserAnswersService].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirectorWithDirectorName)
       )) {
         implicit app =>
 
@@ -119,7 +119,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirectorWithDirectorName),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
       )) {

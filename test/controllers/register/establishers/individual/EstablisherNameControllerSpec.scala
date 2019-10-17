@@ -73,7 +73,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryEstablisher).build()
+      val app = applicationBuilder(getMandatoryEstablisherHns).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
@@ -81,7 +81,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
 
       status(result) mustBe OK
 
-      contentAsString(result) mustBe viewAsString(form.fill(PersonName("test first name", "test last name")))
+      contentAsString(result) mustBe viewAsString(form.fill(PersonName("Test", "Name")))
 
       app.stop()
     }

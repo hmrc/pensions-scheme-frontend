@@ -20,16 +20,13 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.routes._
 import forms.address.AddressFormProvider
 import identifiers.{AdviserAddressId, AdviserNameId}
 import models.NormalMode
 import models.address.Address
-import models.person.PersonDetails
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar

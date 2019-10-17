@@ -17,10 +17,10 @@
 package controllers
 
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.{SchemeNameId, TypedIdentifier}
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import play.api.libs.json.Reads

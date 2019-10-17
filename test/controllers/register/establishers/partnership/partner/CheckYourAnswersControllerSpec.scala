@@ -23,12 +23,11 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.checkMode
 import models.address.Address
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{Index, _}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
-import utils.checkyouranswers.Ops._
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.checkYourAnswers
@@ -55,35 +54,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       allowChangeHelper
     )
 
-
-  private def partnerDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
-    Some("messages__partner__cya__details_heading"),
-    Seq(
-      PartnerDetailsId(firstIndex, firstIndex).
-        row(routes.PartnerDetailsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
-      PartnerNinoId(firstIndex, firstIndex).
-        row(routes.PartnerNinoController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
-      PartnerUniqueTaxReferenceId(firstIndex, firstIndex).
-        row(routes.PartnerUniqueTaxReferenceController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url)
-    ).flatten
-  )
-
-  private def partnerContactDetails(mode: Mode, srn: Option[String] = None) = AnswerSection(
-    Some("messages__partner__cya__contact__details_heading"),
-    Seq(
-      PartnerAddressId(firstIndex, firstIndex).
-        row(routes.PartnerAddressController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
-      PartnerAddressYearsId(firstIndex, firstIndex).
-        row(routes.PartnerAddressYearsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
-      PartnerPreviousAddressId(firstIndex, firstIndex).
-        row(routes.PartnerPreviousAddressController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url),
-      PartnerContactDetailsId(firstIndex, firstIndex).
-        row(routes.PartnerContactDetailsController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url)
-    ).flatten
-  )
-
   private def viewAsString(mode: Mode = NormalMode,
-                           answerSection: Seq[AnswerSection] = Seq(partnerDetails(NormalMode), partnerContactDetails(NormalMode)),
+                           answerSection: Seq[AnswerSection] = Seq.empty,
                            srn: Option[String] = None) = checkYourAnswers(
     frontendAppConfig,
     answerSection,
@@ -150,7 +122,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
   private val partnerAnswersUpdate = UserAnswers()
-    .set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
+    .set(PartnerNameId(firstIndex, firstIndex))(PersonName("first name", "last name"))
     .asOpt.value
     .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
 

@@ -52,37 +52,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
       lazy val displayNewNino = !request.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
-
-      val partnerDetails = AnswerSection(
-        Some("messages__partner__cya__details_heading"),
-        Seq(
-          PartnerDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          mode match {
-            case UpdateMode| CheckUpdateMode if displayNewNino => PartnerNewNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-            case _ => PartnerNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-          },
-          PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
-            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-        ).flatten
-      )
-
-      val partnerContactDetails = AnswerSection(
-        Some("messages__partner__cya__contact__details_heading"),
-        Seq(
-          PartnerAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url),
-          PartnerAddressYearsId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          PartnerPreviousAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          PartnerContactDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerContactDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url)
-        ).flatten
-      )
-
       val answers = Seq(AnswerSection(
         None,
         Seq(

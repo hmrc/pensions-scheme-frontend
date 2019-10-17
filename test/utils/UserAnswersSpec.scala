@@ -20,7 +20,7 @@ import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
@@ -35,7 +35,6 @@ import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
@@ -83,8 +82,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       val json = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name 1", LocalDate.now),
+            EstablisherNameId.toString ->
+              PersonName("my", "name 1"),
             IsEstablisherNewId.toString -> true,
             EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
           ),
@@ -95,8 +94,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             EstablisherKindId.toString -> EstablisherKind.Company.toString
           ),
           Json.obj(
-            EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name 3", LocalDate.now),
+            EstablisherNameId.toString ->
+              PersonName("my", "name 3"),
             IsEstablisherNewId.toString -> true,
             EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
           ),
@@ -257,12 +256,12 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
               CompanyDetails("my company")
           ),
           Json.obj(
-            EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name", LocalDate.now, isDeleted = true)
+            EstablisherNameId.toString ->
+              PersonName("my", "name", isDeleted = true)
           ),
           Json.obj(
-            EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name", LocalDate.now)
+            EstablisherNameId.toString ->
+              PersonName("my", "name")
           )
         )
       )

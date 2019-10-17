@@ -20,14 +20,12 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
-import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
-import models.person.PersonDetails
 import models.register._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import utils.{CountryOptions, DateHelper, UserAnswers}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 import scala.language.implicitConversions
@@ -98,11 +96,6 @@ object CheckYourAnswers {
   implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = PayeCYA()()
 
   implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = VatCYA()()
-
-  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](
-                             implicit rds: Reads[PersonDetails],
-                             messages: Messages
-                            ): CheckYourAnswers[I] = PersonalDetailsCYA()()
 
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None,
                                                      displayAddLink: Boolean = false) {
@@ -211,35 +204,9 @@ object CheckYourAnswers {
     }
   }
 
-  case class PersonalDetailsCYA[I <: TypedIdentifier[PersonDetails]]() {
-
-    def apply()(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = {
-      new CheckYourAnswers[I] {
-
-        private def personDetailsCYARow(personDetails: PersonDetails, changeUrlName: Option[Link], changeUrlDob: Option[Link]): Seq[AnswerRow] = {
-          Seq(
-            AnswerRow("messages__common__cya__name", Seq(personDetails.fullName), answerIsMessageKey = false, changeUrlName),
-            AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(personDetails.date)), answerIsMessageKey = false, changeUrlDob)
-          )
-        }
-
-        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
-          personDetailsCYARow(personDetails,
-            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", personDetails.fullName).resolve))),
-            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__dob", personDetails.fullName).resolve)))
-          )
-        }.getOrElse(Seq.empty[AnswerRow])
-
-        override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { personDetails =>
-          personDetailsCYARow(personDetails, None, None)
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-    }
-  }
-
   case class PartnershipDetailsCYA[I <: TypedIdentifier[PartnershipDetails]]() {
 
-    def apply()(implicit rds: Reads[PersonDetails], messages: Messages): CheckYourAnswers[I] = {
+    def apply()(implicit rds: Reads[PartnershipDetails], messages: Messages): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
           Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,

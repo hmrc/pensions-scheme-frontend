@@ -35,7 +35,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
   def viewmodel = AlreadyDeletedViewModel(Message("messages__alreadyDeleted__director_title"), directorName, onwardRoute)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirector) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName) =
     new AlreadyDeletedController(
       frontendAppConfig,
       messagesApi,
