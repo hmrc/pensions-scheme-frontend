@@ -496,17 +496,12 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
   private val policyNumber = "Test policy number"
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
 
-  private val crn = CompanyRegistrationNumber.Yes("test-crn")
-  private val utr = UniqueTaxReference.Yes("test-utr")
-  private val nino = Nino.Yes("test-nino")
-
   private val newCrn = "test-crn"
   private val newUtr = "test-utr"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYears = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
-  private val contactDetails = ContactDetails("test@test.com", "1234")
 
   private val stringValue = "aa"
   private val firstName = "First"

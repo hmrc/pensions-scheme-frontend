@@ -155,14 +155,14 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing director details data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

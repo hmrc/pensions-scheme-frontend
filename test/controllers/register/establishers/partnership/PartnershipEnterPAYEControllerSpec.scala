@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.PayeVariationsFormProvider
+import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -71,7 +71,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEControllerSpec {
 
   val partnershipName = "test partnership name"
-  val form = new PayeVariationsFormProvider()(partnershipName)
+  val form = new PayeFormProvider()(partnershipName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 

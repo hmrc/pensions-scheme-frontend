@@ -31,7 +31,7 @@ case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends Ty
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) => userAnswers.remove(PartnerNoNINOReasonId(establisherIndex, partnerIndex))
-      case Some(false) => userAnswers.remove(PartnerNewNinoId(establisherIndex, partnerIndex))
+      case Some(false) => userAnswers.remove(PartnerEnterNINOId(establisherIndex, partnerIndex))
       case _ => super.cleanup(value, userAnswers)
     }
   }

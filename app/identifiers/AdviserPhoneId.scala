@@ -21,7 +21,7 @@ import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
 
-object AdviserPhoneNumberId extends TypedIdentifier[String] {
+object AdviserPhoneId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "adviserPhone"
 

@@ -18,11 +18,11 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController
+import controllers.register.establishers.partnership.partner.routes.PartnerEnterNINOController
 import forms.NINOFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNewNinoId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerEnterNINOId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -36,17 +36,17 @@ import views.html.nino
 
 //scalastyle:off magic.number
 
-class PartnerNinoNewControllerSpec extends ControllerSpecBase {
- import PartnerNinoNewControllerSpec._
+class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
+ import PartnerEnterNINOControllerSpec._
 
   private val form = formProvider(partnerName)
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerNinoNewController =
-    new PartnerNinoNewController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerEnterNINOController =
+    new PartnerEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   private def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
-      postCall = PartnerNinoNewController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
+      postCall = PartnerEnterNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
       title = Message("messages__enterNINO", Message("messages__thePartner").resolve),
       heading = messages("messages__enterNINO", partnerName),
       hint = messages("messages__common__nino_hint"),
@@ -117,14 +117,14 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing partner details data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -132,7 +132,7 @@ class PartnerNinoNewControllerSpec extends ControllerSpecBase {
   }
 }
 
-object PartnerNinoNewControllerSpec {
+object PartnerEnterNINOControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   val partnershipName = "test partnership name"
   val formProvider = new NINOFormProvider()
@@ -150,7 +150,7 @@ object PartnerNinoNewControllerSpec {
           Json.obj(
             PartnerNameId.toString ->
               PersonName("First Name", "Last Name"),
-            PartnerNewNinoId.toString ->Json.obj(
+            PartnerEnterNINOId.toString ->Json.obj(
               "value" -> "CS700100A"
             )
           )

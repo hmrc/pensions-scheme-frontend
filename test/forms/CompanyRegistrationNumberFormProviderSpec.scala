@@ -16,24 +16,25 @@
 
 package forms
 
-import forms.mappings.PayeMapping
-import javax.inject.Inject
+import base.SpecBase
+import forms.behaviours.CrnBehaviour
 import models.ReferenceValue
 import play.api.data.Form
-import play.api.data.Forms.mapping
-import play.api.i18n.Messages
 import viewmodels.Message
 
-class PayeVariationsFormProvider @Inject() extends PayeMapping {
+class CompanyRegistrationNumberFormProviderSpec extends CrnBehaviour with FormSpec with SpecBase{
 
-  def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
-    Form(
-      mapping(
-        "paye" -> payeStringMapping(
-          requiredPayeKey = "messages__enterPAYE__error_required",
-          payeLengthKey = Message("messages__enterPAYE__error_length", name),
-          invalidPayeKey = Message("messages__enterPAYE__error_invalid", name)
-        )
-      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
+  private val lengthKey = Message("messages__error__no_crn_length", "company name").resolve
+  private val requiredKey = "messages__error__company_number"
+  private val invalidKey = Message("messages__error__crn_invalid_with_company_name", "company name").resolve
+
+  "A form with a CRNNumber" should {
+    val testForm = new CompanyRegistrationNumberFormProvider().apply("company name")
+
+    behave like formWithCrnVariations(testForm: Form[ReferenceValue],
+      lengthKey: String,
+      requiredKey: String,
+      invalidKey: String
     )
+  }
 }

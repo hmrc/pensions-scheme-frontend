@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.PayeVariationsFormProvider
+import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -70,7 +70,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
 
 object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
-  val form = new PayeVariationsFormProvider()("test company name")
+  val form = new PayeFormProvider()("test company name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 

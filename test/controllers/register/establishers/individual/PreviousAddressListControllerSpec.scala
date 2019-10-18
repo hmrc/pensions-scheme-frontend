@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode, UniqueTaxReference}
+import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -90,8 +90,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       Json.obj(
         EstablisherNameId.toString ->
           PersonName("test first name", "test last name", false),
-        UniqueTaxReferenceId.toString ->
-          UniqueTaxReference.Yes("1234567891"),
+        EstablisherHasUTRId.toString -> true,
+        EstablisherUTRId.toString -> "1234567891",
         PreviousPostCodeLookupId.toString -> previousAddresses)
     ))
 

@@ -20,8 +20,8 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
-import controllers.register.CompanyRegistrationNumberVariationsBaseController
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import controllers.register.CompanyRegistrationNumberBaseController
+import forms.CompanyRegistrationNumberFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.CompanyEnterCRNId
 import models._
@@ -44,9 +44,9 @@ import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class CompanyRegistrationNumberBaseControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
-  import CompanyRegistrationNumberVariationsBaseControllerSpec._
+  import CompanyRegistrationNumberBaseControllerSpec._
 
   val postCall = routes.CompanyEmailController.onSubmit _
 
@@ -62,7 +62,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           implicit val materializer: Materializer = app.materializer
 
           val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
+          val formProvider = app.injector.instanceOf[CompanyRegistrationNumberFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestBaseController]
@@ -92,7 +92,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
           implicit val materializer: Materializer = app.materializer
 
           val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
+          val formProvider = app.injector.instanceOf[CompanyRegistrationNumberFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestBaseController]
@@ -151,7 +151,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
         implicit val materializer: Materializer = app.materializer
 
         val appConfig = app.injector.instanceOf[FrontendAppConfig]
-        val formProvider = app.injector.instanceOf[CompanyRegistrationNumberVariationsFormProvider]
+        val formProvider = app.injector.instanceOf[CompanyRegistrationNumberFormProvider]
         val controller = app.injector.instanceOf[TestBaseController]
         val request = FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "123456789012345"))
 
@@ -172,7 +172,7 @@ class CompanyRegistrationNumberVariationsBaseControllerSpec extends WordSpec wit
   }
 }
 
-object CompanyRegistrationNumberVariationsBaseControllerSpec {
+object CompanyRegistrationNumberBaseControllerSpec {
 
   val firstIndex = Index(0)
   val companyName = "test company name"
@@ -193,7 +193,7 @@ object CompanyRegistrationNumberVariationsBaseControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator
-                                )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
+                                )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberBaseController {
 
     def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEmailController.onSubmit _
 

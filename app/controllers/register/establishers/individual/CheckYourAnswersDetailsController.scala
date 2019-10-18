@@ -61,7 +61,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)++
           EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherUTRId(index).row(routes.EstablisherUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(

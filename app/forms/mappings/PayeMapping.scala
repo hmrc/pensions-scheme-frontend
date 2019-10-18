@@ -16,37 +16,13 @@
 
 package forms.mappings
 
-import models.Paye
-import play.api.data.Forms.tuple
 import play.api.data.Mapping
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 trait PayeMapping extends Mappings with Transforms {
 
-  def payeMapping(requiredKey: String = "messages__error__has_paye_establisher",
-                  requiredPayeKey: String = "messages__error__paye_required",
+  def payeMapping(requiredPayeKey: String = "messages__error__paye_required",
                   invalidPayeKey: String = "messages__error__paye_invalid",
                   payeLengthKey: String = "messages__error__paye_length"):
-  Mapping[Paye] = {
-
-    tuple("hasPaye" -> boolean(requiredKey),
-      "paye" -> mandatoryIfTrue(
-        "paye.hasPaye",
-        text(requiredPayeKey)
-          .transform(payeTransform, noTransform)
-          .verifying(
-            firstError(
-              maxLength(PayeMapping.maxPayeLength, payeLengthKey),
-              payeEmployerReferenceNumber(invalidPayeKey)
-            )
-          )
-      )
-    ).transform(toPaye, fromPaye)
-  }
-
-  def payeStringMapping(requiredPayeKey: String = "messages__error__paye_required",
-                        invalidPayeKey: String = "messages__error__paye_invalid",
-                        payeLengthKey: String = "messages__error__paye_length"):
   Mapping[String] = text(requiredPayeKey)
     .transform(payeTransform, noTransform)
     .verifying(
@@ -55,21 +31,6 @@ trait PayeMapping extends Mappings with Transforms {
         payeEmployerReferenceNumber(invalidPayeKey)
       )
     )
-
-  private[this] def fromPaye(paye: Paye): (Boolean, Option[String]) = {
-    paye match {
-      case Paye.Yes(payeNo) => (true, Some(payeNo))
-      case Paye.No => (false, None)
-    }
-  }
-
-  private[this] def toPaye(payeTuple: (Boolean, Option[String])): Paye = {
-    payeTuple match {
-      case (true, Some(paye)) => Paye.Yes(paye)
-      case (false, None) => Paye.No
-      case _ => throw new RuntimeException("Invalid selection")
-    }
-  }
 }
 
 object PayeMapping {

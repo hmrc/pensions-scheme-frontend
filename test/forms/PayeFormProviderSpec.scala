@@ -16,32 +16,31 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.PayeBehaviours
-import models.Paye
+import models.ReferenceValue
 import play.api.data.Form
+import viewmodels.Message
 
-class PayeFormProviderSpec extends PayeBehaviours {
+class PayeFormProviderSpec extends PayeBehaviours with SpecBase{
 
-  private val requiredKey = "messages__error__has_paye_establisher"
-  private val requiredPayeKey = "messages__error__paye_required"
-  private val payeLengthKey = "messages__error__paye_length"
-  private val invalidPayeKey = "messages__error__paye_invalid"
+  private val requiredPayeKey = "messages__enterPAYE__error_required"
+  private val payeLengthKey = Message("messages__enterPAYE__error_length", "test company").resolve
+  private val invalidPayeKey = Message("messages__enterPAYE__error_invalid", "test company").resolve
 
   "A form with Paye" should {
     val mapping = payeMapping(
-      requiredKey,
       requiredPayeKey,
       invalidPayeKey,
       payeLengthKey
     )
 
-    val testForm = new PayeFormProvider().apply()
+    val testForm = new PayeFormProvider().apply("test company")
 
-    behave like formWithPaye(
-      testForm: Form[Paye],
-      requiredKey: String,
+    behave like formWithPayeVariations(
+      testForm: Form[ReferenceValue],
       requiredPayeKey: String,
-      payeLengthKey: String
+      invalidPayeKey: String
     )
 
   }

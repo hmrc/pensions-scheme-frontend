@@ -124,7 +124,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val partnerAnswersUpdate = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(PersonName("first name", "last name"))
     .asOpt.value
-    .set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
+    .set(PartnerEnterNINOId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)
@@ -140,7 +140,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     .set(PartnerHasUTRId(firstIndex, firstIndex))(true)
     .flatMap(_.set(PartnerEnterUTRId(firstIndex, firstIndex))(ReferenceValue("utr")))
     .flatMap(_.set(PartnerHasNINOId(firstIndex, firstIndex))(true))
-    .flatMap(_.set(PartnerNewNinoId(firstIndex, firstIndex))(ReferenceValue("nino")))
+    .flatMap(_.set(PartnerEnterNINOId(firstIndex, firstIndex))(ReferenceValue("nino")))
     .asOpt.value
 
   private val partnerAnswersNo = partnerAnswers
@@ -152,7 +152,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   private def answerRowWithAddNino: AnswerRow = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
-      routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+      routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
       Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName)))))
 
   private def answerRowWithAddUtr: AnswerRow = AnswerRow(Message("messages__enterUTR", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
@@ -243,7 +243,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )))
 
   def ninoAnswerRow(mode: Mode, srn: Option[String]) = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("nino"), answerIsMessageKey = false, Some(
-    Link("site.change", routes.PartnerNinoNewController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url,
+    Link("site.change", routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url,
       Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName))
     )))
 

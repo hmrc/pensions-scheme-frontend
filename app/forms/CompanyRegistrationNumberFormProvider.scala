@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.partnership.partner
+package forms
 
-import forms.mappings.NinoMapping
+import forms.mappings.CrnMapping
 import javax.inject.Inject
-import models.Nino
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import play.api.i18n.Messages
+import viewmodels.Message
 
-class PartnerNinoFormProvider @Inject() extends NinoMapping {
+class CompanyRegistrationNumberFormProvider @Inject() extends CrnMapping {
 
-  def apply(): Form[Nino] = Form(
-    "nino" -> ninoMapping(
-      requiredKey = "messages__error__has_nino_partner",
-      requiredReasonKey = "messages__partner_no_nino"
+  def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
+    Form(
+      mapping(
+        "companyRegistrationNumber" -> crnMapping(
+          crnLengthKey = Message("messages__error__no_crn_length", name),
+          invalidCRNKey = Message("messages__error__crn_invalid_with_company_name", name).resolve
+        )
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
-  )
 }

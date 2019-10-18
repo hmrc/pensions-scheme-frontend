@@ -20,7 +20,7 @@ import base.CSRFRequest
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -81,7 +81,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers
 object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   val companyName = "test company name"
-  val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
+  val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 

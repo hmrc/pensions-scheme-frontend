@@ -18,13 +18,22 @@ package forms
 
 import forms.mappings.PayeMapping
 import javax.inject.Inject
-import models.Paye
+import models.ReferenceValue
 import play.api.data.Form
+import play.api.data.Forms.mapping
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class PayeFormProvider @Inject() extends PayeMapping {
 
-  def apply(requiredKeyMsg: String = "messages__error__has_paye_establisher"): Form[Paye] =
+  def apply(name: String)(implicit messages: Messages): Form[ReferenceValue] =
     Form(
-      "paye" -> payeMapping(requiredKey = requiredKeyMsg)
+      mapping(
+        "paye" -> payeMapping(
+          requiredPayeKey = "messages__enterPAYE__error_required",
+          payeLengthKey = Message("messages__enterPAYE__error_length", name),
+          invalidPayeKey = Message("messages__enterPAYE__error_invalid", name)
+        )
+      )(ReferenceValue.applyEditable)(ReferenceValue.unapplyEditable)
     )
 }

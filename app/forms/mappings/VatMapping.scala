@@ -16,36 +16,13 @@
 
 package forms.mappings
 
-import models.Vat
-import play.api.data.Forms.tuple
 import play.api.data.Mapping
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfTrue
 
 trait VatMapping extends Mappings with Transforms {
 
-  def vatMapping(requiredKey: String,
-                 vatLengthKey: String,
+  def vatMapping(vatLengthKey: String = "messages__error__vat_length",
                  requiredVatKey: String = "messages__error__vat_required",
                  invalidVatKey: String = "messages__error__vat_invalid"):
-  Mapping[Vat] = {
-
-    tuple("hasVat" -> boolean(requiredKey),
-      "vat" -> mandatoryIfTrue(
-        "vat.hasVat",
-        text(requiredVatKey)
-          .transform(vatRegistrationNumberTransform, noTransform)
-          .verifying(
-            firstError(
-              maxLength(VatMapping.maxVatLength, vatLengthKey),
-              vatRegistrationNumber(invalidVatKey))
-          )
-      )
-    ).transform(toVat, fromVat)
-  }
-
-  def vatStringMapping(vatLengthKey: String = "messages__error__vat_length",
-                       requiredVatKey: String = "messages__error__vat_required",
-                       invalidVatKey: String = "messages__error__vat_invalid"):
   Mapping[String] = text(requiredVatKey)
     .transform(vatRegistrationNumberTransform, noTransform)
     .verifying(
@@ -53,22 +30,6 @@ trait VatMapping extends Mappings with Transforms {
         maxLength(VatMapping.maxVatLength, vatLengthKey),
         vatRegistrationNumber(invalidVatKey))
     )
-
-  private[this] def fromVat(vat: Vat): (Boolean, Option[String]) = {
-    vat match {
-      case Vat.Yes(vatNo) => (true, Some(vatNo))
-      case Vat.No => (false, None)
-    }
-  }
-
-  private[this] def toVat(vatTuple: (Boolean, Option[String])) = {
-    vatTuple match {
-      case (true, Some(vat)) => Vat.Yes(vat)
-      case (false, None) => Vat.No
-      case _ => throw new RuntimeException("Invalid selection")
-    }
-  }
-
 }
 
 object VatMapping {

@@ -27,7 +27,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class PartnerNewNinoIdSpec extends SpecBase {
+class PartnerEnterNINOIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
@@ -41,14 +41,14 @@ class PartnerNewNinoIdSpec extends SpecBase {
 
     def answers: UserAnswers = UserAnswers().
       partnerName(firstIndex = 0, secondIndex = 0, partnerName)
-      .set(PartnerNewNinoId(0, 0))(ReferenceValue("nino")).asOpt.get
+      .set(PartnerEnterNINOId(0, 0))(ReferenceValue("nino")).asOpt.get
 
     "in normal mode" must {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
-        PartnerNewNinoId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnerEnterNINOId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -59,7 +59,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
 
-        PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnerEnterNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 
@@ -69,18 +69,18 @@ class PartnerNewNinoIdSpec extends SpecBase {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
 
-        PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
+        PartnerEnterNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", partnerName.fullName), List("nino"),false, None)
         ))
       }
 
       "return answers rows with change links if nino is available and editable" in {
         val answers = UserAnswers().partnerName(firstIndex = 0, secondIndex = 0, partnerName).
-          set(PartnerNewNinoId(0, 0))(ReferenceValue("nino", isEditable = true)).asOpt.get
+          set(PartnerEnterNINOId(0, 0))(ReferenceValue("nino", isEditable = true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
 
-        PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
+        PartnerEnterNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
@@ -88,7 +88,7 @@ class PartnerNewNinoIdSpec extends SpecBase {
           UserAnswers().partnerName(firstIndex = 0, secondIndex = 0, partnerName), PsaId("A0000000"))
 
 
-        PartnerNewNinoId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
+        PartnerEnterNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", partnerName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", partnerName.fullName)))))))
       }

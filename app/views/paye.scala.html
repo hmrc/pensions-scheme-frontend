@@ -20,10 +20,6 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@_options = @{
-        Paye.options
-}
-
 @main_template(
     title = viewmodel.title,
     appConfig = appConfig,
@@ -37,31 +33,16 @@
             messages(viewmodel.heading).toString
         )
 
-        @components.fieldSet(
-            field = form("paye.hasPaye"),
-            legend = viewmodel.title,
-            hint = viewmodel.hint,
-            hiddenLegend = true
-        ) {
-            @components.radio(
-                field = form("paye.hasPaye"),
-                label = _options.head.label,
-                value = _options.head.value,
-                dataTarget = _options.head.dataTarget
-            )
-
-            @components.input_text(
-                field = form("paye.paye"),
-                label = messages("messages__common__paye_label"),
-                groupClass = Some("js-hidden panel panel-border-narrow")
-            )
-
-            @components.radio(
-                field = form("paye.hasPaye"),
-                label = _options(1).label,
-                value = _options(1).value
-            )
+        @viewmodel.entityName.map{name =>
+            <p>@messages("messages__enterPAYE__p1", name)</p>
         }
+
+        @components.input_text(
+            field = form("paye"),
+            label = messages(viewmodel.title),
+            labelClass = Some("visually-hidden"),
+            hint = viewmodel.hint.map(hint => messages(hint))
+        )
 
         @components.submit_button("site.save_and_continue")
 

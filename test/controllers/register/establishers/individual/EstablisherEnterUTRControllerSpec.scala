@@ -41,11 +41,11 @@ class EstablisherUTRControllerSpec extends ControllerSpecBase with MustMatchers 
 
   import EstablisherUTRControllerSpec._
 
-  "EstablisherUTRController" must {
+  "EstablisherEnterUTRController" must {
 
     "render the view correctly on a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.EstablisherUTRController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
+        implicit app => addToken(FakeRequest(routes.EstablisherEnterUTRController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
@@ -55,7 +55,7 @@ class EstablisherUTRControllerSpec extends ControllerSpecBase with MustMatchers 
 
     "redirect to the next page on a POST request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.EstablisherUTRController.onSubmit(CheckUpdateMode, firstIndex, srn))
+        implicit app => addToken(FakeRequest(routes.EstablisherEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn))
           .withFormUrlEncodedBody(("utr", "1234567890"))),
         (_, result) => {
           status(result) mustBe SEE_OTHER
@@ -75,7 +75,7 @@ object EstablisherUTRControllerSpec extends EstablisherUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val viewModel = UTRViewModel(
-    routes.EstablisherUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.EstablisherEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
     heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),

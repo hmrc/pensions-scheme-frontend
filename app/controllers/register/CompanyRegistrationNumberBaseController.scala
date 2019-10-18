@@ -18,7 +18,7 @@ package controllers.register
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
@@ -34,7 +34,7 @@ import views.html.register.companyRegistrationNumberVariations
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CompanyRegistrationNumberVariationsBaseController extends FrontendController with Retrievals with I18nSupport {
+trait CompanyRegistrationNumberBaseController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -44,7 +44,7 @@ trait CompanyRegistrationNumberVariationsBaseController extends FrontendControll
 
   protected def form(name: String) = formProvider(name)
 
-  protected val formProvider: CompanyRegistrationNumberVariationsFormProvider = new CompanyRegistrationNumberVariationsFormProvider()
+  protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
 
   protected def navigator: Navigator
 

@@ -111,7 +111,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def utr(mode: Mode, srn: Option[String]) =
-    routes.EstablisherUTRController.onPageLoad(checkMode(mode), 0, srn).url
+    routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def noUtrReason(mode: Mode, srn: Option[String]) =
     routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url

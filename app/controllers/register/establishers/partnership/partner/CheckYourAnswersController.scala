@@ -64,8 +64,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           PartnerHasNINOId(establisherIndex, partnerIndex)
             .row(routes.PartnerHasNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
-          PartnerNewNinoId(establisherIndex, partnerIndex)
-            .row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+          PartnerEnterNINOId(establisherIndex, partnerIndex)
+            .row(routes.PartnerEnterNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
           PartnerNoNINOReasonId(establisherIndex, partnerIndex)
             .row(routes.PartnerNoNINOReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),

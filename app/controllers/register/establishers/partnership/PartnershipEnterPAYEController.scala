@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.PayeVariationsController
+import controllers.PayeController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import forms.PayeVariationsFormProvider
+import forms.PayeFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId}
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
@@ -42,8 +42,8 @@ class PartnershipEnterPAYEController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
-                                                     formProvider: PayeVariationsFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends PayeVariationsController with I18nSupport {
+                                                     formProvider: PayeFormProvider
+                                                   )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
   protected def form(partnershipName: String): Form[ReferenceValue] = formProvider(partnershipName)
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =

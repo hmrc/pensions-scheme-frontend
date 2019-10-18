@@ -21,7 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.register.adviser.AdviserPhoneFormProvider
-import identifiers.AdviserPhoneNumberId
+import identifiers.AdviserPhoneId
 import models.NormalMode
 import navigators.Navigator
 import play.api.data.Form
@@ -61,7 +61,7 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
     behave like controllerThatSavesUserAnswers(
       saveAction(this),
       postRequest,
-      AdviserPhoneNumberId,
+      AdviserPhoneId,
       phone
     )
   }

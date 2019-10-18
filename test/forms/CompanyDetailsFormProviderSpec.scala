@@ -16,13 +16,13 @@
 
 package forms
 
-import forms.behaviours.{PayeStringBehaviours, StringFieldBehaviours, VatBehavioursString}
+import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues with PayeStringBehaviours with VatBehavioursString {
+class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues {
 
   val form = new CompanyDetailsFormProvider()()
 

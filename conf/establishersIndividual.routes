@@ -41,12 +41,12 @@ POST        /:index/individual/change/have-unique-taxpayer-reference            
 GET         /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
 POST        /:index/individual/:mode/have-unique-taxpayer-reference/:srn                 controllers.register.establishers.individual.EstablisherHasUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
-GET         /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-POST        /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
-GET         /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
-POST        /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
+GET         /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherEnterUTRController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/enter-unique-taxpayer-reference                           controllers.register.establishers.individual.EstablisherEnterUTRController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherEnterUTRController.onPageLoad(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+POST        /:index/individual/change/enter-unique-taxpayer-reference                    controllers.register.establishers.individual.EstablisherEnterUTRController.onSubmit(mode: Mode = CheckMode,index:Index, srn: Option[String] = None)
+GET         /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherEnterUTRController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
+POST        /:index/individual/:mode/enter-unique-taxpayer-reference/:srn                controllers.register.establishers.individual.EstablisherEnterUTRController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
 GET         /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onPageLoad(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)
 POST        /:index/individual/reason-for-no-unique-taxpayer-reference                   controllers.register.establishers.individual.EstablisherNoUTRReasonController.onSubmit(mode: Mode = NormalMode,index:Index, srn: Option[String] = None)

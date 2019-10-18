@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.adviser.AdviserPhoneFormProvider
-import identifiers.{AdviserNameId, AdviserPhoneNumberId}
+import identifiers.{AdviserNameId, AdviserPhoneId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -51,7 +51,7 @@ class AdviserPhoneController @Inject()(
     implicit request =>
       val form = formProvider()
       AdviserNameId.retrieve.right.map { adviserName =>
-        val preparedForm = request.userAnswers.get(AdviserPhoneNumberId) match {
+        val preparedForm = request.userAnswers.get(AdviserPhoneId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
@@ -68,9 +68,9 @@ class AdviserPhoneController @Inject()(
           }
         },
         value =>
-          dataCacheConnector.save(request.externalId, AdviserPhoneNumberId, value).map {
+          dataCacheConnector.save(request.externalId, AdviserPhoneId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserPhoneNumberId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap)))
           }
       )
   }

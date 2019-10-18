@@ -17,9 +17,9 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.company.routes._
-@import models.{Mode,CompanyRegistrationNumber}
+@import models.Mode
 @import play.api.mvc.Call
-@import forms.CompanyRegistrationNumberVariationsFormProvider
+@import forms.CompanyRegistrationNumberFormProvider
 @import viewmodels.CompanyRegistrationNumberViewModel
 
 @(appConfig: FrontendAppConfig, viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)

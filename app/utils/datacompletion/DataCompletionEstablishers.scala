@@ -136,7 +136,7 @@ trait DataCompletionEstablishers extends DataCompletion {
   def isPartnerDetailsComplete(estIndex: Int, parIndex: Int): Option[Boolean] =
     isComplete(Seq(
       Some(get(PartnerDOBId(estIndex, parIndex)).isDefined),
-      isAnswerComplete(PartnerHasNINOId(estIndex, parIndex), PartnerNewNinoId(estIndex, parIndex), Some(PartnerNoNINOReasonId(estIndex, parIndex))),
+      isAnswerComplete(PartnerHasNINOId(estIndex, parIndex), PartnerEnterNINOId(estIndex, parIndex), Some(PartnerNoNINOReasonId(estIndex, parIndex))),
       isAnswerComplete(PartnerHasUTRId(estIndex, parIndex), PartnerEnterUTRId(estIndex, parIndex), Some(PartnerNoUTRReasonId(estIndex, parIndex)))
     ))
 

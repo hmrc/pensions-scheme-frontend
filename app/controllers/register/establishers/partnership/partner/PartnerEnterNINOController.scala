@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNewNinoId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerEnterNINOId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -31,7 +31,7 @@ import viewmodels.{Message, NinoViewModel}
 
 import scala.concurrent.ExecutionContext
 
-class PartnerNinoNewController @Inject()(
+class PartnerEnterNINOController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
@@ -43,7 +43,7 @@ class PartnerNinoNewController @Inject()(
                                           val formProvider: NINOFormProvider
                                         )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerNinoNewController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterNINOController.onSubmit _
 
   private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): NinoViewModel =
     NinoViewModel(
@@ -60,7 +60,7 @@ class PartnerNinoNewController @Inject()(
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           name =>
             get(
-              PartnerNewNinoId(establisherIndex, partnerIndex),
+              PartnerEnterNINOId(establisherIndex, partnerIndex),
               formProvider(name.fullName),
               viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
             )
@@ -73,7 +73,7 @@ class PartnerNinoNewController @Inject()(
       PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
         name =>
           post(
-            PartnerNewNinoId(establisherIndex, partnerIndex),
+            PartnerEnterNINOId(establisherIndex, partnerIndex),
             mode,
             formProvider(name.fullName),
             viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)

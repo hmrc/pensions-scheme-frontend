@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{Mode, Paye}
+import models.{Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,7 +28,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
 import viewmodels.PayeViewModel
-import views.html.paye
+import views.html.payeVariations
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,26 +42,26 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
 
   protected def navigator: Navigator
 
-  protected def get(id: TypedIdentifier[Paye], form: Form[Paye], viewmodel: PayeViewModel)
+  protected def get(id: TypedIdentifier[ReferenceValue], form: Form[ReferenceValue], viewmodel: PayeViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val filledForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(paye(appConfig, filledForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(payeVariations(appConfig, filledForm, viewmodel, existingSchemeName)))
   }
 
   protected def post(
-                      id: TypedIdentifier[Paye],
+                      id: TypedIdentifier[ReferenceValue],
                       mode: Mode,
-                      form: Form[Paye],
+                      form: Form[ReferenceValue],
                       viewmodel: PayeViewModel
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(paye(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(payeVariations(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       paye =>
-        userAnswersService.save(mode, viewmodel.srn, id, paye).map {
+        userAnswersService.save(mode, viewmodel.srn, id, paye.copy(isEditable = true)).map {
           answers =>
             Redirect(navigator.nextPage(id, mode, UserAnswers(answers), viewmodel.srn))
         }

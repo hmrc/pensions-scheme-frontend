@@ -16,7 +16,7 @@
 
 package views.register
 
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import models.{Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
@@ -28,7 +28,7 @@ class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
   val name = "test name"
   val messageKeyPrefix = "companyNumber__trustee"
   val index = Index(0)
-  val form = new CompanyRegistrationNumberVariationsFormProvider()(name)
+  val form = new CompanyRegistrationNumberFormProvider()(name)
   val submitUrl = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(NormalMode, index, None)
 
   def viewModel(name: String = name): CompanyRegistrationNumberViewModel = {
