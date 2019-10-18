@@ -30,7 +30,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import viewmodels.CompanyRegistrationNumberViewModel
-import views.html.register.companyRegistrationNumberVariations
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,7 +58,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendController with Re
     val preparedForm =
       request.userAnswers.get(identifier(index)).fold(form(companyName))(form(companyName).fill)
 
-    val view = companyRegistrationNumberVariations(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
+    val view = companyRegistrationNumber(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
 
     Future.successful(Ok(view))
   }
@@ -69,7 +69,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendController with Re
       (formWithErrors: Form[_]) =>
 
         Future.successful(BadRequest(
-          companyRegistrationNumberVariations(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
+          companyRegistrationNumber(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
 
       crnNumber => {
         userAnswersService.save(mode, srn, identifier(index), crnNumber.copy(isEditable = true)).map(cacheMap =>

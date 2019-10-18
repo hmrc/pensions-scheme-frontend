@@ -33,7 +33,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
-import views.html.payeVariations
+import views.html.paye
 
 import scala.concurrent.Future
 
@@ -48,7 +48,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
         implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

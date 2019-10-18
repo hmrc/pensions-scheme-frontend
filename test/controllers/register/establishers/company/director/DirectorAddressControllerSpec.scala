@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._

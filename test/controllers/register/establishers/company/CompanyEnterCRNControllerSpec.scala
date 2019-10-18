@@ -34,7 +34,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
-import views.html.register.companyRegistrationNumberVariations
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.Future
 
@@ -52,7 +52,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe
-            companyRegistrationNumberVariations(
+            companyRegistrationNumber(
               appConfig,
               viewModel(),
               form,

@@ -39,7 +39,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.PayeViewModel
-import views.html.payeVariations
+import views.html.paye
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -73,7 +73,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual payeVariations(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual paye(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -95,7 +95,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual payeVariations(
+          contentAsString(result) mustEqual paye(
             appConfig,
             formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             viewmodel,
@@ -150,7 +150,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual payeVariations(
+          contentAsString(result) mustEqual paye(
             appConfig,
             formProvider(companyName)(messages).bind(Map.empty[String, String]),
             viewmodel,

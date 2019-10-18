@@ -40,7 +40,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
-import views.html.register.companyRegistrationNumberVariations
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,7 +70,7 @@ class CompanyRegistrationNumberBaseControllerSpec extends WordSpec with MustMatc
           val postCall = routes.CompanyEmailController.onSubmit _
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual companyRegistrationNumberVariations(
+          contentAsString(result) mustEqual companyRegistrationNumber(
             appConfig,
             viewModel(),
             formProvider(companyName)(messages),
@@ -100,7 +100,7 @@ class CompanyRegistrationNumberBaseControllerSpec extends WordSpec with MustMatc
           val result = controller.onPageLoad(answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual companyRegistrationNumberVariations(
+          contentAsString(result) mustEqual companyRegistrationNumber(
             appConfig,
             viewModel(),
             formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
@@ -160,7 +160,7 @@ class CompanyRegistrationNumberBaseControllerSpec extends WordSpec with MustMatc
         val result = controller.onSubmit(UserAnswers(), request)
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual companyRegistrationNumberVariations(
+        contentAsString(result) mustEqual companyRegistrationNumber(
           appConfig,
           viewModel(),
           formProvider(companyName)(messages).bind(Map("companyRegistrationNumber" -> "123456789012345")),

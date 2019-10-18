@@ -22,10 +22,7 @@ import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.trustees
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId}
-import models.AddressYears.{OverAYear, UnderAYear}
+import identifiers.register.trustees.individual.TrusteeAddressId
 import models._
 import models.address.Address
 import models.requests.DataRequest
@@ -37,7 +34,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeDataRequest, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 

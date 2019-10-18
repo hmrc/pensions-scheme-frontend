@@ -18,13 +18,12 @@ package views
 
 import forms.PayeFormProvider
 import models.ReferenceValue
-import org.jsoup.Jsoup
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import viewmodels.{Message, PayeViewModel}
 import views.behaviours.QuestionViewBehaviours
-import views.html.payeVariations
+import views.html.paye
 
 class PayeViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
@@ -43,13 +42,13 @@ class PayeViewSpec extends QuestionViewBehaviours[ReferenceValue] {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    payeVariations(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    payeVariations(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    payeVariations(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
 
   "Paye view" when {
     "rendered" must {
