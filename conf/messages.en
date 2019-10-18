@@ -1546,8 +1546,8 @@ schemeType.checkYourAnswersLabel = What type of scheme is {0}?
 messages__visuallyhidden__schemeType = what type of scheme {0} is
 haveAnyTrustees.checkYourAnswersLabel = Does {0} have any trustees?
 messages__visuallyhidden__haveAnyTrustees = if {0} has any trustees
-schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
-messages__visuallyhidden__hns_schemeEstablishedCountry = the country {0} was established in
+schemeEstablishedCountry.checkYourAnswersLabel = Which country was {0} established in?
+messages__visuallyhidden__schemeEstablishedCountry = the country {0} was established in
 
 
 messages__bank_account_details__title = What are the scheme’s bank account details?
@@ -1559,10 +1559,10 @@ messages__bank_account_details__sort_code_hint = For example, 08 32 10
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
 
-uKBankAccount.hns_checkYourAnswersLabel = Does {0} have a UK bank account?
-messages__visuallyhidden__hns_uKBankAccount = whether {0} has a UK bank account
-uKBankDetails.hns_checkYourAnswersLabel = What are the bank account details for {0}?
-messages__visuallyhidden__hns_uKBankDetails = the bank account details for {0}
+uKBankAccount.checkYourAnswersLabel = Does {0} have a UK bank account?
+messages__visuallyhidden__uKBankAccount = whether {0} has a UK bank account
+uKBankDetails.checkYourAnswersLabel = What are the bank account details for {0}?
+messages__visuallyhidden__uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
 messages__detailsFor = {0}’s details

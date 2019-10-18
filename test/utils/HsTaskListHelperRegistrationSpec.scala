@@ -182,12 +182,12 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   }
 
   "establishers" must {
-    behave like establishersSectionHnS(NormalMode, None)
+    behave like establishersSection(NormalMode, None)
   }
 
   "trustees" must {
 
-    behave like trusteesSectionHnS(NormalMode, None)
+    behave like trusteesSection(NormalMode, None)
 
     "return the seq of trustees sub sections when all spokes are completed" in {
       val userAnswers = allAnswers

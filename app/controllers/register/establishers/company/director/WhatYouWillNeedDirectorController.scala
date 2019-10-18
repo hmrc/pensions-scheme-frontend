@@ -41,7 +41,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val directorIndex = request.userAnswers.allDirectorsHnS(establisherIndex).size
+      val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
       CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
         Future.successful(Ok(whatYouWillNeed(
           appConfig,

@@ -90,7 +90,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  def establishersSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+  def establishersSection(mode: Mode, srn: Option[String]): Unit = {
     def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
 
     "return the seq of establishers sub sections" in {
@@ -113,7 +113,7 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     }
   }
 
-  def trusteesSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+  def trusteesSection(mode: Mode, srn: Option[String]): Unit = {
     def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
 
     "return the seq of trustees sub sections when all spokes are uninitiated" in {

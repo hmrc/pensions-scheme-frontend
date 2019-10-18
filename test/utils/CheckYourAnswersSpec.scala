@@ -56,8 +56,8 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyCheck
           implicit val userAnswers = request.userAnswers
 
           EstablishedCountryId.row(onwardUrl) must equal(Seq(
-            AnswerRow(Message("schemeEstablishedCountry.hns_checkYourAnswersLabel", "Test Scheme Name"), Seq("Australia"), false,
-              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme Name")))))))
+            AnswerRow(Message("schemeEstablishedCountry.checkYourAnswersLabel", "Test Scheme Name"), Seq("Australia"), false,
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__schemeEstablishedCountry", "Test Scheme Name")))))))
         }
 
         "any id other than schemeEstablishedCountryId" in {

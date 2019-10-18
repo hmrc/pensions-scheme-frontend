@@ -88,21 +88,21 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     None,
     Seq(
       AnswerRow(
-        messages("uKBankAccount.hns_checkYourAnswersLabel", "Test Scheme Name"),
+        messages("uKBankAccount.checkYourAnswersLabel", "Test Scheme Name"),
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(Link("site.change", routes.UKBankAccountController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__hns_uKBankAccount", "Test Scheme Name"))))
+          Some(messages("messages__visuallyhidden__uKBankAccount", "Test Scheme Name"))))
       ),
       AnswerRow(
-        messages("uKBankDetails.hns_checkYourAnswersLabel", "Test Scheme Name"),
+        messages("uKBankDetails.checkYourAnswersLabel", "Test Scheme Name"),
         Seq(bankDetails.bankName,
           bankDetails.accountName,
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
           bankDetails.accountNumber),
         answerIsMessageKey = false,
         Some(Link("site.change", routes.BankAccountDetailsController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__hns_uKBankDetails", "Test Scheme Name"))))
+          Some(messages("messages__visuallyhidden__uKBankDetails", "Test Scheme Name"))))
       )
     )
   )

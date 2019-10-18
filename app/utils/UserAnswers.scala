@@ -229,8 +229,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     allEstablishers(mode).filterNot(_.isDeleted)
   }
 
-  def allDirectorsHnS(establisherIndex: Int): Seq[DirectorEntity] = {
-
+  def allDirectors(establisherIndex: Int): Seq[DirectorEntity] =
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
       details =>
         for ((director, directorIndex) <- details.zipWithIndex) yield {
@@ -246,16 +245,12 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           )
         }
     }.getOrElse(Seq.empty)
-  }
-
-  def allDirectors(establisherIndex: Int): Seq[DirectorEntity] =
-      allDirectorsHnS(establisherIndex)
 
   def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
       allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
-  def allPartnersHnS(establisherIndex: Int): Seq[PartnerEntity] = {
+  def allPartners(establisherIndex: Int): Seq[Partner[_]] =
     getAllRecursive[PersonName](PartnerNameId.collectionPath(establisherIndex)).map {
       details =>
         for ((partner, partnerIndex) <- details.zipWithIndex) yield {
@@ -271,10 +266,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           )
         }
     }.getOrElse(Seq.empty)
-  }
-
-  def allPartners(establisherIndex: Int): Seq[Partner[_]] =
-    allPartnersHnS(establisherIndex)
 
   def allPartnersAfterDelete(establisherIndex: Int): Seq[Partner[_]] = {
     allPartners(establisherIndex).filterNot(_.isDeleted)

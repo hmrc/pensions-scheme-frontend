@@ -219,7 +219,7 @@ object CheckYourAnswers {
     Some(Link("site.add", changeUrl, hiddenLabel))))
 }
 
-case class BankDetailsHnSCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
   def apply()(implicit rds: Reads[BankAccountDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {

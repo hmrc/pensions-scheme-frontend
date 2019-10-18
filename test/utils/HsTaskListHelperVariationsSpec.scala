@@ -222,12 +222,12 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
   "establishers" must {
 
-    behave like establishersSectionHnS(UpdateMode, srn)
+    behave like establishersSection(UpdateMode, srn)
   }
 
   "trustees" must {
 
-    behave like trusteesSectionHnS(UpdateMode, srn)
+    behave like trusteesSection(UpdateMode, srn)
 
     "return the seq of trustees sub sections when all spokes are completed" in {
       val userAnswers = allAnswers
@@ -263,7 +263,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
     }
   }
 
-  override def establishersSectionHnS(mode: Mode, srn: Option[String]): Unit = {
+  override def establishersSection(mode: Mode, srn: Option[String]): Unit = {
 
     def dynamicContentForChangeLink(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
     messages(if(srn.isDefined) variationsKey else registrationKey, name)
