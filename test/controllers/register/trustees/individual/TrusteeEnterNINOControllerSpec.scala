@@ -79,7 +79,7 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   }
 
   "redirect to Session Expired for a POST if no existing data is found" in {
-    val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Nino.options.head.value))
+    val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "CS700100A"))
     val result      = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

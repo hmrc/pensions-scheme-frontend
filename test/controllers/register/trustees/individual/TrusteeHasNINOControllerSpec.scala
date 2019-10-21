@@ -32,7 +32,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.{FakeNavigator, UserAnswers}
-import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -44,7 +43,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
   "TrusteeHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryTrustee).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
@@ -60,7 +59,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET where question already answered" in {
       val trusteeDataWithNinoAnswer = new FakeDataRetrievalAction(Some(validTrusteeData("hasNino" -> false)))
 
-      val app = applicationBuilder(trusteeDataWithNinoAnswer, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(trusteeDataWithNinoAnswer).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
@@ -74,7 +73,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted for true" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false)
+      val app = applicationBuilder(getMandatoryTrustee)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -99,7 +98,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryTrustee, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryTrustee).build()
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 

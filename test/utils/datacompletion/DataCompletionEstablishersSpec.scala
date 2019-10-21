@@ -84,13 +84,13 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
       }
     }
 
-    "isDirectorCompleteHnS" must {
+    "isDirectorComplete" must {
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isDirectorCompleteHnS(0, 0) mustBe true
+        UserAnswers(userAnswersCompleted).isDirectorComplete(0, 0) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isDirectorCompleteHnS(0, 0) mustBe false
+        UserAnswers(userAnswersInProgress).isDirectorComplete(0, 0) mustBe false
       }
     }
   }
@@ -138,34 +138,19 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
       }
     }
 
-    "isEstablisherPartnershipComplete with hns toggle on" must {
+    "isEstablisherPartnershipComplete" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, true) mustBe false
+        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isEstablisherPartnershipComplete(2, true) mustBe true
+        UserAnswers(userAnswersCompleted).isEstablisherPartnershipComplete(2) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, true) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2) mustBe false
       }
     }
-
-    "isEstablisherPartnershipComplete with hns toggle off" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isEstablisherPartnershipComplete(2, false) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isEstablisherPartnershipComplete(2, false) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherPartnershipComplete(2, false) mustBe false
-      }
-    }
-
   }
 
   "Establisher Partner completion status should be returned correctly" when {
@@ -183,57 +168,43 @@ class DataCompletionEstablishersSpec extends WordSpec with MustMatchers with Opt
       }
     }
 
-    "isEstablisherPartnerCompleteHnS" must {
+    "isPartnerComplete" must {
       "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isPartnerCompleteHnS(2, 0) mustBe false
+        UserAnswers(userAnswersUninitiated).isPartnerComplete(2, 0) mustBe false
       }
 
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isPartnerCompleteHnS(2, 0) mustBe true
+        UserAnswers(userAnswersCompleted).isPartnerComplete(2, 0) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isPartnerCompleteHnS(2, 0) mustBe false
+        UserAnswers(userAnswersInProgress).isPartnerComplete(2, 0) mustBe false
       }
     }
 
-    "isEstablisherPartnerCompleteNonHnS" must {
-      "return false when all answers are missing" in {
-        UserAnswers(userAnswersUninitiated).isPartnerCompleteNonHnS(2, 0) mustBe false
-      }
-
-      "return true when all answers are present" in {
-        UserAnswers(userAnswersCompletedNonHnS).isPartnerCompleteNonHnS(2, 0) mustBe true
-      }
-
-      "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isPartnerCompleteNonHnS(2, 0) mustBe false
-      }
-    }
-
-      "isEstablisherPartnershipAndPartnerComplete for toggle on" must {
+      "isEstablisherPartnershipAndPartnerComplete" must {
         "return false when all answers are missing" in {
-          UserAnswers(userAnswersUninitiated).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe false
+          UserAnswers(userAnswersUninitiated).isEstablisherPartnershipAndPartnersComplete(2) mustBe false
         }
 
         "return true when all answers are present" in {
-          UserAnswers(userAnswersCompleted).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe true
+          UserAnswers(userAnswersCompleted).isEstablisherPartnershipAndPartnersComplete(2) mustBe true
         }
 
         "return false when some answer is missing" in {
-          UserAnswers(userAnswersInProgress).isEstablisherPartnershipAndPartnersComplete(2, true) mustBe false
+          UserAnswers(userAnswersInProgress).isEstablisherPartnershipAndPartnersComplete(2) mustBe false
         }
     }
   }
 
   "Establisher Individual completion status should be returned correctly" when {
-    "isEstablisherIndividualComplete H&S enabled" must {
+    "isEstablisherIndividualComplete" must {
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isEstablisherIndividualComplete(isHnSEnabled = true, 1) mustBe true
+        UserAnswers(userAnswersCompleted).isEstablisherIndividualComplete(1) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isEstablisherIndividualComplete(isHnSEnabled = true, 1) mustBe false
+        UserAnswers(userAnswersInProgress).isEstablisherIndividualComplete(1) mustBe false
       }
     }
 
@@ -286,8 +257,6 @@ object DataCompletionEstablishersSpec extends JsonFileReader with DataCompletion
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
-
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payloadNonHns.json")
 
   private val emptyAnswers = UserAnswers()
 }

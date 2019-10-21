@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator

@@ -47,7 +47,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(NormalMode, index, None)),
         row(EstablisherEnterNINOId(index))(someRefValue, EstablisherHasUTRController.onPageLoad(NormalMode, index, None)),
         row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(NormalMode, index, None)),
-        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(NormalMode, index, None)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(NormalMode, index, None)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(NormalMode, index, None)),
         row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(NormalMode), index, None)),
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(NormalMode), index, None))
@@ -65,7 +65,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherEnterNINOId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckMode), index, None)),
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckMode, index, None)),
         row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckMode), index, None)),
-        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(CheckMode, index, None)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(CheckMode, index, None)),
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckMode), index, None)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckMode, index, None)),
         row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckMode), index, None))
@@ -84,7 +84,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherEnterNINOId(index))(someRefValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers))
@@ -103,7 +103,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
         row(EstablisherEnterNINOId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(true, EstablisherUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
         row(EstablisherUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
         row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),

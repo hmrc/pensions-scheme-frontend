@@ -88,7 +88,7 @@ object EstablishersIndividualDetailsNavigator {
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoNINOReasonController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherUTRController.onPageLoad(mode, index, srn)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterUTRController.onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoUTRReasonController.onPageLoad(mode, index, srn)
 }

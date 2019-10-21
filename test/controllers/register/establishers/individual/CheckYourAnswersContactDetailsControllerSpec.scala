@@ -19,24 +19,17 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
+import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.checkYourAnswers
-import play.api.inject.bind
-import play.api.mvc.Call
-import play.api.test.Helpers._
-import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
 
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -89,7 +82,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)

@@ -16,8 +16,7 @@
 
 package utils.hstasklisthelper
 
-import config.FeatureSwitchManagementService
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{company => establisherCompany}
 import identifiers.register.trustees.MoreThanTenTrusteesId
@@ -29,18 +28,15 @@ import models._
 import models.register.SchemeType.{MasterTrust, SingleTrust}
 import models.register.{Entity, SchemeType}
 import play.api.i18n.Messages
-import utils.{Enumerable, Toggles, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper(answers: UserAnswers,
-                                featureSwitchManagementService: FeatureSwitchManagementService
+abstract class HsTaskListHelper(answers: UserAnswers
                                )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
   protected val schemeName: String = answers.get(SchemeNameId).getOrElse("")
-  protected def isHnSPhase2Enabled: Boolean = featureSwitchManagementService.get(Toggles.isHnSEnabled)
 
   protected val beforeYouStartLinkText: String
-
 
   protected lazy val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
   protected lazy val aboutMembersViewLinkText: String = messages("messages__schemeTaskList__about_members_link_text_view", schemeName)
@@ -152,7 +148,7 @@ abstract class HsTaskListHelper(answers: UserAnswers,
 
   protected def linkText(item: Entity[_]): String = item.id match {
     case establisherCompany.CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
-    case EstablisherDetailsId(_) | TrusteeNameId(_) => individualLinkText
+    case EstablisherNameId(_) | TrusteeNameId(_) => individualLinkText
     case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
   }
 
@@ -161,12 +157,12 @@ abstract class HsTaskListHelper(answers: UserAnswers,
   }
 
   protected def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean = {
-    userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode).nonEmpty &&
-      userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode).forall(_.isCompleted)
+    userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
+      userAnswers.allEstablishersAfterDelete(mode).forall(_.isCompleted)
   }
 
   protected[utils] def establishers(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allEstablishers(isHnSPhase2Enabled, mode)
+    val sections = userAnswers.allEstablishers(mode)
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
         section.id match {
@@ -177,14 +173,14 @@ abstract class HsTaskListHelper(answers: UserAnswers,
               Some(section.name))
             )
 
-          case EstablisherNameId(_) if featureSwitchManagementService.get(Toggles.isHnSEnabled) =>
+          case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
               Some(section.name))
             )
 
-          case EstablisherPartnershipDetailsId(_) if featureSwitchManagementService.get(Toggles.isHnSEnabled) =>
+          case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
               getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, section.index),

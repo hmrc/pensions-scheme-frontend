@@ -19,9 +19,9 @@ package models.register
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -74,32 +74,6 @@ case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
 
 sealed trait Partner[T] extends Entity[T]
 
-case class PartnerEntityNonHnS(id: PartnerDetailsId, name: String, isDeleted: Boolean,
-                               isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-    case (_, true) => Some(controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-    case (_, false) => Some(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
-      mode, id.establisherIndex, id.partnerIndex, srn).url)
-  }
-
-  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
-    mode match {
-      case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
-          mode, id.establisherIndex, id.partnerIndex, srn).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(
-          mode, id.establisherIndex, id.partnerIndex, srn).url)
-      case _ => None
-    }
-  }
-
-  override def index: Int = id.partnerIndex
-}
-
 case class PartnerEntity(id: PartnerNameId, name: String, isDeleted: Boolean,
                                isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Partner[PartnerNameId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
@@ -145,27 +119,6 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def index: Int = id.index
 }
 
-case class EstablisherIndividualEntityNonHnS(id: EstablisherDetailsId, name: String, isDeleted: Boolean,
-                                             isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(mode, id.index, srn).url)
-    case (_, false) => Some(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(mode, id.index, srn).url)
-  }
-
-  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
-    mode match {
-      case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index, EstablisherKind.Indivdual, srn).url)
-      case _ => None
-    }
-  }
-
-  override def index: Int = id.index
-}
-
 case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDeleted: Boolean,
                                        isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[EstablisherNameId] {
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
@@ -185,11 +138,7 @@ case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDe
 
 case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, isDeleted: Boolean,
                                         isCompleted: Boolean, isNewEntity: Boolean, noOfRecords : Int) extends Establisher[PartnershipDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, index, srn).url)
-    case (_, true) => Some(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(mode, id.index, srn).url)
-    case (_, false) => Some(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, id.index, srn).url)
-  }
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {

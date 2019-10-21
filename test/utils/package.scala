@@ -346,11 +346,11 @@ package object utils {
     }
 
     def adviserPhone(phone: String): UserAnswers = {
-      answers.set(AdviserPhoneNumberId)(phone).asOpt.value
+      answers.set(AdviserPhoneId)(phone).asOpt.value
     }
 
     def workingKnowledgePersonPhone(phone: String): UserAnswers = {
-      answers.set(identifiers.AdviserPhoneNumberId)(phone).asOpt.value
+      answers.set(identifiers.AdviserPhoneId)(phone).asOpt.value
     }
 
     def adviserName(name: String): UserAnswers = {

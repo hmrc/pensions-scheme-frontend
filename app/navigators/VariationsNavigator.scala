@@ -17,16 +17,14 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
 import models.UpdateMode
 import utils.Enumerable
-import utils.{Enumerable, Toggles}
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                    config: FrontendAppConfig,
-                                    fs: FeatureSwitchManagementService)extends AbstractNavigator with Enumerable.Implicits {
+                                    config: FrontendAppConfig)extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 
@@ -37,7 +35,7 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
         case Some(true) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
         case Some(false) =>
-          if(from.userAnswers.areVariationChangesCompleted(fs.get(Toggles.isHnSEnabled)))
+          if(from.userAnswers.areVariationChangesCompleted)
             NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))
           else
             NavigateTo.dontSave(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn))

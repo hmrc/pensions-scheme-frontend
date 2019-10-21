@@ -16,7 +16,6 @@
 
 package utils.hstasklisthelper
 
-import config.FeatureSwitchManagementService
 import identifiers._
 import models.register.Entity
 import models.{Link, Mode, NormalMode}
@@ -24,9 +23,8 @@ import play.api.i18n.Messages
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration(answers: UserAnswers,
-                                   featureSwitchManagementService: FeatureSwitchManagementService
-                                  )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
+class HsTaskListHelperRegistration(answers: UserAnswers
+                                  )(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
 
   override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__before_you_start_link_text", schemeName)
@@ -114,10 +112,10 @@ class HsTaskListHelperRegistration(answers: UserAnswers,
   }
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
-    if (userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode).isEmpty) {
+    if (userAnswers.allEstablishersAfterDelete(mode).isEmpty) {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
-          userAnswers.allEstablishers(isHnSPhase2Enabled, mode).size, srn).url)), None))
+          userAnswers.allEstablishers(mode).size, srn).url)), None))
     } else {
       Some(SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
         controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)), None))

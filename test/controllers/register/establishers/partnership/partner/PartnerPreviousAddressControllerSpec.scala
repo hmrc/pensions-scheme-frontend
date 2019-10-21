@@ -24,12 +24,11 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressId}
 import models.address.Address
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -41,16 +40,16 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
+import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-import viewmodels.Message
 
 class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
 
-  val partnerDetails = PersonDetails("first", None, "last", LocalDate.now())
+  val partnerDetails = PersonName("first", "last")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -64,7 +63,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj("partner" -> Json.arr(
-        Json.obj(PartnerDetailsId.toString -> partnerDetails)
+        Json.obj(PartnerNameId.toString -> partnerDetails)
       )
       )))))
 
@@ -115,7 +114,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       "saves partner address" in {
 
         val onwardCall = controllers.register.establishers.partnership.partner.routes.
-          PartnerContactDetailsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+          PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),

@@ -21,15 +21,14 @@ import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.{AddressYears, Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -56,8 +55,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      new FakeFeatureSwitchManagementService(false)
+      new DataRequiredActionImpl
     )
 
   private def viewAsString(form: Form[_] = form) =

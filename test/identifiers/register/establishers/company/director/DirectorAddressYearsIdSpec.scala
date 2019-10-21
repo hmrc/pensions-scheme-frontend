@@ -27,7 +27,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.AnswerRow
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {

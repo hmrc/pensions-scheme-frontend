@@ -20,14 +20,13 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -64,7 +63,7 @@ class AlreadyDeletedController @Inject()(
   private def establisherName(index: Index, establisherKind: EstablisherKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     establisherKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
-      case Indivdual => EstablisherDetailsId(index).retrieve.right.map(_.fullName)
+      case Indivdual => EstablisherNameId(index).retrieve.right.map(_.fullName)
       case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
     }
   }

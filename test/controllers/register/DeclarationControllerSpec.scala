@@ -23,12 +23,11 @@ import forms.register.DeclarationFormProvider
 import identifiers.SchemeTypeId
 import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.person.PersonDetails
+import models.person.PersonName
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
-import org.joda.time.LocalDate
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -39,7 +38,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -205,8 +204,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       applicationCrypto,
-      fakePensionAdminstratorConnector,
-      new FakeFeatureSwitchManagementService(true)
+      fakePensionAdminstratorConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
@@ -285,7 +283,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     def individualEstablisher(): UserAnswers = {
-      answers.set(EstablisherDetailsId(0))(PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())).asOpt.value
+      answers.set(EstablisherNameId(0))(PersonName("test-first-name", "test-last-name")).asOpt.value
     }
 
     def dormantCompany(dormant: Boolean, index: Int): UserAnswers = {

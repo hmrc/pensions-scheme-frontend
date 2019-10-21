@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerNameId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator

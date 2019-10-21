@@ -22,10 +22,7 @@ import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
 import identifiers.register.trustees
-import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TruesteeCompanyAddressYearsId, CompanyPreviousAddressId => TruesteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId}
-import models.AddressYears.{OverAYear, UnderAYear}
+import identifiers.register.trustees.individual.TrusteeAddressId
 import models._
 import models.address.Address
 import models.requests.DataRequest
@@ -37,7 +34,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeDataRequest, FakeFeatureSwitchManagementService, UserAnswers}
+import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
@@ -303,8 +300,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                               override val lockConnector: PensionSchemeVarianceLockConnector,
                               override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                              override val appConfig: FrontendAppConfig,
-                              override val fs: FakeFeatureSwitchManagementService
+                              override val appConfig: FrontendAppConfig
                              ) extends UserAnswersService
 
   class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
@@ -312,7 +308,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                             override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig, new FakeFeatureSwitchManagementService(false))
+  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
 
 
@@ -321,7 +317,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig, new FakeFeatureSwitchManagementService(false))
+  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
   protected val subscriptionConnector: UserAnswersCacheConnector = mock[SubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
@@ -329,7 +325,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   protected lazy val testServiceNotAnnotated: UserAnswersService = new TestServiceNotAnnotated(subscriptionConnector,
-    updateConnector, lockConnector, viewConnector, frontendAppConfig, new FakeFeatureSwitchManagementService(false))
+    updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
   protected lazy val testServiceEstAndTrustees = new TestServiceEstAndTrustees(subscriptionConnector,
     updateConnector, lockConnector, viewConnector, frontendAppConfig)

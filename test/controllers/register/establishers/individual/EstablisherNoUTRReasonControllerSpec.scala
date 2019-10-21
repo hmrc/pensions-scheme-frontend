@@ -57,7 +57,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
   "EstablisherNoUTRReasonController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getMandatoryEstablisherIndividual, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryEstablisherIndividual).build()
 
       val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
 
@@ -73,7 +73,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
     "return OK and the correct view for a GET where valid reason given" in {
       val establisherDataWithNoUTRReasonAnswer = new FakeDataRetrievalAction(Some(validEstablisherIndividualData("noUtrReason" -> "blah")))
 
-      val app = applicationBuilder(establisherDataWithNoUTRReasonAnswer, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(establisherDataWithNoUTRReasonAnswer).build()
 
       val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
 
@@ -87,7 +87,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val app = applicationBuilder(getMandatoryEstablisherIndividual, featureSwitchEnabled = false)
+      val app = applicationBuilder(getMandatoryEstablisherIndividual)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -118,7 +118,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
     }
 
     "return a Bad Request when invalid data is submitted" in {
-      val app = applicationBuilder(getMandatoryEstablisherIndividual, featureSwitchEnabled = false).build()
+      val app = applicationBuilder(getMandatoryEstablisherIndividual).build()
 
       val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
 

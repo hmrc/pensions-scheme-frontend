@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import config.FeatureSwitchManagementService
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -39,7 +38,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -119,8 +118,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).toInstance(fakeNavigator),
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[PostCodeLookupFormProvider].to(formProvider),
-      bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(false))
+      bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
       app =>
         val req = request(app)

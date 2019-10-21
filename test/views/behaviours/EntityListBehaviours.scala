@@ -124,7 +124,7 @@ trait EntityListBehaviours {
       }
     }
 
-    "not display the status and edit link if hnsEnabled is true" in {
+    "not display the status and edit link" in {
       val doc = asDocument(view())
       doc mustNot haveDynamicText("site.complete")
       doc mustNot haveDynamicText("site.incomplete")

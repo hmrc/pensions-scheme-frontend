@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider

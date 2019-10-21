@@ -31,7 +31,7 @@ case class PartnerNameId(establisherIndex: Int, partnerIndex: Int) extends Typed
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
 
   override def cleanup(value: Option[PersonName], userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.allPartnersAfterDelete(this.establisherIndex, true).lengthCompare(10) match {
+    userAnswers.allPartnersAfterDelete(this.establisherIndex).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(OtherPartnersId(this.establisherIndex))
       case _ => super.cleanup(value, userAnswers)
     }

@@ -19,7 +19,7 @@ package identifiers
 import models.BankAccountDetails
 import play.api.i18n.Messages
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{BankDetailsHnSCYA, CheckYourAnswers}
+import utils.checkyouranswers.{BankDetailsCYA, CheckYourAnswers}
 
 case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
   self =>
@@ -27,8 +27,8 @@ case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
-    BankDetailsHnSCYA[self.type](
-      label = Some(messages("uKBankDetails.hns_checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__hns_uKBankDetails", userAnswers.get(SchemeNameId).getOrElse("")))
+    BankDetailsCYA[self.type](
+      label = Some(messages("uKBankDetails.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId).getOrElse("")))
     )()
 }

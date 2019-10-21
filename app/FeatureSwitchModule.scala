@@ -15,10 +15,8 @@
  */
 
 import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceProductionImpl, FeatureSwitchManagementServiceTestImpl}
-import navigators._
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
-import utils.annotations.{TrusteesCompany, TrusteesIndividual}
 
 class FeatureSwitchModule extends Module {
 

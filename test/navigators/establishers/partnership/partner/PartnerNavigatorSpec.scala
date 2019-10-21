@@ -17,8 +17,7 @@
 package navigators.establishers.partnership.partner
 
 import base.SpecBase
-import controllers.register.establishers.partnership.partner.routes.{CheckYourAnswersController, PartnerAddressController, PartnerAddressListController, PartnerAddressPostcodeLookupController, PartnerAddressYearsController, PartnerConfirmPreviousAddressController, PartnerDOBController, PartnerEmailController, PartnerEnterUTRController, PartnerHasNINOController, PartnerHasUTRController, PartnerNinoNewController, PartnerNoNINOReasonController, PartnerNoUTRReasonController, PartnerPhoneController, PartnerPreviousAddressController, PartnerPreviousAddressListController, PartnerPreviousAddressPostcodeLookupController}
-import controllers.routes.AnyMoreChangesController
+import controllers.register.establishers.partnership.partner.routes._
 import generators.Generators
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
@@ -26,7 +25,7 @@ import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import navigators.{Navigator, NavigatorBehaviour}
 import org.joda.time.LocalDate
 import org.scalatest.MustMatchers
@@ -52,7 +51,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(NormalMode, None)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(NormalMode, None)),
         row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(NormalMode, None)),
-        row(PartnerNewNinoId(index, index))(someRefValue, hasUtrPage(NormalMode, None)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(NormalMode, None)),
         row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(NormalMode, None)),
         row(PartnerHasUTRId(index, index))(true, utrPage(NormalMode, None)),
         row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(NormalMode, None)),
@@ -83,7 +82,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, None)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, None)),
         row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, None)),
-        row(PartnerNewNinoId(index, index))(someRefValue, cyaPage(CheckMode, None)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, None)),
         row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
         row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, None)),
         row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, None)),
@@ -111,7 +110,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(UpdateMode, srn)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(UpdateMode, srn)),
         row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(UpdateMode, srn)),
-        row(PartnerNewNinoId(index, index))(someRefValue, hasUtrPage(UpdateMode, srn)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(UpdateMode, srn)),
         row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(UpdateMode, srn)),
         row(PartnerHasUTRId(index, index))(true, utrPage(UpdateMode, srn)),
         row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(UpdateMode, srn)),
@@ -142,8 +141,8 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
         row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerHasNINOId(index, index))(true, ninoPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerNewNinoId(index, index))(someRefValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerNewNinoId(index, index))(someRefValue, anyMoreChangesPage(srn)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, anyMoreChangesPage(srn)),
         row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerHasUTRId(index, index))(true, utrPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
         row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
@@ -208,7 +207,7 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     PartnerHasNINOController.onPageLoad(mode, index, index, srn)
 
   private def ninoPage(mode: Mode,  srn: Option[String]): Call =
-    PartnerNinoNewController.onPageLoad(mode, index, index, srn)
+    PartnerEnterNINOController.onPageLoad(mode, index, index, srn)
 
   private def whyNoNinoPage(mode: Mode,  srn: Option[String]): Call =
     PartnerNoNINOReasonController.onPageLoad(mode, index, index, srn)

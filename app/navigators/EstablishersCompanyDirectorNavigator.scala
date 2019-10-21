@@ -17,7 +17,6 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import config.FeatureSwitchManagementService
 import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.AnyMoreChangesId
@@ -28,8 +27,7 @@ import models._
 import utils.UserAnswers
 
 @Singleton
-class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                     featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator {
+class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex, mode, srn))
@@ -71,8 +69,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
         previousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
-      case DirectorContactDetailsId(establisherIndex, directorIndex) =>
-        checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorPhoneNumberId(establisherIndex, directorIndex) =>
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
@@ -117,8 +113,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorConfirmPreviousAddressId(establisherIndex, directorIndex) =>
         confirmPreviousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
-        exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
-      case DirectorContactDetailsId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)
       case DirectorPhoneNumberId(establisherIndex, directorIndex) =>
         exitMiniJourney(establisherIndex, directorIndex, mode, srn, from.userAnswers)

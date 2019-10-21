@@ -17,12 +17,11 @@
 package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
-import controllers.register.establishers.individual.routes._
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import controllers.register.establishers.individual.routes._
+import identifiers.register.establishers.individual.EstablisherNameId
+import models.person.PersonName
 import models.{Index, Mode, NormalMode, UpdateMode}
-import models.person.PersonDetails
-import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
@@ -33,8 +32,8 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
 
   private val establisherName = "Test Name"
   private val mandatoryEstablisher =
-    UserAnswers().set(EstablisherDetailsId(0))(
-      PersonDetails("Test", None, "Name", LocalDate.now())
+    UserAnswers().set(EstablisherNameId(0))(
+      PersonName("Test", "Name")
     ).asOpt.value.dataRetrievalAction
 
   def controller(dataRetrievalAction: DataRetrievalAction = mandatoryEstablisher): WhatYouWillNeedIndividualDetailsController =

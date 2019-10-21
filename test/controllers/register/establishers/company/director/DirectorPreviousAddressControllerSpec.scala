@@ -19,7 +19,7 @@ package controllers.register.establishers.company.director
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -39,7 +39,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -59,7 +59,6 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val form: Form[Address] = formProvider()
 
   val fakeAuditService = new StubSuccessfulAuditService()
-  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     EstablishersId.toString -> Json.arr(
@@ -78,8 +77,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions),
-        bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+        bind[CountryOptions].to(countryOptions)
       )) {
         implicit app =>
 
@@ -125,8 +123,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider),
-          bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+          bind[AddressFormProvider].to(formProvider)
         )) {
           implicit app =>
 

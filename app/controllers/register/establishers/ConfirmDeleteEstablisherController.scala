@@ -16,17 +16,17 @@
 
 package controllers.register.establishers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
 import identifiers.register.establishers.ConfirmDeleteEstablisherId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId}
+import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models._
-import models.person.{PersonDetails, PersonName}
+import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
@@ -36,8 +36,8 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.Establishers
-import utils.{Toggles, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,12 +51,10 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     getData: DataRetrievalAction,
                                                     allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: ConfirmDeleteEstablisherFormProvider,
-                                                    featureSwitchManagementService: FeatureSwitchManagementService
+                                                    formProvider: ConfirmDeleteEstablisherFormProvider
                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-  private val isHnSEnabled = featureSwitchManagementService.get(Toggles.isHnSEnabled)
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -95,49 +93,39 @@ class ConfirmDeleteEstablisherController @Inject()(
 
   private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers): Option[DeletableEstablisher] = {
     establisherKind match {
-      case Indivdual =>
-        if (isHnSEnabled)
-          userAnswers.get(EstablisherNameId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
-        else
-          userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
+      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
     }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
+  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
 
-      establisherKind match {
-        case Company =>
-          CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-            updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex,
-              Some(companyDetails), None, None, None, mode, srn)
-          }
-        case Indivdual =>
-          if (isHnSEnabled)
+        establisherKind match {
+          case Company =>
+            CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+              updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex,
+                Some(companyDetails), None, None, mode, srn)
+            }
+          case Indivdual =>
             EstablisherNameId(establisherIndex).retrieve.right.map { trusteeDetails =>
               updateEstablisherKind(trusteeDetails.fullName, establisherKind, establisherIndex,
-                None, None, Some(trusteeDetails), None, mode, srn)
+                None, Some(trusteeDetails), None, mode, srn)
             }
-          else
-            EstablisherDetailsId(establisherIndex).retrieve.right.map { trusteeDetails =>
-              updateEstablisherKind(trusteeDetails.fullName, establisherKind, establisherIndex,
-                None, Some(trusteeDetails), None, None, mode, srn)
+          case Partnership =>
+            PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+              updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex,
+                None, None, Some(partnershipDetails), mode, srn)
             }
-        case Partnership =>
-          PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
-            updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex,
-              None, None, None, Some(partnershipDetails), mode, srn)
-          }
-      }
-  }
+        }
+    }
 
   private def updateEstablisherKind(name: String,
                                     establisherKind: EstablisherKind,
                                     establisherIndex: Index,
                                     companyDetails: Option[CompanyDetails],
-                                    establisherDetails: Option[PersonDetails],
                                     establisherName: Option[PersonName],
                                     partnershipDetails: Option[PartnershipDetails],
                                     mode: Mode,
@@ -158,13 +146,8 @@ class ConfirmDeleteEstablisherController @Inject()(
           establisherKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex), company.copy(isDeleted = true)))
-            case Indivdual =>
-              if (isHnSEnabled)
-                establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
-                  individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex), individual.copy(isDeleted = true)))
-              else
-                establisherDetails.fold(Future.successful(dataRequest.userAnswers.json))(
-                  individual => userAnswersService.save(mode, srn, EstablisherDetailsId(establisherIndex), individual.copy(isDeleted = true)))
+            case Indivdual => establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
+              individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex), individual.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex), partnership.copy(isDeleted = true)))
           }

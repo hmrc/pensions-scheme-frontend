@@ -41,7 +41,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerDOBId(estIndex, partnerIndex)                             =>           hasNinoPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasNINOId(estIndex, partnerIndex)                      =>
       booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerNewNinoId(estIndex, partnerIndex)                         =>           hasUtrPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEnterNINOId(estIndex, partnerIndex)                         =>           hasUtrPage(mode, estIndex, partnerIndex, srn)
     case PartnerNoNINOReasonId(estIndex, partnerIndex)                    =>           hasUtrPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasUTRId(estIndex, partnerIndex)                       =>
       booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
@@ -66,7 +66,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerNameId(estIndex, partnerIndex)                            => cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerDOBId(estIndex, partnerIndex)                             => cyaPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasNINOId(estIndex, partnerIndex)                      => booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerNewNinoId(estIndex, partnerIndex)                         => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEnterNINOId(estIndex, partnerIndex)                         => cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerNoNINOReasonId(estIndex, partnerIndex)                    => cyaPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasUTRId(estIndex, partnerIndex)                       =>
       booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
@@ -86,8 +86,8 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerDOBId(estIndex, partnerIndex)                                                   => cyaPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasNINOId(estIndex, partnerIndex)                                            =>
       booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerNewNinoId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)   => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerNewNinoId(_, _)                                               => anyMoreChangesPage(srn)
+    case PartnerEnterNINOId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)   => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEnterNINOId(_, _)                                               => anyMoreChangesPage(srn)
     case PartnerNoNINOReasonId(estIndex, partnerIndex)                                          => cyaPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerHasUTRId(estIndex, partnerIndex)                                             =>
       booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
@@ -115,11 +115,11 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
       case (NormalMode, Some(false)) =>
         controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
-      case _ if ua.allPartnersAfterDelete(estIndex, true).lengthCompare(appConfig.maxPartners) >= 0 =>
+      case _ if ua.allPartnersAfterDelete(estIndex).lengthCompare(appConfig.maxPartners) >= 0 =>
         controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, estIndex, srn)
       case _ =>
         controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(
-          mode, estIndex, ua.allPartners(estIndex, true).size, srn)
+          mode, estIndex, ua.allPartners(estIndex).size, srn)
     }
   }
 
@@ -156,7 +156,7 @@ object PartnerNavigator {
     PartnerHasNINOController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def ninoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    PartnerNinoNewController.onPageLoad(mode, estIndex, partnerIndex, srn)
+    PartnerEnterNINOController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def whyNoNinoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerNoNINOReasonController.onPageLoad(mode, estIndex, partnerIndex, srn)

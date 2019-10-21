@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import com.google.inject.{Inject, Singleton}
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -42,8 +42,7 @@ class TrusteeAddressYearsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction,
-                                               fs: FeatureSwitchManagementService
+                                               requireData: DataRequiredAction
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(trusteeName: String) = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))

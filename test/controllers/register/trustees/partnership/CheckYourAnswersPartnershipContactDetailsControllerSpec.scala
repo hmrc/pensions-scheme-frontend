@@ -79,7 +79,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true): _*)) {
+          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)

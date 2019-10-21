@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -30,7 +29,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers
 
@@ -68,7 +67,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction, featureSwitchEnabled = true).build()
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -85,7 +84,6 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
-            bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(true)),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
           )) {

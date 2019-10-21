@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import base.CSRFRequest
-import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -30,7 +29,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -60,7 +59,6 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
     )
   )
 
-  val fakeFeatureSwitch = new FakeFeatureSwitchManagementService(false)
   private val data =
     UserAnswers(Json.obj())
       .set(DirectorNameId(0, 0))(directorDetails)
@@ -78,8 +76,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         _.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-          bind[FeatureSwitchManagementService].to(fakeFeatureSwitch)
+          bind[DataRetrievalAction].toInstance(dataRetrievalAction)
         )) { implicit app =>
         val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0), None)))
         val result  = route(app, request).value

@@ -26,7 +26,7 @@ import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeIndividual): WhatYouWillNeedIndividualAddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): WhatYouWillNeedIndividualAddressController =
     new WhatYouWillNeedIndividualAddressController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -37,7 +37,8 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, None)
 
-  private def viewAsString(): String = whatYouWillNeedAddress(frontendAppConfig, None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
+  private def viewAsString(): String =
+    whatYouWillNeedAddress(frontendAppConfig, None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 

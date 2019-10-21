@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.individual.routes._
@@ -29,8 +29,7 @@ import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig,
-                                  featureSwitchManagementService: FeatureSwitchManagementService) extends AbstractNavigator with Enumerable.Implicits {
+class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {

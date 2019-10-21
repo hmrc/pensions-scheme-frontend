@@ -16,20 +16,18 @@
 
 package controllers.register.establishers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import javax.inject.Inject
 import models.Mode
-import models.register.{Entity, Establisher}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.{Establishers, NoSuspendedCheck}
-import utils.Toggles
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,22 +39,21 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider,
-                                         fsms: FeatureSwitchManagementService
+                                         formProvider: AddEstablisherFormProvider
                                         )(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode)
+        val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
         Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
           establishers, existingSchemeName, srn)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode)
+      val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
@@ -65,6 +62,4 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )
   }
-
-  private def isHnSPhase2Enabled = fsms.get(Toggles.isHnSEnabled)
 }

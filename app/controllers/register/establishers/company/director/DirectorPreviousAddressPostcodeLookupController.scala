@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
@@ -45,8 +45,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
                                                                  getData: DataRetrievalAction,
                                                                  allowAccess: AllowAccessActionProvider,
                                                                  requireData: DataRequiredAction,
-                                                                 formProvider: PostCodeLookupFormProvider,
-                                                                 featureSwitchManagementService: FeatureSwitchManagementService
+                                                                 formProvider: PostCodeLookupFormProvider
                                                                )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()

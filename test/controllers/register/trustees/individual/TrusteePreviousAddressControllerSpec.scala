@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.individual.routes._
@@ -37,7 +37,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeCountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -164,8 +164,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[AuthAction].to(FakeAuthAction),
           bind[CountryOptions].to(countryOptions),
           bind[DataRetrievalAction].to(retrieval),
-          bind[AuditService].toInstance(fakeAuditService),
-        bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false)))) {
+          bind[AuditService].toInstance(fakeAuditService))) {
           implicit app =>
 
             val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))

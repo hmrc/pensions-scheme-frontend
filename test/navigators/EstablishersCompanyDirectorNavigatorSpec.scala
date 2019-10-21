@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FeatureSwitchManagementServiceTestImpl
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.IsEstablisherNewId
@@ -32,7 +31,7 @@ import org.scalatest.prop.TableFor6
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 
 class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
@@ -64,8 +63,6 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
     (DirectorPreviousAddressId(0, 0), emptyAnswers, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorPreviousAddressId(0, 0), newDirector, directorEmail(mode), true, Some(exitJourney(mode, newDirector)), true),
-    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
-    (DirectorContactDetailsId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorPhoneNumberId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorPhoneNumberId(0, 0), newDirector, checkYourAnswers(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorEmailId(0, 0), emptyAnswers, directorPhone(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -104,9 +101,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private val config = injector.instanceOf[Configuration]
 
-  private def featureSwitch = new FeatureSwitchManagementServiceTestImpl(config, environment)
-
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector, new FakeFeatureSwitchManagementService(false))
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers().set(IsEstablisherNewId(0))(true).asOpt.value
   private val establisherIndex = Index(0)

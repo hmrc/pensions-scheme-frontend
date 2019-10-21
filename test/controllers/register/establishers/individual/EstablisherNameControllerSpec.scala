@@ -59,7 +59,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
 
   "EstablisherNameController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
@@ -73,7 +73,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryEstablisher, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getMandatoryEstablisher).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
@@ -81,7 +81,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
 
       status(result) mustBe OK
 
-      contentAsString(result) mustBe viewAsString(form.fill(PersonName("test first name", "test last name")))
+      contentAsString(result) mustBe viewAsString(form.fill(PersonName("Test", "Name")))
 
       app.stop()
     }
@@ -97,7 +97,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
 
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true)
+      val app = applicationBuilder(getEmptyData)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -114,7 +114,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
@@ -128,7 +128,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSui
     }
 
     "return a Bad Request and errors when no data is submitted" in {
-      val app = applicationBuilder(getEmptyData, featureSwitchEnabled = true).build()
+      val app = applicationBuilder(getEmptyData).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 

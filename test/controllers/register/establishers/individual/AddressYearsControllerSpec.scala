@@ -20,10 +20,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
-import models.person.PersonDetails
+import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
+import models.person.PersonName
 import models.{AddressYears, Index, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +40,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  private val establisherName = "test first name test last name"
+  private val establisherName = "Test Name"
 
   private val form = formProvider(Message("messages__common_error__current_address_years", establisherName))
   private val firstIndex = Index(0)
@@ -79,8 +78,8 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString ->
-          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
+        EstablisherNameId.toString ->
+          PersonName("Test", "Name"),
         AddressYearsId.toString ->
           AddressYears.options.head.value.toString
       )

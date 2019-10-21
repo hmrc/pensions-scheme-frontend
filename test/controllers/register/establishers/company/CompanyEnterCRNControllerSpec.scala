@@ -20,7 +20,7 @@ import base.CSRFRequest
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.CompanyRegistrationNumberVariationsFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -34,7 +34,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
-import views.html.register.companyRegistrationNumberVariations
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.Future
 
@@ -52,7 +52,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe
-            companyRegistrationNumberVariations(
+            companyRegistrationNumber(
               appConfig,
               viewModel(),
               form,
@@ -82,7 +82,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers
 object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   val companyName = "test company name"
-  val form = new CompanyRegistrationNumberVariationsFormProvider()(companyName)
+  val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 

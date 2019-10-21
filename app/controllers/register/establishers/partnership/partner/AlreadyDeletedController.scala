@@ -19,9 +19,9 @@ package controllers.register.establishers.partnership.partner
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import javax.inject.Inject
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController

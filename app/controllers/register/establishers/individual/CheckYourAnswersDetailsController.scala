@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherNewId
@@ -25,7 +25,7 @@ import javax.inject.Inject
 import models.Mode._
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -46,8 +46,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                   allowChangeHelper: AllowChangeHelper,
                                                   requireData: DataRequiredAction,
-                                                  implicit val countryOptions: CountryOptions,
-                                                  implicit val featureSwitchManagementService: FeatureSwitchManagementService
+                                                  implicit val countryOptions: CountryOptions
                                                  )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -62,7 +61,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
           EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)++
           EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherUTRId(index).row(routes.EstablisherUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         Future.successful(Ok(checkYourAnswers(

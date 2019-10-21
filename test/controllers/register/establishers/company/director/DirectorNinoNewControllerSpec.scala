@@ -23,14 +23,13 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
 import models._
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
+import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
@@ -55,7 +54,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorNameId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonName("First Name", "Last Name"),
               DirectorEnterNINOId.toString -> Json.obj( "value" -> "CS700100A")
           )
         )
@@ -70,7 +69,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorNameId.toString ->
-              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+              PersonName("First Name", "Last Name")
           )
         )
       )
@@ -80,8 +79,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorEnterNINOController =
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
-      new FakeFeatureSwitchManagementService(false))
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
@@ -157,14 +155,14 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing director details data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", Nino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

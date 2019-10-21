@@ -20,18 +20,17 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
-import models.person.{PersonDetails, PersonName}
-import models.register.PartnerEntityNonHnS
+import models.person.PersonName
+import models.register.PartnerEntity
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
 class AddPartnersControllerSpec extends ControllerSpecBase {
@@ -51,8 +50,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   private def controller(
                           dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                          navigator: Navigator = fakeNavigator(),
-                          isHnsEnabled: Boolean = false
+                          navigator: Navigator = fakeNavigator()
                         ) =
     new AddPartnersController(
       frontendAppConfig,
@@ -62,13 +60,12 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider,
-      new FakeFeatureSwitchManagementService(isHnsEnabled)
+      formProvider
     )
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
-  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntityNonHnS] = Nil) =
+  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
     addPartners(
       frontendAppConfig,
       form,
@@ -83,20 +80,18 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
   private val partnershipName = "MyCo Ltd"
 
   // scalastyle:off magic.number
-  private val johnDoeNonHns = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggsNonHns = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
   private val johnDoe = PersonName("John", "Doe")
   private val joeBloggs = PersonName("Joe", "Bloggs")
   // scalastyle:on magic.number
 
   private val maxPartners = frontendAppConfig.maxPartners
 
-  private def validData(partners: PersonDetails*) = {
+  private def validData(partners: PersonName*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString -> PartnershipDetails(partnershipName, false),
-          "partner" -> partners.map(d => Json.obj(PartnerDetailsId.toString -> Json.toJson(d)))
+          "partner" -> partners.map(d => Json.obj(PartnerNameId.toString -> Json.toJson(d)))
         )
       )
     )
@@ -113,14 +108,14 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     }
 
     "not populate the view on a GET when the question has previously been answered" in {
-      UserAnswers(validData(johnDoeNonHns))
+      UserAnswers(validData(johnDoe))
         .set(AddPartnersId(firstIndex))(true)
         .map { userAnswers =>
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(PartnerEntityNonHnS(PartnerDetailsId(0, 0), johnDoeNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+            Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -133,7 +128,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when less than maximum partners exist and valid data is submitted" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoeNonHns)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
@@ -142,18 +137,18 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when less than maximum partners exist and invalid data is submitted" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoeNonHns)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "meh"))
       val boundForm = form.bind(Map("value" -> "meh"))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(PartnerEntityNonHnS(PartnerDetailsId(0, 0), johnDoeNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+        Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
     "redirect to the next page when maximum partners exist and the user submits" in {
-      val partners = Seq.fill(maxPartners)(johnDoeNonHns)
+      val partners = Seq.fill(maxPartners)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
 
@@ -161,27 +156,13 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "populate the view with partners when they exist and toggle is off" in {
-      val partners = Seq(johnDoeNonHns, joeBloggsNonHns)
+    "populate the view with partners when they exist" in {
+      val partners = Seq(johnDoe, joeBloggs)
       val partnersViewModel = Seq(
-        PartnerEntityNonHnS(
-          PartnerDetailsId(0, 0), johnDoeNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntityNonHnS(
-          PartnerDetailsId(0, 1), joeBloggsNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, partnersViewModel)
-    }
-
-    "populate the view with partners when they exist and toggle is on" in {
-      val partners = Seq(johnDoeNonHns, joeBloggsNonHns)
-      val partnersViewModel = Seq(
-        PartnerEntityNonHnS(
-          PartnerDetailsId(0, 0), johnDoeNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntityNonHnS(
-          PartnerDetailsId(0, 1), joeBloggsNonHns.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+        PartnerEntity(
+          PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
+        PartnerEntity(
+          PartnerNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 

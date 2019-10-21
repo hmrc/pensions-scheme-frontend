@@ -26,7 +26,7 @@ import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): WhatYouWillNeedIndividualAddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): WhatYouWillNeedIndividualAddressController =
     new WhatYouWillNeedIndividualAddressController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,

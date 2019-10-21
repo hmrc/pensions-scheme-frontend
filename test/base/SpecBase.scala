@@ -16,9 +16,8 @@
 
 package base
 
-import config.{FeatureSwitchManagementService, FeatureSwitchManagementServiceSpec, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
-import navigators.Navigator
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
@@ -30,7 +29,6 @@ import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator}
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -57,18 +55,16 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
-  def modules(dataRetrievalAction: DataRetrievalAction, featureSwitchEnabled: Boolean): Seq[GuiceableModule] = Seq(
+  def modules(dataRetrievalAction: DataRetrievalAction): Seq[GuiceableModule] = Seq(
     bind[AuthAction].toInstance(FakeAuthAction),
     bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-    bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-    bind[FeatureSwitchManagementService].toInstance(new FakeFeatureSwitchManagementService(featureSwitchEnabled))
+    bind[DataRetrievalAction].toInstance(dataRetrievalAction)
   )
 
   def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
-                         featureSwitchEnabled: Boolean,
                          onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        modules(dataRetrievalAction, featureSwitchEnabled): _*
+        modules(dataRetrievalAction): _*
       )
 }

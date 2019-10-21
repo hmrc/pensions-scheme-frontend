@@ -22,10 +22,6 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ReasonViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@_options = @{
-Vat.options
-}
-
 @main_template(
     title = viewmodel.title,
     appConfig = appConfig,

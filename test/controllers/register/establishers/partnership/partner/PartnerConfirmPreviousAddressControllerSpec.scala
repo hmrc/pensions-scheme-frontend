@@ -19,11 +19,10 @@ package controllers.register.establishers.partnership.partner
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.ConfirmAddressFormProvider
-import identifiers.register.establishers.partnership.partner.{ExistingCurrentAddressId, PartnerConfirmPreviousAddressId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{ExistingCurrentAddressId, PartnerConfirmPreviousAddressId, PartnerNameId}
 import models._
 import models.address.Address
-import models.person.PersonDetails
-import org.joda.time.LocalDate
+import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
@@ -90,7 +89,7 @@ class PartnerConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     )(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
-    .set(PartnerDetailsId(establisherIndex, partnerIndex))(PersonDetails("John", None, "Doe", LocalDate.now())).flatMap(_.set(
+    .set(PartnerNameId(establisherIndex, partnerIndex))(PersonName("John", "Doe")).flatMap(_.set(
     ExistingCurrentAddressId(establisherIndex, partnerIndex))(testAddress))
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))

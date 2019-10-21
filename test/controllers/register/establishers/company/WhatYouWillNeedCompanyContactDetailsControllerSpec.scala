@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
           val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
@@ -56,7 +56,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction, featureSwitchEnabled = true): _*
+          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
           val result = controller.onPageLoad(UpdateMode, srn, index)(fakeRequest)

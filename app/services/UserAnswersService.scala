@@ -16,25 +16,19 @@
 
 package services
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId}
-import identifiers.register.establishers.company.{CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId}
-import identifiers.register.establishers.individual.{PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId}
-import identifiers.register.establishers.partnership.{PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId}
-import identifiers.register.trustees.company.{CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId}
-import identifiers.register.trustees.individual.{TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId}
-import identifiers.register.trustees.partnership.{PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId, CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId, TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
+import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
 import javax.inject.{Inject, Singleton}
 import models.address.Address
 import models.requests.DataRequest
@@ -57,8 +51,6 @@ trait UserAnswersService {
   protected def viewConnector: SchemeDetailsReadOnlyCacheConnector
 
   protected def appConfig: FrontendAppConfig
-
-  protected def fs: FeatureSwitchManagementService
 
   case object MissingSrnNumber extends Exception
 
@@ -174,8 +166,7 @@ class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subsc
                                                               override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                               override val lockConnector: PensionSchemeVarianceLockConnector,
                                                               override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                                              override val appConfig: FrontendAppConfig,
-                                                              override val fs: FeatureSwitchManagementService
+                                                              override val appConfig: FrontendAppConfig
                                                              ) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
@@ -193,8 +184,7 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
                                                 override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 override val lockConnector: PensionSchemeVarianceLockConnector,
                                                 override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                                override val appConfig: FrontendAppConfig,
-                                                override val fs: FeatureSwitchManagementService
+                                                override val appConfig: FrontendAppConfig
                                                ) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
@@ -211,6 +201,5 @@ class UserAnswersServiceImpl @Inject()(override val subscriptionCacheConnector: 
                                        override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                        override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                       override val appConfig: FrontendAppConfig,
-                                       override val fs: FeatureSwitchManagementService
+                                       override val appConfig: FrontendAppConfig
                                       ) extends UserAnswersService

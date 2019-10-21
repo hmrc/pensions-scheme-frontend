@@ -66,7 +66,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   )
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
-                         trusteeIndividualData.dataRetrievalAction, isHnsEnabled: Boolean = false): TrusteeHasUTRController =
+                         trusteeIndividualData.dataRetrievalAction): TrusteeHasUTRController =
     new TrusteeHasUTRController(
       frontendAppConfig,
       messagesApi,

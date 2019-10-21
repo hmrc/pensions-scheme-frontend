@@ -21,8 +21,8 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.PayeFormProvider
 import identifiers.TypedIdentifier
+import models.{CheckUpdateMode, ReferenceValue}
 import models.requests.DataRequest
-import models.{NormalMode, Paye}
 import navigators.Navigator
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
@@ -35,7 +35,7 @@ import play.api.libs.json._
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.PayeViewModel
@@ -73,7 +73,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual paye(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual paye(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -91,13 +91,13 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
-          val answers = UserAnswers().set(FakeIdentifier)(Paye.Yes("123456789")).get
+          val answers = UserAnswers().set(FakeIdentifier)(ReferenceValue("123456789")).get
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual paye(
             appConfig,
-            formProvider().fill(Paye.Yes("123456789")),
+            formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             viewmodel,
             None
           )(request, messages).toString
@@ -114,25 +114,22 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
       val userAnswersService = mock[UserAnswersService]
 
       running(_.overrides(
-        bind[UserAnswersService].toInstance(userAnswersService),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
 
-          when(
-            userAnswersService.save[Paye, FakeIdentifier.type](any(), any(), eqTo(FakeIdentifier), any())(any(), any(), any(), any())
-          ).thenReturn(Future.successful(Json.obj()))
-
           val request = FakeRequest().withFormUrlEncodedBody(
-            ("paye.hasPaye", "true"), ("paye.paye", "123456789")
+          ("paye", "123456789")
           )
           val controller = app.injector.instanceOf[TestController]
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
+          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("123456789", isEditable = true))
       }
     }
 
@@ -155,7 +152,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual paye(
             appConfig,
-            formProvider().bind(Map.empty[String, String]),
+            formProvider(companyName)(messages).bind(Map.empty[String, String]),
             viewmodel,
             None
           )(request, messages).toString
@@ -166,7 +163,8 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
 
 object PayeControllerSpec {
 
-  object FakeIdentifier extends TypedIdentifier[Paye]
+  object FakeIdentifier extends TypedIdentifier[ReferenceValue]
+  val companyName = "test company name"
 
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
@@ -177,12 +175,15 @@ object PayeControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends PayeController {
 
     def onPageLoad(viewmodel: PayeViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, formProvider(companyName), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(viewmodel: PayeViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, formProvider(), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, CheckUpdateMode, formProvider(companyName), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 
 }
+
+
+

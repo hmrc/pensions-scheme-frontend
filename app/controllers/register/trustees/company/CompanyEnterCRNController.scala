@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.register.CompanyRegistrationNumberVariationsBaseController
+import controllers.register.CompanyRegistrationNumberBaseController
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterCRNId}
 import models.{Index, Mode, ReferenceValue}
@@ -41,7 +41,7 @@ class CompanyEnterCRNController @Inject()(
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction
-                                                             )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberVariationsBaseController {
+                                                             )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberBaseController {
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner._
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
-import utils.annotations.{NoSuspendedCheck}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.checkYourAnswers
@@ -45,46 +45,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            userAnswersService: UserAnswersService,
                                            navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
-                                           allowChangeHelper: AllowChangeHelper,
-                                           fs: FeatureSwitchManagementService
+                                           allowChangeHelper: AllowChangeHelper
                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
     implicit request =>
       lazy val displayNewNino = !request.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
-
-      val partnerDetails = AnswerSection(
-        Some("messages__partner__cya__details_heading"),
-        Seq(
-          PartnerDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          mode match {
-            case UpdateMode| CheckUpdateMode if displayNewNino => PartnerNewNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-            case _ => PartnerNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-          },
-          PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
-            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode)
-        ).flatten
-      )
-
-      val partnerContactDetails = AnswerSection(
-        Some("messages__partner__cya__contact__details_heading"),
-        Seq(
-          PartnerAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url),
-          PartnerAddressYearsId(establisherIndex, partnerIndex).
-            row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          PartnerPreviousAddressId(establisherIndex, partnerIndex).
-            row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
-          PartnerContactDetailsId(establisherIndex, partnerIndex).
-            row(routes.PartnerContactDetailsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url)
-        ).flatten
-      )
-
-      val answersHnS = Seq(AnswerSection(
+      val answers = Seq(AnswerSection(
         None,
         Seq(
           PartnerNameId(establisherIndex, partnerIndex)
@@ -96,8 +64,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           PartnerHasNINOId(establisherIndex, partnerIndex)
             .row(routes.PartnerHasNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
-          PartnerNewNinoId(establisherIndex, partnerIndex)
-            .row(routes.PartnerNinoNewController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
+          PartnerEnterNINOId(establisherIndex, partnerIndex)
+            .row(routes.PartnerEnterNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
 
           PartnerNoNINOReasonId(establisherIndex, partnerIndex)
             .row(routes.PartnerNoNINOReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url, mode),
@@ -128,14 +96,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       ))
 
-      val answerSections = if(fs.get(Toggles.isHnSEnabled))
-        answersHnS
-      else
-        Seq(partnerDetails, partnerContactDetails)
-
       Future.successful(Ok(checkYourAnswers(
         appConfig,
-        answerSections,
+        answers,
         controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
         existingSchemeName,
         mode = mode,

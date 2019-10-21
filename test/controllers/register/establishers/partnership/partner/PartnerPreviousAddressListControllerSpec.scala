@@ -17,27 +17,25 @@
 package controllers.register.establishers.partnership.partner
 
 import base.CSRFRequest
-import services.{UserAnswersService, FakeUserAnswersService}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val partnerDetails = PersonDetails("Joe", None, "Bloggs", LocalDate.now())
+  private val partnerDetails = PersonName("Joe", "Bloggs")
 
   val previousAddressTitle = "Select the previous address"
   val previousAddressHeading = "Select the previous address"
@@ -63,7 +61,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val data =
     UserAnswers(Json.obj())
-      .set(PartnerDetailsId(0, 0))(partnerDetails)
+      .set(PartnerNameId(0, 0))(partnerDetails)
       .flatMap(_.set(PartnerPreviousAddressPostcodeLookupId(0, 0))(addresses))
       .asOpt.map(_.json)
 

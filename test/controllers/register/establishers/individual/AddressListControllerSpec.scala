@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
-import models.{Index, NormalMode, UniqueTaxReference, person}
+import models.{Index, NormalMode, person}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -51,12 +51,12 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       Json.obj(
         EstablisherNameId.toString ->
           person.PersonName("test first name", "test last name", false),
-        UniqueTaxReferenceId.toString ->
-          UniqueTaxReference.Yes("1234567891"))
-    ))
+        EstablisherHasUTRId.toString -> true,
+        EstablisherUTRId.toString -> "1234567891"
+    )))
 
   def controller(
-                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns,
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                   dataCacheConnector: UserAnswersService = FakeUserAnswersService
                 ): AddressListController =
     new AddressListController(
@@ -96,8 +96,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       Json.obj(
         EstablisherNameId.toString ->
           person.PersonName("test first name", "test last name", false),
-        UniqueTaxReferenceId.toString ->
-          UniqueTaxReference.Yes("1234567891"),
+        EstablisherHasUTRId.toString -> true,
+        EstablisherUTRId.toString -> "1234567891",
         PostCodeLookupId.toString -> addresses)
     ))
 

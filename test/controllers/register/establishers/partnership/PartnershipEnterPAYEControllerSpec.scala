@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.PayeVariationsFormProvider
+import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
-import views.html.payeVariations
+import views.html.paye
 
 import scala.concurrent.Future
 
@@ -47,7 +47,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
         implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
       )
     }
@@ -71,7 +71,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMat
 object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEControllerSpec {
 
   val partnershipName = "test partnership name"
-  val form = new PayeVariationsFormProvider()(partnershipName)
+  val form = new PayeFormProvider()(partnershipName)
   val firstIndex = Index(0)
   val srn = Some("S123")
 

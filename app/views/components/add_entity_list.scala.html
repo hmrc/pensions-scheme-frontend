@@ -19,7 +19,6 @@
 @import models.requests.DataRequest
 @import models.register.{Entity, Establisher}
 @import identifiers.register.establishers.company.CompanyDetailsId
-@import identifiers.register.establishers.individual.EstablisherDetailsId
 @import identifiers.register.establishers.individual.EstablisherNameId
 @import identifiers.register.establishers.partnership.PartnershipDetailsId
 @import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
@@ -30,7 +29,7 @@
 @getKind(entity: Entity[_]) = @{
     entity.id match {
         case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__common__entityKind_company")
-        case EstablisherDetailsId(_) | EstablisherNameId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
+        case EstablisherNameId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
         case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__common__entityKind_partnership")
         case _ => ""
     }

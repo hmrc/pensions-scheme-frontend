@@ -140,11 +140,11 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
           Some(messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme"))))
       ),
       AnswerRow(
-        messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", "Test Scheme"),
+        messages("schemeEstablishedCountry.checkYourAnswersLabel", "Test Scheme"),
         Seq("Country of GB"),
         answerIsMessageKey = false,
         Some(Link("site.change", routes.EstablishedCountryController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme"))))
+          Some(messages("messages__visuallyhidden__schemeEstablishedCountry", "Test Scheme"))))
       ),
       AnswerRow(
         "messages__workingKnowledge__title",

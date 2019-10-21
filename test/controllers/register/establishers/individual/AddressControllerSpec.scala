@@ -18,15 +18,13 @@ package controllers.register.establishers.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressId, EstablisherNameId}
 import models.address.{Address, TolerantAddress}
-import models.person.PersonDetails
+import models.person.PersonName
 import models.{Index, NormalMode}
-import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -45,7 +43,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
   private val formProvider = new AddressFormProvider(FakeCountryOptions())
   private val form: Form[Address] = formProvider()
   private val firstIndex = Index(0)
-  private val establisherName: String = "test first name test last name"
+  private val establisherName: String = "Test Name"
   private val heading: Message = "messages__common__confirmAddress__h1"
 
   private val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
@@ -86,8 +84,8 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
   val validData: JsObject = Json.obj(
     "establishers" -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString ->
-          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
+        EstablisherNameId.toString ->
+          PersonName("Test", "Name"),
         AddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")

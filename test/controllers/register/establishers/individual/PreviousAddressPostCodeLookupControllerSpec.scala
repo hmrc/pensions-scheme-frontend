@@ -48,7 +48,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
   val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
+  val establisherName: String = "Test Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressPostCodeLookupController =
     new PreviousAddressPostCodeLookupController(

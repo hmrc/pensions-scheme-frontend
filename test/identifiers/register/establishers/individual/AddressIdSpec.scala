@@ -17,16 +17,15 @@
 package identifiers.register.establishers.individual
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
-import models.{Link, NormalMode, UpdateMode}
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
+import models.{Link, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class AddressIdSpec extends SpecBase {
@@ -59,7 +58,6 @@ class AddressIdSpec extends SpecBase {
             UserAnswers().set(AddressId(0))(address).flatMap(
               _.set(EstablisherNameId(0))(PersonName("test", "name"))).asOpt.value, PsaId("A0000000"))
           implicit val ua: UserAnswers = request.userAnswers
-          implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
 
           AddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(

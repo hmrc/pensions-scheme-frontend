@@ -17,7 +17,6 @@
 package identifiers.register.trustees.individual
 
 import base.SpecBase
-import config.FeatureSwitchManagementService
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
@@ -26,7 +25,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, InputOption, UserAnswers}
+import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class TrusteeAddressIdSpec extends SpecBase {
@@ -59,7 +58,6 @@ class TrusteeAddressIdSpec extends SpecBase {
             UserAnswers().set(TrusteeAddressId(0))(address).flatMap(
               _.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value, PsaId("A0000000"))
           implicit val ua: UserAnswers = request.userAnswers
-          implicit val featureSwitchManagementService: FeatureSwitchManagementService = new FakeFeatureSwitchManagementService(true)
 
           TrusteeAddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(

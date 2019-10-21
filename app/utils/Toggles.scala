@@ -17,5 +17,4 @@
 package utils
 
 object Toggles {
-  val isHnSEnabled: String = "is-hns-enabled"
 }

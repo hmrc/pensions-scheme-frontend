@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
@@ -44,7 +44,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
                                          errorHandler: ErrorHandler,
-                                         featureSwitchManagementService: FeatureSwitchManagementService,
                                          lockConnector: PensionSchemeVarianceLockConnector,
                                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                          updateConnector: UpdateSchemeCacheConnector,
@@ -57,7 +56,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
         case (None, Some(userAnswers)) =>
           val view =
-            schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers, featureSwitchManagementService).taskList)
+            schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers).taskList)
 
           Future.successful(Ok(view))
         case (Some(srnValue), optionUserAnswers) =>
@@ -101,7 +100,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
       val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
-        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn), featureSwitchManagementService).taskList
+        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
         val view =

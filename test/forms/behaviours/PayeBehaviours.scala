@@ -18,69 +18,11 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.{PayeMapping, RegexBehaviourSpec}
-import models.Paye.Yes
-import models.{Paye, ReferenceValue}
+import models.ReferenceValue
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.{Form, FormError}
 
 class PayeBehaviours extends FormSpec with PayeMapping with RegexBehaviourSpec {
-
-  def formWithPaye(
-      testForm: Form[Paye],
-      requiredKey: String,
-      keyPayeRequired: String,
-      keyPayeLength: String
-  ): Unit = {
-
-    "fail to bind when yes is selected but paye is not provided" in {
-      val result = testForm.bind(Map("paye.hasPaye" -> "true"))
-      result.errors mustBe Seq(FormError("paye.paye", keyPayeRequired))
-    }
-
-    "fail to bind when yes is selected and paye exceeds max length of 16" in {
-      val testString = RandomStringUtils.randomAlphabetic(PayeMapping.maxPayeLength + 1)
-      val result     = testForm.bind(Map("paye.hasPaye" -> "true", "paye.paye" -> testString))
-      result.errors mustBe Seq(FormError("paye.paye", keyPayeLength, Seq(PayeMapping.maxPayeLength)))
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("paye.hasPaye", requiredKey)
-      checkForError(testForm, emptyForm, expectedError)
-    }
-
-    "successfully unbind `Paye.Yes`" in {
-      val result = testForm.fill(Paye.Yes("paye")).data
-      result must contain("paye.hasPaye" -> "true")
-      result must contain("paye.paye"    -> "paye")
-    }
-
-    "successfully unbind `Paye.No`" in {
-      val result = testForm.fill(Paye.No).data
-      result must contain("paye.hasPaye" -> "false")
-    }
-
-    val valid = Table(
-      "data",
-      Map("paye.hasPaye" -> "true", "paye.paye" -> " 123/AB56789 "),
-      Map("paye.hasPaye" -> "true", "paye.paye" -> " 123AB56789 "),
-      Map("paye.hasPaye" -> "true", "paye.paye" -> " 123\\AB56789 ")
-    )
-
-    val invalid = Table(
-      "data",
-      Map("paye.hasPaye" -> "true", "paye.paye" -> "A1_"),
-      Map("paye.hasPaye" -> "true", "paye.paye" -> "ABC1234567897"),
-      Map("paye.hasPaye" -> "true", "paye.paye" -> "123")
-    )
-
-    behave like formWithRegex(testForm, valid, invalid)
-
-    "remove spaces and convert to upper case for valid value" in {
-      val result = testForm.bind(Map("paye.hasPaye" -> "true", "paye.paye" -> " 123  ab56 7 8 9   "))
-      result.errors.isEmpty mustBe true
-      result.value mustBe Some(Yes("123AB56789"))
-    }
-  }
 
   def formWithPayeVariations(
       testForm: Form[ReferenceValue],

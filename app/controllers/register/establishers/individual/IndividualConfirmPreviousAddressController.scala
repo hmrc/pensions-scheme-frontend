@@ -21,14 +21,13 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNameId, IndividualConfirmPreviousAddressId, PreviousAddressId}
+import identifiers.register.establishers.individual.{EstablisherNameId, IndividualConfirmPreviousAddressId, PreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -38,7 +37,7 @@ import scala.concurrent.ExecutionContext
 class IndividualConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                            val messagesApi: MessagesApi,
                                                            val userAnswersService: UserAnswersService,
-                                                           @EstablishersIndividual val navigator: Navigator,
+                                                           val navigator: Navigator,
                                                            authenticate: AuthAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            getData: DataRetrievalAction,

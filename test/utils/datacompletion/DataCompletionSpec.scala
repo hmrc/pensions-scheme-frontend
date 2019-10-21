@@ -185,13 +185,13 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     }
 
 
-    "isDirectorCompleteHnS" must {
+    "isDirectorComplete" must {
       "return true when all answers are present" in {
-        UserAnswers(userAnswersCompleted).isDirectorCompleteHnS(0, 0) mustBe true
+        UserAnswers(userAnswersCompleted).isDirectorComplete(0, 0) mustBe true
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isDirectorCompleteHnS(0, 0) mustBe false
+        UserAnswers(userAnswersInProgress).isDirectorComplete(0, 0) mustBe false
       }
     }
   }
@@ -374,7 +374,6 @@ object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
 
-  private val userAnswersCompletedNonHnS: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
 
   private val userAnswersIndividualDetailsCompleted: UserAnswers = setTrusteeCompletionStatusIndividualDetails(isComplete = true)

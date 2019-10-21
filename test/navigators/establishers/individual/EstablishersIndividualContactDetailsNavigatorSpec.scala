@@ -36,7 +36,7 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Mu
   import EstablishersIndividualContactDetailsNavigatorSpec._
 
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj())), featureSwitchEnabled = true).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
   "NormalMode" must {
     def navigationForNewEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =

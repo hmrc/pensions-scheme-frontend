@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
 import controllers.behaviours.AddressControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeFeatureSwitchManagementService, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.address.ManualAddressViewModel
 
 class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
@@ -59,8 +59,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
-      bind[CountryOptions].to(countryOptions),
-      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
+      bind[CountryOptions].to(countryOptions)
     )
 
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
@@ -96,8 +95,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
       bind[DataRetrievalAction].to(retrieval),
-      bind[AuditService].toInstance(fakeAuditService),
-      bind[FeatureSwitchManagementService].to(new FakeFeatureSwitchManagementService(false))
+      bind[AuditService].toInstance(fakeAuditService)
     )) {
       implicit app =>
 

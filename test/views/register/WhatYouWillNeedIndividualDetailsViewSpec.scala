@@ -29,7 +29,7 @@ class WhatYouWillNeedIndividualDetailsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "whatYouWillNeedIndividual"
   val establisherName = "Test Name"
 
-  lazy val href: Call = routes.EstablisherDetailsController.onPageLoad(NormalMode, 0, None)
+  lazy val href: Call = routes.EstablisherNameController.onPageLoad(NormalMode, 0, None)
 
   def createView: () => HtmlFormat.Appendable = () =>
     whatYouWillNeedIndividualDetails(frontendAppConfig, Some("testScheme"), href, None, establisherName)(fakeRequest, messages)

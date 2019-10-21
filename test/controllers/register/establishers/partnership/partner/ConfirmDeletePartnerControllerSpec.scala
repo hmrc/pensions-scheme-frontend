@@ -21,17 +21,16 @@ import controllers.actions._
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.PartnerDetailsId
-import models.person.PersonDetails
+import identifiers.register.establishers.partnership.partner.PartnerNameId
+import models.person.PersonName
 import models.{Index, NormalMode, PartnershipDetails, UpdateMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, FakeSectionComplete}
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
@@ -71,7 +70,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
+      FakeUserAnswersService.verify(PartnerNameId(establisherIndex, partnerIndex), partnerName.copy(isDeleted = true))
     }
 
 
@@ -81,7 +80,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
+      FakeUserAnswersService.verifyNot(PartnerNameId(establisherIndex, partnerIndex))
     }
 
     "never delete the partner on a POST if selected No in UpdateMode" in {
@@ -90,7 +89,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(UpdateMode, establisherIndex, partnerIndex, Some("S123"))(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
-      FakeUserAnswersService.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
+      FakeUserAnswersService.verifyNot(PartnerNameId(establisherIndex, partnerIndex))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -123,26 +122,25 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
   private val partnershipName = "My Partnership Ltd"
-  private val partnerName = "John Doe"
 
   private val formProvider = new ConfirmDeletePartnerFormProvider()
   private val form = formProvider.apply()
 
   private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
-  private val partnerDetails = PersonDetails("John", None, "Doe", LocalDate.now())
+  private val partnerName = PersonName("John", "Doe")
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
   private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
-  private def testData(partners: PersonDetails = partnerDetails) = Json.obj(
+  private def testData(partners: PersonName = partnerName) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
         "partner" -> Json.arr(
           Json.obj(
-            PartnerDetailsId.toString ->
+            PartnerNameId.toString ->
               partners
           )
         )
@@ -150,7 +148,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val partnerDeleted: PersonDetails = partnerDetails.copy(isDeleted = true)
+  val partnerDeleted: PersonName = partnerName.copy(isDeleted = true)
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -165,14 +163,13 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider,
-      new FakeFeatureSwitchManagementService(false)
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form) = confirmDeletePartner(
     frontendAppConfig,
     form,
-    partnerName,
+    "John Doe",
     postCall,
     None
   )(fakeRequest, messages).toString

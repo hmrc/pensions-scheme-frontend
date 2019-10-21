@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
@@ -44,8 +44,7 @@ class IndividualPostCodeLookupController @Inject()(
                                                     allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
                                                     formProvider: PostCodeLookupFormProvider,
-                                                    val addressLookupConnector: AddressLookupConnector,
-                                                    fs: FeatureSwitchManagementService
+                                                    val addressLookupConnector: AddressLookupConnector
                                                   )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
 
   override protected val form: Form[String] = formProvider()

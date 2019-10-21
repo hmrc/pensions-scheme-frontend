@@ -37,7 +37,7 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with MustMatchers
   import TrusteesPartnershipDetailsNavigatorSpec._
 
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj())), featureSwitchEnabled = true).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
   "TrusteesPartnershipDetailsNavigator" when {
     "in NormalMode" must {

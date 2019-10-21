@@ -46,7 +46,7 @@ class PartnerHasNINOIdSpec extends SpecBase {
 
     def answers(hasNino: Boolean = true): UserAnswers = UserAnswers(Json.obj())
       .set(PartnerHasNINOId(0, 0))(hasNino)
-      .flatMap(_.set(PartnerNewNinoId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
+      .flatMap(_.set(PartnerEnterNINOId(0, 0))(ReferenceValue("test-nino", isEditable = true)))
       .flatMap(_.set(PartnerNoNINOReasonId(0, 0))("reason"))
       .asOpt.value
 
@@ -55,7 +55,7 @@ class PartnerHasNINOIdSpec extends SpecBase {
       val result: UserAnswers = answers().set(PartnerHasNINOId(0, 0))(false).asOpt.value
 
       "remove the data for `PartnerNino`" in {
-        result.get(PartnerNewNinoId(0, 0)) mustNot be(defined)
+        result.get(PartnerEnterNINOId(0, 0)) mustNot be(defined)
       }
     }
 

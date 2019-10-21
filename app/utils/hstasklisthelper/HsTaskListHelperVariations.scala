@@ -16,7 +16,6 @@
 
 package utils.hstasklisthelper
 
-import config.FeatureSwitchManagementService
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
 import models.{Link, Mode, UpdateMode}
@@ -26,9 +25,8 @@ import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers,
                                  viewOnly: Boolean,
-                                 srn: Option[String],
-                                 featureSwitchManagementService: FeatureSwitchManagementService
-                                )(implicit messages: Messages) extends HsTaskListHelper(answers, featureSwitchManagementService) {
+                                 srn: Option[String]
+                                )(implicit messages: Messages) extends HsTaskListHelper(answers) {
 
   override protected lazy val beforeYouStartLinkText: String = messages("messages__schemeTaskList__scheme_info_link_text")
 
@@ -38,7 +36,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       userAnswers.get(IsBeforeYouStartCompleteId),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      Some(userAnswers.allEstablishersCompleted(isHnSPhase2Enabled, UpdateMode)),
+      Some(userAnswers.allEstablishersCompleted(UpdateMode)),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true)) && userAnswers.isUserAnswerUpdated
@@ -101,7 +99,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
     if (userAnswers.isUserAnswerUpdated) {
       Some(Link(declarationLinkText,
-        if (userAnswers.areVariationChangesCompleted(isHnSPhase2Enabled))
+        if (userAnswers.areVariationChangesCompleted)
           controllers.routes.VariationDeclarationController.onPageLoad(srn).url
         else
           controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
@@ -113,12 +111,12 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 
   protected[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
 
-    (userAnswers.allEstablishersAfterDelete(isHnSPhase2Enabled, mode).isEmpty, viewOnly) match {
+    (userAnswers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noEstablishersText)))
       case (true, false) =>
         Some(
           SchemeDetailsTaskListHeader(
-            link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers(isHnSPhase2Enabled, mode).size, srn, mode)))
+            link = typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers(mode).size, srn, mode)))
       case (false, false) => Some(SchemeDetailsTaskListHeader(link = addEstablisherLink(viewEstablisherLinkText, srn, mode)))
       case (false, true)  => None
     }

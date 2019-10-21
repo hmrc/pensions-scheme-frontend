@@ -28,7 +28,7 @@ case object EstablishedCountryId extends TypedIdentifier[String] {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     StringCYA[self.type](
-      label = Some(messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__hns_schemeEstablishedCountry", userAnswers.get(SchemeNameId).getOrElse("")))
+      label = Some(messages("schemeEstablishedCountry.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__schemeEstablishedCountry", userAnswers.get(SchemeNameId).getOrElse("")))
     )()
 }

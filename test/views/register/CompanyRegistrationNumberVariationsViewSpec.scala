@@ -16,19 +16,19 @@
 
 package views.register
 
-import forms.CompanyRegistrationNumberVariationsFormProvider
-import models.{Index, NormalMode, UpdateMode}
+import forms.CompanyRegistrationNumberFormProvider
+import models.{Index, NormalMode}
 import play.api.data.Form
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.behaviours.ViewBehaviours
-import views.html.register.companyRegistrationNumberVariations
+import views.html.register.companyRegistrationNumber
 
 class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
 
   val name = "test name"
   val messageKeyPrefix = "companyNumber__trustee"
   val index = Index(0)
-  val form = new CompanyRegistrationNumberVariationsFormProvider()(name)
+  val form = new CompanyRegistrationNumberFormProvider()(name)
   val submitUrl = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(NormalMode, index, None)
 
   def viewModel(name: String = name): CompanyRegistrationNumberViewModel = {
@@ -38,13 +38,13 @@ class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
       hint = Message("messages__common__crn_hint", name)
     )
   }
-  private def createView() = () => companyRegistrationNumberVariations(
+  private def createView() = () => companyRegistrationNumber(
     frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
-  private def createUpdateView = () => companyRegistrationNumberVariations(
+  private def createUpdateView = () => companyRegistrationNumber(
     frontendAppConfig, viewModel(), form, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumberVariations(frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumberVariations view" should {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", name))

@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.PayeVariationsFormProvider
+import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
@@ -33,7 +33,7 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
-import views.html.payeVariations
+import views.html.paye
 
 import scala.concurrent.Future
 
@@ -48,7 +48,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
         implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe payeVariations(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }
@@ -70,7 +70,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
 
 object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
-  val form = new PayeVariationsFormProvider()("test company name")
+  val form = new PayeFormProvider()("test company name")
   val firstIndex = Index(0)
   val srn = Some("S123")
 
