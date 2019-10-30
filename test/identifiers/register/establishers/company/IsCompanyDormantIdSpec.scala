@@ -33,7 +33,7 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
   private val companyName = "the company"
 
   "cya" when {
-    
+
     val onwardUrl = "onwardUrl"
 
     def answers: UserAnswers = UserAnswers().set(IsCompanyDormantId(0))(Yes).asOpt.get
@@ -42,11 +42,17 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+
         implicit val userAnswers: UserAnswers = request.userAnswers
-        IsCompanyDormantId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__company__cya__dormant"),List("site.yes"), answerIsMessageKey = true,
-            Some(Link("site.change",onwardUrl,Some(messages("messages__visuallyhidden__dynamic_company__dormant", companyName)))))
-        ))
+
+        IsCompanyDormantId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(
+          Seq(AnswerRow(
+              label = messages("messages__company__cya__dormant", companyName),
+              answer = List("site.yes"),
+              answerIsMessageKey = true,
+              changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_company__dormant", companyName))))
+            ))
+        )
       }
     }
 

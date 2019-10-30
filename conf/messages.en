@@ -543,7 +543,7 @@ messages__company__cya__vat_yes_no = Does the scheme establisher have a VAT regi
 messages__company__cya__paye_yes_no = Does the scheme establisher have a PAYE employer reference number?
 messages__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number?
-messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
+messages__company__cya__dormant = Has {0} been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
 
@@ -1422,12 +1422,12 @@ messages__phone__invalid = Enter a phone number, like 01632 960 001, 07700 900 9
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 messages__visuallyhidden__declarationDuties = whether you have working knowledge of pensions and pensions tax legislation
 adviserName.checkYourAnswersLabel = Who is the person with working knowledge of pensions and pensions tax legislation?
-adviserEmail.checkYourAnswersLabel = What is the email address for {0}?
-adviserPhone.checkYourAnswersLabel = What is the phone number for {0} ?
-adviserAddress.checkYourAnswersLabel = Address for {0}
+adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
+adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
+adviserAddress.checkYourAnswersLabel = {0}’s address
 messages__visuallyhidden__adviserName = who the person is that has working knowledge of pensions and pensions tax legislation
-messages__visuallyhidden__adviserEmail = the email address for {0}
-messages__visuallyhidden__adviserPhone = the phone number for {0}
+messages__visuallyhidden__adviserEmail = {0}’s email address
+messages__visuallyhidden__adviserPhone = {0}’s phone number
 
 messages__what_you_will_need_wk__title = Who has working knowledge of pensions and pensions tax legislation
 messages__what_you_will_need_wk__h1 = Who has working knowledge of pensions and pensions tax legislation
@@ -1829,4 +1829,4 @@ messages__partnerName__title = What is the partner’s name?
 messages__partnerName__heading = What is the partner’s name?
 messages__hasPartnerUtr__title = Does the partner have a UTR?
 
-messages__partnerName__cya = Partner's name
+messages__partnerName__cya = Partner’s name
