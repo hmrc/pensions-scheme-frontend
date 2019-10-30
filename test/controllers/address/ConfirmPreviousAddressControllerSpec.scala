@@ -247,7 +247,7 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
     srn = Some("S12345")
   )
 
-  private def errorMessage(implicit messages: Messages) = Message("confirmPreviousAddress.error", "Test name").resolve
+  private def errorMessage(implicit messages: Messages) = Message("messages__confirmPreviousAddress__error", "Test name").resolve
 
 
   object FakeIdentifier extends TypedIdentifier[Boolean]

@@ -59,7 +59,7 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
     Future.successful(Ok(confirmPreviousAddress(appConfig, preparedForm, viewModel, countryOptions, existingSchemeName)))
   }
 
-  protected def form(name: String) = formProvider(Message("confirmPreviousAddress.error", name))
+  protected def form(name: String) = formProvider(Message("messages__confirmPreviousAddress__error", name))
 
   protected def formProvider: ConfirmAddressFormProvider = new ConfirmAddressFormProvider()
 
