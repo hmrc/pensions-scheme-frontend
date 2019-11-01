@@ -21,7 +21,7 @@ import controllers.JourneyType.JourneyType
 import models.requests.DataRequest
 import play.api.mvc.Result
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals => HmrcRetrievals}
+import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals => HmrcRetrievals}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -32,14 +32,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[JourneyImpl])
 trait Journey {
 
-  def withJourneyType(f: (JourneyType) => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result]
+  def withJourneyType(f: JourneyType => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result]
 
 }
 
 @Singleton
 class JourneyImpl @Inject()(override val authConnector: AuthConnector) extends Journey with AuthorisedFunctions with BaseController {
 
-  def withJourneyType(f: (JourneyType) => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result] = {
+  def withJourneyType(f: JourneyType => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised().retrieve(HmrcRetrievals.affinityGroup) {
