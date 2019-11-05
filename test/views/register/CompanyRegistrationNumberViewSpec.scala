@@ -23,7 +23,7 @@ import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.behaviours.ViewBehaviours
 import views.html.register.companyRegistrationNumber
 
-class CompanyRegistrationNumberVariationsViewSpec extends ViewBehaviours {
+class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   val name = "test name"
   val messageKeyPrefix = "companyNumber__trustee"
