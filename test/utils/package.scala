@@ -230,19 +230,13 @@ package object utils {
       answers.set(trustees.company.CompanyEnterVATId(index))(reference).asOpt.value
     }
 
-    def trusteesCompanyPayeVariations(index: Int, paye: ReferenceValue): UserAnswers = {
-      answers.set(CompanyEnterPAYEId(index))(paye).asOpt.value
-    }
-
-    def trusteesCompanyCrnVariations(index: Int, crn: ReferenceValue): UserAnswers = {
+    def trusteesCompanyEnterCRN(index: Int, crn: ReferenceValue): UserAnswers = {
       answers.set(CompanyEnterCRNId(index))(crn).asOpt.value
     }
 
-    def trusteesCompanyUtr(index: Int, utr: ReferenceValue): UserAnswers = {
+    def trusteesCompanyEnterUTR(index: Int, utr: ReferenceValue): UserAnswers = {
       answers.set(CompanyEnterUTRId(index))(utr).asOpt.value
     }
-
-
 
     def trusteesCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(trustees.company.CompanyDetailsId(index))(companyDetails).asOpt.value
