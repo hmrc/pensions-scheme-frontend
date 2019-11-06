@@ -26,8 +26,8 @@
         labelClass: Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-field @if(field.hasErrors){form-field--error}">
-    <fieldset class="form-group @fieldsetClass" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-radio-hint"}>
+<div class="form-group @if(field.hasErrors){form-field--error}">
+    <fieldset class="@fieldsetClass" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-radio-hint"}>
         <legend>
             <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
             @if(hint.nonEmpty){
