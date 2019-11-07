@@ -37,8 +37,8 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val partnerDetails = PersonName("Joe", "Bloggs")
 
-  val previousAddressTitle = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
+  private val previousAddressTitle = s"What was the partner’s previous address?"
+  private val previousAddressHeading = s"What was ${partnerDetails.fullName}’s previous address?"
 
   private val addresses = Seq(
     TolerantAddress(

@@ -37,8 +37,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val companyDetails = CompanyDetails("Test company name")
 
-  val previousAddressTitle = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
+  private val previousAddressTitle = s"What was the company’s previous address?"
+  private val previousAddressHeading = s"What was ${companyDetails.companyName}’s previous address?"
 
 
   private val addresses = Seq(
