@@ -1566,12 +1566,14 @@ messages__visuallyhidden__uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
 messages__detailsFor = {0}’s details
+messages__company_detailsFor = Company details for {0}
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us {0}’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
-messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if it has one
-messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
-messages__whatYouWillNeedEstablisherCompany__p1 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
+messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
+messages__whatYouWillNeedEstablisherCompany__p1 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedEstablisherCompany__p2 = We will also need to know if {0} has been dormant at any time in the last 12 months.
 
 messages__whatYouWillNeedAddress__title = Address
 messages__addressFor = {0}’s address
