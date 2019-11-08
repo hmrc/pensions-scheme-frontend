@@ -44,8 +44,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
-    heading = Message("messages__hasVAT", "test company name"),
-    hint = Some(Message("messages__hasCompanyVat__p1", "test company name"))
+    heading = Message("messages__hasVAT", "test company name")
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyVATController =
