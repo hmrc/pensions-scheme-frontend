@@ -39,7 +39,8 @@
                 field = form("value"),
                 legend = messages("messages__is_dormant__title"),
                 legendClass = Some("visually-hidden"),
-                inputs = DeclarationDormant.options
+                inputs = DeclarationDormant.options,
+                fieldsetClass = Some("inline")
             )
 
             @components.submit_button("site.save_and_continue")
