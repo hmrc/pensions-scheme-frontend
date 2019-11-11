@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import javax.inject.Inject
 import models.NormalMode
@@ -27,17 +27,20 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.beforeYouStart
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          crypto: ApplicationCrypto,
-                                         userAnswersCacheConnector: UserAnswersCacheConnector
-                                        ) extends FrontendController with I18nSupport {
+                                         userAnswersCacheConnector: UserAnswersCacheConnector,
+                                         pensionAdministratorConnector: PensionAdministratorConnector
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-      Ok(beforeYouStart(appConfig))
+      pensionAdministratorConnector.getPSAName.flatMap { psaName =>
+        Future.successful(Ok(beforeYouStart(appConfig, psaName)))
+      }
   }
 }

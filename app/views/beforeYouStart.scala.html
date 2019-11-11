@@ -20,7 +20,8 @@
 @import models.Mode
 
 @(
-        appConfig: FrontendAppConfig
+        appConfig: FrontendAppConfig,
+        psaName: String
 )(
         implicit request: Request[_],
         messages: Messages
@@ -46,5 +47,5 @@
 
     @components.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
 
-    @components.return_link("messages__complete__return", None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 }
