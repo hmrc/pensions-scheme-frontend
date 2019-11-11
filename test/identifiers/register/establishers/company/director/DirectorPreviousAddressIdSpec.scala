@@ -42,7 +42,7 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
   )
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow(messages("messages__common__cya__previous_address"),
+    AnswerRow(messages("messages__previousAddressFor"),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
