@@ -202,12 +202,12 @@ messages__hs_what_you_will_need__other_link = There might be other things you ne
 messages__hs_what_you_will_need__p3 = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start again.
 
 messages__before_you_start__title = Before you start
-messages__before_you_start__lede = Before you start entering all of the scheme details, you will need to tell us:
+messages__before_you_start__p1 = There are a number of sections to complete when you apply to register a new pension scheme.
+messages__before_you_start__p2 = Before you start these sections, you will need to tell us:
 messages__before_you_start__item_1 = the pension scheme name
 messages__before_you_start__item_2 = the type of scheme
 messages__before_you_start__item_3 = which country the scheme was established in
 messages__before_you_start__item_4 = if you have working knowledge of pensions and pensions tax legislation
-messages__before_you_start__scheme_setup = This will set up your scheme application
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -1566,12 +1566,14 @@ messages__visuallyhidden__uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
 messages__detailsFor = {0}’s details
+messages__company_detailsFor = Company details for {0}
 messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us {0}’s:
 messages__whatYouWillNeedEstablisherCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
-messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number, if it has one
-messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number, if it has one
-messages__whatYouWillNeedEstablisherCompany__p1 = You will also need to tell us if the company has been dormant at any time in the last 12 months.
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT registration number
+messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE reference (you can tell us any employer PAYE reference if {0} has more than one)
+messages__whatYouWillNeedEstablisherCompany__p1 = If {0} has them, you will also need to tell us their:
+messages__whatYouWillNeedEstablisherCompany__p2 = We will also need to know if {0} has been dormant at any time in the last 12 months.
 
 messages__whatYouWillNeedAddress__title = Address
 messages__addressFor = {0}’s address

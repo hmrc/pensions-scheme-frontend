@@ -34,7 +34,8 @@
 
     @components.heading(headingKey = messages("messages__before_you_start__title"))
 
-    <p>@messages("messages__before_you_start__lede")</p>
+    <p>@messages("messages__before_you_start__p1")</p>
+    <p>@messages("messages__before_you_start__p2")</p>
 
     <ul class="list list-bullet">
         <li>@messages("messages__before_you_start__item_1")</li>
@@ -42,8 +43,6 @@
         <li>@messages("messages__before_you_start__item_3")</li>
         <li>@messages("messages__before_you_start__item_4")</li>
     </ul>
-
-    <p>@messages("messages__before_you_start__scheme_setup")</p>
 
     @components.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
 
