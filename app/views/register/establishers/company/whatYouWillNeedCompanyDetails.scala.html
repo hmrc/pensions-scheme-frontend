@@ -21,23 +21,28 @@
 @(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__detailsFor", messages("messages__theCompany")).capitalize,
+    title = messages("messages__company_detailsFor", messages("messages__theCompany")),
     appConfig = appConfig,
     bodyClasses = None
 ) {
 
-    @components.heading(headingKey = messages("messages__detailsFor", companyName))
+    @components.heading(headingKey = messages("messages__company_detailsFor", companyName))
 
     <p>@messages("messages__whatYouWillNeedEstablisherCompany__lede", companyName)</p>
 
     <ul class="list list-bullet">
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item1")</li>
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item2")</li>
-        <li>@messages("messages__whatYouWillNeedEstablisherCompany__item3")</li>
-        <li>@messages("messages__whatYouWillNeedEstablisherCompany__item4")</li>
     </ul>
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompany__p1")</p>
+    <p>@messages("messages__whatYouWillNeedEstablisherCompany__p1", companyName)</p>
+
+    <ul class="list list-bullet">
+        <li>@messages("messages__whatYouWillNeedEstablisherCompany__item3")</li>
+        <li>@messages("messages__whatYouWillNeedEstablisherCompany__item4", companyName)</li>
+    </ul>
+
+    <p>@messages("messages__whatYouWillNeedEstablisherCompany__p2", companyName)</p>
 
     @components.button_link("site.continue", href.url, "submit")
 
