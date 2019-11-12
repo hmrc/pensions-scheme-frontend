@@ -996,7 +996,7 @@ messages__partnershipPaye__heading = Does the partnership have a PAYE employer r
 messages__addPartners__heading = Partners
 messages__addPartners__error__required = You must make a selection
 messages__addPartners_add_more = Do you want to add another partner?
-messages__addPartners_lede = You must tell us about all your partners.
+messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using the digital service.
 messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
 
