@@ -48,7 +48,7 @@
             @components.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components.entity_list(partners, viewOnly, mode, srn, displayStatus = false)
+            @components.entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
                 @if(partners.size < appConfig.maxPartners) {

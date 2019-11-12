@@ -163,14 +163,12 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       hiddenText mustBe s"${messages("site.view")} John Doe"
     }
 
-    "show edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
+    "show edit links but not show view links when viewOnly is false" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val viewLink = doc.select(s"a[id=person-0-view]")
-      val incompleteLozenge = doc.select(s"span[class=rejected]")
       editLink.size() mustBe 1
       viewLink.size() mustBe 0
-      incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)

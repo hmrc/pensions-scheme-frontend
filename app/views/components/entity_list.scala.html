@@ -18,7 +18,7 @@
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
 @import models.register.{Entity, Establisher}
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String], displayStatus: Boolean = true)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -28,16 +28,6 @@
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
             @if(!viewOnly){
-                @if(displayStatus) {
-                    <div id="person-@{entity.index}-status" class="cya-status status">
-                        @if(entity.isCompleted){
-                            <span class="complete">@messages("site.complete")</span>
-                        } else {
-                            <span class="rejected">@messages("site.incomplete")</span>
-                        }
-                    </div>
-                }
-
                 @entity.deleteLink(mode, srn).map{ deleteLink=>
                     <div>
                         <a id="person-@{entity.index}-delete" href="@deleteLink">
