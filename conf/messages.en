@@ -555,9 +555,8 @@ messages__director_no_nino = Tell us why the director does not have a National I
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
 messages__error__no_nino_director = You need to tell us why the director does not have a National Insurance number
 
-messages__addCompanyDirectors__title = Company directors
-messages__addCompanyDirectors__heading = Company directors
-messages__addCompanyDirectors__checkYourAnswersLabel = Company directors
+messages__addCompanyDirectors__heading = Directors
+messages__addCompanyDirectors__checkYourAnswersLabel = Directors
 messages__addCompanyDirectors__error__required = You must make a selection
 messages__addCompanyDirectors_add_more = Do you want to add another director?
 messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
@@ -994,8 +993,7 @@ messages__company__checkYourAnswers__paye = Does the company have a PAYE employe
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
 
-messages__addPartners__title = Add partners
-messages__addPartners__heading = Add partners
+messages__addPartners__heading = Partners
 messages__addPartners__error__required = You must make a selection
 messages__addPartners_add_more = Do you want to add another partner?
 messages__addPartners_lede = You must tell us about all your partners.

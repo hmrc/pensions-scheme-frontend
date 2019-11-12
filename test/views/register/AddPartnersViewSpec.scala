@@ -85,7 +85,12 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
   "AddPartnershipPartners view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
+    behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
+
+    "display the correct browser title" in {
+      val doc = asDocument(createView()())
+      assertEqualsMessage(doc, "title", messages(s"messages__${messageKeyPrefix}__heading")+ " - " + messagesApi("messages__pension_scheme_registration__title"))
+    }
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
