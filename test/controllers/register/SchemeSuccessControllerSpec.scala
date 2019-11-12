@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SubmissionReferenceNumberId
@@ -25,17 +25,19 @@ import org.joda.time.LocalDate
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.register.schemeSuccess
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  override lazy val app = new GuiceApplicationBuilder().configure(
+  override lazy val app: Application = new GuiceApplicationBuilder().configure(
     "features.useManagePensionsFrontend" -> true
   ).build()
 
@@ -44,6 +46,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   val submissionReferenceNumber = "XX123456789132"
 
   private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+
+  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
+    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
+  }
 
   val validData: JsObject = Json.obj(
     SubmissionReferenceNumberId.toString -> SchemeSubmissionResponse(submissionReferenceNumber)
@@ -57,7 +65,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      fakePensionAdminstratorConnector
     )
 
   def viewAsString(): String =
@@ -65,7 +74,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       frontendAppConfig,
       LocalDate.now(),
       submissionReferenceNumber,
-      showMasterTrustContent = false
+      showMasterTrustContent = false,
+      "email@test.com"
     )(fakeRequest, messages).toString
 
   appRunning()

@@ -47,7 +47,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
         SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
-    //          cacheConnector.removeAll(request.externalId).map { _ =>
+              cacheConnector.removeAll(request.externalId).flatMap { _ =>
           Future.successful(
             Ok(
               schemeSuccess(
@@ -58,7 +58,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                 email
               )
             ))
-//          }
+          }
         }
       }
   }
