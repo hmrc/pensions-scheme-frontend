@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -186,7 +187,9 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
     AddressListViewModel(
       routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
       routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
-      addresses
+      addresses,
+      title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
+      heading = Message("messages__dynamic_whatIsAddress", directorDetails.fullName)
     )
   }
 

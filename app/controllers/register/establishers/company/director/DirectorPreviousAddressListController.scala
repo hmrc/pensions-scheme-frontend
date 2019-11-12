@@ -60,8 +60,8 @@ class DirectorPreviousAddressListController @Inject()(
           postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          title = Message("messages__select_the_previous_address__title"),
-          heading = Message("messages__select_the_previous_address__heading"),
+          title = Message("messages__select_the_previous_address__heading", Message("messages__theDirector")),
+          heading = Message("messages__select_the_previous_address__heading", name),
           srn = srn
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
