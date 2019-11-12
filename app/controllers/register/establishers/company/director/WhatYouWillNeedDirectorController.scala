@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -42,15 +41,12 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
-      CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
         Future.successful(Ok(whatYouWillNeed(
           appConfig,
           existingSchemeName,
           srn,
-          companyDetails.companyName,
           DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
         )))
-      }
 
   }
 }
