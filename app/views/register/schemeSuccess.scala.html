@@ -23,7 +23,7 @@
 
 @(appConfig: FrontendAppConfig, currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
 
-@appealLink = {<a id="tribunal-appeal" href="@appConfig.appealLink">@messages("messages__complete__appeal_link")</a>}
+@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 @printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
@@ -45,7 +45,7 @@
 
     <div id="hintText" class="panel panel-border-wide">
         <p class="bold">@messages("messages__complete__copy_1")</p>
-        <p>@messages("messages__complete__copy_2a") <a id="check-status-submission" href="">@messages("messages__complete__copy_2b")</a> @messages("messages__complete__copy_2c")</p>
+        <p>@Html(Message("messages__complete__copy_2").withArgs(yourSchemesLink))</p>
     </div>
 
     <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
@@ -69,7 +69,5 @@
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__finish")
     }
-
-    <p><a id="feedback" href="@appConfig.serviceSignOut" target="_blank">@messages("messages__complete__feedback")</a></p>
 
 }

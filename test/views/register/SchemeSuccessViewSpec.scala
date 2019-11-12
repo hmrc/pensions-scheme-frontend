@@ -29,7 +29,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   val submissionReferenceNumber = "XX123456789132"
   private val email = "email@email.com"
 
-  val checkStatusLink = frontendAppConfig.appealLink
+  val checkStatusLink = frontendAppConfig.managePensionsYourPensionSchemesUrl
   val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
   val feedbackLink = frontendAppConfig.serviceSignOut
 
@@ -54,7 +54,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   "SchemeSuccess view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"),
-      "_copy_1", "_copy_2a", "_copy_2c", "_copy_3", "_copy_4", "_copy_5"
+      "_copy_1", "_copy_3", "_copy_4", "_copy_5"
     )
 
     "have dynamic text for email" in {
@@ -71,10 +71,9 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
         .hasClass("panel panel-border-wide") mustBe true
     }
 
-    // TODO
-//    "have link for check status" in {
-//      Jsoup.parse(createView().toString()).select("a[id=check-status-submission]") must haveLink(checkStatusLink)
-//    }
+    "have link for check status" in {
+      Jsoup.parse(createView().toString()).select("a[id=check-status-submission]") must haveLink(checkStatusLink)
+    }
 
     "have link for feedback survey" in {
       Jsoup.parse(createView().toString()).select("a[id=feedback]") must haveLink(feedbackLink)
@@ -95,7 +94,6 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
     )
 
     "have link for pensions regulator" in {
-
       Jsoup.parse(createMasterTrustView().toString()).select("a[id=regulator-contact]") must haveLink(pensionsRegulatorLink)
     }
 
