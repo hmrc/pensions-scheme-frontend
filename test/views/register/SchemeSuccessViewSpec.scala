@@ -24,14 +24,13 @@ import views.html.register.schemeSuccess
 
 class SchemeSuccessViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "complete"
+  private val messageKeyPrefix = "complete"
 
-  val submissionReferenceNumber = "XX123456789132"
+  private val submissionReferenceNumber = "XX123456789132"
   private val email = "email@email.com"
 
-  val checkStatusLink = frontendAppConfig.managePensionsYourPensionSchemesUrl
-  val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
-  val feedbackLink = frontendAppConfig.serviceSignOut
+  private val checkStatusLink = frontendAppConfig.managePensionsYourPensionSchemesUrl
+  private val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
 
   def createView: () => HtmlFormat.Appendable = () =>
     schemeSuccess(
@@ -73,10 +72,6 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
     "have link for check status" in {
       Jsoup.parse(createView().toString()).select("a[id=check-status-submission]") must haveLink(checkStatusLink)
-    }
-
-    "have link for feedback survey" in {
-      Jsoup.parse(createView().toString()).select("a[id=feedback]") must haveLink(feedbackLink)
     }
 
     "have a link to 'print this screen'" in {
