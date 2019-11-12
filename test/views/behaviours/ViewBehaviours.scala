@@ -86,6 +86,40 @@ trait ViewBehaviours extends ViewSpecBase {
 
   }
 
+  def normalPageWithBrowserTitleSameAsH1(view: () => HtmlFormat.Appendable,
+                                    messageKeyPrefix: String,
+                                    pageHeader: String,
+                                    expectedGuidanceKeys: String*): Unit = {
+
+    "behave like a normal page" when {
+      "rendered" must {
+        "have the correct banner title" in {
+          val doc = asDocument(view())
+          val nav = doc.getElementById("proposition-menu")
+          val span = nav.children.first
+          span.text mustBe messagesApi("site.service_name")
+        }
+
+        "display the correct page title" in {
+          val doc = asDocument(view())
+          assertPageHeaderEqualsMessage(doc, pageHeader)
+        }
+
+        "display the correct guidance" in {
+          val doc = asDocument(view())
+          for (key <- expectedGuidanceKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix}_$key"))
+        }
+
+        "display the correct browser title" in {
+          val doc = asDocument(view())
+          assertEqualsMessage(doc, "title", pageHeader + " - " + messagesApi("messages__pension_scheme_registration__title"))
+        }
+
+      }
+    }
+
+  }
+
   def normalPage(view: () => HtmlFormat.Appendable,
                  messageKeyPrefix: String,
                  pageHeader: String,

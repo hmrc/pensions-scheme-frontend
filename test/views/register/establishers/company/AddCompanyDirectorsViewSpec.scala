@@ -84,12 +84,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
   "AddCompanyDirectors view" must {
 
-    behave like normalPageWithoutBrowserTitle(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
-
-    "display the correct browser title" in {
-      val doc = asDocument(createView()())
-      assertEqualsMessage(doc, "title", messages(s"messages__${messageKeyPrefix}__heading")+ " - " + messagesApi("messages__pension_scheme_registration__title"))
-    }
+    behave like normalPageWithBrowserTitleSameAsH1(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
