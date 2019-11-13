@@ -37,7 +37,7 @@ object DirectorPreviousAddressId {
     new CheckYourAnswersDirectors[DirectorPreviousAddressId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__cya__previous_address")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__previousAddressFor")
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")

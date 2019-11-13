@@ -35,14 +35,14 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      messages("messages__common__cya__previous_address"),
+      messages("messages__previousAddressFor", "first last"),
       addressAnswer(address),
       answerIsMessageKey = false,
       Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
   )
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow(messages("messages__common__cya__previous_address"),
+    AnswerRow(messages("messages__previousAddressFor", "first last"),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
       Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
