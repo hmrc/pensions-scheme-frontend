@@ -29,6 +29,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,7 +68,9 @@ class DirectorAddressListController @Inject()(
           postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
           manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
-          srn = srn
+          srn = srn,
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
+          heading = Message("messages__dynamic_whatIsAddress", name)
         )
     }.left.map(_ => Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
   }

@@ -37,8 +37,8 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
 
   private val directorDetails = PersonName("Joe", "Bloggs")
 
-  val previousAddressTitle   = "Select the previous address"
-  val previousAddressHeading = "Select the previous address"
+  private val previousAddressTitle   = "What was the director’s previous address?"
+  private val previousAddressHeading = s"What was ${directorDetails.fullName}’s previous address?"
 
   private val addresses = Seq(
     TolerantAddress(
