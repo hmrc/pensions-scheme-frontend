@@ -28,20 +28,18 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "whatYouWillNeed"
 
-  private val companyName = "test company name"
-
   private val href: Call = DirectorNameController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)
 
   private def createView: () => HtmlFormat.Appendable =
-    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, companyName, href)(fakeRequest, messages)
+    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 
   "WhatYouWillNeedCompanyDetails view" must {
 
     behave like normalPageWithTitle(createView, messageKeyPrefix,
-      Message("messages__directorsFor", Message("messages__theCompany").resolve),
-      Message("messages__directorsFor", companyName))
+      Message("messages__directors__heading"),
+      Message("messages__directors__heading"))
 
     "display the correct guidance" in {
       val doc = asDocument(createView())
