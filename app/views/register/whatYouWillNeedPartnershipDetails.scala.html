@@ -24,6 +24,7 @@
     appConfig = appConfig,
     bodyClasses = None
 ) {
+    @components.back_link()
     @components.heading(headingKey = messages("messages__detailsFor", partnershipName))
 
     <p>@messages("messages__whatYouWillNeedPartnershipDetails__p1", partnershipName)</p>

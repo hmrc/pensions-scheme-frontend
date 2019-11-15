@@ -27,6 +27,8 @@
 
     @helpers.form(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.heading(headingKey = messages("messages__what_you_will_need_wk__h1"))
 
         <p>@messages("messages__what_you_will_need_wk__lede")</p>
