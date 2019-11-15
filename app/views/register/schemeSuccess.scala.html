@@ -25,7 +25,6 @@
 
 @yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
-@printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
 @main_template(
     title = messages("messages__complete__title"),
@@ -45,7 +44,7 @@
 
     <div id="hintText" class="panel panel-border-wide">
         <p class="bold">@messages("messages__complete__copy_1")</p>
-        <p>@Html(Message("messages__complete__copy_2").withArgs(yourSchemesLink))</p>
+        <p>@Html(Message("messages__complete__copy_2", yourSchemesLink))</p>
     </div>
 
     <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
@@ -57,14 +56,13 @@
 
     @if(showMasterTrustContent) {
         <h2 class="heading-large">@messages("messages__complete__master_trust_heading")</h2>
-        <p>@Html(Message("messages__complete__pension_regulator").withArgs(pensionsRegulatorLink))</p>
+        <p>@Html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))</p>
     }
 
-    <h2 class="heading-large">@messages("site.saveOrPrint")</h2>
+    <p>
+        <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
+    </p>
 
-    <div class="print-page">
-        @printThisPageLink
-    </div>
 
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__finish")
