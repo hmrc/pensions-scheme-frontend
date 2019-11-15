@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.DeclarationFormProvider
+import controllers.register.routes.DeclarationController
 import identifiers.SchemeTypeId
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
@@ -32,7 +32,6 @@ import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
@@ -53,40 +52,32 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider,
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider()
-
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      showPage(Ok.apply, form)
+      showPage(Ok.apply)
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          showPage(BadRequest.apply, formWithErrors)
-        },
-        _ =>
-          for {
-            cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-            submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-            cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-            _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-          } yield {
-            Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-          }
-      )
+      for {
+        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+        cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+        _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+      } yield {
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+      }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]) = {
     val isCompany = request.userAnswers.hasCompanies(NormalMode)
+    val href = DeclarationController.onClickAgree()
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
     val readyForRender = if (isCompany) {
@@ -99,8 +90,8 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant,
-              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName)
+            declaration(appConfig, isCompany, isDormant = isDeclarationDormant,
+              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName, href)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

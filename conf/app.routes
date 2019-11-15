@@ -204,7 +204,7 @@ GET         /check-adviser-answers                                   controllers
 POST        /check-adviser-answers                                   controllers.AdviserCheckYourAnswersController.onSubmit()
 
 GET         /declare-after-changing-details/:srn                     controllers.VariationDeclarationController.onPageLoad(srn: Option[String])
-POST        /declare-after-changing-details/:srn                     controllers.VariationDeclarationController.onSubmit(srn: Option[String])
+GET         /on-click-declare-after-changing-details/:srn            controllers.VariationDeclarationController.onClickAgree(srn: Option[String])
 
 GET         /make-more-changes/:srn                                  controllers.AnyMoreChangesController.onPageLoad(srn: Option[String])
 POST        /make-more-changes/:srn                                  controllers.AnyMoreChangesController.onSubmit(srn: Option[String])
@@ -213,9 +213,7 @@ GET         /confirmation                                            controllers
 POST        /confirmation                                            controllers.register.SchemeSuccessController.onSubmit()
 
 GET         /declaration                                             controllers.register.DeclarationController.onPageLoad
-POST        /declaration                                             controllers.register.DeclarationController.onSubmit
-GET         /change-declaration                                      controllers.register.DeclarationController.onPageLoad
-POST        /change-declaration                                      controllers.register.DeclarationController.onSubmit
+GET         /on-click-declaration                                    controllers.register.DeclarationController.onClickAgree
 
 GET         /details-updated/:srn                                    controllers.register.SchemeVariationsSuccessController.onPageLoad(srn)
 
