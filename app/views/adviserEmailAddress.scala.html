@@ -28,6 +28,8 @@
 
     @helpers.form(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.error_summary(form.errors)
 
         @components.heading(messages("messages__adviser__email__address__heading", adviserName))

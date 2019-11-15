@@ -38,6 +38,8 @@
 
     @helpers.form(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @if(establishers.isEmpty) {
 
         @components.heading(
