@@ -44,7 +44,7 @@ object CompanyEnterUTRId {
     new CheckYourAnswersCompany[CompanyEnterUTRId] {
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String = {
-        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_utr")
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
       }
 
       override def row(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

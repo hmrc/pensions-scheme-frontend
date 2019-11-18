@@ -1203,14 +1203,12 @@ messages__visuallyhidden__partnership__dormant = whether the partnership been do
 
 messages__visuallyhidden__dynamic_name = the name of {0}
 messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference (UTR)
-messages__visuallyhidden__dynamic_utr = the UTR for {0}
 messages__visuallyhidden__dynamic_unique_taxpayer_reference = {0}’s UTR
 messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
 messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
-messages__visuallyhidden__dynamic_vat = the VAT registration number for {0}
 messages__visuallyhidden__dynamic_vat_number = {0}’s VAT registration number
 messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
-messages__visuallyhidden__dynamic_paye = the employer PAYE reference for {0}
+messages__visuallyhidden__dynamic_paye = {0}’s employer PAYE reference
 messages__visuallyhidden__dynamic_paye_reference = {0}’s employer PAYE reference
 messages__visuallyhidden__dynamic_address = {0}’s address
 messages__visuallyhidden__dynamic_addressYears = whether {0} has used this address for at least 1 year
@@ -1227,7 +1225,7 @@ messages__visuallyhidden__dynamic_national_insurance_number = {0}’s National I
 messages__visuallyhidden__dynamic_noNinoReason = the reason why {0} does not have a National Insurance number
 messages__visuallyhidden__dynamic_hasCrn = whether {0} has a company number
 messages__visuallyhidden__dynamic_noCrnReason = the reason why {0} does not have a company number
-messages__visuallyhidden__dynamic_crn = the company number for {0}
+messages__visuallyhidden__dynamic_crn = {0}’s company number
 messages__visuallyhidden__dynamic_company__dormant = whether {0} has been dormant in the last 12 months
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
