@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeTypeId
@@ -31,32 +31,35 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.schemeSuccess
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         cacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction)
+                                        requireData: DataRequiredAction,
+                                        pensionAdministratorConnector: PensionAdministratorConnector)
                                        (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
 
-      SubmissionReferenceNumberId.retrieve.right.map {
-        submissionReferenceNumber =>
-
-          cacheConnector.removeAll(request.externalId).map { _ =>
-              Ok(
-                schemeSuccess(
-                  appConfig,
-                  LocalDate.now(),
-                  submissionReferenceNumber.schemeReferenceNumber,
-                  showMasterTrustContent
-                )
-            )
+      pensionAdministratorConnector.getPSAEmail.flatMap { email =>
+        SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
+              cacheConnector.removeAll(request.externalId).flatMap { _ =>
+          Future.successful(
+            Ok(
+              schemeSuccess(
+                appConfig,
+                LocalDate.now(),
+                submissionReferenceNumber.schemeReferenceNumber,
+                showMasterTrustContent,
+                email
+              )
+            ))
           }
+        }
       }
   }
 
