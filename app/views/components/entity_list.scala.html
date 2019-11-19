@@ -18,7 +18,7 @@
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
 @import models.register.{Entity, Establisher}
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String], displayStatus: Boolean = true)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
@@ -28,30 +28,19 @@
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
             @if(!viewOnly){
-                @if(displayStatus) {
-                    <div id="person-@{entity.index}-status" class="cya-status status">
-                        @if(entity.isCompleted){
-                            <span class="complete">@messages("site.complete")</span>
-                        } else {
-                            <span class="rejected">@messages("site.incomplete")</span>
-                        }
+                @entity.editLink(mode, srn).map{ editLink=>
+                    <div>
+                        <a id="person-@{entity.index}-edit" href="@editLink">
+                            <span aria-hidden="true">@messages("site.change")</span>
+                            <span class="visually-hidden">@{messages("site.change")} @{entity.name}</span>
+                        </a>
                     </div>
                 }
-
                 @entity.deleteLink(mode, srn).map{ deleteLink=>
                     <div>
                         <a id="person-@{entity.index}-delete" href="@deleteLink">
                             <span aria-hidden="true">@messages("site.remove")</span>
                             <span class="visually-hidden">@{messages("site.remove")} @{entity.name}</span>
-                        </a>
-                    </div>
-                }
-
-                @entity.editLink(mode, srn).map{ editLink=>
-                    <div>
-                        <a id="person-@{entity.index}-edit" href="@editLink">
-                            <span aria-hidden="true">@messages("site.edit")</span>
-                            <span class="visually-hidden">@{messages("site.edit")} @{entity.name}</span>
                         </a>
                     </div>
                 }

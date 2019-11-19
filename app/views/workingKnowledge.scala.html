@@ -28,6 +28,8 @@
 
     @helpers.form(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.error_summary(form.errors)
 
         @components.heading(messages("messages__workingKnowledge__heading"))

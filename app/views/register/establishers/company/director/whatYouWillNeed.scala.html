@@ -22,7 +22,6 @@
         appConfig: FrontendAppConfig,
         schemeName: Option[String],
         srn: Option[String],
-        companyName: String,
         href: Call
 )(
         implicit request: Request[_],
@@ -30,11 +29,12 @@
 )
 
 @main_template(
-    title = messages("messages__directorsFor", messages("messages__theCompany")),
+    title = messages("messages__directors__heading"),
     appConfig = appConfig,
     bodyClasses = None
 ) {
-    @components.heading(messages("messages__directorsFor", companyName))
+    @components.back_link()
+    @components.heading(messages("messages__directors__heading"))
 
     @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
 

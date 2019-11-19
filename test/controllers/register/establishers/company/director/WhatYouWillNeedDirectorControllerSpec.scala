@@ -28,8 +28,6 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  private val companyName = "test company name"
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
       messagesApi,
@@ -39,9 +37,9 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       new DataRequiredActionImpl
     )
 
-  val href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, companyName, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 

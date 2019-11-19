@@ -85,7 +85,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
   "AddPartnershipPartners view" must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
+    behave like normalPageWithBrowserTitleSameAsH1(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
@@ -164,14 +164,12 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       hiddenText mustBe s"${messages("site.view")} John Doe"
     }
 
-    "show edit links and incomplete lozenge, but not show view links when viewOnly is false" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity), viewOnly = false)(form))
+    "show edit links but not show view links when viewOnly is false" in {
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))
       val editLink = doc.select(s"a[id=person-0-edit]")
       val viewLink = doc.select(s"a[id=person-0-view]")
-      val incompleteLozenge = doc.select(s"span[class=rejected]")
       editLink.size() mustBe 1
       viewLink.size() mustBe 0
-      incompleteLozenge.size() mustBe 1
     }
 
     behave like pageWithReturnLink(createView(), getReturnLink)
@@ -179,8 +177,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
     behave like entityListWithSingleRecord(createView(), createView(Seq(johnDoeEntity)), Seq(johnDoeEntity), frontendAppConfig)
-
-    //behave like entityListWithMultipleRecords(createView(), createView(partners), partners, frontendAppConfig)
 
     "show delete links " when {
       "multiple records exist" in {
