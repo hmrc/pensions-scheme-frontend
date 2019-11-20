@@ -43,51 +43,51 @@
 
         @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
 
-        <ol class="list-bullet">
+        <ol class="list list-bullet">
             @if(isCompany){
                 @if(isDormant){
                     <li>
-                        @components.paragraph_text(messages("messages__declaration__statement1_dormant"))
+                        @messages("messages__declaration__statement1_dormant")
                     </li>
                 } else {
                     <li>
-                        @components.paragraph_text(messages("messages__declaration__statement1_not_dormant"))
+                        @messages("messages__declaration__statement1_not_dormant")
                     </li>
                 }
             }
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement2"), para_id="para2")
+                @messages("messages__declaration__statement2")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement3"), para_id="para3")
-            </li>
-
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement4"), para_id="para4")
+                @messages("messages__declaration__statement3")
             </li>
 
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement5"), para_id="para5")
+                @messages("messages__declaration__statement4")
+            </li>
+
+            <li>
+                @messages("messages__declaration__statement5")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement6"), para_id="para6")
+                @messages("messages__declaration__statement6")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement7"), para_id="para7")
+                @messages("messages__declaration__statement7")
             </li>
             <li>
                 @if(hasWorkingKnowledge){
-                        @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"), para_id="para8")
+                        @messages("messages__declaration__statement8_working_knowledge")
                 } else {
-                        @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"), para_id="para8")
+                        @messages("messages__declaration__statement8_no_working_knowledge")
                 }
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement9"), para_id="para9")
+                @messages("messages__declaration__statement9")
             </li>
             @if(showMasterTrustDeclaration){
                 <li>
-                    @components.paragraph_text(messages("messages__declaration__statement10"), para_id="para10")
+                    @messages("messages__declaration__statement10")
                 </li>
             }
         </ol>
