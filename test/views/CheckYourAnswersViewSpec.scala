@@ -20,13 +20,15 @@ import controllers.routes
 import models.Mode.checkMode
 import models.{Link, Mode, NormalMode, UpdateMode}
 import play.twirl.api.HtmlFormat
-import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Section}
+import viewmodels._
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
 
   private val messageKeyPrefix = "checkYourAnswers"
+
+  private val pageTitle = "Page title"
 
   private def emptyAnswerSections: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     AnswerRow(
@@ -55,7 +57,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
         returnOverview = returnOverview,
         hideEditLinks = hideEditLinks,
         srn = srn,
-        hideSaveAndContinueButton = hideSaveAndContinueButton
+        hideSaveAndContinueButton = hideSaveAndContinueButton,
+        title = Message(pageTitle)
       )
     )(fakeRequest, messages)
 
@@ -69,14 +72,15 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
         returnOverview = false,
         hideEditLinks = viewOnly,
         srn = srn,
-        hideSaveAndContinueButton = viewOnly
+        hideSaveAndContinueButton = viewOnly,
+        title = Message(pageTitle)
       )
     )(fakeRequest, messages)
 
   "check_your_answers_old view" must {
 
     behave like normalPageWithTitle(createView(hideSaveAndContinueButton = false),
-      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
+      messageKeyPrefix, pageTitle, messages("checkYourAnswers.hs.heading"))
 
     behave like pageWithReturnChangeLink(createView(hideSaveAndContinueButton = false))
 

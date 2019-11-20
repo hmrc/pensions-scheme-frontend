@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -66,7 +66,8 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
       returnOverview = false,
       hideEditLinks = false,
       srn = srn,
-      hideSaveAndContinueButton = hideButton
+      hideSaveAndContinueButton = hideButton,
+      title = Message("checkYourAnswers.hs.title")
     ))(fakeRequest, messages).toString
 
   "CheckYourAnswersIndividualContactDetailsController" when {

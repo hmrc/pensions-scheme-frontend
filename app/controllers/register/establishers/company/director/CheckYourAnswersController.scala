@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -106,7 +106,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         returnOverview = false,
         hideEditLinks = request.viewOnly,
         srn = srn,
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode)
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
+        title = Message("checkYourAnswers.hs.title")
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig,vm )))

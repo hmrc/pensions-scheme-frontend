@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils._
-import viewmodels.{AnswerRow, AnswerSection, CYAViewModel}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -68,7 +68,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         returnOverview = false,
         hideEditLinks = false,
         srn = srn,
-        hideSaveAndContinueButton = false
+        hideSaveAndContinueButton = false,
+        title = Message("checkYourAnswers.hs.title")
       )
     )(fakeRequest, messages).toString
 

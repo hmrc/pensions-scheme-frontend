@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection, CYAViewModel}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -76,7 +76,8 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         returnOverview = false,
         hideEditLinks = false,
         srn = srn,
-        hideSaveAndContinueButton = hideButton
+        hideSaveAndContinueButton = hideButton,
+        title = Message("checkYourAnswers.hs.title")
       )
     )(fakeRequest, messages).toString
 

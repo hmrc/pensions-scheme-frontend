@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -80,7 +80,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode)
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          title = Message("checkYourAnswers.hs.title")
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

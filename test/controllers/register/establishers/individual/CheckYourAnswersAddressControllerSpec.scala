@@ -142,7 +142,8 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       returnOverview = false,
       hideEditLinks = false,
       srn = srn,
-      hideSaveAndContinueButton = hideButton
+      hideSaveAndContinueButton = hideButton,
+      title = Message("checkYourAnswers.hs.title")
     )
     )(fakeRequest, messages).toString
 

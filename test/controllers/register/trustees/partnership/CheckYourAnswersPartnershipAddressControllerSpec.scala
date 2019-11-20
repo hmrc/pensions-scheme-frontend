@@ -187,7 +187,8 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
         returnOverview = false,
         hideEditLinks = false,
         srn = srn,
-        hideSaveAndContinueButton = false
+        hideSaveAndContinueButton = false,
+        title = Message("checkYourAnswers.hs.title")
       )
     )(fakeRequest, messages).toString
 

@@ -26,7 +26,7 @@
 @(appConfig: FrontendAppConfig, vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("checkYourAnswers.hs.title"),
+    title = vm.title.resolve,
     appConfig = appConfig,
     bodyClasses = None
 ) {
