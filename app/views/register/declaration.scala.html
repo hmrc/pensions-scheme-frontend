@@ -19,29 +19,26 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_],
+@(appConfig: FrontendAppConfig,
     isCompany: Boolean,
     isDormant: Boolean,
     showMasterTrustDeclaration: Boolean,
     hasWorkingKnowledge: Boolean,
-    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+    schemeName: Option[String],
+    href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = DeclarationController.onSubmit(), 'id -> "declarationId", 'autoComplete -> "off") {
+    @components.back_link()
 
-        @components.back_link()
+    @components.heading(
+        headingKey= messages("messages__declaration__heading")
+    )
 
-        @components.error_summary(form.errors)
-
-        @components.heading(
-            headingKey= messages("messages__declaration__heading")
-        )
-
-        @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
+    @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
 
         <ol class="list list-bullet">
             @if(isCompany){
@@ -92,25 +89,8 @@
             }
         </ol>
 
-        <div class="form-group">
-            <div class="form-field @if(form("agree").hasErrors){form-field--error}">
-            <fieldset class="inline">
-                <legend>
-                    @form("agree").errors.map { error =>
-                    <span class="error-notification" id="error-message-agree-input">
-                        <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
-                    }
-                </legend>
-                <div class="multiple-choice">
-                    <input id="agree" name="agree" type="checkbox" value="agreed">
-                    <label for="agree">@messages("messages__declaration__agree")</label>
-                </div>
-            </fieldset>
-        </div>
+    @components.button_link("site.agree_and_continue", href.url, "submit")
 
-        @components.submit_button("site.save_and_continue")
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
-
-    }
 }

@@ -31,10 +31,10 @@ class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  val postCall = routes.VariationDeclarationController.onSubmit _
+  val postCall = routes.VariationDeclarationController.onClickAgree(srn)
 
   def createView: () => HtmlFormat.Appendable = () => variationDeclaration(frontendAppConfig,
-    form, Some(schemeName), postCall(srn), srn)(fakeRequest, messages)
+    Some(schemeName), srn, postCall)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 
