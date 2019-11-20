@@ -38,7 +38,7 @@ object CompanyEnterVATId {
       private val label: String = "messages__common__cya__vat"
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
-        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_vat")
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_vat_number")
 
       override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)

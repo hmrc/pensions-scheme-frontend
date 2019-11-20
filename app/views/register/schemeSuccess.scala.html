@@ -21,11 +21,10 @@
 @import utils.DateHelper
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
 
-@appealLink = {<a id="tribunal-appeal" href="@appConfig.appealLink">@messages("messages__complete__appeal_link")</a>}
+@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
-@printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
 @main_template(
     title = messages("messages__complete__title"),
@@ -35,31 +34,38 @@
     <div class="govuk-box-highlight">
         @components.heading(messages("messages__complete__heading"), "heading-xlarge")
 
-        <p class="font-large">@Html(Message("messages__complete__application_number_is", applicationNumber))</p>
+        <p class="font-large">@Html(Message("messages__complete__application_number_is"))
+            <span class="bold">@applicationNumber</span>
+        </p>
 
     </div>
 
-    <p>@messages("messages__complete__email")</p>
+    <p>@messages("messages__complete__email", email)</p>
+
+    <div id="hintText" class="panel panel-border-wide">
+        <p class="bold">@messages("messages__complete__copy_1")</p>
+        <p>@Html(Message("messages__complete__copy_2", yourSchemesLink))</p>
+    </div>
 
     <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
-    <p>@messages("messages__complete__copy_1")</p>
-    <p>@messages("messages__complete__copy_2")</p>
+
+
     <p>@messages("messages__complete__copy_3")</p>
-    <p>@Html(Message("messages__complete__copy_4").withArgs(appealLink))</p>
+    <p>@messages("messages__complete__copy_4")</p>
+    <p>@messages("messages__complete__copy_5")</p>
 
     @if(showMasterTrustContent) {
         <h2 class="heading-large">@messages("messages__complete__master_trust_heading")</h2>
-        <p>@Html(Message("messages__complete__pension_regulator").withArgs(pensionsRegulatorLink))</p>
+        <p>@Html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))</p>
     }
 
-    <div class="print-page">
-        @printThisPageLink
-    </div>
+    <p>
+        <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
+    </p>
+
 
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
-        @components.submit_button("messages__complete__return")
+        @components.submit_button("messages__finish")
     }
-
-    <p><a id="feedback" href="@appConfig.serviceSignOut" target="_blank">@messages("messages__complete__feedback")</a></p>
 
 }

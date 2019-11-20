@@ -40,54 +40,54 @@
 
     @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
 
-    <ol class="list list-bullet">
-        @if(isCompany){
-            @if(isDormant){
-                <li>
-                    @messages("messages__declaration__statement1_dormant"))
-                </li>
-            } else {
-                <li>
-                    @messages("messages__declaration__statement1_not_dormant"))
-                </li>
+        <ol class="list list-bullet">
+            @if(isCompany){
+                @if(isDormant){
+                    <li>
+                        @messages("messages__declaration__statement1_dormant")
+                    </li>
+                } else {
+                    <li>
+                        @messages("messages__declaration__statement1_not_dormant")
+                    </li>
+                }
             }
-        }
-        <li>
-            @messages("messages__declaration__statement2")
-        </li>
-        <li>
-            @messages("messages__declaration__statement3")
-        </li>
-
-        <li>
-            @messages("messages__declaration__statement4")
-        </li>
-
-        <li>
-            @messages("messages__declaration__statement5")
-        </li>
-        <li>
-            @messages("messages__declaration__statement6")
-        </li>
-        <li>
-            @messages("messages__declaration__statement7")
-        </li>
-        <li>
-            @if(hasWorkingKnowledge){
-                    @messages("messages__declaration__statement8_working_knowledge")
-            } else {
-                    @messages("messages__declaration__statement8_no_working_knowledge")
-            }
-        </li>
-        <li>
-            @messages("messages__declaration__statement9")
-        </li>
-        @if(showMasterTrustDeclaration){
             <li>
-                @messages("messages__declaration__statement10")
+                @messages("messages__declaration__statement2")
             </li>
-        }
-    </ol>
+            <li>
+                @messages("messages__declaration__statement3")
+            </li>
+
+            <li>
+                @messages("messages__declaration__statement4")
+            </li>
+
+            <li>
+                @messages("messages__declaration__statement5")
+            </li>
+            <li>
+                @messages("messages__declaration__statement6")
+            </li>
+            <li>
+                @messages("messages__declaration__statement7")
+            </li>
+            <li>
+                @if(hasWorkingKnowledge){
+                        @messages("messages__declaration__statement8_working_knowledge")
+                } else {
+                        @messages("messages__declaration__statement8_no_working_knowledge")
+                }
+            </li>
+            <li>
+                @messages("messages__declaration__statement9")
+            </li>
+            @if(showMasterTrustDeclaration){
+                <li>
+                    @messages("messages__declaration__statement10")
+                </li>
+            }
+        </ol>
 
     @components.button_link("site.agree_and_continue", href.url, "submit")
 

@@ -170,9 +170,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
         addLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_crn", companyName)),
         addLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_utr", companyName)),
+          messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName)),
         addLink(messages("messages__common__cya__vat"), companyEnterVATRoute(UpdateMode, srn),
-          messages("messages__visuallyhidden__dynamic_vat", companyName)),
+          messages("messages__visuallyhidden__dynamic_vat_number", companyName)),
         addLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(UpdateMode, srn),
           messages("messages__visuallyhidden__dynamic_paye", companyName))
       )
@@ -205,13 +205,13 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def utrRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     if(mode == NormalMode)
     Seq(stringChangeLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
-      messages("messages__visuallyhidden__dynamic_utr", companyName))) else
+      messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))) else
       Seq(stringLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
-        messages("messages__visuallyhidden__dynamic_utr", companyName)))
+        messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName)))
 
   private def vatRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__vat"), companyEnterVATRoute(mode, srn), vat,
-      messages("messages__visuallyhidden__dynamic_vat", companyName)))
+      messages("messages__visuallyhidden__dynamic_vat_number", companyName)))
 
   private def payeRow(mode: Mode, srn: Option[String]): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(mode, srn), paye,
