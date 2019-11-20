@@ -66,7 +66,8 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     Seq(AnswerSection(None, Seq(emailAnswerRow, phoneAnswerRow)))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+                   title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -77,8 +78,8 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = hideButton,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 
@@ -93,7 +94,9 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+                title = Message("checkYourAnswers.hs.heading"),
+                h1 = Message("checkYourAnswers.hs.heading"))
           }
         }
 
@@ -107,7 +110,9 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__contactDetailsFor", Message("messages__thePerson").resolve),
+                h1 = Message("messages__contactDetailsFor", establisherName.fullName))
           }
         }
       }

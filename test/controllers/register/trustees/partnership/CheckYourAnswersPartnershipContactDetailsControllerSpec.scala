@@ -63,7 +63,8 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     ))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
+                   hideButton: Boolean = false, title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -74,8 +75,8 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = hideButton,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 
@@ -90,7 +91,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+                title = Message("checkYourAnswers.hs.heading"),
+                h1 = Message("checkYourAnswers.hs.heading"))
           }
         }
 
@@ -104,7 +107,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
+                h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }
         }
       }

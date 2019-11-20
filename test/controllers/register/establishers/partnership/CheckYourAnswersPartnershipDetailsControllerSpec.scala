@@ -43,7 +43,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -51,7 +53,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -62,7 +66,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAllExistingAnswers(UpdateMode, srn)(request), UpdateMode, srn)
+          viewAsString(partnershipDetailsAllExistingAnswers(UpdateMode, srn)(request), UpdateMode, srn,
+            title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
+            h1 = Message("messages__detailsFor", partnershipName))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -71,7 +77,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAddLinksValues(request), UpdateMode, srn)
+          viewAsString(partnershipDetailsAddLinksValues(request), UpdateMode, srn,
+            title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
+            h1 = Message("messages__detailsFor", partnershipName))
       }
     }
 
@@ -83,7 +91,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn)(request), mode = UpdateMode, srn = srn)
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
+          title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
+          h1 = Message("messages__detailsFor", partnershipName))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -92,7 +102,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn)(request), mode = UpdateMode, srn = srn)
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
+          title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
+          h1 = Message("messages__detailsFor", partnershipName))
       }
     }
   }
@@ -258,7 +270,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None): String =
+                   srn: Option[String] = None, title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -269,8 +281,8 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 

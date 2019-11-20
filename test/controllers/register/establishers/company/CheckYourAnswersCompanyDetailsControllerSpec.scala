@@ -45,7 +45,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -53,7 +55,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -64,7 +68,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAllValues(UpdateMode, srn)(request), UpdateMode, srn, postUrlUpdateMode)
+          viewAsString(companyDetailsAllValues(UpdateMode, srn)(request), UpdateMode, srn, postUrlUpdateMode,
+            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            h1 = Message("messages__detailsFor", companyName))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -73,7 +79,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode)
+          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
+            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            h1 = Message("messages__detailsFor", companyName))
       }
 
       "return OK and the correct view with add links for values" in {
@@ -82,7 +90,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode)
+          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
+            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            h1 = Message("messages__detailsFor", companyName))
       }
     }
 
@@ -300,7 +310,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, postUrl: Call = postUrl): String =
+                   srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -311,8 +321,8 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 

@@ -74,7 +74,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       FakeUserAnswersService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl()): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
+                   title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -85,8 +86,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 
@@ -103,7 +104,9 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+            title = Message("checkYourAnswers.hs.heading"),
+            h1 = Message("checkYourAnswers.hs.heading"))
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
@@ -111,7 +114,9 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
+            title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
+            h1 = Message("messages__contactDetailsFor", name))
         }
       }
     }

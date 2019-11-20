@@ -46,7 +46,9 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection())
+          contentAsString(result) mustBe viewAsString(answerSection(),
+            title = Message("checkYourAnswers.hs.heading"),
+            h1 = Message("checkYourAnswers.hs.heading"))
           app.stop()
         }
 
@@ -66,7 +68,9 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__addressFor", Message("messages__thePerson").resolve),
+                h1 = Message("messages__addressFor", establisherName))
               app.stop()
           }
         }
@@ -134,7 +138,8 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+                   title:Message, h1:Message): String =
     checkYourAnswers(frontendAppConfig, CYAViewModel(
       answerSections = answerSections,
       href = postUrl,
@@ -143,8 +148,8 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       hideEditLinks = false,
       srn = srn,
       hideSaveAndContinueButton = hideButton,
-      title = Message("checkYourAnswers.hs.title"),
-      h1 = Message("checkYourAnswers.hs.heading")
+      title = title,
+      h1 = h1
     )
     )(fakeRequest, messages).toString
 

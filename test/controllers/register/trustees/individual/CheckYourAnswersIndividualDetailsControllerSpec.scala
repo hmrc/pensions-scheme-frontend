@@ -43,7 +43,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -51,7 +53,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -62,7 +66,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
+          viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+            title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+            h1 = Message("messages__detailsFor", trusteeName.fullName))
       }
 
       "return OK and the correct view with add links for values" in {
@@ -71,7 +77,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
+          viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+            title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+            h1 = Message("messages__detailsFor", trusteeName.fullName))
       }
      }
   }
@@ -237,7 +245,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, postUrl: Call = postUrl): String =
+                   srn: Option[String] = None, postUrl: Call = postUrl,
+                   title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -248,8 +257,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 

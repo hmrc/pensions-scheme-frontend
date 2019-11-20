@@ -44,7 +44,9 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -52,7 +54,9 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None)(request))
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None)(request),
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -62,7 +66,9 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+          h1 = Message("messages__detailsFor", establisherName.fullName))
       }
 
       "return OK and the correct view with add links for values" in {
@@ -70,7 +76,9 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+          h1 = Message("messages__detailsFor", establisherName.fullName))
       }
     }
   }
@@ -270,7 +278,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
   def viewAsString(answerSections: Seq[AnswerSection],
                    mode: Mode = NormalMode,
                    srn: Option[String] = None,
-                   postUrl: Call = postUrl): String =
+                   postUrl: Call = postUrl,
+                   title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
       CYAViewModel(
@@ -281,8 +290,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title"),
-        h1 = Message("checkYourAnswers.hs.heading")
+        title = title,
+        h1 = h1
       )
     )(fakeRequest, messages).toString
 }

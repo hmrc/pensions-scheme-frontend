@@ -58,7 +58,8 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
     ))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+                   title:Message, h1:Message): String =
     checkYourAnswers(frontendAppConfig, CYAViewModel(
       answerSections = answerSections,
       href = postUrl,
@@ -67,8 +68,8 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
       hideEditLinks = false,
       srn = srn,
       hideSaveAndContinueButton = hideButton,
-      title = Message("checkYourAnswers.hs.title"),
-      h1 = Message("checkYourAnswers.hs.heading")
+      title = title,
+      h1 = h1
     ))(fakeRequest, messages).toString
 
   "CheckYourAnswersIndividualContactDetailsController" when {
@@ -83,7 +84,9 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+            title = Message("checkYourAnswers.hs.heading"),
+            h1 = Message("checkYourAnswers.hs.heading"))
           app.stop()
         }
 
@@ -102,7 +105,9 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__contactDetailsFor", Message("messages__thePerson").resolve),
+                h1 = Message("messages__contactDetailsFor", trusteeName))
               app.stop()
           }
         }
