@@ -70,7 +70,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = titleIndividualAddressDetails(mode),
-          h1 =  headingTrusteeIndividualAddressDetails(mode, index)
+          h1 =  headingAddressDetails(mode, trusteeIndividualName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

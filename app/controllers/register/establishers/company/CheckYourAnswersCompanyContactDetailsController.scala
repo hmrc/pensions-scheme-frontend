@@ -67,7 +67,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titleCompanyContactDetails(mode),
-          h1 =  headingEstablisherCompanyContactDetails(mode, index)
+          h1 =  headingContactDetails(mode, establisherCompanyName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

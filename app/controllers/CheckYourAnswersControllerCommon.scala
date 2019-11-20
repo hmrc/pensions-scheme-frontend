@@ -24,22 +24,22 @@ import viewmodels.Message
 
 trait CheckYourAnswersControllerCommon extends FrontendController {
 
-  private def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.establishers.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
 
-  private def establisherPartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def establisherPartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.establishers.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
 
-  private def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
 
-  private def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.trustees.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
 
-  private def trusteePartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def trusteePartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.trustees.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
 
-  private def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+  def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
 
   def titleCompanyDetails(mode:Mode)(implicit messages:Messages):Message =
@@ -51,8 +51,6 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def titleCompanyAddressDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
 
-
-
   def titleIndividualDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
 
@@ -62,8 +60,6 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def titleIndividualAddressDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
 
-
-
   def titlePartnershipDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
 
@@ -72,56 +68,13 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
 
   def titlePartnershipAddressDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
-  
-  
-  private def headingDetails(mode:Mode, name: => String)(implicit messages:Messages):Message = {
+
+  def headingDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
-  }
 
-  private def headingAddressDetails(mode:Mode, name: => String)(implicit messages:Messages):Message = {
+  def headingAddressDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__addressFor", name)
-  }
 
-  private def headingContactDetails(mode:Mode, name: => String)(implicit messages:Messages):Message = {
+  def headingContactDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
-  }
-
-  def headingEstablisherCompanyDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, establisherCompanyName(index))
-
-  def headingEstablisherCompanyContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, establisherCompanyName(index))
-
-  def headingEstablisherCompanyAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, establisherCompanyName(index))
-
-  def headingEstablisherPartnershipDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, establisherPartnershipName(index))
-
-  def headingEstablisherPartnershipContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, establisherPartnershipName(index))
-
-  def headingEstablisherPartnershipAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, establisherPartnershipName(index))
-
-  def headingEstablisherIndividualDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, establisherIndividualName(index))
-
-  def headingEstablisherIndividualContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, establisherIndividualName(index))
-
-  def headingEstablisherIndividualAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, establisherIndividualName(index))
-
-
-  def headingTrusteeCompanyDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, trusteeCompanyName(index))
-
-  def headingTrusteeCompanyContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, trusteeCompanyName(index))
-
-  def headingTrusteeCompanyAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, trusteeCompanyName(index))
-
-  def headingTrusteePartnershipDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, trusteePartnershipName(index))
-
-  def headingTrusteePartnershipContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, trusteePartnershipName(index))
-
-  def headingTrusteePartnershipAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, trusteePartnershipName(index))
-
-  def headingTrusteeIndividualDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingDetails(mode, trusteeIndividualName(index))
-
-  def headingTrusteeIndividualContactDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingContactDetails(mode, trusteeIndividualName(index))
-
-  def headingTrusteeIndividualAddressDetails(mode:Mode, index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):Message = headingAddressDetails(mode, trusteeIndividualName(index))
-
-
 }

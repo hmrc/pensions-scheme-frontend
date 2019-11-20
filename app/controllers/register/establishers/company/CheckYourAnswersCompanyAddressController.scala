@@ -70,7 +70,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titleCompanyAddressDetails(mode),
-          h1 =  headingEstablisherCompanyAddressDetails(mode, index)
+          h1 =  headingAddressDetails(mode, establisherCompanyName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

@@ -63,7 +63,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           srn = srn,
           hideSaveAndContinueButton =allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titlePartnershipContactDetails(mode),
-          h1 =  headingEstablisherPartnershipContactDetails(mode, index)
+          h1 =  headingContactDetails(mode, establisherPartnershipName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

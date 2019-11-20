@@ -64,7 +64,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = titleIndividualContactDetails(mode),
-          h1 =  headingTrusteeIndividualContactDetails(mode, index)
+          h1 =  headingContactDetails(mode, trusteeIndividualName(index))
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))
