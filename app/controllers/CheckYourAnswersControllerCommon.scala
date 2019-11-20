@@ -31,7 +31,7 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
     request.userAnswers.get(identifiers.register.establishers.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
 
   private def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
+    request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
 
   private def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.trustees.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
@@ -40,7 +40,7 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
     request.userAnswers.get(identifiers.register.trustees.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
 
   private def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
+    request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
 
   def titleCompanyDetails(mode:Mode)(implicit messages:Messages):Message =
     if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
@@ -54,13 +54,13 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
 
 
   def titleIndividualDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theIndividual").resolve)
+    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
 
   def titleIndividualContactDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theIndividual").resolve)
+    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
 
   def titleIndividualAddressDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theIndividual").resolve)
+    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
 
 
 
