@@ -33,7 +33,7 @@
     @components.back_link()
 
     @components.heading(
-            headingKey =  messages("checkYourAnswers.hs.heading")
+            headingKey =  vm.h1.resolve
     )
 
     @for((section, i) <- vm.answerSections.zipWithIndex){

@@ -64,7 +64,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title")
+          title = Message("checkYourAnswers.hs.title"),
+          h1 = Message("checkYourAnswers.hs.heading")
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

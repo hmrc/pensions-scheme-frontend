@@ -281,7 +281,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = false,
-        title = Message("checkYourAnswers.hs.title")
+        title = Message("checkYourAnswers.hs.title"),
+        h1 = Message("checkYourAnswers.hs.heading")
       )
     )(fakeRequest, messages).toString
 }

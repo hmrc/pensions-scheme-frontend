@@ -58,7 +58,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
         hideEditLinks = hideEditLinks,
         srn = srn,
         hideSaveAndContinueButton = hideSaveAndContinueButton,
-        title = Message(pageTitle)
+        title = Message(pageTitle),
+        h1 = Message("checkYourAnswers.hs.heading")
       )
     )(fakeRequest, messages)
 
@@ -73,7 +74,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
         hideEditLinks = viewOnly,
         srn = srn,
         hideSaveAndContinueButton = viewOnly,
-        title = Message(pageTitle)
+        title = Message(pageTitle),
+        h1 = Message("checkYourAnswers.hs.heading")
       )
     )(fakeRequest, messages)
 

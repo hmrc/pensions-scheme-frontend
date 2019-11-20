@@ -107,7 +107,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
-        title = Message("checkYourAnswers.hs.title")
+        title = Message("checkYourAnswers.hs.title"),
+        h1 = Message("checkYourAnswers.hs.heading")
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig,vm )))

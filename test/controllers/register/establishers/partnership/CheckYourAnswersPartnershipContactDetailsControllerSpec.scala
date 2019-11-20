@@ -75,7 +75,8 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
         hideEditLinks = false,
         srn = srn,
         hideSaveAndContinueButton = hideButton,
-        title = Message("checkYourAnswers.hs.title")
+        title = Message("checkYourAnswers.hs.title"),
+        h1 = Message("checkYourAnswers.hs.heading")
       )
     )(fakeRequest, messages).toString
 
