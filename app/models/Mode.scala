@@ -19,9 +19,12 @@ package models
 import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
-sealed trait Mode
-sealed trait SubscriptionMode extends Mode
-sealed trait VarianceMode extends Mode
+sealed trait Mode {
+  def isSubscription:Boolean
+  def isVariations:Boolean = !isSubscription
+}
+sealed trait SubscriptionMode extends Mode {override def isSubscription:Boolean = true}
+sealed trait VarianceMode extends Mode {override def isSubscription:Boolean = false}
 
 case object NormalMode extends WithName("") with SubscriptionMode
 case object CheckMode extends WithName("change") with SubscriptionMode

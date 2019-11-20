@@ -17,11 +17,12 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.{CheckYourAnswers, Retrievals}
 import controllers.actions._
 import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
+import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -48,7 +49,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          @EstablishersCompany navigator: Navigator,
                                                          userAnswersService: UserAnswersService,
                                                          allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController with CheckYourAnswers
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -70,8 +71,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titleCompanyAddressDetails(mode),
+          h1 =  headingAddressDetails(mode, establisherCompanyName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

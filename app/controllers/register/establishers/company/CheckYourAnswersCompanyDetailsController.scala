@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.{CheckYourAnswers, Retrievals}
 import controllers.actions._
 import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
@@ -49,7 +49,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           @EstablishersCompany navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
                                                           allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController with CheckYourAnswers
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -81,8 +81,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titleCompanyDetails(mode),
+          h1 =  headingDetails(mode, establisherCompanyName(index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

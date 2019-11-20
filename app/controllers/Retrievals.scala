@@ -23,9 +23,11 @@ import identifiers.{SchemeNameId, TypedIdentifier}
 import models.person.PersonName
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
+import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import play.api.mvc.{AnyContent, Result, WrappedRequest}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import viewmodels.Message
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -41,6 +43,25 @@ trait Retrievals {
       f(companyDetails.companyName)
     }
   }
+
+  def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.establishers.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
+
+  def establisherPartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.establishers.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
+
+  def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
+
+  def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.trustees.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
+
+  def trusteePartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.trustees.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
+
+  def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
+
 
   private[controllers] def retrievePartnershipName(index: Int)
                                                   (f: String => Future[Result])
