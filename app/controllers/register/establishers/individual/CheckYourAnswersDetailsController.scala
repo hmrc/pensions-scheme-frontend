@@ -17,8 +17,8 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
@@ -28,11 +28,10 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +46,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                   allowChangeHelper: AllowChangeHelper,
                                                   requireData: DataRequiredAction,
                                                   implicit val countryOptions: CountryOptions
-                                                 )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                 )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -72,8 +71,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titleIndividualDetails(mode),
+          h1 =  headingEstablisherIndividualDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm )))

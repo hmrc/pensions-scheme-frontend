@@ -17,8 +17,8 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipHasBeenTradingId, PartnershipPreviousAddressId}
 import javax.inject.Inject
@@ -26,11 +26,10 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, _}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +42,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              requireData: DataRequiredAction,
                                                              implicit val countryOptions: CountryOptions,
                                                              allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+                                                            )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -65,8 +64,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titlePartnershipAddressDetails(mode),
+          h1 =  headingTrusteePartnershipAddressDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

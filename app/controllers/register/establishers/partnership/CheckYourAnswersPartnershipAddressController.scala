@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipHasBeenTradingId, PartnershipPreviousAddressId}
@@ -43,7 +43,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              requireData: DataRequiredAction,
                                                              implicit val countryOptions: CountryOptions,
                                                              allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+                                                            )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -65,8 +65,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titlePartnershipAddressDetails(mode),
+          h1 =  headingEstablisherPartnershipAddressDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

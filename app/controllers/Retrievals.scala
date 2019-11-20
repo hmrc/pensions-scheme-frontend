@@ -44,25 +44,6 @@ trait Retrievals {
     }
   }
 
-  def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
-
-  def establisherPartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
-
-  def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
-
-  def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
-
-  def trusteePartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
-
-  def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__theIndividual").resolve)
-
-
   private[controllers] def retrievePartnershipName(index: Int)
                                                   (f: String => Future[Result])
                                                   (implicit request: DataRequest[AnyContent]): Future[Result] = {

@@ -17,8 +17,8 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteePreviousAddressId}
 import javax.inject.Inject
@@ -28,11 +28,10 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +47,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
                                                             implicit val countryOptions: CountryOptions,
                                                             allowChangeHelper: AllowChangeHelper
                                                            )(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+  extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -70,8 +69,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titleIndividualAddressDetails(mode),
+          h1 =  headingTrusteeIndividualAddressDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

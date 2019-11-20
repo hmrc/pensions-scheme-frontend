@@ -17,8 +17,8 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import javax.inject.Inject
@@ -28,11 +28,10 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +47,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               navigator: Navigator,
                                                               userAnswersService: UserAnswersService,
                                                               allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+                                                            )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -74,8 +73,8 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titlePartnershipDetails(mode),
+          h1 =  headingTrusteePartnershipDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm )))

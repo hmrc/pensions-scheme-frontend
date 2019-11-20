@@ -17,8 +17,8 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
@@ -27,11 +27,10 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
-import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
 import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +44,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
                                                                 userAnswersService: UserAnswersService
-                                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                               )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -66,8 +65,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titleCompanyContactDetails(mode),
+          h1 =  headingTrusteeCompanyContactDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

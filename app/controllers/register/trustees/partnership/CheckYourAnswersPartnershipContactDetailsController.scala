@@ -17,8 +17,8 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import controllers.Retrievals
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import javax.inject.Inject
@@ -26,11 +26,10 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +42,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
                                                                     requireData: DataRequiredAction,
                                                                     implicit val countryOptions: CountryOptions,
                                                                     allowChangeHelper: AllowChangeHelper
-                                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                                                   )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -64,8 +63,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = Message("checkYourAnswers.hs.title"),
-          h1 = Message("checkYourAnswers.hs.heading")
+          title = titlePartnershipContactDetails(mode),
+          h1 =  headingTrusteePartnershipContactDetails(mode, index)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))
