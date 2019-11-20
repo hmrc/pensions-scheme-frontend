@@ -30,7 +30,7 @@ import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel}
 import utils.checkyouranswers.Ops._
 import views.html.checkYourAnswers
 
@@ -58,15 +58,16 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
             CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          Seq(contactDetails),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val vm = CYAViewModel(
+          answerSections = Seq(contactDetails),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          srn = srn
-        )))
+          srn = srn,
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode)
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
     }
 }

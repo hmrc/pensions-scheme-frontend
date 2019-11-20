@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
@@ -66,12 +66,15 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = hideButton
+      CYAViewModel(
+        answerSections = answerSections,
+        href = postUrl,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = hideButton
+      )
     )(fakeRequest, messages).toString
 
   "CheckYourAnswersPartnershipContactDetailsController" when {

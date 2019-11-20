@@ -20,6 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.routes._
+import controllers.routes.SchemeTaskListController
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -31,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -97,15 +99,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      Future.successful(Ok(checkYourAnswers(
-        appConfig,
-        Seq(directorAnswerSection),
-        AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
-        existingSchemeName,
-        mode = mode,
+      val vm = CYAViewModel(
+        answerSections = Seq(directorAnswerSection),
+        href = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
+        schemeName = existingSchemeName,
+        returnOverview = false,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
-        srn = srn
-      )))
+        srn = srn,
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode)
+      )
+
+      Future.successful(Ok(checkYourAnswers(appConfig,vm )))
     }
 }

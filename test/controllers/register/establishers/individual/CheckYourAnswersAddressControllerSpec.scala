@@ -29,7 +29,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, running, status, _}
 import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeNavigator, UserAnswers, _}
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -135,8 +135,15 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
-      srn = srn, hideSaveAndContinueButton = hideButton
+    checkYourAnswers(frontendAppConfig, CYAViewModel(
+      answerSections = answerSections,
+      href = postUrl,
+      schemeName = None,
+      returnOverview = false,
+      hideEditLinks = false,
+      srn = srn,
+      hideSaveAndContinueButton = hideButton
+    )
     )(fakeRequest, messages).toString
 
 }

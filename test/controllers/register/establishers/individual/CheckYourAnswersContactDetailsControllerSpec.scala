@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -69,12 +69,15 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = hideButton
+      CYAViewModel(
+        answerSections = answerSections,
+        href = postUrl,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = hideButton
+      )
     )(fakeRequest, messages).toString
 
   "CheckYourAnswersContactDetailsController" when {

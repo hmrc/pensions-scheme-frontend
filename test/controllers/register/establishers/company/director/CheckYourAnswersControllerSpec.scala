@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.Ops._
 import utils._
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -61,12 +61,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def viewAsString(mode: Mode = NormalMode, answerSection: Seq[AnswerSection], href: Call, srn: Option[String] = None): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSection,
-      href,
-      None,
-      hideEditLinks = false,
-      hideSaveAndContinueButton = false,
-      srn = srn
+      CYAViewModel(
+        answerSections = answerSection,
+        href = href,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = false
+      )
     )(fakeRequest, messages).toString
 
   "having set up answer sections" when {

@@ -29,7 +29,7 @@ import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -58,12 +58,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
                            answerSection: Seq[AnswerSection] = Seq.empty,
                            srn: Option[String] = None) = checkYourAnswers(
     frontendAppConfig,
-    answerSection,
-    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
-    None,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false,
-    srn = srn
+    CYAViewModel(
+      answerSections = answerSection,
+      href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
+      schemeName = None,
+      returnOverview = false,
+      hideEditLinks = false,
+      srn = srn,
+      hideSaveAndContinueButton = false
+    )
   )(fakeRequest, messages).toString
 
   "Check Your Answers Individual Details Controller " when {
