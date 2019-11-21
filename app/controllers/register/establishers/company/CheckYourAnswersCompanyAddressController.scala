@@ -69,8 +69,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyAddressDetails(mode),
-          h1 =  headingAddressDetails(mode, establisherCompanyName(index))
+          title = titleCompanyAddressDetails(mode, isNewEstablisher(mode, request.userAnswers, index)),
+          h1 =  headingAddressDetails(mode, establisherCompanyName(index), isNewEstablisher(mode, request.userAnswers, index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

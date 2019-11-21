@@ -69,8 +69,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualAddressDetails(mode),
-          h1 =  headingAddressDetails(mode, trusteeIndividualName(index))
+          title = titleIndividualAddressDetails(mode, isNewTrustee(mode, userAnswers, index)),
+          h1 =  headingAddressDetails(mode, trusteeIndividualName(index), isNewTrustee(mode, userAnswers, index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

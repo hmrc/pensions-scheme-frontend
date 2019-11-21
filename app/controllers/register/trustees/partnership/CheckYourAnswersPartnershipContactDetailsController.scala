@@ -63,8 +63,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titlePartnershipContactDetails(mode),
-          h1 =  headingContactDetails(mode, trusteePartnershipName(index))
+          title = titlePartnershipContactDetails(mode, isNewTrustee(mode, userAnswers, index)),
+          h1 =  headingContactDetails(mode, trusteePartnershipName(index), isNewTrustee(mode, userAnswers, index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

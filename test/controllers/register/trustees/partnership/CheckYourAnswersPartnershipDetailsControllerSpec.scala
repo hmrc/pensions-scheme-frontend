@@ -92,8 +92,8 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
-          title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
-          h1 = Message("messages__detailsFor", partnershipName))
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -103,8 +103,8 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
-          title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
-          h1 = Message("messages__detailsFor", partnershipName))
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
   }

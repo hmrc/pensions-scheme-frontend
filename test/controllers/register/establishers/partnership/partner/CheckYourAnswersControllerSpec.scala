@@ -103,8 +103,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn,
-          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
-          h1 = Message("messages__detailsFor", personName.fullName))
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with add links for values" in {

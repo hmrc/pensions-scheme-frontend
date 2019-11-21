@@ -17,8 +17,8 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import controllers.actions._
+import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipHasBeenTradingId, PartnershipPreviousAddressId}
 import javax.inject.Inject
@@ -26,11 +26,10 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, Enumerable}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import utils.{AllowChangeHelper, CountryOptions, Enumerable}
+import viewmodels.{AnswerSection, CYAViewModel}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,8 +64,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titlePartnershipAddressDetails(mode),
-          h1 =  headingAddressDetails(mode, establisherPartnershipName(index))
+          title = titlePartnershipAddressDetails(mode, isNewEstablisher(mode, request.userAnswers, index)),
+          h1 =  headingAddressDetails(mode, establisherPartnershipName(index), isNewEstablisher(mode, request.userAnswers, index))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))
