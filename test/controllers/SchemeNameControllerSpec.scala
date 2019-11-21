@@ -23,6 +23,9 @@ import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
@@ -33,14 +36,16 @@ import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeNameControllerSpec extends ControllerSpecBase {
+class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val scheme = "A scheme"
+  private val psaName = "Mr Maxwell"
   val formProvider = new SchemeNameFormProvider()
   val form = formProvider()
 
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
+  val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
 
   object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
@@ -51,7 +56,16 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
     }
   }
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeNameController =
+  object FakeNameMatchingFactoryWithMatch extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
+    override def nameMatching(schemeName: String)
+                             (implicit request: OptionalDataRequest[AnyContent],
+                              ec: ExecutionContext,
+                              hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
+      Future.successful(NameMatching("My PSA", "My PSA"))
+    }
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory:NameMatchingFactory = FakeNameMatchingFactory): SchemeNameController =
     new SchemeNameController(
       frontendAppConfig,
       messagesApi,
@@ -61,7 +75,8 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
-      FakeNameMatchingFactory,
+      nameMatchingFactory,
+      mockPensionAdministratorConnector,
       FakeSectionComplete
     )
 
@@ -106,10 +121,16 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
       }
 
       "scheme name matches psa name" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "My PSA"))
-        val boundForm = form.bind(Map("value" -> "My PSA"))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "My PSA"))
+        val boundForm = form
+          .withError(
+            "schemeName",
+            "messages__error__scheme_name_psa_name_match", psaName
+          )
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
+
+        val result = controller(nameMatchingFactory = FakeNameMatchingFactoryWithMatch).onSubmit(NormalMode)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

@@ -71,7 +71,7 @@ object PostcodeLookupControllerSpec {
       get(viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
 
     def onSubmit(viewmodel: PostcodeLookupViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(FakeIdentifier, viewmodel, NormalMode, invalidError, noResultError)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, viewmodel, NormalMode, invalidError)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
 
     private val invalidError: Message = "foo"
 

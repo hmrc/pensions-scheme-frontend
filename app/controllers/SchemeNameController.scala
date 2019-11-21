@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.BeforeYouStart
-import views.html.{beforeYouStart, schemeName}
+import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 
