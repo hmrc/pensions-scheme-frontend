@@ -69,12 +69,12 @@ messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 
-messages__error__postcode = Enter the postcode
+messages__error__postcode = Enter a postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
-messages__error__postcode_invalid = Enter a valid postcode
+messages__error__postcode_invalid = Enter a real postcode
 messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
-messages__error__postcode_no_results = There are no addresses for that postcode
+messages__error__postcode_no_results = No addresses have been found for the postcode {0}
 
 messages__error__trustees = trustee’s
 messages__error__director = director’s
@@ -245,7 +245,7 @@ messages__error__scheme_name_invalid = The scheme name contains invalid characte
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
 messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
-messages__error__scheme_name_psa_name_match = The Pension Scheme name cannot be the same as Pension Scheme Administrator name
+messages__error__scheme_name_psa_name_match = The name of the scheme must be different from {0}
 
 messages__investment_regulated__title = Is the scheme investment regulated?
 
@@ -558,7 +558,7 @@ messages__error__no_nino_director = You need to tell us why the director does no
 
 messages__addCompanyDirectors__heading = Directors
 messages__addCompanyDirectors__checkYourAnswersLabel = Directors
-messages__addCompanyDirectors__error__required = You must make a selection
+messages__addCompanyDirectors__error__required = Select yes if you want to add another director
 messages__addCompanyDirectors_add_more = Do you want to add another director?
 messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
 messages__addCompanyDirectors_add_director = Add a director
@@ -664,6 +664,7 @@ messages__addTrustee__text = Do you want to add another trustee?
 messages__addTrustee__header = Trustee name
 messages__addTrustees_at_maximum = You have added the maximum number of trustees.
 messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+messages__addTrustees_error_required = Select yes if you want to add another trustee
 
 messages__schemeReview__title = Review
 messages__schemeReview__heading = Review
