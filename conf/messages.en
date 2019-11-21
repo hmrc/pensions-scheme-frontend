@@ -1740,7 +1740,7 @@ messages__enterPAYE__error_length = Enter {0}’s employer PAYE reference using 
 messages__enterPAYE__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter a Unique Taxpayer Reference (UTR)
-messages__utr__error_maxLength = Unique Taxpayer Reference (UTR) must be 10 numbers
+messages__utr__error_maxLength = Enter a UTR in the correct format
 messages__utr__error_invalid = Enter a Unique Taxpayer Reference (UTR) in the correct format
 messages__companyUtr__guidance1 = If the UTR is 13 numbers, only enter the last 10.
 messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
