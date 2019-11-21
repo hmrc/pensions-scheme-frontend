@@ -20,11 +20,10 @@ import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
 sealed trait Mode {
-  def isSubscription:Boolean
-  def isVariations:Boolean = !isSubscription
+  def isRegistrationJourney:Boolean
 }
-sealed trait SubscriptionMode extends Mode {override def isSubscription:Boolean = true}
-sealed trait VarianceMode extends Mode {override def isSubscription:Boolean = false}
+sealed trait SubscriptionMode extends Mode {override def isRegistrationJourney:Boolean = true}
+sealed trait VarianceMode extends Mode {override def isRegistrationJourney:Boolean = false}
 
 case object NormalMode extends WithName("") with SubscriptionMode
 case object CheckMode extends WithName("change") with SubscriptionMode

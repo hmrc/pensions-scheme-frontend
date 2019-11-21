@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection] = Seq.empty,
-                           srn: Option[String] = None) = checkYourAnswers(
+                           srn: Option[String] = None, title:Message, h1:Message) = checkYourAnswers(
     frontendAppConfig,
     CYAViewModel(
       answerSections = answerSection,
@@ -66,8 +66,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       hideEditLinks = false,
       srn = srn,
       hideSaveAndContinueButton = false,
-      title = Message("checkYourAnswers.hs.title"),
-      h1 = Message("checkYourAnswers.hs.heading")
+      title = title,
+      h1 = h1
     )
   )(fakeRequest, messages).toString
 
@@ -78,7 +78,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None)
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -86,7 +88,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None)
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -98,7 +102,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn)
+        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn,
+          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+          h1 = Message("messages__detailsFor", personName.fullName))
       }
 
       "return OK and the correct view with add links for values" in {
@@ -106,7 +112,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn)
+        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn,
+          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+          h1 = Message("messages__detailsFor", personName.fullName))
       }
     }
 

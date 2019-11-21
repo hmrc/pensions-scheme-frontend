@@ -24,6 +24,12 @@ import viewmodels.Message
 
 trait CheckYourAnswersControllerCommon extends FrontendController {
 
+  def establisherCompanyDirectorName(companyIndex: Int, directorIndex: Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.establishers.company.director.DirectorNameId(companyIndex, directorIndex)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
+
+  def establisherPartnershipPartnerName(partnershipIndex: Int, partnerIndex: Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
+    request.userAnswers.get(identifiers.register.establishers.partnership.partner.PartnerNameId(partnershipIndex, partnerIndex)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
+
   def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
     request.userAnswers.get(identifiers.register.establishers.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
 
@@ -43,38 +49,41 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
     request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
 
   def titleCompanyDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
 
   def titleCompanyContactDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
 
   def titleCompanyAddressDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
 
   def titleIndividualDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
 
   def titleIndividualContactDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
 
   def titleIndividualAddressDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
 
   def titlePartnershipDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
 
   def titlePartnershipContactDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
 
   def titlePartnershipAddressDetails(mode:Mode)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
 
   def headingDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
 
   def headingAddressDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__addressFor", name)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.heading") else Message("messages__addressFor", name)
 
   def headingContactDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
-    if (mode.isSubscription) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
+
+  def headingEstablisherCompanyDirectorOrPartnerDetails(mode:Mode, name: => String)(implicit messages:Messages):Message =
+    if (mode.isRegistrationJourney) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
 }
