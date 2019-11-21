@@ -19,98 +19,78 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_],
+@(appConfig: FrontendAppConfig,
     isCompany: Boolean,
     isDormant: Boolean,
     showMasterTrustDeclaration: Boolean,
     hasWorkingKnowledge: Boolean,
-    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+    schemeName: Option[String],
+    href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = DeclarationController.onSubmit(), 'id -> "declarationId", 'autoComplete -> "off") {
+    @components.back_link()
 
-        @components.back_link()
+    @components.heading(
+        headingKey= messages("messages__declaration__heading")
+    )
 
-        @components.error_summary(form.errors)
+    @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
 
-        @components.heading(
-            headingKey= messages("messages__declaration__heading")
-        )
-
-        @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
-
-        <ol class="list-bullet">
+        <ol class="list list-bullet">
             @if(isCompany){
                 @if(isDormant){
                     <li>
-                        @components.paragraph_text(messages("messages__declaration__statement1_dormant"))
+                        @messages("messages__declaration__statement1_dormant")
                     </li>
                 } else {
                     <li>
-                        @components.paragraph_text(messages("messages__declaration__statement1_not_dormant"))
+                        @messages("messages__declaration__statement1_not_dormant")
                     </li>
                 }
             }
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement2"), para_id="para2")
+                @messages("messages__declaration__statement2")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement3"), para_id="para3")
-            </li>
-
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement4"), para_id="para4")
+                @messages("messages__declaration__statement3")
             </li>
 
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement5"), para_id="para5")
+                @messages("messages__declaration__statement4")
+            </li>
+
+            <li>
+                @messages("messages__declaration__statement5")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement6"), para_id="para6")
+                @messages("messages__declaration__statement6")
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement7"), para_id="para7")
+                @messages("messages__declaration__statement7")
             </li>
             <li>
                 @if(hasWorkingKnowledge){
-                        @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"), para_id="para8")
+                        @messages("messages__declaration__statement8_working_knowledge")
                 } else {
-                        @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"), para_id="para8")
+                        @messages("messages__declaration__statement8_no_working_knowledge")
                 }
             </li>
             <li>
-                @components.paragraph_text(messages("messages__declaration__statement9"), para_id="para9")
+                @messages("messages__declaration__statement9")
             </li>
             @if(showMasterTrustDeclaration){
                 <li>
-                    @components.paragraph_text(messages("messages__declaration__statement10"), para_id="para10")
+                    @messages("messages__declaration__statement10")
                 </li>
             }
         </ol>
 
-        <div class="form-group">
-            <div class="form-field @if(form("agree").hasErrors){form-field--error}">
-            <fieldset class="inline">
-                <legend>
-                    @form("agree").errors.map { error =>
-                    <span class="error-notification" id="error-message-agree-input">
-                        <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
-                    }
-                </legend>
-                <div class="multiple-choice">
-                    <input id="agree" name="agree" type="checkbox" value="agreed">
-                    <label for="agree">@messages("messages__declaration__agree")</label>
-                </div>
-            </fieldset>
-        </div>
+    @components.button_link("site.agree_and_continue", href.url, "submit")
 
-        @components.submit_button("site.save_and_continue")
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
-
-    }
 }

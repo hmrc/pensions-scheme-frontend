@@ -33,6 +33,7 @@ import utils.{Enumerable, UserAnswers}
 import views.html.variationDeclaration
 
 import scala.concurrent.{ExecutionContext, Future}
+import controllers.routes.VariationDeclarationController
 
 class VariationDeclarationController @Inject()(
                                                 appConfig: FrontendAppConfig,
@@ -42,50 +43,40 @@ class VariationDeclarationController @Inject()(
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction,
-                                                formProvider: DeclarationFormProvider,
                                                 pensionsSchemeConnector: PensionsSchemeConnector,
                                                 lockConnector: PensionSchemeVarianceLockConnector,
                                                 updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 viewConnector: SchemeDetailsReadOnlyCacheConnector
                                               )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider()
-  val postCall = routes.VariationDeclarationController.onSubmit _
-
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
+      val href = VariationDeclarationController.onClickAgree(srn)
       srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) { actualSrn =>
         updateSchemeCacheConnector.fetch(actualSrn).map {
-          case Some(_) => Ok(variationDeclaration(appConfig, form, request.userAnswers.get(SchemeNameId), postCall(srn), srn))
+          case Some(_) => Ok(variationDeclaration(appConfig, request.userAnswers.get(SchemeNameId), srn, href))
           case _ => Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
         }
       }
   }
 
-  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
+  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(variationDeclaration(appConfig, formWithErrors, request.userAnswers.get(SchemeNameId), postCall(srn), srn))),
-        value => {
-          srn.flatMap { srnId =>
-            request.userAnswers.get(PstrId).map {
-              pstr =>
-                val ua = request.userAnswers.set(VariationDeclarationId)(value).asOpt.getOrElse(request.userAnswers)
-                for {
-                  _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua)
-                  _ <- updateSchemeCacheConnector.removeAll(srnId)
-                  _ <- viewConnector.removeAll(request.externalId)
-                  _ <- lockConnector.releaseLock(request.psaId.id, srnId)
-                } yield {
-                  Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
-                }
+      srn.flatMap { srnId =>
+        request.userAnswers.get(PstrId).map {
+          pstr =>
+            val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
+            for {
+              _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua)
+              _ <- updateSchemeCacheConnector.removeAll(srnId)
+              _ <- viewConnector.removeAll(request.externalId)
+              _ <- lockConnector.releaseLock(request.psaId.id, srnId)
+            } yield {
+              Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
             }
-          }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
-
         }
-      )
-  }
+      }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
 
+  }
 
 }

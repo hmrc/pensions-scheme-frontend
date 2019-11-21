@@ -45,7 +45,7 @@ object DirectorEnterUTRId {
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__utr__checkyouranswerslabel")
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_utr")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
 
       override def row(id: DirectorEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA(label(id.establisherIndex, id.directorIndex, userAnswers),

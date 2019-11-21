@@ -41,7 +41,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
       "messages__utr__checkyouranswerslabel",
       List(utr),
       false,
-      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_utr", companyName))))
+      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
     )
   )
 
@@ -99,7 +99,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
             "messages__utr__checkyouranswerslabel",
             List("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_utr", companyName))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
           )
           val answers                           = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
           val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))

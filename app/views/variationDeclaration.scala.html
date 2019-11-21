@@ -17,62 +17,40 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
-@import models.Mode
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig, form: Form[_],
-  schemeName: Option[String], postCall: Call,
-  srn: Option[String], mode: Mode = UpdateMode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig,
+  schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__variationDeclaration__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @components.back_link()
 
-        @components.back_link()
+    @components.heading(
+        headingKey= messages("messages__variationDeclaration__heading")
+    )
 
-        @components.error_summary(form.errors)
+    @components.paragraph_text(messages("messages__variationDeclaration__declare"))
 
-        @components.heading(
-            headingKey= messages("messages__variationDeclaration__heading")
-        )
-
-        @components.paragraph_text(messages("messages__variationDeclaration__declare"))
-
-        <ol class="list-bullet">
+        <ol class="list list-bullet">
             <li>
-                @components.paragraph_text(messages("messages__variationDeclaration__statement1"))
+                @messages("messages__variationDeclaration__statement1")
             </li>
 
             <li>
-                @components.paragraph_text(messages("messages__variationDeclaration__statement2"))
+                @messages("messages__variationDeclaration__statement2")
             </li>
 
             <li>
-                @components.paragraph_text(messages("messages__variationDeclaration__statement3"))
+                @messages("messages__variationDeclaration__statement3")
             </li>
 
-        </ol>
+    </ol>
 
-        <div class="form-group">
-            <div class="form-field @if(form("agree").hasErrors){form-field--error}">
-            <fieldset class="inline">
-                <legend>
-                    @form("agree").errors.map { error =><span class="error-notification" id="error-message-agree-input">@messages(error.message, error.args: _*)</span>
-                    }
-                </legend>
-                <div class="multiple-choice">
-                    <input id="agree" name="agree" type="checkbox" value="agreed">
-                    <label for="agree">@messages("messages__declaration__agree")</label>
-                </div>
-            </fieldset>
-        </div>
+    @components.button_link("site.agree_and_continue", href.url, "submit")
 
-        @components.submit_button("site.save_and_continue")
-
-        @components.return_link("site.return_to", schemeName, None, srn)
-
-    }
+    @components.return_link("site.return_to", schemeName, None, srn)
 }
