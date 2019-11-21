@@ -23,22 +23,27 @@
         hint: Option[String] = None,
         inputs: Seq[InputOption],
         fieldsetClass: Option[String] = None,
-        labelClass: Option[String] = None
+        labelClass: Option[String] = None,
+        headingIsLegend: Boolean = false
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-field--error}">
     <fieldset class="@fieldsetClass" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-radio-hint"}>
         <legend>
-            <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
-            @if(hint.nonEmpty){
-                <span id="@{field.id}-radio-hint" class="form-hint">@{hint.get}</span>
+            @if(headingIsLegend){
+                <h1 class="heading-xlarge">@legend</h1>
+            } else {
+                <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
             }
-            @field.errors.map { error =>
-                <span class="error-notification" id="error-message-@{field.id}-input">
-                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
-                </span>
+            @hint.map { hint =>
+            <span id="@{field.id}-radio-hint" class="form-hint">@hint</span>
             }
         </legend>
+        @field.errors.map { error =>
+        <span class="error-notification" id="error-message-@{field.id}-input">
+                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
+                </span>
+        }
         @for(input <- inputs) {
             @components.radio(field, input.label, input.value, input.dataTarget, input.hint, labelClass)
         }
