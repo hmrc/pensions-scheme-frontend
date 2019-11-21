@@ -43,8 +43,7 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
       "accountNumber" ->
         accountNumberMapping(
           "messages__error__bank_accno__blank",
-          "messages__error__bank_accno__invalid",
-          "messages__error__bank_accno__length"
+          "messages__error__bank_accno__invalid"
         )
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )

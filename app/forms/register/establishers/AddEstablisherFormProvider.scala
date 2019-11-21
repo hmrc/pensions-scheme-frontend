@@ -25,12 +25,12 @@ class AddEstablisherFormProvider @Inject() extends Mappings {
   def apply(establishers: Seq[_]): Form[Option[Boolean]] = {
     if (establishers.isEmpty) {
       Form(
-        "value" -> Forms.optional(boolean("messages__error__selection"))
+        "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
       )
     } else {
       Form(
-        "value" -> Forms.optional(boolean("messages__error__selection"))
-          .verifying("messages__error__selection", _.isDefined)
+        "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
+          .verifying("messages__addEstablisher_error__selection", _.isDefined)
       )
     }
   }

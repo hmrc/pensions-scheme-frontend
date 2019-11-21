@@ -86,6 +86,7 @@ messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
 messages__error__date_past = The date of birth must be after 1900
 messages__error__selection = You must make a selection
+messages__addEstablisher_error__selection = Select yes if you want to add another establisher
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
@@ -317,15 +318,14 @@ messages__error__bank_name__blank = Enter a bank name
 messages__error__bank_name__length = Enter bank name using 28 characters or less
 
 messages__error__bank_account_holder_name__blank = Enter an account name
-messages__error__bank_account_holder_name__length = Enter an account name using 28 characters or less
+messages__error__bank_account_holder_name__length = Account name must be 28 characters or fewer
 
 messages__error__sort_code__blank = Enter a bank sort code
-messages__error__sort_code__length = Enter a bank sort code which is exactly 6 numbers
+messages__error__sort_code__length = Sort code must be 6 numbers
 messages__error__sort_code__invalid = Enter a bank sort code using only numbers
 
 messages__error__bank_accno__blank = Enter a bank account number
-messages__error__bank_accno__length = Enter a bank account number which is exactly 8 numbers
-messages__error__bank_accno__invalid = Enter a bank account number using only numbers
+messages__error__bank_accno__invalid = Account number must be 8 numbers
 
 messages__error__bank_name_length = The bank name cannot be more than 28 characters
 messages__error__account_name_length = The account name cannot be more than 28 characters
