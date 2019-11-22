@@ -35,7 +35,7 @@
             @if(headingIsLegend){
             <h1 class="heading-xlarge">@label</h1>
             } else {
-            <span class="bold" @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>
+            <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
             }
             @hint.map { hint =>
             <span id="@{field.id}-yesno-hint" class="form-hint">@hint</span>
