@@ -66,6 +66,17 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def titleIndividualDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
 
+  def titleCompanyDirectorDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theDirector").resolve)
+
+  def titlePartnerDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartner").resolve)
+
+
+
+
+
+
   def titleIndividualContactDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
 
