@@ -37,28 +37,30 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=components.hyphen(messages(viewmodel.heading)).toString
-        )
+        @defining(viewmodel.title.resolve == viewmodel.heading.resolve){ isLegend =>
 
-        @viewmodel.hint.map{hintText =>
-            <p>@messages(hintText)</p>
+            @if(!isLegend){
+                @components.heading(headingKey=components.hyphen(messages(viewmodel.heading)).toString)
+            }
+            @viewmodel.hint.map{hintText =>
+                <p>@messages(hintText)</p>
+            }
+
+            <div class="tabular-data__data tabular-data__data--3-12">
+                <p>
+                    @for((line, i) <- viewmodel.address.lines(countryOptions).zipWithIndex) {
+                    <span id="address-value-@i" class="address-multi-line">@line</span>
+                    }
+                </p>
+            </div>
+
+            @components.input_yes_no(
+                field = form("value"),
+                label = messages(viewmodel.title),
+                labelClass = Some("visually-hidden"),
+                headingIsLegend=isLegend
+            )
         }
-
-        <div class="tabular-data__data tabular-data__data--3-12">
-            <p>
-                @for((line, i) <- viewmodel.address.lines(countryOptions).zipWithIndex) {
-                <span id="address-value-@i" class="address-multi-line">@line</span>
-                }
-            </p>
-        </div>
-
-        @components.input_yes_no(
-            field = form("value"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden")
-        )
-
         <div class="subsection">
             @components.submit_button("site.save_and_continue")
         </div>
