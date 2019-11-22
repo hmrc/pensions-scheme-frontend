@@ -32,18 +32,22 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey=viewmodel.heading)
+        @defining(viewmodel.title.resolve == viewmodel.heading.resolve){ isLegend =>
 
-        @viewmodel.hint.map{ hint =>
-            <p>@messages(hint)</p>
+            @if(!isLegend){
+            @components.heading(headingKey=viewmodel.heading)
+            }
+            @viewmodel.hint.map{ hint =>
+                <p>@messages(hint)</p>
+            }
+
+            @components.input_yes_no(
+                field = form(viewmodel.formFieldName.fold("value")(identity)),
+                label = viewmodel.title,
+                labelClass = Some("visually-hidden"),
+                headingIsLegend=isLegend
+            )
         }
-
-        @components.input_yes_no(
-            field = form(viewmodel.formFieldName.fold("value")(identity)),
-            label = viewmodel.title,
-            labelClass = Some("visually-hidden")
-        )
-
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
