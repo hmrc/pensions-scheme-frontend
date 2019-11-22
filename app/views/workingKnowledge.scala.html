@@ -32,6 +32,8 @@
 
         @components.error_summary(form.errors)
 
+        @components.heading(messages("messages__workingKnowledge__heading"))
+
         <p id="p1">@Html(messages("messages__workingKnowledge__p1"))</p>
         <p id="p2">@Html(messages("messages__workingKnowledge__p2"))</p>
         <p id="p3">@Html(messages("messages__workingKnowledge__p3"))</p>
@@ -39,8 +41,7 @@
         @components.input_yes_no(
             field = form("value"),
             label = messages("messages__workingKnowledge__heading"),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = true
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button("site.save_and_continue")

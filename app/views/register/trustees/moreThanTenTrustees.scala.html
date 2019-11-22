@@ -33,15 +33,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages("messages__moreThanTenTrustees__heading")
-        )
-
         @components.input_yes_no(
             field = form("value"),
             label = messages("messages__moreThanTenTrustees__heading"),
             labelClass = Some("visually-hidden"),
-            hint = Some(messages("messages__moreThanTenTrustees__hint"))
+            hint = Some(messages("messages__moreThanTenTrustees__hint")),
+            headingIsLegend = true
         )
 
         @components.submit_button()
