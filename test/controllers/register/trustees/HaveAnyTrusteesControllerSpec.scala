@@ -33,7 +33,7 @@ package controllers.register.trustees
  */
 
 import connectors.FakeUserAnswersCacheConnector
-import controllers.ControllerSpecBase
+import controllers.{ControllerSpecBase, HaveAnyTrusteesController}
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.HaveAnyTrusteesId
@@ -55,14 +55,14 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, formProvider)
-  val submitUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onSubmit(NormalMode, None)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  val submitUrl = controllers.routes.HaveAnyTrusteesController.onSubmit(NormalMode)
   def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, None, submitUrl)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -72,7 +72,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(HaveAnyTrusteesId.toString -> true)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
@@ -80,7 +80,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -90,7 +90,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

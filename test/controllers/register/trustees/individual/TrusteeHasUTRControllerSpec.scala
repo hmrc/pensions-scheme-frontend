@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.hasUtr
+import views.html.hasReferenceNumber
 
 class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -79,7 +79,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form): String = hasUtr(frontendAppConfig, form, viewModel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = hasReferenceNumber(frontendAppConfig, form, viewModel, None)(fakeRequest, messages).toString
 
   "TrusteeHasUTRController" must {
 

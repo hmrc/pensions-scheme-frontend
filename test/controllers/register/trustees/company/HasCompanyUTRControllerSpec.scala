@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
-import views.html.hasUtr
+import views.html.hasReferenceNumber
 
 class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
@@ -72,7 +72,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = hasUtr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyUTRController" must {
 
