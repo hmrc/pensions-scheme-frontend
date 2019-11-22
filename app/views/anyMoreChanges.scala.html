@@ -42,10 +42,6 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages("messages__any_more_changes__title")
-        )
-
         <p>@messages("messages__any_more_changes__p1")</p>
         <p>@messages("messages__any_more_changes__p2")</p>
         <p>@messages("messages__any_more_changes__p3_date", dateToComplete)</p>
@@ -53,7 +49,8 @@
         @components.input_yes_no(
             field = form("value"),
             label = messages("messages__any_more_changes__title"),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button("site.save_and_continue")
