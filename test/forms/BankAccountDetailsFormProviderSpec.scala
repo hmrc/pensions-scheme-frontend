@@ -88,7 +88,6 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       form,
       "messages__error__bank_accno__blank",
       "messages__error__bank_accno__invalid",
-      "messages__error__bank_accno__length",
       Map(
         "bankName" -> "test bank",
         "accountName" -> "test account",

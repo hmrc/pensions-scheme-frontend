@@ -20,12 +20,11 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeDataRetrievalAction}
 import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
+import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{CheckUpdateMode, Mode, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
@@ -217,8 +216,9 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
           val userAnswersService: UserAnswersService = mock[UserAnswersService]
           val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
+          val postCode = "ZZ1 1ZZ"
 
-          when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
+          when(addressConnector.addressLookupByPostCode(eqTo(postCode))(any(), any())) thenReturn Future.successful {
             Seq.empty
           }
 
@@ -235,11 +235,15 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
               val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
               val request = FakeRequest()
               val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+              val expectedErrorMessage = messages("messages__error__postcode_no_results", postCode)
+
               val controller = app.injector.instanceOf[TestController]
               val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
 
               status(result) mustEqual OK
-              contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel, None)(request, messages).toString
+
+              val expectedResult = postcodeLookup(appConfig, formProvider().withError("value", expectedErrorMessage), viewmodel, None)(request, messages).toString
+              contentAsString(result) mustEqual expectedResult
           }
         }
       }

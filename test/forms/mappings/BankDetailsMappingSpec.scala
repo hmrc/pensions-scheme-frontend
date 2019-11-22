@@ -43,7 +43,6 @@ class BankDetailsMappingSpec extends BankDetailsBehaviour {
       testForm,
       "error.required",
       "error.invalid",
-      "error.max.error",
       Map.empty,
       (str: String) => str
     )
