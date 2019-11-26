@@ -86,30 +86,22 @@ $task-list-indent: 35px;
   display: inline-block;
 }
 
-.task-completed {
-  display: inline-block;
-  font-family: "nta", Arial, sans-serif;
-  padding: 2px 5px 0;
-  font-size: 19px;
-  font-weight: 700;
-  text-transform: none;
-  line-height: 1.14286;
-  letter-spacing: 1px;
-  color: #fff;
-  background-color: #005ea5;
-  float: right;
+.task-status--in-progress {
+    display: inline-block;
+    font-family: "nta", Arial, sans-serif;
+    padding: 4px 4px 4px;
+    font-size:19px;
+    line-height: 1.14286;
+    letter-spacing: 1px;
+    float: right;
+    color: #0B0C0C;
 }
-
-.task-inprogress {
-  display: inline-block;
-  padding: 2px 5px 0;
-  font-family: "nta", Arial, sans-serif;
-  font-weight: 700;
-  text-transform: none;
-  font-size: 19px;
-  line-height: 1.14286;
-  letter-spacing: 1px;
-  text-decoration: none;
-  color: #0B0C0C;
-  float: right;
+.task-status--completed {
+    display: inline-block;
+    font-family: "nta", Arial, sans-serif;
+    padding: 4px 4px 4px;
+    font-size: 19px;
+    line-height: 1.14286;
+    letter-spacing: 1px;
+    float: right;
 }

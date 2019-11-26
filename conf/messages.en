@@ -1293,6 +1293,7 @@ messages__schemeTaskList__declaration_link = Read declaration and send details t
 messages__schemeTaskList__returnlink = Return to pension scheme details
 messages__complete__return = Return to manage your pension schemes
 messages__finish = Finish
+messages__schemeTaskList__status_visuallyHidden = This section is
 
 messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
 messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?

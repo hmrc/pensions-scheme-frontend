@@ -48,15 +48,23 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
 
     "display the correct status if in progress" in {
-
       val doc = asDocument(createView(inProgress)())
-      doc.getElementById(statusId).text mustBe messages("messages__schemeTaskList__inProgress")
+      doc.getElementById(statusId).ownText() mustBe messages("messages__schemeTaskList__inProgress")
+    }
+
+    "display the correct visually hidden text before status if in progress" in {
+      val doc = asDocument(createView(inProgress)())
+      doc.getElementById(statusId).text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages("messages__schemeTaskList__inProgress")
     }
 
     "display the correct status if completed" in {
-
       val doc = asDocument(createView(completed)())
-      doc.getElementById(statusId).text mustBe messages("messages__schemeTaskList__completed")
+      doc.getElementById(statusId).ownText() mustBe messages("messages__schemeTaskList__completed")
+    }
+
+    "display the correct visually hidden text before status if completed" in {
+      val doc = asDocument(createView(completed)())
+      doc.getElementById(statusId).text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages("messages__schemeTaskList__completed")
     }
   }
 
@@ -149,7 +157,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       s"display the about $aboutType section with correct status" in {
         val view = createView(schemeDetailsTaskListData())
         val doc = asDocument(view())
-        doc.getElementById(s"section-about-status-$index").text mustBe messages(msg)
+        doc.getElementById(s"section-about-status-$index").ownText mustBe messages(msg)
+      }
+
+      s"display the about $aboutType section with correct status and visually hidden text" in {
+        val view = createView(schemeDetailsTaskListData())
+        val doc = asDocument(view())
+        doc.getElementById(s"section-about-status-$index").text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
       }
     }
   }
@@ -216,7 +230,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct status of in progress for item no $index" in {
           val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
-          doc.getElementById(s"section-establishers-status-$index-0").text mustBe messages(msg)
+          doc.getElementById(s"section-establishers-status-$index-0").ownText() mustBe messages(msg)
+        }
+
+        s"display the first establisher section with correct status of in progress for item no $index with visually hidden text" in {
+          val view = createView(schemeDetailsTaskListData())
+          val doc = asDocument(view())
+          doc.getElementById(s"section-establishers-status-$index-0").text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
         }
       }
 
@@ -330,7 +350,14 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
 
-          doc.getElementById(s"section-trustees-status-$index-0").text mustBe messages(msg)
+          doc.getElementById(s"section-trustees-status-$index-0").ownText() mustBe messages(msg)
+        }
+
+        s"display the first trustee section with correct status of in progress for item no $index with visually hidden text" in {
+          val view = createView(schemeDetailsTaskListData())
+          val doc = asDocument(view())
+
+          doc.getElementById(s"section-trustees-status-$index-0").text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
         }
       }
     }

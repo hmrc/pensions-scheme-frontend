@@ -44,9 +44,9 @@
 
 @statusClass(isCompleted:Boolean)=@{
     if (isCompleted) {
-        "task-completed"
+        "task-status--completed"
     } else {
-        "task-inprogress"
+        "task-status--in-progress"
     }
 }
 
@@ -73,16 +73,15 @@
                 <ul class="task-list-items">
                     <li class="task-list-item">
                         @if(taskSections.beforeYouStart.isCompleted.isEmpty){
-                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target">
-                            @messages(taskSections.beforeYouStart.link.text)
-                        </a>
+                            <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target">
+                                @messages(taskSections.beforeYouStart.link.text)
+                            </a>
                         }
-
                         @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                        <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
-                            @messages(taskSections.beforeYouStart.link.text)
-                        </a>
-                            <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
+                            <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
+                                @messages(taskSections.beforeYouStart.link.text)
+                            </a>
+                            <span class="task-status @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                         }
                     </li>
                 </ul>
@@ -100,7 +99,7 @@
                                 @messages(item.link.text)
                             </a>
                             @item.isCompleted.map{ isCompleted =>
-                                <strong class="@statusClass(isCompleted)" id="section-about-status-@i">@messages(status(isCompleted))</strong>
+                                <span class="task-status @statusClass(isCompleted)" id="section-about-status-@i"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                             }
                         </li>
                     }
@@ -121,7 +120,7 @@
                             </a>
 
                             @wk.isCompleted.map{ isCompleted =>
-                            <strong class="@statusClass(isCompleted)" id="section-working-knowledge-status">@messages(status(isCompleted))</strong>
+                                <span class="task-status @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                             }
                         </li>
                     </ul>
@@ -161,7 +160,7 @@
                                     @messages(entity.link.text)
                                 </a>
                                 @entity.isCompleted.map{ isCompleted =>
-                                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-@i-@j">@messages(status(isCompleted))</strong>
+                                    <span class="task-status @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                                 }
                             </li>
 
@@ -191,11 +190,10 @@
                 }
 
                 @header.isCompleted.map{ isCompleted =>
-                    <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
+                    <span class="task-status @statusClass(isCompleted)" id="section-trustees-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                 }
             }
             @variationsOnly("</p>")
-
                 @for((item, i) <- taskSections.trustees.zipWithIndex){
                     @item.header.map{hdr=>
                        <h3 class="task-list-section">@messages(hdr)</h3>
@@ -207,14 +205,12 @@
                                     @messages(entity.link.text)
                                 </a>
                                 @entity.isCompleted.map{ isCompleted =>
-                                    <strong class="@statusClass(isCompleted)" id="section-trustees-status-@i-@j">@messages(status(isCompleted))</strong>
+                                    <span class="task-status @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                                 }
                             </li>
                         }
                     </ul>
                 }
-
-
         </section>
 
         @taskSections.declaration.map{declarationSection=>
