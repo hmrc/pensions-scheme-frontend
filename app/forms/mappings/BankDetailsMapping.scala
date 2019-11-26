@@ -86,7 +86,7 @@ trait BankDetailsMapping extends Mappings {
     Forms.of(formatter)
   }
 
-  protected def accountNumberMapping(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[String] = {
+  protected def accountNumberMapping(requiredKey: String = "error.required", invalidKey: String): Mapping[String] = {
 
     val formatter: Formatter[String] = new Formatter[String] {
 
@@ -98,7 +98,7 @@ trait BankDetailsMapping extends Mappings {
           .right.map(strip)
           .right.flatMap {
           case str if strip(str).length != 8 =>
-            Left(Seq(FormError(key, maxErrorKey)))
+            Left(Seq(FormError(key, invalidKey)))
           case str if !strip(str).matches(regexAccountNo) =>
             Left(Seq(FormError(key, invalidKey)))
           case str =>

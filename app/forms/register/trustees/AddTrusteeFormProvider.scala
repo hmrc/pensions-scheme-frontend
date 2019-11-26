@@ -24,6 +24,6 @@ class AddTrusteeFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("messages__error__selection")
+      "value" -> boolean("messages__addTrustees_error_required")
     )
 }

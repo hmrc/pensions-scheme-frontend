@@ -25,7 +25,7 @@ import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -51,7 +51,6 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
   protected def form: Form[String]
 
   private val invalidPostcode: Message = "messages__error__postcode_failed"
-  private val noResults: Message = "messages__error__postcode_no_results"
 
   protected def get(viewmodel: PostcodeLookupViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     Future.successful(Ok(postcodeLookup(appConfig, form, viewmodel, existingSchemeName)))
@@ -61,16 +60,14 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
                       id: TypedIdentifier[Seq[TolerantAddress]],
                       viewmodel: PostcodeLookupViewModel,
                       mode: Mode,
-                      invalidPostcode: Message = invalidPostcode,
-                      noResults: Message = noResults
+                      invalidPostcode: Message = invalidPostcode
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     form.bindFromRequest().fold(
       formWithErrors =>
         Future.successful {
           BadRequest(postcodeLookup(appConfig, formWithErrors, viewmodel, existingSchemeName))
-        },
-      lookupPostcode(id, viewmodel, invalidPostcode, noResults, mode)
+        }, lookupPostcode(id, viewmodel, invalidPostcode, mode, _)
     )
   }
 
@@ -78,11 +75,13 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
                               id: TypedIdentifier[Seq[TolerantAddress]],
                               viewmodel: PostcodeLookupViewModel,
                               invalidPostcode: Message,
-                              noResults: Message,
-                              mode: Mode
-                            )(postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+                              mode: Mode,
+                              postCode: String
+                            )(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
-    addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
+    val noResults: Message = Message("messages__error__postcode_no_results", postCode)
+
+    addressLookupConnector.addressLookupByPostCode(postCode).flatMap {
 
       case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel, existingSchemeName)))
 

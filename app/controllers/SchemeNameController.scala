@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.{IsBeforeYouStartCompleteId, SchemeNameId}
@@ -47,6 +47,7 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
+                                     pensionAdministratorConnector: PensionAdministratorConnector,
                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -68,10 +69,12 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
-              Future.successful(BadRequest(schemeName(appConfig, form.withError(
+              pensionAdministratorConnector.getPSAName.map { psaName =>
+              BadRequest(schemeName(appConfig, form.withError(
                 "schemeName",
-                "messages__error__scheme_name_psa_name_match"
-              ), mode, existingSchemeNameOrEmptyString)))
+                "messages__error__scheme_name_psa_name_match", psaName
+              ), mode, existingSchemeNameOrEmptyString))
+                }
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
                 sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, UserAnswers(cacheMap), value = false).map { json =>
