@@ -31,7 +31,7 @@ import services.UserAnswersService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,6 +63,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
+
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -71,7 +73,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualAddressDetails(mode, isNew),
+          title = title,
           h1 =  headingAddressDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 

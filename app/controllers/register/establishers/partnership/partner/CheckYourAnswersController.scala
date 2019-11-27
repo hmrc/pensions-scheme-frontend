@@ -30,7 +30,7 @@ import services.UserAnswersService
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -97,6 +97,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val isNew = isNewItem(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))
 
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+
       val vm = CYAViewModel(
         answerSections = answers,
         href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
@@ -105,7 +107,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewPartnerId(establisherIndex, partnerIndex), mode),
-        title = titleIndividualDetails(mode, isNew),
+        title = title,
         h1 =  headingDetails(mode, personName(PartnerNameId(establisherIndex, partnerIndex)),
           isNew)
       )

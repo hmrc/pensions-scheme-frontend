@@ -32,7 +32,7 @@ import services.UserAnswersService
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,6 +63,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
 
         val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
 
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
+
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = SchemeTaskListController.onPageLoad(mode, srn),
@@ -71,7 +73,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyAddressDetails(mode, isNew),
+          title = title,
           h1 =  headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 

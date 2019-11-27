@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,6 +57,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
+
         val vm = CYAViewModel(
           answerSections = Seq(contactDetailsSection),
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -65,7 +67,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titlePartnershipContactDetails(mode, isNew),
+          title = title,
           h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 

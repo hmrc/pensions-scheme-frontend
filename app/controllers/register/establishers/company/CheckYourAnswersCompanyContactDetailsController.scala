@@ -31,7 +31,7 @@ import services.UserAnswersService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,6 +60,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
+
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
           href = SchemeTaskListController.onPageLoad(mode, srn),
@@ -68,7 +70,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyContactDetails(mode, isNew),
+          title = title,
           h1 =  headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 

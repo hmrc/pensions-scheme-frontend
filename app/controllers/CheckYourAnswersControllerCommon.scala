@@ -46,33 +46,6 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
       case _ => Message("messages__thePartnership").resolve
     }
 
-  def titleCompanyDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
-
-  def titleCompanyContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
-
-  def titleCompanyAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
-
-  def titleIndividualDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
-
-  def titleIndividualContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
-
-  def titleIndividualAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
-
-  def titlePartnershipDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
-
-  def titlePartnershipContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
-
-  def titlePartnershipAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
-
   def headingDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
 

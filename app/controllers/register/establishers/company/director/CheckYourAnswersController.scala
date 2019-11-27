@@ -30,7 +30,7 @@ import services.UserAnswersService
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -98,6 +98,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val isNew = isNewItem(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex))
 
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+
       val vm = CYAViewModel(
         answerSections = Seq(directorAnswerSection),
         href = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
@@ -106,7 +108,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
-        title = titleIndividualDetails(mode, isNew),
+        title = title,
         h1 =  headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)), isNew)
       )
 

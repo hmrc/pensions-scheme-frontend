@@ -31,7 +31,7 @@ import services.UserAnswersService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,6 +65,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -73,7 +75,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleIndividualDetails(mode, isNew),
+          title = title,
           h1 =  headingDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
