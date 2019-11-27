@@ -46,7 +46,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
     behave like normalPage(createView, messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"),
       expectedGuidanceKeys = "_p1", "_p2", "_p3")
 
-    behave like yesNoPage(
+    behave like yesNoPageWithLegend(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.WorkingKnowledgeController.onSubmit(NormalMode).url

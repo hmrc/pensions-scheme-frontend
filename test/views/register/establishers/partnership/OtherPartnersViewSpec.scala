@@ -47,7 +47,7 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
       messages("messages__otherPartners__heading")
     )
 
-    behave like yesNoPage(createViewUsingForm,
+    behave like yesNoPageWithHint(createViewUsingForm,
       messageKeyPrefix,
       routes.OtherPartnersController.onSubmit(NormalMode, index, None).url,
       expectedHintKey = Some("_lede")

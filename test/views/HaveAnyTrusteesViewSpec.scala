@@ -44,7 +44,7 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", scheme))
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.HaveAnyTrusteesController.onSubmit(NormalMode).url)
+    behave like yesNoPageWithLegend(createViewUsingForm, messageKeyPrefix, routes.HaveAnyTrusteesController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }

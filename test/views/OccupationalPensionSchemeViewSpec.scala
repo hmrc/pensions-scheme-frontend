@@ -41,7 +41,7 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
-    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)

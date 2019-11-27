@@ -32,22 +32,15 @@
 
         @components.error_summary(form.errors)
 
-        @defining(viewmodel.legend.resolve == viewmodel.heading.resolve){ isLegend =>
+        @components.input_radio(
+            field = form("value"),
+            legend = viewmodel.heading,
+            legendClass = Some("visually-hidden"),
+            inputs = viewmodel.inputs,
+            fieldsetClass = Some("inline"),
+            headingIsLegend=true
+        )
 
-            @if(!isLegend){
-                @components.heading(messages(viewmodel.heading))
-            }
-
-            @components.input_radio(
-                field = form("value"),
-                legend = viewmodel.legend,
-                legendClass = Some("visually-hidden"),
-                inputs = viewmodel.inputs,
-                fieldsetClass = Some("inline"),
-                headingIsLegend=isLegend
-
-            )
-        }
 
         @components.submit_button()
 

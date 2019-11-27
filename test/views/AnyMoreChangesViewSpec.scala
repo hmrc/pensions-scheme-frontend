@@ -54,7 +54,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
     "display partnership name" in {
       Jsoup.parse(createView().toString) must haveDynamicText(Message("messages__any_more_changes__p3_date", date))
     }
-    behave like yesNoPage(
+    behave like yesNoPageWithLegend(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.AnyMoreChangesController.onSubmit(Some("123")).url

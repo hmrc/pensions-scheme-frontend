@@ -48,7 +48,7 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
       messages("messages__otherDirectors__heading")
     )
 
-    behave like yesNoPage(createViewUsingForm,
+    behave like yesNoPageWithHint(createViewUsingForm,
       messageKeyPrefix,
       routes.OtherDirectorsController.onSubmit(NormalMode, None, index).url,
       expectedHintKey = Some("_lede")
