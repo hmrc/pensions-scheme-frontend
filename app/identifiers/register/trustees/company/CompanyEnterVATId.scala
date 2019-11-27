@@ -42,7 +42,7 @@ object CompanyEnterVATId {
     new CheckYourAnswers[CompanyEnterVATId] {
 
       private val labelVat = "messages__common__cya__vat"
-      def hiddenLabelVat(index: Int, userAnswers: UserAnswers) = messages("messages__visuallyhidden__dynamic_vat", companyName(index, userAnswers))
+      def hiddenLabelVat(index: Int, userAnswers: UserAnswers) = messages("messages__visuallyhidden__dynamic_vat_number", companyName(index, userAnswers))
 
       override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))().row(id)(changeUrl, userAnswers)

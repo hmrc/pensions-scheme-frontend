@@ -16,24 +16,21 @@
 
 package views.register
 
-import forms.register.DeclarationFormProvider
 import org.jsoup.Jsoup
-import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import views.behaviours.QuestionViewBehaviours
+import views.behaviours.ViewBehaviours
 import views.html.register.declaration
 
-class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
+class DeclarationViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "declaration"
 
   val schemeName = "Test Scheme Name"
-  val form: Form[Boolean] = new DeclarationFormProvider()()
+  private val href = controllers.register.routes.DeclarationController.onClickAgree()
 
-  def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, isCompany = true,
+  def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig, isCompany = true,
     isDormant = false,
     showMasterTrustDeclaration = true,
-    hasWorkingKnowledge = hasWorkingKnowledge, None)(fakeRequest, messages)
+    hasWorkingKnowledge = hasWorkingKnowledge, None, href)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 

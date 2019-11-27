@@ -34,7 +34,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))
+      Some(messages("messages__visuallyhidden__dynamic_vat_number", companyName)))))
   )
 
   "cya" when {
@@ -90,7 +90,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat", companyName)))))))
+            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat_number", companyName)))))))
       }
     }
   }

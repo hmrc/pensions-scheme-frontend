@@ -19,11 +19,9 @@ package models
 import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
-sealed trait Mode {
-  def isRegistrationJourney:Boolean
-}
-sealed trait SubscriptionMode extends Mode {override def isRegistrationJourney:Boolean = true}
-sealed trait VarianceMode extends Mode {override def isRegistrationJourney:Boolean = false}
+sealed trait Mode
+sealed trait SubscriptionMode extends Mode
+sealed trait VarianceMode extends Mode
 
 case object NormalMode extends WithName("") with SubscriptionMode
 case object CheckMode extends WithName("change") with SubscriptionMode

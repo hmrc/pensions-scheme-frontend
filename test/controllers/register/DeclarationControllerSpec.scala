@@ -107,16 +107,14 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       }
     }
 
-    "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
-
-      val result = controller(nonDormantCompanyAndPartnership).onSubmit()(postRequest)
+    "redirect to the next page on clicking agree and continue" in {
+      val result = controller(nonDormantCompanyAndPartnership).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "send an email when valid data is submitted" which {
+    "send an email on clicking agree and continue" which {
       "fetches from Get PSA Minimal Details" in {
 
         reset(mockEmailConnector)
@@ -124,9 +122,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
         when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
-        val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
-
-        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onSubmit(postRequest)) { _ =>
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
@@ -139,27 +135,6 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       }
     }
 
-    "return a Bad Request and errors" when {
-      "invalid data is submitted in individual journey" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val result = controller(individual).onSubmit()(postRequest)
-
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe viewAsString(boundForm, isCompany = false, isDormant = false)
-      }
-      "invalid data is submitted in company journey" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val result = controller(nonDormantCompanyAndPartnership).onSubmit()(postRequest)
-
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe viewAsString(boundForm, isCompany = true, isDormant = false)
-      }
-    }
-
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
@@ -169,8 +144,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
-          val result = controller(dontGetAnyData).onSubmit()(postRequest)
+          val result = controller(dontGetAnyData).onClickAgree()(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -187,6 +161,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
+  private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val psaId = PsaId("A0000000")
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
@@ -200,7 +175,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       applicationCrypto,
@@ -211,12 +185,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     declaration(
       frontendAppConfig,
-      form,
       isCompany,
       isDormant,
       showMasterTrustDeclaration,
       hasWorkingKnowledge,
-      None
+      None,
+      href
     )(fakeRequest, messages).toString
 
   private val individual =
