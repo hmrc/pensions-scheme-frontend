@@ -71,8 +71,8 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualDetails(mode, isNewTrustee(mode, userAnswers, index)),
-          h1 =  headingDetails(mode, trusteeIndividualName(index), isNewTrustee(mode, userAnswers, index))
+          title = titleIndividualDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
+          h1 =  headingDetails(mode, personName(TrusteeNameId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))

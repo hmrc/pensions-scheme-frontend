@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -43,32 +43,36 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
-                                                                userAnswersService: UserAnswersService
-                                                               )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with I18nSupport with Retrievals {
+                                                                userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
+    extends CheckYourAnswersControllerCommon
+    with I18nSupport
+    with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
-        val contactDetails = AnswerSection(
-          None,
-          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        )
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
+      val notNewEstablisher                 = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+      val contactDetails = AnswerSection(
+        None,
+        CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      )
 
-        val vm = CYAViewModel(
-          answerSections = Seq(contactDetails),
-          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly || notNewEstablisher,
-          srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleCompanyContactDetails(mode, isNewTrustee(mode, userAnswers, index)),
-          h1 =  headingContactDetails(mode, trusteeCompanyName(index), isNewTrustee(mode, userAnswers, index))
-        )
+      val isNew = isNew(mode, userAnswers, IsTrusteeNewId(index))
 
-        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      val vm = CYAViewModel(
+        answerSections = Seq(contactDetails),
+        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        schemeName = existingSchemeName,
+        returnOverview = false,
+        hideEditLinks = request.viewOnly || notNewEstablisher,
+        srn = srn,
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+        title = titleCompanyContactDetails(mode, isNew),
+        h1 = headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+      )
+
+      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+
     }
 }

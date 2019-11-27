@@ -16,13 +16,11 @@
 
 package controllers
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.director.IsNewDirectorId
-import identifiers.register.establishers.partnership.partner.IsNewPartnerId
-import identifiers.register.trustees.IsTrusteeNewId
-import models.Mode
+import models.person.PersonName
 import models.requests.DataRequest
+import models.{CompanyDetails, Mode, PartnershipDetails}
 import play.api.i18n.Messages
+import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
@@ -30,29 +28,25 @@ import viewmodels.Message
 
 trait CheckYourAnswersControllerCommon extends FrontendController {
 
-  def establisherCompanyDirectorName(companyIndex: Int, directorIndex: Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.company.director.DirectorNameId(companyIndex, directorIndex)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
+  def personName(id: TypedIdentifier[PersonName])(implicit request: DataRequest[AnyContent], messages: Messages, reads:Reads[PersonName]): String =
+    request.userAnswers.get(id) match {
+      case Some(name) => name.fullName
+      case _ => Message("messages__thePerson").resolve
+    }
 
-  def establisherPartnershipPartnerName(partnershipIndex: Int, partnerIndex: Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.partnership.partner.PartnerNameId(partnershipIndex, partnerIndex)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
+  def companyName(id: TypedIdentifier[CompanyDetails])(implicit request: DataRequest[AnyContent], messages: Messages, reads:Reads[PersonName]): String =
+    request.userAnswers.get(id) match {
+      case Some(name) => name.companyName
+      case _ => Message("messages__theCompany").resolve
+    }
 
-  def establisherCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
+  def partnershipName(id: TypedIdentifier[PartnershipDetails])(implicit request: DataRequest[AnyContent], messages: Messages, reads:Reads[PersonName]): String =
+    request.userAnswers.get(id) match {
+      case Some(name) => name.name
+      case _ => Message("messages__thePartnership").resolve
+    }
 
-  def establisherPartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
-
-  def establisherIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.establishers.individual.EstablisherNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
-
-  def trusteeCompanyName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.company.CompanyDetailsId(index)).map(_.companyName).getOrElse(Message("messages__theCompany").resolve)
-
-  def trusteePartnershipName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.partnership.PartnershipDetailsId(index)).map(_.name).getOrElse(Message("messages__thePartnership").resolve)
-
-  def trusteeIndividualName(index:Int)(implicit request: DataRequest[AnyContent], messages:Messages):String =
-    request.userAnswers.get(identifiers.register.trustees.individual.TrusteeNameId(index)).map(_.fullName).getOrElse(Message("messages__thePerson").resolve)
+  ///
 
   def titleCompanyDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
@@ -81,6 +75,9 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def titlePartnershipAddressDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
 
+
+  ////
+
   def headingDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
 
@@ -90,16 +87,10 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def headingContactDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
 
-  def headingEstablisherCompanyDirectorOrPartnerDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
-    if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
+  ////
 
-  def isNewEstablisher(mode:Mode, ua:UserAnswers, index:Int):Boolean = mode.isRegistrationJourney || ua.get(IsEstablisherNewId(index)).getOrElse(false)
+//  def isNewEstablisherPartnershipPartner(mode:Mode, ua:UserAnswers, establisherIndex:Int, partnerIndex:Int):Boolean =
+//    mode.isRegistrationJourney || ua.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
 
-  def isNewEstablisherCompanyDirector(mode:Mode, ua:UserAnswers, establisherIndex:Int, directorIndex:Int):Boolean =
-    mode.isRegistrationJourney || ua.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)
-
-  def isNewEstablisherPartnershipPartner(mode:Mode, ua:UserAnswers, establisherIndex:Int, partnerIndex:Int):Boolean =
-    mode.isRegistrationJourney || ua.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
-
-  def isNewTrustee(mode:Mode, ua:UserAnswers, index:Int):Boolean = mode.isRegistrationJourney || ua.get(IsTrusteeNewId(index)).getOrElse(false)
+  def isNew(mode:Mode, ua:UserAnswers, id: TypedIdentifier[Boolean]):Boolean = mode.isRegistrationJourney || ua.get(id).getOrElse(false)
 }

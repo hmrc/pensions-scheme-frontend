@@ -80,8 +80,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyDetails(mode, isNewEstablisher(mode, userAnswers, index)),
-          h1 =  headingDetails(mode, establisherCompanyName(index), isNewEstablisher(mode, userAnswers, index))
+          title = titleCompanyDetails(mode, isNew(mode, userAnswers, IsEstablisherNewId(index))),
+          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew(mode, userAnswers, IsEstablisherNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

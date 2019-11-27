@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressYearsId, PartnershipHasBeenTradingId, PartnershipPreviousAddressId}
+import identifiers.register.establishers.partnership._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -64,8 +64,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titlePartnershipAddressDetails(mode, isNewEstablisher(mode, request.userAnswers, index)),
-          h1 =  headingAddressDetails(mode, establisherPartnershipName(index), isNewEstablisher(mode, request.userAnswers, index))
+          title = titlePartnershipAddressDetails(mode, isNew(mode, request.userAnswers, IsEstablisherNewId(index))),
+          h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew(mode, request.userAnswers, IsEstablisherNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

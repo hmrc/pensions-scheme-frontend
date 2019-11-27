@@ -68,8 +68,8 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titlePartnershipDetails(mode, isNewEstablisher(mode, request.userAnswers, index)),
-          h1 =  headingDetails(mode, establisherPartnershipName(index), isNewEstablisher(mode, request.userAnswers, index))
+          title = titlePartnershipDetails(mode, isNew(mode, request.userAnswers, IsEstablisherNewId(index))),
+          h1 =  headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew(mode, request.userAnswers, IsEstablisherNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

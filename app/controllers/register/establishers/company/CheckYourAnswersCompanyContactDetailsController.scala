@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.routes._
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.{CompanyEmailId, CompanyPhoneId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -66,8 +66,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyContactDetails(mode, isNewEstablisher(mode, userAnswers, index)),
-          h1 =  headingContactDetails(mode, establisherCompanyName(index), isNewEstablisher(mode, userAnswers, index))
+          title = titleCompanyContactDetails(mode, isNew(mode, userAnswers, IsEstablisherNewId(index))),
+          h1 =  headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew(mode, userAnswers, IsEstablisherNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))

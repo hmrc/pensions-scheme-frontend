@@ -103,9 +103,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewPartnerId(establisherIndex, partnerIndex), mode),
-        title = titleIndividualDetails(mode, isNewEstablisherPartnershipPartner(mode, request.userAnswers, establisherIndex, partnerIndex)),
-        h1 =  headingEstablisherCompanyDirectorOrPartnerDetails(mode, establisherPartnershipPartnerName(establisherIndex, partnerIndex),
-          isNewEstablisherPartnershipPartner(mode, request.userAnswers, establisherIndex, partnerIndex))
+        title = titleIndividualDetails(mode, isNew(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))),
+        h1 =  headingDetails(mode, personName(PartnerNameId(establisherIndex, partnerIndex)),
+          isNew(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex)))
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig,vm)))

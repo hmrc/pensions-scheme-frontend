@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherPhoneId}
+import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherNameId, EstablisherPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -62,8 +62,8 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleIndividualContactDetails(mode, isNewEstablisher(mode, request.userAnswers, index)),
-          h1 =  headingContactDetails(mode, establisherIndividualName(index), isNewEstablisher(mode, request.userAnswers, index))
+          title = titleIndividualContactDetails(mode, isNew(mode, request.userAnswers, IsEstablisherNewId(index))),
+          h1 =  headingContactDetails(mode, personName(EstablisherNameId(index)), isNew(mode, request.userAnswers, IsEstablisherNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

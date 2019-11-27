@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteePhoneId}
+import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId, TrusteePhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -63,8 +63,8 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualContactDetails(mode, isNewTrustee(mode, userAnswers, index)),
-          h1 =  headingContactDetails(mode, trusteeIndividualName(index), isNewTrustee(mode, userAnswers, index))
+          title = titleIndividualContactDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
+          h1 =  headingContactDetails(mode, personName(TrusteeNameId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))

@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, CompanyPreviousAddressId, HasBeenTradingCompanyId}
+import identifiers.register.trustees.company._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -66,8 +66,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleCompanyAddressDetails(mode, isNewTrustee(mode, request.userAnswers, index)),
-          h1 =  headingAddressDetails(mode, trusteeCompanyName(index), isNewTrustee(mode, request.userAnswers, index))
+          title = titleCompanyAddressDetails(mode, isNew(mode, request.userAnswers, IsTrusteeNewId(index))),
+          h1 =  headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew(mode, request.userAnswers, IsTrusteeNewId(index)))
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig, vm)))
