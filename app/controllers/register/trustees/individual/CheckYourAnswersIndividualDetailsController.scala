@@ -17,8 +17,8 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
@@ -28,11 +28,13 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,7 +48,7 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             allowChangeHelper: AllowChangeHelper,
                                                             requireData: DataRequiredAction,
                                                             implicit val countryOptions: CountryOptions
-                                                           )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

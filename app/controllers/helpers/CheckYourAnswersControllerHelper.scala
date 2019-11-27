@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.helpers
 import identifiers.TypedIdentifier
 import models.person.PersonName
 import models.requests.DataRequest
@@ -22,11 +22,10 @@ import models._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
 import viewmodels.Message
 
-trait CheckYourAnswersControllerCommon extends FrontendController {
+object CheckYourAnswersControllerHelper {
 
   def personName(id: TypedIdentifier[PersonName])(implicit request: DataRequest[AnyContent],
                                                   messages: Messages, reads:Reads[PersonName]): String =

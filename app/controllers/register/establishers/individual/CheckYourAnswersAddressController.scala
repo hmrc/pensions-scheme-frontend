@@ -17,8 +17,8 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
@@ -28,11 +28,13 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +49,7 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
                                                   implicit val countryOptions: CountryOptions,
                                                   allowChangeHelper: AllowChangeHelper
                                                  )(implicit val ec: ExecutionContext)
-  extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport with Enumerable.Implicits {
+  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

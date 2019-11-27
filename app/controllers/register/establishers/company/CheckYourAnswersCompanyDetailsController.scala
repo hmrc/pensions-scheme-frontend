@@ -17,23 +17,25 @@
 package controllers.register.establishers.company
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
 import controllers.routes._
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,7 +50,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           @EstablishersCompany navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
                                                           allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
 

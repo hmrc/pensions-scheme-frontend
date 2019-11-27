@@ -17,8 +17,8 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import javax.inject.Inject
@@ -26,11 +26,13 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, _}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +44,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              requireData: DataRequiredAction,
                                                              implicit val countryOptions: CountryOptions,
                                                              allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
+                                                            )(implicit val ec: ExecutionContext) extends FrontendController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

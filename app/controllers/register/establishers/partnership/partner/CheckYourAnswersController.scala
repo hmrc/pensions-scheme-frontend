@@ -17,8 +17,8 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.{CheckYourAnswersControllerCommon, Retrievals}
 import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
 import models.Mode.checkMode
@@ -27,11 +27,13 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +47,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper
-                                          )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon with Retrievals with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
