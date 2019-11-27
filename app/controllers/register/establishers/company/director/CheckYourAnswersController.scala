@@ -96,6 +96,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
+      val isNew = isNewItem(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex))
+
       val vm = CYAViewModel(
         answerSections = Seq(directorAnswerSection),
         href = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
@@ -104,9 +106,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
-        title = titleIndividualDetails(mode, isNew(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex))),
-        h1 =  headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)),
-          isNew(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex)))
+        title = titleIndividualDetails(mode, isNew),
+        h1 =  headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)), isNew)
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig,vm )))

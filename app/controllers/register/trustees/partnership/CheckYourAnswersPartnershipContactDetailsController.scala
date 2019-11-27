@@ -55,6 +55,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
             PartnershipPhoneId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
         val vm = CYAViewModel(
           answerSections = Seq(contactDetailsSection),
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -63,8 +65,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titlePartnershipContactDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
-          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
+          title = titlePartnershipContactDetails(mode, isNew),
+          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

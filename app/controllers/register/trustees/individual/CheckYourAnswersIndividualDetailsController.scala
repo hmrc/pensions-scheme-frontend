@@ -63,6 +63,8 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
           TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -71,8 +73,8 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
-          h1 =  headingDetails(mode, personName(TrusteeNameId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
+          title = titleIndividualDetails(mode, isNew),
+          h1 =  headingDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))

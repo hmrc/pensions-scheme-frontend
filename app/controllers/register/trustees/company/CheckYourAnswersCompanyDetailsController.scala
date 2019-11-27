@@ -69,6 +69,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
             CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -77,8 +79,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleCompanyDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
-          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
+          title = titleCompanyDetails(mode, isNew),
+          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))

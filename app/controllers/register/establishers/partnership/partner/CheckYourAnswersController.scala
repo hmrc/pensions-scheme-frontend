@@ -95,6 +95,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       ))
 
+      val isNew = isNewItem(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))
+
       val vm = CYAViewModel(
         answerSections = answers,
         href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
@@ -103,9 +105,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewPartnerId(establisherIndex, partnerIndex), mode),
-        title = titleIndividualDetails(mode, isNew(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))),
+        title = titleIndividualDetails(mode, isNew),
         h1 =  headingDetails(mode, personName(PartnerNameId(establisherIndex, partnerIndex)),
-          isNew(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex)))
+          isNew)
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig,vm)))

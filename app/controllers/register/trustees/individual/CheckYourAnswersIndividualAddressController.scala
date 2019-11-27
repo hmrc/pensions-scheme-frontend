@@ -61,6 +61,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
             TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -69,8 +71,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualAddressDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
-          h1 =  headingAddressDetails(mode, personName(TrusteeNameId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
+          title = titleIndividualAddressDetails(mode, isNew),
+          h1 =  headingAddressDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))

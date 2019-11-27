@@ -26,13 +26,13 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
-import viewmodels.{AnswerSection, CYAViewModel}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,6 +50,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           allowChangeHelper: AllowChangeHelper
                                                         )(implicit val ec: ExecutionContext) extends CheckYourAnswersControllerCommon
   with Retrievals with I18nSupport with Enumerable.Implicits {
+
+
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -72,6 +74,10 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
             IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 
+        val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
+
+        val titleCompanyDetails:Message = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
+
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = SchemeTaskListController.onPageLoad(mode, srn),
@@ -80,8 +86,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleCompanyDetails(mode, isNew(mode, userAnswers, IsEstablisherNewId(index))),
-          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew(mode, userAnswers, IsEstablisherNewId(index)))
+          title = titleCompanyDetails,
+          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

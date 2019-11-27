@@ -46,37 +46,32 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
       case _ => Message("messages__thePartnership").resolve
     }
 
-  ///
-
-  def titleCompanyDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleCompanyDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
 
-  def titleCompanyContactDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleCompanyContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
 
-  def titleCompanyAddressDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleCompanyAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
 
-  def titleIndividualDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleIndividualDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
 
-  def titleIndividualContactDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleIndividualContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
 
-  def titleIndividualAddressDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titleIndividualAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
 
-  def titlePartnershipDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titlePartnershipDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
 
-  def titlePartnershipContactDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titlePartnershipContactDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
 
-  def titlePartnershipAddressDetails(mode:Mode, isNew: => Boolean)(implicit messages:Messages):Message =
+  def titlePartnershipAddressDetails(mode:Mode, isNew: Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
-
-
-  ////
 
   def headingDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
@@ -87,10 +82,5 @@ trait CheckYourAnswersControllerCommon extends FrontendController {
   def headingContactDetails(mode:Mode, name: => String, isNew: => Boolean)(implicit messages:Messages):Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
 
-  ////
-
-//  def isNewEstablisherPartnershipPartner(mode:Mode, ua:UserAnswers, establisherIndex:Int, partnerIndex:Int):Boolean =
-//    mode.isRegistrationJourney || ua.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
-
-  def isNew(mode:Mode, ua:UserAnswers, id: TypedIdentifier[Boolean]):Boolean = mode.isRegistrationJourney || ua.get(id).getOrElse(false)
+  def isNewItem(mode:Mode, ua:UserAnswers, id: TypedIdentifier[Boolean]):Boolean = mode.isRegistrationJourney || ua.get(id).getOrElse(false)
 }

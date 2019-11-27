@@ -55,6 +55,8 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
             TrusteePhoneId(index).row(routes.TrusteePhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -63,8 +65,8 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           hideEditLinks = request.viewOnly || notNewTrustee,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = titleIndividualContactDetails(mode, isNew(mode, userAnswers, IsTrusteeNewId(index))),
-          h1 =  headingContactDetails(mode, personName(TrusteeNameId(index)), isNew(mode, userAnswers, IsTrusteeNewId(index)))
+          title = titleIndividualContactDetails(mode, isNew),
+          h1 =  headingContactDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm)))

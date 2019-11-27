@@ -58,7 +58,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
       )
 
-      val isNew = isNew(mode, userAnswers, IsTrusteeNewId(index))
+      val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
       val vm = CYAViewModel(
         answerSections = Seq(contactDetails),

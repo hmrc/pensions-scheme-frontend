@@ -63,6 +63,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
+        val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
+
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -71,8 +73,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleIndividualDetails(mode, isNew(mode, userAnswers, IsEstablisherNewId(index))),
-          h1 =  headingDetails(mode, personName(EstablisherNameId(index)), isNew(mode, userAnswers, IsEstablisherNewId(index)))
+          title = titleIndividualDetails(mode, isNew),
+          h1 =  headingDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers( appConfig,vm )))

@@ -56,6 +56,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
             PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
+        val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
+
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -64,8 +66,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titlePartnershipAddressDetails(mode, isNew(mode, request.userAnswers, IsEstablisherNewId(index))),
-          h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew(mode, request.userAnswers, IsEstablisherNewId(index)))
+          title = titlePartnershipAddressDetails(mode, isNew),
+          h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm )))

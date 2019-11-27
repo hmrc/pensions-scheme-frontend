@@ -54,6 +54,8 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
             EstablisherPhoneId(index).row(routes.EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
+        val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
+
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
@@ -62,8 +64,8 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = titleIndividualContactDetails(mode, isNew(mode, request.userAnswers, IsEstablisherNewId(index))),
-          h1 =  headingContactDetails(mode, personName(EstablisherNameId(index)), isNew(mode, request.userAnswers, IsEstablisherNewId(index)))
+          title = titleIndividualContactDetails(mode, isNew),
+          h1 =  headingContactDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
         Future.successful(Ok(checkYourAnswers(appConfig,vm)))
