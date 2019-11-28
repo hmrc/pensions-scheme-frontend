@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyEmailId, CompanyPhoneId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -29,10 +29,11 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
-import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.AnswerSection
 import utils.checkyouranswers.Ops._
+import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,29 +45,38 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
-                                                                userAnswersService: UserAnswersService
-                                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                                userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
+    extends FrontendController
+    with I18nSupport
+    with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
-        val contactDetails = AnswerSection(
-          None,
-          CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
-        )
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
+      val notNewEstablisher                 = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+      val contactDetails = AnswerSection(
+        None,
+        CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+          CompanyPhoneId(index).row(routes.CompanyPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+      )
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          Seq(contactDetails),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
-          hideEditLinks = request.viewOnly || notNewEstablisher,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          srn = srn
-        )))
+      val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
+
+      val vm = CYAViewModel(
+        answerSections = Seq(contactDetails),
+        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        schemeName = existingSchemeName,
+        returnOverview = false,
+        hideEditLinks = request.viewOnly || notNewEstablisher,
+        srn = srn,
+        hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+        title = title,
+        h1 = headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+      )
+
+      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+
     }
 }

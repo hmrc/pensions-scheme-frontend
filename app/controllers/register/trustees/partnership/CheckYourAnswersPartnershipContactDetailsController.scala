@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -30,8 +30,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,15 +57,22 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
             PartnershipPhoneId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          Seq(contactDetailsSection),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
+
+        val vm = CYAViewModel(
+          answerSections = Seq(contactDetailsSection),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || notNewTrustee,
+          srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          srn = srn
-        )))
+          title = title,
+          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
     }
 }

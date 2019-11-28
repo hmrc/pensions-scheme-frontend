@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherPhoneId}
+import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherNameId, EstablisherPhoneId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -29,9 +29,10 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.AnswerSection
+import utils.{AllowChangeHelper, CountryOptions, Enumerable}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,7 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
                                                          allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits{
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -55,15 +56,22 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
             EstablisherPhoneId(index).row(routes.EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          Seq(contactDetails),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
+
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
+
+        val vm = CYAViewModel(
+          answerSections = Seq(contactDetails),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
+          srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          srn = srn
-        )))
+          title = title,
+          h1 =  headingContactDetails(mode, personName(EstablisherNameId(index)), isNew)
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
     }
 }

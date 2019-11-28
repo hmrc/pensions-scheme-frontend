@@ -31,8 +31,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -96,16 +97,24 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       ))
 
-      Future.successful(Ok(checkYourAnswers(
-        appConfig,
-        answers,
-        controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
-        existingSchemeName,
-        mode = mode,
+      val isNew = isNewItem(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))
+
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartner").resolve)
+
+      val vm = CYAViewModel(
+        answerSections = answers,
+        href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn),
+        schemeName = existingSchemeName,
+        returnOverview = false,
         hideEditLinks = request.viewOnly,
+        srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewPartnerId(establisherIndex, partnerIndex), mode),
-        srn = srn
-      )))
+        title = title,
+        h1 =  headingDetails(mode, personName(PartnerNameId(establisherIndex, partnerIndex)),
+          isNew)
+      )
+
+      Future.successful(Ok(checkYourAnswers(appConfig,vm)))
 
   }
 }

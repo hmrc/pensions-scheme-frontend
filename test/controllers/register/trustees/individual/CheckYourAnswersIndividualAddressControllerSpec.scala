@@ -19,6 +19,7 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.trustees.company.CheckYourAnswersCompanyAddressControllerSpec.companyName
 import models.Mode.checkMode
 import models._
 import models.address.Address
@@ -29,7 +30,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
 import utils.annotations.NoSuspendedCheck
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -46,7 +47,9 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection())
+          contentAsString(result) mustBe viewAsString(answerSection(),
+            title = Message("checkYourAnswers.hs.heading"),
+            h1 = Message("checkYourAnswers.hs.heading"))
           app.stop()
         }
 
@@ -66,7 +69,10 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn,
+                submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__addressFor", Message("messages__thePerson").resolve),
+                h1 = Message("messages__addressFor", trusteeName))
               app.stop()
           }
         }
@@ -134,9 +140,20 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
-    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None, hideEditLinks = false,
-      srn = srn, hideSaveAndContinueButton = hideButton
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,
+                   postUrl: Call = submitUrl(), hideButton: Boolean = false,
+                   title:Message, h1:Message): String =
+    checkYourAnswers(frontendAppConfig, CYAViewModel(
+      answerSections = answerSections,
+      href = postUrl,
+      schemeName = None,
+      returnOverview = false,
+      hideEditLinks = false,
+      srn = srn,
+      hideSaveAndContinueButton = hideButton,
+      title = title,
+      h1 = h1
+    )
     )(fakeRequest, messages).toString
 
 }

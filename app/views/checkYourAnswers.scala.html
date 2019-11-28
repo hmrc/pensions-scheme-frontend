@@ -21,45 +21,37 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 @import models.{NormalMode, Mode}
+@import viewmodels.CYAViewModel
 
-@(appConfig: FrontendAppConfig,
-    answerSections: Seq[Section],
-    href: Call,
-    schemeName: Option[String],
-    returnOverview: Boolean = false,
-    mode: Mode = NormalMode,
-    hideEditLinks:Boolean,
-    srn: Option[String] = None,
-    hideSaveAndContinueButton:Boolean
-)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("checkYourAnswers.hs.title"),
+    title = vm.title.resolve.capitalize,
     appConfig = appConfig,
     bodyClasses = None
 ) {
     @components.back_link()
 
     @components.heading(
-            headingKey =  messages("checkYourAnswers.hs.heading")
+            headingKey =  vm.h1.resolve
     )
 
-    @for((section, i) <- answerSections.zipWithIndex){
+    @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
-                case a: AnswerSection => components.answer_section(a, i.toString, hideEditLinks)
-                case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, hideEditLinks)
+                case a: AnswerSection => components.answer_section(a, i.toString, vm.hideEditLinks)
+                case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, vm.hideEditLinks)
             }
         }
     }
 
-    @if(!hideSaveAndContinueButton) {
-        @components.button_link("site.save_and_continue", href.url, "submit")
+    @if(!vm.hideSaveAndContinueButton) {
+        @components.button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    @if(returnOverview){
-        @components.return_link("messages__complete__return", schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @if(vm.returnOverview){
+        @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
     } else {
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, None, vm.srn)
     }
 }

@@ -29,7 +29,7 @@ import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -56,14 +56,19 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection] = Seq.empty,
-                           srn: Option[String] = None) = checkYourAnswers(
+                           srn: Option[String] = None, title:Message, h1:Message) = checkYourAnswers(
     frontendAppConfig,
-    answerSection,
-    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
-    None,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false,
-    srn = srn
+    CYAViewModel(
+      answerSections = answerSection,
+      href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
+      schemeName = None,
+      returnOverview = false,
+      hideEditLinks = false,
+      srn = srn,
+      hideSaveAndContinueButton = false,
+      title = title,
+      h1 = h1
+    )
   )(fakeRequest, messages).toString
 
   "Check Your Answers Individual Details Controller " when {
@@ -73,7 +78,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None)
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
@@ -81,7 +88,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None)
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -93,7 +102,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn)
+        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsYes(UpdateMode, srn), srn,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with add links for values" in {
@@ -101,7 +112,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn)
+        contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn,
+          title = Message("messages__detailsFor", Message("messages__thePartner").resolve),
+          h1 = Message("messages__detailsFor", personName.fullName))
       }
     }
 

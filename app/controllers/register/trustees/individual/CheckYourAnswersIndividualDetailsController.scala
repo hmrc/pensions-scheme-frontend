@@ -32,8 +32,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,16 +65,23 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
           TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          companyDetails,
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
+
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+
+        val vm = CYAViewModel(
+          answerSections = companyDetails,
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          srn = srn
-        )))
+          title = title,
+          h1 =  headingDetails(mode, personName(TrusteeNameId(index)), isNew)
+        )
+
+        Future.successful(Ok(checkYourAnswers( appConfig,vm)))
 
     }
 }

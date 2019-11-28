@@ -20,18 +20,19 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneNumberId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import utils.{AllowChangeHelper, CountryOptions}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,15 +56,22 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
             PartnershipPhoneNumberId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
         )
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          Seq(contactDetailsSection),
-          controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
+
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
+
+        val vm = CYAViewModel(
+          answerSections = Seq(contactDetailsSection),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          srn = srn
-        )))
+          srn = srn,
+          hideSaveAndContinueButton =allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          title = title,
+          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
     }
 }

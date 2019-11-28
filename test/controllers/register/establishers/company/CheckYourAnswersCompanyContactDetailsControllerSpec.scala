@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
@@ -74,15 +74,21 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       FakeUserAnswersService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl()): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
+                   title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = false
+      CYAViewModel(
+        answerSections = answerSections,
+        href = postUrl,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = false,
+        title = title,
+        h1 = h1
+      )
     )(fakeRequest, messages).toString
 
   private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
@@ -98,7 +104,9 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+            title = Message("checkYourAnswers.hs.heading"),
+            h1 = Message("checkYourAnswers.hs.heading"))
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
@@ -106,7 +114,9 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn)
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
+            title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
+            h1 = Message("messages__contactDetailsFor", name))
         }
       }
     }

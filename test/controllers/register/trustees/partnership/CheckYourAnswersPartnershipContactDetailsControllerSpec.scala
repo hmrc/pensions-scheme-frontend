@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
@@ -63,15 +63,21 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     ))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
+                   hideButton: Boolean = false, title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = hideButton
+      CYAViewModel(
+        answerSections = answerSections,
+        href = postUrl,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = hideButton,
+        title = title,
+        h1 = h1
+      )
     )(fakeRequest, messages).toString
 
   "CheckYourAnswersPartnershipContactDetailsController" when {
@@ -85,7 +91,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode))
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+                title = Message("checkYourAnswers.hs.heading"),
+                h1 = Message("checkYourAnswers.hs.heading"))
           }
         }
 
@@ -99,7 +107,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true)
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+                title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
+                h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }
         }
       }

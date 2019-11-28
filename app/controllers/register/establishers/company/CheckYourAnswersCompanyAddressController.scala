@@ -33,8 +33,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,15 +63,22 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
             CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 
-        Future.successful(Ok(checkYourAnswers(
-          appConfig,
-          answerSections,
-          SchemeTaskListController.onPageLoad(mode, srn),
-          existingSchemeName,
-          mode = mode,
+        val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
+
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany").resolve)
+
+        val vm = CYAViewModel(
+          answerSections = answerSections,
+          href = SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          srn = srn
-        )))
+          title = title,
+          h1 =  headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
     }
 }

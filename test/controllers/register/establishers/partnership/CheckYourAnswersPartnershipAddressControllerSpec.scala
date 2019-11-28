@@ -26,7 +26,7 @@ import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -39,7 +39,9 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
         val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipAddressNormal)
+        contentAsString(result) mustBe viewAsString(partnershipAddressNormal,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       behave like changeableController(
@@ -55,7 +57,9 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
         val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipAddressUpdate, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(partnershipAddressUpdate, srn, postUrlUpdateMode,
+          title = Message("messages__addressFor", Message("messages__thePartnership").resolve),
+          h1 = Message("messages__addressFor", partnershipName))
       }
 
       "return OK and the correct view with partial answers" in {
@@ -63,7 +67,9 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
         val result  = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, srn, postUrlUpdateMode,
+          title = Message("messages__addressFor", Message("messages__thePartnership").resolve),
+          h1 = Message("messages__addressFor", partnershipName))
       }
     }
   }
@@ -180,15 +186,21 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       allowChangeHelper
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
+  private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,
+                           postUrl: Call = postUrl, title:Message, h1:Message): String =
     checkYourAnswers(
       frontendAppConfig,
-      answerSections,
-      postUrl,
-      None,
-      hideEditLinks = false,
-      srn = srn,
-      hideSaveAndContinueButton = false
+      CYAViewModel(
+        answerSections = answerSections,
+        href = postUrl,
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = false,
+        title = title,
+        h1 = h1
+      )
     )(fakeRequest, messages).toString
 
 }

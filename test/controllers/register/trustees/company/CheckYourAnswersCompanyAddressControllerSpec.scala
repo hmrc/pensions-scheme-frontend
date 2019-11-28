@@ -27,7 +27,7 @@ import models.{NormalMode, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -43,7 +43,9 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(companyAddressNormal)
+        contentAsString(result) mustBe viewAsString(companyAddressNormal,
+          title = Message("checkYourAnswers.hs.heading"),
+          h1 = Message("checkYourAnswers.hs.heading"))
       }
     }
 
@@ -54,7 +56,11 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(
+          companyAddressUpdate, srn, postUrlUpdateMode,
+          title = Message("messages__addressFor", Message("messages__theCompany").resolve),
+          h1 = Message("messages__addressFor", companyName)
+        )
       }
 
       "return OK and the correct view with partial answers" in {
@@ -62,7 +68,9 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, srn, postUrlUpdateMode)
+        contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, srn, postUrlUpdateMode,
+          title = Message("messages__addressFor", Message("messages__theCompany").resolve),
+          h1 = Message("messages__addressFor", companyName))
       }
     }
 
@@ -168,9 +176,18 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper)
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl): String =
-    checkYourAnswers(frontendAppConfig, answerSections, postUrl, None,
-      hideEditLinks = false, srn = srn, hideSaveAndContinueButton = false)(fakeRequest, messages).toString
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+    checkYourAnswers(frontendAppConfig, CYAViewModel(
+      answerSections = answerSections,
+      href = postUrl,
+      schemeName = None,
+      returnOverview = false,
+      hideEditLinks = false,
+      srn = srn,
+      hideSaveAndContinueButton = false,
+      title = title,
+      h1 = h1
+    ))(fakeRequest, messages).toString
 
 }
 

@@ -31,8 +31,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -97,15 +98,22 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         ).flatten
       )
 
-      Future.successful(Ok(checkYourAnswers(
-        appConfig,
-        Seq(directorAnswerSection),
-        AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
-        existingSchemeName,
-        mode = mode,
+      val isNew = isNewItem(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex))
+
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theDirector").resolve)
+
+      val vm = CYAViewModel(
+        answerSections = Seq(directorAnswerSection),
+        href = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex),
+        schemeName = existingSchemeName,
+        returnOverview = false,
         hideEditLinks = request.viewOnly,
+        srn = srn,
         hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
-        srn = srn
-      )))
+        title = title,
+        h1 =  headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)), isNew)
+      )
+
+      Future.successful(Ok(checkYourAnswers(appConfig,vm )))
     }
 }

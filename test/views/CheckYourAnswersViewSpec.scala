@@ -20,13 +20,15 @@ import controllers.routes
 import models.Mode.checkMode
 import models.{Link, Mode, NormalMode, UpdateMode}
 import play.twirl.api.HtmlFormat
-import viewmodels.{AnswerRow, AnswerSection, Section}
+import viewmodels._
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
 
   private val messageKeyPrefix = "checkYourAnswers"
+
+  private val pageTitle = "Page title"
 
   private def emptyAnswerSections: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     AnswerRow(
@@ -48,31 +50,39 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
                 ): () => HtmlFormat.Appendable = () =>
     checkYourAnswers(
       frontendAppConfig,
-      emptyAnswerSections,
-      routes.IndexController.onPageLoad(),
-      None,
-      returnOverview,
-      mode,
-      hideEditLinks,
-      srn,
-      hideSaveAndContinueButton
+      CYAViewModel(
+        answerSections = emptyAnswerSections,
+        href = routes.IndexController.onPageLoad(),
+        schemeName = None,
+        returnOverview = returnOverview,
+        hideEditLinks = hideEditLinks,
+        srn = srn,
+        hideSaveAndContinueButton = hideSaveAndContinueButton,
+        title = Message(pageTitle),
+        h1 = Message("checkYourAnswers.hs.heading")
+      )
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
     checkYourAnswers(
       frontendAppConfig,
-      sections,
-      routes.IndexController.onPageLoad(),
-      None,
-      mode = mode,
-      hideEditLinks = viewOnly,
-      hideSaveAndContinueButton = viewOnly
+      CYAViewModel(
+        answerSections = sections,
+        href = routes.IndexController.onPageLoad(),
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = viewOnly,
+        srn = srn,
+        hideSaveAndContinueButton = viewOnly,
+        title = Message(pageTitle),
+        h1 = Message("checkYourAnswers.hs.heading")
+      )
     )(fakeRequest, messages)
 
   "check_your_answers_old view" must {
 
     behave like normalPageWithTitle(createView(hideSaveAndContinueButton = false),
-      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
+      messageKeyPrefix, pageTitle, messages("checkYourAnswers.hs.heading"))
 
     behave like pageWithReturnChangeLink(createView(hideSaveAndContinueButton = false))
 
