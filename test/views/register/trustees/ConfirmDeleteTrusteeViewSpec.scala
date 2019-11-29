@@ -35,8 +35,8 @@ class ConfirmDeleteTrusteeViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", trusteeName))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = postCall.url)
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url, legend = messages("messages__confirmDeleteTrustee__heading", trusteeName))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 

@@ -35,14 +35,15 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
     occupationalPensionScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    occupationalPensionScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   "OccupationalPensionScheme view " must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url,
+      legend = messages("messages__occupational_pension_scheme__h1", schemeName))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

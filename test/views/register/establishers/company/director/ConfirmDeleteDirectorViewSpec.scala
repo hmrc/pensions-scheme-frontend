@@ -43,8 +43,8 @@ class ConfirmDeleteDirectorViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", directorName))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = postCall.url)
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url, legend = messages("messages__confirmDeleteDirector__heading", directorName))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
   }

@@ -40,7 +40,8 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__moreThanTenTrustees__heading"))
 
-    behave like yesNoPageWithHint(createViewUsingForm, messageKeyPrefix, routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None).url, expectedHintKey = Some("_hint"))
+    behave like yesNoPageWithMandatoryHint(createViewUsingForm, messageKeyPrefix, routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None).url,
+      expectedHint = messages("messages__moreThanTenTrustees__hint"))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 

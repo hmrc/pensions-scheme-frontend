@@ -32,18 +32,16 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-        headingKey = messages("messages__confirmDeleteEstablisher__heading", establisherName)
-        )
-
         @hintText.map{ ht =>
+        @components.heading(messages("messages__confirmDeleteEstablisher__heading", establisherName))
             <span id="delete-hint" class="form-hint">@ht</span>
         }
 
         @components.input_yes_no(
         field = form("value"),
-        label = messages("messages__confirmDeleteEstablisher__title"),
-        labelClass = Some("visually-hidden")
+        label = messages("messages__confirmDeleteEstablisher__heading", establisherName),
+        labelClass = Some("visually-hidden"),
+        headingIsLegend = hintText.isEmpty
         )
 
         @components.submit_button()

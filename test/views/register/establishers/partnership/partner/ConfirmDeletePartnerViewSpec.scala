@@ -43,8 +43,8 @@ class ConfirmDeletePartnerViewSpec extends YesNoViewBehaviours{
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", partnerName))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = postCall.url)
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url,legend = messages("messages__confirmDeletePartner__heading", partnerName))
 
     behave like pageWithReturnLink(createView(), getReturnLink)
 

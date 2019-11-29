@@ -87,7 +87,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
     behave like normalPageWithBrowserTitleSameAsH1(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
 
-    behave like yesNoPageWithLegend(
+    behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
       routes.AddPartnersController.onSubmit(NormalMode, 0, None).url,

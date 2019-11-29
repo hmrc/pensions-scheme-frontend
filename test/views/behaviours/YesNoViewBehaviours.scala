@@ -20,17 +20,39 @@ import play.api.data.Form
 import play.twirl.api.HtmlFormat
 
 trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
+  def yesNoPageExplicitLegend(createView: Form[Boolean] => HtmlFormat.Appendable,
+                              messageKeyPrefix: String,
+                              expectedFormAction: String,
+                              legend: String,
+                              expectedHintKey: Option[String] = None,
+                              valueId:String = "value"): Unit = {
 
-  def yesNoPageWithLegend(createView: Form[Boolean] => HtmlFormat.Appendable,
-                          messageKeyPrefix: String,
-                          expectedFormAction: String,
-                          legendKey: String = "_title",
-                          expectedHintKey: Option[String] = None,
-                          valueId:String = "value"): Unit = {
-    yesNoPage(createView, messageKeyPrefix, expectedFormAction, expectedHintKey, valueId)
-    "behave like a page with a Yes/No question having a legend and hint" when {
+    "behave like a page with a Yes/No question" when {
       "rendered" must {
-        "contain a legend and hint for the question" in {
+        "contain a legend for the question" in {
+          val doc = asDocument(createView(form))
+          val legends = if (expectedHintKey.nonEmpty) doc.select("legend > span") else doc.select("legend")
+          legends.size mustBe expectedHintKey.map(_ => 2).getOrElse(1)
+          legends.first.text mustBe legend
+          expectedHintKey.foreach(key =>
+            legends.next.text mustBe messages(s"messages__${messageKeyPrefix}_$key")
+          )
+        }
+      }
+    }
+    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+  }
+
+  def yesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable,
+                messageKeyPrefix: String,
+                expectedFormAction: String,
+                legendKey: String = "_title",
+                expectedHintKey: Option[String] = None,
+                valueId:String = "value"): Unit = {
+
+    "behave like a page with a Yes/No question" when {
+      "rendered" must {
+        "contain a legend for the question" in {
           val doc = asDocument(createView(form))
           val legends = if (expectedHintKey.nonEmpty) doc.select("legend > span") else doc.select("legend")
           legends.size mustBe expectedHintKey.map(_ => 2).getOrElse(1)
@@ -41,36 +63,40 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         }
       }
     }
+    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+
   }
 
-  def yesNoPageWithHint(createView: Form[Boolean] => HtmlFormat.Appendable,
-                        messageKeyPrefix: String,
-                        expectedFormAction: String,
-                        expectedHintKey: Option[String] = None,
-                        valueId:String = "value"): Unit = {
-    yesNoPage(createView, messageKeyPrefix, expectedFormAction, expectedHintKey, valueId)
-    "behave like a page with a Yes/No question having a hint" when {
+  def yesNoPageWithMandatoryHint(createView: Form[Boolean] => HtmlFormat.Appendable,
+                                 messageKeyPrefix: String,
+                                 expectedFormAction: String,
+                                 legendKey: String = "_title",
+                                 expectedHint: String,
+                                 valueId:String = "value"): Unit = {
+
+    "behave like a page with a Yes/No question" when {
       "rendered" must {
-        "contain a hint for the question" in {
+        "contain a legend for the question" in {
           val doc = asDocument(createView(form))
-          val legends = if (expectedHintKey.nonEmpty) doc.select("legend > span") else doc.select("legend")
+          val legends = doc.select("legend > span")
           legends.size mustBe 1
-          expectedHintKey.foreach(key =>
-            legends.first.text mustBe messages(s"messages__${messageKeyPrefix}_$key")
-          )
+          legends.first.text mustBe expectedHint
         }
       }
     }
+    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+
   }
 
-  def yesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable,
+  private def yesNoPageMain(createView: Form[Boolean] => HtmlFormat.Appendable,
                 messageKeyPrefix: String,
                 expectedFormAction: String,
-                expectedHintKey: Option[String] = None,
                 valueId:String = "value"): Unit = {
 
     "behave like a page with a Yes/No question" when {
       "rendered" must {
+
+
         "contain an input for the value" in {
           val doc = asDocument(createView(form))
           assertRenderedById(doc, s"$valueId-yes")
@@ -113,7 +139,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
   }
 
 
-  def answeredYesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable, answer: Boolean, valueId:String = "value"): Unit = {
+  def answeredYesNoPage(createView: (Form[Boolean]) => HtmlFormat.Appendable, answer: Boolean, valueId:String = "value"): Unit = {
 
     "have only the correct value checked" in {
       val doc = asDocument(createView(form.fill(answer)))

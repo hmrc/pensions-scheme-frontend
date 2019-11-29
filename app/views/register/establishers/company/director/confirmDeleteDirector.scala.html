@@ -31,19 +31,15 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey = messages("messages__confirmDeleteDirector__heading", directorName)
-        )
-
         @components.input_yes_no(
             field = form("value"),
-            label = messages("messages__confirmDeleteDirector__title"),
-            labelClass = Some("visually-hidden")
+            label = messages("messages__confirmDeleteDirector__heading", directorName),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName)
     }
-
 }

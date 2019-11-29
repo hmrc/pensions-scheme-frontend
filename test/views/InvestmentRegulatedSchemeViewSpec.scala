@@ -26,20 +26,22 @@ import views.html.investmentRegulatedScheme
 class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "investment_regulated_scheme"
+  private val schemeName = "schemeName"
 
   val form = new InvestmentRegulatedSchemeFormProvider()()
 
   private def createView() = () =>
-    investmentRegulatedScheme(frontendAppConfig, form, NormalMode, Some("schemeName"))(fakeRequest, messages)
+    investmentRegulatedScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    investmentRegulatedScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    investmentRegulatedScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   "InvestmentRegulated view " must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1","schemeName"))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      legend = messages("messages__investment_regulated_scheme__h1", schemeName),
       expectedFormAction = routes.InvestmentRegulatedSchemeController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)

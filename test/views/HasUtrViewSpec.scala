@@ -52,7 +52,7 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
     behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__h1", "ABC"),
       expectedGuidanceKeys = "_p1")
 
-    behave like yesNoPageWithLegend(
+    behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = postCall.url

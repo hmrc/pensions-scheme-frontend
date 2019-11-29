@@ -36,8 +36,8 @@ class ConfirmDeleteEstablisherViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", establisherName))
 
-    behave like yesNoPageWithLegend(createView = createViewUsingForm(), messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = postCall.url)
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm(), messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url, legend= messages("messages__confirmDeleteEstablisher__heading", establisherName))
 
     behave like pageWithReturnLink(createView(), url = getReturnLink)
 

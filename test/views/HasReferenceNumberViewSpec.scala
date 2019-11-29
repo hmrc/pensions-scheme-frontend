@@ -62,10 +62,11 @@ class HasReferenceNumberViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages("messages__hasX__heading"))
 
-    behave like yesNoPageWithLegend(
+    behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = postCall.url
+      expectedFormAction = postCall.url,
+      legendKey = "_heading"
     )
 
     behave like pageWithSubmitButton(createView())

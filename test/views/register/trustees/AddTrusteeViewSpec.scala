@@ -86,7 +86,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
     behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
-    behave like yesNoPageWithLegend(
+    behave like yesNoPage(
       createViewUsingForm(trustees),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode, None).url,
