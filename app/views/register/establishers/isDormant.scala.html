@@ -33,16 +33,13 @@
 
             @components.error_summary(form.errors)
 
-            @components.heading(
-                headingKey=messages("messages__is_dormant__heading", establisherName)
-            )
-
             @components.input_radio(
                 field = form("value"),
-                legend = messages("messages__is_dormant__title"),
+                legend = messages("messages__is_dormant__heading", establisherName),
                 legendClass = Some("visually-hidden"),
                 inputs = DeclarationDormant.options,
-                fieldsetClass = Some("inline")
+                fieldsetClass = Some("inline"),
+                headingIsLegend = true
             )
 
             @components.submit_button("site.save_and_continue")

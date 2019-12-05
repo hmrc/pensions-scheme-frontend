@@ -33,13 +33,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__otherPartners__heading"))
-
         @components.input_yes_no(
             field = form("value"),
             hint = Some(messages("messages__otherPartners__lede")),
             label = messages("messages__otherPartners__heading"),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button()

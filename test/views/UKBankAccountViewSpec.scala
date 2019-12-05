@@ -21,6 +21,7 @@ import forms.UKBankAccountFormProvider
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.YesNoViewBehaviours
 import views.html.uKBankAccount
 
@@ -40,7 +41,8 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))
 
-    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+    behave like yesNoPageExplicitLegend(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      legend = Message("messages__scheme_uk_bank_account__h1", schemeName).resolve,
       expectedFormAction = routes.UKBankAccountController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), getReturnLink)

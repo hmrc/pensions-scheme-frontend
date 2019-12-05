@@ -32,15 +32,15 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages(viewmodel.heading))
-
         @components.input_radio(
             field = form("value"),
-            legend = viewmodel.legend,
+            legend = viewmodel.heading,
             legendClass = Some("visually-hidden"),
             inputs = viewmodel.inputs,
-            fieldsetClass = Some("inline")
+            fieldsetClass = Some("inline"),
+            headingIsLegend=true
         )
+
 
         @components.submit_button()
 

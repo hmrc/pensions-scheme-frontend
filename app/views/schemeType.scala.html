@@ -33,14 +33,13 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_type__heading", schemeName))
-
         @components.input_radio(
             field = form("schemeType.type"),
-            legend = messages("messages__scheme_type__title"),
+            legend = messages("messages__scheme_type__heading", schemeName),
             legendClass = Some("visually-hidden"),
             inputs = SchemeType.options(appConfig),
-            labelClass = Some("form-label-bold")
+            labelClass = Some("form-label-bold"),
+            headingIsLegend=true
         )
 
         @components.input_text(

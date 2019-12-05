@@ -24,7 +24,7 @@ import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
-import views.html.hasUtr
+import views.html.hasReferenceNumber
 
 class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")
@@ -42,10 +42,10 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
     srn = srn
   )
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    hasUtr(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasUtr(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
+    hasReferenceNumber(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
 
   "HasCompanyNumber view" must {
 

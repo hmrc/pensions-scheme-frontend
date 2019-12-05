@@ -35,12 +35,6 @@ POST        /change/other-trustees                               controllers.reg
 GET         /:mode/other-trustees/:srn                           controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode, srn: Option[String])
 POST        /:mode/other-trustees/:srn                           controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode, srn: Option[String])
 
-GET         /any-trustees                                        controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-POST        /any-trustees                                        controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /change/any-trustees                                 controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
-POST        /change/any-trustees                                 controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
-GET         /:mode/any-trustees/:srn                             controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode, srn: Option[String])
-POST        /:mode/any-trustees/:srn                             controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode, srn: Option[String])
 
 GET         /:index/company/already-deleted                      controllers.register.trustees.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company, srn: Option[String] = None)
 GET         /:index/company/:mode/already-deleted                controllers.register.trustees.AlreadyDeletedController.onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company, srn: Option[String])

@@ -37,11 +37,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=components.hyphen(messages(viewmodel.heading)).toString
-        )
-
         @viewmodel.hint.map{hintText =>
+            @components.heading(
+            headingKey=components.hyphen(messages(viewmodel.heading)).toString
+            )
             <p>@messages(hintText)</p>
         }
 
@@ -55,8 +54,9 @@
 
         @components.input_yes_no(
             field = form("value"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden")
+            label = messages(viewmodel.heading),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = viewmodel.hint.isEmpty
         )
 
         <div class="subsection">

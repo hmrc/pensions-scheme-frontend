@@ -23,7 +23,8 @@
         yesAssoc: Option[String] = None,
         noAssoc: Option[String] = None,
         labelClass: Option[String] = None,
-        legendClass: Option[String] = None
+        legendClass: Option[String] = None,
+        headingIsLegend: Boolean = false
 )(implicit messages: Messages)
 
 
@@ -31,9 +32,13 @@
     <fieldset class="@fieldsetClass" id="@{field.id}" id="@{field.id}" @if(hint.nonEmpty){aria-describedby="@{field.id}-yesno-hint"}>
 
         <legend @if(legendClass.nonEmpty){class="@legendClass"}>
-            <span @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>
-            @if(hint.nonEmpty){
-                <span id="@{field.id}-yesno-hint" class="form-hint">@hint</span>
+            @if(headingIsLegend){
+            <h1 class="heading-xlarge">@label</h1>
+            } else {
+            <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
+            }
+            @hint.map { hint =>
+            <span id="@{field.id}-yesno-hint" class="form-hint">@hint</span>
             }
             @field.errors.map { error =>
                 <span class="error-notification" id="error-message-@{field.id}-input">

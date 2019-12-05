@@ -33,14 +33,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey = messages("messages__confirmDeleteTrustee__heading", trusteeName)
-        )
-
         @components.input_yes_no(
             field = form("value"),
-            label = messages("messages__confirmDeleteTrustee__title"),
-            labelClass = Some("visually-hidden")
+            label = messages("messages__confirmDeleteTrustee__heading", trusteeName),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button()

@@ -33,15 +33,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages("messages__current_members__h1", schemeName)
-        )
-
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__current_members__title"),
+            legend = messages("messages__current_members__h1", schemeName),
             legendClass = Some("visually-hidden"),
-            inputs = Members.options
+            inputs = Members.options,
+            headingIsLegend=true
         )
 
         @components.submit_button()

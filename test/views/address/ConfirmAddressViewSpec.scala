@@ -71,7 +71,7 @@ class ConfirmAddressViewSpec extends YesNoViewBehaviours {
   "Same Contact Address View" must {
     behave like normalPage(createView, messageKeyPrefix, viewmodel().heading)
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, "www.example.com", s"_title")
+    behave like yesNoPageExplicitLegend(createViewUsingForm, messageKeyPrefix, "www.example.com", legend = viewmodel().heading)
 
     behave like pageWithSubmitButton(createView)
 

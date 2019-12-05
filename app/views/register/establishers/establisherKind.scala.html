@@ -34,15 +34,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages("messages__establisher__type__h1")
-        )
-
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__establisher__type_title"),
+            legend = messages("messages__establisher__type__h1"),
             legendClass = Some("visually-hidden"),
-            inputs = EstablisherKind.options
+            inputs = EstablisherKind.options,
+            headingIsLegend = true
         )
 
         @components.submit_button("site.save_and_continue")
