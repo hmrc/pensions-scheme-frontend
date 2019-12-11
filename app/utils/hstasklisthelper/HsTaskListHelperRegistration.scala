@@ -63,7 +63,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
       case None => Link(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
     }
 
-    val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
+    val bankDetailsLink = userAnswers.isBankDetailsCompleted match {
       case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
       case Some(false) => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
       case None => Link(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
@@ -71,7 +71,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
 
     Seq(SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.isBenefitsAndInsuranceCompleted, benefitsAndInsuranceLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
+      SchemeDetailsTaskListSection(userAnswers.isBankDetailsCompleted, bankDetailsLink, None))
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =

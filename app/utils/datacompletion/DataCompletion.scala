@@ -74,9 +74,9 @@ trait DataCompletion {
       case _ => Some(false)
     }
 
-  def isAnswerComplete(yesNoQuestionId: TypedIdentifier[Boolean],
-                              yesValueId: TypedIdentifier[ReferenceValue],
-                              noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
+  def isAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
+                              yesValueId: TypedIdentifier[A],
+                              noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
       case (None, None, _) => None
       case (_, Some(_), _) => Some(true)

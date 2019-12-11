@@ -158,11 +158,9 @@ GET         /check-your-answers-members                              controllers
 GET         /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: Option[String])
 
 GET         /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onPageLoad()
-POST        /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onSubmit()
 
 GET         /check-your-answers-benefits-insurance                   controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-benefits-insurance/:srn        controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode, srn: Option[String])
-
 
 GET         /select-adviser-address                                  controllers.AdviserAddressListController.onPageLoad(mode: Mode = NormalMode)
 POST        /select-adviser-address                                  controllers.AdviserAddressListController.onSubmit(mode: Mode = NormalMode)
@@ -195,7 +193,6 @@ GET         /:mode/who-has-working-knowledge                         controllers
 POST        /:mode/who-has-working-knowledge                         controllers.AdviserNameController.onSubmit(mode: Mode)
 
 GET         /check-adviser-answers                                   controllers.AdviserCheckYourAnswersController.onPageLoad()
-POST        /check-adviser-answers                                   controllers.AdviserCheckYourAnswersController.onSubmit()
 
 GET         /declare-after-changing-details/:srn                     controllers.VariationDeclarationController.onPageLoad(srn: Option[String])
 GET         /on-click-declare-after-changing-details/:srn            controllers.VariationDeclarationController.onClickAgree(srn: Option[String])

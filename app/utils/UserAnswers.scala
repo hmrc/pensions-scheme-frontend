@@ -451,10 +451,13 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     isAnswerComplete(CurrentMembersId),
     isAnswerComplete(FutureMembersId)))
 
+  def isBankDetailsCompleted: Option[Boolean] = isAnswerComplete(UKBankAccountId, BankAccountDetailsId, None)
+
   def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
 
     val isBenefitsSecuredByContractCompleted = get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => Some(!List(get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None))
+      case Some(true) => isComplete(Seq(
+        isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete(InsurerConfirmAddressId)))
       case Some(false) => Some(true)
       case _ => None
     }
@@ -464,8 +467,20 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       isAnswerComplete(OccupationalPensionSchemeId),
       isAnswerComplete(TypeOfBenefitsId),
       isBenefitsSecuredByContractCompleted))
-
   }
+
+  def isAdviserCompleted: Option[Boolean] = isComplete(Seq(
+    isAnswerComplete(AdviserNameId),
+    isAnswerComplete(AdviserEmailId),
+    isAnswerComplete(AdviserPhoneId),
+    isAnswerComplete(AdviserAddressId)
+  ))
+
+  def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {
+    case Some(false) => isAdviserCompleted
+    case _ => get(DeclarationDutiesId)
+  }
+
 
   def areVariationChangesCompleted: Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted &&

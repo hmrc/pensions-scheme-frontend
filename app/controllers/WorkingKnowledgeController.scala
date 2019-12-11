@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.DeclarationDutiesId
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -29,8 +29,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
 import utils._
+import utils.annotations.BeforeYouStart
 import views.html.workingKnowledge
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,22 +68,10 @@ class WorkingKnowledgeController @Inject()(
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
 
-          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).flatMap(cacheMap =>
-            setCompleteFlag(value, UserAnswers(cacheMap)).map { _ =>
-              Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
-            }
+          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
           )
         }
       )
-  }
-
-  private def setCompleteFlag(value: Boolean, userAnswers: UserAnswers)
-                             (implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
-    if (value) {
-      sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-        userAnswers, value)
-    } else {
-      Future.successful(userAnswers)
-    }
   }
 }
