@@ -19,13 +19,13 @@ package controllers
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider
-import identifiers.{AdviserNameId, IsWorkingKnowledgeCompleteId}
+import identifiers.AdviserNameId
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete}
+import utils.FakeNavigator
 import views.html.adviserName
 
 class AdviserNameControllerSpec extends ControllerSpecBase {
@@ -38,7 +38,7 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AdviserNameController =
     new AdviserNameController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, FakeSectionComplete)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = adviserName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
@@ -60,14 +60,13 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(nameOrCompany))
     }
 
-    "save the complete flag to false(in progress) and redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

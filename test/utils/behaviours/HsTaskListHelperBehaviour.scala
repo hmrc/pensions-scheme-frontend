@@ -20,13 +20,13 @@ import base.{JsonFileReader, SpecBase}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import helpers.DataCompletionHelper
+import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeNewId, company => trusteesCompany}
-import identifiers.{IsWorkingKnowledgeCompleteId, _}
 import models.person.PersonName
 import models.register.SchemeType
 import models.{person, _}
@@ -75,14 +75,15 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
     def link(target: String) = Link(linkContent, target)
 
     "return the link to scheme name page when not completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(false).asOpt.value
+      val userAnswers = userAnswersWithSchemeName
       val helper = createTaskListHelper(userAnswers)
       helper.beforeYouStartLink(userAnswers, mode, srn) mustBe
         link(controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
     }
 
     "return the link to cya page when completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(true).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.schemeType(SchemeType.GroupLifeDeath).
+        establishedCountry("GB").set(DeclarationDutiesId)(value = true).asOpt.value
       val helper = createTaskListHelper(userAnswers)
       helper.beforeYouStartLink(userAnswers, mode, srn) mustBe link(
         controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
@@ -272,39 +273,6 @@ trait HsTaskListHelperBehaviour extends SpecBase with MustMatchers with OptionVa
 
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers), userAnswers)
     }
-
-
-//    "not have link when all the sections are completed with 10 trustees but the more than ten question has not been answered" in {
-//      val userAnswers = answersDataWithTenTrustees
-//      mustNotHaveDeclarationLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
-//    }
-//
-//    "have link when all the sections are completed with 10 trustees and the more than ten question has been answered" in {
-//      val userAnswers = answersDataWithTenTrustees.set(MoreThanTenTrusteesId)(true).asOpt.value
-//
-//      mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
-//    }
-//
-//    declarationTests
-//
-//
-//    "not have link when do you have any trustees is true but no trustees are added" in {
-//      val userAnswers = userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(true).flatMap(
-//        _.set(IsAboutMembersCompleteId)(true).flatMap(
-//          _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
-//            _.set(IsAboutBenefitsAndInsuranceCompleteId)(true).flatMap(
-//              _.set(IsWorkingKnowledgeCompleteId)(true).flatMap(
-//                _.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).flatMap(
-//                  _.set(SchemeTypeId)(SingleTrust)).flatMap(
-//                  _.set(IsEstablisherCompleteId(0))(true)).flatMap(
-//                  _.set(HaveAnyTrusteesId)(true))
-//              )
-//            )
-//          )
-//        )
-//      ).asOpt.value
-//      mustNotHaveDeclarationLink(createTaskListHelper(userAnswers, fakeFeatureManagementService), userAnswers)
-//    }
   }
 
   private def answersDataWithTenTrustees = {

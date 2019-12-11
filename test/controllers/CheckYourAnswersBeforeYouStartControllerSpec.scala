@@ -18,10 +18,11 @@ package controllers
 
 import controllers.actions._
 import identifiers.register.trustees.HaveAnyTrusteesId
-import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
+import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
 import models._
 import models.register.SchemeType
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.FakeCountryOptions
@@ -63,16 +64,6 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
     }
 
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-        FakeUserAnswersService.verify(IsBeforeYouStartCompleteId, true)
-      }
-    }
-
   }
 }
 
@@ -92,7 +83,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService
     )
 
-  private def postUrl(mode:Mode) = routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, None)
+  private def postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -110,8 +101,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       SchemeTypeId.toString -> SchemeType.SingleTrust,
       HaveAnyTrusteesId.toString -> true,
       EstablishedCountryId.toString -> "GB",
-      identifiers.DeclarationDutiesId.toString -> false,
-      identifiers.IsBeforeYouStartCompleteId.toString -> true
+      identifiers.DeclarationDutiesId.toString -> false
     ))
   )
 
@@ -159,7 +149,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   private def viewAsString(): String = check_your_answers_old(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl(NormalMode),
+    postUrl,
     Some("Test Scheme"),
     hideEditLinks = false,
     hideSaveAndContinueButton = false,
@@ -169,7 +159,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   private def viewAsStringWithReturnToManage(): String = check_your_answers_old(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl(NormalMode),
+    postUrl,
     Some("Test Scheme"),
     returnOverview=true,
     hideEditLinks = false,

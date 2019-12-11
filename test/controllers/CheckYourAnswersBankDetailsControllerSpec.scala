@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.{BankAccountDetailsId, IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
+import identifiers.{BankAccountDetailsId, SchemeNameId, UKBankAccountId}
 import models.register._
 import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
+import utils.{FakeCountryOptions, FakeNavigator}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers_old
 
@@ -40,17 +40,6 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         contentAsString(result) mustBe viewAsString()
       }
     }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
-        FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, true)
-      }
-    }
-
   }
 }
 
@@ -66,11 +55,10 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new FakeCountryOptions,
-      FakeSectionComplete
+      new FakeCountryOptions
     )
 
-  private val postUrl = routes.CheckYourAnswersBankDetailsController.onSubmit()
+  private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   val bankDetails = BankAccountDetails("test bank name", "test account name",
     SortCode("34", "45", "67"), "test account number")

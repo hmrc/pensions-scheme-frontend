@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutMembers
-import utils.{Enumerable, SectionComplete, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.currentMembers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,8 +41,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: CurrentMembersFormProvider,
-                                         sectionComplete: SectionComplete
+                                         formProvider: CurrentMembersFormProvider
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()

@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import identifiers.IsAboutMembersCompleteId
 import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
@@ -52,23 +51,13 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
-        FakeUserAnswersService.verify(IsAboutMembersCompleteId, true)
-      }
-    }
   }
 }
 
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.CheckYourAnswersMembersController.onSubmit(NormalMode, None)
+  private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =

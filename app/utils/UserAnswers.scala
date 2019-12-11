@@ -481,7 +481,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => get(DeclarationDutiesId)
   }
 
-
   def areVariationChangesCompleted: Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted &&
       allEstablishersCompleted(UpdateMode)

@@ -16,16 +16,14 @@
 
 package controllers
 
-import controllers.CheckYourAnswersBeforeYouStartControllerSpec.{controller, schemeInfoWithCompleteFlag}
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import identifiers.IsAboutBenefitsAndInsuranceCompleteId
-import models.address.Address
-import models._
 import models.Mode._
+import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
+import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers_old
 
@@ -73,16 +71,6 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
-        FakeUserAnswersService.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
-      }
-    }
   }
 }
 
@@ -90,7 +78,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private def postUrl(mode : Mode = NormalMode) = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, None)
+  private def postUrl = routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
@@ -207,7 +195,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     Seq(
       benefitsAndInsuranceSection(mode)
     ),
-    postUrl(mode),
+    postUrl,
     Some(schemeName),
     false,
     mode,
@@ -220,7 +208,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     Seq(
       updateBenefitsAndInsuranceSection(mode)
     ),
-    postUrl(mode),
+    postUrl,
     Some(schemeName),
     false,
     mode,
