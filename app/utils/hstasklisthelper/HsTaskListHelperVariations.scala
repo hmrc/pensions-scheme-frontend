@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, SchemeNameId, _}
+import identifiers.{SchemeNameId, _}
 import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
 import utils.UserAnswers
@@ -35,7 +35,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(UpdateMode)),
       userAnswers.isMembersCompleted,
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      userAnswers.isBenefitsAndInsuranceCompleted,
       Some(userAnswers.allEstablishersCompleted(UpdateMode)),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)

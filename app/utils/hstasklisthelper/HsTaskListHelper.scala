@@ -129,7 +129,7 @@ abstract class HsTaskListHelper(answers: UserAnswers
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
       userAnswers.get(IsAboutBankDetailsCompleteId),
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      userAnswers.isBenefitsAndInsuranceCompleted,
       userAnswers.get(IsWorkingKnowledgeCompleteId),
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),

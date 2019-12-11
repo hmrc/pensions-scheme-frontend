@@ -46,8 +46,8 @@ import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
 final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits
-                                                          with DataCompletionEstablishers
-                                                          with DataCompletionTrustees {
+  with DataCompletionEstablishers
+  with DataCompletionTrustees {
 
   def prettyPrint: String = Json.prettyPrint(json)
 
@@ -157,12 +157,12 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   //scalastyle:off method.length
   def readEstablishers(mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
-    private def noOfRecords : Int = json.validate((__ \ 'establishers).readNullable(__.read(
+    private def noOfRecords: Int = json.validate((__ \ 'establishers).readNullable(__.read(
       Reads.seq((__ \ 'establisherKind).read[String].flatMap {
         case "individual" => (__ \ 'establisherDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
@@ -247,7 +247,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }.getOrElse(Seq.empty)
 
   def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
-      allDirectors(establisherIndex).filterNot(_.isDeleted)
+    allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
   def allPartners(establisherIndex: Int): Seq[Partner[_]] =
@@ -271,7 +271,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
-  private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+  private def schemeType: Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
     case JsSuccess(scheme, _) => Some(scheme.value)
     case JsError(errors) => None
   }
@@ -279,12 +279,12 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   //scalastyle:off method.length
   def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
-    private def noOfRecords : Int = json.validate((__ \ 'trustees).readNullable(__.read(
+    private def noOfRecords: Int = json.validate((__ \ 'trustees).readNullable(__.read(
       Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
         case "individual" => (__ \ 'trusteeDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-      }).map(x=> x.count(deleted => deleted == JsBoolean(false)))))) match {
+      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
@@ -307,6 +307,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         isTrusteeCompanyComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
     }
     )
+
     private def readsPartnership(index: Int): Reads[Trustee[_]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
@@ -314,6 +315,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
       isTrusteePartnershipComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
+
     private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
       override def reads(json: JsValue): JsResult[Trustee[_]] = {
         (json \ TrusteeKindId.toString)
@@ -321,6 +323,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
+
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
@@ -410,14 +413,14 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def isAllTrusteesCompleted: Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
 
-    if(isSingleOrMaster)
+    if (isSingleOrMaster)
       allTrusteesAfterDelete.nonEmpty && allTrusteesAfterDelete.forall(_.isCompleted)
     else
       allTrusteesAfterDelete.forall(_.isCompleted)
 
   }
 
-  def isDirectorPartnerCompleted(establisherIndex:Int): Boolean = get(EstablisherKindId(establisherIndex)) match {
+  def isDirectorPartnerCompleted(establisherIndex: Int): Boolean = get(EstablisherKindId(establisherIndex)) match {
     case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex).forall(_.isCompleted)
     case Some(EstablisherKind.Partnership) => allPartnersAfterDelete(establisherIndex).forall(_.isCompleted)
     case _ => true
@@ -426,7 +429,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def allEstablishersCompleted(mode: Mode): Boolean =
     !allEstablishersAfterDelete(mode).zipWithIndex.collect { case (item, establisherIndex) =>
       item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
-  }.contains(false)
+    }.contains(false)
 
   def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
     case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
@@ -438,7 +441,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def isBeforeYouStartCompleted(mode: Mode): Boolean = {
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
     val haveAnyTrusteeComplete = if (isSingleOrMaster && get(HaveAnyTrusteesId).isEmpty) true else get(HaveAnyTrusteesId).nonEmpty
-    val declarationDutiesComplete = if(mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
+    val declarationDutiesComplete = if (mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
 
     !List(get(SchemeNameId), get(SchemeTypeId), get(EstablishedCountryId)).contains(None) &&
       haveAnyTrusteeComplete && declarationDutiesComplete
@@ -447,6 +450,22 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def isMembersCompleted: Option[Boolean] = isComplete(Seq(
     isAnswerComplete(CurrentMembersId),
     isAnswerComplete(FutureMembersId)))
+
+  def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
+
+    val isBenefitsSecuredByContractCompleted = get(BenefitsSecuredByInsuranceId) match {
+      case Some(true) => Some(!List(get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None))
+      case Some(false) => Some(true)
+      case _ => None
+    }
+
+    isComplete(Seq(
+      isAnswerComplete(InvestmentRegulatedSchemeId),
+      isAnswerComplete(OccupationalPensionSchemeId),
+      isAnswerComplete(TypeOfBenefitsId),
+      isBenefitsSecuredByContractCompleted))
+
+  }
 
   def areVariationChangesCompleted: Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted &&

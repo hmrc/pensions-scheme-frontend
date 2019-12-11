@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InvestmentRegulatedSchemeFormProvider
-import identifiers.{InvestmentRegulatedSchemeId, IsAboutBenefitsAndInsuranceCompleteId}
+import identifiers.InvestmentRegulatedSchemeId
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -62,10 +62,8 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(investmentRegulatedScheme(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).flatMap { cacheMap =>
-            sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, UserAnswers(cacheMap), value = false).map { answers =>
-              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, answers))
-            }
+          dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).map { cacheMap =>
+            Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap)))
           }
       )
   }

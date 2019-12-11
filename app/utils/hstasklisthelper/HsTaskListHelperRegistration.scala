@@ -56,7 +56,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
       case None => Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+    val benefitsAndInsuranceLink = userAnswers.isBenefitsAndInsuranceCompleted match {
       case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case Some(false) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
@@ -70,7 +70,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
     }
 
     Seq(SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
+      SchemeDetailsTaskListSection(userAnswers.isBenefitsAndInsuranceCompleted, benefitsAndInsuranceLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
   }
 
