@@ -33,7 +33,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
+      Some(userAnswers.isBeforeYouStartCompleted(UpdateMode)),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       Some(userAnswers.allEstablishersCompleted(UpdateMode)),

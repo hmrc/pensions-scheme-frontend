@@ -435,6 +435,15 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     case _ => false
   }
 
+  def isBeforeYouStartCompleted(mode: Mode): Boolean = {
+    val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
+    val haveAnyTrusteeComplete = if (isSingleOrMaster && get(HaveAnyTrusteesId).isEmpty) true else get(HaveAnyTrusteesId).nonEmpty
+    val declarationDutiesComplete = if(mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
+
+    !List(get(SchemeNameId), get(SchemeTypeId), get(EstablishedCountryId)).contains(None) &&
+      haveAnyTrusteeComplete && declarationDutiesComplete
+  }
+
   def areVariationChangesCompleted: Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted &&
       allEstablishersCompleted(UpdateMode)

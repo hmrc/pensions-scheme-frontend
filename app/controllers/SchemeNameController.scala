@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
-import identifiers.{IsBeforeYouStartCompleteId, SchemeNameId}
+import identifiers.SchemeNameId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -52,12 +52,12 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
+  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
     existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>
-      val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v=> form.fill(v))
+      val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(schemeName(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
@@ -70,16 +70,14 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
               pensionAdministratorConnector.getPSAName.map { psaName =>
-              BadRequest(schemeName(appConfig, form.withError(
-                "schemeName",
-                "messages__error__scheme_name_psa_name_match", psaName
-              ), mode, existingSchemeNameOrEmptyString))
-                }
+                BadRequest(schemeName(appConfig, form.withError(
+                  "schemeName",
+                  "messages__error__scheme_name_psa_name_match", psaName
+                ), mode, existingSchemeNameOrEmptyString))
+              }
             } else {
-              dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
-                sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, UserAnswers(cacheMap), value = false).map { json =>
-                  Redirect(navigator.nextPage(SchemeNameId, mode, json))
-                }
+              dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
+                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap)))
               }
             } recoverWith {
               case e: NotFoundException =>

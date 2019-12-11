@@ -31,7 +31,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers
   def taskList: SchemeDetailsTaskList = {
 
     SchemeDetailsTaskList(
-      SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
+      SchemeDetailsTaskListSection(Some(answers.isBeforeYouStartCompleted(NormalMode)),
+        beforeYouStartLink(answers, NormalMode, None), None),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       workingKnowledgeSection(answers),

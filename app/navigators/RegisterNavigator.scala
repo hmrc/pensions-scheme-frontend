@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register._
-import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
-import models.{NormalMode, UpdateMode}
+import identifiers.{UserResearchDetailsId, VariationDeclarationId}
+import models.NormalMode
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
@@ -46,17 +46,15 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
 
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = (from.id, srn) match {
-    case (VariationDeclarationId , Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(validSrn))
+    case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None
   }
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
-    userAnswers.get(IsBeforeYouStartCompleteId) match {
-      case Some(true) =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
-      case _ =>
-        NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
-    }
+    if (userAnswers.isBeforeYouStartCompleted(NormalMode))
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
+    else
+      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 }

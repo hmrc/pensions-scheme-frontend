@@ -70,10 +70,9 @@ abstract class HsTaskListHelper(answers: UserAnswers
   protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection]
 
   private[utils] def beforeYouStartLink(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Link = {
-    userAnswers.get(IsBeforeYouStartCompleteId) match {
-      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
-      case _ => Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
-    }
+    if(userAnswers.isBeforeYouStartCompleted(mode))
+      Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
+    else Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
   }
 
   private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
@@ -127,7 +126,7 @@ abstract class HsTaskListHelper(answers: UserAnswers
 
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
+      Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.get(IsAboutMembersCompleteId),
       userAnswers.get(IsAboutBankDetailsCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
