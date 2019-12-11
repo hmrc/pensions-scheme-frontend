@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.CurrentMembersFormProvider
-import identifiers.{CurrentMembersId, IsAboutMembersCompleteId, SchemeNameId}
+import identifiers.{CurrentMembersId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -66,10 +66,8 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(currentMembers(appConfig, formWithErrors, mode, schemeName)))
           },
         value =>
-          dataCacheConnector.save(request.externalId, CurrentMembersId, value).flatMap { cacheMap =>
-            sectionComplete.setCompleteFlag(request.externalId, IsAboutMembersCompleteId, UserAnswers(cacheMap), value = false).map { answers =>
-              Redirect(navigator.nextPage(CurrentMembersId, mode, answers))
-            }
+          dataCacheConnector.save(request.externalId, CurrentMembersId, value).map { cacheMap =>
+            Redirect(navigator.nextPage(CurrentMembersId, mode, UserAnswers(cacheMap)))
           }
       )
   }

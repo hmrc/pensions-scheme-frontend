@@ -155,9 +155,7 @@ GET         /check-your-answers-before-start                         controllers
 GET         /:mode/check-your-answers-before-start/:srn              controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode, srn: Option[String])
 
 GET         /check-your-answers-members                              controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-POST        /check-your-answers-members                              controllers.CheckYourAnswersMembersController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: Option[String])
-POST        /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onSubmit(mode: Mode, srn: Option[String])
 
 GET         /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 POST        /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onSubmit()

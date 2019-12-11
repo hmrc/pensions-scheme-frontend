@@ -50,7 +50,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
   }
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+    val membersLink = userAnswers.isMembersCompleted match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
       case Some(false) => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
       case None => Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
@@ -69,7 +69,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers
       case None => Link(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
     }
 
-    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
+    Seq(SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
   }

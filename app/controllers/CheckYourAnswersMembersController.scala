@@ -18,21 +18,20 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.{CurrentMembersId, FutureMembersId, IsAboutMembersCompleteId}
+import identifiers.{CurrentMembersId, FutureMembersId}
 import javax.inject.Inject
-import models.requests.DataRequest
-import models.{CheckMode, CheckUpdateMode, Mode, UpdateMode}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{NoSuspendedCheck, TaskList}
+import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import viewmodels.{AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -44,31 +43,32 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                  )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
-    implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
-      val membersSection = AnswerSection(
-        None,
-        CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
-          FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
-      )
-      Ok(check_your_answers_old(
-        appConfig,
-        Seq(membersSection),
-        routes.CheckYourAnswersMembersController.onSubmit(mode, srn),
-        existingSchemeName,
-        mode = mode,
-        hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-        srn = srn
-      ))
-  }
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        val membersSection = AnswerSection(
+          None,
+          CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
+            FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
+        )
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
-    implicit request =>
-      userAnswersService.save(mode, srn, IsAboutMembersCompleteId, value = true) map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-      }
-  }
+        def heading(name: String): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+          Message("messages__membershipDetailsFor", name)
+
+        val vm = CYAViewModel(
+          answerSections = Seq(membersSection),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
+          hideEditLinks = request.viewOnly,
+          srn = srn,
+          hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+          title = heading(Message("messages__theScheme").resolve),
+          h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme").resolve))
+        )
+
+        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+    }
 
 }

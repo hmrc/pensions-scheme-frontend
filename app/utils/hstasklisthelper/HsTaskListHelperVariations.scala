@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, SchemeNameId, _}
 import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
 import utils.UserAnswers
@@ -34,7 +34,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(UpdateMode)),
-      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.isMembersCompleted,
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       Some(userAnswers.allEstablishersCompleted(UpdateMode)),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
@@ -64,7 +64,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   }
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+    val membersLink = userAnswers.isMembersCompleted match {
       case Some(true) => Link(aboutMembersViewLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
       case _ => Link(aboutMembersViewLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }

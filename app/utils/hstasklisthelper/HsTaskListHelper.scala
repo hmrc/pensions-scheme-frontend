@@ -127,7 +127,7 @@ abstract class HsTaskListHelper(answers: UserAnswers
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
-      userAnswers.get(IsAboutMembersCompleteId),
+      userAnswers.isMembersCompleted,
       userAnswers.get(IsAboutBankDetailsCompleteId),
       userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
       userAnswers.get(IsWorkingKnowledgeCompleteId),

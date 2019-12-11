@@ -444,6 +444,10 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       haveAnyTrusteeComplete && declarationDutiesComplete
   }
 
+  def isMembersCompleted: Option[Boolean] = isComplete(Seq(
+    isAnswerComplete(CurrentMembersId),
+    isAnswerComplete(FutureMembersId)))
+
   def areVariationChangesCompleted: Boolean =
     isInsuranceCompleted && isAllTrusteesCompleted &&
       allEstablishersCompleted(UpdateMode)

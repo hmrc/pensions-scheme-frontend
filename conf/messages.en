@@ -1833,3 +1833,4 @@ messages__hasPartnerUtr__title = Does the partner have a UTR?
 
 messages__partnerName__cya = Partner’s name
 messages__informationFor = {0}’s information
+messages__membershipDetailsFor = {0}’s membership details
