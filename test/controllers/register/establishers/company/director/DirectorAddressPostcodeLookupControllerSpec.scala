@@ -118,7 +118,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
       val validPostcode = "ZZ1 1ZZ"
 
       val fakeRequest = addToken(FakeRequest(postCall)
-        .withFormUrlEncodedBody("value" -> validPostcode))
+        .withFormUrlEncodedBody("postcode" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(validPostcode)))

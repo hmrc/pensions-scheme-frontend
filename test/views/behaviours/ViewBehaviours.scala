@@ -58,7 +58,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
   }
 
-  def normalPageWith1(view: () => HtmlFormat.Appendable,
+  def normalPageWithHeaderCheck(view: () => HtmlFormat.Appendable,
                           messageKeyPrefix: String,
                           title: String,
                           pageHeader: String,
@@ -144,19 +144,6 @@ trait ViewBehaviours extends ViewSpecBase {
                  expectedGuidanceKeys: String*): Unit = {
 
     normalPageWithTitle(
-      view,
-      messageKeyPrefix,
-      messagesApi(s"messages__${messageKeyPrefix}__title"),
-      pageHeader,
-      expectedGuidanceKeys: _*
-    )
-  }
-  def normalPage1(view: () => HtmlFormat.Appendable,
-                 messageKeyPrefix: String,
-                 pageHeader: String,
-                 expectedGuidanceKeys: String*): Unit = {
-
-    normalPageWith1(
       view,
       messageKeyPrefix,
       messagesApi(s"messages__${messageKeyPrefix}__title"),

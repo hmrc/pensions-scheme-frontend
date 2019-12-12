@@ -132,7 +132,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         implicit app =>
 
           val fakeRequest = addToken(FakeRequest(call)
-            .withFormUrlEncodedBody("value" -> validPostcode)
+            .withFormUrlEncodedBody("postcode" -> validPostcode)
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, fakeRequest).value

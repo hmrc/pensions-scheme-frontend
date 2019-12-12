@@ -24,7 +24,7 @@ class PostCodeLookupFormProviderSpec extends AddressBehaviours {
   private val requiredKey = "messages__error__postcode"
   private val lengthKey = "messages__error__postcode_length"
   private val invalid = "messages__error__postcode_invalid"
-  private val fieldName = "value"
+  private val fieldName = "postcode"
 
   val form = new PostCodeLookupFormProvider()()
 
