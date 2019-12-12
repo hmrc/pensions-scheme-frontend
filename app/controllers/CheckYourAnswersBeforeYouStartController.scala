@@ -59,8 +59,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
       )
 
-      val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
-        Message("messages__informationFor", name)
+      val heading = (titleOrHeading: Message) =>
+        if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
       val vm = CYAViewModel(
         answerSections = Seq(beforeYouStart),
@@ -70,8 +70,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         hideEditLinks = request.viewOnly,
         srn = srn,
         hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-        title = heading(Message("messages__Scheme").resolve),
-        h1 =  heading(existingSchemeName.getOrElse(Message("messages__Scheme").resolve))
+        title = heading(Message("messages__informationFor_title")),
+        h1 =  heading(Message("messages__informationFor_heading",
+          existingSchemeName.getOrElse(Message("messages__theScheme").resolve)))
       )
 
       Future.successful(Ok(checkYourAnswers(appConfig, vm)))

@@ -1659,7 +1659,6 @@ messages__thePartner = the partner
 messages__thePerson = the person
 messages__theIndividual = the individual
 messages__theScheme = The scheme
-messages__Scheme = Scheme
 
 messages__hasBeenTradingCompany__title = Has the establisher been trading for at least 1 year?
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
@@ -1833,6 +1832,7 @@ messages__partnerName__heading = What is the partner’s name?
 messages__hasPartnerUtr__title = Does the partner have a UTR?
 
 messages__partnerName__cya = Partner’s name
-messages__informationFor = {0}’s information
+messages__informationFor_heading = {0}’s information
+messages__informationFor_title = Scheme information
 messages__membershipDetailsFor = {0}’s membership details
 messages__benefitsAndInsuranceDetailsFor = {0}’s benefits and insurance details
