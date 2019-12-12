@@ -20,19 +20,17 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
 import javax.inject.Inject
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import models.Mode._
+import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, SectionComplete, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
-import views.html.{checkYourAnswers, check_your_answers_old}
-import models.Mode._
-import models.requests.DataRequest
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,7 +60,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
 
-      def heading(name: String): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+      val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
         Message("messages__benefitsAndInsuranceDetailsFor", name)
 
       val vm = CYAViewModel(

@@ -84,7 +84,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     )
   }
 
-  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] = {
     if (viewOnly) {
       None
     } else {
@@ -95,6 +95,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))
     }
+  }
 
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
     if (userAnswers.isUserAnswerUpdated) {

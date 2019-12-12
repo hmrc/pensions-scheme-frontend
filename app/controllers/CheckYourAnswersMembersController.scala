@@ -53,7 +53,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
             FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
         )
 
-        def heading(name: String): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+        val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
           Message("messages__membershipDetailsFor", name)
 
         val vm = CYAViewModel(

@@ -29,8 +29,8 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -112,13 +112,19 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     )
   )
 
-  val viewAsString: String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(adviserSection),
-    postUrl,
-    None,
+  val vm = CYAViewModel(
+    answerSections = Seq(adviserSection),
+    href = postUrl,
+    schemeName = None,
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false
+    srn = None,
+    hideSaveAndContinueButton = false,
+    title = Message("checkYourAnswers.hs.title"),
+    h1 = Message("checkYourAnswers.hs.title")
+  )
+  val viewAsString: String = checkYourAnswers(
+    frontendAppConfig, vm
   )(fakeRequest, messages).toString
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()

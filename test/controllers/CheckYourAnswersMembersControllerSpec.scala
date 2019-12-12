@@ -22,8 +22,8 @@ import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.UserAnswers
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with OptionValues{
 
@@ -36,7 +36,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+        contentAsString(result) mustBe viewAsString(NormalMode)
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
@@ -91,16 +91,22 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      membersSection
-    ),
-    postUrl,
-    Some(schemeName),
+  private def heading(name: String, mode: Mode): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+    Message("messages__membershipDetailsFor", name)
+
+  private def vm(mode: Mode) = CYAViewModel(
+    answerSections = Seq(membersSection),
+    href = postUrl,
+    schemeName = Some(schemeName),
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false
-  )(fakeRequest, messages).toString
+    srn = None,
+    hideSaveAndContinueButton = false,
+    title = heading(Message("messages__theScheme").resolve, mode),
+    h1 = heading(schemeName, mode)
+  )
+
+  private def viewAsString(mode: Mode): String = checkYourAnswers(frontendAppConfig, vm(mode))(fakeRequest, messages).toString
 
 }
 

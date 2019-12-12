@@ -23,8 +23,8 @@ import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator}
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
@@ -95,10 +95,19 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers_old(
-    frontendAppConfig, Seq(bankAccountSection), postUrl, Some("Test Scheme Name"),
+  val vm = CYAViewModel(
+    answerSections = Seq(bankAccountSection),
+    href = postUrl,
+    schemeName = Some("Test Scheme Name"),
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false)(fakeRequest, messages).toString
+    srn = None,
+    hideSaveAndContinueButton = false,
+    title = Message("checkYourAnswers.hs.title"),
+    h1 = Message("checkYourAnswers.hs.title")
+  )
+
+  private def viewAsString(): String = checkYourAnswers(frontendAppConfig, vm)(fakeRequest, messages).toString
 
 }
 

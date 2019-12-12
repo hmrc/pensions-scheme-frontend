@@ -24,8 +24,8 @@ import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase with OptionValues {
 
@@ -78,7 +78,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private def postUrl = routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None)
+  private def postUrl(mode: Mode) = routes.SchemeTaskListController.onPageLoad(mode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
@@ -190,31 +190,26 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   }
 
-  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      benefitsAndInsuranceSection(mode)
-    ),
-    postUrl,
-    Some(schemeName),
-    false,
-    mode,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = hideSaveAndContinueButton
-  )(fakeRequest, messages).toString
+  def heading(name: String, mode: Mode): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+    Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-  private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      updateBenefitsAndInsuranceSection(mode)
-    ),
-    postUrl,
-    Some(schemeName),
-    false,
-    mode,
+  def vm(mode : Mode, hideSaveAndContinueButton:Boolean, data: AnswerSection): CYAViewModel = CYAViewModel(
+    answerSections = Seq(data),
+    href = postUrl(mode),
+    schemeName = Some(schemeName),
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = true
-  )(fakeRequest, messages).toString
+    srn = None,
+    hideSaveAndContinueButton = hideSaveAndContinueButton,
+    title = heading(Message("messages__theScheme").resolve, mode),
+    h1 = heading(schemeName, mode)
+  )
+
+  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String =
+    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton, benefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
+
+  private def viewAsStringWithLessData(mode : Mode): String =
+    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton = true, updateBenefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
 }
 
