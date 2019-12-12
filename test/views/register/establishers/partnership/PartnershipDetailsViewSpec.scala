@@ -44,7 +44,7 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix,
       routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None).url, "partnershipName")
 
     behave like pageWithReturnLink(createView(), getReturnLink)

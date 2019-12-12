@@ -84,7 +84,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
   "AddCompanyDirectors view" must {
 
-    behave like normalPageWithBrowserTitleSameAsH1(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
+    behave like normalPageWithBrowserTitleSame(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),

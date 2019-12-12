@@ -58,7 +58,7 @@ class PayeViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
       behave like pageWithReturnLinkAndSrn(createUpdateView(), getReturnLinkWithSrn)
 
-      behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, postCall.url,
+      behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, postCall.url,
         "paye")
 
       "display correct p1" in {

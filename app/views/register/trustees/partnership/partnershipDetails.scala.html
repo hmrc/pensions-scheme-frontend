@@ -39,8 +39,9 @@
 
         @components.input_text(
             field = form("partnershipName"),
-            label = messages("messages__partnershipName__title"),
-            labelClass = Some("visually-hidden")
+            label = messages("messages__partnershipName__heading"),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button()

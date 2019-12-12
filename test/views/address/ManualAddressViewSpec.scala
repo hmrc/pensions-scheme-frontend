@@ -61,7 +61,7 @@ def createUpdateView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =
 
     behave like normalPage(createView(), messageKeyPrefix, viewModel.heading)
 
-    behave like pageWithTextFields(
+    behave like pageWithErrorOutsideLabel(
       createViewUsingForm,
       messageKeyPrefix,
       controllers.routes.AdviserAddressController.onPageLoad(NormalMode).url,

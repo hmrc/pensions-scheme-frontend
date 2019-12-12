@@ -47,7 +47,7 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
     behave like pageWithReturnLinkAndSrn(createUpdateView, getReturnLinkWithSrn)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix,
       company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None).url, "companyName")
   }
 }

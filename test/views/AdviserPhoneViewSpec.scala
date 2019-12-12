@@ -38,7 +38,7 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   behave like normalPage(createView, messageKeyPrefix,
     messages("messages__adviser__phone__heading", adviserName))
 
-  behave like pageWithTextFields(
+  behave like pageWithErrorOutsideLabel(
     createViewWithForm,
     messageKeyPrefix,
     controllers.routes.AdviserPhoneController.onSubmit(NormalMode).url,

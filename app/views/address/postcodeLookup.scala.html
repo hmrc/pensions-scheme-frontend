@@ -46,9 +46,8 @@
         )
 
         @components.input_text(
-            field = form("value"),
-            label = messages(viewmodel.formLabel),
-            labelClass = Some("visually-hidden")
+            field = form("postcode"),
+            label = messages(viewmodel.formLabel)
         )
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
