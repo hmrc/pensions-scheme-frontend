@@ -58,7 +58,7 @@ class PersonNameViewSpec extends QuestionViewBehaviours[PersonName] {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix,
       controllers.register.establishers.company.director.routes.DirectorNameController.onSubmit(NormalMode, establisherIndex, directorIndex, None).url,
       "firstName", "lastName")
     

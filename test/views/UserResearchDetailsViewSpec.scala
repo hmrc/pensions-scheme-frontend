@@ -46,7 +46,7 @@ class UserResearchDetailsViewSpec extends QuestionViewBehaviours[UserResearchDet
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(
+    behave like pageWithErrorOutsideLabel(
       createViewUsingForm,
       messageKeyPrefix,
       controllers.routes.UserResearchDetailsController.onSubmit().url,

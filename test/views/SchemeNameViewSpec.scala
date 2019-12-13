@@ -41,7 +41,7 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.SchemeNameController.onSubmit(NormalMode).url,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.routes.SchemeNameController.onSubmit(NormalMode).url,
       "schemeName")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)

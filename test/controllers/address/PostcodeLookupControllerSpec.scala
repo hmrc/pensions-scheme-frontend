@@ -140,7 +140,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
           val request = FakeRequest()
           val controller = app.injector.instanceOf[TestController]
-          val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+          val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("postcode" -> "ZZ11ZZ"))
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
@@ -170,7 +170,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
             val request = FakeRequest()
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
             val controller = app.injector.instanceOf[TestController]
-            val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+            val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("postcode" -> "ZZ11ZZ"))
 
             status(result) mustEqual BAD_REQUEST
             contentAsString(result) mustEqual postcodeLookup(appConfig,
@@ -195,14 +195,14 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
             implicit val mat: Materializer = app.materializer
 
-            val request = FakeRequest().withFormUrlEncodedBody("value" -> invalidPostcode)
+            val request = FakeRequest().withFormUrlEncodedBody("postcode" -> invalidPostcode)
 
             val appConfig = app.injector.instanceOf[FrontendAppConfig]
             val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
             val controller = app.injector.instanceOf[TestController]
             val result = controller.onSubmit(viewmodel, UserAnswers(), request)
-            val form = formProvider().bind(Map("value" -> invalidPostcode))
+            val form = formProvider().bind(Map("postcode" -> invalidPostcode))
 
             status(result) mustEqual BAD_REQUEST
             contentAsString(result) mustEqual postcodeLookup(appConfig, form, viewmodel, None)(request, messages).toString
@@ -238,7 +238,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
               val expectedErrorMessage = messages("messages__error__postcode_no_results", postCode)
 
               val controller = app.injector.instanceOf[TestController]
-              val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+              val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("postcode" -> "ZZ11ZZ"))
 
               status(result) mustEqual OK
 

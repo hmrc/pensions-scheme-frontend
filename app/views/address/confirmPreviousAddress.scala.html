@@ -37,11 +37,12 @@
 
         @components.error_summary(form.errors)
 
+        @components.heading(
+        headingKey=components.hyphen(messages(viewmodel.heading)).toString
+        )
+
         @viewmodel.hint.map{hintText =>
-            @components.heading(
-            headingKey=components.hyphen(messages(viewmodel.heading)).toString
-            )
-            <p>@messages(hintText)</p>
+        <p>@messages(hintText)</p>
         }
 
         <div class="tabular-data__data tabular-data__data--3-12">
@@ -56,7 +57,7 @@
             field = form("value"),
             label = messages(viewmodel.heading),
             labelClass = Some("visually-hidden"),
-            headingIsLegend = viewmodel.hint.isEmpty
+            headingIsLegend = false
         )
 
         <div class="subsection">

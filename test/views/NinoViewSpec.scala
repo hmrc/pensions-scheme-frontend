@@ -57,7 +57,7 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
         title =  messages("messages__enterNINO", messages("messages__thePerson")),
         pageHeader = messages(s"messages__enterNINO", testName))
 
-      behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, Call("POST", "/").url,
+      behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, Call("POST", "/").url,
         "nino")
 
       behave like pageWithReturnLink(createView(), getReturnLink)

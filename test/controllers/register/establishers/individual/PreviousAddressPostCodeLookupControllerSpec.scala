@@ -89,7 +89,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
     "redirect a Bad Request when post code is not valid" in {
       val invalidPostCode = "invalid"
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", invalidPostCode))
 
       val boundForm = form.bindFromRequest()(postRequest)
 
@@ -104,7 +104,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
     "redirect a Bad Request when no results found for the input post code" in {
       val notFoundPostCode = "ZZ1 1ZZ"
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", notFoundPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results", Seq(notFoundPostCode)))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
@@ -118,7 +118,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
     "redirect to the next page when valid data is submitted" in {
       val validPostCode = "ZZ1 1ZZ"
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB")))))
 
@@ -129,7 +129,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
@@ -144,7 +144,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "valid"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", "valid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

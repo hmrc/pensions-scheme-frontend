@@ -64,7 +64,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with CS
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
           implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None))
-            .withFormUrlEncodedBody("value" -> validPostcode)),
+            .withFormUrlEncodedBody("postcode" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

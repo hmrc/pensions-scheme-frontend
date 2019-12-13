@@ -58,6 +58,39 @@ trait ViewBehaviours extends ViewSpecBase {
 
   }
 
+  def normalPageWithHeaderCheck(view: () => HtmlFormat.Appendable,
+                          messageKeyPrefix: String,
+                          title: String,
+                          pageHeader: String,
+                          expectedGuidanceKeys: String*): Unit = {
+
+    "behave like a normal page" when {
+      "rendered" must {
+        "have the correct banner title" in {
+          val doc = asDocument(view())
+          val nav = doc.getElementById("proposition-menu")
+          val span = nav.children.first
+          span.text mustBe messagesApi("site.service_name")
+        }
+
+        "display the correct browser title" in {
+          val doc = asDocument(view())
+          assertEqualsMessage(doc, "title", title + " - " + messagesApi("messages__pension_scheme_registration__title"))
+        }
+
+        "display the correct page header" in {
+          val doc = asDocument(view())
+          assertContainsMessages(doc, pageHeader)
+        }
+
+        "display the correct guidance" in {
+          val doc = asDocument(view())
+          for (key <- expectedGuidanceKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix}_$key"))
+        }
+      }
+    }
+
+  }
   def normalPageWithoutBrowserTitle(view: () => HtmlFormat.Appendable,
                           messageKeyPrefix: String,
                           pageHeader: String,
@@ -86,10 +119,10 @@ trait ViewBehaviours extends ViewSpecBase {
 
   }
 
-  def normalPageWithBrowserTitleSameAsH1(view: () => HtmlFormat.Appendable,
-                                    messageKeyPrefix: String,
-                                    pageHeader: String,
-                                    expectedGuidanceKeys: String*): Unit = {
+  def normalPageWithBrowserTitleSame(view: () => HtmlFormat.Appendable,
+                                     messageKeyPrefix: String,
+                                     pageHeader: String,
+                                     expectedGuidanceKeys: String*): Unit = {
 
     normalPageWithoutBrowserTitle(view, messageKeyPrefix, pageHeader, expectedGuidanceKeys :_*)
 

@@ -133,7 +133,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
           implicit app =>
 
             val fakeRequest = addToken(FakeRequest(call)
-              .withFormUrlEncodedBody("value" -> validPostcode)
+              .withFormUrlEncodedBody("postcode" -> validPostcode)
               .withHeaders("Csrf-Token" -> "nocheck"))
 
             val result = route(app, fakeRequest).value

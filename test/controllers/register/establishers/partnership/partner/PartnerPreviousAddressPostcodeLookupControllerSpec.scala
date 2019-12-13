@@ -104,7 +104,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       val onwardUrl = routes.PartnerPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
       val fakeRequest = addToken(FakeRequest(onwardRoute))
-        .withFormUrlEncodedBody("value" -> validPostcode)
+        .withFormUrlEncodedBody("postcode" -> validPostcode)
         .withHeaders("Csrf-Token" -> "nocheck")
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))

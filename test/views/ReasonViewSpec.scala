@@ -52,7 +52,7 @@ class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
       behave like pageWithReturnLinkAndSrn(createView(), getReturnLinkWithSrn)
 
-      behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, postCall.url,
+      behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, postCall.url,
         "reason")
 
     }

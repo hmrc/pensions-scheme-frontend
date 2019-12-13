@@ -38,7 +38,7 @@ class AdviserNameViewSpec extends QuestionViewBehaviours[String] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.AdviserNameController.onSubmit(NormalMode).url,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.routes.AdviserNameController.onSubmit(NormalMode).url,
       "adviserName")
   }
 }

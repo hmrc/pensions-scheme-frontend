@@ -34,17 +34,15 @@
         @components.error_summary(form.errors)
 
         @schemeName.map{sn=>
-            @components.heading(
-                headingKey=messages("messages__type_of_benefits__h1",sn)
-            )
-        }
+
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__type_of_benefits__title"),
+            legend = messages("messages__type_of_benefits__h1",sn),
             legendClass = Some("visually-hidden"),
-            inputs = TypeOfBenefits.options
+            inputs = TypeOfBenefits.options,
+            headingIsLegend = true
         )
-
+        }
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName)

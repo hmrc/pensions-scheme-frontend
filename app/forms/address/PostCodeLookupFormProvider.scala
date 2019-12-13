@@ -24,7 +24,7 @@ class PostCodeLookupFormProvider @Inject() extends AddressMapping {
 
   def apply(): Form[String] =
     Form(
-      "value" -> postCodeMapping(
+      "postcode" -> postCodeMapping(
         "messages__error__postcode",
         "messages__error__postcode_length",
         "messages__error__postcode_invalid"

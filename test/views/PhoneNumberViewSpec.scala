@@ -49,7 +49,7 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     assertContainsText(asDocument(createView()), messages("messages__contact_details__hint", companyName))
   }
 
-  behave like pageWithTextFields(
+  behave like pageWithErrorOutsideLabel(
     createViewWithForm,
     messageKeyPrefix,
     Call("POST", "/").url,

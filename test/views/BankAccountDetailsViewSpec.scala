@@ -41,7 +41,7 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetai
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))
 
-    behave like pageWithTextFields(
+    behave like pageWithErrorOutsideLabel(
       createViewUsingForm,
       messageKeyPrefix,
       routes.BankAccountDetailsController.onSubmit(NormalMode).url,

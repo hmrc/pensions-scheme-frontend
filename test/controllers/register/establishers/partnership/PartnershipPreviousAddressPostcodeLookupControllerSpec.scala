@@ -126,7 +126,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(testAnswer))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(testAnswer))))
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
@@ -136,7 +136,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
@@ -153,7 +153,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER

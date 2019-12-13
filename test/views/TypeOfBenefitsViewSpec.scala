@@ -33,7 +33,7 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
     typeOfBenefits(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    typeOfBenefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
+    typeOfBenefits(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   "Type of benefits view" when {
     "rendered" must {
