@@ -55,7 +55,6 @@ messages__common__confirmAddress__h1 = Enter {0}’s address
 messages__common__confirmPreviousAddress__h1 = Enter {0}’s previous address
 messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
 messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
-messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
 messages__common__partnership__selectAddress__h1 = What is {0}’s address?
 messages__common__entityKind_company = Company
 messages__common__entityKind_individual = Individual
@@ -516,8 +515,6 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
 
-messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
-
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 
@@ -709,7 +706,6 @@ messages__trustee__individual__address__title = What is the trustee’s address?
 messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
-messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
 messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
 
 messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
@@ -734,8 +730,6 @@ messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
-
-messages__trustee_individual_confirm__previous_address__title = Confirm the trustee’s previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -1061,7 +1055,6 @@ messages__partnershipReview__partners__viewLink = View details of partners
 
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
-messages__trusteePartnershipAddress__title = Confirm the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?

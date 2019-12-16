@@ -84,7 +84,7 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       ManualAddressViewModel(
         routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),
         options,
-        Message("messages__common__partnership_confirmPreviousAddress__title"),
+        Message("messages__common__confirmPreviousAddress__h1",Message("messages__thePartnership")),
         Message("messages__common__confirmPreviousAddress__h1",partnershipName),
         None
       ),

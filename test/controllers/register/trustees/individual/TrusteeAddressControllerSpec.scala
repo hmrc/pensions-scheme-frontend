@@ -27,6 +27,7 @@ import models.address.Address
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -34,6 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
+import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
@@ -67,8 +69,8 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
   val viewmodel = ManualAddressViewModel(
     postCall = controller.postCall(NormalMode, firstIndex, None),
     countryOptions = countryOptions.options,
-    title = messages("messages__trustee__individual__address__confirm__title"),
-    heading = messages("messages__common__confirmAddress__h1", personDetails.fullName)
+    title = Messages("messages__common__confirmAddress__h1", Message("messages__theTrustee").resolve),
+    heading = Messages("messages__common__confirmAddress__h1", personDetails.fullName)
   )
 
   behave like manualAddress(

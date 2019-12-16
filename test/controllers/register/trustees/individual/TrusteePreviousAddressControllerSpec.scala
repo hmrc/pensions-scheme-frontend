@@ -82,7 +82,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             val viewmodel = ManualAddressViewModel(
               controller.postCall(NormalMode, firstIndex, None),
               countryOptions.options,
-              Message("messages__trustee_individual_confirm__previous_address__title"),
+              Message("messages__common__confirmPreviousAddress__h1",Message("messages__theTrustee")),
               Message("messages__common__confirmPreviousAddress__h1", trusteeDetails.fullName)
             )
 
