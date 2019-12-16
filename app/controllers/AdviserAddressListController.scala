@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -39,7 +40,8 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                              @WorkingKnowledge override val navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction
+                                             requireData: DataRequiredAction,
+                                             val auditService: AuditService
                                             )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
@@ -51,7 +53,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
     implicit request =>
       viewModel(mode).right.map {
         vm =>
-          post(vm, AdviserAddressListId, AdviserAddressId, mode)
+          post(vm, AdviserAddressListId, AdviserAddressId, mode,"Adviser Address")
       }
   }
 

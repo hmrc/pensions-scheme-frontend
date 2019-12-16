@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.AddressListController
@@ -39,7 +40,8 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               val auditService: AuditService
                                               )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 
@@ -53,14 +55,13 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>
-          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode)
+          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode, "Insurer Address")
       }
   }
 
   private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    (InsurerEnterPostCodeId).retrieve.right.map {
-      case addresses =>
+    InsurerEnterPostCodeId.retrieve.right.map {addresses =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
           manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),

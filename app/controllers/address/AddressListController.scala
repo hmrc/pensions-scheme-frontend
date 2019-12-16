@@ -16,6 +16,7 @@
 
 package controllers.address
 
+import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
@@ -43,6 +44,8 @@ trait AddressListController extends FrontendController with Retrievals  with I18
 
   protected def userAnswersService: UserAnswersService
 
+  protected def auditService: AuditService
+
   protected def navigator: Navigator
 
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
@@ -54,7 +57,11 @@ trait AddressListController extends FrontendController with Retrievals  with I18
     Future.successful(Ok(addressList(appConfig, form, viewModel, existingSchemeName)))
   }
 
-  protected def post(viewModel: AddressListViewModel, navigatorId: TypedIdentifier[TolerantAddress], dataId: TypedIdentifier[Address], mode: Mode)
+  protected def post(viewModel: AddressListViewModel,
+                     navigatorId: TypedIdentifier[TolerantAddress],
+                     dataId: TypedIdentifier[Address],
+                     mode: Mode,
+                     context: String                    )
                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
@@ -62,9 +69,15 @@ trait AddressListController extends FrontendController with Retrievals  with I18
         Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
-        val answers = request.userAnswers.remove(dataId).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
+        val answers =
+          request.userAnswers.set(dataId)(address.toAddress).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
+
+        val existingAddress = request.userAnswers.get(dataId)
+        val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress, existingAddress, Some(address), context)
+
         userAnswersService.upsert(mode, viewModel.srn, answers.json).map{
           json =>
+            auditEvent.foreach(auditService.sendEvent(_))
             Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
         }
       }
