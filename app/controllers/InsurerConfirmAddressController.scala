@@ -53,7 +53,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
 
   private[controllers] val postCall = routes.InsurerConfirmAddressController.onSubmit _
   private[controllers] val title: Message = "messages__insurer_confirm_address__title"
-  private[controllers] val heading: Message = "messages__insurer_confirm_address__h1"
+  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
 
   protected val form: Form[Address] = formProvider()
 

@@ -130,7 +130,7 @@ object InsurerConfirmAddressControllerSpec {
           routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
           options,
           Message("messages__insurer_confirm_address__title"),
-          Message("messages__insurer_confirm_address__h1", insuranceCompanyName),
+          Message("messages__common__confirmAddress__h1", insuranceCompanyName),
           None
         ),
         Some(schemeName)

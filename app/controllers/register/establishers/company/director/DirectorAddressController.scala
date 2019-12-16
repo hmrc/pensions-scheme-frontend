@@ -53,7 +53,7 @@ class DirectorAddressController @Inject()(
                                          )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__directorAddressConfirm__title"
+  private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__directorAddressPostcodeLookup__lede"
 
@@ -89,7 +89,7 @@ class DirectorAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(title, Message("messages__theDirector")),
       heading = Message(heading, name),
       srn = srn
     )
