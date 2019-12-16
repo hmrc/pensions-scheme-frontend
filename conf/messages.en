@@ -51,7 +51,7 @@ messages__common__vat__hint = This has 9 characters and is issued by HMRC. It mi
 messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
-messages__common__confirmAddress__h1 = Confirm {0}’s address
+messages__common__confirmAddress__h1 = Enter {0}’s address
 messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
 messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
 messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
@@ -817,7 +817,7 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
-messages__confirmAdviserAddress__title = Confirm the person’s address
+messages__confirmAdviserAddress__title = Enter the person’s address
 
 #Delete 3 messages later
 messages__adviserAddress__secondary = Pension adviser
@@ -1528,8 +1528,8 @@ messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
 messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
 
-messages__insurer_confirm_address__title = Insurance company’s address
-messages__insurer_confirm_address__h1 = Insurance company’s address
+messages__insurer_confirm_address__title = Enter Insurance company’s address
+messages__insurer_confirm_address__h1 = Enter {0}’s address
 messages__visuallyhidden__insurer_confirm_address = the address for {0}
 
 messages__established_country__title = Which country was the scheme established in?

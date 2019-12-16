@@ -57,23 +57,33 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode, srn: Option[String]): ManualAddressViewModel =
+  private def viewmodel(mode: Mode, srn: Option[String], companyName: String): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, srn),
       countryOptions.options,
       title = Message(title),
-      heading = Message(heading),
+      heading = Message(heading,companyName),
       srn = srn
     )
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn))
+
+      InsuranceCompanyNameId.retrieve.right.map { companyName =>
+        get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn,companyName))
+      }
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      post(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn), mode, "Insurer Address", InsurerEnterPostCodeId)
+      InsuranceCompanyNameId.retrieve.right.map { companyName =>
+        post(InsurerConfirmAddressId,
+             InsurerSelectAddressId,
+             viewmodel(mode, srn, companyName),
+             mode,
+             "Insurer Address",
+             InsurerEnterPostCodeId)
+      }
   }
 }
