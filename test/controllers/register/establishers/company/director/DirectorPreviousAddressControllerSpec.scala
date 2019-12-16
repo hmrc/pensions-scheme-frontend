@@ -86,7 +86,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           val viewmodel = ManualAddressViewModel(
             controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions.options,
-            controller.title,
+            Message(controller.title, Message("messages__theDirector")),
             Message(controller.heading, directorDetails.fullName)
           )
 
