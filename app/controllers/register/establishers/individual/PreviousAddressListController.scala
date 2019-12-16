@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.individual
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
@@ -41,7 +42,8 @@ class PreviousAddressListController @Inject()(
     authenticate: AuthAction,
     getData: DataRetrievalAction,
     allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction
+    requireData: DataRequiredAction,
+    val auditService: AuditService
 )(implicit val ec: ExecutionContext)
     extends GenericAddressListController
     with Retrievals {
@@ -70,8 +72,8 @@ class PreviousAddressListController @Inject()(
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) ( viewmodel(mode, index, srn, _)
-        .right.map ( vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode))
-      )
+      retrieveEstablisherName(index) { name =>
+        val context = s"Establisher Individual Previous Address: $name"
+        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode,context)) }
   }
 }
