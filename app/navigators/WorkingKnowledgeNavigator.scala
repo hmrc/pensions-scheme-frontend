@@ -35,7 +35,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case AdviserAddressPostCodeLookupId =>
         NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode))
       case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserAddressId =>
         NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserCheckYourAnswersId =>
@@ -55,7 +55,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case AdviserAddressPostCodeLookupId =>
         NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode))
       case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserAddressId =>
         NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case _ => None
