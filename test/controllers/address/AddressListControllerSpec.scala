@@ -31,6 +31,7 @@ import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -114,7 +115,7 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
 
     }
 
-    "over-write any existing address on submission of valid data" in {
+    "over-write any existing address on submission of valid data and remove list of addresses selected" in {
 
       running(_.overrides()) { app =>
         val viewModel = addressListViewModel()
@@ -123,6 +124,9 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
 
         status(result) shouldBe SEE_OTHER
         FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) shouldBe Some(addresses.head.toAddress)
+
+        FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
+
       }
 
     }
@@ -191,6 +195,10 @@ object AddressListControllerSpec {
 
     def onSubmit(viewModel: AddressListViewModel, value: Int): Future[Result] = {
 
+      val json = Json.obj(
+        fakeSeqTolerantAddressId.toString -> addresses
+      )
+
       val request = FakeRequest().withFormUrlEncodedBody("value" -> value.toString)
 
       post(
@@ -200,7 +208,7 @@ object AddressListControllerSpec {
         NormalMode,
         "test-context",
         fakeSeqTolerantAddressId
-      )(DataRequest(request, "cacheId", UserAnswers(), PsaId("A0000000")))
+      )(DataRequest(request, "cacheId", UserAnswers(json), PsaId("A0000000")))
 
     }
   }
