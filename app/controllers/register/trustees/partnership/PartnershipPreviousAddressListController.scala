@@ -16,6 +16,7 @@
 
 package controllers.register.trustees.partnership
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
@@ -23,52 +24,66 @@ import controllers.address.AddressListController
 import identifiers.register.trustees.partnership._
 import javax.inject.Inject
 import models._
+import models.address.TolerantAddress
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
-import utils.annotations.TrusteesPartnership
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipPreviousAddressListController @Inject()(
-                                                          val appConfig: FrontendAppConfig,
-                                                          val messagesApi: MessagesApi,
-                                                          val userAnswersService: UserAnswersService,
-                                                          val navigator: Navigator,
-                                                          authenticate: AuthAction,
-                                                          getData: DataRetrievalAction,
-                                                          allowAccess: AllowAccessActionProvider,
-                                                          requireData: DataRequiredAction
-                                                        )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
-
+    val appConfig: FrontendAppConfig,
+    val messagesApi: MessagesApi,
+    val userAnswersService: UserAnswersService,
+    val navigator: Navigator,
+    authenticate: AuthAction,
+    getData: DataRetrievalAction,
+    allowAccess: AllowAccessActionProvider,
+    requireData: DataRequiredAction,
+    val auditService: AuditService
+)(implicit val ec: ExecutionContext)
+    extends AddressListController
+    with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map(get)
-  }
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+      (PartnershipDetailsId(index) and PartnershipPreviousAddressPostcodeLookupId(index)).retrieve.right
+        .map {
+          case partnershipDetails ~ addresses =>
+            get(viewmodel(mode, index, srn, partnershipDetails.name, addresses))
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map(vm => post(vm, PartnershipPreviousAddressListId(index), PartnershipPreviousAddressId(index), mode))
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+      (PartnershipDetailsId(index) and PartnershipPreviousAddressPostcodeLookupId(index)).retrieve.right
+        .map {
+          case partnershipDetails ~ addresses =>
+            val context = s"Trustee Partnership Previous Address: ${partnershipDetails.name}"
+            post(viewmodel(mode, index, srn, partnershipDetails.name, addresses),
+                 PartnershipPreviousAddressListId(index),
+                 PartnershipPreviousAddressId(index),
+                 mode,
+                 context)
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
+    }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
-  Either[Future[Result], AddressListViewModel] = {
-    (PartnershipDetailsId(index) and PartnershipPreviousAddressPostcodeLookupId(index)).retrieve.right.map {
-      case partnershipDetails ~ addresses =>
-        AddressListViewModel(
-          postCall = routes.PartnershipPreviousAddressListController.onSubmit(mode, index, srn),
-          manualInputCall = routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
-          addresses = addresses,
-          title = Message("messages__common__partnership_selectPreviousAddress__title"),
-          heading = Message("messages__common__selectPreviousAddress__h1", partnershipDetails.name),
-          srn = srn
-        )
-    }.left.map(_ => Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
-  }
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String, addresses: Seq[TolerantAddress])(
+      implicit request: DataRequest[AnyContent]): AddressListViewModel =
+    AddressListViewModel(
+      postCall = routes.PartnershipPreviousAddressListController.onSubmit(mode, index, srn),
+      manualInputCall = routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
+      addresses = addresses,
+      title = Message("messages__common__partnership_selectPreviousAddress__title"),
+      heading = Message("messages__common__selectPreviousAddress__h1", name),
+      srn = srn
+    )
 }
