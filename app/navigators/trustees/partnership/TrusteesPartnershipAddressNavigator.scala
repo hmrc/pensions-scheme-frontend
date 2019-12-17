@@ -36,25 +36,28 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   //scalastyle:off cyclomatic.complexity
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index)                => PartnershipAddressListController.onPageLoad(mode, index, None)
-    case PartnershipAddressListId(index)                   => PartnershipAddressController.onPageLoad(mode, index, None)
+    case PartnershipAddressListId(index) if mode == NormalMode => PartnershipAddressYearsController.onPageLoad(mode, index, None)
+    case PartnershipAddressListId(index)                       => cyaAddress(journeyMode(mode), index, None)
     case PartnershipAddressId(index) if mode == NormalMode => PartnershipAddressYearsController.onPageLoad(mode, index, None)
     case PartnershipAddressId(index)                       => cyaAddress(journeyMode(mode), index, None)
     case PartnershipAddressYearsId(index)                  => trusteeAddressYearsRoutes(mode, ua, index, None)
     case id@PartnershipHasBeenTradingId(index)             => booleanNav(id, ua, previousAddressLookup(mode, index, None), cyaAddress(journeyMode(mode), index, None))
     case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad(mode, index, None)
-    case PartnershipPreviousAddressListId(index)           => PartnershipPreviousAddressController.onPageLoad(mode, index, None)
+    case PartnershipPreviousAddressListId(index)           => cyaAddress(journeyMode(mode), index, None)
     case PartnershipPreviousAddressId(index)               => cyaAddress(journeyMode(mode), index, None)
   }
 
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index)                            => PartnershipAddressListController.onPageLoad(mode, index, srn)
-    case PartnershipAddressListId(index)                               => PartnershipAddressController.onPageLoad(mode, index, srn)
+    case PartnershipAddressListId(index) if mode == UpdateMode             => PartnershipAddressYearsController.onPageLoad(mode, index, srn)
+    case PartnershipAddressListId(index)                                   => trusteeAddressRoute(ua, mode, index, srn)
     case PartnershipAddressId(index) if mode == UpdateMode             => PartnershipAddressYearsController.onPageLoad(mode, index, srn)
     case PartnershipAddressId(index)                                   => trusteeAddressRoute(ua, mode, index, srn)
     case PartnershipAddressYearsId(index)                              => trusteeAddressYearsRoutes(mode, ua, index, srn)
     case id@PartnershipHasBeenTradingId(index)                         => booleanNav(id, ua, previousAddressLookup(mode, index, srn), cyaAddress(journeyMode(mode), index, srn))
     case PartnershipPreviousAddressPostcodeLookupId(index)             => PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
-    case PartnershipPreviousAddressListId(index)                       => PartnershipPreviousAddressController.onPageLoad(mode, index, srn)
+    case PartnershipPreviousAddressListId(index) if isNewTrustee(index, ua)=> cyaAddress(journeyMode(mode), index, srn)
+    case PartnershipPreviousAddressListId(_)                               => moreChanges(srn)
     case id@PartnershipConfirmPreviousAddressId(index)                 => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
     case PartnershipPreviousAddressId(index) if isNewTrustee(index, ua)=> cyaAddress(journeyMode(mode), index, srn)
     case PartnershipPreviousAddressId(_)                               => moreChanges(srn)

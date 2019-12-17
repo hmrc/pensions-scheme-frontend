@@ -50,7 +50,6 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = true), directorWhatIsDirectorUTR(mode), true, Some(directorWhatIsDirectorUTR(checkMode(mode))), true),
     (DirectorHasUTRId(0, 0), hasUtr(newDirector, value = false), directorWhyNoUTR(mode), true, Some(directorWhyNoUTR(checkMode(mode))), true),
     (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(mode), true, Some(directorAddressList(checkMode(mode))), true),
-    (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(mode), true, Some(directorAddress(checkMode(mode))), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorAddressYearsId(0, 0), addressYearsOverAYearNew, directorEmail(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew)), true),
     (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(mode), true,
@@ -60,7 +59,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (DirectorConfirmPreviousAddressId(0, 0), confirmPreviousAddressNo, none, false, Some(directorPreviousAddPostcode(checkMode(mode))), false),
     (DirectorConfirmPreviousAddressId(0, 0), emptyAnswers, none, false, Some(sessionExpired), false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(mode), true, Some(directorPreviousAddList(checkMode(mode))), true),
-    (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(mode), true, Some(directorPreviousAddress(checkMode(mode))), true),
+    (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
+    (DirectorPreviousAddressListId(0, 0), newDirector, directorEmail(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorPreviousAddressId(0, 0), emptyAnswers, directorEmail(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
     (DirectorPreviousAddressId(0, 0), newDirector, directorEmail(mode), true, Some(exitJourney(mode, newDirector)), true),
     (DirectorPhoneNumberId(0, 0), emptyAnswers, checkYourAnswers(mode), true, Some(exitJourney(mode, emptyAnswers)), true),
@@ -74,6 +74,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(NormalMode), false, None, false),
     (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(NormalMode), true, None, true),
+    (DirectorAddressListId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
+    (DirectorAddressListId(0, 0), newDirector, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
     (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true),
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(NormalMode), true, Some(checkYourAnswers(NormalMode)), true)
   )
@@ -85,6 +87,8 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
     (CheckYourAnswersId(0, 0), newEstablisher, addCompanyDirectors(UpdateMode), true, None, true),
     (DirectorAddressYearsId(0, 0), directorNoExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress), true),
     (DirectorAddressYearsId(0, 0), directorExistingCurrentAddress, directorPreviousAddPostcode(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress), true),
+    (DirectorAddressListId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (DirectorAddressListId(0, 0), newDirector, directorAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true),
     (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
     (DirectorAddressId(0, 0), newDirector, directorAddressYears(UpdateMode), true, Some(checkYourAnswers(UpdateMode)), true)
   )

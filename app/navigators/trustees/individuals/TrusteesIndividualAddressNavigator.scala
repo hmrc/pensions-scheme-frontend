@@ -36,24 +36,26 @@ class TrusteesIndividualAddressNavigator @Inject()(val dataCacheConnector: UserA
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, None)
-    case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, None)
+    case IndividualAddressListId(index) if mode == NormalMode    => TrusteeAddressYearsController.onPageLoad(mode, index, None)
+    case IndividualAddressListId(index)                          => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeAddressId(index) if mode == NormalMode    => TrusteeAddressYearsController.onPageLoad(mode, index, None)
     case TrusteeAddressId(index)                          => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, None)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, None)
-    case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, None)
+    case TrusteePreviousAddressListId(index)              => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteePreviousAddressId(index)                  => CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
   }
 
   //scalastyle:off cyclomatic.complexity
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index)                => IndividualAddressListController.onPageLoad(mode, index, srn)
-    case IndividualAddressListId(index)                   => TrusteeAddressController.onPageLoad(mode, index, srn)
+    case IndividualAddressListId(index) if mode == UpdateMode    => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
+    case IndividualAddressListId(index)                          => trusteeAddressRoute(ua, mode, index, srn)
     case TrusteeAddressId(index) if mode == UpdateMode    => TrusteeAddressYearsController.onPageLoad(mode, index, srn)
     case TrusteeAddressId(index)                          => trusteeAddressRoute(ua, mode, index, srn)
     case TrusteeAddressYearsId(index)                     => trusteeAddressYearsRoutes(mode, ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) => TrusteePreviousAddressListController.onPageLoad(mode, index, srn)
-    case TrusteePreviousAddressListId(index)              => TrusteePreviousAddressController.onPageLoad(mode, index, srn)
+    case TrusteePreviousAddressListId(index)              => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
     case id@IndividualConfirmPreviousAddressId(index)     => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
     case TrusteePreviousAddressId(index)                  => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
   }

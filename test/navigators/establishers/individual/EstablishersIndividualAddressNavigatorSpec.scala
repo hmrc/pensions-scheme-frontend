@@ -41,12 +41,12 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with MustMatch
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, None)),
-        row(AddressListId(index))(someTolerantAddress, AddressController.onPageLoad(mode, index, None)),
+        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, index, None)),
         row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, index, None)),
         row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, None)),
         row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, index, None)),
         row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, None)),
-        row(PreviousAddressListId(index))(someTolerantAddress, PreviousAddressController.onPageLoad(mode, index, None)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, None)),
         row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, None))
       )
 
@@ -58,12 +58,12 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with MustMatch
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, None)),
-        row(AddressListId(index))(someTolerantAddress, AddressController.onPageLoad(mode, index, None)),
+        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, None)),
         row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, None)),
-        row(PreviousAddressListId(index))(someTolerantAddress, PreviousAddressController.onPageLoad(mode, index, None)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None))
       )
 
@@ -75,12 +75,12 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with MustMatch
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, srn)),
-        row(AddressListId(index))(someTolerantAddress, AddressController.onPageLoad(mode, index, srn)),
+        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, index, srn)),
         row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, index, srn)),
         row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)),
         row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, index, srn)),
         row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, srn)),
-        row(PreviousAddressListId(index))(someTolerantAddress, PreviousAddressController.onPageLoad(mode, index, srn)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, srn), Some(newEstablisherUserAnswers)),
         row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, srn), Some(newEstablisherUserAnswers))
       )
 
@@ -92,13 +92,15 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with MustMatch
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, srn)),
-        row(AddressListId(index))(someTolerantAddress, AddressController.onPageLoad(mode, index, srn)),
+        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newEstablisherUserAnswers)),
+        row(AddressListId(index))(someTolerantAddress, IndividualConfirmPreviousAddressController.onPageLoad(index, srn)),
         row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newEstablisherUserAnswers)),
         row(AddressId(index))(someAddress, IndividualConfirmPreviousAddressController.onPageLoad(index, srn)),
         row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)),
         row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)),
         row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, srn)),
-        row(PreviousAddressListId(index))(someTolerantAddress, PreviousAddressController.onPageLoad(mode, index, srn)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newEstablisherUserAnswers)),
+        row(PreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingEstablisherUserAnswers)),
         row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newEstablisherUserAnswers)),
         row(PreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingEstablisherUserAnswers))
       )

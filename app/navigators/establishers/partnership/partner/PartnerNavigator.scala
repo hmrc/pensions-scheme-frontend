@@ -48,7 +48,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerEnterUTRId(estIndex, partnerIndex)                        =>          postcodeLookupPage(mode, estIndex, partnerIndex, srn)
     case PartnerNoUTRReasonId(estIndex, partnerIndex)                     =>          postcodeLookupPage(mode, estIndex, partnerIndex, srn)
     case PartnerAddressPostcodeLookupId(estIndex, partnerIndex)           => addressListPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressListId(estIndex, partnerIndex)                     => addressPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressListId(estIndex, partnerIndex)                     => addressYearsPage(mode, estIndex, partnerIndex, srn)
     case PartnerAddressId(estIndex, partnerIndex)                         => addressYearsPage(mode, estIndex, partnerIndex, srn)
     case id@PartnerAddressYearsId(estIndex, partnerIndex)                 => partnerAddressYearsRoutes(mode, ua, estIndex, partnerIndex, srn)
     case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   =>
