@@ -41,7 +41,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     (InsuranceCompanyNameId, emptyAnswers, policyNumber(), false, Some(policyNumber(NormalMode)), false),
     (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(), false, Some(checkYouAnswers()), false),
     (InsurerEnterPostCodeId, emptyAnswers, insurerAddressList(), false, None, false),
-    (InsurerSelectAddressId, emptyAnswers, insurerAddress(), false, None, false),
+    (InsurerSelectAddressId, emptyAnswers, checkYouAnswers(), false, None, false),
     (InsurerConfirmAddressId, emptyAnswers, checkYouAnswers(), false, Some(checkYouAnswers()), false)
   )
 
@@ -53,7 +53,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     (InsuranceCompanyNameId, emptyAnswers, none, false, Some(policyNumber(UpdateMode)), false),
     (InsurancePolicyNumberId, emptyAnswers, insurerPostcode(CheckUpdateMode), false, Some(anyMoreChanges), false),
     (InsurerEnterPostCodeId, emptyAnswers, none, false, Some(insurerAddressList(CheckUpdateMode)), false),
-    (InsurerSelectAddressId, emptyAnswers, none, false, Some(insurerAddress(CheckUpdateMode)), false),
+    (InsurerSelectAddressId, emptyAnswers, none, false, Some(anyMoreChanges), false),
     (InsurerConfirmAddressId, emptyAnswers, none, false, Some(anyMoreChanges), false)
   )
 

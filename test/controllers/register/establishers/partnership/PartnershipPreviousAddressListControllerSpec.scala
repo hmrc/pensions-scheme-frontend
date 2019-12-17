@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.partnership
 
+import audit.testdoubles.StubSuccessfulAuditService
 import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -35,7 +36,7 @@ import views.html.address.addressList
 class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0, 1))
   val index = Index(0)
@@ -73,7 +74,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService
     )
 
   def viewAsString(form: Form[_] = form): String =

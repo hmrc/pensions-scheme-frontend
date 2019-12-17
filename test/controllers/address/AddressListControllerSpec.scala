@@ -16,8 +16,11 @@
 
 package controllers.address
 
+import audit.{AddressAction, AddressEvent, AuditService}
+import audit.testdoubles.StubSuccessfulAuditService
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.address.ManualAddressControllerSpec._
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
 import models._
@@ -27,12 +30,13 @@ import navigators.Navigator
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
 import play.api.i18n.MessagesApi
+import play.api.inject.bind
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -110,7 +114,7 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
 
     }
 
-    "delete any existing address on submission of valid data" in {
+    "over-write any existing address on submission of valid data" in {
 
       running(_.overrides()) { app =>
         val viewModel = addressListViewModel()
@@ -118,13 +122,12 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) shouldBe None
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) shouldBe Some(addresses.head.toAddress)
       }
 
     }
 
     "return Bad Request and the correct view on submission of invalid data" in {
-
       running(_.overrides()) { app =>
         val viewModel = addressListViewModel()
         val controller = app.injector.instanceOf[TestController]
@@ -134,6 +137,32 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         contentAsString(result) shouldBe viewAsString(app, viewModel, Some(-1))
       }
 
+    }
+
+    "will send an audit event" in {
+      val auditService = new StubSuccessfulAuditService()
+      running(_.overrides(bind[AuditService].toInstance(auditService))) { app =>
+        val viewModel = addressListViewModel()
+        val controller = app.injector.instanceOf[TestController]
+        val result = controller.onSubmit(viewModel, 0)
+
+        status(result) shouldBe SEE_OTHER
+        auditService.verifySent(
+          AddressEvent(
+            externalId,
+            AddressAction.LookupChanged,
+            "test-context",
+            Address(
+              "value 1",
+              "value 2",
+              None,
+              None,
+              Some("AB1 1AB"),
+              "GB"
+            )
+          )
+        )
+      }
     }
   }
 
@@ -149,6 +178,8 @@ object AddressListControllerSpec {
     override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 
     override protected def navigator: Navigator = new FakeNavigator(onwardRoute)
+
+    override def auditService = new StubSuccessfulAuditService()
 
     def onPageLoad(viewModel: AddressListViewModel): Future[Result] = {
 
@@ -166,7 +197,9 @@ object AddressListControllerSpec {
         viewModel,
         FakeSelectedAddressIdentifier,
         FakeAddressIdentifier,
-        NormalMode
+        NormalMode,
+        "test-context",
+        fakeSeqTolerantAddressId
       )(DataRequest(request, "cacheId", UserAnswers(), PsaId("A0000000")))
 
     }
@@ -179,7 +212,9 @@ object AddressListControllerSpec {
 
   val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-
+  val fakeSeqTolerantAddressId: TypedIdentifier[Seq[TolerantAddress]] = new TypedIdentifier[Seq[TolerantAddress]] {
+    override def toString = "abc"
+  }
   private lazy val postCall = controllers.routes.IndexController.onPageLoad()
   private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad()
 

@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.testdoubles.StubSuccessfulAuditService
+import controllers.InsurerConfirmAddressControllerSpec.fakeAuditService
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.{InsurerEnterPostCodeId, InsurerSelectAddressId}
@@ -34,7 +36,7 @@ import views.html.address.addressList
 class InsurerSelectAddressControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"
   val schemeNameJsValue: JsObject = Json.obj("schemeName" -> schemeName)
@@ -57,7 +59,8 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      fakeAuditService
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
