@@ -81,11 +81,14 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
         .map {
           case name ~ addresses =>
             val context = s"Trustee Individual Previous Address: $name"
-            post(viewmodel(mode, index, srn, name, addresses),
-                 TrusteePreviousAddressListId(index),
-                 TrusteePreviousAddressId(index),
-                 mode,
-                 context)
+            post(
+              viewmodel(mode, index, srn, name, addresses),
+              TrusteePreviousAddressListId(index),
+              TrusteePreviousAddressId(index),
+              mode,
+              context,
+              IndividualPreviousAddressPostCodeLookupId(index)
+            )
         }
         .left
         .map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))

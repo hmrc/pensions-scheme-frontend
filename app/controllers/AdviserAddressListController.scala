@@ -53,7 +53,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
     implicit request =>
       viewModel(mode).right.map {
         vm =>
-          post(vm, AdviserAddressListId, AdviserAddressId, mode,"Adviser Address")
+          post(vm, AdviserAddressListId, AdviserAddressId, mode,"Adviser Address",AdviserAddressPostCodeLookupId)
       }
   }
 

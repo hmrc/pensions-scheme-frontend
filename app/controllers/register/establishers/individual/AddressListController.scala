@@ -56,7 +56,7 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       retrieveEstablisherName(index) { name =>
         val context = s"Establisher Individual Address: $name"
-        viewmodel(mode, index, srn, name).right.map( post(_, AddressListId(index), AddressId(index), mode,context)) }
+        viewmodel(mode, index, srn, name).right.map( post(_, AddressListId(index), AddressId(index), mode,context, PostCodeLookupId(index))) }
   }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], establisherName: String)(

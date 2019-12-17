@@ -80,7 +80,7 @@ class CompanyAddressListController @Inject()(
           case companyDetails ~ addresses =>
             val context = s"Establisher Company Address: ${companyDetails.companyName}"
             post(viewmodel(mode, srn, index, companyDetails.companyName, addresses),
-              CompanyAddressListId(index), CompanyAddressId(index), mode, context)
+              CompanyAddressListId(index), CompanyAddressId(index), mode, context,CompanyPostCodeLookupId(index))
         }
         .left
         .map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index))))

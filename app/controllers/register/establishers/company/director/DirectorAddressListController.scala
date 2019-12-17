@@ -74,7 +74,8 @@ class DirectorAddressListController @Inject()(
               DirectorAddressListId(establisherIndex, directorIndex),
               DirectorAddressId(establisherIndex, directorIndex),
               mode,
-              context
+              context,
+              DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
             )
         }
         .left

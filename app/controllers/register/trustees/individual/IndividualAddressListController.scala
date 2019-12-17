@@ -64,11 +64,14 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
       (TrusteeNameId(index) and IndividualPostCodeLookupId(index)).retrieve.right
         .map {
           case pn ~ addresses =>
-            post(viewmodel(mode, index, srn, pn.fullName, addresses),
-                 IndividualAddressListId(index),
-                 TrusteeAddressId(index),
-                 mode,
-                 context(pn.fullName))
+            post(
+              viewmodel(mode, index, srn, pn.fullName, addresses),
+              IndividualAddressListId(index),
+              TrusteeAddressId(index),
+              mode,
+              context(pn.fullName),
+              IndividualPostCodeLookupId(index)
+            )
         }
         .left
         .map(_ => Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn))))

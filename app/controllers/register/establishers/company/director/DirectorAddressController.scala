@@ -94,7 +94,7 @@ class DirectorAddressController @Inject()(
       srn = srn
     )
 
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }

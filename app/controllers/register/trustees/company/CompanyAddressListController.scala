@@ -64,11 +64,14 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
         .map {
           case companyDetails ~ addresses =>
             val context = s"Trustee Company Address: ${companyDetails.companyName}"
-            post(viewmodel(mode, index, srn, companyDetails.companyName, addresses),
-                 CompanyAddressListId(index),
-                 CompanyAddressId(index),
-                 mode,
-                 context)
+            post(
+              viewmodel(mode, index, srn, companyDetails.companyName, addresses),
+              CompanyAddressListId(index),
+              CompanyAddressId(index),
+              mode,
+              context,
+              CompanyPostcodeLookupId(index)
+            )
         }
         .left
         .map(_ => Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn))))

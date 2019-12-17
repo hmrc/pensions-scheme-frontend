@@ -61,7 +61,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
       (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right.map {
         case partnershipDetails ~ addresses =>
           val context = s"Trustee Partnership Address: ${partnershipDetails.name}"
-          post(viewmodel(mode, index, srn, partnershipDetails.name, addresses), PartnershipAddressListId(index), PartnershipAddressId(index), mode, context)
+          post(viewmodel(mode, index, srn, partnershipDetails.name, addresses), PartnershipAddressListId(index), PartnershipAddressId(index), mode, context, PartnershipPostcodeLookupId(index))
       }.left.map(_ =>
         Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
 

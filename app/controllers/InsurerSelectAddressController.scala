@@ -55,7 +55,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>
-          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode, "Insurer Address")
+          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode, "Insurer Address",InsurerEnterPostCodeId)
       }
   }
 

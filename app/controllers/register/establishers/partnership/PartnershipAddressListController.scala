@@ -21,7 +21,12 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.establishers.partnership.{
+  PartnershipAddressId,
+  PartnershipAddressListId,
+  PartnershipDetailsId,
+  PartnershipPostcodeLookupId
+}
 import javax.inject.Inject
 import models.address.TolerantAddress
 import models.requests.DataRequest
@@ -64,11 +69,14 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
         .map {
           case partnershipDetails ~ addresses =>
             val context = s"Partnership Address: ${partnershipDetails.name}"
-            post(viewmodel(mode, index, srn, partnershipDetails.name, addresses),
-                 PartnershipAddressListId(index),
-                 PartnershipAddressId(index),
-                 mode,
-                 context)
+            post(
+              viewmodel(mode, index, srn, partnershipDetails.name, addresses),
+              PartnershipAddressListId(index),
+              PartnershipAddressId(index),
+              mode,
+              context,
+              PartnershipPostcodeLookupId(index)
+            )
         }
         .left
         .map(_ => Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))

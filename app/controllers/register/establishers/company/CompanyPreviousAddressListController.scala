@@ -67,11 +67,14 @@ class CompanyPreviousAddressListController @Inject()(
         .map {
           case companyDetails ~ addresses =>
             val context = s"Establisher Company Previous Address: ${companyDetails.companyName}"
-            post(viewmodel(mode, srn, index, companyDetails.companyName, addresses),
-                 CompanyPreviousAddressListId(index),
-                 CompanyPreviousAddressId(index),
-                 mode,
-                 context)
+            post(
+              viewmodel(mode, srn, index, companyDetails.companyName, addresses),
+              CompanyPreviousAddressListId(index),
+              CompanyPreviousAddressId(index),
+              mode,
+              context,
+              CompanyPreviousAddressPostcodeLookupId(index)
+            )
         }
         .left
         .map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))))

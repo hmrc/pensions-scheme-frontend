@@ -94,7 +94,8 @@ class PartnerAddressListController @Inject()(
               PartnerAddressListId(establisherIndex, partnerIndex),
               PartnerAddressId(establisherIndex, partnerIndex),
               mode,
-              context
+              context,
+              PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
             )
         }
         .left

@@ -74,6 +74,6 @@ class PreviousAddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) { name =>
         val context = s"Establisher Individual Previous Address: $name"
-        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode,context)) }
+        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode,context,PreviousPostCodeLookupId(index))) }
   }
 }

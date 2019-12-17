@@ -89,7 +89,8 @@ class PartnerPreviousAddressListController @Inject()(
               PartnerPreviousAddressListId(establisherIndex, partnerIndex),
               PartnerPreviousAddressId(establisherIndex, partnerIndex),
               mode,
-              context
+              context,
+              PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
             )
         }
         .left
