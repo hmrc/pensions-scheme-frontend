@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.UKBankAccountFormProvider
-import identifiers.{IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
+import identifiers.{SchemeNameId, UKBankAccountId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -41,8 +41,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankAccountFormProvider,
-                                        sectionComplete: SectionComplete
+                                        formProvider: UKBankAccountFormProvider
                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -66,10 +65,8 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode, schemeName)))
           },
         value =>
-          dataCacheConnector.save(request.externalId, UKBankAccountId, value).flatMap { cacheMap =>
-            sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, UserAnswers(cacheMap), value = false).map { answers =>
-              Redirect(navigator.nextPage(UKBankAccountId, mode, answers))
-            }
+          dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
+            Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap)))
           }
       )
   }

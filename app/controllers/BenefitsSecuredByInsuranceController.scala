@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
-import identifiers.{BenefitsSecuredByInsuranceId, IsAboutBenefitsAndInsuranceCompleteId}
+import identifiers.BenefitsSecuredByInsuranceId
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -28,8 +28,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.UserAnswers
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.benefitsSecuredByInsurance
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,17 +47,17 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
 
   private val form: Form[Boolean] = formProvider()
 
-  val postCall: (Mode,Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
+  val postCall: (Mode, Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
-  }
+      implicit request =>
+        val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
+    }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
@@ -65,10 +65,8 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
         value =>
-          userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).flatMap{ userAnswers =>
-            val updatedUserAnswers = UserAnswers(userAnswers).set(IsAboutBenefitsAndInsuranceCompleteId)(!value).getOrElse(UserAnswers(userAnswers))
-            userAnswersService.upsert(mode, srn, updatedUserAnswers.json).map(cacheMap =>
-            Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap), srn)))
+          userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map { userAnswers =>
+            Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(userAnswers), srn))
           }
       )
   }

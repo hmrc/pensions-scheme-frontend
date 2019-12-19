@@ -31,7 +31,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers
   def taskList: SchemeDetailsTaskList = {
 
     SchemeDetailsTaskList(
-      SchemeDetailsTaskListSection(answers.get(IsBeforeYouStartCompleteId), beforeYouStartLink(answers, NormalMode, None), None),
+      SchemeDetailsTaskListSection(Some(answers.isBeforeYouStartCompleted(NormalMode)),
+        beforeYouStartLink(answers, NormalMode, None), None),
       messages("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       workingKnowledgeSection(answers),
@@ -49,28 +50,28 @@ class HsTaskListHelperRegistration(answers: UserAnswers
   }
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+    val membersLink = userAnswers.isMembersCompleted match {
       case Some(true) => Link(aboutMembersLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
       case Some(false) => Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
       case None => Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId) match {
+    val benefitsAndInsuranceLink = userAnswers.isBenefitsAndInsuranceCompleted match {
       case Some(true) => Link(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
       case Some(false) => Link(aboutBenefitsAndInsuranceLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
       case None => Link(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
     }
 
-    val bankDetailsLink = userAnswers.get(IsAboutBankDetailsCompleteId) match {
+    val bankDetailsLink = userAnswers.isBankDetailsCompleted match {
       case Some(true) => Link(aboutBankDetailsLinkText, controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
       case Some(false) => Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
       case None => Link(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
     }
 
-    Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
-      SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
+    Seq(SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
+      SchemeDetailsTaskListSection(userAnswers.isBenefitsAndInsuranceCompleted, benefitsAndInsuranceLink, None),
+      SchemeDetailsTaskListSection(userAnswers.isBankDetailsCompleted, bankDetailsLink, None))
   }
 
   protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =

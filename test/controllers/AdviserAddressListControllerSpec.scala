@@ -120,9 +120,8 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
 object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
-  lazy val onwardRoute: Call = controllers.routes.AdviserAddressController.onPageLoad(NormalMode)
+  lazy val onwardRoute: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
   private val adviserName = "the Adviser"
-
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),

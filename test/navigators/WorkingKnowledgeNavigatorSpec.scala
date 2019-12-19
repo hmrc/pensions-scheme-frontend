@@ -34,7 +34,7 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
     (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true),
     (AdviserAddressPostCodeLookupId, emptyAnswers, adviserAddressList(NormalMode), true, Some(adviserAddressList(CheckMode)), true),
-    (AdviserAddressListId, emptyAnswers, adviserAddress(NormalMode), true, Some(adviserAddress(CheckMode)), true),
+    (AdviserAddressListId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
     (AdviserAddressId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
     (AdviserCheckYourAnswersId, emptyAnswers, taskList, true, None, false)
   )

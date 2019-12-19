@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider
-import identifiers.{AdviserNameId, IsWorkingKnowledgeCompleteId}
+import identifiers.AdviserNameId
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -28,8 +28,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.WorkingKnowledge
-import utils.{SectionComplete, UserAnswers}
 import views.html.adviserName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,8 +42,7 @@ class AdviserNameController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: AdviserNameFormProvider,
-                                       sectionComplete: SectionComplete
+                                       formProvider: AdviserNameFormProvider
                                      )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -63,11 +62,8 @@ class AdviserNameController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(adviserName(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          dataCacheConnector.save(request.externalId, AdviserNameId, value).flatMap { cacheMap =>
-            sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-              UserAnswers(cacheMap), value = false).map { answers =>
-              Redirect(navigator.nextPage(AdviserNameId, mode, answers))
-            }
+          dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
+            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap)))
           }
       )
   }

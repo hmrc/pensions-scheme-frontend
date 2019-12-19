@@ -17,16 +17,14 @@
 package controllers
 
 import controllers.actions._
-import identifiers.register.trustees.HaveAnyTrusteesId
-import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
 import models._
 import models.register.SchemeType
-import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.FakeCountryOptions
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import utils.{FakeCountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
@@ -39,14 +37,14 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+        contentAsString(result) mustBe viewAsString
       }
 
       "return OK and the correct view with return to Manage" in {
         val result = controller(schemeInfo).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsStringWithReturnToManage()
+        contentAsString(result) mustBe viewAsStringWithReturnToManage
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
@@ -61,16 +59,6 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
-    }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-        FakeUserAnswersService.verify(IsBeforeYouStartCompleteId, true)
-      }
     }
 
   }
@@ -92,28 +80,24 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService
     )
 
-  private def postUrl(mode:Mode) = routes.CheckYourAnswersBeforeYouStartController.onSubmit(mode, None)
+  private def postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  private val schemeInfo = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      SchemeNameId.toString -> "Test Scheme",
-      SchemeTypeId.toString -> SchemeType.SingleTrust,
-      HaveAnyTrusteesId.toString -> true,
-      EstablishedCountryId.toString -> "GB",
-      identifiers.DeclarationDutiesId.toString -> false
-    ))
-  )
+  private val schemeInfo = UserAnswers().schemeName(schemeName = "Test Scheme").dataRetrievalAction
 
-  private val schemeInfoWithCompleteFlag = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      SchemeNameId.toString -> "Test Scheme",
-      SchemeTypeId.toString -> SchemeType.SingleTrust,
-      HaveAnyTrusteesId.toString -> true,
-      EstablishedCountryId.toString -> "GB",
-      identifiers.DeclarationDutiesId.toString -> false,
-      identifiers.IsBeforeYouStartCompleteId.toString -> true
-    ))
-  )
+  private val schemeInfoWithCompleteFlag = UserAnswers().schemeName(schemeName = "Test Scheme").
+    schemeType(SchemeType.SingleTrust).establishedCountry(country = "GB").
+    declarationDuties(haveWorkingKnowledge = true).dataRetrievalAction
+
+  private val beforeYouStartIncomplete = AnswerSection(
+    None,
+    Seq(
+      AnswerRow(
+        "schemeName.checkYourAnswersLabel",
+        Seq("Test Scheme"),
+        answerIsMessageKey = false,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+          Some(messages("messages__visuallyhidden__schemeName"))))
+      )))
 
   private val beforeYouStart = AnswerSection(
     None,
@@ -133,13 +117,6 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
           Some(messages("messages__visuallyhidden__schemeType", "Test Scheme"))))
       ),
       AnswerRow(
-        messages("haveAnyTrustees.checkYourAnswersLabel", "Test Scheme"),
-        Seq("site.yes"),
-        answerIsMessageKey = true,
-        Some(Link("site.change", routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url,
-          Some(messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme"))))
-      ),
-      AnswerRow(
         messages("schemeEstablishedCountry.checkYourAnswersLabel", "Test Scheme"),
         Seq("Country of GB"),
         answerIsMessageKey = false,
@@ -148,7 +125,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
-        Seq("site.no"),
+        Seq("site.yes"),
         answerIsMessageKey = true,
         Some(Link("site.change", routes.WorkingKnowledgeController.onPageLoad(CheckMode).url,
           Some("messages__visuallyhidden__declarationDuties")))
@@ -156,24 +133,20 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(beforeYouStart),
-    postUrl(NormalMode),
-    Some("Test Scheme"),
+  private def vm(returnOverview: Boolean = false, data: AnswerSection) = CYAViewModel(
+    answerSections = Seq(data),
+    href = postUrl,
+    schemeName = Some("Test Scheme"),
+    returnOverview = returnOverview,
     hideEditLinks = false,
+    srn = None,
     hideSaveAndContinueButton = false,
-    mode = NormalMode
-  )(fakeRequest, messages).toString
+    title = Message("checkYourAnswers.hs.title"),
+    h1 =  Message("checkYourAnswers.hs.title")
+  )
 
-  private def viewAsStringWithReturnToManage(): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(beforeYouStart),
-    postUrl(NormalMode),
-    Some("Test Scheme"),
-    returnOverview=true,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = false
-  )(fakeRequest, messages).toString
+  private def viewAsString: String = checkYourAnswers(frontendAppConfig, vm(false, beforeYouStart))(fakeRequest, messages).toString
+
+  private def viewAsStringWithReturnToManage: String = checkYourAnswers(frontendAppConfig, vm(true, beforeYouStartIncomplete))(fakeRequest, messages).toString
 
 }

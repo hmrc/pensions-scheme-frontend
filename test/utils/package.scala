@@ -99,6 +99,14 @@ package object utils {
       answers.set(identifiers.UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
+    def declarationDuties(haveWorkingKnowledge: Boolean): UserAnswers = {
+      answers.set(identifiers.DeclarationDutiesId)(haveWorkingKnowledge).asOpt.value
+    }
+
+    def haveAnyTrustees(haveTrustees: Boolean): UserAnswers = {
+      answers.set(identifiers.HaveAnyTrusteesId)(haveTrustees).asOpt.value
+    }
+
     //Establishers Individual
 
     def establishersIndividualAddress(index: Int, address: Address): UserAnswers = {

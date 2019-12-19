@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register._
-import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId, VariationDeclarationId}
+import identifiers.{UserResearchDetailsId, VariationDeclarationId}
 import models._
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
@@ -75,8 +75,9 @@ object RegisterNavigatorSpec extends OptionValues{
   private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
-  private val beforeYouStartCompleted = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
-  private val beforeYouStartInProgress = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
+  private val beforeYouStartInProgress = UserAnswers().schemeName("Test Scheme")
+  private val beforeYouStartCompleted = beforeYouStartInProgress.schemeType(SchemeType.SingleTrust).
+    establishedCountry(country = "GB").declarationDuties(haveWorkingKnowledge = true)
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
