@@ -16,7 +16,7 @@
 
 package utils.datacompletion
 
-import identifiers.TypedIdentifier
+import identifiers._
 import identifiers.register.establishers.company._
 import identifiers.register.trustees.{company => tc}
 import identifiers.register.trustees.{partnership => tp}
@@ -24,7 +24,7 @@ import identifiers.register.establishers.company.director._
 import identifiers.register.trustees.individual._
 import identifiers.register.trustees.partnership.PartnershipHasBeenTradingId
 import models.address.Address
-import models.{AddressYears, Mode, NormalMode, ReferenceValue}
+import models._
 import play.api.libs.json.Reads
 import utils.UserAnswers
 
@@ -74,9 +74,9 @@ trait DataCompletion {
       case _ => Some(false)
     }
 
-  def isAnswerComplete(yesNoQuestionId: TypedIdentifier[Boolean],
-                              yesValueId: TypedIdentifier[ReferenceValue],
-                              noReasonIdOpt: Option[TypedIdentifier[String]]): Option[Boolean] =
+  def isAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
+                              yesValueId: TypedIdentifier[A],
+                              noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =
     (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
       case (None, None, _) => None
       case (_, Some(_), _) => Some(true)
@@ -91,8 +91,46 @@ trait DataCompletion {
       case Some(_) => Some(true)
     }
 
+  def isBeforeYouStartCompleted(mode: Mode): Boolean = {
+    val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
+    val haveAnyTrusteeComplete = if (isSingleOrMaster && get(HaveAnyTrusteesId).isEmpty) true else get(HaveAnyTrusteesId).nonEmpty
+    val declarationDutiesComplete = if (mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
 
+    !List(get(SchemeNameId), get(SchemeTypeId), get(EstablishedCountryId)).contains(None) &&
+      haveAnyTrusteeComplete && declarationDutiesComplete
+  }
 
+  def isMembersCompleted: Option[Boolean] = isComplete(Seq(
+    isAnswerComplete(CurrentMembersId),
+    isAnswerComplete(FutureMembersId)))
 
+  def isBankDetailsCompleted: Option[Boolean] = isAnswerComplete(UKBankAccountId, BankAccountDetailsId, None)
 
+  def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
+
+    val isBenefitsSecuredByContractCompleted = get(BenefitsSecuredByInsuranceId) match {
+      case Some(true) => isComplete(Seq(
+        isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete(InsurerConfirmAddressId)))
+      case Some(false) => Some(true)
+      case _ => None
+    }
+
+    isComplete(Seq(
+      isAnswerComplete(InvestmentRegulatedSchemeId),
+      isAnswerComplete(OccupationalPensionSchemeId),
+      isAnswerComplete(TypeOfBenefitsId),
+      isBenefitsSecuredByContractCompleted))
+  }
+
+  def isAdviserCompleted: Option[Boolean] = isComplete(Seq(
+    isAnswerComplete(AdviserNameId),
+    isAnswerComplete(AdviserEmailId),
+    isAnswerComplete(AdviserPhoneId),
+    isAnswerComplete(AdviserAddressId)
+  ))
+
+  def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {
+    case Some(false) => isAdviserCompleted
+    case _ => get(DeclarationDutiesId)
+  }
 }

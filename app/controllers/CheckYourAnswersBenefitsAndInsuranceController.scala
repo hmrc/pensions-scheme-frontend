@@ -20,21 +20,19 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
 import javax.inject.Inject
-import models.{CheckUpdateMode, Mode, UpdateMode}
 import models.Mode._
+import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, SectionComplete}
-import viewmodels.AnswerSection
-import views.html.check_your_answers_old
-import models.Mode._
-import models.requests.DataRequest
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.NoSuspendedCheck
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: FrontendAppConfig,
                                                                override val messagesApi: MessagesApi,
@@ -47,9 +45,10 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
         InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
@@ -61,23 +60,21 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
 
-      Ok(check_your_answers_old(
-        appConfig,
-        Seq(benefitsAndInsuranceSection),
-        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, srn),
-        existingSchemeName,
-        mode = mode,
+      val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+        Message("messages__benefitsAndInsuranceDetailsFor", name)
+
+      val vm = CYAViewModel(
+        answerSections = Seq(benefitsAndInsuranceSection),
+        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        schemeName = existingSchemeName,
+        returnOverview = false,
         hideEditLinks = request.viewOnly,
+        srn = srn,
         hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-        srn = srn
-      ))
-  }
+        title = heading(Message("messages__theScheme").resolve),
+        h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme").resolve))
+      )
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      userAnswersService.save(mode, srn, IsAboutBenefitsAndInsuranceCompleteId, value = true) map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
-      }
+      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
   }
-
 }

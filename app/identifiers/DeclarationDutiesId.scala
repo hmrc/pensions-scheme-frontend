@@ -26,9 +26,7 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
     value match {
       case Some(true) =>
         userAnswers.removeAllOf(List(AdviserEmailId, AdviserPhoneId, AdviserNameId,
-          AdviserAddressListId, AdviserAddressPostCodeLookupId, AdviserAddressId, IsWorkingKnowledgeCompleteId))
-      case Some(false) =>
-        userAnswers.remove(IsWorkingKnowledgeCompleteId)
+          AdviserAddressListId, AdviserAddressPostCodeLookupId, AdviserAddressId))
       case _ => super.cleanup(value, userAnswers)
     }
   }

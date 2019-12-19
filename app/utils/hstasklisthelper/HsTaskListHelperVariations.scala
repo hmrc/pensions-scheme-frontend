@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import identifiers.{IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import identifiers.{SchemeNameId, _}
 import models.{Link, Mode, UpdateMode}
 import play.api.i18n.Messages
 import utils.UserAnswers
@@ -33,9 +33,9 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   override def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
-      userAnswers.get(IsAboutMembersCompleteId),
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
+      Some(userAnswers.isBeforeYouStartCompleted(UpdateMode)),
+      userAnswers.isMembersCompleted,
+      userAnswers.isBenefitsAndInsuranceCompleted,
       Some(userAnswers.allEstablishersCompleted(UpdateMode)),
       Some(isTrusteeOptional | userAnswers.isAllTrusteesCompleted),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
@@ -64,7 +64,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   }
 
   override protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.get(IsAboutMembersCompleteId) match {
+    val membersLink = userAnswers.isMembersCompleted match {
       case Some(true) => Link(aboutMembersViewLinkText, controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
       case _ => Link(aboutMembersViewLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
@@ -84,7 +84,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     )
   }
 
-  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] =
+  protected[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] = {
     if (viewOnly) {
       None
     } else {
@@ -95,6 +95,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))
     }
+  }
 
   private[utils] def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
     if (userAnswers.isUserAnswerUpdated) {

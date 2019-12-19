@@ -17,18 +17,18 @@
 package identifiers
 
 import base.SpecBase
-import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{Link, UpdateMode}
 import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.{JsSuccess, Json}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
-import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
+import viewmodels.AnswerRow
 
 class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
 
@@ -71,10 +71,6 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with P
     "`BenefitsSecuredByInsuranceId` is set to `true`" must {
 
       val result: UserAnswers = answers.set(BenefitsSecuredByInsuranceId)(true).asOpt.value
-
-      "set the IsAboutSectionComplete to false" in {
-        result.get(IsAboutBenefitsAndInsuranceCompleteId).value mustBe false
-      }
 
       "not remove the data for `InsuranceCompanyName`" in {
         result.get(InsuranceCompanyNameId) must be(defined)

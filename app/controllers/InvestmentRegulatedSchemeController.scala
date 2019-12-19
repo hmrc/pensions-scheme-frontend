@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InvestmentRegulatedSchemeFormProvider
-import identifiers.{InvestmentRegulatedSchemeId, IsAboutBenefitsAndInsuranceCompleteId}
+import identifiers.InvestmentRegulatedSchemeId
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -28,8 +28,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.UserAnswers
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{SectionComplete, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,8 +41,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: InvestmentRegulatedSchemeFormProvider,
-                                                    sectionComplete: SectionComplete
+                                                    formProvider: InvestmentRegulatedSchemeFormProvider
                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -62,10 +61,8 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(investmentRegulatedScheme(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
-          dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).flatMap { cacheMap =>
-            sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, UserAnswers(cacheMap), value = false).map { answers =>
-              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, answers))
-            }
+          dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).map { cacheMap =>
+            Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap)))
           }
       )
   }

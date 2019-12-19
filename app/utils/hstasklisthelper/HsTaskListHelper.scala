@@ -23,7 +23,7 @@ import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, _}
+import identifiers.{DeclarationDutiesId, _}
 import models._
 import models.register.SchemeType.{MasterTrust, SingleTrust}
 import models.register.{Entity, SchemeType}
@@ -70,21 +70,20 @@ abstract class HsTaskListHelper(answers: UserAnswers
   protected[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection]
 
   private[utils] def beforeYouStartLink(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Link = {
-    userAnswers.get(IsBeforeYouStartCompleteId) match {
-      case Some(true) => Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
-      case _ => Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
-    }
+    if(userAnswers.isBeforeYouStartCompleted(mode))
+      Link(beforeYouStartLinkText, controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url)
+    else Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)
   }
 
   private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(false) =>
-        val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
+        val wkLink = userAnswers.isAdviserCompleted match {
           case Some(true) => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
           case Some(false) => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
           case None => Link(workingKnowledgeAddLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
         }
-        Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))
+        Some(SchemeDetailsTaskListSection(userAnswers.isWorkingKnowledgeCompleted, wkLink, None))
       case _ =>
         None
     }
@@ -127,11 +126,11 @@ abstract class HsTaskListHelper(answers: UserAnswers
 
     val isTrusteeOptional = userAnswers.get(HaveAnyTrusteesId).contains(false)
     Seq(
-      userAnswers.get(IsBeforeYouStartCompleteId),
-      userAnswers.get(IsAboutMembersCompleteId),
-      userAnswers.get(IsAboutBankDetailsCompleteId),
-      userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId),
-      userAnswers.get(IsWorkingKnowledgeCompleteId),
+      Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
+      userAnswers.isMembersCompleted,
+      userAnswers.isBankDetailsCompleted,
+      userAnswers.isBenefitsAndInsuranceCompleted,
+      userAnswers.isWorkingKnowledgeCompleted,
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(isTrusteeOptional | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)

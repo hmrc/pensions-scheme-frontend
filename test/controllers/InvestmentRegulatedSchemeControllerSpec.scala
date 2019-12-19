@@ -21,13 +21,13 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InvestmentRegulatedSchemeFormProvider
-import identifiers.{InvestmentRegulatedSchemeId, IsAboutBenefitsAndInsuranceCompleteId}
+import identifiers.InvestmentRegulatedSchemeId
 import models.NormalMode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, FakeSectionComplete, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,14 +60,6 @@ class InvestmentRegulatedSchemeControllerSpec extends ControllerWithQuestionPage
       InvestmentRegulatedSchemeId,
       true
     )
-
-    "calling onSubmit" must {
-      "set the IsAboutBenefitsAndInsuranceCompleteId to false to change to in progress status" in {
-        controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
-
-        FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, false)
-      }
-    }
   }
 }
 
@@ -86,8 +78,7 @@ object InvestmentRegulatedSchemeControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector,
-    sectionComplete: SectionComplete = FakeSectionComplete
+    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): InvestmentRegulatedSchemeController =
     new InvestmentRegulatedSchemeController(
       base.frontendAppConfig,
@@ -97,8 +88,7 @@ object InvestmentRegulatedSchemeControllerSpec {
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider,
-      sectionComplete
+      formProvider
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =

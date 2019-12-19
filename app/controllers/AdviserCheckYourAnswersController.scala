@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers.{IsWorkingKnowledgeCompleteId, _}
+import identifiers._
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import navigators.Navigator
@@ -28,11 +28,11 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, SectionComplete}
-import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -41,13 +41,12 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   @WorkingKnowledge navigator: Navigator,
-                                                  implicit val countryOptions: CountryOptions,
-                                                  sectionComplete: SectionComplete
+                                                  implicit val countryOptions: CountryOptions
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val seqAnswerSection = {
           val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
@@ -56,22 +55,18 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
           Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }
-      Ok(
-        check_your_answers_old(
-          appConfig,
-          seqAnswerSection,
-          controllers.routes.AdviserCheckYourAnswersController.onSubmit(),
-          existingSchemeName,
-          hideEditLinks = request.viewOnly,
-          hideSaveAndContinueButton = request.viewOnly
-        )
+      val vm = CYAViewModel(
+        answerSections = seqAnswerSection,
+        href = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None),
+        schemeName = existingSchemeName,
+        returnOverview = false,
+        hideEditLinks = request.viewOnly,
+        srn = None,
+        hideSaveAndContinueButton = request.viewOnly,
+        title = Message("checkYourAnswers.hs.title"),
+        h1 = Message("checkYourAnswers.hs.title")
       )
-  }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
-    implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value = true).map { _ =>
-        Redirect(navigator.nextPage(AdviserCheckYourAnswersId, NormalMode, request.userAnswers))
-      }
+      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
   }
 }
