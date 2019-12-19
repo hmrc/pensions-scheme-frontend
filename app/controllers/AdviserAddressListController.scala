@@ -59,12 +59,14 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
 
   private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    AdviserAddressPostCodeLookupId.retrieve.right.map {
-      addresses =>
+      (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.right.map {
+        case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.AdviserAddressListController.onSubmit(mode),
           manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
-          addresses = addresses
+          addresses = addresses,
+          heading = Message("messages__dynamic_whatIsAddress", name),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser"))
         )
     }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }

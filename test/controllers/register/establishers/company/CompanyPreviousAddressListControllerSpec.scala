@@ -84,7 +84,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         routes.CompanyPreviousAddressListController.onSubmit(NormalMode, None, index),
         routes.CompanyPreviousAddressController.onPageLoad(NormalMode, None, index),
         addresses,
-        title = Message("messages__establisherPreviousSelectAddress__title"),
+        title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
         heading = Message("messages__common__selectPreviousAddress__h1", companyName)
       ),
       None

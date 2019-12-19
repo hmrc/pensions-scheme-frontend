@@ -62,7 +62,7 @@ class CompanyAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, srn, Index(index)),
       countryOptions.options,
-      title = Message(title, Message("messages__common__address_years__establisher")),
+      title = Message(title, Message("messages__theEstablisher")),
       heading = Message(heading, name),
       srn = srn
     )

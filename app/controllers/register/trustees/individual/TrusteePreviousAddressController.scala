@@ -59,7 +59,7 @@ class TrusteePreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message("messages__common__confirmPreviousAddress__h1",Message("messages__theTrustee")),
+      title = Message("messages__common__confirmPreviousAddress__h1",Message("messages__theIndividual")),
       heading = Message("messages__common__confirmPreviousAddress__h1", name),
       srn = srn
     )

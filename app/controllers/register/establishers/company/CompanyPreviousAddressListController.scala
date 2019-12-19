@@ -86,7 +86,7 @@ class CompanyPreviousAddressListController @Inject()(
       postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
       manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
       addresses = addresses,
-      title = Message("messages__establisherPreviousSelectAddress__title"),
+      title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
       heading = Message("messages__common__selectPreviousAddress__h1", companyName),
       srn = srn
     )

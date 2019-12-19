@@ -20,7 +20,7 @@ import base.CSRFRequest
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.AdviserAddressPostCodeLookupId
+import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
 import models.NormalMode
 import models.address.TolerantAddress
 import navigators.Navigator
@@ -121,6 +121,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
   lazy val onwardRoute: Call = controllers.routes.AdviserAddressController.onPageLoad(NormalMode)
+  private val adviserName = "the Adviser"
 
   private val addresses = Seq(
     TolerantAddress(
@@ -142,7 +143,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
   )
 
   private val data =
-    UserAnswers(Json.obj())
+    UserAnswers(Json.obj(AdviserNameId.toString ->adviserName))
       .set(AdviserAddressPostCodeLookupId)(addresses)
       .asOpt.map(_.json)
 
@@ -152,7 +153,9 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
     AddressListViewModel(
       routes.AdviserAddressListController.onSubmit(NormalMode),
       routes.AdviserAddressController.onPageLoad(NormalMode),
-      addresses
+      addresses,
+      heading = Message("messages__dynamic_whatIsAddress", adviserName),
+      title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser"))
     )
   }
 

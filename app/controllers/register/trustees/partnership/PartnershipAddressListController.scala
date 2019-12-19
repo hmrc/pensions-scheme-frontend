@@ -73,6 +73,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
         postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
         manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
         addresses = addresses,
+        title = Message("messages__common__partnership__selectAddress__h1", Message("messages__thePartnership")),
         srn = srn
       )
 }

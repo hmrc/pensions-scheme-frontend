@@ -54,7 +54,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
       routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
       routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
       addresses,
-      title = Message("messages__trustee__individual__previous__address__title"),
+      title = Message("messages__trustee__individual__previous__address__heading", Message("messages__theIndividual")),
       heading = Message("messages__trustee__individual__previous__address__heading", name),
       srn = srn
     )

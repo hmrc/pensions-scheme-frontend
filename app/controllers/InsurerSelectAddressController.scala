@@ -29,6 +29,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,12 +62,15 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
 
   private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    InsurerEnterPostCodeId.retrieve.right.map {addresses =>
+    (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.right.map {
+      case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
           manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
           addresses = addresses,
-          srn = srn
+          srn = srn,
+          heading = Message("messages__dynamic_whatIsAddress", name),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany"))
         )
     }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
   }

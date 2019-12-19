@@ -31,6 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, UserAnswers}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -194,7 +195,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0), None),
       routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
-      title = messages("messages__trustee__individual__previous__address__title"),
+      title = messages("messages__trustee__individual__previous__address__heading",Message("messages__theIndividual").resolve),
       heading = messages("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName)
     )
   }

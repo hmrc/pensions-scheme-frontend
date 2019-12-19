@@ -32,6 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, UserAnswers}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -204,8 +205,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       postCall = routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None),
       manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses = addresses,
-      title = messages("messages__trustee__individual__address__title"),
-      heading = messages("messages__trustee__individual__address__heading", trusteeDetails.fullName)
+      title = messages("messages__trustee__individual__address__heading",  Message("messages__theIndividual").resolve),
+      heading = messages("messages__trustee__individual__address__heading", trusteeName.fullName)
     )
   }
 }

@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import controllers.InsurerConfirmAddressControllerSpec.fakeAuditService
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.{InsurerEnterPostCodeId, InsurerSelectAddressId}
+import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import models.NormalMode
 import models.address.TolerantAddress
 import org.scalatest.mockito.MockitoSugar
@@ -30,6 +30,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{Enumerable, FakeNavigator, MapFormats}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -39,12 +40,15 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"
-  val schemeNameJsValue: JsObject = Json.obj("schemeName" -> schemeName)
+  val insurerCompanyName = "blaaa ltd"
+  private val schemeNameJsValue: JsObject = Json.obj("schemeName" -> schemeName,
+    InsuranceCompanyNameId.toString -> insurerCompanyName)
   private val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
   )
-  val addressObject: JsObject = Json.obj(InsurerEnterPostCodeId.toString -> addresses)
+  val addressObject: JsObject = Json.obj(InsurerEnterPostCodeId.toString -> addresses,
+    InsuranceCompanyNameId.toString -> insurerCompanyName)
 
   val form: Form[_] = formProvider(Seq(0))
 
@@ -70,7 +74,9 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       AddressListViewModel(
         routes.InsurerSelectAddressController.onSubmit(NormalMode, None),
         routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
-        addresses
+        addresses,
+        heading = Message("messages__dynamic_whatIsAddress", insurerCompanyName),
+        title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany"))
       ),
       None
     )(fakeRequest, messages).toString

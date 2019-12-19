@@ -84,7 +84,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
       postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
       manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
       addresses = addresses,
-      title = Message("messages__trustee__individual__address__title"),
+      title = Message("messages__trustee__individual__address__heading", Message("messages__theIndividual")),
       heading = Message("messages__trustee__individual__address__heading", name),
       srn = srn
     )
