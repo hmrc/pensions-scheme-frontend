@@ -18,9 +18,9 @@ package controllers
 
 import connectors._
 import controllers.actions._
-import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId, IsWorkingKnowledgeCompleteId}
-import models.{CheckMode, Link}
+import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
+import models.{CheckMode, Link, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
@@ -28,9 +28,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers_old
+import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -52,15 +52,6 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
-    "redirect to the next page on a POST request" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller().onSubmit()(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, true)
-    }
   }
 }
 
@@ -75,7 +66,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   lazy val adviserNameRoute: String = controllers.routes.AdviserNameController.onPageLoad(CheckMode).url
   lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url
   lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url
-  lazy val postUrl: Call = routes.AdviserCheckYourAnswersController.onSubmit()
+  lazy val postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   val adviserName = "Xyx"
   val adviserEmail = "x@x.c"
@@ -121,13 +112,19 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     )
   )
 
-  val viewAsString: String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(adviserSection),
-    postUrl,
-    None,
+  val vm = CYAViewModel(
+    answerSections = Seq(adviserSection),
+    href = postUrl,
+    schemeName = None,
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false
+    srn = None,
+    hideSaveAndContinueButton = false,
+    title = Message("checkYourAnswers.hs.title"),
+    h1 = Message("checkYourAnswers.hs.title")
+  )
+  val viewAsString: String = checkYourAnswers(
+    frontendAppConfig, vm
   )(fakeRequest, messages).toString
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
@@ -144,8 +141,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      new FakeCountryOptions,
-      FakeSectionComplete
+      new FakeCountryOptions
     )
 
 }

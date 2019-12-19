@@ -79,7 +79,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       )
     )(fakeRequest, messages)
 
-  "check_your_answers_old view" must {
+  "checkYourAnswers view" must {
 
     behave like normalPageWithTitle(createView(hideSaveAndContinueButton = false),
       messageKeyPrefix, pageTitle, messages("checkYourAnswers.hs.heading"))

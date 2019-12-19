@@ -22,10 +22,9 @@ import controllers.register.trustees.individual.{routes => trusteeIndividualRout
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.{DeclarationDutiesId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, SchemeNameId, _}
+import identifiers.{DeclarationDutiesId, SchemeNameId, _}
+import models._
 import models.person.PersonName
-import models.{person, _}
-import play.api.libs.json.JsResult
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperVariations}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
@@ -45,26 +44,16 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
                            isCompleteTrustees: Boolean = true,
                            isChangedInsuranceDetails: Boolean = true,
                            isChangedEstablishersTrustees: Boolean = true
-                          ): JsResult[UserAnswers] = {
+                          ): UserAnswers = {
 
-    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0,
-      userAnswersWithSchemeName.set(IsBeforeYouStartCompleteId)(isCompleteBeforeStart).flatMap(
-        _.set(IsAboutMembersCompleteId)(isCompleteAboutMembers).flatMap(
-          _.set(IsAboutBankDetailsCompleteId)(isCompleteAboutBank).flatMap(
-            _.set(IsAboutBenefitsAndInsuranceCompleteId)(isCompleteAboutBenefits).flatMap(
-              _.set(BenefitsSecuredByInsuranceId)(!isCompleteAboutBenefits).flatMap(
-                _.set(IsWorkingKnowledgeCompleteId)(isCompleteWk).flatMap(
-                  _.set(EstablisherNameId(0))(person.PersonName("firstName", "lastName")).flatMap(
-                    _.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).flatMap(
-                      _.set(InsuranceDetailsChangedId)(isChangedInsuranceDetails))
-                  )
-                )
-              )
-            )
-          )
-        )
-      ).asOpt.value
-    )
+    setCompleteBeforeYouStart(isCompleteBeforeStart,
+      setCompleteMembers(isCompleteAboutMembers,
+        setCompleteBank(isCompleteAboutBank,
+          setCompleteBenefits(isCompleteAboutBenefits,
+            setCompleteWorkingKnowledge(isCompleteWk,
+    setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, userAnswersWithSchemeName).asOpt.value))))).set(
+      InsuranceDetailsChangedId
+    )(isChangedInsuranceDetails).asOpt.value
   }
 
   "h1" must {
@@ -120,9 +109,9 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
   "aboutSection " must {
     "return the the Seq of members and benefits section with " +
       "links of the first pages of individual sub sections when not completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsAboutMembersCompleteId)(false).flatMap(
-        _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
-      ).asOpt.value
+      val userAnswers = setCompleteMembers(isComplete = false,
+        setCompleteBenefits(isComplete = false,
+          userAnswersWithSchemeName))
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe
         Seq(
@@ -135,9 +124,8 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
     "return the the Seq of members and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsAboutMembersCompleteId)(true).flatMap(
-        _.set(BenefitsSecuredByInsuranceId)(false)
-      ).asOpt.value
+      val userAnswers = setCompleteMembers(isComplete = true,
+        setCompleteBenefits(isComplete = true, userAnswersWithSchemeName))
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.aboutSection(userAnswers) mustBe
         Seq(
@@ -292,25 +280,25 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
   def variationsTrusteeTests():Unit = {
     s"have a declaration section when viewonly is false" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData()
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
 
     s"have incomplete link when about benefits and insurance section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBenefits = false).asOpt.value
+      val userAnswers = answersData(isCompleteAboutBenefits = false)
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
     s"have incomplete link when establishers section not completed" in {
-      val userAnswers = answersData(isCompleteEstablishers = false).asOpt.value
+      val userAnswers = answersData(isCompleteEstablishers = false)
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
 
     s"have incomplete link when trustees section not completed" in {
-      val userAnswers = answersData(isCompleteTrustees = false).asOpt.value
+      val userAnswers = answersData(isCompleteTrustees = false)
       mustHaveDeclarationLinkEnabled(createTaskListHelper(userAnswers), userAnswers,
         Some(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url))
     }
@@ -322,7 +310,7 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
     }
 
     s"have no link when all the sections are not completed and no user answers updated" in {
-      val userAnswers = answersData(isChangedInsuranceDetails = false).asOpt.value
+      val userAnswers = answersData(isChangedInsuranceDetails = false)
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
       mustNotHaveDeclarationLink(helper, userAnswers)
@@ -346,7 +334,7 @@ class HsTaskListHelperVariationsViewOnlySpec extends HsTaskListHelperBehaviour {
 
 
     "NOT have a declaration section when viewonly is true" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData()
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe false
     }

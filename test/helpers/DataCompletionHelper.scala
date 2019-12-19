@@ -16,14 +16,10 @@
 
 package helpers
 
-import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director._
-import identifiers.register.trustees.company.CompanyEnterUTRId
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
-import models.person.PersonName
-import models.register.DeclarationDormant
+import models.register.SchemeType
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
@@ -110,4 +106,41 @@ trait DataCompletionHelper extends OptionValues {
 
   protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
+
+  protected def setCompleteBeforeYouStart(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
+    if(isComplete) {
+      ua.schemeName(schemeName = "Test Scheme").
+        schemeType(SchemeType.SingleTrust).establishedCountry(country = "GB").
+        declarationDuties(haveWorkingKnowledge = true)
+    } else {
+      ua.schemeName(schemeName = "Test Scheme")
+    }
+  }
+
+  protected def setCompleteMembers(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
+    if(isComplete) ua.currentMembers(Members.One).futureMembers(Members.One) else ua.currentMembers(Members.One)
+  }
+
+  protected def setCompleteBank(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
+    if(isComplete) ua.ukBankAccount(ukBankAccount = false) else ua.ukBankAccount(ukBankAccount = true)
+  }
+
+  protected def setCompleteBenefits(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
+    if(isComplete) {
+      ua.occupationalPensionScheme(isOccupational = true).
+        investmentRegulated(isInvestmentRegulated = true).typeOfBenefits(TypeOfBenefits.MoneyPurchase).
+        benefitsSecuredByInsurance(isInsured = false)
+    } else {
+      ua.occupationalPensionScheme(isOccupational = true)
+    }
+  }
+
+  protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
+    if(isComplete) {
+      ua.adviserName(name = "test adviser").adviserEmailAddress(email = "s@s.com").
+        adviserPhone("123").advisersAddress(Address("a", "b", None, None, None, "GB"))
+    } else {
+      ua.adviserName(name = "test adviser")
+    }
+  }
 }

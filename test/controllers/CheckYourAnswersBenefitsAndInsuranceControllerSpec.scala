@@ -16,18 +16,16 @@
 
 package controllers
 
-import controllers.CheckYourAnswersBeforeYouStartControllerSpec.{controller, schemeInfoWithCompleteFlag}
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import identifiers.IsAboutBenefitsAndInsuranceCompleteId
-import models.address.Address
-import models._
 import models.Mode._
+import models._
+import models.address.Address
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeCountryOptions, FakeSectionComplete, UserAnswers}
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import utils.{FakeCountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase with OptionValues {
 
@@ -73,16 +71,6 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
-        FakeUserAnswersService.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
-      }
-    }
   }
 }
 
@@ -90,7 +78,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private def postUrl(mode : Mode = NormalMode) = routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(mode, None)
+  private def postUrl(mode: Mode) = routes.SchemeTaskListController.onPageLoad(mode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
@@ -202,31 +190,26 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   }
 
-  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      benefitsAndInsuranceSection(mode)
-    ),
-    postUrl(mode),
-    Some(schemeName),
-    false,
-    mode,
-    hideEditLinks = false,
-    hideSaveAndContinueButton = hideSaveAndContinueButton
-  )(fakeRequest, messages).toString
+  def heading(name: String, mode: Mode): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+    Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-  private def viewAsStringWithLessData(mode : Mode = CheckMode): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      updateBenefitsAndInsuranceSection(mode)
-    ),
-    postUrl(mode),
-    Some(schemeName),
-    false,
-    mode,
+  def vm(mode : Mode, hideSaveAndContinueButton:Boolean, data: AnswerSection): CYAViewModel = CYAViewModel(
+    answerSections = Seq(data),
+    href = postUrl(mode),
+    schemeName = Some(schemeName),
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = true
-  )(fakeRequest, messages).toString
+    srn = None,
+    hideSaveAndContinueButton = hideSaveAndContinueButton,
+    title = heading(Message("messages__theScheme").resolve, mode),
+    h1 = heading(schemeName, mode)
+  )
+
+  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String =
+    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton, benefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
+
+  private def viewAsStringWithLessData(mode : Mode): String =
+    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton = true, updateBenefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
 }
 

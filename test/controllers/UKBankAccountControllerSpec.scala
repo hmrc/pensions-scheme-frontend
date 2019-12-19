@@ -21,13 +21,12 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.UKBankAccountFormProvider
-import identifiers.IsAboutBankDetailsCompleteId
 import models.NormalMode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, FakeSectionComplete, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.uKBankAccount
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -66,14 +65,6 @@ class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
       identifiers.UKBankAccountId,
       true
     )
-
-    "calling onSubmit" must {
-      "set the IsAboutBankDetailsCompleteId to false to change to in progress status" in {
-        controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
-
-        FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, false)
-      }
-    }
   }
 }
 
@@ -92,8 +83,7 @@ object UKBankAccountControllerSpec {
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector,
-    sectionComplete: SectionComplete = FakeSectionComplete
+    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): UKBankAccountController =
     new UKBankAccountController(
       base.frontendAppConfig,
@@ -103,8 +93,7 @@ object UKBankAccountControllerSpec {
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider,
-      sectionComplete
+      formProvider
     )
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =

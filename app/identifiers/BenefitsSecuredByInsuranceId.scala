@@ -31,7 +31,6 @@ case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
     value match {
       case Some(false) => userAnswers.removeAllOf(List(InsuranceCompanyNameId, InsurancePolicyNumberId,
         InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
-      case Some(true) => userAnswers.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
       case _ => super.cleanup(value, userAnswers)
     }
   }

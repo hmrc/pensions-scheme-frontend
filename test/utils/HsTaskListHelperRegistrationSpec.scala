@@ -22,6 +22,7 @@ import controllers.register.trustees.partnership.{routes => trusteePartnershipRo
 import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
 import models._
+import models.address.Address
 import models.person.PersonName
 import utils.behaviours.HsTaskListHelperBehaviour
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
@@ -35,7 +36,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "h1" must {
     "display appropriate heading" in {
       val name = "scheme name 1"
-      val userAnswers = userAnswersWithSchemeName.set(SchemeNameId)(name).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.schemeName(name)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.taskList.h1 mustBe name
     }
@@ -86,11 +87,8 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   "aboutSection " must {
     "return the the Seq of members, bank details and benefits section with " +
       "links of the first pages of individual sub sections when not completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsAboutMembersCompleteId)(false).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(false).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
-        )
-      ).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).
+        ukBankAccount(ukBankAccount = true).occupationalPensionScheme(isOccupational = true)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
@@ -105,11 +103,10 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
 
     "return the the Seq of members, bank details and benefits section with " +
       "links of the cya pages of individual sub sections when completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(IsAboutMembersCompleteId)(true).flatMap(
-        _.set(IsAboutBankDetailsCompleteId)(true).flatMap(
-          _.set(IsAboutBenefitsAndInsuranceCompleteId)(true)
-        )
-      ).asOpt.value
+      val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).futureMembers(Members.One).
+        ukBankAccount(ukBankAccount = false).occupationalPensionScheme(isOccupational = true).
+        investmentRegulated(isInvestmentRegulated = true).typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(isInsured = false)
+
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
@@ -131,9 +128,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "display and link should go to what you will need page when do you have working knowledge is false and section not completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(false).flatMap(
-        _.set(IsWorkingKnowledgeCompleteId)(false)
-      ).asOpt.value
+      val userAnswers = setCompleteWorkingKnowledge(isComplete = false, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
@@ -141,9 +136,7 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "display and link should go to cya page when do you have working knowledge is false and section is completed " in {
-      val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(false).flatMap(
-        _.set(IsWorkingKnowledgeCompleteId)(true)
-      ).asOpt.value
+      val userAnswers = setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
@@ -220,13 +213,12 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
                 trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true))
             ), Some("test partnership"))
         )
-    }    
-    
+    }
   }
 
   "declaration" must {
     "have a declaration section" in {
-      val userAnswers = answersData().asOpt.value
+      val userAnswers = answersData()
       val helper = createTaskListHelper(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
@@ -234,12 +226,12 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     behave like declarationSection()
 
     "not have link when about bank details section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBank = false).asOpt.value
+      val userAnswers = answersData(isCompleteAboutBank = false)
       mustNotHaveDeclarationLink(createTaskListHelper(userAnswers), userAnswers)
     }
 
     "not have link when working knowledge section not completed" in {
-      val userAnswers = answersData(isCompleteWk = false).asOpt.value
+      val userAnswers = answersData(isCompleteWk = false)
       mustNotHaveDeclarationLink(createTaskListHelper(userAnswers), userAnswers)
     }
   }

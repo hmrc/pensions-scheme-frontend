@@ -271,7 +271,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
-  private def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+  protected def schemeType : Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
     case JsSuccess(scheme, _) => Some(scheme.value)
     case JsError(errors) => None
   }

@@ -25,47 +25,43 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, SectionComplete}
-import viewmodels.AnswerSection
-import views.html.check_your_answers_old
+import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
-                                                      implicit val countryOptions: CountryOptions,
-                                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
+                                                      implicit val countryOptions: CountryOptions)(implicit val ec: ExecutionContext)
   extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
 
-      implicit val userAnswers = request.userAnswers
+      implicit val userAnswers: UserAnswers = request.userAnswers
 
       val bankAccountSection = AnswerSection(
         None,
         UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
-        BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
+          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers_old(
-        appConfig,
-        Seq(bankAccountSection),
-        controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),
-        existingSchemeName,
+      val vm = CYAViewModel(
+        answerSections = Seq(bankAccountSection),
+        href = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None),
+        schemeName = existingSchemeName,
+        returnOverview = false,
         hideEditLinks = request.viewOnly,
-        hideSaveAndContinueButton = request.viewOnly
-      ))
-  }
+        srn = None,
+        hideSaveAndContinueButton = request.viewOnly,
+        title = Message("checkYourAnswers.hs.title"),
+        h1 = Message("checkYourAnswers.hs.title")
+      )
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
-    implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
-      }
+      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
   }
-
 }

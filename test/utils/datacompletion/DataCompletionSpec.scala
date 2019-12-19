@@ -19,10 +19,12 @@ package utils.datacompletion
 import base.JsonFileReader
 import helpers.DataCompletionHelper
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorEnterNINOId, DirectorNoNINOReasonId}
-import identifiers.register.trustees.individual.{TrusteeHasNINOId, TrusteeEnterNINOId, TrusteeNoNINOReasonId}
+import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorHasNINOId, DirectorNoNINOReasonId}
+import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeHasNINOId, TrusteeNoNINOReasonId}
 import identifiers.register.trustees.{company => tc}
-import models.NormalMode
+import models.address.Address
+import models.register.{SchemeType, SortCode}
+import models._
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.JsValue
 import utils.{Enumerable, UserAnswers}
@@ -30,6 +32,7 @@ import utils.{Enumerable, UserAnswers}
 class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionSpec._
+
   "All generic methods" when {
     "isComplete" must {
       "return Some(true) only when all values in list are true" in {
@@ -115,10 +118,10 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
           TrusteeEnterNINOId(1), Some(TrusteeNoNINOReasonId(1))) mustBe Some(true)
       }
 
-    "return Some(true) when has value is false and reason is not needed" in {
-      UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
-        tc.CompanyEnterVATId(0), None) mustBe Some(true)
-    }
+      "return Some(true) when has value is false and reason is not needed" in {
+        UserAnswers(userAnswersCompleted).isAnswerComplete(tc.HasCompanyVATId(0),
+          tc.CompanyEnterVATId(0), None) mustBe Some(true)
+      }
 
       "return Some(false) when answer is missing" in {
         UserAnswers(userAnswersInProgress).isAnswerComplete(DirectorHasNINOId(0, 0),
@@ -263,7 +266,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       }
 
       "return false when some answer is missing" in {
-        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete( 1) mustBe false
+        UserAnswers(userAnswersInProgress).isTrusteeIndividualComplete(1) mustBe false
       }
     }
 
@@ -367,9 +370,134 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
       }
     }
   }
+
+  "isBeforeYouStartCompleted" must {
+    "return true when all the answers are completed for Single Trust" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.SingleTrust).establishedCountry("GB").
+        declarationDuties(true)
+      answers.isBeforeYouStartCompleted(NormalMode) mustBe true
+    }
+
+    "return true when all the answers are completed for UpdateMode" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.SingleTrust).establishedCountry("GB")
+      answers.isBeforeYouStartCompleted(UpdateMode) mustBe true
+    }
+
+    "return true when all the answers are completed for Group LIfe" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.GroupLifeDeath).establishedCountry("GB").
+        declarationDuties(true).haveAnyTrustees(true)
+      answers.isBeforeYouStartCompleted(NormalMode) mustBe true
+    }
+
+    "return false when have any trustees not answered for Group LIfe" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.GroupLifeDeath).establishedCountry("GB").
+        declarationDuties(true)
+      answers.isBeforeYouStartCompleted(NormalMode) mustBe false
+    }
+
+    "return false when not all the answers are completed for Normal Mode" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.SingleTrust).establishedCountry("GB")
+      answers.isBeforeYouStartCompleted(NormalMode) mustBe false
+    }
+
+    "return false when all the answers are not completed for UpdateMode" in {
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.SingleTrust)
+      answers.isBeforeYouStartCompleted(UpdateMode) mustBe false
+    }
+  }
+
+  "isMembersCompleted" must {
+    "return true when all the answers are completed" in {
+      val answers = UserAnswers().currentMembers(Members.One).futureMembers(Members.One)
+      answers.isMembersCompleted.value mustBe true
+    }
+
+    "return false when all answers not completed" in {
+      val answers = UserAnswers().currentMembers(Members.One)
+      answers.isMembersCompleted.value mustBe false
+    }
+
+    "return None when there is no data" in {
+      UserAnswers().isMembersCompleted mustBe None
+    }
+  }
+
+  "isBankDetailsCompleted" must {
+    "return true when all the answers are completed with no uk bank account" in {
+      val answers = UserAnswers().ukBankAccount(false)
+      answers.isBankDetailsCompleted.value mustBe true
+    }
+
+    "return true when all the answers are completed with uk bank account" in {
+      val answers = UserAnswers().ukBankAccount(true).
+        bankAccountDetails(BankAccountDetails("name", "acc", SortCode("12", "34", "56"), "no"))
+      answers.isBankDetailsCompleted.value mustBe true
+    }
+
+    "return false when bank details are not provided" in {
+      val answers = UserAnswers().ukBankAccount(true)
+      answers.isBankDetailsCompleted.value mustBe false
+    }
+
+    "return None when there is no data" in {
+      UserAnswers().isBankDetailsCompleted mustBe None
+    }
+  }
+
+  "isBenefitsAndInsuranceCompleted" must {
+    "return true when all the answers are completed with benefits secured by insurance" in {
+      val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+        typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(true).insuranceCompanyName("test name").
+        insurancePolicyNumber("112").insurerConfirmAddress(Address("a", "b", None, None, None, "GB"))
+      answers.isBenefitsAndInsuranceCompleted.value mustBe true
+    }
+
+    "return true when all the answers are completed with no benefits secured by insurance" in {
+      val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+        typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(false)
+      answers.isBenefitsAndInsuranceCompleted.value mustBe true
+    }
+
+    "return false when insurance details are not provided" in {
+      val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
+        typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(true)
+      answers.isBenefitsAndInsuranceCompleted.value mustBe false
+    }
+
+    "return false when not all answers are completed" in {
+      val answers = UserAnswers().investmentRegulated(true)
+      answers.isBenefitsAndInsuranceCompleted.value mustBe false
+    }
+
+    "return None when there is no data" in {
+      UserAnswers().isBenefitsAndInsuranceCompleted mustBe None
+    }
+  }
+
+  "isWorkingKnowledgeCompleted" must {
+    "return true when user has working knowledge" in {
+      val answers = UserAnswers().declarationDuties(haveWorkingKnowledge = true)
+      answers.isWorkingKnowledgeCompleted.value mustBe true
+    }
+
+    "return true when user don't have working knowledge but have an adviser" in {
+      val answers = UserAnswers().declarationDuties(haveWorkingKnowledge = false).adviserName("Test Adviser").
+        adviserEmailAddress("s@s.com").adviserPhone("123").advisersAddress(Address("a", "b", None, None, None, "GB"))
+      answers.isWorkingKnowledgeCompleted.value mustBe true
+    }
+
+    "return false when user don't have working knowledge and don't have adviser details completed" in {
+      val answers = UserAnswers().declarationDuties(haveWorkingKnowledge = false).adviserName("Test Adviser")
+      answers.isWorkingKnowledgeCompleted.value mustBe false
+    }
+
+    "return None when there is no data" in {
+      UserAnswers().isWorkingKnowledgeCompleted mustBe None
+    }
+  }
 }
 
-object DataCompletionSpec extends JsonFileReader with DataCompletionHelper  {
+object DataCompletionSpec extends JsonFileReader with DataCompletionHelper {
   private val mode = NormalMode
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")

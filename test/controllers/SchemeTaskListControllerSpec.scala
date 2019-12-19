@@ -202,7 +202,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   private lazy val addTrusteesLinkText                  = messages("messages__schemeTaskList__sectionTrustees_add_link", schemeName)
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
-    SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
+    SchemeDetailsTaskListSection(Some(false), Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
     messages("messages__schemeTaskList__about_scheme_header", "test scheme"),
     Seq(
       SchemeDetailsTaskListSection(None, Link(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),

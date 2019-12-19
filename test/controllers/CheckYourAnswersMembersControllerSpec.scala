@@ -17,14 +17,13 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import identifiers.IsAboutMembersCompleteId
 import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils.UserAnswers
-import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers_old
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import views.html.checkYourAnswers
 
 class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with OptionValues{
 
@@ -37,7 +36,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+        contentAsString(result) mustBe viewAsString(NormalMode)
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
@@ -52,23 +51,13 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
     }
-
-    "onSubmit is called" must {
-      "redirect to next page" in {
-        val result = controller().onSubmit(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
-        FakeUserAnswersService.verify(IsAboutMembersCompleteId, true)
-      }
-    }
   }
 }
 
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.CheckYourAnswersMembersController.onSubmit(NormalMode, None)
+  private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
@@ -102,16 +91,22 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def viewAsString(): String = check_your_answers_old(
-    frontendAppConfig,
-    Seq(
-      membersSection
-    ),
-    postUrl,
-    Some(schemeName),
+  private def heading(name: String, mode: Mode): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+    Message("messages__membershipDetailsFor", name)
+
+  private def vm(mode: Mode) = CYAViewModel(
+    answerSections = Seq(membersSection),
+    href = postUrl,
+    schemeName = Some(schemeName),
+    returnOverview = false,
     hideEditLinks = false,
-    hideSaveAndContinueButton = false
-  )(fakeRequest, messages).toString
+    srn = None,
+    hideSaveAndContinueButton = false,
+    title = heading(Message("messages__theScheme").resolve, mode),
+    h1 = heading(schemeName, mode)
+  )
+
+  private def viewAsString(mode: Mode): String = checkYourAnswers(frontendAppConfig, vm(mode))(fakeRequest, messages).toString
 
 }
 
