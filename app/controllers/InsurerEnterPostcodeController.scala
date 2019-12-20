@@ -59,7 +59,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     PostcodeLookupViewModel(
       postCall(mode, srn),
       manualCall(mode, srn),
-      Messages("messages__insurer_enter_postcode__title"),
+      Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
       Messages("messages__insurer_enter_postcode__h1",name),
       None,
       srn = srn

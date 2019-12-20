@@ -58,7 +58,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
           val viewModel = PostcodeLookupViewModel(
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
             routes.InsurerConfirmAddressController.onPageLoad(NormalMode, None),
-            Messages("messages__insurer_enter_postcode__title"),
+            Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
             Messages("messages__insurer_enter_postcode__h1",insurerName),
             None
           )

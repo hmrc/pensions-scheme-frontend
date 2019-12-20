@@ -816,7 +816,6 @@ messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= You can {0} enter the address manually {1}  if it is overseas
-messages__adviserPostCodeLookup__title=What is the person’s postcode?
 messages__adviserPostCodeLookup__heading=What is {0}’s postcode?
 
 
@@ -1510,8 +1509,7 @@ messages__insurance_policy_number_cya_label = What is the policy number with {0}
 messages__visuallyhidden__insurance_policy_number = the policy number with {0}
 messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 
-messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
-messages__insurer_enter_postcode__h1 = Enter {0}’s postcode
+messages__insurer_enter_postcode__h1 = What is {0}’s postcode?
 
 messages__insurer_confirm_address__title = Enter the insurance company’s address
 messages__visuallyhidden__insurer_confirm_address = the address for {0}
