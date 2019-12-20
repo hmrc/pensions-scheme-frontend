@@ -53,7 +53,7 @@ class CompanyPreviousAddressController @Inject()(
                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyConfirmPreviousAddress__title"
+  private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
@@ -63,7 +63,7 @@ class CompanyPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(title, Message("messages__theCompany")),
       heading = Message(heading, name),
       srn = srn
     )

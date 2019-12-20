@@ -99,7 +99,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           val viewmodel = ManualAddressViewModel(
             postCall = controller.postCall(NormalMode, establisherIndex, directorIndex, None),
             countryOptions = countryOptions.options,
-            title = Message(controller.title),
+            title = Message(controller.title, Message("messages__theDirector")),
             heading = Message(controller.heading, director.fullName)
           )
 

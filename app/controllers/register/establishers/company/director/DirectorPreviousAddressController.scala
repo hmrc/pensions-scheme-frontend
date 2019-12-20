@@ -54,7 +54,7 @@ class DirectorPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__directorPreviousAddressConfirm__title"
+  private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -71,7 +71,7 @@ class DirectorPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, establisherIndex, directorIndex, srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(title, Message("messages__common__address_years__director")),
       heading = Message(heading, name),
       srn = srn
     )

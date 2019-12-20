@@ -59,7 +59,6 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyNoUTRReasonId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
     (CompanyNoUTRReasonId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
     (CompanyPostCodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
-    (CompanyAddressListId(0), emptyAnswers, companyManualAddress(mode), true, Some(companyManualAddress(checkMode(mode))), true),
     (CompanyAddressYearsId(0), addressYearsOverAYear, cyaCompanyAddressDetails(mode) , true, Some(exitJourney(mode, addressYearsOverAYear, 0, cyaCompanyAddressDetails(mode))), true),
     (CompanyAddressYearsId(0), addressYearsOverAYearNew, cyaCompanyAddressDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, cyaCompanyAddressDetails(mode))), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
@@ -67,9 +66,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
     (CompanyConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
-    (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(mode), true, Some(companyPreviousAddress(checkMode(mode))), true),
     (CompanyEmailId(0), newEstablisher, companyPhoneNumber(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyContactDetails(mode))), true),
     (CompanyEmailId(0), emptyAnswers, companyPhoneNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode))), true),
+    (CompanyPreviousAddressListId(0), emptyAnswers, previousAddressRoutes( mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode))), true),
+    (CompanyPreviousAddressListId(0), newEstablisher, previousAddressRoutes( mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode))), true),
     (CompanyPreviousAddressId(0), emptyAnswers, previousAddressRoutes( mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode))), true),
     (CompanyPreviousAddressId(0), newEstablisher, previousAddressRoutes( mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode))), true),
     (AddCompanyDirectorsId(0), emptyAnswers, startDirectorJourney( mode, 0), true, None, true),
@@ -90,6 +90,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (HasCompanyPAYEId(0), establisherHasPAYE(false), isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode) ), true),
     (CompanyNoCRNReasonId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
     (CompanyEnterPAYEId(0), emptyAnswers, isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
+    (CompanyAddressListId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
+    (CompanyAddressListId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
     (CompanyAddressId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true),
     (AddCompanyDirectorsId(0), addCompanyDirectorsFalse, taskList(NormalMode), true, None, true)
@@ -107,6 +109,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
     (HasCompanyPAYEId(0), establisherHasPAYE(false), cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))), true),
     (CompanyNoCRNReasonId(0), newEstablisher, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))), true),
+    (CompanyAddressListId(0), emptyAnswers, companyAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
+    (CompanyAddressListId(0), newEstablisher, companyAddressYears(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))), true),
     (CompanyAddressId(0), emptyAnswers, companyAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
     (CompanyAddressId(0), newEstablisher, companyAddressYears(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))), true)
   )

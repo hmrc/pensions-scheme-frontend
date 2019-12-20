@@ -90,7 +90,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
-    title = Message("messages__individualPostCodeLookup__title"),
+    title = Message("messages__individualPostCodeLookup__heading",Message("messages__theIndividual")),
     heading = Message("messages__individualPostCodeLookup__heading", personDetails.fullName),
     subHeading = Some(personDetails.fullName)
   )

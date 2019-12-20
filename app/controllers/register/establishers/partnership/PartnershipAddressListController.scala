@@ -16,17 +16,24 @@
 
 package controllers.register.establishers.partnership
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.establishers.partnership.{
+  PartnershipAddressId,
+  PartnershipAddressListId,
+  PartnershipDetailsId,
+  PartnershipPostcodeLookupId
+}
 import javax.inject.Inject
+import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -40,35 +47,50 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
-                                                 requireData: DataRequiredAction
-                                                )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                 requireData: DataRequiredAction,
+                                                 val auditService: AuditService)(implicit val ec: ExecutionContext)
+    extends AddressListController
+    with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(mode, index, srn).right.map(get)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+      (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right
+        .map {
+          case partnershipDetails ~ addresses =>
+            get(viewmodel(mode, index, srn, partnershipDetails.name, addresses))
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).right.map {
-        vm =>
-          post(vm, PartnershipAddressListId(index), PartnershipAddressId(index), mode)
-      }
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+      (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right
+        .map {
+          case partnershipDetails ~ addresses =>
+            val context = s"Partnership Address: ${partnershipDetails.name}"
+            post(
+              viewmodel(mode, index, srn, partnershipDetails.name, addresses),
+              PartnershipAddressListId(index),
+              PartnershipAddressId(index),
+              mode,
+              context,
+              PartnershipPostcodeLookupId(index)
+            )
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
+    }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]):
-  Either[Future[Result], AddressListViewModel] = {
-    (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.right.map {
-      case partnershipDetails ~ addresses => AddressListViewModel(
-        postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
-        manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
-        addresses = addresses,
-        srn = srn,
-        title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
-        heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name)
-      )
-    }.left.map(_ =>
-      Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn))))
-  }
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String, addresses: Seq[TolerantAddress])(
+      implicit request: DataRequest[AnyContent]): AddressListViewModel =
+    AddressListViewModel(
+      postCall = routes.PartnershipAddressListController.onSubmit(mode, index, srn),
+      manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
+      addresses = addresses,
+      srn = srn,
+      title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
+      heading = Message("messages__establisherSelectAddress__h1", name)
+    )
+
 }

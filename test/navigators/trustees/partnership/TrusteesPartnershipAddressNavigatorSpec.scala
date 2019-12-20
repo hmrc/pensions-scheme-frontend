@@ -41,14 +41,14 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(NormalMode, None)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(NormalMode, None)),
         row(PartnershipAddressId(index))(someAddress, addressYearsPage(NormalMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
         row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(NormalMode, None)),
         row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(NormalMode, None)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, previousAddressPage(NormalMode, None)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
       )
 
@@ -60,12 +60,12 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(CheckMode, None)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
         row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, None)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, previousAddressPage(CheckMode, None)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
       )
 
@@ -77,14 +77,14 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(UpdateMode, srn)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(UpdateMode, srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(UpdateMode, srn)),
         row(PartnershipAddressId(index))(someAddress, addressYearsPage(UpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(UpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(UpdateMode, srn)),
         row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(UpdateMode, srn)),
         row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(UpdateMode, srn)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(UpdateMode, srn)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, previousAddressPage(UpdateMode, srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers))
       )
 
@@ -96,13 +96,15 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckUpdateMode, srn)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressPage(CheckUpdateMode, srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, isThisPreviousAddressPage(srn)),
         row(PartnershipAddressId(index))(someAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
         row(PartnershipAddressId(index))(someAddress, isThisPreviousAddressPage(srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckUpdateMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(UpdateMode, srn)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckUpdateMode, srn)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, previousAddressPage(CheckUpdateMode, srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(srn)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(UpdateMode, srn), Some(newTrusteeUserAnswers)),
         row(PartnershipPreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn))
       )

@@ -16,17 +16,18 @@
 
 package controllers.address
 
+import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
-import models.{CheckUpdateMode, Mode, UpdateMode}
+import models.Mode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Call, Result}
+import play.api.libs.json.JsValue
+import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
@@ -43,6 +44,8 @@ trait AddressListController extends FrontendController with Retrievals  with I18
 
   protected def userAnswersService: UserAnswersService
 
+  protected def auditService: AuditService
+
   protected def navigator: Navigator
 
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
@@ -54,7 +57,13 @@ trait AddressListController extends FrontendController with Retrievals  with I18
     Future.successful(Ok(addressList(appConfig, form, viewModel, existingSchemeName)))
   }
 
-  protected def post(viewModel: AddressListViewModel, navigatorId: TypedIdentifier[TolerantAddress], dataId: TypedIdentifier[Address], mode: Mode)
+  protected def post(viewModel: AddressListViewModel,
+                     navigatorId: TypedIdentifier[TolerantAddress],
+                     dataId: TypedIdentifier[Address],
+                     mode: Mode,
+                     context: String,
+                     postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
+                    )
                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
@@ -62,12 +71,29 @@ trait AddressListController extends FrontendController with Retrievals  with I18
         Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
-        val answers = request.userAnswers.remove(dataId).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
-        userAnswersService.upsert(mode, viewModel.srn, answers.json).map{
-          json =>
-            Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
-        }
+        removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
+          .flatMap { userAnswersJson =>
+            val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress, request.userAnswers.get(dataId), Some(address), context)
+            val answers = userAnswersService
+              .setExistingAddress(mode, dataId, UserAnswers(userAnswersJson))
+              .set(dataId)(address.toAddress).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
+
+            userAnswersService.upsert(mode, viewModel.srn, answers.json).map{
+              json =>
+                auditEvent.foreach(auditService.sendEvent(_))
+                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
+            }
+          }
       }
     )
+  }
+
+  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String], postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
+                                         (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
+    if(request.userAnswers.get(postCodeLookupId).nonEmpty) {
+      userAnswersService.remove(mode, srn, postCodeLookupId)
+    } else {
+      Future(request.userAnswers.json)
+    }
   }
 }

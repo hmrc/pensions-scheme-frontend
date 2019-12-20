@@ -198,7 +198,8 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
       postCall = routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
       manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses = addresses,
-      heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name)
+      heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name),
+      title = Message("messages__common__partnership__selectAddress__h1", Message("messages__thePartnership"))
     )
   }
 }

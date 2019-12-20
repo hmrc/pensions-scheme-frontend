@@ -70,7 +70,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
     manualInputCall = manualInputCall,
-    title = Message("messages__adviserPostCodeLookup__title"),
+    title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
     heading = Message("messages__adviserPostCodeLookup__heading", "name"),
     subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
   )

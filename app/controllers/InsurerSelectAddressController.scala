@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.AddressListController
@@ -28,6 +29,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +41,8 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               val auditService: AuditService
                                               )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 
@@ -53,19 +56,21 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>
-          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode)
+          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode, "Insurer Address",InsurerEnterPostCodeId)
       }
   }
 
   private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    (InsurerEnterPostCodeId).retrieve.right.map {
-      case addresses =>
+    (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.right.map {
+      case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),
           manualInputCall = routes.InsurerConfirmAddressController.onPageLoad(mode, srn),
           addresses = addresses,
-          srn = srn
+          srn = srn,
+          heading = Message("messages__dynamic_whatIsAddress", name),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany"))
         )
     }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
   }

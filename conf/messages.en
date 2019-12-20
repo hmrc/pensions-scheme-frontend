@@ -51,11 +51,10 @@ messages__common__vat__hint = This has 9 characters and is issued by HMRC. It mi
 messages__common__company_vat__hint = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__common__nino = National Insurance number
 messages__common__reason = Reason
-messages__common__confirmAddress__h1 = Confirm {0}’s address
-messages__common__confirmPreviousAddress__h1 = Confirm {0}’s previous address
+messages__common__confirmAddress__h1 = Enter {0}’s address
+messages__common__confirmPreviousAddress__h1 = Enter {0}’s previous address
 messages__common__selectPreviousAddress__h1 = What was {0}’s previous address?
 messages__common__partnership_selectPreviousAddress__title = What was the partnership’s previous address?
-messages__common__partnership_confirmPreviousAddress__title = Confirm the partnership’s previous address
 messages__common__partnership__selectAddress__h1 = What is {0}’s address?
 messages__common__entityKind_company = Company
 messages__common__entityKind_individual = Individual
@@ -133,7 +132,7 @@ messages__common__address_years__company = the company
 messages__common__address_years__director = the director
 messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
-messages__common__address_years__establisher = the establisher
+messages__theEstablisher = the establisher
 messages__common__address_years__trustee = the trustee
 messages__common_partnershipUtr__title = What is the UTR for the partnership?
 
@@ -516,10 +515,6 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 messages__companyAddress__checkYourAnswersLabel = Address
 
-messages__companyConfirmAddress__title = Confirm the company’s address
-
-messages__companyConfirmPreviousAddress__title = Confirm the company’s previous address
-
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 
@@ -601,8 +596,6 @@ messages__director__cya__utr_yes_no_fallback = Does the director have a Self Ass
 messages__confirmDeleteDirector__title =  Are you sure you want to delete this establisher?
 messages__confirmDeleteDirector__heading = Are you sure you want to delete {0}?
 
-messages__directorAddressConfirm__title = Confirm the director’s address
-
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
@@ -650,8 +643,6 @@ messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Uni
 messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
 
 messages__checkYourAnswers__establishers__company__number = Company number
-
-messages__directorPreviousAddressConfirm__title = Confirm the director’s previous address
 
 messages__directorPreviousAddressPostcodeLookup__title = What was the director’s previous postcode?
 messages__previousAddressPostcodeLookup__heading = What was {0}’s previous postcode?
@@ -711,11 +702,9 @@ messages__declarationDuties__no_hint1 = I have appointed an adviser to the pensi
 messages__declarationDuties__no_hint2 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
 messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
 
-messages__trustee__individual__address__title = What is the trustee’s address?
 messages__trustee__individual__address__heading = What is {0}’s address?
 messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
-messages__trustee__individual__address__confirm__title = Confirm the trustee’s address
 messages__trustee__individual__address__confirm__lede = This is usually the residential address for this person.
 
 messages__trustee__individual__previous__address__title = What was the trustee’s previous address?
@@ -737,11 +726,8 @@ messages__trusteeName__heading = What is the trustee’s name?
 messages__individualPostCodeLookup__title = What is the trustee’s postcode?
 messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 
-messages__trustee_individual_previous_address__title = What was the trustee’s previous postcode?
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
 messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
-
-messages__trustee_individual_confirm__previous_address__title = Confirm the trustee’s previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -817,7 +803,7 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
-messages__confirmAdviserAddress__title = Confirm the person’s address
+messages__confirmAdviserAddress__title = Enter the person’s address
 
 #Delete 3 messages later
 messages__adviserAddress__secondary = Pension adviser
@@ -830,7 +816,6 @@ messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= You can {0} enter the address manually {1}  if it is overseas
-messages__adviserPostCodeLookup__title=What is the person’s postcode?
 messages__adviserPostCodeLookup__heading=What is {0}’s postcode?
 
 
@@ -1067,7 +1052,6 @@ messages__partnershipReview__partners__viewLink = View details of partners
 
 messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
 
-messages__trusteePartnershipAddress__title = Confirm the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__needContact__title = What is your email address?
@@ -1525,11 +1509,9 @@ messages__insurance_policy_number_cya_label = What is the policy number with {0}
 messages__visuallyhidden__insurance_policy_number = the policy number with {0}
 messages__visuallyhidden__insurance_policy_number_add = Add the policy number
 
-messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
-messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
+messages__insurer_enter_postcode__h1 = What is {0}’s postcode?
 
-messages__insurer_confirm_address__title = Insurance company’s address
-messages__insurer_confirm_address__h1 = Insurance company’s address
+messages__insurer_confirm_address__title = Enter the insurance company’s address
 messages__visuallyhidden__insurer_confirm_address = the address for {0}
 
 messages__established_country__title = Which country was the scheme established in?
@@ -1786,11 +1768,9 @@ messages__establisherSelectAddress__h1 = What is {0}’s address?
 messages__establisherPreviousSelectAddress__title = Select the previous address
 messages__establisherPreviousSelectAddress__h1 = Select the previous address
 
-messages__establisherConfirmAddress__title = Confirm the establisher’s address
 messages__address__cya = {0}’s address
 messages__establisherConfirmAddress__cya_visually_hidden_label = contact address
 
-messages__establisherPreviousConfirmAddress__title = Confirm the establisher’s previous address
 messages__previousAddress__cya = {0}’s previous address
 messages__establisherPreviousConfirmAddress__cya_visually_hidden_label = previous contact address
 
@@ -1836,3 +1816,6 @@ messages__informationFor_heading = {0}’s information
 messages__informationFor_title = Scheme information
 messages__membershipDetailsFor = {0}’s membership details
 messages__benefitsAndInsuranceDetailsFor = {0}’s benefits and insurance details
+
+messages__theInsuranceCompany = the insurance company
+messages__theAdviser = the adviser

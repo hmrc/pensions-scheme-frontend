@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.individual
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
@@ -40,7 +41,9 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       allowAccess: AllowAccessActionProvider,
-                                      requireData: DataRequiredAction)(implicit val ec: ExecutionContext)
+                                      requireData: DataRequiredAction,
+                                      val auditService: AuditService
+                                     )(implicit val ec: ExecutionContext)
     extends GenericAddressListController
     with Retrievals {
 
@@ -51,7 +54,9 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) ( viewmodel(mode, index, srn, _).right.map( post(_, AddressListId(index), AddressId(index), mode)) )
+      retrieveEstablisherName(index) { name =>
+        val context = s"Establisher Individual Address: $name"
+        viewmodel(mode, index, srn, name).right.map( post(_, AddressListId(index), AddressId(index), mode,context, PostCodeLookupId(index))) }
   }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], establisherName: String)(

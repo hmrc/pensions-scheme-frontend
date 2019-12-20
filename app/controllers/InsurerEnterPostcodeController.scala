@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.{InsurerConfirmAddressId, InsurerEnterPostCodeId, InsurerSelectAddressId}
+import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -55,25 +55,29 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def viewModel(mode: Mode, srn: Option[String]): PostcodeLookupViewModel =
+  def viewModel(mode: Mode, srn: Option[String],name: String): PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
       manualCall(mode, srn),
-      Messages("messages__insurer_enter_postcode__title"),
-      "messages__insurer_enter_postcode__h1",
+      Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
+      Messages("messages__insurer_enter_postcode__h1",name),
       None,
       srn = srn
     )
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      get(viewModel(mode, srn))
-  }
+      implicit request =>
+        InsuranceCompanyNameId.retrieve.right.map { name =>
+          get(viewModel(mode, srn, name))
+        }
+    }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      post(InsurerEnterPostCodeId, viewModel(mode, srn), mode)
+      InsuranceCompanyNameId.retrieve.right.map { name =>
+        post(InsurerEnterPostCodeId, viewModel(mode, srn, name), mode)
+      }
   }
 
 }

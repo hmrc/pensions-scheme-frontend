@@ -135,7 +135,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(NormalMode, None, 0).url
+        redirectLocation(result).value mustBe controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, None, 0).url
       }
 
     }
@@ -189,7 +189,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       routes.CompanyAddressListController.onSubmit(NormalMode, None, Index(0)),
       routes.CompanyAddressController.onPageLoad(NormalMode, None, Index(0)),
       addresses,
-      title = Message("messages__establisherSelectAddress__title"),
+      title = Message("messages__establisherSelectAddress__h1",Message("messages__theEstablisher")),
       heading = Message("messages__establisherSelectAddress__h1", companyDetails.companyName)
     )
   }

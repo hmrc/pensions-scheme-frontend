@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.individual
 
+import audit.testdoubles.StubSuccessfulAuditService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -38,7 +39,7 @@ import views.html.address.addressList
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0))
   val firstIndex = Index(0)
@@ -60,7 +61,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl)
+      new DataRequiredActionImpl,
+      fakeAuditService)
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =
     addressList(

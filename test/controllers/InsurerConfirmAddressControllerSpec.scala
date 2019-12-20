@@ -70,7 +70,9 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       fakeAuditService.reset()
       val insurerUpdatedData = Address("address line updated", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
 
-      val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
+      val validData: UserAnswers = UserAnswers().schemeName(schemeName)
+        .insuranceCompanyName(insuranceCompanyName)
+        .insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
       val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
 
       whenReady(result) {
@@ -99,14 +101,20 @@ object InsurerConfirmAddressControllerSpec {
 
   implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   private val schemeName = "test scheme"
+  private val insuranceCompanyName = "test insurance company"
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
   val insurerAddressData = Address("address line 1", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
   val selectedAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("AB1 1AB"), Some("country:AF"))
-  private val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerAddressData).insurerSelectAddress(selectedAddress)
+  private val minData = UserAnswers()
+    .schemeName(schemeName)
+    .insuranceCompanyName(insuranceCompanyName)
+    .dataRetrievalAction
+  private val validData: UserAnswers = UserAnswers().schemeName(schemeName)
+    .insuranceCompanyName(insuranceCompanyName)
+    .insurerConfirmAddress(insurerAddressData).insurerSelectAddress(selectedAddress)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("addressLine1", "address line 1"),
-    ("addressLine2", "address line 2"), ("postCode", "AB1 1AB"), ("country" -> "country:AF"))
+    ("addressLine2", "address line 2"), ("postCode", "AB1 1AB"), "country" -> "country:AF")
 
   def countryOptions: CountryOptions = new CountryOptions(options)
   val fakeAuditService = new StubSuccessfulAuditService()
@@ -122,7 +130,7 @@ object InsurerConfirmAddressControllerSpec {
           routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
           options,
           Message("messages__insurer_confirm_address__title"),
-          Message("messages__insurer_confirm_address__h1"),
+          Message("messages__common__confirmAddress__h1", insuranceCompanyName),
           None
         ),
         Some(schemeName)

@@ -67,7 +67,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
   val viewmodel = ManualAddressViewModel(
     controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
-    Message(controller.title),
+    Message(controller.title,Message("messages__theCompany")),
     Message(controller.heading, companyDetails.companyName)
   )
 

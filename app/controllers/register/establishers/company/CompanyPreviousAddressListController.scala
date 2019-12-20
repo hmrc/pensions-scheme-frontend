@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company
 
+import audit.AuditService
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
@@ -23,10 +24,11 @@ import controllers.address.AddressListController
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models._
+import models.address.TolerantAddress
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
@@ -35,40 +37,57 @@ import viewmodels.address.AddressListViewModel
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyPreviousAddressListController @Inject()(
-                                                      val appConfig: FrontendAppConfig,
-                                                      val messagesApi: MessagesApi,
-                                                      val userAnswersService: UserAnswersService,
-                                                      @EstablishersCompany val navigator: Navigator,
-                                                      authenticate: AuthAction,
-                                                      getData: DataRetrievalAction,
-                                                      allowAccess: AllowAccessActionProvider,
-                                                      requireData: DataRequiredAction
-                                                    )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
-
+    val appConfig: FrontendAppConfig,
+    val messagesApi: MessagesApi,
+    val userAnswersService: UserAnswersService,
+    @EstablishersCompany val navigator: Navigator,
+    authenticate: AuthAction,
+    getData: DataRetrievalAction,
+    allowAccess: AllowAccessActionProvider,
+    requireData: DataRequiredAction,
+    val auditService: AuditService
+)(implicit val ec: ExecutionContext)
+    extends AddressListController
+    with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(mode, srn, index).right.map(get)
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+      (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right
+        .map {
+          case companyDetails ~ addresses =>
+            get(viewmodel(mode, srn, index, companyDetails.companyName, addresses))
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, srn, index).right.map(vm => post(vm, CompanyPreviousAddressListId(index), CompanyPreviousAddressId(index), mode))
-  }
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
+      (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right
+        .map {
+          case companyDetails ~ addresses =>
+            val context = s"Establisher Company Previous Address: ${companyDetails.companyName}"
+            post(
+              viewmodel(mode, srn, index, companyDetails.companyName, addresses),
+              CompanyPreviousAddressListId(index),
+              CompanyPreviousAddressId(index),
+              mode,
+              context,
+              CompanyPreviousAddressPostcodeLookupId(index)
+            )
+        }
+        .left
+        .map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))))
+    }
 
-  private def viewmodel(mode: Mode, srn: Option[String], index: Index)
-                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right.map {
-      case companyDetails ~ addresses =>
-        AddressListViewModel(
-          postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
-          manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
-          addresses = addresses,
-          title = Message("messages__establisherPreviousSelectAddress__title"),
-          heading = Message("messages__common__selectPreviousAddress__h1", companyDetails.companyName),
-          srn = srn
-        )
-    }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))))
-  }
+  private def viewmodel(mode: Mode, srn: Option[String], index: Index, companyName: String, addresses: Seq[TolerantAddress])(
+      implicit request: DataRequest[AnyContent]): AddressListViewModel =
+    AddressListViewModel(
+      postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
+      manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
+      addresses = addresses,
+      title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
+      heading = Message("messages__common__selectPreviousAddress__h1", companyName),
+      srn = srn
+    )
 }

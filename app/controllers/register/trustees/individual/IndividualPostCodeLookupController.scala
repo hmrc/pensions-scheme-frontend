@@ -57,7 +57,7 @@ class IndividualPostCodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn),
               routes.TrusteeAddressController.onPageLoad(mode, index, srn),
-              title = Message("messages__individualPostCodeLookup__title"),
+              title = Message("messages__individualPostCodeLookup__heading", Message("messages__theIndividual")),
               heading = Message("messages__individualPostCodeLookup__heading", name),
               subHeading = Some(name),
               srn = srn

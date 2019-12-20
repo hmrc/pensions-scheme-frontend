@@ -134,7 +134,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), None).url)
       }
 
     }

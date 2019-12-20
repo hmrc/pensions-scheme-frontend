@@ -38,7 +38,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(NormalMode, None))
       case InsurancePolicyNumberId => NavigateTo.dontSave(InsurerEnterPostcodeController.onPageLoad(NormalMode, None))
       case InsurerEnterPostCodeId => NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(NormalMode, None))
-      case InsurerSelectAddressId => NavigateTo.dontSave(InsurerConfirmAddressController.onPageLoad(NormalMode, None))
+      case InsurerSelectAddressId => checkYourAnswers(NormalMode)
       case InsurerConfirmAddressId => checkYourAnswers(NormalMode)
       case _ => None
     }
@@ -67,7 +67,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(UpdateMode, srn))
       case InsurancePolicyNumberId => anyMoreChanges(srn)
       case InsurerEnterPostCodeId => NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(CheckUpdateMode, srn))
-      case InsurerSelectAddressId => NavigateTo.dontSave(InsurerConfirmAddressController.onPageLoad(CheckUpdateMode, srn))
+      case InsurerSelectAddressId => anyMoreChanges(srn)
       case InsurerConfirmAddressId => anyMoreChanges(srn)
       case _ => None
     }

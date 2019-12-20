@@ -52,7 +52,7 @@ class CompanyAddressController @Inject()(
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = CompanyAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyConfirmAddress__title"
+  private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
@@ -62,7 +62,7 @@ class CompanyAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title),
+      title = Message(title, Message("messages__theCompany")),
       heading = Message(heading, name),
       srn = srn
     )

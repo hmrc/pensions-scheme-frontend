@@ -53,7 +53,7 @@ class CompanyPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.CompanyPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__establisherPreviousConfirmAddress__title"
+  private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__lede"
 
@@ -80,7 +80,7 @@ class CompanyPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, srn, Index(index)),
       countryOptions.options,
-      title = Message(title),
+      title = Message(title, Message("messages__theEstablisher")),
       heading = Message(heading, name),
       srn = srn
     )

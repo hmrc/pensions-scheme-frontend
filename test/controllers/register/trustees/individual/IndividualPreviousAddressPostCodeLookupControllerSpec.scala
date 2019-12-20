@@ -90,7 +90,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
-    title = Message("messages__trustee_individual_previous_address__title"),
+    title = Message("messages__trustee_individual_previous_address__heading", Message("messages__theIndividual")),
     heading = Message("messages__trustee_individual_previous_address__heading", personDetails.fullName),
     subHeading = Some(personDetails.fullName)
   )

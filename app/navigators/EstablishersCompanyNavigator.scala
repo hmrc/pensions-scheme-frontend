@@ -87,7 +87,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPostCodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
       case CompanyAddressListId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressController.onPageLoad(mode, srn, index))
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
       case CompanyAddressId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
       case CompanyAddressYearsId(index) =>
@@ -95,7 +95,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressPostcodeLookupId(index) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
       case CompanyPreviousAddressListId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
+        previousAddressRoutes(index, mode, srn)
       case CompanyPreviousAddressId(index) =>
         previousAddressRoutes(index, mode, srn)
       case CompanyPhoneId(index) =>
@@ -144,17 +144,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
 
       case CompanyAddressListId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressController.onPageLoad(mode, srn, index))
-
+        addressRoutes(index, from.userAnswers, mode, srn)
       case CompanyAddressId(index) =>
-        if (from.userAnswers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
-            cyaAddressDetails(index, journeyMode(mode), srn)
-        }
-        else if (!from.userAnswers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
-          NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-        } else {
-          NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
-        }
+        addressRoutes(index, from.userAnswers, mode, srn)
       case CompanyAddressYearsId(index) =>
 
         editAddressYearsRoutes(index, from.userAnswers, mode, srn)
@@ -165,8 +157,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
 
       case CompanyPreviousAddressListId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressController.onPageLoad(mode, srn, index))
-
+        previousAddressEditRoutes(index, mode, srn, from.userAnswers)
       case CompanyPreviousAddressId(index) => previousAddressEditRoutes(index, mode, srn, from.userAnswers)
       case CompanyPhoneId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case CompanyEmailId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
@@ -198,6 +189,17 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def addressRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+    if (answers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
+      cyaAddressDetails(index, journeyMode(mode), srn)
+    }
+    else if (!answers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
+      NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+    } else {
+      NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
     }
   }
 

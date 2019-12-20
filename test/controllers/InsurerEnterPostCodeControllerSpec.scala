@@ -20,7 +20,7 @@ import base.CSRFRequest
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import identifiers.{InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
+import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
 import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
@@ -58,8 +58,8 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
           val viewModel = PostcodeLookupViewModel(
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
             routes.InsurerConfirmAddressController.onPageLoad(NormalMode, None),
-            Messages("messages__insurer_enter_postcode__title"),
-            "messages__insurer_enter_postcode__h1",
+            Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
+            Messages("messages__insurer_enter_postcode__h1",insurerName),
             None
           )
 
@@ -95,9 +95,10 @@ object InsurerEnterPostCodeControllerSpec extends OptionValues {
   val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
   val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
   val srn = Some("123")
+  val insurerName = "the insurer"
 
   val retrieval = new FakeDataRetrievalAction(Some(
-    Json.obj(SchemeNameId.toString -> "Test Scheme Name")
+    Json.obj(SchemeNameId.toString -> "Test Scheme Name",InsuranceCompanyNameId.toString ->insurerName)
   ))
 
   val preSavedAddress = new FakeDataRetrievalAction(Some(

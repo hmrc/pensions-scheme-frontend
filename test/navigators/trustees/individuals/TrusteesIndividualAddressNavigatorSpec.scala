@@ -42,12 +42,12 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None)),
-        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressController.onPageLoad(mode, index, None)),
+        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressYearsController.onPageLoad(mode, index, None)),
         row(TrusteeAddressId(index))(someAddress, TrusteeAddressYearsController.onPageLoad(mode, index, None)),
         row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, None)),
         row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None)),
         row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, None)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, TrusteePreviousAddressController.onPageLoad(mode, index, None)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None)),
         row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None))
       )
 
@@ -59,12 +59,12 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None)),
-        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressController.onPageLoad(mode, index, None)),
+        row(IndividualAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(TrusteeAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, None)),
         row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, None)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, TrusteePreviousAddressController.onPageLoad(mode, index, None)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
         row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None))
       )
 
@@ -76,12 +76,12 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, srn)),
-        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressController.onPageLoad(mode, index, srn)),
+        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressYearsController.onPageLoad(mode, index, srn)),
         row(TrusteeAddressId(index))(someAddress, TrusteeAddressYearsController.onPageLoad(mode, index, srn)),
         row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)),
         row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)),
         row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, srn)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, TrusteePreviousAddressController.onPageLoad(mode, index, srn)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn), Some(newTrusteeUserAnswers))
       )
 
@@ -93,13 +93,14 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
       Table(
         ("Id", "UserAnswers", "Next page"),
         row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, srn)),
-        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressController.onPageLoad(mode, index, srn)),
+        row(IndividualAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteeAddressId(index))(someAddress, IndividualConfirmPreviousAddressController.onPageLoad(index, srn)),
         row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)),
         row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)),
         row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, srn)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, TrusteePreviousAddressController.onPageLoad(mode, index, srn)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingTrusteeUserAnswers)),
         row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn), Some(newTrusteeUserAnswers)),
         row(TrusteePreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingTrusteeUserAnswers))
       )

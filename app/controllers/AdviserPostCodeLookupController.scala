@@ -70,7 +70,7 @@ class AdviserPostCodeLookupController @Inject()(
     PostcodeLookupViewModel(
       routes.AdviserPostCodeLookupController.onSubmit(mode),
       routes.AdviserAddressController.onPageLoad(mode),
-      title = Message("messages__adviserPostCodeLookup__title"),
+      title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
     )
