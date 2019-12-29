@@ -32,16 +32,13 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages("messages__established_country__h1", schemeName)
-        )
-
         @components.select(field = form("value"),
-            label = messages("messages__established_country__title"),
+            label = messages("messages__established_country__h1", schemeName),
             options = options,
             placeholder = Some("messages__common__pick_country"),
             formGroupClasses = Set("autocomplete-wrapper"),
-            labelClasses = Set("visually-hidden")
+            labelClasses = Set("visually-hidden"),
+            headingIsLegend = true
         )
         @components.submit_button()
 

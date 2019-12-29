@@ -34,12 +34,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_name__heading"))
-
         @components.input_text(
             field = form("schemeName"),
-            label = messages("messages__scheme_details__name_label"),
-            labelClass = Some("visually-hidden")
+            label = messages("messages__scheme_name__heading"),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
 
         @components.submit_button()

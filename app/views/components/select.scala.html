@@ -22,20 +22,31 @@
         options: Seq[InputOption],
         formGroupClasses: Set[String] = Set.empty,
         labelClasses: Set[String] = Set("form-label-bold"),
-        selectClasses: Set[String] = Set.empty)(implicit messages: Messages)
+        selectClasses: Set[String] = Set.empty,
+        headingIsLegend: Boolean = false)(implicit messages: Messages)
 
 <div id="@{field.id}-form" class="form-group @formGroupClasses.mkString(" ") @if(field.hasErrors) {form-field--error}">
-    <label for="@field.id">
-        <span class="bold @labelClasses.mkString(" ")">@messages(label)</span>
-        @hint.map { hintText =>
-            <span class="form-hint">@messages(hintText)</span>
-        }
 
-        @field.errors.headOption.map { error =>
-            <span class="error-message">
-                <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
-        }
+    @if(headingIsLegend){
+    <h1>
+        <label class="form-label" for="@{field.id}">
+            <span class="bold heading-xlarge">@label</span>
+        </label>
+    </h1>
+    } else {
+    <label class="form-label" for="@{field.id}">
+        <span class="bold @if(labelClasses.nonEmpty){@labelClasses}">@label</span>
     </label>
+    }
+    @hint.map { hintText =>
+    <span class="form-hint">@messages(hintText)</span>
+    }
+
+    @field.errors.headOption.map { error =>
+    <span class="error-message">
+                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
+    }
+
     <div class="form-control-wrapper">
         <select
         class="form-control @selectClasses.mkString(" ")"
