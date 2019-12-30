@@ -41,7 +41,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @components.heading(
             headingKey=messages("messages__any_more_changes__title")
         )
@@ -55,7 +55,7 @@
             label = messages("messages__any_more_changes__title"),
             labelClass = Some("visually-hidden")
         )
-
+        </div>
         @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)

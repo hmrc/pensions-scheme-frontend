@@ -31,7 +31,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @hintText.map{ ht =>
         @components.heading(messages("messages__confirmDeleteEstablisher__heading", establisherName))
             <span id="delete-hint" class="form-hint">@ht</span>
@@ -43,7 +43,7 @@
         labelClass = Some("visually-hidden"),
         headingIsLegend = hintText.isEmpty
         )
-
+        </div>
         @components.submit_button()
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
