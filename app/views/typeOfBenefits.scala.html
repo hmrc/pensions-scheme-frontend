@@ -19,11 +19,12 @@
 @import controllers.routes._
 @import models.{Mode}
 @import models.TypeOfBenefits
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__type_of_benefits__title"),
+    title = titleWithErrors(form, messages("messages__type_of_benefits__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

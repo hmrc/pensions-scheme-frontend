@@ -20,11 +20,12 @@
 @import models.Mode
 @import models.register.trustees.TrusteeKind
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__trusteeKind__title"),
+    title = titleWithErrors(form, messages("messages__trusteeKind__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

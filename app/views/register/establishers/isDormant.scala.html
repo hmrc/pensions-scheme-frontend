@@ -19,11 +19,12 @@
 @import controllers.register.establishers.routes._
 @import models.{Mode}
 @import models.register.DeclarationDormant
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], establisherName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__is_dormant__title"),
+    title = titleWithErrors(form, messages("messages__is_dormant__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

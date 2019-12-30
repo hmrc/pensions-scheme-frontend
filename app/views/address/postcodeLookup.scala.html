@@ -19,6 +19,7 @@
 @import controllers.register.establishers.company.routes._
 @import models.{Mode, Index}
 @import viewmodels.address.PostcodeLookupViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
@@ -31,7 +32,7 @@
 }
 
 @main_template(
-    title = viewmodel.title,
+    title = titleWithErrors(form, viewmodel.title),
     appConfig = appConfig,
     bodyClasses = None) {
 

@@ -18,11 +18,12 @@
 @import uk.gov.hmrc.play.views.html._
 @import models.address.Address
 @import viewmodels.address.AddressListViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = viewModel.title,
+    title = titleWithErrors(form, viewModel.title),
     appConfig = appConfig,
     bodyClasses = None) {
 

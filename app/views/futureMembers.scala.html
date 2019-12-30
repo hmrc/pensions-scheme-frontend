@@ -19,11 +19,12 @@
 @import controllers.routes._
 @import models.{Mode}
 @import models.Members
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__future_members__title"),
+    title = titleWithErrors(form, messages("messages__future_members__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

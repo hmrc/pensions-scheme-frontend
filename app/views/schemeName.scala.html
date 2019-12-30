@@ -20,11 +20,12 @@
 @import models.Mode
 @import models.register._
 @import models.register.SchemeType.MasterTrust
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__scheme_name__title"),
+    title = titleWithErrors(form, messages("messages__scheme_name__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

@@ -20,6 +20,7 @@
 @import utils.Constants._
 @import play.api.mvc.Call
 @import models.{Mode, UpdateMode}
+@import utils.ViewHelper.titleWithErrors
 
 @(
     appConfig: FrontendAppConfig,
@@ -32,7 +33,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__any_more_changes__title"),
+    title = titleWithErrors(form, messages("messages__any_more_changes__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

@@ -21,6 +21,7 @@
 @import utils.Constants._
 @import models.register.Establisher
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(
     appConfig: FrontendAppConfig,
@@ -32,7 +33,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__establishers__add__title"),
+    title = titleWithErrors(form, messages("messages__establishers__add__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

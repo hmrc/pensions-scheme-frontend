@@ -21,11 +21,12 @@
 @import play.api.mvc.Call
 @import forms.CompanyRegistrationNumberFormProvider
 @import viewmodels.CompanyRegistrationNumberViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
     @main_template(
-        title = viewmodel.title,
+        title = titleWithErrors(form, viewmodel.title),
         appConfig = appConfig,
         bodyClasses = None) {
 
