@@ -40,7 +40,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @components.heading(
             headingKey=messages(viewmodel.heading)
         )
@@ -51,7 +51,7 @@
         )
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
-
+        </div>
         @components.submit_button("site.find_address")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)

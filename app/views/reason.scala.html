@@ -32,7 +32,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @components.heading(
             messages(viewmodel.heading).toString
         )
@@ -42,7 +42,7 @@
             label = messages(viewmodel.title),
             labelClass = Some("visually-hidden")
         )
-
+        </div>
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
