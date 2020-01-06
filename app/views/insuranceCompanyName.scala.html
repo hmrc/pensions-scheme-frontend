@@ -32,7 +32,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @components.heading(
             headingKey=messages("messages__insurance_company_name__h1")
         )
@@ -42,7 +42,7 @@
             label = messages("messages__benefits_insurance__name"),
             labelClass = Some("visually-hidden")
         )
-
+        </div>
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)

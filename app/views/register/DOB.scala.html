@@ -42,7 +42,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-
+        <div class="form-group @if(form.hasErrors){form-group--error}">
         @components.heading(
             headingKey = messages("messages__DOB__heading", fullName)
         )
@@ -52,7 +52,7 @@
             label = "",
             hint = Some(messages("messages__common__dob__hint"))
         )
-
+        </div>
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
