@@ -19,11 +19,12 @@
 @import controllers.register.establishers.partnership.routes._
 @import models.Mode
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_],mode: Mode, index: Index, schemeName: Option[String], submitCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__otherPartners__title"),
+    title = titleWithErrors(form, messages("messages__otherPartners__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

@@ -19,6 +19,7 @@
 @import models.Mode
 @import utils.CountryOptions
 @import viewmodels.address.ConfirmAddressViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig,
     form: Form[_],
@@ -27,7 +28,7 @@
     schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages(viewmodel.title),
+    title = titleWithErrors(form, messages(viewmodel.title)),
     appConfig = appConfig,
     bodyClasses = None) {
 

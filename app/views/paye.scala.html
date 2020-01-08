@@ -17,11 +17,12 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.PayeViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = viewmodel.title,
+    title = titleWithErrors(form, viewmodel.title),
     appConfig = appConfig,
     bodyClasses = None) {
 

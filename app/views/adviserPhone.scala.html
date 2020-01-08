@@ -18,11 +18,12 @@
 @import models.Mode
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, adviserName: String, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${messages("messages__adviser__phone__title")}",
+    title = titleWithErrors(form, messages("messages__adviser__phone__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

@@ -18,11 +18,12 @@
 @import uk.gov.hmrc.play.views.html._
 @import play.api.mvc.Call
 @import viewmodels.Message
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], establisherName: String, hintText: Option[String], postCall: Call, schemeName: Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__confirmDeleteEstablisher__title"),
+    title = titleWithErrors(form, messages("messages__confirmDeleteEstablisher__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

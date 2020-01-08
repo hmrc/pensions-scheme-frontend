@@ -19,11 +19,12 @@
 @import controllers.routes._
 @import models.Mode
 @import utils.InputOption
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, options: Seq[InputOption], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__established_country__title"),
+    title = titleWithErrors(form, messages("messages__established_country__title")),
     appConfig = appConfig,
     bodyClasses = None) {
     @helpers.form(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {

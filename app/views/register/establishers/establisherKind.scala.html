@@ -20,11 +20,12 @@
 @import models.{Mode}
 @import models.register.establishers.EstablisherKind
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], srn: Option[String], index:Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__establisher__type__title"),
+    title = titleWithErrors(form, messages("messages__establisher__type__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

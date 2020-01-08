@@ -17,11 +17,12 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], directorName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__confirmDeleteDirector__title"),
+    title = titleWithErrors(form, messages("messages__confirmDeleteDirector__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 

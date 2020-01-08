@@ -19,11 +19,12 @@
 @import models.{Mode, Index}
 @import viewmodels.address.ManualAddressViewModel
 @import utils.InputOption
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages(viewmodel.title),
+    title = titleWithErrors(form, messages(viewmodel.title)),
     appConfig = appConfig,
     bodyClasses = None
 ) {

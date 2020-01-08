@@ -19,11 +19,12 @@
 @import models.Mode
 @import play.api.mvc.Call
 @import viewmodels.CommonFormWithHintViewModel
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages(viewModel.title),
+    title = titleWithErrors(form, messages(viewModel.title)),
     appConfig = appConfig,
     bodyClasses = None) {
 

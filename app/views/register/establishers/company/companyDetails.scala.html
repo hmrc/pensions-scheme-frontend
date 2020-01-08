@@ -20,11 +20,12 @@
 @import models.{Mode, Index}
 @import models.CompanyDetails
 @import play.api.mvc.Call
+@import utils.ViewHelper.titleWithErrors
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__companyName__title"),
+    title = titleWithErrors(form, messages("messages__companyName__title")),
     appConfig = appConfig,
     bodyClasses = None) {
 
