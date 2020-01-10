@@ -87,12 +87,12 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
     behave like normalPageWithBrowserTitleSame(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
 
-    behave like yesNoPage(
+    behave like yesNoPageWithMandatoryHint(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
       routes.AddPartnersController.onSubmit(NormalMode, 0, None).url,
       legendKey = "add_more",
-      expectedHintKey = Some("lede")
+      expectedHint = messages("messages__addPartners_add_more")
     )
 
     "not show the yes no inputs if there are no partners" in {

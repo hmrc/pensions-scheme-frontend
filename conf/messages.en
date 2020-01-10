@@ -436,9 +436,9 @@ messages__common__paye = PAYE number (optional)
 messages__common__paye_label = Enter the employer PAYE number
 messages__common__paye_hint = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’.
 messages__error__company_name = Enter the company name
-messages__error__vat_length = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__vat_length = messages__enterVAT__company_invalid
 messages__error__vat_required = Enter a VAT registration number
-messages__error__vat_invalid = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__vat_invalid = messages__enterVAT__company_invalid
 messages__error__has_vat_establisher = Select whether the partnership has a VAT number
 messages__error__paye_required = Enter an employer PAYE number
 messages__error__paye_length = Enter an employer PAYE number using 16 characters or less
@@ -1715,7 +1715,7 @@ messages__enterPAYE__hint = For example, 123/AB456
 messages__enterPAYE__p1 = You can tell us any employer PAYE reference if {0} has more then one.
 
 messages__enterVAT__company_invalid = Enter {0}’s VAT registration number in the correct format
-messages__enterVAT__company_length = Enter {0}’s VAT registration number using either 9 numbers only or GB followed by 9 numbers
+messages__enterVAT__company_length = messages__enterVAT__company_invalid
 
 messages__enterPAYE__error_invalid = Enter {0}’s employer PAYE reference in the correct format
 messages__enterPAYE__error_length = Enter {0}’s employer PAYE reference using 16 characters or less

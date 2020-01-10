@@ -43,6 +43,27 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
     yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
   }
 
+  def yesNoPageLegendWithH1(createView: Form[Boolean] => HtmlFormat.Appendable,
+                            messageKeyPrefix: String,
+                            expectedFormAction: String,
+                            legend: String,
+                            expectedHintKey: Option[String] = None,
+                            valueId:String = "value"): Unit = {
+
+    "behave like a page with a Yes/No question" when {
+      "rendered" must {
+        "contain a legend for the question" in {
+          val doc = asDocument(createView(form))
+          val legends = doc.select("legend > h1")
+          legends.size mustBe 1
+          legends.first.text mustBe legend
+        }
+      }
+    }
+    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+  }
+
+
   def yesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable,
                 messageKeyPrefix: String,
                 expectedFormAction: String,
