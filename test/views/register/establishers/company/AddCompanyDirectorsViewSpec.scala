@@ -86,12 +86,12 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
     behave like normalPageWithBrowserTitleSame(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
 
-    behave like yesNoPage(
+    behave like yesNoPageWithMandatoryHint(
       createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
       routes.AddCompanyDirectorsController.onSubmit(NormalMode, None, 0).url,
       legendKey = "add_more",
-      expectedHintKey = Some("lede")
+      expectedHint = messages("messages__addCompanyDirectors_add_more")
     )
 
     "not show the yes no inputs if there are no directors" in {

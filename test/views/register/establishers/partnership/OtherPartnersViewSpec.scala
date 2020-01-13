@@ -47,10 +47,11 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
       messages("messages__otherPartners__heading")
     )
 
-    behave like yesNoPageWithMandatoryHint(createViewUsingForm,
+    behave like yesNoPageLegendWithH1(createViewUsingForm,
       messageKeyPrefix,
       routes.OtherPartnersController.onSubmit(NormalMode, index, None).url,
-      expectedHint = messages("messages__otherPartners__lede")
+      legend= messages("messages__otherPartners__heading"),
+      expectedHintKey = Some(messages("messages__otherPartners__lede"))
     )
 
     behave like pageWithSubmitButton(createView())

@@ -30,7 +30,7 @@ class EnterVATFormProvider @Inject() extends VatMapping {
     Form(
       mapping(
         "vat" -> vatMapping(
-          vatLengthKey = Message("messages__enterVAT__company_length", name),
+          vatLengthKey = Message("messages__enterVAT__company_invalid", name),
           invalidVatKey = Message("messages__enterVAT__company_invalid", name)
         )
       )

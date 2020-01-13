@@ -35,10 +35,10 @@
             } else {
                 <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
             }
-            @hint.map { hint =>
-            <span id="@{field.id}-radio-hint" class="form-hint">@hint</span>
-            }
         </legend>
+        @hint.map { hint =>
+        <span id="@{field.id}-radio-hint" class="form-hint">@hint</span>
+        }
         @field.errors.map { error =>
         <span class="error-notification" id="error-message-@{field.id}-input">
                     <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)

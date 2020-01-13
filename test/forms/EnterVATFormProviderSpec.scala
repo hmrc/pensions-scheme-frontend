@@ -24,7 +24,7 @@ import viewmodels.Message
 
 class EnterVATFormProviderSpec extends VatBehaviours with SpecBase{
 
-  private val vatLengthKey = Message("messages__enterVAT__company_length", "test company")
+  private val vatLengthKey = Message("messages__enterVAT__company_invalid", "test company")
   private val requiredVatKey = "messages__error__vat_required"
   private val invalidVatKey = Message("messages__enterVAT__company_invalid", "test company")
 

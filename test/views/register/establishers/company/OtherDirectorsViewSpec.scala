@@ -48,10 +48,11 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
       messages("messages__otherDirectors__heading")
     )
 
-    behave like yesNoPageWithMandatoryHint(createViewUsingForm,
+    behave like yesNoPageLegendWithH1(createViewUsingForm,
       messageKeyPrefix,
       routes.OtherDirectorsController.onSubmit(NormalMode, None, index).url,
-      expectedHint = messages("messages__otherDirectors__lede")
+      legend = messages("messages__otherDirectors__heading"),
+      expectedHintKey = Some(messages("messages__otherDirectors__lede"))
     )
 
     behave like pageWithSubmitButton(createView())
