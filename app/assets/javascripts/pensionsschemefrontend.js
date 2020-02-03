@@ -6,12 +6,7 @@ $(document).ready(function() {
             this.click();
         }
     });
-    window.GOVUK.timeoutDialog({
-        timeout: 900,
-        countdown: 120,
-        keepAliveUrl: '/register-pension-scheme/keep-alive',
-        signOutUrl: '/register-pension-scheme/logout',
-      });
+
     // =====================================================
     // Initialise show-hide-content
     // Toggles additional content based on radio/checkbox input state
