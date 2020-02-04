@@ -51,7 +51,7 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
-      title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
+      title = Message("messages__enterUTR", Message("messages__theCompany")),
       heading = Message("messages__enterUTR", companyName),
       hint = Message("messages_utr__hint"),
       srn = srn

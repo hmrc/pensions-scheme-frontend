@@ -22,8 +22,10 @@ import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoUTRReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -45,14 +47,16 @@ class CompanyNoUTRReasonController @Inject()(
                                           formProvider: ReasonFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: reason
-                                        )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val ec: ExecutionContext) extends ReasonController
+                                          with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
+    formProvider("messages__reason__error_utrRequired", companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
+      title = Message("messages__whyNoUTR", Message("messages__theCompany")),
       heading = Message("messages__whyNoUTR", companyName),
       srn = srn
     )

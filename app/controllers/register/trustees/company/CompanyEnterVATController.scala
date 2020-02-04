@@ -22,8 +22,10 @@ import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterVATId}
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -46,12 +48,13 @@ class CompanyEnterVATController @Inject()(
                                                 val view: enterVATView
                                               )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String) = formProvider(companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
+    formProvider(companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
+      title = Message("messages__enterVAT", Message("messages__theCompany")),
       heading = Message("messages__enterVAT", companyName),
       hint = Message("messages__enterVAT__hint", companyName),
       subHeading = None,

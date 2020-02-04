@@ -51,7 +51,7 @@ class CompanyEnterCRNController @Inject()(
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
-      title = Message("messages__enterCRN", Message("messages__theCompany").resolve),
+      title = Message("messages__enterCRN", Message("messages__theCompany")),
       heading = Message("messages__enterCRN", companyName),
       hint = Message("messages__common__crn_hint", companyName)
     )

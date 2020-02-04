@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -48,10 +49,11 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
+      title = Message("messages__enterUTR", Message("messages__thePartnership")),
       heading = Message("messages__enterUTR", partnershipName),
       hint = Message("messages_utr__hint"),
       srn = srn

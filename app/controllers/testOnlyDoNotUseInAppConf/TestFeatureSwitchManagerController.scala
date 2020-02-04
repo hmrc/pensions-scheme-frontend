@@ -20,18 +20,17 @@ import com.google.inject.Inject
 import config.FeatureSwitchManagementService
 import connectors.{PensionAdministratorFeatureSwitchConnectorImpl, PensionsSchemeFeatureSwitchConnectorImpl}
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Request}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.testOnlyDoNotUseInAppConf.testFeatureSwitchManagerSuccess
 
 import scala.concurrent.ExecutionContext
 
 class TestFeatureSwitchManagerController @Inject()(
-                                                    fs: FeatureSwitchManagementService,
-                                                    schemeFeatureSwitchConnector: PensionsSchemeFeatureSwitchConnectorImpl,
-                                                    adminFeatureSwitchConnector: PensionAdministratorFeatureSwitchConnectorImpl,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       fs: FeatureSwitchManagementService,
+                                       schemeFeatureSwitchConnector: PensionsSchemeFeatureSwitchConnectorImpl,
+                                        adminFeatureSwitchConnector: PensionAdministratorFeatureSwitchConnectorImpl,
+                                       val controllerComponents: MessagesControllerComponents
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController {
 
   private def onOrOff(state:Option[Boolean]):String = state match {

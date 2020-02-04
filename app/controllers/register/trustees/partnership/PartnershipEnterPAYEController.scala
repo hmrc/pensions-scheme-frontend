@@ -22,6 +22,7 @@ import controllers.PayeController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId}
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -47,12 +48,14 @@ class PartnershipEnterPAYEController  @Inject()(
                                                       val view: paye
                                                     )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
-  protected def form(partnershipName: String): Form[ReferenceValue] = formProvider(partnershipName)
+  protected def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
+    formProvider(partnershipName)
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): PayeViewModel =
     PayeViewModel(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
+      title = Message("messages__enterPAYE", Message("messages__thePartnership")),
       heading = Message("messages__enterPAYE", partnershipName),
       hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,

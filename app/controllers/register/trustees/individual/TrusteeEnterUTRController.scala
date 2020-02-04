@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -48,7 +49,8 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String
+                       )(implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.TrusteeEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
