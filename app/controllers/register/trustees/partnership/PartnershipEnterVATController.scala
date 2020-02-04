@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -46,12 +47,12 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
                                               val view: enterVATView
                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
+      title = Message("messages__enterVAT", Message("messages__thePartnership")),
       heading = Message("messages__enterVAT", companyName),
       hint = Message("messages__enterVAT__hint", companyName),
       subHeading = None,

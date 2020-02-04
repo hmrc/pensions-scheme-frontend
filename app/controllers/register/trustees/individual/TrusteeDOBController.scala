@@ -22,6 +22,7 @@ import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import org.joda.time.LocalDate
@@ -52,7 +53,8 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
 
   private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String
+                       )(implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,
@@ -63,14 +65,14 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
+        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
     }
 
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual").resolve), mode)
+        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
     }
 
 }

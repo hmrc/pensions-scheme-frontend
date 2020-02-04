@@ -22,8 +22,10 @@ import controllers.actions._
 import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasBeenTradingId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -43,9 +45,10 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
                                                     formProvider: HasBeenTradingFormProvider,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     val view: hasReferenceNumber)(
-                                                    implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                                    implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(mode, index, srn),
       title = Message("messages__partnership_trading_time__title"),
@@ -54,7 +57,8 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
       srn = srn
     )
 
-  private def form(partnershipName: String) = formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
+  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

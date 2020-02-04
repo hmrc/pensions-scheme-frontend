@@ -23,6 +23,7 @@ import controllers.register.trustees.partnership.routes._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasVATId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -35,7 +36,7 @@ import views.html.hasReferenceNumber
 import scala.concurrent.ExecutionContext
 
 class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
-                                            val messagesApi: MessagesApi,
+                                            override val messagesApi: MessagesApi,
                                             val userAnswersService: UserAnswersService,
                                             val navigator: Navigator,
                                             authenticate: AuthAction,
@@ -45,11 +46,13 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             formProvider: HasReferenceNumberFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: hasReferenceNumber
-                                           )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  def form(partnershipName: String): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)
+  def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider("messages__vat__formError", partnershipName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
       title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),

@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeEnterNINOController @Inject()(
                                            val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
+                                           override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            val navigator: Navigator,
                                            authenticate: AuthAction,
@@ -48,10 +49,11 @@ class TrusteeEnterNINOController @Inject()(
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit _
 
-  private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]
+                       )(implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
-      title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__enterNINO", Message("messages__theIndividual")),
       heading = Message("messages__enterNINO", fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn

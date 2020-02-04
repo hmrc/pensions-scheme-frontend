@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.individual.{TrusteeHasNINOId, TrusteeNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -45,9 +46,10 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                                          formProvider: HasReferenceNumberFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: hasReferenceNumber
-                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(mode, index, srn),
       title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
@@ -56,7 +58,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  private def form(personName: String): Form[Boolean] =
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__genericHasNino__error__required", personName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

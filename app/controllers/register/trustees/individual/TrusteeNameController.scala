@@ -23,6 +23,8 @@ import controllers.register.trustees.individual.routes._
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
+import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -47,9 +49,10 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       formProvider: PersonNameFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: personName
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                        with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider("messages__error__trustees")
+  private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] = formProvider("messages__error__trustees")
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
     TrusteeNameController.onSubmit(mode, index, srn),

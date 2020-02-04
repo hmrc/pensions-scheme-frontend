@@ -38,19 +38,21 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                            override val messagesApi: MessagesApi,
-                                                            val userAnswersService: UserAnswersService,
-                                                            val navigator: Navigator,
-                                                            authenticate: AuthAction,
-                                                            getData: DataRetrievalAction,
-                                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                                            allowChangeHelper: AllowChangeHelper,
-                                                            requireData: DataRequiredAction,
-                                                            implicit val countryOptions: CountryOptions,
-                                                            val controllerComponents: MessagesControllerComponents,
-                                                            val view: checkYourAnswers
-                                                           )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+class CheckYourAnswersIndividualDetailsController @Inject()(
+                                      val appConfig: FrontendAppConfig,
+                                      override val messagesApi: MessagesApi,
+                                      val userAnswersService: UserAnswersService,
+                                      val navigator: Navigator,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                      allowChangeHelper: AllowChangeHelper,
+                                      requireData: DataRequiredAction,
+                                      implicit val countryOptions: CountryOptions,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: checkYourAnswers
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                       with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

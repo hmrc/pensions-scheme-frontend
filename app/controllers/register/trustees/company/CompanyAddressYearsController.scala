@@ -21,13 +21,13 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{AddressYears, Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -67,7 +67,8 @@ class CompanyAddressYearsController @Inject()(
         }
     )
 
-  private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
+  private def form(implicit request: DataRequest[AnyContent]): Form[AddressYears] =
+    formProvider(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

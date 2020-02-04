@@ -24,6 +24,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.partnership._
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -51,7 +52,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                       val auditService: AuditService,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       val view: manualAddress
-                                                    )(implicit val executionContext: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                                    )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
@@ -59,12 +60,13 @@ class PartnershipPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String
+                       )(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
 
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(title,Message("messages__thePartnership")),
+      title = Message(title, Message("messages__thePartnership")),
       heading = Message(heading, name),
       srn = srn
     )
