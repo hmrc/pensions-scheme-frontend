@@ -23,7 +23,8 @@
 
 @this(
     main_template: main_template,
-    formHelper: FormWithCSRF
+    formHelper: FormWithCSRF,
+    appConfig: FrontendAppConfig
 )
 
 @(form: Form[_], mode: Mode, options: Seq[InputOption], schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -46,6 +47,6 @@
         )
         @components.submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName)
+        @components.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }

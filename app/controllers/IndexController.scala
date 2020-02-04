@@ -25,10 +25,11 @@ import views.html.index
 
 class IndexController @Inject()(val appConfig: FrontendAppConfig,
                                 override val messagesApi: MessagesApi,
-                                val controllerComponents: MessagesControllerComponents
+                                val controllerComponents: MessagesControllerComponents,
+                                val view: index
                                ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(index(appConfig))
+    Ok(view())
   }
 }

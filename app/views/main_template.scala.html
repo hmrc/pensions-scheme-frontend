@@ -40,7 +40,8 @@
     }
 }
 
-@govuk_wrapper(title = title + " - " + Messages("messages__pension_scheme_registration__title"),
+@govuk_wrapper(appConfig = appConfig,
+               title = title + " - " + Messages("messages__pension_scheme_registration__title"),
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,
