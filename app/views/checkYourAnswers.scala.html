@@ -24,7 +24,8 @@
 @import viewmodels.CYAViewModel
 
 @this(
-    main_template: main_template
+    main_template: main_template,
+    appConfig: FrontendAppConfig
 )
 
 @(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)

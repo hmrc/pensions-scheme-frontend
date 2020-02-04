@@ -17,6 +17,9 @@
 @import config.FrontendAppConfig
 @import models.Mode
 
+@this(
+  appConfig: FrontendAppConfig
+)
 @(mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
 @{
