@@ -23,13 +23,14 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import javax.inject.Inject
 import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -50,7 +51,7 @@ class PartnerNameController @Inject()(
                                        val view: personName
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider("messages__error__partner")
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
 
   def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = CommonFormWithHintViewModel(
     postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -66,8 +67,7 @@ class PartnerNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(
-          appConfig, preparedForm, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -75,8 +75,7 @@ class PartnerNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(
-              appConfig, formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewPartnerId(establisherIndex, partnerIndex))(true).flatMap(

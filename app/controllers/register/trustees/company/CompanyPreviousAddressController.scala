@@ -26,6 +26,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -41,7 +42,7 @@ import scala.concurrent.ExecutionContext
 
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
-                                                  val messagesApi: MessagesApi,
+                                                  override val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
                                                   val navigator: Navigator,
                                                   authenticate: AuthAction,
@@ -53,7 +54,7 @@ class CompanyPreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: manualAddress
-                                                )(implicit val executionContext: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
@@ -62,7 +63,8 @@ class CompanyPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,

@@ -116,7 +116,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
 
     }
 }

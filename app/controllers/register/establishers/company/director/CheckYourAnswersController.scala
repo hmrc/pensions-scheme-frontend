@@ -116,6 +116,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           h1 = headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

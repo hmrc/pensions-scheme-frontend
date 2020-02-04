@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController}
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 import scala.concurrent.Future
@@ -45,7 +45,6 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
       val partnerIndex = request.userAnswers.allPartners(index).size
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
         Future.successful(Ok(view(
-          appConfig,
           existingSchemeName,
           srn,
           partnershipDetails.name,

@@ -28,8 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
-import utils.annotations.EstablisherPartnership
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import views.html.register.establishers.partnership.otherPartners
 
@@ -57,7 +56,7 @@ class OtherPartnersController @Inject()(
         retrievePartnershipName(establisherIndex) { _ =>
           val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
           val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-          Future.successful(Ok(view(appConfig, preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
+          Future.successful(Ok(view(preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
         }
 
     }
@@ -69,7 +68,7 @@ class OtherPartnersController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-              Future.successful(BadRequest(view(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
+              Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
             },
             value =>
               userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>

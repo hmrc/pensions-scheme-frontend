@@ -22,12 +22,12 @@ import controllers.actions._
 import forms.HasUTRFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -44,9 +44,10 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         formProvider: HasUTRFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: hasReferenceNumber
-                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__theCompany").resolve),
@@ -55,7 +56,8 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__hasCompanyUtr__error__required", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasCompanyUtr__error__required", companyName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

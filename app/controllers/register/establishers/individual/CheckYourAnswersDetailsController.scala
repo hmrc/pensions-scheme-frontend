@@ -83,6 +83,6 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           h1 = headingDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

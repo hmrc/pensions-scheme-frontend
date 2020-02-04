@@ -70,7 +70,6 @@ class ConfirmDeletePartnerController @Inject()(
               Future.successful(
                 Ok(
                   view(
-                    appConfig,
                     form,
                     partner.fullName,
                     routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -90,7 +89,6 @@ class ConfirmDeletePartnerController @Inject()(
             form.bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
                 Future.successful(BadRequest(view(
-                  appConfig,
                   formWithErrors,
                   partnerDetails.fullName,
                   routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),

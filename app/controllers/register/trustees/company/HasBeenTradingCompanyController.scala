@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasBeenTradingCompanyId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -43,9 +44,10 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                 formProvider: HasBeenTradingFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: hasReferenceNumber)(
-                                                implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                                implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index, srn),
       title = Message("messages__trustee_company_trading-time__title"),
@@ -54,7 +56,8 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__tradingAtLeastOneYear__error", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__tradingAtLeastOneYear__error", companyName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

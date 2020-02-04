@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
@@ -46,7 +46,7 @@ class AlreadyDeletedController @Inject()(
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
-            Future.successful(Ok(view(appConfig, vm(mode, establisherIndex, details.fullName, srn))))
+            Future.successful(Ok(view(vm(mode, establisherIndex, details.fullName, srn))))
         }
 
     }

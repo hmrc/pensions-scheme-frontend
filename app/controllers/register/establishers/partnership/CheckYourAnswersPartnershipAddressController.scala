@@ -76,7 +76,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           h1 = headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
 
     }
 }
