@@ -29,26 +29,29 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    val userAnswersService: UserAnswersService,
-    @EstablishersCompany override val navigator: Navigator,
-    override val messagesApi: MessagesApi,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends AddressListController
+                                              override val appConfig: FrontendAppConfig,
+                                              val userAnswersService: UserAnswersService,
+                                              @EstablishersCompany override val navigator: Navigator,
+                                              override val messagesApi: MessagesApi,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              val auditService: AuditService,
+                                              val view: addressList,
+                                              val controllerComponents: MessagesControllerComponents
+                                            )(implicit val ec: ExecutionContext)
+  extends AddressListController
     with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -63,7 +66,7 @@ class CompanyAddressListController @Inject()(
     }
 
   private def viewmodel(mode: Mode, srn: Option[String], index: Index, companyName: String, addresses: Seq[TolerantAddress])(
-      implicit request: DataRequest[AnyContent]): AddressListViewModel =
+    implicit request: DataRequest[AnyContent]): AddressListViewModel =
     AddressListViewModel(
       postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),
       manualInputCall = routes.CompanyAddressController.onPageLoad(mode, srn, index),
@@ -80,7 +83,7 @@ class CompanyAddressListController @Inject()(
           case companyDetails ~ addresses =>
             val context = s"Establisher Company Address: ${companyDetails.companyName}"
             post(viewmodel(mode, srn, index, companyDetails.companyName, addresses),
-              CompanyAddressListId(index), CompanyAddressId(index), mode, context,CompanyPostCodeLookupId(index))
+              CompanyAddressListId(index), CompanyAddressId(index), mode, context, CompanyPostCodeLookupId(index))
         }
         .left
         .map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index))))

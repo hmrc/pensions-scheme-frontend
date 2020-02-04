@@ -22,14 +22,16 @@ import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterVATId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{EnterVATViewModel, Message}
+import views.html.enterVATView
 
 import scala.concurrent.ExecutionContext
 
@@ -41,12 +43,15 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: EnterVATFormProvider
+                                          formProvider: EnterVATFormProvider,
+                                          val view: enterVATView,
+                                          val controllerComponents: MessagesControllerComponents
                                          )(implicit val ec: ExecutionContext) extends EnterVATController {
 
   private def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
       title = Message("messages__enterVAT", Message("messages__theCompany").resolve),

@@ -26,11 +26,11 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersCompany
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.otherDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,33 +45,35 @@ class OtherDirectorsController @Inject()(
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: OtherDirectorsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: otherDirectors
+                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
+
   private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
 
   def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
+      implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
-          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
-          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
+          case None => Ok(view(appConfig, form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
+          case Some(value) => Ok(view(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
         }
         Future.successful(redirectResult)
 
-  }
+    }
 
-  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(
-                otherDirectors(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))),
-            value =>
-              userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
-          )
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(
+            view(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))),
+        value =>
+          userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
+            Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
+      )
   }
 }

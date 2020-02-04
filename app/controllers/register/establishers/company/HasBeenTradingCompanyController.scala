@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.HasBeenTradingFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasBeenTradingCompanyId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +43,9 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 formProvider: HasBeenTradingFormProvider,
-                                                implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                                val view: hasReferenceNumber,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
@@ -52,7 +56,8 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__hasBeenTradingCompany__error__required", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasBeenTradingCompany__error__required", companyName)
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

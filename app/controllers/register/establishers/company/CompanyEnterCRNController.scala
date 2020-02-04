@@ -22,13 +22,15 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.CompanyRegistrationNumberBaseController
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterCRNId}
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,14 +42,17 @@ class CompanyEnterCRNController @Inject()(
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
-                                                               requireData: DataRequiredAction
+                                                               requireData: DataRequiredAction,
+                                                               val view: companyRegistrationNumber,
+                                                               val controllerComponents: MessagesControllerComponents
                                                              )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberBaseController {
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__enterCRN", Message("messages__theCompany").resolve),
       heading = Message("messages__enterCRN", companyName),

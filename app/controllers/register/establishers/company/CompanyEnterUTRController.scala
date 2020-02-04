@@ -22,14 +22,16 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
@@ -42,12 +44,15 @@ class CompanyEnterUTRController @Inject()(
                                       getData: DataRetrievalAction,
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      formProvider: UTRFormProvider
+                                      formProvider: UTRFormProvider,
+                                      val view: utr,
+                                      val controllerComponents: MessagesControllerComponents
                                     )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
       title = Message("messages__enterUTR", Message("messages__theCompany").resolve),

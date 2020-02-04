@@ -50,8 +50,6 @@ trait AddressListController extends FrontendBaseController with Retrievals with 
 
   protected def view: addressList
 
-  protected def controllerComponents: MessagesControllerComponents
-
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
 
   protected def get(viewModel: AddressListViewModel)

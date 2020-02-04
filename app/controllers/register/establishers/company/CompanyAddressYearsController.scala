@@ -23,14 +23,16 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -39,14 +41,17 @@ class CompanyAddressYearsController @Inject()(
 
                                                val userAnswersService: UserAnswersService,
                                                @EstablishersCompany val navigator: Navigator,
-                                               val messagesApi: MessagesApi,
+                                               override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               val view: addressYears,
+                                               val controllerComponents: MessagesControllerComponents
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private def form(companyName: String) = new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
