@@ -47,7 +47,7 @@ class PartnershipEnterVATController @Inject()(
                                                     val view: enterVATView
                                               )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String) = formProvider(companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider(companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
                        (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {

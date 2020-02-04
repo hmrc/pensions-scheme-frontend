@@ -17,8 +17,11 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 
+@this(
+    main_template: main_template
+)
+
 @(
-        appConfig: FrontendAppConfig,
         schemeName: Option[String],
         srn: Option[String],
         partnershipName: String,

@@ -21,8 +21,13 @@
 @import utils.ViewHelper.titleWithErrors
 
 @import viewmodels.dateOfBirth.DateOfBirthViewModel
+
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
 @(
-        appConfig: FrontendAppConfig,
         form: Form[_],
         mode: Mode,
         schemeName: Option[String],

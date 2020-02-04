@@ -81,6 +81,6 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           h1 = headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

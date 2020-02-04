@@ -93,6 +93,6 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           h1 = headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

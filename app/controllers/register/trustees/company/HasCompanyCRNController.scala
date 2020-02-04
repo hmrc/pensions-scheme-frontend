@@ -22,33 +22,33 @@ import controllers.actions._
 import forms.HasCRNFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyCRNId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
 class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           override val userAnswersService: UserAnswersService,
-                                           override val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: HasCRNFormProvider,
+                                        override val messagesApi: MessagesApi,
+                                        override val userAnswersService: UserAnswersService,
+                                        override val navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        allowAccess: AllowAccessActionProvider,
+                                        requireData: DataRequiredAction,
+                                        formProvider: HasCRNFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: hasReferenceNumber
-                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
 
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(mode, index, srn),
       title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
@@ -57,7 +57,8 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__hasCompanyNumber__error__required", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasCompanyNumber__error__required", companyName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

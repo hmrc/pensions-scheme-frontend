@@ -54,7 +54,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(
         EstablisherNameId(index).retrieve.right.map {
           name =>
             Future.successful(Ok(
-              view(appConfig, existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))
+              view(existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))
         }
       }
     }

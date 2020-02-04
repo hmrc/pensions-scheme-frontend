@@ -23,6 +23,7 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import javax.inject.Inject
 import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EstablisherNameController @Inject()(
                                            val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
+                                           override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            val navigator: Navigator,
                                            authenticate: AuthAction,
@@ -52,7 +53,7 @@ class EstablisherNameController @Inject()(
 
   private val form = formProvider("messages__error__establisher")
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
     title = Message("messages__individualName__title"),
     heading = Message("messages__individualName__heading"),

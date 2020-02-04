@@ -81,6 +81,6 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
           h1 =  headingAddressDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
-        Future.successful(Ok(view(appConfig,vm)))
+        Future.successful(Ok(view(vm)))
     }
 }
