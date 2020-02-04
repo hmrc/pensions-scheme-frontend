@@ -52,7 +52,7 @@ class TrusteePreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: manualAddress
-                                                )(implicit val executionContext: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
 

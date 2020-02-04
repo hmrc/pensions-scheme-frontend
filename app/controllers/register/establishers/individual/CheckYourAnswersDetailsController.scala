@@ -39,7 +39,7 @@ import views.html.checkYourAnswers
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                  val messagesApi: MessagesApi,
+                                                  override val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
                                                   val navigator: Navigator,
                                                   authenticate: AuthAction,

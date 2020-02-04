@@ -37,7 +37,7 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                         val messagesApi: MessagesApi,
+                                                         override val messagesApi: MessagesApi,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
