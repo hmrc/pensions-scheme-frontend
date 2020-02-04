@@ -21,7 +21,7 @@
     main_template: main_template
 )
 
-@( srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
 title = messages("messages__cannot_Make_Changes__title")) {

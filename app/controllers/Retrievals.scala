@@ -23,18 +23,14 @@ import identifiers.{SchemeNameId, TypedIdentifier}
 import models.person.PersonName
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
-import play.api.i18n.Messages
 import play.api.libs.json.Reads
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result, WrappedRequest}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
-import viewmodels.Message
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 trait Retrievals {
-
-  this: FrontendBaseController =>
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
@@ -61,7 +57,7 @@ trait Retrievals {
   }
 
   private[controllers] def retrieve[A](id: TypedIdentifier[A])
-                                      (f: (A) => Future[Result])
+                                      (f: A => Future[Result])
                                       (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
     request.userAnswers.get(id).map(f).getOrElse {
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

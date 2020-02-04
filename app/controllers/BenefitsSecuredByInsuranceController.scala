@@ -25,9 +25,9 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.benefitsSecuredByInsurance
@@ -44,7 +44,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                      requireData: DataRequiredAction,
                                                      formProvider: BenefitsSecuredByInsuranceFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: benefitsSecuredByInsurance
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -58,14 +58,14 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
+        Future.successful(Ok(view(preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
         value =>
           userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map { userAnswers =>
             Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(userAnswers), srn))

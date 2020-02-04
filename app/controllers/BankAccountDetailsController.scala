@@ -26,10 +26,10 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.AboutBankDetails
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.AboutBankDetails
 import views.html.bankAccountDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              requireData: DataRequiredAction,
                                              formProvider: BankAccountDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: bankAccountDetails
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -55,7 +55,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(bankAccountDetails(appConfig, preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName)))
       }
   }
 
@@ -64,7 +64,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(bankAccountDetails(appConfig, formWithErrors, mode, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, BankAccountDetailsId, value).map(cacheMap =>

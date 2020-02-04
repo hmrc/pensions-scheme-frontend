@@ -42,18 +42,20 @@ trait PhoneNumberController extends FrontendController with Retrievals with I18n
 
   protected def navigator: Navigator
 
+  protected def view: phoneNumber
+
   def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(phoneNumber(appConfig, preparedForm, viewModel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewModel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(phoneNumber(appConfig, formWithErrors, viewModel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewModel.srn, id, value).map{cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))}

@@ -23,7 +23,7 @@
     main_template: main_template
 )
 
-@( mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__membership_pension_regulator__title")) {

@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait EmailAddressController extends FrontendController with Retrievals with I18nSupport {
 
-  protected implicit def ec: ExecutionContext
+  protected implicit def executionContext: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
 
@@ -43,6 +43,8 @@ trait EmailAddressController extends FrontendController with Retrievals with I18
   protected def view: emailAddress
 
   protected def navigator: Navigator
+
+  protected def view: emailAddress
 
   def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {

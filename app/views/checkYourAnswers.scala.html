@@ -27,7 +27,7 @@
     main_template: main_template
 )
 
-@( vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
+@(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = vm.title.resolve.capitalize

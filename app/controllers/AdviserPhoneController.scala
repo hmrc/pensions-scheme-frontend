@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.WorkingKnowledge
 import views.html.adviserPhone
@@ -44,7 +44,7 @@ class AdviserPhoneController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: AdviserPhoneFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: adviserPhone
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -57,7 +57,7 @@ class AdviserPhoneController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(adviserPhone(appConfig, preparedForm, mode, adviserName, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, existingSchemeName)))
       }
   }
 
@@ -66,7 +66,7 @@ class AdviserPhoneController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(adviserPhone(appConfig, formWithErrors, mode, adviserName, existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, existingSchemeName)))
           }
         },
         value =>

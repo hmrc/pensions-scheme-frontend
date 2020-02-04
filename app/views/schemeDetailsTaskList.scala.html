@@ -28,7 +28,7 @@
     main_template: main_template
 )
 
-@( taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
+@(taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
 @variationsOnly(html:String)=@{
     if(taskSections.srn.isDefined){

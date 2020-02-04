@@ -26,7 +26,7 @@
     main_template: main_template
 )
 
-@( schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
