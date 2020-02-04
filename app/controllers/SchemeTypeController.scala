@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.BeforeYouStart
 import utils.{NameMatchingFactory, UserAnswers}
 import views.html.schemeType
@@ -42,8 +42,10 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeTypeFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory)(
-  implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                     nameMatchingFactory: NameMatchingFactory,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val view: schemeType
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -54,7 +56,7 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(schemeType(appConfig, preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName)))
       }
   }
 
@@ -63,7 +65,7 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(schemeType(appConfig, formWithErrors, mode, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>

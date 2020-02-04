@@ -26,9 +26,9 @@ import models.requests.OptionalDataRequest
 import models.{Mode, VarianceLock}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
@@ -48,9 +48,9 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                          updateConnector: UpdateSchemeCacheConnector,
                                          minimalPsaConnector: MinimalPsaConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: schemeDetailsTaskList
+                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
     implicit request =>
@@ -58,7 +58,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
         case (None, Some(userAnswers)) =>
           val view =
-            schemeDetailsTaskList(appConfig, new HsTaskListHelperRegistration(userAnswers).taskList)
+            view(new HsTaskListHelperRegistration(userAnswers).taskList)
 
           Future.successful(Ok(view))
         case (Some(srnValue), optionUserAnswers) =>
@@ -106,7 +106,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
         val view =
-          schemeDetailsTaskList(appConfig, taskList)
+          view(taskList)
         Future.successful(Ok(view))
       }
     }

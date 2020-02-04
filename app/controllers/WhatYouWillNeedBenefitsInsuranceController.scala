@@ -21,17 +21,19 @@ import controllers.actions._
 import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import views.html.whatYouWillNeedBenefitsInsurance
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
-                                                           getData: DataRetrievalAction
-                                                        ) extends FrontendController with I18nSupport with Retrievals {
+                                                           getData: DataRetrievalAction,
+                                                           val controllerComponents: MessagesControllerComponents,
+                                                           val view: whatYouWillNeedBenefitsInsurance
+                                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>

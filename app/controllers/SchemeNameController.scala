@@ -29,9 +29,9 @@ import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils._
 import utils.annotations.BeforeYouStart
 import views.html.schemeName
@@ -48,7 +48,10 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                     sectionComplete: SectionComplete,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val view: schemeName
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -58,19 +61,19 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(schemeName(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
               pensionAdministratorConnector.getPSAName.map { psaName =>
-                BadRequest(schemeName(appConfig, form.withError(
+                BadRequest(view(form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match", psaName
                 ), mode, existingSchemeNameOrEmptyString))
