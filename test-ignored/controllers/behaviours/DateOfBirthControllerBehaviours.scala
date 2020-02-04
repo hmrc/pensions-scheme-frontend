@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures

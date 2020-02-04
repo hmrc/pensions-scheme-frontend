@@ -57,7 +57,7 @@ class OtherDirectorsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
-          case None => Ok(view(appConfig, form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
+          case None => Ok(view(form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
           case Some(value) => Ok(view(form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
         }
         Future.successful(redirectResult)

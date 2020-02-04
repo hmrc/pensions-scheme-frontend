@@ -31,7 +31,7 @@ import views.html.register.whatYouWillNeedAddress
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                           val messagesApi: MessagesApi,
+                                                           override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
@@ -47,7 +47,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           establisherName =>
             val name = establisherName.fullName
             val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
+            Future.successful(Ok(view(existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
         }
     }
 }

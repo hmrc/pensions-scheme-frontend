@@ -23,6 +23,7 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -49,11 +50,13 @@ class DirectorNameController @Inject()(
                                         formProvider: PersonNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: personName
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                      )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider("messages__error__director")
 
-  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+               (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
     postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorName__title"),
     heading = Message("messages__directorName__heading"),

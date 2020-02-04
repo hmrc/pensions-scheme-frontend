@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.addPartners
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,7 +54,7 @@ class AddPartnersController @Inject()(
       implicit request =>
         retrievePartnershipName(index) { _ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(view(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
+          Future.successful(Ok(view(form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
         }
     }
 
@@ -73,7 +73,6 @@ class AddPartnersController @Inject()(
                 Future.successful(
                   BadRequest(
                     view(
-                      appConfig,
                       formWithErrors,
                       partners,
                       postUrl(index, mode, srn),

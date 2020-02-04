@@ -25,7 +25,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerId, PartnerNameId}
 import models.person.PersonName
 import models.{PartnershipDetails, Index, Mode, NormalMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

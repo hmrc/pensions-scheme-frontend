@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

@@ -24,7 +24,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.mvc.Call

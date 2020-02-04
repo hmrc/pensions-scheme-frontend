@@ -20,7 +20,7 @@ import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
 import models.register.SchemeType
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers

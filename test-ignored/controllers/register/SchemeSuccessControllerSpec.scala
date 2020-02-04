@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar

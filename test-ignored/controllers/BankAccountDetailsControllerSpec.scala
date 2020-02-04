@@ -25,7 +25,7 @@ import models.register.SortCode
 import models.{BankAccountDetails, NormalMode}
 import navigators.Navigator
 import org.apache.commons.lang3.RandomUtils
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
