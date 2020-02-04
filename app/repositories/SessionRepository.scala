@@ -18,7 +18,7 @@ package repositories
 
 import javax.inject.{Inject, Singleton}
 import org.joda.time.{DateTime, DateTimeZone}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Format, JsString, JsValue, Json}
 import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.MongoDbConnection
 import reactivemongo.api.DefaultDB
@@ -37,7 +37,7 @@ case class DatedCacheMap(id: String,
                          lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object DatedCacheMap {
-  implicit val dateFormat = ReactiveMongoFormats.dateTimeFormats
+  implicit val dateFormat: Format[DateTime] = ReactiveMongoFormats.dateTimeFormats
   implicit val formats = Json.format[DatedCacheMap]
 
   def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
@@ -71,7 +71,7 @@ class ReactiveMongoRepository(config: Configuration, mongo: () => DefaultDB)
     val document = Json.obj(
       "id" -> id,
       "data" -> json,
-      "lastUpdated" -> DateTime.now(DateTimeZone.UTC)
+      "lastUpdated" -> JsString(DateTime.now(DateTimeZone.UTC).toString())
     )
 
     val selector = BSONDocument("id" -> id)

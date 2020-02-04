@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.UpdateMode
 import navigators.Navigator
 import java.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import java.time.format.DateTimeFormatter
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -66,6 +66,8 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
+  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).
+    format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+
 }
 

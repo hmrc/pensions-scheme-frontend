@@ -50,10 +50,10 @@ class DirectorNameController @Inject()(
                                         formProvider: PersonNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: personName
-                                      )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider("messages__error__director")
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
 
   def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
