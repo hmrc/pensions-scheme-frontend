@@ -37,7 +37,7 @@ class DataRetrievalImpl(
                          lockConnector: PensionSchemeVarianceLockConnector,
                          mode: Mode,
                          srn: Option[String]
-                       )(implicit ec: ExecutionContext) extends DataRetrieval {
+                       )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))

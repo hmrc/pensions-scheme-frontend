@@ -22,9 +22,9 @@ import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
 import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -40,8 +40,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         userAnswersService: UserAnswersService
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                         userAnswersService: UserAnswersService,
+                                                         val controllerComponents: MessagesControllerComponents
+                                                        )(implicit val ec: ExecutionContext) extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
