@@ -33,9 +33,9 @@ import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.Trustees
 import views.html.register.trustees.confirmDeleteTrustee
@@ -50,8 +50,11 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                userAnswersService: UserAnswersService,
-                                               formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport with Retrievals {
+                                               formProvider: ConfirmDeleteTrusteeFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: confirmDeleteTrustee
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -65,9 +68,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           } else {
             Future.successful(
               Ok(
-                confirmDeleteTrustee(
-                  appConfig,
-                  form,
+                view(form,
                   trustee.name,
                   routes.ConfirmDeleteTrusteeController.onSubmit(mode, index, trusteeKind, srn),
                   existingSchemeName,
@@ -109,8 +110,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(confirmDeleteTrustee(
-          appConfig,
+        Future.successful(BadRequest(view(
           formWithErrors,
           name,
           routes.ConfirmDeleteTrusteeController.onSubmit(mode, trusteeIndex, trusteeKind, srn),
@@ -142,9 +142,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   private def getDeletableTrustee(index: Index, trusteeKind: TrusteeKind, userAnswers: UserAnswers): Option[DeletableTrustee] = {
     trusteeKind match {
-      case Individual => {
-          userAnswers.get(TrusteeNameId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
-      }
+      case Individual => userAnswers.get(TrusteeNameId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
       case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableTrustee(details.name, details.isDeleted))
     }
