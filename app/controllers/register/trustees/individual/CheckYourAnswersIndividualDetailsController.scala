@@ -47,8 +47,10 @@ class CheckYourAnswersIndividualDetailsController @Inject()(val appConfig: Front
                                                             @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                             allowChangeHelper: AllowChangeHelper,
                                                             requireData: DataRequiredAction,
-                                                            implicit val countryOptions: CountryOptions
-                                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                            implicit val countryOptions: CountryOptions,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

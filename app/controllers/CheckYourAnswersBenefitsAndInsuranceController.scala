@@ -41,8 +41,10 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction,
                                                                userAnswersService: UserAnswersService,
-                                                               implicit val countryOptions: CountryOptions
-                                                              )(implicit val ec: ExecutionContext) extends FrontendController
+                                                               implicit val countryOptions: CountryOptions,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =

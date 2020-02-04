@@ -23,12 +23,14 @@
 @import models.{NormalMode, Mode}
 @import viewmodels.CYAViewModel
 
-@(appConfig: FrontendAppConfig, vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@( vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = vm.title.resolve.capitalize,
-    appConfig = appConfig,
-    bodyClasses = None
+    title = vm.title.resolve.capitalize
 ) {
     @components.back_link()
 

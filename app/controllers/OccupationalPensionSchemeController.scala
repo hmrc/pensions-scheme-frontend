@@ -41,8 +41,10 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: OccupationalPensionSchemeFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                    formProvider: OccupationalPensionSchemeFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

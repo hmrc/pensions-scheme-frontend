@@ -44,8 +44,10 @@ class OtherDirectorsController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: OtherDirectorsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                          formProvider: OtherDirectorsFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
   private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _

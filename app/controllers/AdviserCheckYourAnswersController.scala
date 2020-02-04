@@ -41,8 +41,10 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   @WorkingKnowledge navigator: Navigator,
-                                                  implicit val countryOptions: CountryOptions
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                  implicit val countryOptions: CountryOptions,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>

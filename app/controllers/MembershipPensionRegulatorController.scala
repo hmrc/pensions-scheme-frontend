@@ -37,8 +37,10 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
                                                      userAnswersCacheConnector: UserAnswersCacheConnector,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction
-                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                     requireData: DataRequiredAction,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData) {
     implicit request =>

@@ -42,8 +42,10 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
-                                                     formProvider: BenefitsSecuredByInsuranceFormProvider
-                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                     formProvider: BenefitsSecuredByInsuranceFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

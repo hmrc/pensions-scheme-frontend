@@ -49,8 +49,10 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           implicit val countryOptions: CountryOptions,
                                                           @EstablishersCompany navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
-                                                          allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                          allowChangeHelper: AllowChangeHelper,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
 

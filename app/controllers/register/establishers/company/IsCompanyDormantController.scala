@@ -44,8 +44,10 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
                                  authenticate: AuthAction,
                                  getData: DataRetrievalAction,
                                  requireData: DataRequiredAction,
-                                 formProvider: IsDormantFormProvider
-                                 )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                 formProvider: IsDormantFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
   private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, srn, index )

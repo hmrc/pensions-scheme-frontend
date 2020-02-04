@@ -34,8 +34,10 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          crypto: ApplicationCrypto,
                                          userAnswersCacheConnector: UserAnswersCacheConnector,
-                                         pensionAdministratorConnector: PensionAdministratorConnector
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                         pensionAdministratorConnector: PensionAdministratorConnector,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>

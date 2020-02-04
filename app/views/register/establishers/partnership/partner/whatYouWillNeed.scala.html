@@ -29,9 +29,7 @@
 )
 
 @main_template(
-    title = messages("messages__partnersFor", messages("messages__thePartnership")).capitalize,
-    appConfig = appConfig,
-    bodyClasses = None
+    title = messages("messages__partnersFor", messages("messages__thePartnership")).capitalize
 ) {
     @components.back_link()
     @components.heading(messages("messages__partnersFor", partnershipName))

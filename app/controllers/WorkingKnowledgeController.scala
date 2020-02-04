@@ -43,8 +43,10 @@ class WorkingKnowledgeController @Inject()(
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
-                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
+                                            sectionComplete: SectionComplete,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
 

@@ -33,8 +33,10 @@ class CannotMakeChangesController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                            requireData: DataRequiredAction,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn)).async {

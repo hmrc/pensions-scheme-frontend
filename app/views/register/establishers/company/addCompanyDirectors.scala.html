@@ -34,9 +34,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__addCompanyDirectors__heading")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))) {
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {
 

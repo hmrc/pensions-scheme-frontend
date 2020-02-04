@@ -31,8 +31,10 @@ import scala.concurrent.ExecutionContext
 class ContinueRegistrationController @Inject()(
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
-                                                @Register navigator: Navigator
-                                              )(implicit val ec: ExecutionContext) extends FrontendController {
+                                                @Register navigator: Navigator,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>

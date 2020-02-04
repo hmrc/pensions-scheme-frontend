@@ -29,8 +29,10 @@ import scala.concurrent.ExecutionContext
 class TestFeatureSwitchManagerController @Inject()(
                                                     fs: FeatureSwitchManagementService,
                                                     schemeFeatureSwitchConnector: PensionsSchemeFeatureSwitchConnectorImpl,
-                                                    adminFeatureSwitchConnector: PensionAdministratorFeatureSwitchConnectorImpl
-                                                  )(implicit val ec: ExecutionContext) extends FrontendController {
+                                                    adminFeatureSwitchConnector: PensionAdministratorFeatureSwitchConnectorImpl,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController {
 
   private def onOrOff(state:Option[Boolean]):String = state match {
     case None => "unknown"

@@ -44,8 +44,10 @@ class OtherPartnersController @Inject()(
                                          getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: OtherPartnersFormProvider
-                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                         formProvider: OtherPartnersFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

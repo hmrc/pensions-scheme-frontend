@@ -39,8 +39,10 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
-                                                  userAnswersService: UserAnswersService
-                                                 )(implicit val ec: ExecutionContext) extends FrontendController
+                                                  userAnswersService: UserAnswersService,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =

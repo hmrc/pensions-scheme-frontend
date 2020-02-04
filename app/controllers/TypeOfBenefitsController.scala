@@ -41,8 +41,10 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: TypeOfBenefitsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                         formProvider: TypeOfBenefitsFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 

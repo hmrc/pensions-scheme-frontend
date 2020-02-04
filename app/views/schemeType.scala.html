@@ -21,12 +21,15 @@
 @import models.register._
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__scheme_type__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__scheme_type__title"))) {
 
     @helpers.form(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 

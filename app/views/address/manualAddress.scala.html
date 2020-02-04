@@ -21,12 +21,15 @@
 @import utils.InputOption
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages(viewmodel.title)),
-    appConfig = appConfig,
-    bodyClasses = None
+    title = titleWithErrors(form, messages(viewmodel.title))
 ) {
     @helpers.form(action = viewmodel.postCall, 'autoComplete -> "off") {
 

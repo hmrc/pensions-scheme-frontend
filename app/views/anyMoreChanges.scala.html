@@ -33,9 +33,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__any_more_changes__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__any_more_changes__title"))) {
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {
 

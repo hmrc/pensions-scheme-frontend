@@ -24,7 +24,11 @@
 @import controllers.register.trustees.routes._
 @import uk.gov.hmrc.play.views.html._
 
-@(appConfig: FrontendAppConfig, taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@( taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
 @variationsOnly(html:String)=@{
     if(taskSections.srn.isDefined){
@@ -51,9 +55,7 @@
 }
 
 @main_template(
-    title = messages(taskSections.pageTitle),
-    appConfig = appConfig,
-    bodyClasses = None
+    title = messages(taskSections.pageTitle)
     ) {
         @components.back_link()
         @components.heading(taskSections.h1)

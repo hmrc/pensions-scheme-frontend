@@ -19,7 +19,11 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig,
+@this(
+    main_template: main_template
+)
+
+@(
     isCompany: Boolean,
     isDormant: Boolean,
     showMasterTrustDeclaration: Boolean,
@@ -28,9 +32,7 @@
     href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__declaration__title"),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = messages("messages__declaration__title")) {
 
     @components.back_link()
 

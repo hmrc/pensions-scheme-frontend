@@ -35,8 +35,10 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
-                                                           requireData: DataRequiredAction
-                                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                           requireData: DataRequiredAction,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

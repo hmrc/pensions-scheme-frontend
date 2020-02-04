@@ -46,8 +46,10 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
-                                                                userAnswersService: UserAnswersService
-                                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                                userAnswersService: UserAnswersService,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

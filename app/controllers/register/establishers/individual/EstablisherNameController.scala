@@ -45,8 +45,10 @@ class EstablisherNameController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           formProvider: PersonNameFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                           formProvider: PersonNameFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider("messages__error__establisher")
 

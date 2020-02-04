@@ -19,9 +19,7 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__unauthorised__title"),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = messages("messages__unauthorised__title")) {
 
     @components.back_link()
 

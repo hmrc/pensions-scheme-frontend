@@ -45,8 +45,10 @@ class PartnershipDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: PartnershipDetailsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          formProvider: PartnershipDetailsFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

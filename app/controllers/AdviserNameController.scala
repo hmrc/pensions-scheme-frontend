@@ -42,8 +42,10 @@ class AdviserNameController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: AdviserNameFormProvider
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                       formProvider: AdviserNameFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

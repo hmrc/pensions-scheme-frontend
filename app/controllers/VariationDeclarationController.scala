@@ -46,8 +46,10 @@ class VariationDeclarationController @Inject()(
                                                 pensionsSchemeConnector: PensionsSchemeConnector,
                                                 lockConnector: PensionSchemeVarianceLockConnector,
                                                 updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                                viewConnector: SchemeDetailsReadOnlyCacheConnector
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>

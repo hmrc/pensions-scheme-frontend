@@ -44,8 +44,10 @@ class UserResearchDetailsController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: UserResearchDetailsFormProvider,
-                                               auditService: AuditService
-                                             )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                               auditService: AuditService,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 

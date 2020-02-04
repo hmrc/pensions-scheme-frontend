@@ -45,8 +45,10 @@ class MoreThanTenTrusteesController @Inject()(
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               formProvider: MoreThanTenTrusteesFormProvider
-                                             )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                               formProvider: MoreThanTenTrusteesFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

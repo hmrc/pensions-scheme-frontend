@@ -43,8 +43,10 @@ class AddTrusteeController @Inject()(
                                       getData: DataRetrievalAction,
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      formProvider: AddTrusteeFormProvider
-                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                      formProvider: AddTrusteeFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

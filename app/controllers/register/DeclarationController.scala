@@ -55,8 +55,10 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                       pensionAdministratorConnector: PensionAdministratorConnector,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: businessType
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
