@@ -20,25 +20,27 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models.Mode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContent, Call, Result}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ManualAddressController extends FrontendController with Retrievals with I18nSupport {
+trait ManualAddressController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
+
+  protected def controllerComponents: MessagesControllerComponents
 
   protected def appConfig: FrontendAppConfig
 
@@ -49,6 +51,8 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
   protected def auditService: AuditService
 
   protected val form: Form[Address]
+
+  protected def view: manualAddress
 
   protected def get(
                      id: TypedIdentifier[Address],
@@ -62,7 +66,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
       }
       case Some(value) => form.fill(value)
     }
-    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewModel, existingSchemeName)))
   }
 
   protected def post(
@@ -74,7 +78,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, existingSchemeName))),
+      (formWithError: Form[_]) => Future.successful(BadRequest(view(formWithError, viewModel, existingSchemeName))),
       address => {
         val existingAddress = request.userAnswers.get(id)
         val selectedAddress = request.userAnswers.get(selectedId)

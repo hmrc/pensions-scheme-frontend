@@ -24,16 +24,16 @@ import models.{AddressYears, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AddressYearsController extends FrontendController with Retrievals with I18nSupport {
+trait AddressYearsController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -43,13 +43,17 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
 
   protected def navigator: Navigator
 
+  protected def controllerComponents: MessagesControllerComponents
+
+  protected def view: addressYears
+
   protected def get(id: TypedIdentifier[AddressYears], form: Form[AddressYears], viewmodel: AddressYearsViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val filledForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(addressYears(appConfig, filledForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(filledForm, viewmodel, existingSchemeName)))
   }
 
   protected def post[I <: TypedIdentifier[AddressYears]](
@@ -60,7 +64,7 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
                                                         )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(addressYears(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       addressYears =>
         userAnswersService.save[AddressYears, TypedIdentifier[AddressYears]](mode, viewmodel.srn, id, addressYears).map {
           json =>

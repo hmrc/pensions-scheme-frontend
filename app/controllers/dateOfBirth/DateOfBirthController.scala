@@ -25,17 +25,16 @@ import models.requests.DataRequest
 import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait DateOfBirthController extends FrontendController with Retrievals with I18nSupport {
+trait DateOfBirthController extends FrontendBaseController with Retrievals {
   protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig

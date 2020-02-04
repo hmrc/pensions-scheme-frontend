@@ -40,7 +40,7 @@ import scala.concurrent.ExecutionContext
 
 class DirectorPreviousAddressController @Inject()(
                                                    val appConfig: FrontendAppConfig,
-                                                   val messagesApi: MessagesApi,
+                                                   override val messagesApi: MessagesApi,
                                                    val userAnswersService: UserAnswersService,
                                                    @EstablishersCompanyDirector val navigator: Navigator,
                                                    authenticate: AuthAction,

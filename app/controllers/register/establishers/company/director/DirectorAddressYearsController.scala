@@ -26,7 +26,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -35,13 +35,14 @@ import viewmodels.address.AddressYearsViewModel
 import scala.concurrent.ExecutionContext
 
 class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
-                                                val userAnswersService: UserAnswersService,
-                                                @EstablishersCompanyDirector val navigator: Navigator,
-                                                val messagesApi: MessagesApi,
-                                                authenticate: AuthAction,
-                                                getData: DataRetrievalAction,
-                                                allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction
+                                               val userAnswersService: UserAnswersService,
+                                               @EstablishersCompanyDirector val navigator: Navigator,
+                                               override val messagesApi: MessagesApi,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction,
+                                               val controllerComponents: MessagesControllerComponents
                                               )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(directorName: String) = new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
@@ -80,6 +81,6 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
 
   private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 }

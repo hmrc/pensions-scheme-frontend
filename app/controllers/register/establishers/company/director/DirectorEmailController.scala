@@ -30,6 +30,7 @@ import play.api.mvc.{Action, AnyContent}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +42,8 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
                                         @EstablishersCompanyDirector val navigator: Navigator,
-                                        formProvider: EmailFormProvider
+                                        formProvider: EmailFormProvider,
+                                        val view: emailAddress
                                        )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()

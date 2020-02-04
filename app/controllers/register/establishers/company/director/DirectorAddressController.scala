@@ -28,8 +28,8 @@ import models.address.Address
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import utils.annotations.EstablishersCompanyDirector
@@ -40,7 +40,6 @@ import scala.concurrent.ExecutionContext
 
 class DirectorAddressController @Inject()(
                                            val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            @EstablishersCompanyDirector val navigator: Navigator,
                                            authenticate: AuthAction,
@@ -49,7 +48,8 @@ class DirectorAddressController @Inject()(
                                            requireData: DataRequiredAction,
                                            val formProvider: AddressFormProvider,
                                            val countryOptions: CountryOptions,
-                                           val auditService: AuditService
+                                           val auditService: AuditService,
+                                           val controllerComponents: MessagesControllerComponents
                                          )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
@@ -89,14 +89,14 @@ class DirectorAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
       countryOptions.options,
-      title = Message(title, Message("messages__theDirector")),
-      heading = Message(heading, name),
+      title = Message(title.resolve, Message("messages__theDirector")),
+      heading = Message(heading.resolve, name),
       srn = srn
     )
 
   private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
 }

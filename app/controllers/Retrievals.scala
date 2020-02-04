@@ -26,7 +26,7 @@ import models.{CompanyDetails, PartnershipDetails}
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import play.api.mvc.{AnyContent, Result, WrappedRequest}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import viewmodels.Message
 
 import scala.concurrent.Future
@@ -34,7 +34,7 @@ import scala.language.implicitConversions
 
 trait Retrievals {
 
-  this: FrontendController =>
+  this: FrontendBaseController =>
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
