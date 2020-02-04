@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNoUTRReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -40,12 +42,15 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
-                                              formProvider: ReasonFormProvider
+                                              formProvider: ReasonFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: reason
                                              )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  private def form(directorName: String) = formProvider("messages__reason__error_utrRequired", directorName)
+  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", directorName)
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__whyNoUTR", Message("messages__theDirector").resolve),

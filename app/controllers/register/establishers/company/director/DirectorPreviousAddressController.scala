@@ -25,16 +25,18 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
@@ -49,7 +51,9 @@ class DirectorPreviousAddressController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    val formProvider: AddressFormProvider,
                                                    val countryOptions: CountryOptions,
-                                                   val auditService: AuditService
+                                                   val auditService: AuditService,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   val view: manualAddress
                                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()
@@ -67,7 +71,8 @@ class DirectorPreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, establisherIndex, directorIndex, srn),
       countryOptions.options,
