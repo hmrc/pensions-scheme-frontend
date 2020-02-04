@@ -57,10 +57,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          val view =
-            view(new HsTaskListHelperRegistration(userAnswers).taskList)
-
-          Future.successful(Ok(view))
+          Future.successful(Ok(view(new HsTaskListHelperRegistration(userAnswers).taskList)))
         case (Some(srnValue), optionUserAnswers) =>
           onPageLoadVariations(srnValue, optionUserAnswers)
         case _ =>
@@ -105,9 +102,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
-        val view =
-          view(taskList)
-        Future.successful(Ok(view))
+        Future.successful(Ok(view(taskList)))
       }
     }
 

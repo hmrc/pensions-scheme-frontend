@@ -41,7 +41,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
                                                          userAnswersService: UserAnswersService,
-                                                         val controllerComponents: MessagesControllerComponents
+                                                         val controllerComponents: MessagesControllerComponents,
+                                                         val view: checkYourAnswers
                                                         )(implicit val ec: ExecutionContext) extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
@@ -76,6 +77,6 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
           existingSchemeName.getOrElse(Message("messages__theScheme").resolve)))
       )
 
-      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      Future.successful(Ok(view(vm)))
   }
 }

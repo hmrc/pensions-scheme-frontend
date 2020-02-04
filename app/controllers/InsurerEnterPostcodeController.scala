@@ -21,9 +21,10 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerEnterPostCodeId, InsurerSelectAddressId}
+import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId}
 import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -58,7 +59,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def viewModel(mode: Mode, srn: Option[String],name: String): PostcodeLookupViewModel =
+  def viewModel(mode: Mode, srn: Option[String],name: String)(implicit request: DataRequest[AnyContent]): PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
       manualCall(mode, srn),

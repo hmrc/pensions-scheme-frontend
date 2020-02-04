@@ -18,7 +18,6 @@ package controllers
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.routes._
@@ -32,8 +31,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.WorkingKnowledge
 import utils.CountryOptions
+import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -42,7 +41,7 @@ import scala.concurrent.ExecutionContext
 
 class AdviserAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
-                                          val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
                                           @WorkingKnowledge val navigator: Navigator,
                                           authenticate: AuthAction,
@@ -53,7 +52,7 @@ class AdviserAddressController @Inject()(
                                           val auditService: AuditService,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: manualAddress
-                                        )(implicit val executionContext: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = AdviserAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmAdviserAddress__title"
@@ -83,7 +82,7 @@ class AdviserAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode),
       countryOptions.options,
-      title = Message(title),
+      title = title,
       heading = heading(adviserName)
     )
 }

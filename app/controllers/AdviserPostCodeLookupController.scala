@@ -33,7 +33,6 @@ import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-import views.html.components.heading
 
 import scala.concurrent.ExecutionContext
 
@@ -73,7 +72,7 @@ class AdviserPostCodeLookupController @Inject()(
     PostcodeLookupViewModel(
       routes.AdviserPostCodeLookupController.onSubmit(mode),
       routes.AdviserAddressController.onPageLoad(mode),
-      title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
+      title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
     )

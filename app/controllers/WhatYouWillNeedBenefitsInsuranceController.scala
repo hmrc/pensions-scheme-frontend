@@ -37,7 +37,7 @@ class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAp
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
-      Future.successful(Ok(whatYouWillNeedBenefitsInsurance(appConfig, existingSchemeName)))
+      Future.successful(Ok(view(existingSchemeName)))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData()).async {
