@@ -19,7 +19,7 @@ package handlers
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import models.Link
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
@@ -35,7 +35,7 @@ class ErrorHandler @Inject()(
                             ) extends FrontendErrorHandler with I18nSupport {
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
-    val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")
+    val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")(Lang.defaultLang)
     notFoundView(Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))
     )
   }
