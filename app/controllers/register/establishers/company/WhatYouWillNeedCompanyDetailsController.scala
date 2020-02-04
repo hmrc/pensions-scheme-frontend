@@ -44,7 +44,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
     implicit request =>
       val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(mode, srn, index)
       CompanyDetailsId(index).retrieve.right.map { details =>
-        Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, details.companyName)))
+        Future.successful(Ok(view(existingSchemeName, href, srn, details.companyName)))
       }
   }
 }

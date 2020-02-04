@@ -54,12 +54,12 @@ class PartnerDOBController @Inject()(
 
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: String)
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: Message)
                        (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, partnerIndex, srn),
       srn = srn,
-      token = token
+      token = token.resolve
     )
   }
 
@@ -69,7 +69,7 @@ class PartnerDOBController @Inject()(
         get(
           PartnerDOBId(establisherIndex, partnerIndex),
           PartnerNameId(establisherIndex, partnerIndex),
-          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner").resolve),
+          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner")),
           mode
         )
     }
@@ -80,7 +80,7 @@ class PartnerDOBController @Inject()(
         post(
           PartnerDOBId(establisherIndex, partnerIndex),
           PartnerNameId(establisherIndex, partnerIndex),
-          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner").resolve),
+          viewModel(mode, establisherIndex, partnerIndex, srn, Message("messages__thePartner")),
           mode
         )
     }

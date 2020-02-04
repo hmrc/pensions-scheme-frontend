@@ -32,7 +32,7 @@
     @main_template(
         title = titleWithErrors(form, viewmodel.title)) {
 
-        @helpers.form(action = submitUrl, 'autoComplete -> "off") {
+        @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
         @components.back_link()
 

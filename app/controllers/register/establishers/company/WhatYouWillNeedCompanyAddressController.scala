@@ -45,7 +45,7 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
       CompanyDetailsId(index).retrieve.right.map { details =>
         val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController
           .onSubmit(mode, srn, index)
-        Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, details.companyName)))
+        Future.successful(Ok(view(existingSchemeName, href, srn, details.companyName)))
       }
   }
 }

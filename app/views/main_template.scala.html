@@ -16,8 +16,14 @@
 
 @import config.FrontendAppConfig
 
+@this(
+    appConfig: FrontendAppConfig,
+    govuk_wrapper: govuk_wrapper,
+    article: Article,
+    sidebar: Sidebar
+)
+
 @(title: String,
-  appConfig: FrontendAppConfig,
   sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
@@ -34,8 +40,7 @@
     }
 }
 
-@govuk_wrapper(appConfig = appConfig,
-               title = title + " - " + Messages("messages__pension_scheme_registration__title"),
+@govuk_wrapper(title = title + " - " + Messages("messages__pension_scheme_registration__title"),
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,

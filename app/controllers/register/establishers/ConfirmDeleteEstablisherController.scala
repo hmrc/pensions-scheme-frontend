@@ -35,7 +35,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.Establishers
 import views.html.register.establishers.confirmDeleteEstablisher
@@ -52,9 +52,9 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
                                                     formProvider: ConfirmDeleteEstablisherFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: confirmDeleteEstablisher
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    val view: confirmDeleteEstablisher
+                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -69,7 +69,6 @@ class ConfirmDeleteEstablisherController @Inject()(
               Future.successful(
                 Ok(
                   view(
-                    appConfig,
                     form,
                     establisher.name,
                     getHintText(establisherKind),
@@ -135,7 +134,6 @@ class ConfirmDeleteEstablisherController @Inject()(
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(
-          appConfig,
           formWithErrors,
           name,
           getHintText(establisherKind),

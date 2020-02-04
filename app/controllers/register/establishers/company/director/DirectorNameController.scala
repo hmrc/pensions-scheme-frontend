@@ -67,8 +67,7 @@ class DirectorNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(
-          appConfig, preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -76,8 +75,7 @@ class DirectorNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(
-              appConfig, formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(

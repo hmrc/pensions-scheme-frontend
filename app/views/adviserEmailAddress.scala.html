@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__adviser__email__address__title"))) {
 
-    @helpers.form(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__occupational_pension_scheme__title"))) {
 
-    @helpers.form(action = OccupationalPensionSchemeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = OccupationalPensionSchemeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

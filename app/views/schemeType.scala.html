@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__scheme_type__title"))) {
 
-    @helpers.form(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

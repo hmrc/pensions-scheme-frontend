@@ -48,7 +48,7 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
                                           val controllerComponents: MessagesControllerComponents
                                          )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
                        (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {

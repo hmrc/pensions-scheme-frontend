@@ -28,7 +28,7 @@
 @main_template(
     title = messages("messages__membership_pension_regulator__title")) {
 
-    @helpers.form(action = MembershipPensionRegulatorController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = MembershipPensionRegulatorController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

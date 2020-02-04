@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__investment_regulated_scheme__title"))) {
 
-    @helpers.form(action = InvestmentRegulatedSchemeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

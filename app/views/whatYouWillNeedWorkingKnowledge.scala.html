@@ -27,7 +27,7 @@
 @main_template(
     title = messages("messages__what_you_will_need_wk__title")) {
 
-    @helpers.form(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, 'autoComplete -> "off") {
 
         @components.back_link()
 

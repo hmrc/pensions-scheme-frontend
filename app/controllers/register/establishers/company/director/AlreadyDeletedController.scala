@@ -45,7 +45,7 @@ class AlreadyDeletedController @Inject()(
     (authenticate andThen getData(srn = srn) andThen requireData).async {
     implicit request =>
       DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
-          Future.successful(Ok(view(appConfig, vm(establisherIndex, details.fullName, srn))))
+          Future.successful(Ok(view(vm(establisherIndex, details.fullName, srn))))
       }
 
   }

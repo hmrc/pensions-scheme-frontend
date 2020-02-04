@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__otherDirectors__title"))) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 

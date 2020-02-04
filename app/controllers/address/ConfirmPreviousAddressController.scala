@@ -24,7 +24,7 @@ import models.Mode
 import models.address.Address
 import models.requests.DataRequest
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -51,7 +51,7 @@ trait ConfirmPreviousAddressController extends FrontendBaseController with Retri
   protected def get(
                      id: TypedIdentifier[Boolean],
                      viewModel: ConfirmAddressViewModel
-                   )(implicit request: DataRequest[AnyContent], messages: Messages): Future[Result] = {
+                   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm = request.userAnswers.get(id) match {
       case None => form(viewModel.name)
@@ -60,7 +60,8 @@ trait ConfirmPreviousAddressController extends FrontendBaseController with Retri
     Future.successful(Ok(view(preparedForm, viewModel, countryOptions, existingSchemeName)))
   }
 
-  protected def form(name: String)(implicit messages: Messages) = formProvider(Message("messages__confirmPreviousAddress__error", name))
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider(Message("messages__confirmPreviousAddress__error", name))
 
   protected def formProvider: ConfirmAddressFormProvider = new ConfirmAddressFormProvider()
 
@@ -69,7 +70,7 @@ trait ConfirmPreviousAddressController extends FrontendBaseController with Retri
                       contactId: TypedIdentifier[Address],
                       viewModel: ConfirmAddressViewModel,
                       mode: Mode
-                    )(implicit request: DataRequest[AnyContent], messages: Messages): Future[Result] = {
+                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(viewModel.name).bindFromRequest().fold(
       formWithError => {
         Future.successful(BadRequest(view(formWithError, viewModel, countryOptions, existingSchemeName)))

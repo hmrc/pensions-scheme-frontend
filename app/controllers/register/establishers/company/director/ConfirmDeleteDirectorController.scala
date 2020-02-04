@@ -70,7 +70,6 @@ class ConfirmDeleteDirectorController @Inject()(
               Future.successful(
                 Ok(
                   view(
-                    appConfig,
                     form,
                     director.fullName,
                     routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
@@ -93,7 +92,6 @@ class ConfirmDeleteDirectorController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(view(
-                appConfig,
                 formWithErrors,
                 director.fullName,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),

@@ -51,7 +51,7 @@ class EstablisherNameController @Inject()(
                                            val view: personName
                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form = formProvider("messages__error__establisher")
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
@@ -67,8 +67,7 @@ class EstablisherNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Ok(view(
-          appConfig, preparedForm, viewmodel(mode, index, srn), existingSchemeName))
+        Ok(view(preparedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -76,8 +75,7 @@ class EstablisherNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(
-              appConfig, formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
           value => {
             userAnswersService.save(mode, srn, EstablisherNameId(index), value).map {
               cacheMap =>

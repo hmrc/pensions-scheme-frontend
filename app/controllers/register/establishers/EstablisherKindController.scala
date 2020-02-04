@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -29,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Establishers
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.establisherKind
@@ -57,14 +56,14 @@ class EstablisherKindController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
-        Future.successful(Ok(view(appConfig, formWithData, srn, index, existingSchemeName, postCall(mode, index, srn))))
+        Future.successful(Ok(view(formWithData, srn, index, existingSchemeName, postCall(mode, index, srn))))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(appConfig, formWithErrors, srn, index, existingSchemeName, postCall(mode, index, srn)))),
+          Future.successful(BadRequest(view(formWithErrors, srn, index, existingSchemeName, postCall(mode, index, srn)))),
         value =>
 
           request.userAnswers.upsert(IsEstablisherNewId(index))(value = true) {

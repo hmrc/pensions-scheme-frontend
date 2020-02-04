@@ -27,7 +27,7 @@
 @main_template(
     title = messages("messages__what_you_will_need_members__title")) {
 
-    @helpers.form(action = WhatYouWillNeedMembersController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = WhatYouWillNeedMembersController.onSubmit, 'autoComplete -> "off") {
 
         @components.back_link()
 

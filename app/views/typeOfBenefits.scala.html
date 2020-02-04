@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__type_of_benefits__title"))) {
 
-    @helpers.form(action = TypeOfBenefitsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = TypeOfBenefitsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

@@ -58,7 +58,7 @@ class OtherDirectorsController @Inject()(
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
           case None => Ok(view(appConfig, form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
-          case Some(value) => Ok(view(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
+          case Some(value) => Ok(view(form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
         }
         Future.successful(redirectResult)
 
@@ -70,7 +70,7 @@ class OtherDirectorsController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(
-            view(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))),
+            view(formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))),
         value =>
           userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
             Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))

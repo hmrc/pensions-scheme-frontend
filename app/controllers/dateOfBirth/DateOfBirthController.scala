@@ -25,6 +25,7 @@ import models.requests.DataRequest
 import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -34,7 +35,7 @@ import views.html.register.DOB
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait DateOfBirthController extends FrontendBaseController with Retrievals {
+trait DateOfBirthController extends FrontendBaseController with Retrievals with I18nSupport {
   protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
@@ -58,7 +59,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals {
     personNameId.retrieve.right.map {
       personName =>
         Future.successful(Ok(
-          view(appConfig, preparedForm, mode, existingSchemeName, personName.fullName, viewModel)
+          view(preparedForm, mode, existingSchemeName, personName.fullName, viewModel)
         ))
     }
   }
@@ -71,7 +72,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals {
         personNameId.retrieve.right.map {
           personName =>
             Future.successful(BadRequest(
-              view(appConfig, formWithErrors, mode, existingSchemeName, personName.fullName, viewModel)
+              view(formWithErrors, mode, existingSchemeName, personName.fullName, viewModel)
             ))
         },
       value =>

@@ -29,7 +29,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
@@ -51,7 +51,7 @@ class AlreadyDeletedController @Inject()(
     implicit request =>
       establisherName(index, establisherKind) match {
         case Right(establisherName) =>
-          Future.successful(Ok(view(appConfig, vm(establisherName, mode, srn))))
+          Future.successful(Ok(view(vm(establisherName, mode, srn))))
         case Left(result) => result
       }
   }

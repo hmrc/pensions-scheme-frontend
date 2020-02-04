@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
 
-    @helpers.form(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

@@ -32,7 +32,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__addTrustee__title"))) {
 
-    @helpers.form(action = AddTrusteeController.onSubmit(mode, srn), 'autoComplete -> "off") {
+    @formHelper(action = AddTrusteeController.onSubmit(mode, srn), 'autoComplete -> "off") {
 
         @components.back_link()
 

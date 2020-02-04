@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__workingKnowledge__title"))) {
 
-    @helpers.form(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

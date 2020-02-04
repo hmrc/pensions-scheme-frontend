@@ -45,7 +45,7 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
       EstablisherNameId(index).retrieve.right.map {
         details =>
           val href = EstablisherDOBController.onPageLoad(mode, index, srn)
-          Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, details.fullName)))
+          Future.successful(Ok(view(existingSchemeName, href, srn, details.fullName)))
       }
 
   }

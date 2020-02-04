@@ -47,7 +47,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
         val href = CompanyEmailController.onSubmit(mode, srn, index)
         CompanyDetailsId(index).retrieve.right.map { details =>
           Future.successful(
-            Ok(view(appConfig, existingSchemeName, href, srn, details.companyName, Message("messages__theCompany"))))
+            Ok(view(existingSchemeName, href, srn, details.companyName, Message("messages__theCompany"))))
         }
     }
 }

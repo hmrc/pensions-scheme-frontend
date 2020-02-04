@@ -30,7 +30,7 @@
 
 @main_template(
     title = titleWithErrors(form, messages("messages__established_country__title"))) {
-    @helpers.form(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

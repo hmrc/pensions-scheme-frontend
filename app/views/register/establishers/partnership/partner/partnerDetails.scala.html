@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__partnerDetails__title"))) {
 
-    @helpers.form(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, 'autoComplete -> "off") {
 
         @components.back_link()
 

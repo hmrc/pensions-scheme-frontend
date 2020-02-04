@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__current_members__title"))) {
 
-    @helpers.form(action = CurrentMembersController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = CurrentMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

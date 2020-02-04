@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.company.companyDetails
@@ -57,14 +57,14 @@ class CompanyDetailsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-        Future.successful(Ok(view(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
+        Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
         value =>
           userAnswersService.save(
             mode,
