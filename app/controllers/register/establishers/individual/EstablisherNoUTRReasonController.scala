@@ -22,12 +22,14 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.ReasonFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNoUTRReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -39,12 +41,15 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
-                                                 formProvider: ReasonFormProvider)
+                                                 formProvider: ReasonFormProvider,
+                                                 val view: reason,
+                                                 val controllerComponents: MessagesControllerComponents)
                                                 (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
-  private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),

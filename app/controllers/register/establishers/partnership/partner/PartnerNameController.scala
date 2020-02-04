@@ -27,9 +27,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -47,7 +47,7 @@ class PartnerNameController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: PersonNameFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: personName
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider("messages__error__partner")
@@ -66,7 +66,7 @@ class PartnerNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(personName(
+        Future.successful(Ok(view(
           appConfig, preparedForm, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
     }
 
@@ -75,7 +75,7 @@ class PartnerNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(personName(
+            Future.successful(BadRequest(view(
               appConfig, formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
           ,
           value => {

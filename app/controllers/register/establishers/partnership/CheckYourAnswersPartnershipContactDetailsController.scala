@@ -25,8 +25,8 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions}
@@ -44,9 +44,9 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
                                                                     requireData: DataRequiredAction,
                                                                     implicit val countryOptions: CountryOptions,
                                                                     allowChangeHelper: AllowChangeHelper,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                                                    val controllerComponents: MessagesControllerComponents,
+                                                                    val view: checkYourAnswers
+                                                                   )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,11 +69,11 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
-          hideSaveAndContinueButton =allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,
-          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          h1 = headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
+        Future.successful(Ok(view(appConfig, vm)))
     }
 }

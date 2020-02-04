@@ -23,21 +23,21 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedPartnershipAddressController  @Inject()(val appConfig: FrontendAppConfig,
-                                                             val messagesApi: MessagesApi,
+                                                             override val messagesApi: MessagesApi,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              allowAccess: AllowAccessActionProvider,
                                                              requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: whatYouWillNeedAddress
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -46,7 +46,7 @@ class WhatYouWillNeedPartnershipAddressController  @Inject()(val appConfig: Fron
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
+            Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
         }
     }
 }

@@ -27,34 +27,37 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PreviousAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    override val messagesApi: MessagesApi,
-    val userAnswersService: UserAnswersService,
-    val navigator: Navigator,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends GenericAddressListController
+                                               override val appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               val userAnswersService: UserAnswersService,
+                                               val navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction,
+                                               val auditService: AuditService,
+                                               val view: addressList,
+                                               val controllerComponents: MessagesControllerComponents
+                                             )(implicit val ec: ExecutionContext)
+  extends GenericAddressListController
     with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      retrieveEstablisherName(index) (viewmodel(mode, index, srn, _).right.map(get))
+      retrieveEstablisherName(index)(viewmodel(mode, index, srn, _).right.map(get))
     }
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String)(
-      implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     PreviousPostCodeLookupId(index).retrieve.right
       .map { addresses =>
         AddressListViewModel(
@@ -74,6 +77,7 @@ class PreviousAddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) { name =>
         val context = s"Establisher Individual Previous Address: $name"
-        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode,context,PreviousPostCodeLookupId(index))) }
+        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode, context, PreviousPostCodeLookupId(index)))
+      }
   }
 }

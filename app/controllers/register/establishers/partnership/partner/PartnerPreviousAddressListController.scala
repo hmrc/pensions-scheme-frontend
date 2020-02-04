@@ -28,25 +28,28 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnerPreviousAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    val userAnswersService: UserAnswersService,
-    override val navigator: Navigator,
-    override val messagesApi: MessagesApi,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends AddressListController
+                                                      override val appConfig: FrontendAppConfig,
+                                                      val userAnswersService: UserAnswersService,
+                                                      override val navigator: Navigator,
+                                                      override val messagesApi: MessagesApi,
+                                                      authenticate: AuthAction,
+                                                      getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
+                                                      requireData: DataRequiredAction,
+                                                      val auditService: AuditService,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      val view: addressList
+                                                    )(implicit val ec: ExecutionContext)
+  extends AddressListController
     with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -103,5 +106,5 @@ class PartnerPreviousAddressListController @Inject()(
     (establisherIndex: Index, partnerIndex: Index) =>
       Retrieval { implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
-    }
+      }
 }

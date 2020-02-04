@@ -28,8 +28,8 @@ import models.register.establishers.EstablisherKind.{Company, Indivdual, Partner
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
@@ -43,7 +43,7 @@ class AlreadyDeletedController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: alreadyDeleted
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
@@ -51,7 +51,7 @@ class AlreadyDeletedController @Inject()(
     implicit request =>
       establisherName(index, establisherKind) match {
         case Right(establisherName) =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherName, mode, srn))))
+          Future.successful(Ok(view(appConfig, vm(establisherName, mode, srn))))
         case Left(result) => result
       }
   }

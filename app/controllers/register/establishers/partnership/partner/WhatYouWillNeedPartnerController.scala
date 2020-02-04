@@ -23,8 +23,8 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 import scala.concurrent.Future
@@ -34,7 +34,9 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
-                                                 requireData: DataRequiredAction
+                                                 requireData: DataRequiredAction,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: whatYouWillNeed
                                                 ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
@@ -42,7 +44,7 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       val partnerIndex = request.userAnswers.allPartners(index).size
       PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
-        Future.successful(Ok(whatYouWillNeed(
+        Future.successful(Ok(view(
           appConfig,
           existingSchemeName,
           srn,

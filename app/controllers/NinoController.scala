@@ -18,14 +18,14 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.{Mode, ReferenceValue}
 import models.requests.DataRequest
+import models.{Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.NinoViewModel
 import views.html.nino

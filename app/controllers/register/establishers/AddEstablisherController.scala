@@ -25,8 +25,8 @@ import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.addEstablisher
 
@@ -39,7 +39,9 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider
+                                         formProvider: AddEstablisherFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: addEstablisher
                                         )(implicit val ec: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
 
@@ -47,7 +49,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
-        Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
+        Future.successful(Ok(view(appConfig, formProvider(establishers), mode,
           establishers, existingSchemeName, srn)))
     }
 
@@ -56,7 +58,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
+          Future.successful(BadRequest(view(appConfig, formWithErrors, mode,
             establishers, existingSchemeName, srn))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))

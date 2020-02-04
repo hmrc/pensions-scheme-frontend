@@ -27,9 +27,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -46,9 +46,9 @@ class EstablisherNameController @Inject()(
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: PersonNameFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: personName
+                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider("messages__error__establisher")
 
@@ -66,23 +66,23 @@ class EstablisherNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Ok(personName(
+        Ok(view(
           appConfig, preparedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(personName(
-            appConfig, formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
-        value => {
-          userAnswersService.save(mode, srn, EstablisherNameId(index), value).map {
-            cacheMap =>
-              Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+      implicit request =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(view(
+              appConfig, formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
+          value => {
+            userAnswersService.save(mode, srn, EstablisherNameId(index), value).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+            }
           }
-        }
-      )
-  }
+        )
+    }
 }

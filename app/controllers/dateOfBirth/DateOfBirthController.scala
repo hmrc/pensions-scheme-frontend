@@ -45,6 +45,8 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals {
 
   protected val form: Form[LocalDate]
 
+  protected def view: DOB
+
   protected def get(dobId: TypedIdentifier[LocalDate], personNameId: TypedIdentifier[PersonName], viewModel: DateOfBirthViewModel, mode: Mode)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
@@ -56,7 +58,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals {
     personNameId.retrieve.right.map {
       personName =>
         Future.successful(Ok(
-          DOB(appConfig, preparedForm, mode, existingSchemeName, personName.fullName, viewModel)
+          view(appConfig, preparedForm, mode, existingSchemeName, personName.fullName, viewModel)
         ))
     }
   }
@@ -69,7 +71,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals {
         personNameId.retrieve.right.map {
           personName =>
             Future.successful(BadRequest(
-              DOB(appConfig, formWithErrors, mode, existingSchemeName, personName.fullName, viewModel)
+              view(appConfig, formWithErrors, mode, existingSchemeName, personName.fullName, viewModel)
             ))
         },
       value =>

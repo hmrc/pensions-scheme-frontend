@@ -28,9 +28,9 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
@@ -47,9 +47,9 @@ class ConfirmDeletePartnerController @Inject()(
                                                 requireData: DataRequiredAction,
                                                 sectionComplete: SectionComplete,
                                                 formProvider: ConfirmDeletePartnerFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: confirmDeletePartner
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -69,7 +69,7 @@ class ConfirmDeletePartnerController @Inject()(
             } else {
               Future.successful(
                 Ok(
-                  confirmDeletePartner(
+                  view(
                     appConfig,
                     form,
                     partner.fullName,
@@ -89,7 +89,7 @@ class ConfirmDeletePartnerController @Inject()(
           partnerDetails =>
             form.bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
-                Future.successful(BadRequest(confirmDeletePartner(
+                Future.successful(BadRequest(view(
                   appConfig,
                   formWithErrors,
                   partnerDetails.fullName,

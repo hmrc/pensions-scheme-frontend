@@ -23,29 +23,35 @@ import forms.NINOFormProvider
 import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId}
 import javax.inject.Inject
 import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, NinoViewModel}
+import views.html.nino
 
 import scala.concurrent.ExecutionContext
 
 class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
-                                               val messagesApi: MessagesApi,
+                                               override val messagesApi: MessagesApi,
                                                val userAnswersService: UserAnswersService,
                                                val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               val formProvider: NINOFormProvider)
+                                               val formProvider: NINOFormProvider,
+                                               val view: nino,
+                                               val controllerComponents: MessagesControllerComponents
+                                              )
                                               (implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit _
 
-  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
       title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),

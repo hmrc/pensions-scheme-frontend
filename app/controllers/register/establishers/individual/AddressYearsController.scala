@@ -23,13 +23,15 @@ import controllers.address.{AddressYearsController => GenericAddressYearControll
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -41,10 +43,13 @@ class AddressYearsController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
-                                        requireData: DataRequiredAction
+                                        requireData: DataRequiredAction,
+                                        val view: addressYears,
+                                        val controllerComponents: MessagesControllerComponents
                                       )(implicit val ec: ExecutionContext) extends GenericAddressYearController with Retrievals {
 
-  private def form(establisherName: String) = new AddressYearsFormProvider()(Message("messages__establisher_address_years__formError", establisherName))
+  private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__establisher_address_years__formError", establisherName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -61,7 +66,8 @@ class AddressYearsController @Inject()(
       }
   }
 
-  private def viewModel(mode: Mode, index: Index, establisherName: String, srn: Option[String]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, index: Index, establisherName: String, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent])= AddressYearsViewModel(
     postCall = routes.AddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__establisher_address_years__title", Message("messages__theIndividual").resolve),
     heading = Message("messages__establisher_address_years__title", establisherName),
