@@ -26,9 +26,10 @@ import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +41,9 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
                                          getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: UTRFormProvider
+                                         formProvider: UTRFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: utr
                                         )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()

@@ -26,9 +26,9 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
@@ -39,19 +39,19 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersPartnershipDetailsController @Inject()(
-                                                              appConfig: FrontendAppConfig,
-                                                              override val messagesApi: MessagesApi,
-                                                              authenticate: AuthAction,
-                                                              getData: DataRetrievalAction,
-                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                                              requireData: DataRequiredAction,
-                                                              implicit val countryOptions: CountryOptions,
-                                                              navigator: Navigator,
-                                                              userAnswersService: UserAnswersService,
-                                                              allowChangeHelper: AllowChangeHelper,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                      appConfig: FrontendAppConfig,
+                                      override val messagesApi: MessagesApi,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                      requireData: DataRequiredAction,
+                                      implicit val countryOptions: CountryOptions,
+                                      navigator: Navigator,
+                                      userAnswersService: UserAnswersService,
+                                      allowChangeHelper: AllowChangeHelper,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: checkYourAnswers
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -85,6 +85,6 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           h1 =  headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers( appConfig,vm )))
+        Future.successful(Ok(view(vm)))
     }
 }

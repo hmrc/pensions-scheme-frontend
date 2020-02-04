@@ -26,9 +26,10 @@ import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{EnterVATViewModel, Message}
+import views.html.enterVATView
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +41,9 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
-                                              formProvider: EnterVATFormProvider
+                                              formProvider: EnterVATFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: enterVATView
                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
   private def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)

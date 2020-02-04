@@ -25,10 +25,11 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +41,9 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: NoCompanyNumberFormProvider
+                                          formProvider: NoCompanyNumberFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: reason
                                          )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
   protected def form(name: String) = formProvider(name)

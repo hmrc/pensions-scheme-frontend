@@ -27,9 +27,10 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +42,9 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             getData: DataRetrievalAction,
                                             allowAccess: AllowAccessActionProvider,
                                             requireData: DataRequiredAction,
-                                            formProvider: HasReferenceNumberFormProvider
+                                            formProvider: HasReferenceNumberFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: hasReferenceNumber
                                            )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   def form(partnershipName: String): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)

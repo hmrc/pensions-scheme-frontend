@@ -27,8 +27,8 @@ import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import org.joda.time.LocalDate
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.schemeSuccess
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,8 +39,10 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        pensionAdministratorConnector: PensionAdministratorConnector)
-                                       (implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                        pensionAdministratorConnector: PensionAdministratorConnector,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: schemeSuccess
+                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -50,8 +52,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
               cacheConnector.removeAll(request.externalId).flatMap { _ =>
           Future.successful(
             Ok(
-              schemeSuccess(
-                appConfig,
+              view(
                 LocalDate.now(),
                 submissionReferenceNumber.schemeReferenceNumber,
                 showMasterTrustContent,

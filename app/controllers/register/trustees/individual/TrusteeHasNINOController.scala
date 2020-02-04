@@ -26,22 +26,25 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
 class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
-                                         val messagesApi: MessagesApi,
+                                         override val messagesApi: MessagesApi,
                                          val userAnswersService: UserAnswersService,
                                          val navigator: Navigator,
                                          authenticate: AuthAction,
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: HasReferenceNumberFormProvider
+                                         formProvider: HasReferenceNumberFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: hasReferenceNumber
                                         )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =

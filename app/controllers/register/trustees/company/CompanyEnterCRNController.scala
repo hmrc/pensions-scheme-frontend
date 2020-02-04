@@ -25,10 +25,10 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterCRNI
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
+import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +40,9 @@ class CompanyEnterCRNController @Inject()(
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
-                                                               requireData: DataRequiredAction
+                                                               requireData: DataRequiredAction,
+                                                               val controllerComponents: MessagesControllerComponents,
+                                                               val view: companyRegistrationNumber
                                                              )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberBaseController {
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)

@@ -30,11 +30,12 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
@@ -49,8 +50,10 @@ class CompanyPreviousAddressController @Inject()(
                                                   requireData: DataRequiredAction,
                                                   val formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
-                                                  val auditService: AuditService
-                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
+                                                  val auditService: AuditService,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: manualAddress
+                                                )(implicit val executionContext: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"

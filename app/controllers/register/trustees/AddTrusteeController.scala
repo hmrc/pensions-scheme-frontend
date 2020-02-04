@@ -28,8 +28,8 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees.addTrustee
 
@@ -45,7 +45,7 @@ class AddTrusteeController @Inject()(
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: addTrustee
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -54,7 +54,7 @@ class AddTrusteeController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val trustees = request.userAnswers.allTrusteesAfterDelete
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName, srn)))
+      Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -68,7 +68,7 @@ class AddTrusteeController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             Future.successful(BadRequest(
-              addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName, srn)))
+              view(formWithErrors, mode, trustees, existingSchemeName, srn)))
           },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(

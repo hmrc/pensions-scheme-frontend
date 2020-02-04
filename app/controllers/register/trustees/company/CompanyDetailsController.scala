@@ -20,18 +20,15 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
-import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
-import models.register.trustees.TrusteeKind._
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.TrusteesCompany
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
@@ -48,7 +45,7 @@ class CompanyDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: companyDetails
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -58,7 +55,7 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(mode, index, srn)
       val updatedForm = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(companyDetails(appConfig, updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
+      Future.successful(Ok(view(updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -66,7 +63,7 @@ class CompanyDetailsController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
+          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>
           request.userAnswers.upsert(CompanyDetailsId(index))(value) {

@@ -23,8 +23,8 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
@@ -35,7 +35,9 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
-                                                               requireData: DataRequiredAction
+                                                               requireData: DataRequiredAction,
+                                                               val controllerComponents: MessagesControllerComponents,
+                                                               val view: whatYouWillNeedContactDetails
                                                               ) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -45,7 +47,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
           case CompanyDetails(companyName, _) =>
 
             val href = controllers.register.trustees.company.routes.CompanyEmailController.onSubmit(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, companyName, Message("messages__theCompany"))))
+            Future.successful(Ok(view(existingSchemeName, href, srn, companyName, Message("messages__theCompany"))))
         }
     }
 }

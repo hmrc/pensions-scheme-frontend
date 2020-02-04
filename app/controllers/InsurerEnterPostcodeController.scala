@@ -27,10 +27,11 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -43,7 +44,9 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               formProvider: PostCodeLookupFormProvider
+                                               formProvider: PostCodeLookupFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: postcodeLookup
                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit

@@ -22,8 +22,8 @@ import controllers.actions._
 import javax.inject.Inject
 import models.UpdateMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import views.html.register.stillNeedDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,13 +33,13 @@ class StillNeedDetailsController @Inject()(
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: stillNeedDetails
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) ).async {
     implicit request =>
-      Future.successful(Ok(stillNeedDetails(appConfig, srn, existingSchemeName)))
+      Future.successful(Ok(view(srn, existingSchemeName)))
   }
 }

@@ -25,11 +25,12 @@ import models.{AddressYears, Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +43,9 @@ class CompanyAddressYearsController @Inject()(
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               formProvider: AddressYearsFormProvider
+                                               formProvider: AddressYearsFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: addressYears
                                              )(implicit val ec: ExecutionContext) extends controllers.address.AddressYearsController {
 
   private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =

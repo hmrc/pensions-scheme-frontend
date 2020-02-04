@@ -26,9 +26,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.trusteeKind
@@ -46,7 +46,7 @@ class TrusteeKindController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: TrusteeKindFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: trusteeKind
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -59,7 +59,7 @@ class TrusteeKindController @Inject()(
         case Some(value) => form.fill(value)
       }
       val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
+      Future.successful(Ok(view(preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
   }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -67,7 +67,7 @@ class TrusteeKindController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
+          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value => {
 

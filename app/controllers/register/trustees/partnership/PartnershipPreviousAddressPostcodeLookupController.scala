@@ -27,11 +27,12 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +46,9 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     getData: DataRetrievalAction,
                                                                     allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
-                                                                    formProvider: PostCodeLookupFormProvider
+                                                                    formProvider: PostCodeLookupFormProvider,
+                                                                    val controllerComponents: MessagesControllerComponents,
+                                                                    val view: postcodeLookup
                                                                   )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"

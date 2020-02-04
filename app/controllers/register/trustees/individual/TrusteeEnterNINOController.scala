@@ -25,9 +25,10 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import viewmodels.{Message, NinoViewModel}
+import views.html.nino
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +41,9 @@ class TrusteeEnterNINOController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           val formProvider: NINOFormProvider
+                                           val formProvider: NINOFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: nino
                                  )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit _

@@ -19,6 +19,7 @@ package controllers.register.trustees.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import javax.inject.Inject
@@ -26,10 +27,9 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.helpers.CheckYourAnswersControllerHelper._
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
@@ -49,9 +49,9 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
                                                           allowChangeHelper: AllowChangeHelper,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                          val controllerComponents: MessagesControllerComponents,
+                                                          val view: checkYourAnswers
+                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -89,6 +89,6 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers( appConfig,vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

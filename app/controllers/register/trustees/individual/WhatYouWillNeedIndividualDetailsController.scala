@@ -23,8 +23,8 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedIndividualDetails
 
 import scala.concurrent.Future
@@ -34,7 +34,9 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
-                                                           requireData: DataRequiredAction
+                                                           requireData: DataRequiredAction,
+                                                           val controllerComponents: MessagesControllerComponents,
+                                                           val view: whatYouWillNeedIndividualDetails
                                                           ) extends FrontendBaseController with I18nSupport with Retrievals{
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
@@ -43,7 +45,7 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
       TrusteeNameId(index).retrieve.right.map {
         details =>
           val href = routes.TrusteeDOBController.onPageLoad(mode, index, srn)
-          Future.successful(Ok(whatYouWillNeedIndividualDetails(appConfig, existingSchemeName, href, srn, details.fullName)))
+          Future.successful(Ok(view(existingSchemeName, href, srn, details.fullName)))
       }
   }
 }

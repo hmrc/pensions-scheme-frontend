@@ -27,9 +27,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -46,7 +46,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       requireData: DataRequiredAction,
                                       formProvider: PersonNameFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: personName
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider("messages__error__trustees")
@@ -61,14 +61,14 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val updatedForm = request.userAnswers.get(TrusteeNameId(index)).fold(form)(form.fill)
-        Future.successful(Ok(personName(appConfig, updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
+        Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(personName(appConfig, formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
+          Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
         value =>
           userAnswersService.save(mode, srn, TrusteeNameId(index), value).map { cacheMap =>
             Redirect(navigator.nextPage(TrusteeNameId(index), mode, UserAnswers(cacheMap), srn))

@@ -25,9 +25,10 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,6 +41,8 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     formProvider: HasBeenTradingFormProvider,
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    val view: hasReferenceNumber)(
                                                     implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =

@@ -17,19 +17,19 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import controllers.{ReasonController, Retrievals}
 import controllers.actions._
+import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoUTRReasonId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import utils.Enumerable
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +42,9 @@ class CompanyNoUTRReasonController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: ReasonFormProvider
+                                          formProvider: ReasonFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: reason
                                         )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private def form(companyName: String) = formProvider("messages__reason__error_utrRequired", companyName)

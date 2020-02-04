@@ -25,10 +25,11 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.{hasReferenceNumber, paye}
 
 import scala.concurrent.ExecutionContext
 
@@ -41,6 +42,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: HasPAYEFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: hasReferenceNumber)(
                                          implicit val ec: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
