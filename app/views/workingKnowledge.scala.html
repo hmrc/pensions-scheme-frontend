@@ -22,6 +22,7 @@
 
 @this(
     main_template: main_template,
+    appConfig: FrontendAppConfig,
     formHelper: FormWithCSRF
 )
 
@@ -52,6 +53,6 @@
         </div>
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link_before_you_start(appConfig, mode, schemeName)
+        @components.return_link_before_you_start(mode, schemeName)
     }
 }

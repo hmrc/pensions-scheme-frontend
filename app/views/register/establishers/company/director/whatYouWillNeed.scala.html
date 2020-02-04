@@ -18,8 +18,11 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.director.routes._
 
+@this(
+    main_template: main_template
+)
+
 @(
-        appConfig: FrontendAppConfig,
         schemeName: Option[String],
         srn: Option[String],
         href: Call
