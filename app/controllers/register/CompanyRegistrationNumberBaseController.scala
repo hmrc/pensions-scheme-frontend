@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils._
 import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumber
@@ -48,6 +48,8 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected def navigator: Navigator
 
+  protected def view: companyRegistrationNumber
+
   def postCall: (Mode, Option[String], Index) => Call
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
@@ -58,7 +60,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
     val preparedForm =
       request.userAnswers.get(identifier(index)).fold(form(companyName))(form(companyName).fill)
 
-    val view = companyRegistrationNumber(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
+    val view = view(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
 
     Future.successful(Ok(view))
   }
@@ -69,7 +71,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
       (formWithErrors: Form[_]) =>
 
         Future.successful(BadRequest(
-          companyRegistrationNumber(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
+          view(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
 
       crnNumber => {
         userAnswersService.save(mode, srn, identifier(index), crnNumber.copy(isEditable = true)).map(cacheMap =>

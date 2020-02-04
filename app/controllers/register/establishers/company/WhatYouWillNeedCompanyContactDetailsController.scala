@@ -19,15 +19,15 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company.routes.CompanyEmailController
 import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.whatYouWillNeedContactDetails
-import controllers.register.establishers.company.routes.CompanyEmailController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
+import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.Future
 
@@ -36,7 +36,9 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
-                                                               requireData: DataRequiredAction
+                                                               requireData: DataRequiredAction,
+                                                               val view: whatYouWillNeedContactDetails,
+                                                               val controllerComponents: MessagesControllerComponents
                                                               ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
@@ -45,7 +47,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
         val href = CompanyEmailController.onSubmit(mode, srn, index)
         CompanyDetailsId(index).retrieve.right.map { details =>
           Future.successful(
-            Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, details.companyName, Message("messages__theCompany"))))
+            Ok(view(appConfig, existingSchemeName, href, srn, details.companyName, Message("messages__theCompany"))))
         }
     }
 }

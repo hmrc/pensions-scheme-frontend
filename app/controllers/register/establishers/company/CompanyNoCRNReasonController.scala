@@ -22,30 +22,35 @@ import controllers.actions._
 import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoCRNReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
 class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val userAnswersService: UserAnswersService,
-                                          @EstablishersCompany val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: NoCompanyNumberFormProvider
-                                         )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+                                             override val messagesApi: MessagesApi,
+                                             override val userAnswersService: UserAnswersService,
+                                             @EstablishersCompany val navigator: Navigator,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             allowAccess: AllowAccessActionProvider,
+                                             requireData: DataRequiredAction,
+                                             formProvider: NoCompanyNumberFormProvider,
+                                             val view: reason,
+                                             val controllerComponents: MessagesControllerComponents
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
-  protected def form(name: String) = formProvider(name)
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider(name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.CompanyNoCRNReasonController.onSubmit(mode, srn, index),
       title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),

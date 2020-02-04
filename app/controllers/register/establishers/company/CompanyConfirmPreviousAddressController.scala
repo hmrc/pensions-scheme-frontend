@@ -26,24 +26,27 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
+import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
 
 class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                        val messagesApi: MessagesApi,
+                                                        override val messagesApi: MessagesApi,
                                                         val userAnswersService: UserAnswersService,
                                                         @EstablishersCompany val navigator: Navigator,
                                                         authenticate: AuthAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         getData: DataRetrievalAction,
                                                         requireData: DataRequiredAction,
-                                                        val countryOptions: CountryOptions
+                                                        val countryOptions: CountryOptions,
+                                                        val view: confirmPreviousAddress,
+                                                        val controllerComponents: MessagesControllerComponents
                                                       )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyConfirmPreviousAddressController.onSubmit _

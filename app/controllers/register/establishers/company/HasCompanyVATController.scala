@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,10 +42,13 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasReferenceNumberFormProvider
-                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                        formProvider: HasReferenceNumberFormProvider,
+                                        val view: hasReferenceNumber,
+                                        val controllerComponents: MessagesControllerComponents
+                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
       title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
@@ -51,7 +56,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
       srn = srn
     )
 
-  private def form(companyName: String) = formProvider("messages__hasCompanyVat__error__required", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasCompanyVat__error__required", companyName)
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

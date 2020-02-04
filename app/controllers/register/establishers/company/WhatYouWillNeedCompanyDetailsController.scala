@@ -23,8 +23,8 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
@@ -34,7 +34,9 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
-                                                        requireData: DataRequiredAction
+                                                        requireData: DataRequiredAction,
+                                                        val view: whatYouWillNeedCompanyDetails,
+                                                        val controllerComponents: MessagesControllerComponents
                                                     ) extends FrontendBaseController with I18nSupport with Retrievals{
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
@@ -42,7 +44,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
     implicit request =>
       val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(mode, srn, index)
       CompanyDetailsId(index).retrieve.right.map { details =>
-        Future.successful(Ok(whatYouWillNeedCompanyDetails(appConfig, existingSchemeName, href, srn, details.companyName)))
+        Future.successful(Ok(view(appConfig, existingSchemeName, href, srn, details.companyName)))
       }
   }
 }
