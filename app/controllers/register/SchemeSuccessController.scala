@@ -25,7 +25,7 @@ import identifiers.register.SubmissionReferenceNumberId
 import javax.inject.Inject
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController

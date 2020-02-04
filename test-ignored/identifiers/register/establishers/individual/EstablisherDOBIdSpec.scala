@@ -21,7 +21,7 @@ import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.person.PersonName
 import models.requests.DataRequest
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId

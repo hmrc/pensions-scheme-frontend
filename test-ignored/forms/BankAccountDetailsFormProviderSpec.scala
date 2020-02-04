@@ -21,7 +21,7 @@ import forms.mappings.Constraints
 import models._
 import models.register.SortCode
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints with BankDetailsBehaviour {
 

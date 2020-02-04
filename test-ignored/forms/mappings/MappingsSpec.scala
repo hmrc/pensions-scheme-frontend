@@ -17,7 +17,7 @@
 package forms.mappings
 
 import generators.Generators
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}

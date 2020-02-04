@@ -27,7 +27,7 @@ import models.Mode.journeyMode
 import models._
 import models.person.PersonName
 import navigators.{Navigator, NavigatorBehaviour}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.libs.json.Json

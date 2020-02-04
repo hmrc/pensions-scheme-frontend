@@ -26,7 +26,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models._
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}

@@ -20,7 +20,7 @@ import base.SpecBase
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{Link, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId

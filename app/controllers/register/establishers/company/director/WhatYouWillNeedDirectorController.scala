@@ -44,7 +44,6 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
         Future.successful(Ok(view(
-          appConfig,
           existingSchemeName,
           srn,
           DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)

@@ -126,12 +126,12 @@ trait Generators {
     )
   }
 
-  implicit val arbitraryLocalDate: Arbitrary[org.joda.time.LocalDate] = Arbitrary {
+  implicit val arbitraryLocalDate: Arbitrary[java.time.LocalDate] = Arbitrary {
     for {
       year  <- intsAboveValue(1900) suchThat (_ < LocalDate.now().getYear)
       month <- Gen.chooseNum(1, 12)
       day   <- Gen.chooseNum(1, 28)
-    } yield new org.joda.time.LocalDate(year, month, day)
+    } yield new java.time.LocalDate(year, month, day)
   }
 
 }

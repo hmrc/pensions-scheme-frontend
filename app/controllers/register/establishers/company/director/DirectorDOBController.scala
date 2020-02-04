@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.company.director
 
+import java.time.LocalDate
+
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
@@ -25,7 +27,6 @@ import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}

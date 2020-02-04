@@ -21,7 +21,7 @@ import connectors.FakeUserAnswersCacheConnector
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
 import models.{BankAccountDetails, NormalMode, UpdateMode}
 import models.register.SortCode
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers

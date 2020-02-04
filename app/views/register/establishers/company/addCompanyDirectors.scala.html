@@ -22,8 +22,12 @@
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
 @(
-    appConfig: FrontendAppConfig,
     form: Form[_],
     directors: Seq[DirectorEntity],
     schemeName: Option[String],

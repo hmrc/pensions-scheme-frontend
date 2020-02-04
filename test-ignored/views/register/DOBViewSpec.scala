@@ -18,7 +18,7 @@ package views.register
 
 import forms.DOBFormProvider
 import models.{Index, Mode, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import viewmodels.dateOfBirth.DateOfBirthViewModel

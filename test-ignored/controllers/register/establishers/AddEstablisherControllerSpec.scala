@@ -25,7 +25,7 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonName
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

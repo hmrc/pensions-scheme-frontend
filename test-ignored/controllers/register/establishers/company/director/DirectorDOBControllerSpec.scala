@@ -25,7 +25,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorId, DirectorNameId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, Mode, NormalMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
