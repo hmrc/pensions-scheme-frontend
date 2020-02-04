@@ -25,14 +25,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.UserAnswers
 import viewmodels.CommonFormWithHintViewModel
 import views.html.hasReferenceNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait HasReferenceNumberController extends FrontendController with Retrievals with I18nSupport {
+trait HasReferenceNumberController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def executionContext : ExecutionContext
 

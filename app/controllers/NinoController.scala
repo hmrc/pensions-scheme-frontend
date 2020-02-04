@@ -32,7 +32,7 @@ import views.html.nino
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait NinoController extends FrontendController with Retrievals with I18nSupport {
+trait NinoController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

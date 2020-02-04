@@ -43,8 +43,6 @@ trait AddressYearsController extends FrontendBaseController with Retrievals with
 
   protected def navigator: Navigator
 
-  protected def controllerComponents: MessagesControllerComponents
-
   protected def view: addressYears
 
   protected def get(id: TypedIdentifier[AddressYears], form: Form[AddressYears], viewmodel: AddressYearsViewModel)

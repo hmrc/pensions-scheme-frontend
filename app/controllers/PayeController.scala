@@ -32,7 +32,7 @@ import views.html.paye
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait PayeController extends FrontendController with Retrievals with I18nSupport {
+trait PayeController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

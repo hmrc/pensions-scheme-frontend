@@ -40,7 +40,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         pensionAdministratorConnector: PensionAdministratorConnector)
-                                       (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                       (implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>

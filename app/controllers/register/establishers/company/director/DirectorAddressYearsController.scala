@@ -23,6 +23,7 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -31,6 +32,7 @@ import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -42,10 +44,12 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               val controllerComponents: MessagesControllerComponents
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: addressYears
                                               )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private def form(directorName: String) = new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
+  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,7 +73,8 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String]) =
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent])=
     AddressYearsViewModel(
       postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__director_address_years__title", Message("messages__common__address_years__director").resolve),

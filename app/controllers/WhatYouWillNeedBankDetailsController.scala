@@ -31,7 +31,7 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
                                                      override val messagesApi: MessagesApi,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals {
+                                                    ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>

@@ -34,7 +34,7 @@ import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CompanyRegistrationNumberBaseController extends FrontendController with Retrievals with I18nSupport {
+trait CompanyRegistrationNumberBaseController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

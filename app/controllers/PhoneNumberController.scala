@@ -32,7 +32,7 @@ import views.html.phoneNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait PhoneNumberController extends FrontendController with Retrievals with I18nSupport {
+trait PhoneNumberController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

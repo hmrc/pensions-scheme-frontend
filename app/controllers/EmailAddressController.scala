@@ -25,14 +25,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.CommonFormWithHintViewModel
 import views.html.emailAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EmailAddressController extends FrontendController with Retrievals with I18nSupport {
+trait EmailAddressController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def executionContext: ExecutionContext
 
@@ -43,8 +43,6 @@ trait EmailAddressController extends FrontendController with Retrievals with I18
   protected def view: emailAddress
 
   protected def navigator: Navigator
-
-  protected def view: emailAddress
 
   def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {

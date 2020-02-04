@@ -46,7 +46,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
                                                                 userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
-    extends FrontendController
+    extends FrontendBaseController
     with I18nSupport
     with Retrievals {
 

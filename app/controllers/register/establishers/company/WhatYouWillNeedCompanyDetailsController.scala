@@ -35,7 +35,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         requireData: DataRequiredAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals{
+                                                    ) extends FrontendBaseController with I18nSupport with Retrievals{
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

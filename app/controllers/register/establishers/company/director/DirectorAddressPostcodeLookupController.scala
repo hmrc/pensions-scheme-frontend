@@ -27,7 +27,7 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -47,7 +47,8 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          formProvider: PostCodeLookupFormProvider,
-                                                         val view: postcodeLookup
+                                                         val view: postcodeLookup,
+                                                         val controllerComponents: MessagesControllerComponents
                                                        )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()

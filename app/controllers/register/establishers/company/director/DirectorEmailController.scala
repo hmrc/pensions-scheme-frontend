@@ -26,7 +26,7 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
@@ -43,8 +43,9 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction,
                                         @EstablishersCompanyDirector val navigator: Navigator,
                                         formProvider: EmailFormProvider,
-                                        val view: emailAddress
-                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                        val view: emailAddress,
+                                        val controllerComponents: MessagesControllerComponents
+                                       )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 

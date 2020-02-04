@@ -41,7 +41,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider
                                         )(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+  extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

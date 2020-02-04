@@ -32,7 +32,7 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ReasonController extends FrontendController with Retrievals with I18nSupport {
+trait ReasonController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

@@ -48,7 +48,7 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

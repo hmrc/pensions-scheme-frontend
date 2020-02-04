@@ -26,7 +26,7 @@ import views.html.service_unavailable
 import scala.concurrent.ExecutionContext
 
 class ServiceUnavailableController @Inject()(val appConfig: FrontendAppConfig,
-                                             val messagesApi: MessagesApi)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                             val messagesApi: MessagesApi)(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(service_unavailable(appConfig))

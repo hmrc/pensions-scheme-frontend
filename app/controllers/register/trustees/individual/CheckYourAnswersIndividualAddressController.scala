@@ -49,7 +49,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
                                                             implicit val countryOptions: CountryOptions,
                                                             allowChangeHelper: AllowChangeHelper
                                                            )(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+  extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

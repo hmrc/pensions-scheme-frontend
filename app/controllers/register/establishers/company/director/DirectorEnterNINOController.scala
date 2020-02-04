@@ -22,32 +22,37 @@ import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, NinoViewModel}
+import views.html.nino
 
 import scala.concurrent.ExecutionContext
 
 class DirectorEnterNINOController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           @EstablishersCompanyDirector val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                           val formProvider: NINOFormProvider
-                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+                                             val appConfig: FrontendAppConfig,
+                                             override val messagesApi: MessagesApi,
+                                             val userAnswersService: UserAnswersService,
+                                             @EstablishersCompanyDirector val navigator: Navigator,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             allowAccess: AllowAccessActionProvider,
+                                             requireData: DataRequiredAction,
+                                             val formProvider: NINOFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: nino
+                                           )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit _
   private[controllers] val hint: String = "messages__common__nino_hint"
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String): NinoViewModel =
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
       title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
@@ -58,7 +63,7 @@ class DirectorEnterNINOController @Inject()(
 
   private val directorName: (Index, Index) => Retrieval[String] = (establisherIndex, directorIndex) => Retrieval {
     implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -73,12 +78,12 @@ class DirectorEnterNINOController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      directorName(establisherIndex, directorIndex).retrieve.right.map {
-        name =>
-          post(DirectorEnterNINOId(establisherIndex, directorIndex), mode, formProvider(name),
-            viewmodel(establisherIndex, directorIndex, mode, srn, name))
-      }
-  }
+      implicit request =>
+        directorName(establisherIndex, directorIndex).retrieve.right.map {
+          name =>
+            post(DirectorEnterNINOId(establisherIndex, directorIndex), mode, formProvider(name),
+              viewmodel(establisherIndex, directorIndex, mode, srn, name))
+        }
+    }
 
 }

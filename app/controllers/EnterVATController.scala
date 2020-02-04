@@ -32,7 +32,7 @@ import views.html.enterVATView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EnterVATController extends FrontendController with Retrievals with I18nSupport {
+trait EnterVATController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 

@@ -27,7 +27,7 @@ import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -44,7 +44,8 @@ class DirectorDOBController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: DOBFormProvider
+                                       formProvider: DOBFormProvider,
+                                       val controllerComponents: MessagesControllerComponents
                                      )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
   val form: Form[LocalDate] = formProvider()

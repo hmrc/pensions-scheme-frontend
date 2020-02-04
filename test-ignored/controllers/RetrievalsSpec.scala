@@ -38,7 +38,7 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
 
   def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data), PsaId("A0000000"))
 
-  class TestController extends FrontendController with Retrievals
+  class TestController extends FrontendBaseController with Retrievals
 
   val controller = new TestController()
 
