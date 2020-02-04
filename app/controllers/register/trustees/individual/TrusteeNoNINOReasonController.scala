@@ -25,23 +25,26 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.Enumerable
 import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
 class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
-                                              val messagesApi: MessagesApi,
+                                              override val messagesApi: MessagesApi,
                                               val userAnswersService: UserAnswersService,
                                               val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
-                                              formProvider: ReasonFormProvider
+                                              formProvider: ReasonFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
                                             with I18nSupport with Enumerable.Implicits {
 

@@ -27,10 +27,11 @@ import navigators.Navigator
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +43,9 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      getData: DataRetrievalAction,
                                      allowAccess: AllowAccessActionProvider,
                                      requireData: DataRequiredAction,
-                                     val formProvider: DOBFormProvider
+                                     val formProvider: DOBFormProvider,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val view: DOB
                                     )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
   val form: Form[LocalDate] = formProvider()

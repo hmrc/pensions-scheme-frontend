@@ -26,10 +26,11 @@ import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, Par
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +42,9 @@ class PartnershipAddressYearsController @Inject()(
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
                                                    allowAccess: AllowAccessActionProvider,
-                                                   requireData: DataRequiredAction
+                                                   requireData: DataRequiredAction,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   val view: addressYears
                                                  )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   private def form(partnershipName: String) = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))

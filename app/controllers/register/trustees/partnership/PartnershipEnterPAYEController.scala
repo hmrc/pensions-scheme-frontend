@@ -26,9 +26,10 @@ import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, PayeViewModel}
+import views.html.paye
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +42,9 @@ class PartnershipEnterPAYEController  @Inject()(
                                                       getData: DataRetrievalAction,
                                                       allowAccess: AllowAccessActionProvider,
                                                       requireData: DataRequiredAction,
-                                                      formProvider: PayeFormProvider
+                                                      formProvider: PayeFormProvider,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      val view: paye
                                                     )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
   protected def form(partnershipName: String): Form[ReferenceValue] = formProvider(partnershipName)

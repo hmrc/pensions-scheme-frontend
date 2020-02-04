@@ -23,10 +23,10 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
+import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 import scala.concurrent.Future
 
@@ -35,7 +35,9 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
-                                                        requireData: DataRequiredAction
+                                                        requireData: DataRequiredAction,
+                                                        val controllerComponents: MessagesControllerComponents,
+                                                        val view: whatYouWillNeedCompanyAddress
                                                        ) extends FrontendBaseController with I18nSupport with Retrievals{
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
@@ -45,7 +47,7 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
         case CompanyDetails(companyName, _) =>
           val pageHeader = Message("messages__addressFor", companyName)
           val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
-          Future.successful(Ok(whatYouWillNeedCompanyAddress(appConfig, existingSchemeName, href, srn, pageHeader)))
+          Future.successful(Ok(view(existingSchemeName, href, srn, pageHeader)))
       }
   }
 }

@@ -25,10 +25,11 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.TrusteesCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +41,9 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: HasCRNFormProvider
+                                          formProvider: HasCRNFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: hasReferenceNumber
                                         )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
 
 

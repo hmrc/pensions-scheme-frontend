@@ -28,10 +28,11 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,9 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
-                                                     val auditService: AuditService)(implicit val ec: ExecutionContext)
+                                                     val auditService: AuditService,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     val view: addressList)(implicit val ec: ExecutionContext)
     extends AddressListController
     with Retrievals
     with I18nSupport {

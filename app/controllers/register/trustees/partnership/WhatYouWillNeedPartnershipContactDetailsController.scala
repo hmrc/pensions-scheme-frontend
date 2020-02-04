@@ -23,21 +23,22 @@ import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                                   val messagesApi: MessagesApi,
-                                                                   authenticate: AuthAction,
-                                                                   getData: DataRetrievalAction,
-                                                                   allowAccess: AllowAccessActionProvider,
-                                                                   requireData: DataRequiredAction,
+class WhatYouWillNeedPartnershipContactDetailsController @Inject()(
+                                       val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: whatYouWillNeedContactDetails
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -46,7 +47,7 @@ class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedContactDetails(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
+            Future.successful(Ok(view(existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
         }
     }
 }

@@ -23,21 +23,22 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                           val messagesApi: MessagesApi,
-                                                           authenticate: AuthAction,
-                                                           getData: DataRetrievalAction,
-                                                           allowAccess: AllowAccessActionProvider,
-                                                           requireData: DataRequiredAction,
+class WhatYouWillNeedIndividualAddressController @Inject()(
+                                       val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: businessType
+                                       val view: whatYouWillNeedAddress
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -47,6 +48,6 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           name =>
             val trusteeName = name.fullName
             val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))}
+            Future.successful(Ok(view(existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))}
     }
 }

@@ -21,22 +21,18 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{
-  CompanyDetailsId,
-  CompanyPreviousAddressId,
-  CompanyPreviousAddressListId,
-  CompanyPreviousAddressPostcodeLookupId
-}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,7 +45,9 @@ class CompanyPreviousAddressListController @Inject()(
     getData: DataRetrievalAction,
     allowAccess: AllowAccessActionProvider,
     requireData: DataRequiredAction,
-    val auditService: AuditService
+    val auditService: AuditService,
+    val controllerComponents: MessagesControllerComponents,
+    val view: addressList
 )(implicit val ec: ExecutionContext)
     extends AddressListController
     with Retrievals {

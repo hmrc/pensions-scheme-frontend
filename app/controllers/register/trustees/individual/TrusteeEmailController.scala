@@ -26,9 +26,10 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
 
@@ -40,8 +41,10 @@ class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
                                         val navigator: Navigator,
-                                        formProvider: EmailFormProvider
-                                       )(implicit val ec: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                        formProvider: EmailFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: emailAddress
+                                       )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 
