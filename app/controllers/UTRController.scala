@@ -42,6 +42,8 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
 
   protected def navigator: Navigator
 
+  protected def view: utr
+
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: UTRViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
@@ -50,14 +52,14 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
         case _ => form
       }
 
-    Future.successful(Ok(utr(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(utr(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       utr => {
         userAnswersService.save(mode, viewmodel.srn, id, utr.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

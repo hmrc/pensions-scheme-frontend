@@ -21,7 +21,7 @@
     main_template: main_template
 )
 
-@( schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__detailsFor", messages("messages__thePartnership")).capitalize

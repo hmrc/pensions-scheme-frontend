@@ -23,7 +23,7 @@
     main_template: main_template
 )
 
-@( viewmodel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
+@(viewmodel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewmodel.title) {

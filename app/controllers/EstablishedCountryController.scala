@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.BeforeYouStart
 import utils.{CountryOptions, UserAnswers}
 import views.html.establishedCountry
@@ -42,7 +42,10 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
                                              formProvider: EstablishedCountryFormProvider,
-                                             countryOptions: CountryOptions)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                             countryOptions: CountryOptions,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: establishedCountry
+                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -53,7 +56,7 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(establishedCountry(appConfig, preparedForm, mode, countryOptions.options, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, countryOptions.options, schemeName)))
       }
   }
 
@@ -62,7 +65,7 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(establishedCountry(appConfig, formWithErrors, mode, countryOptions.options, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options, schemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, EstablishedCountryId, value).map(cacheMap =>

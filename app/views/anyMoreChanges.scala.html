@@ -22,9 +22,12 @@
 @import models.{Mode, UpdateMode}
 @import utils.ViewHelper.titleWithErrors
 
-@(
-    appConfig: FrontendAppConfig,
-    form: Form[_],
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_],
     schemeName:Option[String],
     dateToComplete: String,
     postCall: Call,

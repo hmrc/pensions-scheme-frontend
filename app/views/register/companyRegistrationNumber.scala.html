@@ -27,7 +27,7 @@
     main_template: main_template
 )
 
-@( viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
     @main_template(
         title = titleWithErrors(form, viewmodel.title)) {

@@ -23,7 +23,7 @@
     main_template: main_template
 )
 
-@( schemeName: Option[String], href: Call, srn:Option[String], title: Message)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], href: Call, srn:Option[String], title: Message)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__whatYouWillNeedAddress__title")

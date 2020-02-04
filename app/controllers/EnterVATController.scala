@@ -42,17 +42,19 @@ trait EnterVATController extends FrontendController with Retrievals with I18nSup
 
   protected def navigator: Navigator
 
+  protected def view: enterVATView
+
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).fold(form)(form.fill)
-    Future.successful(Ok(enterVATView(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(enterVATView(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       vat => {
         userAnswersService.save(mode, viewmodel.srn, id, vat.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

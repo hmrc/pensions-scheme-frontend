@@ -22,7 +22,7 @@
     main_template: main_template
 )
 
-@( schemeName: Option[String], viewModel: CommonFormWithHintViewModel)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], viewModel: CommonFormWithHintViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewModel.title

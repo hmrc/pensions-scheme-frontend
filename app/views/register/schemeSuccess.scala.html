@@ -25,7 +25,7 @@
     main_template: main_template
 )
 
-@( currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
 
 @yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
