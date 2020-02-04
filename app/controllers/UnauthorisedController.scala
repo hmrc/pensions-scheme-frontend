@@ -26,7 +26,7 @@ import views.html.unauthorised
 import scala.concurrent.ExecutionContext
 
 class UnauthorisedController @Inject()(val appConfig: FrontendAppConfig,
-                                       override messagesApi: MessagesApi,
+                                       override val messagesApi: MessagesApi,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: unauthorised
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
