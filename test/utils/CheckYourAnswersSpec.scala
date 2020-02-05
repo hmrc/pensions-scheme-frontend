@@ -22,8 +22,8 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import models.requests.DataRequest
-import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ import viewmodels.{AnswerRow, Message}
 
 import scala.language.implicitConversions
 
-class CheckYourAnswersSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
+class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
 
