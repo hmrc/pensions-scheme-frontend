@@ -17,15 +17,19 @@
 package controllers.actions
 
 import models.requests.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 object FakeAuthAction extends AuthAction {
   override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
     block(AuthenticatedRequest(request, "id", PsaId("A0000000")))
 
   val externalId: String = "id"
-}
 
+  val parser: BodyParser[AnyContent] = stubMessagesControllerComponents().parsers.defaultBodyParser
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+}

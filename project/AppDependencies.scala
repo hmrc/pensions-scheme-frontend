@@ -32,7 +32,7 @@ object AppDependencies {
         "org.jsoup" % "jsoup" % "1.12.1" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "org.mockito" % "mockito-all" % "1.10.19" % scope,
-        "com.github.tomakehurst" % "wiremock" % "2.21.0" % scope,
+        "com.github.tomakehurst" % "wiremock-jre8" % "2.21.0" % scope,
         "wolfendale" %% "scalacheck-gen-regexp" % "0.1.1" % scope
       )
 
