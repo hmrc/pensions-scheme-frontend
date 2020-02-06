@@ -29,14 +29,14 @@ import views.html.register.cannotMakeChanges
 import scala.concurrent.{ExecutionContext, Future}
 
 class CannotMakeChangesController @Inject()(
-                                            appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            authenticate: AuthAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: cannotMakeChanges
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                             appConfig: FrontendAppConfig,
+                                             override val messagesApi: MessagesApi,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: cannotMakeChanges
+                                           )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn)).async {
