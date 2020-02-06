@@ -25,8 +25,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -39,7 +38,7 @@ import views.html.personName
 
 import scala.concurrent.Future
 
-class EstablisherNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
+class EstablisherNameControllerSpec extends ControllerSpecBase {
   
   import EstablisherNameControllerSpec._
 
