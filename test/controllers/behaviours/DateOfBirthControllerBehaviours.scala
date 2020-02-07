@@ -46,7 +46,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   val formProvider: DOBFormProvider = new DOBFormProvider
   val form: Form[LocalDate] = formProvider()
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
   val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     fakeRequest.withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
