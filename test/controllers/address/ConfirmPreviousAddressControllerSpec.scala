@@ -28,13 +28,13 @@ import models.requests.DataRequest
 import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
@@ -47,7 +47,11 @@ import views.html.address.confirmPreviousAddress
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class ConfirmPreviousAddressControllerSpec extends SpecBase with OptionValues with ScalaFutures with MockitoSugar {
+
+  import ConfirmPreviousAddressControllerSpec._
+
+  val view = injector.instanceOf[confirmPreviousAddress]
 
   "get" must {
 
@@ -57,7 +61,7 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers wi
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
+
           val formProvider = app.injector.instanceOf[ConfirmAddressFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -76,7 +80,6 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers wi
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ConfirmAddressFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -193,7 +196,6 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers wi
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ConfirmAddressFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -211,13 +213,16 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers wi
       }
     }
   }
-  
-  val schemeName = "Test Scheme Name"
+
+}
+
+object ConfirmPreviousAddressControllerSpec extends OptionValues {
+
   val name = "Test name"
   private val psaId = PsaId("A0000000")
-  private val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
-  private val view = injector.instanceOf[confirmPreviousAddress]
+  val schemeName = "Test Scheme Name"
+  private val userAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
   private def userAnswersWithId(id: Boolean) = UserAnswers()
     .set(SchemeNameId)(schemeName).flatMap(
@@ -254,8 +259,8 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with MustMatchers wi
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
                                   override val countryOptions: CountryOptions,
-                                  val controllerComponents: MessagesControllerComponents,
-                                  val view: confirmPreviousAddress
+                                  override val controllerComponents: MessagesControllerComponents,
+                                  override val view: confirmPreviousAddress
                                 )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController {
 
     def onPageLoad(viewmodel: ConfirmAddressViewModel, answers: UserAnswers): Future[Result] = {

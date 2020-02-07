@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
-
-import java.time.LocalDate
+package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
+import java.time.LocalDate
+
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeNavigator
+import utils.{FakeNavigator, SectionComplete}
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
-class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
+//scalastyle:off magic.number
 
-  import EstablisherDOBControllerSpec._
+class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
+
+  import TrusteeDOBControllerSpec._
 
   private val view = injector.instanceOf[DOB]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherDOBController =
-    new EstablisherDOBController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeDOBController =
+    new TrusteeDOBController(
       frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
@@ -53,34 +55,34 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
-      view,
-      stubMessagesControllerComponents()
-    )
+      stubMessagesControllerComponents(),
+      view)
 
-  private val postCall = routes.EstablisherDOBController.onSubmit _
+  private val postCall = routes.TrusteeDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,
       token = token
     )
+  }
 
-  "EstablisherDOB Controller" must {
+  "TrusteeDOB Controller" must {
 
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, 0, None),
       post = data => controller(data).onSubmit(NormalMode, 0, None),
       viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual").resolve),
       mode = NormalMode,
-      requiredData = getMandatoryEstablisher,
+      requiredData = getMandatoryTrustee,
       validData = validData,
       fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )
   }
 }
 
-object EstablisherDOBControllerSpec extends MockitoSugar {
+private object TrusteeDOBControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
@@ -88,16 +90,21 @@ object EstablisherDOBControllerSpec extends MockitoSugar {
 
   val index: Index = Index(0)
 
+  val mockSectionComplete: SectionComplete = mock[SectionComplete]
+
   val day: Int = LocalDate.now().getDayOfMonth
   val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
 
   val validData: JsObject = Json.obj(
-    EstablishersId.toString -> Json.arr(
+    TrusteesId.toString -> Json.arr(
       Json.obj(
-        EstablisherNameId.toString -> PersonName("Test", "Name"),
-        EstablisherDOBId.toString -> LocalDate.of(year, month, day)
+        TrusteeNameId.toString -> PersonName("Test", "Name"),
+        TrusteeDOBId.toString  -> LocalDate.of(year, month, day)
       )
     )
   )
 }
+
+
+
