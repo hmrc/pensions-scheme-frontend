@@ -64,7 +64,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
         implicit app =>
 
           val request = addCSRFToken(FakeRequest())
-          val controller = injector.instanceOf[InsurerEnterPostcodeController]
+          val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
           val result = controller.onPageLoad(NormalMode, None)(request)
 
           val viewModel = PostcodeLookupViewModel(
@@ -93,7 +93,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
         )) {
           implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
-          val controller = injector.instanceOf[InsurerEnterPostcodeController]
+          val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
           val result = controller.onSubmit(NormalMode, None)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

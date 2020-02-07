@@ -58,8 +58,8 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
-          val controller = injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(fakeRequest)
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
       }
@@ -76,8 +76,8 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
-          val controller = injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(fakeRequest)
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
       }
@@ -95,8 +95,8 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
-          val controller = injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(fakeRequest)
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
@@ -114,7 +114,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
-          val controller = injector.instanceOf[AdviserAddressListController]
+          val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -132,7 +132,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
-          val controller = injector.instanceOf[AdviserAddressListController]
+          val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -150,7 +150,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
       ) {
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
-          val controller = injector.instanceOf[AdviserAddressListController]
+          val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)

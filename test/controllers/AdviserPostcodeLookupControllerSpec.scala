@@ -110,6 +110,8 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
+  //    val call: Call = routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
+
       val validPostcode = "ZZ1 1ZZ"
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
@@ -132,7 +134,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
           val fakeRequest = addCSRFToken(FakeRequest()
             .withFormUrlEncodedBody("postcode" -> validPostcode))
-          val controller = injector.instanceOf[AdviserPostCodeLookupController]
+          val controller = app.injector.instanceOf[AdviserPostCodeLookupController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
 
           status(result) must be(SEE_OTHER)

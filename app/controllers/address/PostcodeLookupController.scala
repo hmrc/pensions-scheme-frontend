@@ -63,15 +63,13 @@ trait PostcodeLookupController extends FrontendBaseController with Retrievals wi
                       viewmodel: PostcodeLookupViewModel,
                       mode: Mode,
                       invalidPostcode: Message = invalidPostcode
-                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-
+                    )(implicit request: DataRequest[AnyContent]): Future[Result] =
     form.bindFromRequest().fold(
       formWithErrors =>
         Future.successful {
           BadRequest(view(formWithErrors, viewmodel, existingSchemeName))
         }, lookupPostcode(id, viewmodel, invalidPostcode, mode, _)
     )
-  }
 
   private def lookupPostcode(
                               id: TypedIdentifier[Seq[TolerantAddress]],
