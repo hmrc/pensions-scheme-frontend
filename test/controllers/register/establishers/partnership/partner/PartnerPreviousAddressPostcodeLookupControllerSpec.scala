@@ -16,11 +16,15 @@
 
 package controllers.register.establishers.partnership.partner
 
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
+import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -31,6 +35,8 @@ import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
+
+import scala.concurrent.Future
 
 class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
@@ -53,6 +59,8 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     Message("messages__partnerPreviousAddressPostcodeLookup__heading", partner.fullName),
     Some(partner.fullName)
   )
+  private val addressLookupConnector = mock[AddressLookupConnector]
+  private val address = TolerantAddress(Some("value 1"), Some("value 2"), None, None, Some("AB1 1AB"), Some("GB"))
   private val view = injector.instanceOf[postcodeLookup]
 
   "PartnerPreviousAddressPostcodeLookup Controller" must {
@@ -71,9 +79,11 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       val validPostcode = "ZZ1 1ZZ"
       running(_.overrides(modules(getMandatoryPartner) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
+          bind[AddressLookupConnector].toInstance(addressLookupConnector)
         ): _*)) {
         app =>
+          when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
           val controller = app.injector.instanceOf[PartnerPreviousAddressPostcodeLookupController]
           val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
           val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)

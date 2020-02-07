@@ -25,6 +25,8 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -33,14 +35,12 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
-import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -62,9 +62,11 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
         val validPostcode = "ZZ1 1ZZ"
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[UserAnswersService].toInstance(FakeUserAnswersService)
+            bind[UserAnswersService].toInstance(FakeUserAnswersService),
+            bind[AddressLookupConnector].toInstance(addressLookupConnector)
           ): _*)) {
           app =>
+            when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
             val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
             val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
@@ -87,6 +89,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   val validPostcode = "ZZ1 1ZZ"
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
+  private val addressLookupConnector = mock[AddressLookupConnector]
   private val view = injector.instanceOf[postcodeLookup]
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),

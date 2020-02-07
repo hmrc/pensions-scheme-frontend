@@ -19,9 +19,12 @@ package controllers.register.establishers.company.director
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
+import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -33,6 +36,8 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
+
+import scala.concurrent.Future
 
 class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
@@ -50,6 +55,8 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
+  private val addressLookupConnector = mock[AddressLookupConnector]
+  private val address = TolerantAddress(Some("value 1"), Some("value 2"), None, None, Some("AB1 1AB"), Some("GB"))
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
@@ -74,9 +81,11 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     val validPostcode = "ZZ1 1ZZ"
     running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName) ++
       Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AddressLookupConnector].toInstance(addressLookupConnector)
       ): _*)) {
       app =>
+        when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[DirectorPreviousAddressPostcodeLookupController]
         val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)

@@ -16,10 +16,14 @@
 
 package controllers.register.establishers.company
 
+import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
+import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
@@ -35,6 +39,8 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
+import scala.concurrent.Future
+
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, None, firstIndex)
@@ -48,6 +54,9 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val firstIndex = Index(0)
   val companyName: String = "test company name"
   val company = CompanyDetails(companyName)
+
+  private val addressLookupConnector = mock[AddressLookupConnector]
+  private val address = TolerantAddress(Some("value 1"), Some("value 2"), None, None, Some("AB1 1AB"), Some("GB"))
 
   private val view = injector.instanceOf[postcodeLookup]
 
@@ -72,11 +81,13 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     val validPostcode = "ZZ1 1ZZ"
     running(_.overrides(modules(getMandatoryEstablisherCompany) ++
       Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AddressLookupConnector].toInstance(addressLookupConnector)
       ): _*)) {
       app =>
+        when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode" -> validPostcode))
+        val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
         val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
