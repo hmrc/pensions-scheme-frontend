@@ -15,6 +15,10 @@
 
 @import 'location-autocomplete.min';
 
+// import these files last, in this order
+@import 'partials/_palette';
+@import 'partials/_focus';
+
 // Task list pattern
 
 // Spacing to the left of the task list
