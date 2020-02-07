@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company.director
+package controllers.register.establishers.partnership.partner
 
 import java.time.LocalDate
 
@@ -23,10 +23,10 @@ import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorId, DirectorNameId}
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerId, PartnerNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, PartnershipDetails}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -39,14 +39,14 @@ import views.html.register.DOB
 
 //scalastyle:off magic.number
 
-class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
+class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
-  import DirectorDOBControllerSpec._
+  import PartnerDOBControllerSpec._
 
   private val view = injector.instanceOf[DOB]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorDOBController =
-    new DirectorDOBController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerDOBController =
+    new PartnerDOBController(
       frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
@@ -57,39 +57,40 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       new DataRequiredActionImpl,
       formProvider,
       stubMessagesControllerComponents(),
-      view)
+      view
+    )
 
-  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
+  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
       srn = srn,
       token = token
     )
 
-  "DirectorDOB Controller" must {
+  "PartnerDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector").resolve),
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner").resolve),
       mode = NormalMode,
-      requiredData = getMandatoryEstablisherCompanyDirectorWithDirectorName,
+      requiredData = getMandatoryPartner,
       validData = validData,
       fullName = s"${(validData \\ "firstName").head.as[String]} ${(validData \\ "lastName").head.as[String]}"
     )
   }
 }
 
-object DirectorDOBControllerSpec extends MockitoSugar {
+object PartnerDOBControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()
 
   val firstEstablisherIndex: Index = Index(0)
-  val firstDirectorIndex: Index = Index(0)
+  val firstPartnerIndex: Index = Index(0)
 
   val day: Int = LocalDate.now().getDayOfMonth
   val month: Int = LocalDate.now().getMonthValue
@@ -98,11 +99,11 @@ object DirectorDOBControllerSpec extends MockitoSugar {
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails("test company name"),
-        DirectorId.toString -> Json.arr(
+        PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
+        PartnerId.toString -> Json.arr(
           Json.obj(
-            DirectorNameId.toString -> PersonName("first", "last"),
-            DirectorDOBId.toString  -> LocalDate.of(year, month, day)
+            PartnerNameId.toString -> PersonName("first", "last"),
+            PartnerDOBId.toString  -> LocalDate.of(year, month, day)
           )
         )
       )
