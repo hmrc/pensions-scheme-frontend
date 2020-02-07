@@ -28,7 +28,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
@@ -36,71 +36,53 @@ import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DirectorPreviousAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    val userAnswersService: UserAnswersService,
-    @EstablishersCompanyDirector override val navigator: Navigator,
-    override val messagesApi: MessagesApi,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends AddressListController
-    with Retrievals {
+class DirectorPreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
+                                                      val userAnswersService: UserAnswersService,
+                                                      @EstablishersCompanyDirector override val navigator: Navigator,
+                                                      override val messagesApi: MessagesApi,
+                                                      authenticate: AuthAction,
+                                                      getData: DataRetrievalAction,
+                                                      allowAccess: AllowAccessActionProvider,
+                                                      requireData: DataRequiredAction,
+                                                      val auditService: AuditService
+                                                     )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      (directorName(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            get(viewmodel(mode, establisherIndex, directorIndex, srn, name, addresses))
-        }
-        .left
-        .map(_ =>
-          Future.successful(
-            Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
-
-  private def viewmodel(mode: Mode,
-                        establisherIndex: Index,
-                        directorIndex: Index,
-                        srn: Option[String],
-                        name: String,
-                        addresses: Seq[TolerantAddress])(implicit request: DataRequest[AnyContent]): AddressListViewModel =
-    AddressListViewModel(
-      postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
-      addresses = addresses,
-      title = Message("messages__select_the_previous_address__heading", Message("messages__theDirector")),
-      heading = Message("messages__select_the_previous_address__heading", name),
-      srn = srn
-    )
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
-      (directorName(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            val context = s"Company Director Previous Address: $name"
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, directorIndex, srn).right.map {
+          vm =>
             post(
-              viewmodel(mode, establisherIndex, directorIndex, srn, name, addresses),
-              DirectorPreviousAddressListId(establisherIndex, directorIndex),
-              DirectorPreviousAddressId(establisherIndex, directorIndex),
-              mode,
-              context,
-              DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)
+              viewModel = vm,
+              navigatorId = DirectorPreviousAddressListId(establisherIndex, directorIndex),
+              dataId = DirectorPreviousAddressId(establisherIndex, directorIndex),
+              mode = mode,
+              context = s"Company Director Previous Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)
             )
         }
-        .left
-        .map(_ =>
-          Future.successful(
-            Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn))))
     }
 
-  private val directorName = (establisherIndex: Index, directorIndex: Index) =>
-    Retrieval { implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
+    (DirectorNameId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)).retrieve.right.map {
+      case name ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
+          manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
+          addresses = addresses,
+          title = Message("messages__select_the_previous_address__heading", Message("messages__theDirector")),
+          heading = Message("messages__select_the_previous_address__heading", name),
+          srn = srn,
+          entityName = name.fullName
+        )
+    }.left.map(_ =>
+        Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
+    )
 }

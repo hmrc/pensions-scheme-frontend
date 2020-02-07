@@ -16,7 +16,6 @@
 
 package viewmodels.address
 
-import models.{Mode, NormalMode}
 import models.address.TolerantAddress
 import play.api.mvc.Call
 import viewmodels.Message
@@ -29,5 +28,6 @@ case class AddressListViewModel(
                                  heading: Message = Message("messages__select_the_address__title"),
                                  selectAddress: Message = Message("messages__common__select_address"),
                                  selectAddressLink: Message = Message("messages__common__select_address_link"),
-                                 srn: Option[String] = None
+                                 srn: Option[String] = None,
+                                 entityName: String
                                )

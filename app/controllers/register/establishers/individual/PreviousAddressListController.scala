@@ -34,46 +34,52 @@ import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PreviousAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    override val messagesApi: MessagesApi,
-    val userAnswersService: UserAnswersService,
-    val navigator: Navigator,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends GenericAddressListController
-    with Retrievals {
+class PreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              val userAnswersService: UserAnswersService,
+                                              val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              val auditService: AuditService
+                                             )(implicit val ec: ExecutionContext) extends GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      retrieveEstablisherName(index) (viewmodel(mode, index, srn, _).right.map(get))
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map(get)
     }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String)(
-      implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    PreviousPostCodeLookupId(index).retrieve.right
-      .map { addresses =>
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map(
+          vm => post(
+            viewModel = vm,
+            navigatorId = PreviousAddressListId(index),
+            dataId = PreviousAddressId(index),
+            mode = mode,
+            context = s"Establisher Individual Previous Address: ${vm.entityName}",
+            postCodeLookupIdForCleanup = PreviousPostCodeLookupId(index))
+        )
+    }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    (EstablisherNameId(index) and PreviousPostCodeLookupId(index)).retrieve.right.map {
+      case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.PreviousAddressListController.onSubmit(mode, index, srn),
           manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
           title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual").resolve),
           heading = Message("messages__dynamic_whatWasPreviousAddress", name),
-          srn = srn
+          srn = srn,
+          entityName = name.fullName
         )
-      }
-      .left
-      .map(_ => Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn))))
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      retrieveEstablisherName(index) { name =>
-        val context = s"Establisher Individual Previous Address: $name"
-        viewmodel(mode, index, srn, name).right.map(vm => post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode,context,PreviousPostCodeLookupId(index))) }
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)))
+    )
   }
 }

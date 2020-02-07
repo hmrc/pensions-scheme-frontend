@@ -25,6 +25,7 @@ import models.Mode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Result}
@@ -33,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
+import views.html.helper.form
 
 import scala.concurrent.{ExecutionContext, Future}
 
