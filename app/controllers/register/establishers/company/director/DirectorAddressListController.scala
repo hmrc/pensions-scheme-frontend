@@ -23,7 +23,6 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.company.director._
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
@@ -79,7 +78,7 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
           addresses = addresses,
           srn = srn,
           title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
-          heading = Message("messages__dynamic_whatIsAddress", name),
+          heading = Message("messages__dynamic_whatIsAddress", name.fullName),
           entityName = name.fullName
         )
     }.left.map(_ =>

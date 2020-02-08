@@ -24,7 +24,6 @@ import controllers.address.AddressListController
 import identifiers.register.establishers.partnership._
 import javax.inject.Inject
 import models._
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi

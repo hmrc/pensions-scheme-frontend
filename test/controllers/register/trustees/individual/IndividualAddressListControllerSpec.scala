@@ -206,7 +206,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses = addresses,
       title = messages("messages__trustee__individual__address__heading",  Message("messages__theIndividual").resolve),
-      heading = messages("messages__trustee__individual__address__heading", trusteeName.fullName)
+      heading = messages("messages__trustee__individual__address__heading", trusteeName.fullName),
+      entityName = trusteeDetails.fullName
     )
   }
 }

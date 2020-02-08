@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -190,11 +191,13 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None),
-      addresses,
+      postCall = routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0), None),
+      manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None),
+      addresses = addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading
+      heading = previousAddressHeading,
+      selectAddress = Message("messages__common__select_address"),
+      entityName = companyDetails.companyName
     )
   }
 }

@@ -189,7 +189,8 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theCompany")),
-      heading = Message("messages__dynamic_whatIsAddress", companyDetails.companyName)
+      heading = Message("messages__dynamic_whatIsAddress", companyDetails.companyName),
+      entityName = companyDetails.companyName
     )
   }
 

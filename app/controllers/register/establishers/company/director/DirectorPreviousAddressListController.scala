@@ -23,7 +23,6 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.company.director._
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
@@ -78,7 +77,7 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
           manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
           addresses = addresses,
           title = Message("messages__select_the_previous_address__heading", Message("messages__theDirector")),
-          heading = Message("messages__select_the_previous_address__heading", name),
+          heading = Message("messages__select_the_previous_address__heading", name.fullName),
           srn = srn,
           entityName = name.fullName
         )

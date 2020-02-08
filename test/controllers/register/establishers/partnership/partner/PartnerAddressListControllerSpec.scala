@@ -191,7 +191,8 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
         title = Message("messages__dynamic_whatIsAddress", Message("messages__thePartner").resolve),
-      heading = Message("messages__dynamic_whatIsAddress", partnerDetails.fullName)
+      heading = Message("messages__dynamic_whatIsAddress", partnerDetails.fullName),
+      entityName = partnerDetails.fullName
     )
   }
 

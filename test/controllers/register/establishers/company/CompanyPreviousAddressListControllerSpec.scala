@@ -85,7 +85,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         routes.CompanyPreviousAddressController.onPageLoad(NormalMode, None, index),
         addresses,
         title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
-        heading = Message("messages__common__selectPreviousAddress__h1", companyName)
+        heading = Message("messages__common__selectPreviousAddress__h1", companyName),
+        entityName = companyName
       ),
       None
     )(fakeRequest, messages).toString

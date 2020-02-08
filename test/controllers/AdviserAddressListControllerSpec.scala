@@ -154,7 +154,8 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
       routes.AdviserAddressController.onPageLoad(NormalMode),
       addresses,
       heading = Message("messages__dynamic_whatIsAddress", adviserName),
-      title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser"))
+      title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
+      entityName = adviserName
     )
   }
 
