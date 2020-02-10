@@ -29,7 +29,9 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   private val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onPageLoad(NormalMode, None, index=Index(0))
 
-  private def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedCompanyDetails(frontendAppConfig,
+  val view: whatYouWillNeedCompanyDetails = app.injector.instanceOf[whatYouWillNeedCompanyDetails]
+
+  private def createView: () => HtmlFormat.Appendable = () => view(
     Some("testScheme"), href, None, companyName)(fakeRequest, messages)
 
   "WhatYouWillNeedCompanyDetails view" must {

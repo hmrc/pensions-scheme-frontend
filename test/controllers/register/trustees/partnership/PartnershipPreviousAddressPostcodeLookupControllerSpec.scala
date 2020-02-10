@@ -26,13 +26,14 @@ import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.Mockito._
 import org.mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -45,11 +46,11 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-  val index = Index(0)
+  val index: Index = Index(0)
   val partnershipName: String = "test partnership name"
 
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
@@ -69,16 +70,17 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->
-          PartnershipDetails("test partnership name", false),
+          PartnershipDetails("test partnership name"),
         PartnershipPreviousAddressPostcodeLookupId.toString ->
           Seq(fakeAddress(testAnswer))
       ),
       Json.obj(
         PartnershipDetailsId.toString ->
-          PartnershipDetails("test", false)
+          PartnershipDetails("test")
       )
     )
   )
+  private val view = injector.instanceOf[postcodeLookup]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipPreviousAddressPostcodeLookupController =
     new PartnershipPreviousAddressPostcodeLookupController(
@@ -91,12 +93,13 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    postcodeLookup(
-      frontendAppConfig,
+    view(
       form,
       PostcodeLookupViewModel(
         routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),

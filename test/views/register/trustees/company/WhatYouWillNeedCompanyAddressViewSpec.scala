@@ -30,7 +30,9 @@ class WhatYouWillNeedCompanyAddressViewSpec extends ViewBehaviours {
 
   private def href: Call = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, index=Index(0))
 
-  def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyAddress(frontendAppConfig, Some("testScheme"), href, None, pageHeader)(fakeRequest, messages)
+  val view: whatYouWillNeedCompanyAddress = app.injector.instanceOf[whatYouWillNeedCompanyAddress]
+
+  def createView(): HtmlFormat.Appendable = view(Some("testScheme"), href, None, pageHeader)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {
 

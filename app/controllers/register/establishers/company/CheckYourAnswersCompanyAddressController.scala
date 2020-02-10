@@ -27,9 +27,9 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
@@ -48,8 +48,10 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          implicit val countryOptions: CountryOptions,
                                                          @EstablishersCompany navigator: Navigator,
                                                          userAnswersService: UserAnswersService,
-                                                         allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                         allowChangeHelper: AllowChangeHelper,
+                                                         val controllerComponents: MessagesControllerComponents,
+                                                         val view: checkYourAnswers
+                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -76,9 +78,9 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,
-          h1 =  headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+          h1 = headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

@@ -27,9 +27,10 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.phoneNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,7 +42,9 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            val navigator: Navigator,
-                                           formProvider: PhoneFormProvider
+                                           formProvider: PhoneFormProvider,
+                                           val view: phoneNumber,
+                                           val controllerComponents: MessagesControllerComponents
                                           )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
   protected val form: Form[String] = formProvider()

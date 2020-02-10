@@ -28,8 +28,9 @@ class WhatYouWillNeedCompanyDetailsViewSpec extends ViewBehaviours {
 
   lazy val href = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
-  def createView(): HtmlFormat.Appendable = whatYouWillNeedCompanyDetails(
-    frontendAppConfig,
+  val view: whatYouWillNeedCompanyDetails = app.injector.instanceOf[whatYouWillNeedCompanyDetails]
+
+  def createView(): HtmlFormat.Appendable = view(
     Some("testScheme"),
     href,
     None,

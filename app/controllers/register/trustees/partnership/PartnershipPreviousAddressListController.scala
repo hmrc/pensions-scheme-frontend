@@ -28,24 +28,27 @@ import models.address.TolerantAddress
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipPreviousAddressListController @Inject()(
     val appConfig: FrontendAppConfig,
-    val messagesApi: MessagesApi,
+    override val messagesApi: MessagesApi,
     val userAnswersService: UserAnswersService,
     val navigator: Navigator,
     authenticate: AuthAction,
     getData: DataRetrievalAction,
     allowAccess: AllowAccessActionProvider,
     requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
+    val auditService: AuditService,
+    val controllerComponents: MessagesControllerComponents,
+    val view: addressList
+    )(implicit val ec: ExecutionContext)
     extends AddressListController
     with Retrievals {
 

@@ -32,9 +32,9 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
   private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
-
+  private val view = injector.instanceOf[whatYouWillNeedAddress]
   private def viewAsString(): String =
-    whatYouWillNeedAddress(frontendAppConfig, None, href, None, trusteePartnership.name, Message("messages__thePartnership"))(fakeRequest, messages).toString
+    view(None, href, None, trusteePartnership.name, Message("messages__thePartnership"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipAddressController" when {
 

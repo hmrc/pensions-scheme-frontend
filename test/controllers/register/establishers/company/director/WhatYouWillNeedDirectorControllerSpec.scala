@@ -21,12 +21,15 @@ import controllers.actions._
 import controllers.register.establishers.company.director.routes.DirectorNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import views.html.register.establishers.company.director.whatYouWillNeed
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  private val view = injector.instanceOf[whatYouWillNeed]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
@@ -34,12 +37,14 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, None, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 

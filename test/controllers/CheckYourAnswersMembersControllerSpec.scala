@@ -21,6 +21,7 @@ import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -60,6 +61,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
+  private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
       frontendAppConfig,
@@ -68,7 +70,9 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private val membersSection = AnswerSection(
@@ -106,7 +110,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     h1 = heading(schemeName, mode)
   )
 
-  private def viewAsString(mode: Mode): String = checkYourAnswers(frontendAppConfig, vm(mode))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode): String = view(vm(mode))(fakeRequest, messages).toString
 
 }
 

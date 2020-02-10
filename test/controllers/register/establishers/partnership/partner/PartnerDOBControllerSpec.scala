@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.partnership.partner
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
@@ -24,21 +26,24 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerId, PartnerNameId}
 import models.person.PersonName
-import models.{PartnershipDetails, Index, Mode, NormalMode}
-import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
+import models.{Index, Mode, NormalMode, PartnershipDetails}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 //scalastyle:off magic.number
 
 class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import PartnerDOBControllerSpec._
+
+  private val view = injector.instanceOf[DOB]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerDOBController =
     new PartnerDOBController(
@@ -50,7 +55,10 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
+    )
 
   private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
 
@@ -85,7 +93,7 @@ object PartnerDOBControllerSpec extends MockitoSugar {
   val firstPartnerIndex: Index = Index(0)
 
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
 
   val validData: JsObject = Json.obj(
@@ -95,7 +103,7 @@ object PartnerDOBControllerSpec extends MockitoSugar {
         PartnerId.toString -> Json.arr(
           Json.obj(
             PartnerNameId.toString -> PersonName("first", "last"),
-            PartnerDOBId.toString  -> new LocalDate(year, month, day)
+            PartnerDOBId.toString  -> LocalDate.of(year, month, day)
           )
         )
       )

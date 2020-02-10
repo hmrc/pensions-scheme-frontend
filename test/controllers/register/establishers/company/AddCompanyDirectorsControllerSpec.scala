@@ -23,12 +23,13 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
 import models.person.PersonName
-import models.register.{DirectorEntity}
+import models.register.DirectorEntity
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -44,6 +45,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
   val firstIndex = Index(0)
 
+  private val view = injector.instanceOf[addCompanyDirectors]
+
   private def controller(
       dataRetrievalAction: DataRetrievalAction = getEmptyData,
       navigator: Navigator = fakeNavigator()
@@ -55,12 +58,13 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil, enableSubmission: Boolean = false) =
-    addCompanyDirectors(
-      frontendAppConfig,
+    view(
       form,
       directors,
       None,

@@ -41,13 +41,16 @@ class PersonNameViewSpec extends QuestionViewBehaviours[PersonName] {
 
   override val form = new PersonNameFormProvider()("messages__error__director")
 
+  val view: personName = app.injector.instanceOf[personName]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    personName(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
+    view(form, viewmodel(), None)(fakeRequest, messages)
+
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    personName(frontendAppConfig, form, viewmodel(UpdateMode, Some("srn")), Some("srn"))(fakeRequest, messages)
+    view(form, viewmodel(UpdateMode, Some("srn")), Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    personName(frontendAppConfig, form, viewmodel(), None)(fakeRequest, messages)
+    view(form, viewmodel(), None)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -27,9 +26,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Establishers
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.establisherKind
@@ -45,24 +44,26 @@ class EstablisherKindController @Inject()(
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
-                                           formProvider: EstablisherKindFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                           formProvider: EstablisherKindFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: establisherKind
+                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
   private val postCall = routes.EstablisherKindController.onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
-      Future.successful(Ok(establisherKind(appConfig, formWithData, srn, index, existingSchemeName, postCall(mode, index, srn))))
-  }
+      implicit request =>
+        val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
+        Future.successful(Ok(view(formWithData, srn, index, existingSchemeName, postCall(mode, index, srn))))
+    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, srn, index, existingSchemeName, postCall(mode, index, srn)))),
+          Future.successful(BadRequest(view(formWithErrors, srn, index, existingSchemeName, postCall(mode, index, srn)))),
         value =>
 
           request.userAnswers.upsert(IsEstablisherNewId(index))(value = true) {

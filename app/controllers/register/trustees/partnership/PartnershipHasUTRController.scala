@@ -22,12 +22,15 @@ import controllers.actions._
 import forms.HasUTRFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -39,10 +42,13 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             allowAccess: AllowAccessActionProvider,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            formProvider: HasUTRFormProvider
-                                           )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                            formProvider: HasUTRFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: hasReferenceNumber
+                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__thePartnership").resolve),
@@ -51,7 +57,8 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
       srn = srn
     )
 
-  private def form(partnershipName: String) = formProvider("messages__hasUtr__partnership_error_required", partnershipName)
+  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider("messages__hasUtr__partnership_error_required", partnershipName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

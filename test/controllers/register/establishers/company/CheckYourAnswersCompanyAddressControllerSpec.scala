@@ -30,6 +30,7 @@ import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -167,6 +168,8 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def companyAddressUpdatePartial: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(
@@ -179,13 +182,14 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      allowChangeHelper
+      allowChangeHelper,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

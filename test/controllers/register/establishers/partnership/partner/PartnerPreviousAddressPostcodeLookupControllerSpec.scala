@@ -16,11 +16,8 @@
 
 package controllers.register.establishers.partnership.partner
 
-import base.CSRFRequest
-import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
-import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonName
@@ -28,11 +25,10 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
-import play.api.i18n.MessagesApi
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
@@ -42,7 +38,7 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
+class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
@@ -56,10 +52,6 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   private val partner = PersonName("first", "last")
 
   private val form = formProvider()
-  private val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  private val fakeCacheConnector: UserAnswersService = mock[UserAnswersService]
-
-
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
@@ -67,68 +59,37 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     Message("messages__partnerPreviousAddressPostcodeLookup__heading", partner.fullName),
     Some(partner.fullName)
   )
+  private val addressLookupConnector = mock[AddressLookupConnector]
+  private val address = TolerantAddress(Some("value 1"), Some("value 2"), None, None, Some("AB1 1AB"), Some("GB"))
+  private val view = injector.instanceOf[postcodeLookup]
 
   "PartnerPreviousAddressPostcodeLookup Controller" must {
 
     "return OK and the correct view for a GET" in {
-
-      val call: Call = routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersService].toInstance(fakeCacheConnector),
-        bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryPartner)
-      )) {
-        implicit app =>
-
-          val request = addToken(FakeRequest(call)
-            .withHeaders("Csrf-Token" -> "nocheck"))
-
-          val result = route(app, request).get
+      running(_.overrides(modules(getMandatoryPartner): _*)) {
+        app =>
+          val controller = app.injector.instanceOf[PartnerPreviousAddressPostcodeLookupController]
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(fakeRequest)
           status(result) mustBe OK
-
-          contentAsString(result) mustEqual postcodeLookup(
-            frontendAppConfig,
-            form,
-            viewmodel,
-            None
-          )(request, messages).toString
+          contentAsString(result) mustBe view(form, viewmodel, None)(fakeRequest, messages).toString
       }
     }
 
     "redirect to the next page on POST request" in {
-
       val validPostcode = "ZZ1 1ZZ"
-      val onwardUrl = routes.PartnerPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
-
-      val fakeRequest = addToken(FakeRequest(onwardRoute))
-        .withFormUrlEncodedBody("postcode" -> validPostcode)
-        .withHeaders("Csrf-Token" -> "nocheck")
-
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB")))
-        ))
-
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[MessagesApi].to(messagesApi),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardUrl)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryPartner),
-        bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider)
-      )) {
+      running(_.overrides(modules(getMandatoryPartner) ++
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
+          bind[AddressLookupConnector].toInstance(addressLookupConnector)
+        ): _*)) {
         app =>
-          val result = route(app, fakeRequest).get
-
+          when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
+          val controller = app.injector.instanceOf[PartnerPreviousAddressPostcodeLookupController]
+          val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardUrl.url)
+          redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
-
   }
 }

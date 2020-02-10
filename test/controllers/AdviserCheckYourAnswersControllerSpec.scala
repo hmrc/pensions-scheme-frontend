@@ -22,12 +22,13 @@ import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
 import models.{CheckMode, Link, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -123,9 +124,8 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")
   )
-  val viewAsString: String = checkYourAnswers(
-    frontendAppConfig, vm
-  )(fakeRequest, messages).toString
+  private val view = injector.instanceOf[checkYourAnswers]
+  val viewAsString: String = view(vm)(fakeRequest, messages).toString
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -141,7 +141,9 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
 }

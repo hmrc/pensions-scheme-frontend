@@ -30,6 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
@@ -48,6 +49,8 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = 0
 
+  private val view = injector.instanceOf[addPartners]
+
   private def controller(
                           dataRetrievalAction: DataRetrievalAction = getEmptyData,
                           navigator: Navigator = fakeNavigator()
@@ -60,14 +63,15 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
-    addPartners(
-      frontendAppConfig,
+    view(
       form,
       partners,
       postUrl,

@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.register.SchemeType
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
 import utils.{CountryOptions, NameMatching}

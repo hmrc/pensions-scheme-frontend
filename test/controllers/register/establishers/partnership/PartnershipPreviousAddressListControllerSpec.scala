@@ -17,7 +17,6 @@
 package controllers.register.establishers.partnership
 
 import audit.testdoubles.StubSuccessfulAuditService
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -29,6 +28,8 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -67,6 +68,8 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
     )
   )
 
+  private val view = injector.instanceOf[addressList]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnershipPreviousAddressListController =
     new PartnershipPreviousAddressListController(
       frontendAppConfig,
@@ -74,12 +77,13 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    addressList(
-      frontendAppConfig,
+    view(
       form,
       AddressListViewModel(
         routes.PartnershipPreviousAddressListController.onSubmit(NormalMode, index, None),

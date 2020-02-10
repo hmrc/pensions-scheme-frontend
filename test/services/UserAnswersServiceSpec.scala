@@ -28,7 +28,7 @@ import models.address.Address
 import models.requests.DataRequest
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent

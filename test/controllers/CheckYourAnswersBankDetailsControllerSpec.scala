@@ -22,6 +22,7 @@ import models.register._
 import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, FakeNavigator}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -48,6 +49,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
+  private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBankDetailsController =
     new CheckYourAnswersBankDetailsController(
       frontendAppConfig,
@@ -55,7 +57,9 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
@@ -107,7 +111,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     h1 = Message("checkYourAnswers.hs.title")
   )
 
-  private def viewAsString(): String = checkYourAnswers(frontendAppConfig, vm)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(vm)(fakeRequest, messages).toString
 
 }
 

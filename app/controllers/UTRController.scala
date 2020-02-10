@@ -18,21 +18,21 @@ package controllers
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.{Mode, ReferenceValue}
 import models.requests.DataRequest
+import models.{Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.UTRViewModel
 import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait UTRController extends FrontendController with Retrievals with I18nSupport {
+trait UTRController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -42,6 +42,8 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
 
   protected def navigator: Navigator
 
+  protected def view: utr
+
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: UTRViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
@@ -50,14 +52,14 @@ trait UTRController extends FrontendController with Retrievals with I18nSupport 
         case _ => form
       }
 
-    Future.successful(Ok(utr(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(utr(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       utr => {
         userAnswersService.save(mode, viewmodel.srn, id, utr.copy(isEditable = true)).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

@@ -16,9 +16,10 @@
 
 package forms
 
+import java.time.LocalDate
+
 import forms.mappings.{Mappings, Transforms}
 import javax.inject.Inject
-import org.joda.time.LocalDate
 import play.api.data.Form
 
 class DOBFormProvider @Inject() extends Mappings with Transforms {

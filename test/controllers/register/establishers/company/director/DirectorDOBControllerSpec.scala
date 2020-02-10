@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.company.director
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
@@ -25,20 +27,23 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorId, DirectorNameId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, Mode, NormalMode}
-import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 //scalastyle:off magic.number
 
 class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import DirectorDOBControllerSpec._
+
+  private val view = injector.instanceOf[DOB]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorDOBController =
     new DirectorDOBController(
@@ -50,7 +55,9 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
   private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
 
@@ -85,7 +92,7 @@ object DirectorDOBControllerSpec extends MockitoSugar {
   val firstDirectorIndex: Index = Index(0)
 
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
 
   val validData: JsObject = Json.obj(
@@ -95,7 +102,7 @@ object DirectorDOBControllerSpec extends MockitoSugar {
         DirectorId.toString -> Json.arr(
           Json.obj(
             DirectorNameId.toString -> PersonName("first", "last"),
-            DirectorDOBId.toString  -> new LocalDate(year, month, day)
+            DirectorDOBId.toString  -> LocalDate.of(year, month, day)
           )
         )
       )

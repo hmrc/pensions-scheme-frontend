@@ -24,11 +24,13 @@ import models.Mode.checkMode
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{NormalMode, _}
-import org.joda.time.LocalDate
+import java.time.LocalDate
+
 import org.scalatest.OptionValues
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -227,6 +229,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private def addLink(label: String, changeUrl: String, hiddenLabel: String) =
     AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(hiddenLabel))))
 
+  private val view = injector.instanceOf[checkYourAnswers]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach,
@@ -241,14 +244,15 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       FakeAllowAccessProvider(),
       allowChangeHelper,
   new DataRequiredActionImpl,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
                    srn: Option[String] = None, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

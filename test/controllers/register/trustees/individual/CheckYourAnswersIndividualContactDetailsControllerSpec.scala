@@ -58,9 +58,11 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
     ))
   }
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
-    checkYourAnswers(frontendAppConfig, CYAViewModel(
+    view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,
       schemeName = None,

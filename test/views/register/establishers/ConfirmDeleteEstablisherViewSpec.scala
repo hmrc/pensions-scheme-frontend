@@ -64,11 +64,11 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   private val firstIndex = Index(0)
   private val establisherName = "John Doe"
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(NormalMode, firstIndex, EstablisherKind.Indivdual, None)
-  private val cancelCall = AddEstablisherController.onSubmit(NormalMode, None)
+
+  val view: confirmDeleteEstablisher = app.injector.instanceOf[confirmDeleteEstablisher]
 
   private def createView(hintText:Option[String] = None) =
-    () => confirmDeleteEstablisher(
-      frontendAppConfig,
+    () => view(
       formLocal,
       establisherName,
       hintText,
@@ -77,8 +77,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       None
     )(fakeRequest, messages)
   private def createUpdateView(hintText:Option[String] = None) =
-    () => confirmDeleteEstablisher(
-      frontendAppConfig,
+    () => view(
       formLocal,
       establisherName,
       hintText,
@@ -88,8 +87,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
     )(fakeRequest, messages)
 
   def createViewUsingForm(hintText:Option[String] = None): Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    confirmDeleteEstablisher(
-      frontendAppConfig,
+    view(
       form,
       establisherName,
       hintText,

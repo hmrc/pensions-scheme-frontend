@@ -18,7 +18,6 @@ package controllers.register.trustees.company
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import base.CSRFRequest
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -31,30 +30,31 @@ import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
+  private val view = injector.instanceOf[manualAddress]
 
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val companyDetails = CompanyDetails("companyName")
+  val companyDetails: CompanyDetails = CompanyDetails("companyName")
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
@@ -87,7 +87,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             Message(controller.heading, companyDetails.companyName)
           )
 
-          val request = addToken(
+          val request = addCSRFToken(
             FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
@@ -96,8 +96,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual manualAddress(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
             viewmodel,
             None
@@ -133,7 +132,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           implicit app =>
 
 
-            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
+            val fakeRequest = addCSRFToken(FakeRequest()
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -141,7 +140,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
                 ("postCode", address.postcode.get),
                 "country" -> address.country))
 
-            val result = route(app, fakeRequest).value
+            val controller = app.injector.instanceOf[CompanyPreviousAddressController]
+            val result = controller.onSubmit(NormalMode, Index(0), None)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
@@ -172,7 +172,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex, None))
+          val fakeRequest = addCSRFToken(FakeRequest()
             .withHeaders("Csrf-Token" -> "nocheck")
             .withFormUrlEncodedBody(
               ("addressLine1", address.addressLine1),
@@ -182,7 +182,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
           fakeAuditService.reset()
 
-          val result = route(app, fakeRequest).value
+          val controller = app.injector.instanceOf[CompanyPreviousAddressController]
+          val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
           whenReady(result) {
             _ =>

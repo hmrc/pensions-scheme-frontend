@@ -428,8 +428,10 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
+  val view: schemeDetailsTaskList = app.injector.instanceOf[schemeDetailsTaskList]
+
   private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData()): () => HtmlFormat.Appendable = () =>
-    schemeDetailsTaskList(frontendAppConfig, schemeDetailsList)(fakeRequest, messages)
+    view(schemeDetailsList)(fakeRequest, messages)
 
 
 }

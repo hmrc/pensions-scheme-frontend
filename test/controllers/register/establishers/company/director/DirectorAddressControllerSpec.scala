@@ -16,10 +16,10 @@
 
 package controllers.register.establishers.company.director
 
+import java.time.LocalDate
+
 import audit.testdoubles.StubSuccessfulAuditService
-import audit.{AddressAction, AddressEvent, AuditService}
-import base.CSRFRequest
-import config.FrontendAppConfig
+import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
@@ -30,15 +30,14 @@ import models.address.Address
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
@@ -46,27 +45,24 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
-  val establisherIndex = Index(0)
-  val directorIndex = Index(0)
+  private val establisherIndex = Index(0)
+  private val directorIndex = Index(0)
 
-  val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
-  val year: Int = LocalDate.now().getYear
+  private val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+  private val postCall = routes.DirectorAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(directorIndex), None)
+  private val director = PersonName("first", "last")
 
-  val date = new LocalDate(year, month, day)
-  val director = PersonName("first", "last")
-
-  val countryOptions = new CountryOptions(
+  private val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
   )
 
-  val fakeAuditService = new StubSuccessfulAuditService()
-  val formProvider = new AddressFormProvider(countryOptions)
-  val form: Form[Address] = formProvider()
+  private val fakeAuditService = new StubSuccessfulAuditService()
+  private val formProvider = new AddressFormProvider(countryOptions)
+  private val form: Form[Address] = formProvider()
 
-  val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
+  private val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "director" -> Json.arr(
@@ -80,138 +76,99 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   )
   )
 
-  "DirectorAddress Controller" must {
+  private def viewmodel(postCall: Call = postCall) = ManualAddressViewModel(
+    postCall,
+    countryOptions.options,
+    title = Message("messages__common__confirmAddress__h1", Message("messages__theDirector")),
+    heading = Message("messages__common__confirmAddress__h1", director.fullName),
+    srn = None
+  )
+
+  private val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
+
+  private val view = injector.instanceOf[manualAddress]
+
+  "Address Controller" must {
 
     "render manualAddress from GET request" in {
-
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
-      )) {
-        implicit app =>
-
+      val postCall = routes.DirectorAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(directorIndex), None)
+      running(_.overrides(modules(retrieval) ++
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
+        app =>
           val controller = app.injector.instanceOf[DirectorAddressController]
 
-          val viewmodel = ManualAddressViewModel(
-            postCall = controller.postCall(NormalMode, establisherIndex, directorIndex, None),
-            countryOptions = countryOptions.options,
-            title = Message(controller.title, Message("messages__theDirector")),
-            heading = Message(controller.heading, director.fullName)
-          )
-
-          val request = addToken(
-            FakeRequest(DirectorAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None))
-              .withHeaders("Csrf-Token" -> "nocheck")
-          )
-
-          val result = route(app, request).value
+          val result = controller.onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual manualAddress(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
-            viewmodel,
+            viewmodel(postCall),
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
 
       }
-
     }
 
     "redirect to next page on POST request" which {
-      "save address" in {
-
+      "saves director address" in {
         val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+        running(_.overrides(modules(retrieval) ++
+          Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
+            bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+            bind[UserAnswersService].toInstance(FakeUserAnswersService)
+          ): _*)) { app =>
 
-        val address = Address(
-          addressLine1 = "value 1",
-          addressLine2 = "value 2",
-          None, None,
-          postcode = Some("AB1 1AB"),
-          country = "GB"
-        )
+          val postRequest = fakeRequest.withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country)
 
-        running(_.overrides(
-          bind[FrontendAppConfig].to(frontendAppConfig),
-          bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
-          bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].to(retrieval),
-          bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider)
-        )) {
-          implicit app =>
+          val controller = app.injector.instanceOf[DirectorAddressController]
 
-            val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
-              .withHeaders("Csrf-Token" -> "nocheck")
-              .withFormUrlEncodedBody(
-                ("addressLine1", address.addressLine1),
-                ("addressLine2", address.addressLine2),
-                ("postCode", address.postcode.get),
-                "country" -> address.country))
+          val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
 
-            val result = route(app, fakeRequest).value
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).value mustEqual onwardCall.url
 
-            status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardCall.url
-
-            FakeUserAnswersService.userAnswer.get(DirectorAddressId(establisherIndex, directorIndex)).value mustEqual address
+          FakeUserAnswersService.userAnswer.get(DirectorAddressId(establisherIndex, directorIndex)).value mustEqual address
         }
       }
     }
 
     "send an audit event when valid data is submitted" in {
 
-      val address = Address(
-        addressLine1 = "value 1",
-        addressLine2 = "value 2",
-        None, None,
-        postcode = Some("AB1 1AB"),
-        country = "GB"
-      )
+      running(_.overrides(modules(retrieval) ++
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
+          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
 
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[CountryOptions].to(countryOptions),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[AuditService].toInstance(fakeAuditService)
-      )) {
-        implicit app =>
+        val postRequest = fakeRequest.withFormUrlEncodedBody(
+          ("addressLine1", address.addressLine1),
+          ("addressLine2", address.addressLine2),
+          ("postCode", address.postcode.get),
+          "country" -> address.country)
 
-          val fakeRequest = addToken(FakeRequest(DirectorAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None))
-            .withHeaders("Csrf-Token" -> "nocheck")
-            .withFormUrlEncodedBody(
-              ("addressLine1", address.addressLine1),
-              ("addressLine2", address.addressLine2),
-              ("postCode", address.postcode.get),
-              "country" -> address.country))
+        val controller = app.injector.instanceOf[DirectorAddressController]
 
-          fakeAuditService.reset()
+        val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
 
-          val result = route(app, fakeRequest).value
+        fakeAuditService.reset()
 
-          whenReady(result) {
-            _ =>
-              fakeAuditService.verifySent(
-                AddressEvent(
-                  FakeAuthAction.externalId,
-                  AddressAction.LookupChanged,
-                  s"Company Director Address: ${director.fullName}",
-                  address
-                )
+        whenReady(result) {
+          _ =>
+            fakeAuditService.verifySent(
+              AddressEvent(
+                FakeAuthAction.externalId,
+                AddressAction.LookupChanged,
+                s"Company Director Address: ${director.fullName}",
+                address
               )
-          }
+            )
+        }
       }
     }
-
   }
 }

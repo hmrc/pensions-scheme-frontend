@@ -25,11 +25,11 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,8 +42,10 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction,
-                                                formProvider: InsurancePolicyNumberFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                formProvider: InsurancePolicyNumberFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: insurancePolicyNumber
+                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -60,7 +62,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
+      Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -68,7 +70,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val companyName = request.userAnswers.get(InsuranceCompanyNameId)
-          Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
+          Future.successful(BadRequest(view(formWithErrors, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
         },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>

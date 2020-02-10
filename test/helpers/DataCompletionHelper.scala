@@ -20,7 +20,7 @@ import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
 import models.register.SchemeType
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
@@ -31,7 +31,7 @@ trait DataCompletionHelper extends OptionValues {
   private val refValue    = ReferenceValue(stringValue)
   private val firstName   = "firstName"
   private val lastName    = "lastName"
-  private val dateValue   = new LocalDate(2000, 6, 9)
+  private val dateValue   = LocalDate.of(2000, 6, 9)
 
   protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value

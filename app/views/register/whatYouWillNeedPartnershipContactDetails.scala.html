@@ -18,12 +18,14 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.CommonFormWithHintViewModel
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], viewModel: CommonFormWithHintViewModel)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@(schemeName: Option[String], viewModel: CommonFormWithHintViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = viewModel.title,
-    appConfig = appConfig,
-    bodyClasses = None
+    title = viewModel.title
 ) {
     @components.back_link()
     @components.heading(headingKey = viewModel.heading)

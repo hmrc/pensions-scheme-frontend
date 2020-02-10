@@ -25,7 +25,8 @@ class StillNeedDetailsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "stillNeedDetails"
   val schemeName = "schemeName"
   val srn = Some("A232322")
-  private def createView() = () => stillNeedDetails(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages)
+  val view: stillNeedDetails = app.injector.instanceOf[stillNeedDetails]
+  private def createView() = () => view(srn, Some(schemeName))(fakeRequest, messages)
 
   "StillNeedDetails view" must {
 

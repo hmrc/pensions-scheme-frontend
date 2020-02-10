@@ -19,20 +19,20 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,8 +43,10 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                              requireData: DataRequiredAction,
                                                              implicit val countryOptions: CountryOptions,
-                                                             allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+                                                             allowChangeHelper: AllowChangeHelper,
+                                                             val controllerComponents: MessagesControllerComponents,
+                                                             val view: checkYourAnswers
+                                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -71,10 +73,10 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,
-          h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          h1 = headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig,vm )))
+        Future.successful(Ok(view(vm)))
 
     }
 }

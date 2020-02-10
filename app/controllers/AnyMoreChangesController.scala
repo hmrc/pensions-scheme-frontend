@@ -23,12 +23,12 @@ import identifiers.AnyMoreChangesId
 import javax.inject.Inject
 import models.UpdateMode
 import navigators.Navigator
-import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Variations
 import views.html.anyMoreChanges
 
@@ -41,22 +41,24 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: AnyMoreChangesFormProvider)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+                                         formProvider: AnyMoreChangesFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: anyMoreChanges
+                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(anyMoreChanges(appConfig, form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
+      Future.successful(Ok(view(form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
   }
 
   def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(anyMoreChanges(appConfig, formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))),
+          Future.successful(BadRequest(view(formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))),
         value => {
           val ua = request.userAnswers.set(AnyMoreChangesId)(value).asOpt.getOrElse(request.userAnswers)
           Future.successful(Redirect(navigator.nextPage(AnyMoreChangesId, UpdateMode, ua, srn)))
@@ -64,6 +66,8 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
+  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).
+    format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+
 }
 

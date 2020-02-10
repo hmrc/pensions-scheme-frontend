@@ -25,6 +25,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.adviserName
 
@@ -36,11 +37,15 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
   private val nameOrCompany = "test name"
 
+  private val view = injector.instanceOf[adviserName]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AdviserNameController =
     new AdviserNameController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-  def viewAsString(form: Form[_] = form): String = adviserName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None)(fakeRequest, messages).toString
 
   "AdviserName Controller" must {
 

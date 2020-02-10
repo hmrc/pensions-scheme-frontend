@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
@@ -26,11 +25,11 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.insuranceCompanyName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,8 +42,10 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               formProvider: InsuranceCompanyNameFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                               formProvider: InsuranceCompanyNameFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: insuranceCompanyName
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -52,14 +53,14 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
       val submitCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(mode, srn)
-      Ok(insuranceCompanyName(appConfig, preparedForm, mode, existingSchemeName, submitCall, srn))
+      Ok(view(preparedForm, mode, existingSchemeName, submitCall, srn))
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode, existingSchemeName,
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName,
             controllers.routes.InsuranceCompanyNameController.onSubmit(mode, srn), srn))),
         value =>
           userAnswersService.save(mode, srn, InsuranceCompanyNameId, value).map(cacheMap =>

@@ -16,7 +16,6 @@
 
 package controllers.register.establishers
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -27,6 +26,8 @@ import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.establisherKind
 
@@ -51,12 +52,13 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
       )
     )
   )
+  private val view = injector.instanceOf[establisherKind]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
 
-  def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, None, firstIndex, None,
+  def viewAsString(form: Form[_] = form): String = view(form, None, firstIndex, None,
     postCall(NormalMode, firstIndex, None))(fakeRequest, messages).toString
 
   "EstablisherKind Controller" must {

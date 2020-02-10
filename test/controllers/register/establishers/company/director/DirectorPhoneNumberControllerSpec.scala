@@ -23,11 +23,12 @@ import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
@@ -42,6 +43,8 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
 
   private val estCompanyDirector = UserAnswers().set(DirectorNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
 
+  private val view = injector.instanceOf[phoneNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = estCompanyDirector): DirectorPhoneNumberController =
     new DirectorPhoneNumberController(frontendAppConfig,
       messagesApi,
@@ -51,12 +54,13 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.DirectorPhoneNumberController.onSubmit(NormalMode, firstIndex, firstIndex, None),

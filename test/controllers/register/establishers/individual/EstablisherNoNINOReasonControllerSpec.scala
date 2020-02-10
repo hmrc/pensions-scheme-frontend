@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -53,7 +53,9 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
     srn = None
   )
 
-  private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewModel, None)(fakeRequest, messages).toString
+  private val view = injector.instanceOf[reason]
+
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "EstablisherNoNINOReasonController" must {
     "return OK and the correct view for a GET" in {

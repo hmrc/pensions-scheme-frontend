@@ -32,11 +32,13 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   private val form = new EstablisherKindFormProvider()()
 
+  val view: establisherKind = app.injector.instanceOf[establisherKind]
+
   private def createView(srn: Option[String] = None) = () =>
-    establisherKind(frontendAppConfig, form, srn, Index(1), None, postCall(NormalMode, Index(1), srn))(fakeRequest, messages)
+    view(form, srn, Index(1), None, postCall(NormalMode, Index(1), srn))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    establisherKind(frontendAppConfig, form, srn, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
+    view(form, srn, Index(1), None, postCall(NormalMode, Index(1), None))(fakeRequest, messages)
 
   private def establisherKindOptions = EstablisherKind.options
 

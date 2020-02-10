@@ -22,6 +22,7 @@ import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
@@ -30,6 +31,8 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 
   private val establisherIndex = Index(0)
+
+  private val view = injector.instanceOf[alreadyDeleted]
 
   def viewmodel(establisherName: String): AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
@@ -43,11 +46,12 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  def viewAsString(establisherName: String): String = alreadyDeleted(
-    frontendAppConfig,
+  def viewAsString(establisherName: String): String = view(
     viewmodel(establisherName)
   )(fakeRequest, messages).toString
 

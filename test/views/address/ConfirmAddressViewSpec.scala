@@ -59,14 +59,16 @@ class ConfirmAddressViewSpec extends YesNoViewBehaviours {
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)
 
-  def createView: () => HtmlFormat.Appendable = () => confirmPreviousAddress(frontendAppConfig, form, viewmodel(), countryOptions,
+  val view: confirmPreviousAddress = app.injector.instanceOf[confirmPreviousAddress]
+
+  def createView: () => HtmlFormat.Appendable = () => view(form, viewmodel(), countryOptions,
     schemeName)(fakeRequest, messages)
 
-  def createViewUpdateMode: () => HtmlFormat.Appendable = () => confirmPreviousAddress(frontendAppConfig, form, viewmodel(UpdateMode), countryOptions,
+  def createViewUpdateMode: () => HtmlFormat.Appendable = () => view(form, viewmodel(UpdateMode), countryOptions,
     schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    confirmPreviousAddress(frontendAppConfig, form, viewmodel(), countryOptions, schemeName)(fakeRequest, messages)
+    view(form, viewmodel(), countryOptions, schemeName)(fakeRequest, messages)
 
   "Same Contact Address View" must {
     behave like normalPage(createView, messageKeyPrefix, viewmodel().heading)

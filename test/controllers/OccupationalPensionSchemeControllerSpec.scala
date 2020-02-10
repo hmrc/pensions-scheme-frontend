@@ -16,6 +16,7 @@
 
 package controllers
 
+
 import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
@@ -28,44 +29,11 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.occupationalPensionScheme
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class OccupationalPensionSchemeControllerSpec extends ControllerWithQuestionPageBehaviours {
-
-  import OccupationalPensionSchemeControllerSpec._
-
-  "Occupational Pension Scheme Controller" when {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(true),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      OccupationalPensionSchemeId,
-      true
-    )
-  }
-}
-
-object OccupationalPensionSchemeControllerSpec {
+class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWithQuestionPageBehaviours {
 
   private val formProvider = new OccupationalPensionSchemeFormProvider()
   private val form = formProvider.apply()
@@ -73,34 +41,63 @@ object OccupationalPensionSchemeControllerSpec {
     SchemeNameId.toString -> "Test Scheme Name")).occupationalPensionScheme(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
+  private val view = injector.instanceOf[occupationalPensionScheme]
+  private def viewAsStringview(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"))(base.fakeRequest, base.messages).toString()
-
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): OccupationalPensionSchemeController =
     new OccupationalPensionSchemeController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+  "Occupational Pension Scheme Controller" when {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(true),
+      viewAsStringview(form)
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsStringview(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      OccupationalPensionSchemeId,
+      true
+    )
+  }
 }

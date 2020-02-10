@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
@@ -39,7 +39,6 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
   import InsurancePolicyNumberControllerSpec._
 
   "InsurancePolicyNumber Controller" must {
-
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction(this),
       mandatoryData.dataRetrievalAction,
@@ -79,15 +78,18 @@ object InsurancePolicyNumberControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, Some(companyName), None, postUrl, None)(base.fakeRequest, base.messages).toString()
+  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form => {
+    val view = base.injector.instanceOf[insurancePolicyNumber]
+    view(form, NormalMode, Some(companyName), None, postUrl, None)(base.fakeRequest, base.messages).toString()
+  }
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersService = FakeUserAnswersService
-  ): InsurancePolicyNumberController =
+  ): InsurancePolicyNumberController = {
+    val view = base.injector.instanceOf[insurancePolicyNumber]
     new InsurancePolicyNumberController(
       base.frontendAppConfig,
       base.messagesApi,
@@ -97,8 +99,11 @@ object InsurancePolicyNumberControllerSpec {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
+  }
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
     controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)

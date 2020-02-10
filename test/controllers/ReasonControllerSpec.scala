@@ -17,6 +17,7 @@
 package controllers
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.ReasonFormProvider
@@ -28,7 +29,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -39,7 +40,7 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   import ReasonControllerSpec._
 
@@ -48,6 +49,7 @@ class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues 
     title = "title",
     heading = "heading"
   )
+  private val view = injector.instanceOf[reason]
 
   "get" must {
 
@@ -68,7 +70,7 @@ class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues 
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(appConfig, formProvider(errorKey, companyName)(messages), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider(errorKey, companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -90,8 +92,7 @@ class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues 
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual reason(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider(errorKey, companyName)(messages).fill("123456789"),
             viewmodel,
             None
@@ -145,8 +146,7 @@ class ReasonControllerSpec extends WordSpec with MustMatchers with OptionValues 
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual reason(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider(errorKey, companyName)(messages).bind(Map("reason" -> "1234567^89{0}12345")),
             viewmodel,
             None
@@ -169,14 +169,20 @@ object ReasonControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
-                                  val formProvider: ReasonFormProvider
+                                  val formProvider: ReasonFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: reason
                                 )(implicit val ec: ExecutionContext) extends ReasonController {
 
-    def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] =
-      get(FakeIdentifier, viewmodel, formProvider(errorKey, companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+    def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      get(FakeIdentifier, viewmodel, formProvider(errorKey, companyName))
+    }
 
-    def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] =
-      post(FakeIdentifier, NormalMode, viewmodel, formProvider(errorKey, companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+    def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
+      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(errorKey, companyName))
+    }
   }
 
 }

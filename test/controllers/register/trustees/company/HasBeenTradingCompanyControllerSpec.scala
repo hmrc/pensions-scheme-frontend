@@ -27,8 +27,10 @@ import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -37,19 +39,19 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   private val schemeName = None
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new HasBeenTradingFormProvider()
-  val form = formProvider("messages__tradingAtLeastOneYear__error","test company name")
-  val index = Index(0)
-  val srn = None
-  val postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn)
+  val form: Form[Boolean] = formProvider("messages__tradingAtLeastOneYear__error","test company name")
+  val index: Index = Index(0)
+  val srn: Option[String] = None
+  val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn)
 
-  val viewModel = CommonFormWithHintViewModel(
+  val viewModel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn),
     title = Message("messages__trustee_company_trading-time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test company name"),
     hint = None
   )
-  val tolerantAddress = TolerantAddress(None, None, None, None, None, None)
-  val address = Address("line 1", "line 2", None, None, None, "GB")
+  val tolerantAddress: TolerantAddress = TolerantAddress(None, None, None, None, None, None)
+  val address: Address = Address("line 1", "line 2", None, None, None, "GB")
 
   private def getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -65,6 +67,8 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     ))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasBeenTradingCompanyController =
     new HasBeenTradingCompanyController(
       frontendAppConfig,
@@ -76,10 +80,12 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
+      stubMessagesControllerComponents(),
+      view)(
       global
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasBeenTradingCompanyController" must {
 

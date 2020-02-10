@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -27,49 +27,14 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeNavigator, InputOption, UserAnswers}
 import views.html.establishedCountry
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import EstablishedCountryControllerSpec._
+  private val view = injector.instanceOf[establishedCountry]
 
-  "EstablishedCountry Controller" must {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(testAnswer),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      EstablishedCountryId,
-      testAnswer
-    )
-  }
-}
-
-object EstablishedCountryControllerSpec {
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   val schemeName = "Test Scheme Name"
@@ -84,34 +49,68 @@ object EstablishedCountryControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", testAnswer))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    establishedCountry(base.frontendAppConfig, form, NormalMode, options, schemeName)(base.fakeRequest, base.messages).toString()
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+   view(form, NormalMode, options, schemeName)(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): EstablishedCountryController =
     new EstablishedCountryController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
       formProvider,
-      countryOptions
+      countryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+  "EstablishedCountry Controller" must {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(testAnswer),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnPageLoadMethodMissingRequiredData(
+      onPageLoadAction,
+      getEmptyData
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      EstablishedCountryId,
+      testAnswer
+    )
+  }
 }

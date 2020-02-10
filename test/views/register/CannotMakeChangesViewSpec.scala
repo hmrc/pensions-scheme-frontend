@@ -24,8 +24,9 @@ class CannotMakeChangesViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "cannot_Make_Changes"
   val schemeName = "schemeName"
-  val srn = Some("A232322")
-  private def createView() = () => cannotMakeChanges(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages)
+  val srn: Option[String] = Some("A232322")
+  val view: cannotMakeChanges = app.injector.instanceOf[cannotMakeChanges]
+  private def createView() = () => view(srn, Some(schemeName))(fakeRequest, messages)
 
   "CannotMakeChanges view" must {
 

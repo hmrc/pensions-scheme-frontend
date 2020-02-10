@@ -28,7 +28,7 @@ import views.html.paye
 class PayeViewSpec extends QuestionViewBehaviours[ReferenceValue] {
 
   val messageKeyPrefix = "enter_paye"
-  val postCall = Call("GET", "/")
+  val postCall: Call = Call("GET", "/")
   val companyName = "test company name"
   val form = new PayeFormProvider()(companyName)
 
@@ -41,14 +41,16 @@ class PayeViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     entityName = Some(companyName)
   )
 
+  val view: paye = app.injector.instanceOf[paye]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    paye(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    view(form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    paye(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   "Paye view" when {
     "rendered" must {

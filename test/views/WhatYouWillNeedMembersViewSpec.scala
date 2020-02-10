@@ -24,7 +24,9 @@ class WhatYouWillNeedMembersViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "what_you_will_need_members"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedMembers(frontendAppConfig, None)(fakeRequest, messages)
+  val view: whatYouWillNeedMembers = app.injector.instanceOf[whatYouWillNeedMembers]
+
+  def createView: () => HtmlFormat.Appendable = () => view(None)(fakeRequest, messages)
 
   "WhatYouWillNeedMembers view" must {
 

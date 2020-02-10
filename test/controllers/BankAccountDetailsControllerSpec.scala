@@ -16,7 +16,6 @@
 
 package controllers
 
-import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -25,53 +24,16 @@ import models.register.SortCode
 import models.{BankAccountDetails, NormalMode}
 import navigators.Navigator
 import org.apache.commons.lang3.RandomUtils
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.bankAccountDetails
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class BankAccountDetailsControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import BankAccountDetailsControllerSpec._
-
-  "BankAccountDetails Controller" must {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(bankDetails),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      identifiers.BankAccountDetailsId,
-      bankDetails
-    )
-  }
-}
-
-object BankAccountDetailsControllerSpec {
   private val schemeName = "Test Scheme Name"
   private val formProvider = new BankAccountDetailsFormProvider()
   private val form = formProvider.apply()
@@ -79,7 +41,7 @@ object BankAccountDetailsControllerSpec {
   private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
   //scalastyle:on magic.number
 
-  val bankDetails = BankAccountDetails("test bank", "test account",
+  val bankDetails: BankAccountDetails = BankAccountDetails("test bank", "test account",
     SortCode("34", "45", "67"), accountNo)
 
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).bankAccountDetails(bankDetails)
@@ -89,33 +51,70 @@ object BankAccountDetailsControllerSpec {
       ("sortCode", "344567"),
       ("accountNumber", accountNo))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    bankAccountDetails(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private val view = injector.instanceOf[bankAccountDetails]
+
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
+
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): BankAccountDetailsController =
     new BankAccountDetailsController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+  "BankAccountDetails Controller" must {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(bankDetails),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnPageLoadMethodMissingRequiredData(
+      onPageLoadAction,
+      getEmptyData
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      identifiers.BankAccountDetailsId,
+      bankDetails
+    )
+  }
 }

@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.adviserPhone
+import views.html.{adviserName, adviserPhone}
 
 class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
 
@@ -30,10 +30,12 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   val form = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
 
-  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
+  val view: adviserPhone = app.injector.instanceOf[adviserPhone]
+
+  private val createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
+    (form: Form[String]) => view(form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
     messages("messages__adviser__phone__heading", adviserName))

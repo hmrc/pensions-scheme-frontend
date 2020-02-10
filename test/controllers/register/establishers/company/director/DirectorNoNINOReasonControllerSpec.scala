@@ -22,22 +22,24 @@ import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.DirectorNoNINOReasonId
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
-    private val schemeName = None
-    private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-    val formProvider = new ReasonFormProvider()
-    val name = "first last"
-    val form = formProvider("messages__reason__error_ninoRequired", name)
-    val establisherIndex, directorIndex = Index(0)
-    val srn = None
-    val postCall = routes.DirectorNoNINOReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val schemeName = None
+
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+
+  val formProvider = new ReasonFormProvider()
+  val name = "first last"
+  val form = formProvider("messages__reason__error_ninoRequired", name)
+  val establisherIndex, directorIndex = Index(0)
+  val srn = None
+  val postCall = routes.DirectorNoNINOReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
@@ -46,50 +48,54 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
     srn = srn
   )
 
-    def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoNINOReasonController =
-      new DirectorNoNINOReasonController(
-        frontendAppConfig,
-        messagesApi,
-        FakeUserAnswersService,
-        new FakeNavigator(desiredRoute = onwardRoute),
-        FakeAuthAction,
-        dataRetrievalAction,
-        FakeAllowAccessProvider(),
-        new DataRequiredActionImpl,
-        formProvider
-      )
+  private val view = injector.instanceOf[reason]
 
-    private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewmodel, schemeName)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoNINOReasonController =
+    new DirectorNoNINOReasonController(
+      frontendAppConfig,
+      messagesApi,
+      FakeUserAnswersService,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-    "HasCompanyCRNController" must {
+  private def viewAsString(form: Form[_] = form) = view(form, viewmodel, schemeName)(fakeRequest, messages).toString
 
-      "return OK and the correct view for a GET" in {
-        val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+  "HasCompanyCRNController" must {
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
-      }
+    "return OK and the correct view for a GET" in {
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
 
-      "redirect to the next page when valid data is submitted for true" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
-
-        val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
-        FakeUserAnswersService.verify(DirectorNoNINOReasonId(establisherIndex, directorIndex), "reason")
-      }
-
-      "return a Bad Request and errors when invalid data is submitted" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
-
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe viewAsString(boundForm)
-      }
-
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
     }
+
+    "redirect to the next page when valid data is submitted for true" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersService.verify(DirectorNoNINOReasonId(establisherIndex, directorIndex), "reason")
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
   }
+}
 

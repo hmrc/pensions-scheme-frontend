@@ -16,7 +16,7 @@
 
 package views.register
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -31,10 +31,9 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   private val checkStatusLink = frontendAppConfig.managePensionsYourPensionSchemesUrl
   private val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
-
+  val view: schemeSuccess = app.injector.instanceOf[schemeSuccess]
   def createView: () => HtmlFormat.Appendable = () =>
-    schemeSuccess(
-      frontendAppConfig,
+    view(
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false,
@@ -42,8 +41,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
     )(fakeRequest, messages)
 
   def createMasterTrustView: () => HtmlFormat.Appendable = () =>
-    schemeSuccess(
-      frontendAppConfig,
+    view(
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = true,

@@ -25,12 +25,13 @@ import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
 import views.html.schemeName
 
@@ -65,6 +66,8 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
   }
 
+  private val view = injector.instanceOf[schemeName]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory:NameMatchingFactory = FakeNameMatchingFactory): SchemeNameController =
     new SchemeNameController(
       frontendAppConfig,
@@ -77,10 +80,12 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       formProvider,
       nameMatchingFactory,
       mockPensionAdministratorConnector,
-      FakeSectionComplete
+      FakeSectionComplete,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "SchemeName Controller" must {
 

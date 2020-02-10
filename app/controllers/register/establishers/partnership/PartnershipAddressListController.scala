@@ -21,22 +21,18 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.{
-  PartnershipAddressId,
-  PartnershipAddressListId,
-  PartnershipDetailsId,
-  PartnershipPostcodeLookupId
-}
+import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,6 +44,8 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: addressList,
                                                  val auditService: AuditService)(implicit val ec: ExecutionContext)
     extends AddressListController
     with Retrievals {

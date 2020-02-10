@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -27,49 +27,12 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.adviserEmailAddress
 
 class AdviserEmailAddressControllerSpec extends ControllerSpecBase with ControllerWithQuestionPageBehaviours {
 
-  import AdviserEmailAddressControllerSpec._
-
-  "AdviserEmailAddressController" when {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      minData,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(emailAddress),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      AdviserEmailId,
-      emailAddress
-    )
-  }
-
-}
-
-object AdviserEmailAddressControllerSpec {
-  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   val formProvider: AdviserEmailFormProvider = new AdviserEmailFormProvider()
   val form: Form[String] = formProvider.apply()
 
@@ -80,41 +43,74 @@ object AdviserEmailAddressControllerSpec {
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("email", emailAddress))
 
-  def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String =
+  private val view = injector.instanceOf[adviserEmailAddress]
+  def viewAsString(form: Form[_]): Form[_] => String =
     form =>
-      adviserEmailAddress(
-        base.frontendAppConfig,
-        form,
+      view(form,
         NormalMode,
         adviserName,
         None
-      )(base.fakeRequest, base.messages).toString()
+      )(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): AdviserEmailAddressController =
     new AdviserEmailAddressController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       authAction,
       navigator,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
       formProvider,
-      cache
+      cache,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+  def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+  "AdviserEmailAddressController" when {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      minData,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(emailAddress),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnPageLoadMethodMissingRequiredData(
+      onPageLoadAction,
+      getEmptyData
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      AdviserEmailId,
+      emailAddress
+    )
+  }
 }
 
 

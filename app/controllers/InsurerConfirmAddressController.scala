@@ -35,11 +35,12 @@ import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
 class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                val messagesApi: MessagesApi,
+                                                override val messagesApi: MessagesApi,
                                                 @InsuranceService val userAnswersService: UserAnswersService,
                                                 @AboutBenefitsAndInsurance val navigator: Navigator,
                                                 authenticate: AuthAction,
@@ -48,12 +49,14 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
                                                 requireData: DataRequiredAction,
                                                 val formProvider: AddressFormProvider,
                                                 val countryOptions: CountryOptions,
-                                                val auditService: AuditService
+                                                val auditService: AuditService,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: manualAddress
                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.InsurerConfirmAddressController.onSubmit _
   private[controllers] val title: Message = "messages__insurer_confirm_address__title"
-  private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
+  private[controllers] val heading: String = "messages__common__confirmAddress__h1"
 
   protected val form: Form[Address] = formProvider()
 
@@ -61,8 +64,8 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
     ManualAddressViewModel(
       postCall(mode, srn),
       countryOptions.options,
-      title = Message(title),
-      heading = Message(heading,companyName),
+      title = title,
+      heading = Message(heading, companyName),
       srn = srn
     )
 

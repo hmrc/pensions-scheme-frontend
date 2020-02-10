@@ -38,11 +38,13 @@ class ReasonViewSpec extends QuestionViewBehaviours[String] {
     srn = srn
   )
 
+  val view: reason = app.injector.instanceOf[reason]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    reason(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    view(form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    reason(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   "Reason view" when {
     "rendered" must {

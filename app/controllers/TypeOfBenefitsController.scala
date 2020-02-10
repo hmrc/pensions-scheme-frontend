@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.AboutBenefitsAndInsurance
 import utils.{Enumerable, UserAnswers}
 import views.html.typeOfBenefits
@@ -41,8 +41,10 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: TypeOfBenefitsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                         formProvider: TypeOfBenefitsFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: typeOfBenefits
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
@@ -52,14 +54,14 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode, existingSchemeName)))
+      Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(typeOfBenefits(appConfig, formWithErrors, mode, existingSchemeName))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap))))

@@ -21,7 +21,7 @@ import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.person.PersonName
 import models.requests.DataRequest
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -33,7 +33,7 @@ class EstablisherDOBIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
-  val date = new LocalDate()
+  val date = LocalDate.now()
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, Some(Link("site.change", onwardUrl,
       Some(messages("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))

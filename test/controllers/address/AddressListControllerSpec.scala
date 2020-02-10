@@ -16,8 +16,9 @@
 
 package controllers.address
 
-import audit.{AddressAction, AddressEvent, AuditService}
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.address.ManualAddressControllerSpec._
@@ -27,24 +28,37 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.scalatest.{Matchers, OptionValues, WordSpec}
-import play.api.Application
+import org.scalatest.OptionValues
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, Result}
+import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressListControllerSpec extends WordSpec with Matchers with OptionValues {
+class AddressListControllerSpec extends SpecBase with OptionValues {
+
+  def viewAsString(viewModel: AddressListViewModel, value: Option[Int]): String = {
+
+    val request = FakeRequest()
+    val messages = injector.instanceOf[MessagesApi].preferred(request)
+    val view = injector.instanceOf[addressList]
+    val form = value match {
+      case Some(i) => new AddressListFormProvider()(viewModel.addresses).bind(Map("value" -> i.toString))
+      case None => new AddressListFormProvider()(viewModel.addresses)
+    }
+
+    view(form, viewModel, None)(request, messages).toString()
+
+  }
 
   import AddressListControllerSpec._
 
@@ -57,8 +71,8 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onPageLoad(viewModel)
 
-        status(result) shouldBe OK
-        contentAsString(result) shouldBe viewAsString(app, viewModel, None)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(viewModel, None)
       }
 
     }
@@ -70,8 +84,8 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onPageLoad(viewModel)
 
-        status(result) shouldBe OK
-        contentAsString(result) shouldBe viewAsString(app, viewModel, None)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(viewModel, None)
       }
 
     }
@@ -86,7 +100,7 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(addressListViewModel(), 0)
 
-        status(result) shouldBe SEE_OTHER
+        status(result) mustBe SEE_OTHER
       }
 
     }
@@ -97,7 +111,7 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(addressListViewModel(), 0)
 
-        redirectLocation(result) shouldBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
 
     }
@@ -109,8 +123,8 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(viewModel, 0)
 
-        status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.userAnswer.get(FakeSelectedAddressIdentifier).value shouldBe viewModel.addresses.head
+        status(result) mustBe SEE_OTHER
+        FakeUserAnswersService.userAnswer.get(FakeSelectedAddressIdentifier).value mustBe viewModel.addresses.head
       }
 
     }
@@ -122,8 +136,8 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(viewModel, 0)
 
-        status(result) shouldBe SEE_OTHER
-        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) shouldBe Some(addresses.head.toAddress)
+        status(result) mustBe SEE_OTHER
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe Some(addresses.head.toAddress)
 
         FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
 
@@ -137,8 +151,8 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(viewModel, -1)
 
-        status(result) shouldBe BAD_REQUEST
-        contentAsString(result) shouldBe viewAsString(app, viewModel, Some(-1))
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(viewModel, Some(-1))
       }
 
     }
@@ -150,7 +164,7 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
         val controller = app.injector.instanceOf[TestController]
         val result = controller.onSubmit(viewModel, 0)
 
-        status(result) shouldBe SEE_OTHER
+        status(result) mustBe SEE_OTHER
         auditService.verifySent(
           AddressEvent(
             externalId,
@@ -169,21 +183,21 @@ class AddressListControllerSpec extends WordSpec with Matchers with OptionValues
       }
     }
   }
-
 }
 
 object AddressListControllerSpec {
-
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
-                                  override val messagesApi: MessagesApi
+                                  override val messagesApi: MessagesApi,
+                                  override val controllerComponents: MessagesControllerComponents,
+                                  override val view: addressList
                                 )(implicit val ec: ExecutionContext) extends AddressListController {
 
     override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 
     override protected def navigator: Navigator = new FakeNavigator(onwardRoute)
 
-    override def auditService = new StubSuccessfulAuditService()
+    override def auditService: StubSuccessfulAuditService = new StubSuccessfulAuditService()
 
     def onPageLoad(viewModel: AddressListViewModel): Future[Result] = {
 
@@ -213,8 +227,8 @@ object AddressListControllerSpec {
     }
   }
 
-  val tolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
-  val address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
+  val tolerantAddress: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
+  val address: Address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
   object FakeAddressIdentifier extends TypedIdentifier[Address]
   object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
 
@@ -255,20 +269,5 @@ object AddressListControllerSpec {
       selectAddress = Message("select an address text"),
       selectAddressLink = Message("select an address link text")
     )
-
-  def viewAsString(app: Application, viewModel: AddressListViewModel, value: Option[Int]): String = {
-
-    val appConfig = app.injector.instanceOf[FrontendAppConfig]
-    val request = FakeRequest()
-    val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-
-    val form = value match {
-      case Some(i) => new AddressListFormProvider()(viewModel.addresses).bind(Map("value" -> i.toString))
-      case None => new AddressListFormProvider()(viewModel.addresses)
-    }
-
-    addressList(appConfig, form, viewModel, None)(request, messages).toString()
-
-  }
 
 }

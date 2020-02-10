@@ -16,56 +16,49 @@
 
 package controllers.register.establishers.company
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions._
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
-import play.api.test.FakeRequest
+import play.api.inject.guice.GuiceableModule
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersCompany
 import utils.FakeNavigator
+import utils.annotations.EstablishersCompany
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-import scala.concurrent.Future
-
-class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterUTRControllerSpec._
 
-  "CompanyEnterUTRController" must {
-
-    "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
-        (request, result) => {
-          status(result) mustBe OK
-          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
-        }
-      )
+  "render the view correctly on a GET request" in {
+    running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
+      app =>
+        val controller = app.injector.instanceOf[CompanyEnterUTRController]
+        val result = controller.onPageLoad(CheckUpdateMode, srn, index = 0)(fakeRequest)
+        status(result) mustBe OK
+        contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
     }
+  }
 
-    "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
-          .withFormUrlEncodedBody(("utr", "1234567890"))),
-        (_, result) => {
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
-      )
+  "redirect to the next page on a POST request" in {
+    running(_.overrides(modules(getMandatoryEstablisherCompany) ++
+      Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+      ): _*)) {
+      app =>
+        val controller = app.injector.instanceOf[CompanyEnterUTRController]
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
+        val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
     }
   }
 }
-
 
 
 object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
@@ -73,6 +66,8 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
   val srn = Some("S123")
+
+  private val view = injector.instanceOf[utr]
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -83,23 +78,6 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
     hint = Message("messages_utr__hint"),
     srn = srn
   )
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryEstablisherCompany),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 }
 
 

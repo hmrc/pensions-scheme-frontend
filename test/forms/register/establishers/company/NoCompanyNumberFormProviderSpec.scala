@@ -20,13 +20,13 @@ import com.google.inject.Inject
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import forms.register.NoCompanyNumberFormProvider
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class NoCompanyNumberFormProviderSpec @Inject() extends StringFieldBehaviours with Constraints with OneAppPerSuite {
+class NoCompanyNumberFormProviderSpec @Inject() extends StringFieldBehaviours with Constraints with GuiceOneAppPerSuite {
 
   implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages = messagesApi.preferred(FakeRequest())

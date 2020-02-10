@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddressYearsFormProvider
@@ -27,6 +26,8 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -44,6 +45,8 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   private val invalidIndex = Index(10)
   private val companyName = "test company"
 
+  private val view = injector.instanceOf[addressYears]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
     new CompanyAddressYearsController(
       frontendAppConfig,
@@ -53,12 +56,13 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      view,
+      stubMessagesControllerComponents()
     )
 
   private def viewAsString(form: Form[_] = form) =
-    addressYears(
-      frontendAppConfig,
+    view(
       form,
       AddressYearsViewModel(
         routes.CompanyAddressYearsController.onSubmit(NormalMode, None, firstIndex),

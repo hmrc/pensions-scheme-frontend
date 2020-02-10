@@ -16,16 +16,16 @@
 
 package controllers.behaviours
 
-import base.CSRFRequest
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
-import org.joda.time.LocalDate
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.JsObject
 import play.api.mvc._
@@ -39,21 +39,22 @@ import scala.concurrent.Future
 
 trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   with MockitoSugar
-  with ScalaFutures
-  with CSRFRequest {
+  with ScalaFutures{
 
   val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   val formProvider: DOBFormProvider = new DOBFormProvider
   val form: Form[LocalDate] = formProvider()
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
   val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     fakeRequest.withFormUrlEncodedBody(("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
+  private val view = injector.instanceOf[DOB]
+
   def viewAsString(form: Form[LocalDate], mode: Mode, fullName: String, viewModel: DateOfBirthViewModel): String =
-    DOB(frontendAppConfig, form, mode, None, fullName, viewModel)(fakeRequest, messages).toString
+    view(form, mode, None, fullName, viewModel)(fakeRequest, messages).toString
 
   def dateOfBirthController(get: DataRetrievalAction => Action[AnyContent],
                             post: DataRetrievalAction => Action[AnyContent],
@@ -78,7 +79,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(form.fill(new LocalDate(year, month, day)), mode, fullName, viewModel)
+        contentAsString(result) mustBe viewAsString(form.fill(LocalDate.of(year, month, day)), mode, fullName, viewModel)
       }
 
       "redirect to the next page when valid data is submitted" in {

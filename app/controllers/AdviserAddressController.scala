@@ -18,7 +18,6 @@ package controllers
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.routes._
@@ -30,18 +29,19 @@ import models.address.Address
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.WorkingKnowledge
 import utils.CountryOptions
+import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
 class AdviserAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
-                                          val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
                                           @WorkingKnowledge val navigator: Navigator,
                                           authenticate: AuthAction,
@@ -49,7 +49,9 @@ class AdviserAddressController @Inject()(
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
-                                          val auditService: AuditService
+                                          val auditService: AuditService,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: manualAddress
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = AdviserAddressController.onSubmit _
@@ -80,7 +82,7 @@ class AdviserAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode),
       countryOptions.options,
-      title = Message(title),
+      title = title,
       heading = heading(adviserName)
     )
 }

@@ -38,13 +38,16 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       hint = Message("messages__common__crn_hint", name)
     )
   }
-  private def createView() = () => companyRegistrationNumber(
-    frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
-  private def createUpdateView = () => companyRegistrationNumber(
-    frontendAppConfig, viewModel(), form, None, submitUrl, Some("srn"))(fakeRequest, messages)
+
+  val view: companyRegistrationNumber = app.injector.instanceOf[companyRegistrationNumber]
+
+  private def createView() = () => view(
+    viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => view(
+    viewModel(), form, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumber(frontendAppConfig, viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
+    view(viewModel(), form, None, submitUrl, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumberVariations view" should {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", name))

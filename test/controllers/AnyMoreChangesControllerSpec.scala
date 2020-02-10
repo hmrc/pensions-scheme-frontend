@@ -18,10 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
-import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import play.api.data.Form
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.anyMoreChanges
 
@@ -31,9 +33,12 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
-  val date: String = LocalDate.now().plusDays(28).toString(DateTimeFormat.forPattern("dd MMMM YYYY"))
+  val date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
   val srn = Some("123")
+
+
+  private val view = injector.instanceOf[anyMoreChanges]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =
     new AnyMoreChangesController(
@@ -44,10 +49,12 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall(srn), srn)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, schemeName, date, postCall(srn), srn)(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 

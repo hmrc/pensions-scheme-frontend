@@ -23,11 +23,12 @@ import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
@@ -42,6 +43,8 @@ class PartnerPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val estCompanyPartner = UserAnswers().set(PartnerNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
 
+  private val view = injector.instanceOf[phoneNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = estCompanyPartner): PartnerPhoneController =
     new PartnerPhoneController(frontendAppConfig,
       messagesApi,
@@ -51,12 +54,13 @@ class PartnerPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.PartnerPhoneController.onSubmit(NormalMode, firstIndex, firstIndex, None),

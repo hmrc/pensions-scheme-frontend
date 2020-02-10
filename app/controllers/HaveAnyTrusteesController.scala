@@ -23,14 +23,13 @@ import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
-import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.BeforeYouStart
 import views.html.haveAnyTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,8 +42,10 @@ class HaveAnyTrusteesController @Inject()(
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: HaveAnyTrusteesFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                           formProvider: HaveAnyTrusteesFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: haveAnyTrustees
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -55,7 +56,7 @@ class HaveAnyTrusteesController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName)))
       }
   }
 
@@ -64,7 +65,7 @@ class HaveAnyTrusteesController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>

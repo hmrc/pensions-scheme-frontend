@@ -34,8 +34,10 @@ class AlreadyDeletedViewSpec extends ViewBehaviours {
   def updatedViewmodel = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"), Some("srn"), Some("Scheme Name"))
 
-  def createView = () => alreadyDeleted(frontendAppConfig, viewmodel)(fakeRequest, messages)
-  def createUpdateView = () => alreadyDeleted(frontendAppConfig, updatedViewmodel)(fakeRequest, messages)
+  val view: alreadyDeleted = app.injector.instanceOf[alreadyDeleted]
+
+  def createView = () => view(viewmodel)(fakeRequest, messages)
+  def createUpdateView = () => view(updatedViewmodel)(fakeRequest, messages)
 
   "Already Deleted view" must {
 

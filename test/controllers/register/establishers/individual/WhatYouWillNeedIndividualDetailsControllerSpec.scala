@@ -23,8 +23,9 @@ import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.{Index, Mode, NormalMode, UpdateMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import views.html.register.whatYouWillNeedIndividualDetails
 
@@ -36,6 +37,8 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       PersonName("Test", "Name")
     ).asOpt.value.dataRetrievalAction
 
+  private val view = injector.instanceOf[whatYouWillNeedIndividualDetails]
+
   def controller(dataRetrievalAction: DataRetrievalAction = mandatoryEstablisher): WhatYouWillNeedIndividualDetailsController =
     new WhatYouWillNeedIndividualDetailsController(
       frontendAppConfig,
@@ -43,12 +46,14 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(mode: Mode): String = {
     val href = EstablisherDOBController.onPageLoad(mode, 0, None)
-    whatYouWillNeedIndividualDetails(frontendAppConfig, None, href, None, establisherName)(fakeRequest, messages).toString
+    view(None, href, None, establisherName)(fakeRequest, messages).toString
   }
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {

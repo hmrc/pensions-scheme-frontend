@@ -22,14 +22,15 @@ import controllers.PayeController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId}
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.EstablisherPartnership
 import viewmodels.{Message, PayeViewModel}
+import views.html.paye
 
 import scala.concurrent.ExecutionContext
 
@@ -42,11 +43,14 @@ class PartnershipEnterPAYEController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
-                                                     formProvider: PayeFormProvider
+                                                     formProvider: PayeFormProvider,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     val view: paye
                                                    )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
-  protected def form(partnershipName: String): Form[ReferenceValue] = formProvider(partnershipName)
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
+  protected def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(partnershipName)
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
+                       (implicit request: DataRequest[AnyContent]): PayeViewModel =
 
     PayeViewModel(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),

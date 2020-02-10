@@ -17,6 +17,7 @@
 package controllers
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.EnterVATFormProvider
@@ -28,7 +29,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -39,9 +40,12 @@ import views.html.enterVATView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class EnterVATControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   import EnterVATControllerSpec._
+
+
+  private val view = injector.instanceOf[enterVATView]
 
   val viewmodel = EnterVATViewModel(
     postCall = Call("GET", "www.example.com"),
@@ -62,7 +66,6 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[EnterVATFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -70,7 +73,7 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual enterVATView(appConfig, formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider(companyName)(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -83,7 +86,6 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[EnterVATFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -92,8 +94,7 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual enterVATView(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider(companyName)(messages).fill(ReferenceValue("123456789")),
             viewmodel,
             None
@@ -137,7 +138,6 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[EnterVATFormProvider]
           val controller = app.injector.instanceOf[TestController]
           val request = FakeRequest().withFormUrlEncodedBody(("vat", "123456789012345"))
@@ -147,8 +147,7 @@ class EnterVATControllerSpec extends WordSpec with MustMatchers with OptionValue
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual enterVATView(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider(companyName)(messages).bind(Map("vat" -> "123456789012345")),
             viewmodel,
             None
@@ -169,15 +168,19 @@ object EnterVATControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
-                                  val formProvider: EnterVATFormProvider
+                                  val formProvider: EnterVATFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: enterVATView
                                 )(implicit val ec: ExecutionContext) extends EnterVATController {
 
     def onPageLoad(viewmodel: EnterVATViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel, formProvider(companyName))(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      get(FakeIdentifier, viewmodel, formProvider(companyName))
     }
 
     def onSubmit(viewmodel: EnterVATViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))
     }
   }
 

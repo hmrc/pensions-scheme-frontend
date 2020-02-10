@@ -33,11 +33,13 @@ class ConfirmDeleteDirectorViewSpec extends YesNoViewBehaviours {
   private val directorName = "John Doe"
   private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0, NormalMode, None)
 
+  val view: confirmDeleteDirector = app.injector.instanceOf[confirmDeleteDirector]
+
   private def createView() = () =>
-    confirmDeleteDirector(frontendAppConfig, form, directorName, postCall, None)(fakeRequest, messages)
+    view(form, directorName, postCall, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    confirmDeleteDirector(frontendAppConfig, form, directorName, postCall, None)(fakeRequest, messages)
+    view(form, directorName, postCall, None)(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
 

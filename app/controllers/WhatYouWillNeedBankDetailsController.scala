@@ -21,21 +21,23 @@ import controllers.actions._
 import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import views.html.whatYouWillNeedBankDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      authenticate: AuthAction,
-                                                     getData: DataRetrievalAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals {
+                                                     getData: DataRetrievalAction,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     val view: whatYouWillNeedBankDetails
+                                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
-      Future.successful(Ok(whatYouWillNeedBankDetails(appConfig, existingSchemeName)))
+      Future.successful(Ok(view(existingSchemeName)))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

@@ -23,20 +23,22 @@ import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                            val messagesApi: MessagesApi,
+                                                            override val messagesApi: MessagesApi,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,
-                                                            requireData: DataRequiredAction
-                                                           )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                                            requireData: DataRequiredAction,
+                                                             val controllerComponents: MessagesControllerComponents,
+                                                             val view: whatYouWillNeedAddress
+                                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -44,7 +46,7 @@ class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: Front
         PartnershipDetailsId(index).retrieve.right.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
+            Future.successful(Ok(view(existingSchemeName, href, srn, partnershipName, Message("messages__thePartnership"))))
         }
     }
 }

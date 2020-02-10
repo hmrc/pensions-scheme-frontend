@@ -23,10 +23,11 @@ import models.Mode.checkMode
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.IdentifiedRequest
-import models.{CheckMode, Mode, NormalMode, ReferenceValue}
+import models.{Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
-import org.scalatest.prop.{PropertyChecks, TableFor3, TableFor6}
+import org.scalatest.prop.{TableFor3, TableFor6}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Writes
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,7 +35,7 @@ import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait NavigatorBehaviour extends PropertyChecks with OptionValues {
+trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
 
   protected implicit val request: IdentifiedRequest = new IdentifiedRequest {

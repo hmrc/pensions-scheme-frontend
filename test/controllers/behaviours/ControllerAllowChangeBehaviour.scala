@@ -16,14 +16,13 @@
 
 package controllers.behaviours
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
 import identifiers.TypedIdentifier
 import models.Mode
 import models.requests.DataRequest
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.Helpers._
 import utils.AllowChangeHelper
@@ -33,7 +32,6 @@ import scala.concurrent.Future
 trait ControllerAllowChangeBehaviour extends ControllerSpecBase
   with MockitoSugar
   with ScalaFutures
-  with CSRFRequest
   with OptionValues {
 
   protected def allowChangeHelper(saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {

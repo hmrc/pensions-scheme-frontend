@@ -26,11 +26,12 @@ import models.Mode
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +42,9 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             val auditService: AuditService
+                                             val auditService: AuditService,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: addressList
                                             )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {

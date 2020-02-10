@@ -25,9 +25,9 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
@@ -45,10 +45,12 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
-                                                                userAnswersService: UserAnswersService)(implicit val ec: ExecutionContext)
-    extends FrontendController
-    with I18nSupport
-    with Retrievals {
+                                                                userAnswersService: UserAnswersService,
+                                                                val controllerComponents: MessagesControllerComponents,
+                                                                val view: checkYourAnswers
+                                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                                  with I18nSupport
+                                                                  with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
@@ -76,7 +78,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
         h1 = headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew)
       )
 
-      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      Future.successful(Ok(view(vm)))
 
     }
 }

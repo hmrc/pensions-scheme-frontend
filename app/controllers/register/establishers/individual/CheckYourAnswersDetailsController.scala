@@ -26,9 +26,9 @@ import models.Mode._
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -39,7 +39,7 @@ import views.html.checkYourAnswers
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                  val messagesApi: MessagesApi,
+                                                  override val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
                                                   val navigator: Navigator,
                                                   authenticate: AuthAction,
@@ -47,8 +47,10 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                   allowChangeHelper: AllowChangeHelper,
                                                   requireData: DataRequiredAction,
-                                                  implicit val countryOptions: CountryOptions
-                                                 )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                  implicit val countryOptions: CountryOptions,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: checkYourAnswers
+                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -57,12 +59,12 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
         val establisherIndividualDetails = Seq(AnswerSection(
           None,
           EstablisherDOBId(index).row(routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          EstablisherHasNINOId(index).row(routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherEnterNINOId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)++
-          EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            EstablisherHasNINOId(index).row(routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherEnterNINOId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
@@ -78,9 +80,9 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,
-          h1 =  headingDetails(mode, personName(EstablisherNameId(index)), isNew)
+          h1 = headingDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers( appConfig,vm )))
+        Future.successful(Ok(view(vm)))
     }
 }

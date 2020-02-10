@@ -26,6 +26,7 @@ import models.address.Address
 import models.{NormalMode, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -89,9 +90,9 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
-  val index = Index(0)
+  val index: Index = Index(0)
   val companyName = "Test company Name"
-  val srn = Some("S123")
+  val srn: Option[String] = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -170,14 +171,16 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def companyAddressSectionWithAddLink: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
     addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      fakeCountryOptions, allowChangeHelper)
+      fakeCountryOptions, allowChangeHelper, stubMessagesControllerComponents(), view)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
-    checkYourAnswers(frontendAppConfig, CYAViewModel(
+    view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,
       schemeName = None,

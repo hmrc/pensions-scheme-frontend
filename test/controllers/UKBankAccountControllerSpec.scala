@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -26,6 +26,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.uKBankAccount
 
@@ -33,42 +34,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import UKBankAccountControllerSpec._
-
-  "UKBankAccount Controller" must {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(true),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      identifiers.UKBankAccountId,
-      true
-    )
-  }
-}
-
-object UKBankAccountControllerSpec {
   private val schemeName = "Test Scheme Name"
   private val formProvider = new UKBankAccountFormProvider()
   private val form = formProvider.apply()
@@ -76,33 +41,69 @@ object UKBankAccountControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    uKBankAccount(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()
+  private val view = injector.instanceOf[uKBankAccount]
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): UKBankAccountController =
     new UKBankAccountController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+
+  "UKBankAccount Controller" must {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(true),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnPageLoadMethodMissingRequiredData(
+      onPageLoadAction,
+      getEmptyData
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      identifiers.UKBankAccountId,
+      true
+    )
+  }
 }

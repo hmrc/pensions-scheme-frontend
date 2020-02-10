@@ -16,52 +16,65 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-import scala.concurrent.Future
-
-class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterPAYEControllerSpec._
+
+  private val view = injector.instanceOf[paye]
 
   "CompanyEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
+      )) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[CompanyEnterPAYEController]
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
-      )
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
-          .withFormUrlEncodedBody(("paye", "123456789"))),
-        (_, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
+      )) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
+          val controller = app.injector.instanceOf[CompanyEnterPAYEController]
+          val result = controller.onSubmit(CheckUpdateMode, firstIndex, srn)(request)
+
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
-      )
     }
 
   }
@@ -71,12 +84,12 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatcher
 object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
   val form = new PayeFormProvider()("test company name")
-  val firstIndex = Index(0)
-  val srn = Some("S123")
+  val firstIndex: Index = Index(0)
+  val srn: Option[String] = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = PayeViewModel(
+  val viewModel: PayeViewModel = PayeViewModel(
     routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
     title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
     heading = Message("messages__enterPAYE", "test company name"),
@@ -84,24 +97,6 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
     srn = srn,
     entityName = Some("test company name")
   )
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 
 }
 

@@ -16,19 +16,21 @@
 
 package controllers.register.establishers.individual
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.individual._
+import models.Mode._
+import models._
 import models.person.PersonName
 import models.requests.DataRequest
-import models._
-import models.Mode._
-import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -258,6 +260,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       Some(Link("site.add", changeUrl, Some(hiddenLabel)))
     )
 
+  private val view = injector.instanceOf[checkYourAnswers]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach,
@@ -272,7 +275,9 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       FakeAllowAccessProvider(),
       allowChangeHelper,
       new DataRequiredActionImpl,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection],
@@ -280,8 +285,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
                    srn: Option[String] = None,
                    postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

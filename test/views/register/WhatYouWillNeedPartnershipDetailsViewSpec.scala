@@ -31,9 +31,8 @@ class WhatYouWillNeedPartnershipDetailsViewSpec extends ViewBehaviours {
   private val nextPageUrl = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
   private val pageHeader = Message("messages__detailsFor", partnershipName)
   private val title = Message("messages__detailsFor", Message("messages__thePartnership").resolve.capitalize)
-
-  def createView(): HtmlFormat.Appendable = whatYouWillNeedPartnershipDetails(
-    frontendAppConfig,
+  val view: whatYouWillNeedPartnershipDetails = app.injector.instanceOf[whatYouWillNeedPartnershipDetails]
+  def createView(): HtmlFormat.Appendable = view(
     Some("testScheme"),
     nextPageUrl,
     partnershipName,

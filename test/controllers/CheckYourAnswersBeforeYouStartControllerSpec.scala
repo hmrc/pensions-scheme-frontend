@@ -16,12 +16,14 @@
 
 package controllers
 
+import controllers.AdviserCheckYourAnswersControllerSpec.injector
 import controllers.actions._
 import models._
 import models.register.SchemeType
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -68,6 +70,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
+  private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
     new CheckYourAnswersBeforeYouStartController(
       frontendAppConfig,
@@ -77,7 +80,9 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
@@ -145,8 +150,8 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     h1 =  Message("checkYourAnswers.hs.title")
   )
 
-  private def viewAsString: String = checkYourAnswers(frontendAppConfig, vm(false, beforeYouStart))(fakeRequest, messages).toString
+  private def viewAsString: String = view(vm(false, beforeYouStart))(fakeRequest, messages).toString
 
-  private def viewAsStringWithReturnToManage: String = checkYourAnswers(frontendAppConfig, vm(true, beforeYouStartIncomplete))(fakeRequest, messages).toString
+  private def viewAsStringWithReturnToManage: String = view(vm(true, beforeYouStartIncomplete))(fakeRequest, messages).toString
 
 }

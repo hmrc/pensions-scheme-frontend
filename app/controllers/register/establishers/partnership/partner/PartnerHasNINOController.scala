@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerHasNINOId, PartnerNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -40,10 +42,13 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
                                          allowAccess: AllowAccessActionProvider,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: HasReferenceNumberFormProvider
-                                        )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                         formProvider: HasReferenceNumberFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: hasReferenceNumber
+                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasNINO", Message("messages__thePartner").resolve),
@@ -52,7 +57,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
       srn = srn
     )
 
-  private def form(personName: String): Form[Boolean] =
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =

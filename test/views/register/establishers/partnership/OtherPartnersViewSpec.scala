@@ -31,13 +31,16 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
 
   val form = new OtherPartnersFormProvider()()
   val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(NormalMode, index, None)
+
+  val view: otherPartners = app.injector.instanceOf[otherPartners]
+
   private def createView() = () =>
-    otherPartners(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
   private def createUpdateView() = () =>
-    otherPartners(frontendAppConfig, form, NormalMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
+    view(form, NormalMode, index, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherPartners(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages)
 
   "OtherPartners view" must {
 

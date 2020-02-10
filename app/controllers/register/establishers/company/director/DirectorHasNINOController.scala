@@ -22,14 +22,16 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.director.{DirectorHasNINOId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,10 +43,13 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
                                           allowAccess: AllowAccessActionProvider,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: HasReferenceNumberFormProvider
-                                         )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                          formProvider: HasReferenceNumberFormProvider,
+                                          val view: hasReferenceNumber,
+                                          val controllerComponents: MessagesControllerComponents
+                                         )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], personName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__hasNINO", Message("messages__theDirector").resolve),
@@ -53,7 +58,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
       srn = srn
     )
 
-  private def form(personName: String): Form[Boolean] =
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =

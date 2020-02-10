@@ -23,13 +23,15 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNameId}
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -42,10 +44,13 @@ class TrusteeAddressYearsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: addressYears
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private def form(trusteeName: String) = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
+  private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -67,7 +72,8 @@ class TrusteeAddressYearsController @Inject()(
         TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 
-  private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee").resolve),
     heading = Message("messages__trusteeAddressYears__heading", trusteeName),

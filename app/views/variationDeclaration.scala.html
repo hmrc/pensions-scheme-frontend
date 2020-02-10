@@ -19,13 +19,15 @@
 @import controllers.routes._
 @import play.api.mvc.Call
 
-@(appConfig: FrontendAppConfig,
+@this(
+    main_template: main_template
+)
+
+@(
   schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__variationDeclaration__title"),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = messages("messages__variationDeclaration__title")) {
 
     @components.back_link()
 

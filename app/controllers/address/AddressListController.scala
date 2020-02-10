@@ -29,14 +29,14 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AddressListController extends FrontendController with Retrievals  with I18nSupport {
+trait AddressListController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -48,13 +48,15 @@ trait AddressListController extends FrontendController with Retrievals  with I18
 
   protected def navigator: Navigator
 
+  protected def view: addressList
+
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
 
   protected def get(viewModel: AddressListViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val form = formProvider(viewModel.addresses)
-    Future.successful(Ok(addressList(appConfig, form, viewModel, existingSchemeName)))
+    Future.successful(Ok(view(form, viewModel, existingSchemeName)))
   }
 
   protected def post(viewModel: AddressListViewModel,
@@ -68,7 +70,7 @@ trait AddressListController extends FrontendController with Retrievals  with I18
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)

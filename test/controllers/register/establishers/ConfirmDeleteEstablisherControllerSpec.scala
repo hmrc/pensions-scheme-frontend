@@ -16,6 +16,8 @@
 
 package controllers.register.establishers
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -26,13 +28,13 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models._
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.confirmDeleteEstablisher
 
@@ -202,7 +204,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val establisherName = "John Doe"
   private val establisherKind = EstablisherKind.Indivdual
   private val day = LocalDate.now().getDayOfMonth
-  private val month = LocalDate.now().getMonthOfYear
+  private val month = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
   private val personDetails = person.PersonName("John", "Doe")
@@ -242,6 +244,8 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
+  private val view = injector.instanceOf[confirmDeleteEstablisher]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteEstablisherController(
       frontendAppConfig,
@@ -252,13 +256,14 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(hintText:Option[String] = None,
                            estName:String = establisherName,
-                           postCall:Call = postCall, form: Form[_] = form) = confirmDeleteEstablisher(
-    frontendAppConfig,
+                           postCall:Call = postCall, form: Form[_] = form) = view(
     form,
     estName,
     hintText,

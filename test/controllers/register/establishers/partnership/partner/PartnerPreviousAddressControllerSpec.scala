@@ -17,9 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import audit.testdoubles.StubSuccessfulAuditService
-import audit.{AddressAction, AddressEvent, AuditService}
-import base.CSRFRequest
-import config.FrontendAppConfig
+import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -31,12 +29,12 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
@@ -44,13 +42,15 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
 
   val partnerDetails = PersonName("first", "last")
 
+  private val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+  private val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
   )
@@ -67,137 +67,98 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       )
       )))))
 
+  def viewmodel(postCall: Call = postCall) = ManualAddressViewModel(
+    postCall,
+    countryOptions.options,
+    Message("messages__common__confirmPreviousAddress__h1", Message("messages__thePartner")),
+    Message("messages__common__confirmPreviousAddress__h1", partnerDetails.fullName)
+  )
+
+  val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
+
+  private val view = injector.instanceOf[manualAddress]
+
   "PreviousAddress Controller" must {
 
     "render manualAddress from GET request" in {
-
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
-      )) {
-        implicit app =>
-
+      val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
+      running(_.overrides(modules(retrieval) ++
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
+        app =>
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-          val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, establisherIndex, partnerIndex, None),
-            countryOptions.options,
-            Message(controller.heading,Message("messages__thePartner").resolve),
-            Message(controller.heading,partnerDetails.fullName)
-          )
-
-          val request = addToken(
-            FakeRequest(routes.PartnerPreviousAddressController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None))
-              .withHeaders("Csrf-Token" -> "nocheck")
-          )
-
-          val result = route(app, request).value
+          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual manualAddress(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
-            viewmodel,
+            viewmodel(postCall),
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
 
       }
-
     }
 
     "redirect to next page on POST request" which {
       "saves partner address" in {
 
-        val onwardCall = controllers.register.establishers.partnership.partner.routes.
-          PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+        val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+        running(_.overrides(modules(retrieval) ++
+          Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
+            bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+            bind[UserAnswersService].toInstance(FakeUserAnswersService)
+          ): _*)) { app =>
 
-        running(_.overrides(
-          bind[FrontendAppConfig].to(frontendAppConfig),
-          bind[MessagesApi].to(messagesApi),
-          bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
-          bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].to(retrieval),
-          bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider)
-        )) {
-          implicit app =>
+          val postRequest = fakeRequest.withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country)
 
-            val address = Address(
-              "value 1",
-              "value 2",
-              None, None,
-              Some("AB1 1AB"),
-              "GB"
-            )
+          val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-            val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
-              .withHeaders("Csrf-Token" -> "nocheck")
-              .withFormUrlEncodedBody(
-                ("addressLine1", address.addressLine1),
-                ("addressLine2", address.addressLine2),
-                ("postCode", address.postcode.get),
-                "country" -> address.country))
+          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
-            val result = route(app, fakeRequest).value
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).value mustEqual onwardCall.url
 
-            status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardCall.url
-
-            FakeUserAnswersService.userAnswer.get(PartnerPreviousAddressId(establisherIndex, partnerIndex)).value mustEqual address
+          FakeUserAnswersService.userAnswer.get(PartnerPreviousAddressId(establisherIndex, partnerIndex)).value mustEqual address
         }
       }
     }
 
     "send an audit event when valid data is submitted" in {
+      running(_.overrides(modules(retrieval) ++
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
+          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
 
-      val address = Address(
-        addressLine1 = "value 1",
-        addressLine2 = "value 2",
-        None, None,
-        postcode = Some("AB1 1AB"),
-        country = "GB"
-      )
+        val postRequest = fakeRequest.withFormUrlEncodedBody(
+          ("addressLine1", address.addressLine1),
+          ("addressLine2", address.addressLine2),
+          ("postCode", address.postcode.get),
+          "country" -> address.country)
 
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].to(FakeUserAnswersService),
-        bind[CountryOptions].to(countryOptions),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[AuditService].toInstance(fakeAuditService)
-      )) {
-        implicit app =>
+        val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-          val fakeRequest = addToken(FakeRequest(routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None))
-            .withHeaders("Csrf-Token" -> "nocheck")
-            .withFormUrlEncodedBody(
-              ("addressLine1", address.addressLine1),
-              ("addressLine2", address.addressLine2),
-              ("postCode", address.postcode.get),
-              "country" -> address.country))
+        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
 
-          fakeAuditService.reset()
+        fakeAuditService.reset()
 
-          val result = route(app, fakeRequest).value
-
-          whenReady(result) {
-            _ =>
-              fakeAuditService.verifySent(
-                AddressEvent(
-                  FakeAuthAction.externalId,
-                  AddressAction.LookupChanged,
-                  s"Partnership Partners Previous Address: ${partnerDetails.fullName}",
-                  address
-                )
+        whenReady(result) {
+          _ =>
+            fakeAuditService.verifySent(
+              AddressEvent(
+                FakeAuthAction.externalId,
+                AddressAction.LookupChanged,
+                s"Partnership Partners Previous Address: ${partnerDetails.fullName}",
+                address
               )
-          }
+            )
+        }
+
       }
     }
   }

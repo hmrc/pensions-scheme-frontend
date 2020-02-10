@@ -20,10 +20,10 @@ import forms.FormSpec
 import forms.mappings.{Constraints, VatMapping}
 import generators.Generators
 import models.ReferenceValue
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 
-trait VatBehaviours extends FormSpec with Generators with PropertyChecks with Constraints with VatMapping {
+trait VatBehaviours extends FormSpec with Generators with ScalaCheckPropertyChecks with Constraints with VatMapping {
 
   val maxVatLength = 9
 

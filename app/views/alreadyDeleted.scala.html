@@ -19,12 +19,14 @@
 @import models.Mode
 @import viewmodels.{Message, AlreadyDeletedViewModel}
 
-@(appConfig: FrontendAppConfig, viewmodel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@(viewmodel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = viewmodel.title,
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = viewmodel.title) {
 
     @components.back_link()
     @components.heading(

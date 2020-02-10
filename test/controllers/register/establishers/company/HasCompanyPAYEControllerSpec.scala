@@ -28,6 +28,7 @@ import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
@@ -47,6 +48,8 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     formFieldName = Some("hasPaye")
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyPAYEController =
     new HasCompanyPAYEController(
       frontendAppConfig,
@@ -58,10 +61,12 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
+      view,
+      stubMessagesControllerComponents(),
       global
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyPAYEController" must {
 

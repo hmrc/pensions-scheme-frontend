@@ -22,12 +22,14 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerHasUTRId, PartnerNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -39,10 +41,13 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasReferenceNumberFormProvider
-                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                        formProvider: HasReferenceNumberFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: hasReferenceNumber
+                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasUTR", Message("messages__thePartner").resolve),
@@ -52,7 +57,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
     )
 
 
-  private def form(personName: String) = formProvider("messages__hasUtr__error__required", personName)
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasUtr__error__required", personName)
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

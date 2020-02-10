@@ -22,12 +22,14 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherHasNINOId, EstablisherNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -39,11 +41,14 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
                                              allowAccess: AllowAccessActionProvider,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             formProvider: HasUTRFormProvider)
-                                            (implicit val ec: ExecutionContext)
+                                             formProvider: HasUTRFormProvider,
+                                             val view: hasReferenceNumber,
+                                             val controllerComponents: MessagesControllerComponents)
+                                            (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(mode, index, srn),
       title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
@@ -52,7 +57,8 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
       srn = srn
     )
 
-  private def form(establisherName: String) = formProvider("messages__genericHasNino__error__required", establisherName)
+  private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__genericHasNino__error__required", establisherName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>

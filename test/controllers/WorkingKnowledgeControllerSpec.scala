@@ -24,6 +24,7 @@ import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.workingKnowledge
 
@@ -32,8 +33,9 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new WorkingKnowledgeFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
+  private val view = injector.instanceOf[workingKnowledge]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WorkingKnowledgeController =
     new WorkingKnowledgeController(
       frontendAppConfig,
@@ -43,10 +45,12 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
-      FakeSectionComplete
+      FakeSectionComplete,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "WorkingKnowledgeController" must {
 

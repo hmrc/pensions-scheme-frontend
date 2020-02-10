@@ -26,7 +26,7 @@ import identifiers.register.establishers.individual._
 import models._
 import models.Mode._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.MustMatchers
 import org.scalatest.prop._
 import play.api.mvc.Call

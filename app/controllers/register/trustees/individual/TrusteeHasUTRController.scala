@@ -22,28 +22,33 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
 class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
-                                        val messagesApi: MessagesApi,
+                                        override val messagesApi: MessagesApi,
                                         val userAnswersService: UserAnswersService,
                                         val navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
-                                        formProvider: HasReferenceNumberFormProvider
-                                       )(implicit val ec: ExecutionContext) extends HasReferenceNumberController {
+                                        formProvider: HasReferenceNumberFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: hasReferenceNumber
+                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
@@ -52,7 +57,8 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  private def form(trusteeName: String) = formProvider("messages__hasUtr__error__required", trusteeName)
+  private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider("messages__hasUtr__error__required", trusteeName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

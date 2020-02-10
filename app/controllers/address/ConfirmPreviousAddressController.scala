@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -35,8 +35,7 @@ import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ConfirmPreviousAddressController extends FrontendController with Retrievals with I18nSupport {
-
+trait ConfirmPreviousAddressController extends FrontendBaseController with Retrievals with I18nSupport {
   protected implicit def ec: ExecutionContext
 
   protected def appConfig: FrontendAppConfig
@@ -47,6 +46,8 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
 
   protected def countryOptions: CountryOptions
 
+  protected def view: confirmPreviousAddress
+
   protected def get(
                      id: TypedIdentifier[Boolean],
                      viewModel: ConfirmAddressViewModel
@@ -56,10 +57,11 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
       case None => form(viewModel.name)
       case Some(value) => form(viewModel.name).fill(value)
     }
-    Future.successful(Ok(confirmPreviousAddress(appConfig, preparedForm, viewModel, countryOptions, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewModel, countryOptions, existingSchemeName)))
   }
 
-  protected def form(name: String) = formProvider(Message("messages__confirmPreviousAddress__error", name))
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider(Message("messages__confirmPreviousAddress__error", name))
 
   protected def formProvider: ConfirmAddressFormProvider = new ConfirmAddressFormProvider()
 
@@ -71,7 +73,7 @@ trait ConfirmPreviousAddressController extends FrontendController with Retrieval
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(viewModel.name).bindFromRequest().fold(
       formWithError => {
-        Future.successful(BadRequest(confirmPreviousAddress(appConfig, formWithError, viewModel, countryOptions, existingSchemeName)))
+        Future.successful(BadRequest(view(formWithError, viewModel, countryOptions, existingSchemeName)))
       },
       { case true =>
 

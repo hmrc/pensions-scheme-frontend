@@ -19,24 +19,27 @@ package handlers
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import models.Link
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import views.html.error_template_page_not_found
+import views.html.error_template
 
 @Singleton
 class ErrorHandler @Inject()(
                               appConfig: FrontendAppConfig,
-                              val messagesApi: MessagesApi
+                              val messagesApi: MessagesApi,
+                              val notFoundView: error_template_page_not_found,
+                              val errorView: error_template
                             ) extends FrontendErrorHandler with I18nSupport {
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
-    val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")
-    views.html.error_template_page_not_found(appConfig,
-      Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))
+    val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")(Lang.defaultLang)
+    notFoundView(Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))
     )
   }
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
-    views.html.error_template(pageTitle, heading, message, appConfig)
+    errorView(pageTitle, heading, message, appConfig)
 }

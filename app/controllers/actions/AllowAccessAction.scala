@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class AllowAccessAction(srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  errorHandler: FrontendErrorHandler
-                                )(implicit ec: ExecutionContext) extends ActionFilter[OptionalDataRequest] {
+                                )(implicit val executionContext: ExecutionContext) extends ActionFilter[OptionalDataRequest] {
 
   private def checkForAssociation[A](request: OptionalDataRequest[A],
                                      extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] =
@@ -69,7 +69,7 @@ class AllowAccessActionMain(
                              srn: Option[String],
                              pensionsSchemeConnector: PensionsSchemeConnector,
                              errorHandler: FrontendErrorHandler
-                           )(implicit ec: ExecutionContext) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+                           )(implicit executionContext: ExecutionContext) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {

@@ -24,9 +24,8 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import javax.inject.Inject
 import models.{CompanyDetails, Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import viewmodels.Message
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
@@ -36,8 +35,10 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
-                                                        requireData: DataRequiredAction
-                                                    ) extends FrontendController with I18nSupport with Retrievals {
+                                                        requireData: DataRequiredAction,
+                                                        val controllerComponents: MessagesControllerComponents,
+                                                        val view: whatYouWillNeedCompanyDetails
+                                                    ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -45,8 +46,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
       CompanyDetailsId(index).retrieve.right.map {
         case CompanyDetails(companyName, _) =>
           Future.successful(Ok(
-            whatYouWillNeedCompanyDetails(
-              appConfig = appConfig,
+            view(
               schemeName = existingSchemeName,
               href = HasCompanyCRNController.onSubmit(mode, index, srn),
               srn = srn,

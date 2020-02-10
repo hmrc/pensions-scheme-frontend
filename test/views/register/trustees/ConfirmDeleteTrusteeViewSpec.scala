@@ -54,9 +54,10 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
 
   val postCall = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, Company, None)
 
+  val view: confirmDeleteTrustee = app.injector.instanceOf[confirmDeleteTrustee]
+
   private def createView() =
-    () => confirmDeleteTrustee(
-      frontendAppConfig,
+    () => view(
       formLocal,
       trusteeName,
       postCall,
@@ -66,8 +67,7 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
     )(fakeRequest, messages)
 
   private def createUpdateView =
-    () => confirmDeleteTrustee(
-      frontendAppConfig,
+    () => view(
       formLocal,
       trusteeName,
       postCall,
@@ -77,8 +77,7 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
     )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    confirmDeleteTrustee(
-      frontendAppConfig,
+    view(
       form,
       trusteeName,
       postCall,

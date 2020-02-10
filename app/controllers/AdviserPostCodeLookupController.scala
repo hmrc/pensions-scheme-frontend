@@ -27,12 +27,12 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.WorkingKnowledge
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
-import views.html.components.heading
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +45,9 @@ class AdviserPostCodeLookupController @Inject()(
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
-                                                 formProvider: PostCodeLookupFormProvider
+                                                 formProvider: PostCodeLookupFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: postcodeLookup
                                                )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
@@ -70,7 +72,7 @@ class AdviserPostCodeLookupController @Inject()(
     PostcodeLookupViewModel(
       routes.AdviserPostCodeLookupController.onSubmit(mode),
       routes.AdviserAddressController.onPageLoad(mode),
-      title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
+      title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
     )

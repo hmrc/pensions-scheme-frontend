@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
 
@@ -35,17 +36,21 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PartnershipDetailsFormProvider()
-  val form = formProvider()
-  val firstIndex = Index(0)
-  val invalidIndex = Index(3)
+  val form: Form[PartnershipDetails] = formProvider()
+  val firstIndex: Index = Index(0)
+  val invalidIndex: Index = Index(3)
   val schemeName = "Test Scheme Name"
+
+  private val view = injector.instanceOf[partnershipDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-  val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
-  def viewAsString(form: Form[_] = form): String = partnershipDetails(
-    frontendAppConfig,
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view)
+
+  val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
+  def viewAsString(form: Form[_] = form): String = view(
     form,
     NormalMode,
     firstIndex,

@@ -17,10 +17,11 @@
 package forms.mappings
 
 import generators.Generators
-import org.joda.time.LocalDate
+import java.time.LocalDate
+
 import org.scalacheck.Gen
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import utils.Enumerable
@@ -44,7 +45,7 @@ object MappingsSpec {
 
 }
 
-class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings with GeneratorDrivenPropertyChecks with Generators {
+class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
 
   import MappingsSpec._
 
@@ -266,14 +267,14 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     )
 
     // scalastyle:off magic.number
-    val testDate = new LocalDate(1862, 6, 9)
+    val testDate = LocalDate.of(1862, 6, 9)
     // scalastyle:on magic.number
 
     "bind valid data" in {
       val result = testForm.bind(
         Map(
           "date.day" -> testDate.getDayOfMonth.toString,
-          "date.month" -> testDate.getMonthOfYear.toString,
+          "date.month" -> testDate.getMonthValue.toString,
           "date.year" -> testDate.getYear.toString
         )
       )
@@ -320,7 +321,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       val result = testForm.bind(
         Map(
           "date.day" -> "0",
-          "date.month" -> testDate.getMonthOfYear.toString,
+          "date.month" -> testDate.getMonthValue.toString,
           "date.year" -> testDate.getYear.toString
         )
       )

@@ -19,21 +19,19 @@ package controllers
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
-import forms.register.DeclarationFormProvider
+import controllers.routes.VariationDeclarationController
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
 import javax.inject.Inject
 import models.UpdateMode
 import navigators.Navigator
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
 import views.html.variationDeclaration
 
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.routes.VariationDeclarationController
 
 class VariationDeclarationController @Inject()(
                                                 appConfig: FrontendAppConfig,
@@ -46,15 +44,18 @@ class VariationDeclarationController @Inject()(
                                                 pensionsSchemeConnector: PensionsSchemeConnector,
                                                 lockConnector: PensionSchemeVarianceLockConnector,
                                                 updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                                viewConnector: SchemeDetailsReadOnlyCacheConnector
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: variationDeclaration
+                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = VariationDeclarationController.onClickAgree(srn)
-      srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) { actualSrn =>
+      srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))) { actualSrn =>
         updateSchemeCacheConnector.fetch(actualSrn).map {
-          case Some(_) => Ok(variationDeclaration(appConfig, request.userAnswers.get(SchemeNameId), srn, href))
+          case Some(_) => Ok(view(request.userAnswers.get(SchemeNameId), srn, href))
           case _ => Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
         }
       }
@@ -75,7 +76,7 @@ class VariationDeclarationController @Inject()(
               Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
             }
         }
-      }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
+      }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
 
   }
 

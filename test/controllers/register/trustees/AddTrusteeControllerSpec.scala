@@ -33,6 +33,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
 
@@ -63,6 +64,9 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
+
+  private val view = injector.instanceOf[addTrustee]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
     new AddTrusteeController(
       frontendAppConfig,
@@ -72,14 +76,16 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
   }
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
+    view(form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(

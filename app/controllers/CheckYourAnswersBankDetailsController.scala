@@ -22,8 +22,8 @@ import identifiers._
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -36,8 +36,10 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
-                                                      implicit val countryOptions: CountryOptions)(implicit val ec: ExecutionContext)
-  extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                                      implicit val countryOptions: CountryOptions,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      val view: checkYourAnswers
+                                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -62,6 +64,6 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         h1 = Message("checkYourAnswers.hs.title")
       )
 
-      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      Future.successful(Ok(view(vm)))
   }
 }

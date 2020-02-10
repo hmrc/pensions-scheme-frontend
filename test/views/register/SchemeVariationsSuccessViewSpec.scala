@@ -28,10 +28,9 @@ class SchemeVariationsSuccessViewSpec extends ViewBehaviours {
 
   val schemeName = Some("a scheme")
   val srn = Some("srn")
-
+  val view: schemeVariationsSuccess = app.injector.instanceOf[schemeVariationsSuccess]
   def createView: () => HtmlFormat.Appendable = () =>
-    schemeVariationsSuccess(
-      frontendAppConfig,
+    view(
       schemeName,
       srn
     )(fakeRequest, messages)

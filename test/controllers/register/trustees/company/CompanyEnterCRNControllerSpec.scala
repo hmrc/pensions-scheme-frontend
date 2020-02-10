@@ -16,12 +16,12 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, Mode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -37,22 +37,32 @@ import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.Future
 
-class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterCRNControllerSpec._
 
-  val appConfig = app.injector.instanceOf[FrontendAppConfig]
+  val appConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  private val view = injector.instanceOf[companyRegistrationNumber]
 
   "CompanyEnterCRNControllerSpec$" must {
 
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterCRNController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      )) {
+        app =>
+        val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[CompanyEnterCRNController]
+        val result = controller.onPageLoad(CheckUpdateMode, srn, firstIndex)(request)
+
           status(result) mustBe OK
           contentAsString(result) mustBe
-            companyRegistrationNumber(
-              appConfig,
+            view(
               viewModel(),
               form,
               None,
@@ -61,18 +71,24 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers
             )(request, messages).toString
 
         }
-      )
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterCRNController.onSubmit(CheckUpdateMode, srn, firstIndex))
-          .withFormUrlEncodedBody(("companyRegistrationNumber", "1234567"))),
-        (_, result) => {
-          status(result) mustBe SEE_OTHER
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      )) {
+        app =>
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "1234567")))
+        val controller = app.injector.instanceOf[CompanyEnterCRNController]
+        val result = controller.onSubmit(CheckUpdateMode, srn, firstIndex)(request)
+
+        status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
-      )
     }
   }
 
@@ -82,8 +98,8 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()(companyName)
-  val firstIndex = Index(0)
-  val srn = Some("S123")
+  val firstIndex: Index = Index(0)
+  val srn: Option[String] = Some("S123")
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
@@ -93,25 +109,8 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
     )
   }
 
-  val postCall = routes.CompanyEnterCRNController.onSubmit _
+  val postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit _
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 
 }

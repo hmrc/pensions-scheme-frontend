@@ -16,15 +16,16 @@
 
 package controllers.register.establishers.partnership
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models._
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -116,6 +117,8 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
+  private val view = injector.instanceOf[addressYears]
+
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new PartnershipAddressYearsController(
       frontendAppConfig,
@@ -125,7 +128,9 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl()
+      new DataRequiredActionImpl(),
+      stubMessagesControllerComponents(),
+      view
     )
 
   private val viewModel =
@@ -138,8 +143,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[AddressYears] = form) =
-    addressYears(
-      frontendAppConfig,
+    view(
       form,
       viewModel,
       None

@@ -25,8 +25,8 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable}
@@ -37,14 +37,16 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
-                                                         val messagesApi: MessagesApi,
+                                                         override val messagesApi: MessagesApi,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits{
+                                                         allowChangeHelper: AllowChangeHelper,
+                                                         val controllerComponents: MessagesControllerComponents,
+                                                         val view: checkYourAnswers
+                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,9 +71,9 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,
-          h1 =  headingContactDetails(mode, personName(EstablisherNameId(index)), isNew)
+          h1 = headingContactDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
+        Future.successful(Ok(view(vm)))
     }
 }

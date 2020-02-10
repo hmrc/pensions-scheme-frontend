@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsResult, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -56,11 +57,15 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     Some(companyDetails.companyName)
   )
 
+  private val view = injector.instanceOf[addressYears]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
     new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeUserAnswersService, FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
-  def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, viewmodel, None)(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
     .set(CompanyDetailsId(0))(companyDetails)

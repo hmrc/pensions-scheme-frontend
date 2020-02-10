@@ -27,9 +27,8 @@ class WhatYouWillNeedPartnershipContactDetailsViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "whatYouWillNeedPartnershipContact"
   private val index = 0
   private val pageHeader = Message("messages__whatYouWillNeedPartnershipContact__h1", "test partnership")
-
-  def createView(): HtmlFormat.Appendable = whatYouWillNeedPartnershipContactDetails(
-    frontendAppConfig,
+  val view: whatYouWillNeedPartnershipContactDetails = app.injector.instanceOf[whatYouWillNeedPartnershipContactDetails]
+  def createView(): HtmlFormat.Appendable = view(
     Some("testScheme"),
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),

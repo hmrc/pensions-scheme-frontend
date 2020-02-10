@@ -28,9 +28,9 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
@@ -46,8 +46,10 @@ class ConfirmDeletePartnerController @Inject()(
                                                 allowAccess: AllowAccessActionProvider,
                                                 requireData: DataRequiredAction,
                                                 sectionComplete: SectionComplete,
-                                                formProvider: ConfirmDeletePartnerFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                formProvider: ConfirmDeletePartnerFormProvider,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: confirmDeletePartner
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -67,8 +69,7 @@ class ConfirmDeletePartnerController @Inject()(
             } else {
               Future.successful(
                 Ok(
-                  confirmDeletePartner(
-                    appConfig,
+                  view(
                     form,
                     partner.fullName,
                     routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -87,8 +88,7 @@ class ConfirmDeletePartnerController @Inject()(
           partnerDetails =>
             form.bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
-                Future.successful(BadRequest(confirmDeletePartner(
-                  appConfig,
+                Future.successful(BadRequest(view(
                   formWithErrors,
                   partnerDetails.fullName,
                   routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),

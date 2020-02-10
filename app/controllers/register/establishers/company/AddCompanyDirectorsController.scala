@@ -26,8 +26,8 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -40,8 +40,10 @@ class AddCompanyDirectorsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: AddCompanyDirectorsFormProvider
-                                             )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                               formProvider: AddCompanyDirectorsFormProvider,
+                                               val view: addCompanyDirectors,
+                                               val controllerComponents: MessagesControllerComponents
+                                             )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -51,7 +53,7 @@ class AddCompanyDirectorsController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      Future.successful(Ok(addCompanyDirectors(appConfig, form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly, mode, srn)))
+      Future.successful(Ok(view(form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly, mode, srn)))
   }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -66,8 +68,7 @@ class AddCompanyDirectorsController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(
               BadRequest(
-                addCompanyDirectors(
-                  appConfig,
+                view(
                   formWithErrors,
                   directors,
                   existingSchemeName,

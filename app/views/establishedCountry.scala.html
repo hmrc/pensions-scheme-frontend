@@ -21,13 +21,17 @@
 @import utils.InputOption
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, options: Seq[InputOption], schemeName: String)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF,
+    appConfig: FrontendAppConfig
+)
+
+@(form: Form[_], mode: Mode, options: Seq[InputOption], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__established_country__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
-    @helpers.form(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
+    title = titleWithErrors(form, messages("messages__established_country__title"))) {
+    @formHelper(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
@@ -43,6 +47,6 @@
         )
         @components.submit_button()
 
-        @components.return_link_before_you_start(appConfig, mode, schemeName)
+        @components.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }

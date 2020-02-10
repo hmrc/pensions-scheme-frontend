@@ -16,7 +16,8 @@
 
 package forms.mappings
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
+
 import play.api.data.Forms.{of, _}
 import play.api.data.{FieldMapping, Mapping}
 import utils.Enumerable
@@ -47,11 +48,11 @@ trait Mappings extends Formatters with Constraints {
   protected def dateMapping(requiredKey: String, invalidKey: String): Mapping[LocalDate] = {
 
     def toLocalDate(input: (Int, Int, Int)): LocalDate = {
-      new LocalDate(input._3, input._2, input._1)
+      LocalDate.of(input._3, input._2, input._1)
     }
 
     def fromLocalDate(date: LocalDate): (Int, Int, Int) = {
-      (date.getDayOfMonth, date.getMonthOfYear, date.getYear)
+      (date.getDayOfMonth, date.getMonthValue, date.getYear)
     }
 
     def validDate(input: (Int, Int, Int)): Boolean = {

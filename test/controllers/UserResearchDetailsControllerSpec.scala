@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.userResearchDetails
 
@@ -35,18 +36,23 @@ class UserResearchDetailsControllerSpec extends ControllerSpecBase with ScalaFut
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  private val view = injector.instanceOf[userResearchDetails]
   val formProvider = new UserResearchDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[UserResearchDetails] = formProvider()
   val fakeAuditService = new StubSuccessfulAuditService()
   val name = "test name"
   val email = "test@test.com"
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): UserResearchDetailsController =
-    new UserResearchDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakeAuditService)
+    new UserResearchDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-  def viewAsString(form: Form[_] = form): String = userResearchDetails(frontendAppConfig, form)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form)(fakeRequest, messages).toString
 
   "UserResearchContactDetails Controller" must {
 

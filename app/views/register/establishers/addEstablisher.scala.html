@@ -23,8 +23,12 @@
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
 @(
-    appConfig: FrontendAppConfig,
     form: Form[_],
     mode: Mode,
     establishers: Seq[Establisher[_]],
@@ -33,11 +37,9 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__establishers__add__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__establishers__add__title"))) {
 
-    @helpers.form(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
+    @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
 
         @components.back_link()
 

@@ -28,6 +28,7 @@ import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -49,6 +50,8 @@ class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     Some("test county"),
     Some("test post code"), "GB"
   )
+
+  private val view = injector.instanceOf[confirmPreviousAddress]
 
   private def viewmodel = ConfirmAddressViewModel(
     postCall = routes.CompanyConfirmPreviousAddressController.onSubmit(index, srn),
@@ -75,12 +78,13 @@ class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      countryOptions
+      countryOptions,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    confirmPreviousAddress(
-      frontendAppConfig,
+    view(
       form,
       viewmodel,
       countryOptions,

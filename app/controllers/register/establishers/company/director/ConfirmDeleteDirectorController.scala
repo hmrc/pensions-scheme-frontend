@@ -28,9 +28,9 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
@@ -47,51 +47,51 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete,
-                                                 formProvider: ConfirmDeleteDirectorFormProvider
-                                               )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                 formProvider: ConfirmDeleteDirectorFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: confirmDeleteDirector
+                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
   private def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
-    )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
-      request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
-        userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
-      }
+                            )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
+    request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
+      userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
+    }
   }
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
-            director.isDeleted match {
-              case false =>
-                Future.successful(
-                  Ok(
-                    confirmDeleteDirector(
-                      appConfig,
-                      form,
-                      director.fullName,
-                      routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                      existingSchemeName
-                    )
+          director.isDeleted match {
+            case false =>
+              Future.successful(
+                Ok(
+                  view(
+                    form,
+                    director.fullName,
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
+                    existingSchemeName
                   )
                 )
-              case true =>
-                Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
-            }
+              )
+            case true =>
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
+          }
         }
     }
 
   def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
+      implicit request =>
 
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
 
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(confirmDeleteDirector(
-                appConfig,
+              Future.successful(BadRequest(view(
                 formWithErrors,
                 director.fullName,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
@@ -99,15 +99,15 @@ class ConfirmDeleteDirectorController @Inject()(
               ))),
             value => {
               if (value) {
-                  userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true)).flatMap { jsValue =>
-                    Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, UserAnswers(jsValue), srn)))
-                  }
+                userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true)).flatMap { jsValue =>
+                  Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, UserAnswers(jsValue), srn)))
+                }
               } else {
                 Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, request.userAnswers, srn)))
               }
             }
 
           )
-      }
-  }
+        }
+    }
 }

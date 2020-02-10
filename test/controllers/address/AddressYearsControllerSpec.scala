@@ -17,9 +17,9 @@
 package controllers.address
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import services.UserAnswersService
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -28,11 +28,11 @@ import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.UserAnswersService
@@ -52,25 +52,31 @@ object AddressYearsControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
-                                  formProvider: AddressYearsFormProvider
+                                  formProvider: AddressYearsFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: addressYears
                                 )(implicit val ec: ExecutionContext) extends AddressYearsController {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, formProvider("error"), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      implicit def request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      get(FakeIdentifier, formProvider("error"), viewmodel)
     }
 
     def onSubmit(viewmodel: AddressYearsViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      implicit def request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)
     }
   }
 
 }
 
-class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class AddressYearsControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import AddressYearsControllerSpec._
 
-  val viewmodel = AddressYearsViewModel(
+  private val view = injector.instanceOf[addressYears]
+
+  val viewmodel: AddressYearsViewModel = AddressYearsViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
@@ -88,7 +94,6 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[AddressYearsFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -96,7 +101,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual addressYears(appConfig, formProvider("error")(messages), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider("error")(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -109,7 +114,6 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[AddressYearsFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -118,8 +122,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual addressYears(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider("error")(messages).fill(AddressYears.OverAYear),
             viewmodel,
             None
@@ -169,7 +172,6 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[AddressYearsFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -177,8 +179,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual addressYears(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider("error")(messages).bind(Map.empty[String, String]),
             viewmodel,
             None

@@ -34,17 +34,19 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val form = new AnyMoreChangesFormProvider()()
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit(srn)
 
+  val view: anyMoreChanges = app.injector.instanceOf[anyMoreChanges]
+
   def createView: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
+    view(form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   def createUpdateView: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
+    view(form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
+    view(form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    anyMoreChanges(frontendAppConfig, form, schemeName, date, postCall, srn)(fakeRequest, messages)
+    view(form, schemeName, date, postCall, srn)(fakeRequest, messages)
 
   "Any More Changes view" must {
 

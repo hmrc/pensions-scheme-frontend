@@ -17,6 +17,7 @@
 package controllers.address
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
@@ -29,8 +30,8 @@ import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
@@ -63,7 +64,9 @@ object PostcodeLookupControllerSpec {
                                   override val userAnswersService: UserAnswersService,
                                   override val addressLookupConnector: AddressLookupConnector,
                                   override val navigator: Navigator,
-                                  formProvider: PostCodeLookupFormProvider
+                                  formProvider: PostCodeLookupFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: postcodeLookup
                                 )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
     def onPageLoad(viewmodel: PostcodeLookupViewModel, answers: UserAnswers): Future[Result] =
@@ -74,19 +77,19 @@ object PostcodeLookupControllerSpec {
 
     private val invalidError: Message = "foo"
 
-    private val noResultError: Message = "bar"
-
     override protected def form: Form[String] = formProvider()
   }
 
 }
 
-class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
+class PostcodeLookupControllerSpec extends SpecBase with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
 
-  val viewmodel = PostcodeLookupViewModel(
+  val viewmodel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     Call("GET", "www.example.com"),
     Call("POST", "www.example.com")
   )
+
+  private val view = injector.instanceOf[postcodeLookup]
 
   import PostcodeLookupControllerSpec._
 
@@ -100,7 +103,6 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
           implicit val mat: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -108,7 +110,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider(), viewmodel, None)(request, messages).toString
       }
     }
   }
@@ -165,7 +167,6 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
             implicit val mat: Materializer = app.materializer
 
-            val appConfig = app.injector.instanceOf[FrontendAppConfig]
             val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
             val request = FakeRequest()
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -173,7 +174,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
             val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("postcode" -> "ZZ11ZZ"))
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) mustEqual postcodeLookup(appConfig,
+            contentAsString(result) mustEqual view(
               formProvider().withError("value", "foo"), viewmodel, None)(request, messages).toString
         }
       }
@@ -197,7 +198,6 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
             val request = FakeRequest().withFormUrlEncodedBody("postcode" -> invalidPostcode)
 
-            val appConfig = app.injector.instanceOf[FrontendAppConfig]
             val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
             val controller = app.injector.instanceOf[TestController]
@@ -205,7 +205,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
             val form = formProvider().bind(Map("postcode" -> invalidPostcode))
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) mustEqual postcodeLookup(appConfig, form, viewmodel, None)(request, messages).toString
+            contentAsString(result) mustEqual view(form, viewmodel, None)(request, messages).toString
         }
       }
     }
@@ -231,7 +231,6 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
               implicit val mat: Materializer = app.materializer
 
-              val appConfig = app.injector.instanceOf[FrontendAppConfig]
               val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
               val request = FakeRequest()
               val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -242,7 +241,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
               status(result) mustEqual OK
 
-              val expectedResult = postcodeLookup(appConfig, formProvider().withError("value", expectedErrorMessage), viewmodel, None)(request, messages).toString
+              val expectedResult = view(formProvider().withError("value", expectedErrorMessage), viewmodel, None)(request, messages).toString
               contentAsString(result) mustEqual expectedResult
           }
         }

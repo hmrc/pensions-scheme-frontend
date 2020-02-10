@@ -20,34 +20,39 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.establishers.company.director.{DirectorNameId, DirectorEnterUTRId}
+import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
 class DirectorEnterUTRController @Inject()(
-                                       override val appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       override val userAnswersService: UserAnswersService,
-                                       @EstablishersCompanyDirector override val navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction,
-                                       formProvider: UTRFormProvider
-                                     )(implicit val ec: ExecutionContext) extends UTRController {
+                                            override val appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            override val userAnswersService: UserAnswersService,
+                                            @EstablishersCompanyDirector override val navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
+                                            requireData: DataRequiredAction,
+                                            formProvider: UTRFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: utr
+                                          )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__enterUTR", Message("messages__theDirector").resolve),

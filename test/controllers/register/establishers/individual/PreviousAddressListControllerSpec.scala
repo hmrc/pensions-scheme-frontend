@@ -25,12 +25,13 @@ import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -49,6 +50,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     address("test post code 1"),
     address("test post code 2")
   )
+  private val view = injector.instanceOf[addressList]
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
@@ -62,11 +64,13 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      fakeAuditService)
+      fakeAuditService,
+      view,
+      stubMessagesControllerComponents()
+    )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =
-    addressList(
-      frontendAppConfig,
+    view(
       form,
       AddressListViewModel(
         routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex, None),

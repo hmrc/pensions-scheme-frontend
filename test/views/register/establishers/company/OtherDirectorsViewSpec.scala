@@ -32,13 +32,15 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
   val form = new OtherDirectorsFormProvider()()
   private val postCall = routes.OtherDirectorsController.onSubmit _
 
+  val view: otherDirectors = app.injector.instanceOf[otherDirectors]
+
   private def createView() = () =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
+    view(form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
   private def createUpdateView() = () =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), Some("srn"))(fakeRequest, messages)
+    view(form, NormalMode, index, None, postCall(NormalMode, None, index), Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
+    view(form, NormalMode, index, None, postCall(NormalMode, None, index), None)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 

@@ -21,10 +21,11 @@ import controllers.actions._
 import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.HasCompanyCRNId
 import models.{Index, NormalMode}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -45,6 +46,8 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasCompanyCRNController =
     new HasCompanyCRNController(
       frontendAppConfig,
@@ -55,10 +58,12 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyCRNController" must {
 

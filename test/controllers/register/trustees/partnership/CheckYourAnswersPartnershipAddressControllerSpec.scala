@@ -25,6 +25,7 @@ import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -170,6 +171,8 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private def partnershipAddressUpdatePartial: Seq[AnswerSection] =
     Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipAddressController =
     new CheckYourAnswersPartnershipAddressController(
@@ -180,13 +183,14 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,
                            title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

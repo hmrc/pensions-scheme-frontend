@@ -21,16 +21,18 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerEnterPostCodeId, InsurerSelectAddressId}
+import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId}
 import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -43,7 +45,9 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               formProvider: PostCodeLookupFormProvider
+                                               formProvider: PostCodeLookupFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: postcodeLookup
                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
@@ -55,7 +59,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def viewModel(mode: Mode, srn: Option[String],name: String): PostcodeLookupViewModel =
+  def viewModel(mode: Mode, srn: Option[String],name: String)(implicit request: DataRequest[AnyContent]): PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
       manualCall(mode, srn),

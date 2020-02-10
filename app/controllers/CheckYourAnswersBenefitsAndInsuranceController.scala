@@ -23,9 +23,9 @@ import javax.inject.Inject
 import models.Mode._
 import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, UserAnswers}
@@ -41,8 +41,10 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction,
                                                                userAnswersService: UserAnswersService,
-                                                               implicit val countryOptions: CountryOptions
-                                                              )(implicit val ec: ExecutionContext) extends FrontendController
+                                                               implicit val countryOptions: CountryOptions,
+                                                               val controllerComponents: MessagesControllerComponents,
+                                                               val view: checkYourAnswers
+                                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
@@ -75,6 +77,6 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
         h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme").resolve))
       )
 
-      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      Future.successful(Ok(view(vm)))
   }
 }

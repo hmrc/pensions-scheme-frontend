@@ -26,12 +26,13 @@ import models.person.PersonName
 import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -49,6 +50,8 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
     title = Message("messages__partnerName__title"),
     heading = Message("messages__partnerName__heading"))
 
+  private val view = injector.instanceOf[personName]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnerNameController =
     new PartnerNameController(
       frontendAppConfig,
@@ -59,11 +62,12 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
 
-  def viewAsString(form: Form[_] = form): String = personName(
-    frontendAppConfig,
+  def viewAsString(form: Form[_] = form): String = view(
     form,
     viewmodel,
     None)(fakeRequest, messages).toString

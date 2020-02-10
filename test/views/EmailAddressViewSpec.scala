@@ -27,10 +27,10 @@ import views.html.emailAddress
 class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "establisher_email"
-  val form = new EmailFormProvider().apply()
+  val form: Form[String] = new EmailFormProvider().apply()
   val companyName = "test company"
 
-  val viewModel = CommonFormWithHintViewModel(
+  val viewModel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     Message("messages__trustee_email__title"),
     Message("messages__enterEmail", companyName),
@@ -38,10 +38,12 @@ class EmailAddressViewSpec extends QuestionViewBehaviours[String] {
     None
   )
 
-  private val createView: () => HtmlFormat.Appendable = () => emailAddress(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
+  val view: emailAddress = app.injector.instanceOf[emailAddress]
+
+  private val createView: () => HtmlFormat.Appendable = () => view(form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => emailAddress(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
+    (form: Form[String]) => view(form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
 
 

@@ -28,8 +28,10 @@ class ErrorTemplatePageNotFoundViewSpec extends ViewBehaviours {
 
   private val returnLink = Link(text = "bla", target = "target",None)
 
+  val view: error_template_page_not_found = app.injector.instanceOf[error_template_page_not_found]
+
   def createView: () => HtmlFormat.Appendable = () =>
-    error_template_page_not_found(frontendAppConfig, returnLink)(fakeRequest, messages)
+    view(returnLink)(fakeRequest, messages)
 
   "Error template page not found page" must {
     behave like normalPageWithoutBrowserTitle(

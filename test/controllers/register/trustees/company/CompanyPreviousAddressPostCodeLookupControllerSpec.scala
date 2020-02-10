@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
@@ -30,7 +30,8 @@ import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -45,17 +46,19 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
+class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
   def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)
 
-  val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
 
-  val firstIndex = Index(0)
+  private val view = injector.instanceOf[postcodeLookup]
+  val formProvider = new PostCodeLookupFormProvider()
+  val form: Form[String] = formProvider()
+
+  val firstIndex: Index = Index(0)
 
   val companyName: String = "test company name"
-  val company = CompanyDetails(companyName)
+  val company: CompanyDetails = CompanyDetails(companyName)
 
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(TrusteesId.toString -> Json.arr(
@@ -91,15 +94,14 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             subHeading = Some(company.companyName)
           )
 
-          val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))
+          val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual postcodeLookup(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
             viewModel,
             None
@@ -109,8 +111,6 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
 
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
-
-        val call: Call = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None)
 
         val validPostcode = "ZZ1 1ZZ"
 
@@ -131,11 +131,12 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
         )) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(call)
+            val fakeRequest = addCSRFToken(FakeRequest()
               .withFormUrlEncodedBody("postcode" -> validPostcode)
               .withHeaders("Csrf-Token" -> "nocheck"))
 
-            val result = route(app, fakeRequest).value
+            val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
+            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardRoute.url

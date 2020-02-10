@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -136,5 +136,7 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar
 
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private val view = injector.instanceOf[hasReferenceNumber]
+
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 }

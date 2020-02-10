@@ -30,6 +30,7 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
@@ -150,6 +151,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val formProvider = new ConfirmDeleteDirectorFormProvider()
   private val form         = formProvider.apply()
 
+  private val view = injector.instanceOf[confirmDeleteDirector]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteDirectorController(
       frontendAppConfig,
@@ -161,12 +164,13 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(form: Form[_] = form) =
-    confirmDeleteDirector(
-      frontendAppConfig,
+    view(
       form,
       directorName,
       postCall,

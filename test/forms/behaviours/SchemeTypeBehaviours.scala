@@ -20,10 +20,10 @@ import forms.FormSpec
 import forms.mappings.SchemeTypeMapping
 import generators.Generators
 import models.register.SchemeType
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 
-trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generators with PropertyChecks {
+trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generators with ScalaCheckPropertyChecks {
 
   private val schemeTypeTable = Table(
     ("type", "value"),

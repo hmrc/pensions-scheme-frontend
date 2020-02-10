@@ -24,22 +24,24 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
 class CompanyAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
-                                          val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
                                           @EstablishersCompany val navigator: Navigator,
                                           authenticate: AuthAction,
@@ -48,7 +50,9 @@ class CompanyAddressController @Inject()(
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
-                                          val auditService: AuditService
+                                          val auditService: AuditService,
+                                          val view: manualAddress,
+                                          val controllerComponents: MessagesControllerComponents
                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
@@ -58,7 +62,8 @@ class CompanyAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, srn, Index(index)),
       countryOptions.options,

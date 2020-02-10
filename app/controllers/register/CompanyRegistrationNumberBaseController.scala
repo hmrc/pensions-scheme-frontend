@@ -27,14 +27,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils._
 import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CompanyRegistrationNumberBaseController extends FrontendController with Retrievals with I18nSupport {
+trait CompanyRegistrationNumberBaseController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -42,11 +42,13 @@ trait CompanyRegistrationNumberBaseController extends FrontendController with Re
 
   protected def userAnswersService: UserAnswersService
 
-  protected def form(name: String) = formProvider(name)
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(name)
 
   protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
 
   protected def navigator: Navigator
+
+  protected def view: companyRegistrationNumber
 
   def postCall: (Mode, Option[String], Index) => Call
 
@@ -58,9 +60,9 @@ trait CompanyRegistrationNumberBaseController extends FrontendController with Re
     val preparedForm =
       request.userAnswers.get(identifier(index)).fold(form(companyName))(form(companyName).fill)
 
-    val view = companyRegistrationNumber(appConfig, viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
+    val updatedView = view(viewModel, preparedForm, existingSchemeName, postCall(mode, srn, index), srn)
 
-    Future.successful(Ok(view))
+    Future.successful(Ok(updatedView))
   }
 
   def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
@@ -69,7 +71,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendController with Re
       (formWithErrors: Form[_]) =>
 
         Future.successful(BadRequest(
-          companyRegistrationNumber(appConfig, viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
+          view(viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),
 
       crnNumber => {
         userAnswersService.save(mode, srn, identifier(index), crnNumber.copy(isEditable = true)).map(cacheMap =>

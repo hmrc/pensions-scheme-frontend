@@ -31,6 +31,8 @@ import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -40,7 +42,7 @@ import viewmodels.address.ManualAddressViewModel
 
 class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
 
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -48,7 +50,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
-  val personDetails = PersonName("First", "Last")
+  val personDetails: PersonName = PersonName("First", "Last")
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     TrusteesId.toString -> Json.arr(Json.obj(TrusteeNameId.toString -> personDetails))
@@ -66,7 +68,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
 
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
-  val viewmodel = ManualAddressViewModel(
+  val viewmodel: ManualAddressViewModel = ManualAddressViewModel(
     postCall = controller.postCall(NormalMode, firstIndex, None),
     countryOptions = countryOptions.options,
     title = Messages("messages__common__confirmAddress__h1", Message("messages__theTrustee").resolve),
@@ -79,6 +81,38 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
     TrusteeAddressId(firstIndex),
     viewmodel
   )
+
+  "save address and redirect to next page on POST request" in {
+    running(_ => builder) {
+      implicit app =>
+
+        val onwardCall = Call("GET", "www.example.com")
+
+        val address = Address(
+          addressLine1 = "value 1",
+          addressLine2 = "value 2",
+          None, None,
+          postcode = Some("AB1 1AB"),
+          country = "GB"
+        )
+
+        val fakeRequest = addCSRFToken(FakeRequest()
+          .withHeaders("Csrf-Token" -> "nocheck")
+          .withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country))
+
+        val controller = app.injector.instanceOf[TrusteeAddressController]
+        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).value mustEqual onwardCall.url
+
+        FakeUserAnswersService.userAnswer.get(TrusteeAddressId(firstIndex)).value mustEqual address
+    }
+  }
 
   "send an audit event when valid data is submitted" in {
 
@@ -100,18 +134,15 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
       bind[AuditService].toInstance(fakeAuditService)
     )) {
       implicit app =>
-
-        val fakeRequest = addToken(FakeRequest(routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, None))
-          .withHeaders("Csrf-Token" -> "nocheck")
-          .withFormUrlEncodedBody(
-            ("addressLine1", address.addressLine1),
-            ("addressLine2", address.addressLine2),
-            ("postCode", address.postcode.get),
-            "country" -> address.country))
-
         fakeAuditService.reset()
 
-        val result = route(app, fakeRequest).value
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(
+          ("addressLine1", address.addressLine1),
+          ("addressLine2", address.addressLine2),
+          ("postCode", address.postcode.get),
+          "country" -> address.country))
+        val controller = app.injector.instanceOf[TrusteeAddressController]
+        val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
 
         whenReady(result) {
           _ =>

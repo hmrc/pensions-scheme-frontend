@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.trustees.company.companyDetails
 
@@ -41,14 +42,18 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
+  private val view = injector.instanceOf[companyDetails]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None)
 
   def viewAsString(form: Form[_] = form): String =
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
+    view(form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     TrusteesId.toString -> Json.arr(

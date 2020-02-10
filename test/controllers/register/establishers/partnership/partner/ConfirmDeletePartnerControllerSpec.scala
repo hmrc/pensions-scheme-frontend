@@ -30,6 +30,7 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
@@ -150,6 +151,8 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
   val partnerDeleted: PersonName = partnerName.copy(isDeleted = true)
 
+  private val view = injector.instanceOf[confirmDeletePartner]
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
@@ -163,11 +166,12 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = confirmDeletePartner(
-    frontendAppConfig,
+  private def viewAsString(form: Form[_] = form) = view(
     form,
     "John Doe",
     postCall,

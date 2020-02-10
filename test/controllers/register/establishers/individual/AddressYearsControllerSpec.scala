@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -46,6 +47,8 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   private val firstIndex = Index(0)
   private val invalidIndex = Index(11)
 
+  private val view = injector.instanceOf[addressYears]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
     new AddressYearsController(
       frontendAppConfig,
@@ -55,7 +58,9 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      view,
+      stubMessagesControllerComponents()
     )
 
   private lazy val viewModel =
@@ -68,8 +73,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[_] = form) =
-    addressYears(
-      frontendAppConfig,
+    view(
       form,
       viewModel,
       None

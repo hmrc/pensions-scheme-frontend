@@ -22,8 +22,14 @@
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 
-@(
+
+@this(
+    main_template: main_template,
     appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
+)
+
+@(
     form: Form[_],
     directors: Seq[DirectorEntity],
     schemeName: Option[String],
@@ -34,11 +40,9 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__addCompanyDirectors__heading")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 

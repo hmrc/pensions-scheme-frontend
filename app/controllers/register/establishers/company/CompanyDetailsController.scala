@@ -26,9 +26,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.company.companyDetails
@@ -44,24 +44,27 @@ class CompanyDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: CompanyDetailsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          formProvider: CompanyDetailsFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: companyDetails
+                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
+
   private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
-  }
+      implicit request =>
+        val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
+        Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
+    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
         value =>
           userAnswersService.save(
             mode,

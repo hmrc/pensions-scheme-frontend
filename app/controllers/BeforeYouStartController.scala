@@ -20,11 +20,10 @@ import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import javax.inject.Inject
-import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.beforeYouStart
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,13 +33,15 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          crypto: ApplicationCrypto,
                                          userAnswersCacheConnector: UserAnswersCacheConnector,
-                                         pensionAdministratorConnector: PensionAdministratorConnector
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                         pensionAdministratorConnector: PensionAdministratorConnector,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: beforeYouStart
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(beforeYouStart(appConfig, psaName)))
+        Future.successful(Ok(view(psaName)))
       }
   }
 }

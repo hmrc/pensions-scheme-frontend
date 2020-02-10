@@ -31,10 +31,12 @@ class CurrentMembersViewSpec extends ViewBehaviours {
 
   private val schemeName = "Test Scheme Name"
 
-  def createView(): () => HtmlFormat.Appendable = () => currentMembers(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  val view: currentMembers = app.injector.instanceOf[currentMembers]
+
+  def createView(): () => HtmlFormat.Appendable = () => view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    currentMembers(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   "Current Members view" when {
     "rendered" must {

@@ -20,14 +20,17 @@
 @import models.UserResearchDetails
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_])(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__userResearchDetails__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__userResearchDetails__title"))) {
 
-    @helpers.form(action = UserResearchDetailsController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = UserResearchDetailsController.onSubmit(), 'autoComplete -> "off") {
 
         @components.back_link()
 

@@ -18,15 +18,20 @@ package controllers
 
 import controllers.actions._
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.youNeedToRegister
 
 class YouNeedToRegisterControllerSpec extends ControllerSpecBase {
 
+  private val view = injector.instanceOf[youNeedToRegister]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): YouNeedToRegisterController =
     new YouNeedToRegisterController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl)
+      dataRetrievalAction, new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-  private def viewAsString() = youNeedToRegister(frontendAppConfig)(fakeRequest, messages).toString
+  private def viewAsString() = view()(fakeRequest, messages).toString
 
   "YouNeedToRegister Controller" must {
 

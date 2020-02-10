@@ -31,13 +31,15 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
   val form = new HaveAnyTrusteesFormProvider()()
 
+  val view: haveAnyTrustees = app.injector.instanceOf[haveAnyTrustees]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+    view(form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    haveAnyTrustees(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
+    view(form, CheckMode, scheme)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => view(form,
     NormalMode, scheme)(fakeRequest, messages)
 
   "HaveAnyTrustees view" must {

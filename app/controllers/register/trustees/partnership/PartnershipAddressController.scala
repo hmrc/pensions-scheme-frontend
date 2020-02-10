@@ -24,21 +24,23 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
 class PartnershipAddressController @Inject()(
                                               val appConfig: FrontendAppConfig,
-                                              val messagesApi: MessagesApi,
+                                              override val messagesApi: MessagesApi,
                                               val userAnswersService: UserAnswersService,
                                               val navigator: Navigator,
                                               authenticate: AuthAction,
@@ -47,7 +49,9 @@ class PartnershipAddressController @Inject()(
                                               requireData: DataRequiredAction,
                                               val formProvider: AddressFormProvider,
                                               val countryOptions: CountryOptions,
-                                              val auditService: AuditService
+                                              val auditService: AuditService,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: manualAddress
                                             )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
@@ -57,7 +61,8 @@ class PartnershipAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String
+                       )(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,

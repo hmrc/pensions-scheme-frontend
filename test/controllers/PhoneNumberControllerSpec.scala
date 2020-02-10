@@ -17,6 +17,7 @@
 package controllers
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.PhoneFormProvider
@@ -25,11 +26,11 @@ import models.CheckUpdateMode
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -40,7 +41,7 @@ import views.html.phoneNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import PhoneNumberControllerSpec._
 
@@ -50,6 +51,8 @@ class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionVa
     heading = "heading",
     hint = Some("legend")
   )
+
+  private val view = injector.instanceOf[phoneNumber]
 
   "get" must {
 
@@ -70,7 +73,7 @@ class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionVa
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual phoneNumber(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider(), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -92,8 +95,7 @@ class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionVa
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual phoneNumber(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider().fill("098777777777"),
             viewmodel,
             None
@@ -145,8 +147,7 @@ class PhoneNumberControllerSpec extends WordSpec with MustMatchers with OptionVa
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual phoneNumber(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider().bind(Map.empty[String, String]),
             viewmodel,
             None
@@ -166,7 +167,9 @@ object PhoneNumberControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
-                                  formProvider: PhoneFormProvider
+                                  formProvider: PhoneFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: phoneNumber
                                 )(implicit val ec: ExecutionContext) extends PhoneNumberController {
 
     def onPageLoad(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers): Future[Result] = {

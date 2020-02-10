@@ -42,11 +42,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   val form = new AddCompanyDirectorsFormProvider()()
   private val johnDoeEntity = DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
   private val joeBloggsEntity = DirectorEntity(DirectorNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
-
+  val view: addCompanyDirectors = app.injector.instanceOf[addCompanyDirectors]
   private def createView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
-      addCompanyDirectors(
-        frontendAppConfig,
+      view(
         form,
         directors,
         None,
@@ -58,8 +57,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
   private def createUpdateView(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     () =>
-      addCompanyDirectors(
-        frontendAppConfig,
+      view(
         form,
         directors,
         None,
@@ -71,8 +69,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
 
   private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
-      addCompanyDirectors(
-        frontendAppConfig,
+      view(
         form,
         directors,
         None,

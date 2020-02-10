@@ -30,10 +30,12 @@ class FutureMembershipViewSpec extends ViewBehaviours {
 
   val form = new FutureMembersFormProvider()()
 
-  def createView(): () => HtmlFormat.Appendable = () => futureMembers(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  val view: futureMembers = app.injector.instanceOf[futureMembers]
+
+  def createView(): () => HtmlFormat.Appendable = () => view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    futureMembers(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   "Future Members view" when {
     "rendered" must {

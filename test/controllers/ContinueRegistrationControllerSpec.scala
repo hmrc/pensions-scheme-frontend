@@ -19,11 +19,11 @@ package controllers
 import controllers.actions.{DataRetrievalAction, FakeAuthAction}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 
 class ContinueRegistrationControllerSpec extends ControllerSpecBase {
 
-  import ContinueRegistrationControllerSpec._
 
   "ContinueRegistrationController" when {
     "asked to continue" must {
@@ -36,17 +36,13 @@ class ContinueRegistrationControllerSpec extends ControllerSpecBase {
     }
   }
 
-}
-
-object ContinueRegistrationControllerSpec {
-
-  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
-
   def nextPage: Call = Call("GET", "http://www.test.com")
 
   val fakeNavigator = new FakeNavigator(nextPage)
 
   def controller(data: DataRetrievalAction): ContinueRegistrationController =
-    new ContinueRegistrationController(FakeAuthAction, data, fakeNavigator)
+    new ContinueRegistrationController(FakeAuthAction, data, fakeNavigator,
+      stubMessagesControllerComponents()
+    )
 
 }

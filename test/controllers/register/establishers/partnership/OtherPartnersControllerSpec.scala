@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.partnership
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
@@ -27,6 +26,8 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.otherPartners
 
@@ -53,6 +54,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       )
     )
   )
+  private val view = injector.instanceOf[otherPartners]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): OtherPartnersController =
     new OtherPartnersController(
@@ -64,12 +66,13 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
   val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(NormalMode, index, None)
   def viewAsString(form: Form[_] = form): String =
-    otherPartners(
-      frontendAppConfig,
+    view(
       form,
       NormalMode,
       index,

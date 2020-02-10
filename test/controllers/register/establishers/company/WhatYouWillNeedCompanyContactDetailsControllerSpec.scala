@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.register.establishers.company.routes.CompanyEmailController
 import models._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
@@ -33,10 +33,12 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
   private val index = 0
   private val srn = Some("srn")
 
+  private val view = injector.instanceOf[whatYouWillNeedContactDetails]
+
   private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = view(
+    None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
     "in Subscription" must {

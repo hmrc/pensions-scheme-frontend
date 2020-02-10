@@ -23,10 +23,11 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.beforeYouStart
 
 import scala.concurrent.Future
@@ -37,6 +38,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
   private val psaName = "Psa Name"
+  private val view = injector.instanceOf[beforeYouStart]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): BeforeYouStartController =
     new BeforeYouStartController(frontendAppConfig,
@@ -44,12 +46,14 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
       FakeAuthAction,
       applicationCrypto,
       FakeUserAnswersCacheConnector,
-      pensionAdministratorConnector
+      pensionAdministratorConnector,
+      stubMessagesControllerComponents(),
+      view
     )
 
   val encryptedPsaId: String = applicationCrypto.QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
-  def viewAsString(): String = beforeYouStart(frontendAppConfig, psaName)(fakeRequest, messages).toString
+  def viewAsString(): String = view(psaName)(fakeRequest, messages).toString
 
   "BeforeYouStart Controller" when {
 

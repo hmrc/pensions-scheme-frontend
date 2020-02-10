@@ -26,21 +26,23 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
 
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
-                                                  val messagesApi: MessagesApi,
+                                                  override val messagesApi: MessagesApi,
                                                   val userAnswersService: UserAnswersService,
                                                   val navigator: Navigator,
                                                   authenticate: AuthAction,
@@ -49,7 +51,9 @@ class CompanyPreviousAddressController @Inject()(
                                                   requireData: DataRequiredAction,
                                                   val formProvider: AddressFormProvider,
                                                   val countryOptions: CountryOptions,
-                                                  val auditService: AuditService
+                                                  val auditService: AuditService,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: manualAddress
                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
@@ -59,7 +63,8 @@ class CompanyPreviousAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,

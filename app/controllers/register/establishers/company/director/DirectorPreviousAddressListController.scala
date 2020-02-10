@@ -28,26 +28,29 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorPreviousAddressListController @Inject()(
-    override val appConfig: FrontendAppConfig,
-    val userAnswersService: UserAnswersService,
-    @EstablishersCompanyDirector override val navigator: Navigator,
-    override val messagesApi: MessagesApi,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    allowAccess: AllowAccessActionProvider,
-    requireData: DataRequiredAction,
-    val auditService: AuditService
-)(implicit val ec: ExecutionContext)
-    extends AddressListController
+                                                       override val appConfig: FrontendAppConfig,
+                                                       val userAnswersService: UserAnswersService,
+                                                       @EstablishersCompanyDirector override val navigator: Navigator,
+                                                       override val messagesApi: MessagesApi,
+                                                       authenticate: AuthAction,
+                                                       getData: DataRetrievalAction,
+                                                       allowAccess: AllowAccessActionProvider,
+                                                       requireData: DataRequiredAction,
+                                                       val auditService: AuditService,
+                                                       val view: addressList,
+                                                       val controllerComponents: MessagesControllerComponents
+                                                     )(implicit val ec: ExecutionContext)
+  extends AddressListController
     with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -102,5 +105,5 @@ class DirectorPreviousAddressListController @Inject()(
   private val directorName = (establisherIndex: Index, directorIndex: Index) =>
     Retrieval { implicit request =>
       DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
+    }
 }

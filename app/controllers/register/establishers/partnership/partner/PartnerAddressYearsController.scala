@@ -23,13 +23,15 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -37,14 +39,17 @@ class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
                                                val userAnswersService: UserAnswersService,
                                                val navigator: Navigator,
-                                               val messagesApi: MessagesApi,
+                                               override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
-                                               requireData: DataRequiredAction
+                                               requireData: DataRequiredAction,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: addressYears
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private def form(partnerName: String) = new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
+  private def form(partnerName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -55,7 +60,8 @@ class PartnerAddressYearsController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_address_years__title", Message("messages__common__address_years__partner").resolve),
     heading = Message("messages__partner_address_years__heading", partnerName),

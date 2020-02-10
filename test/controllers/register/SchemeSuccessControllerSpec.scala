@@ -16,21 +16,23 @@
 
 package controllers.register
 
+import java.time.LocalDate
+
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
-import org.joda.time.LocalDate
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.schemeSuccess
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,6 +58,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   val validData: JsObject = Json.obj(
     SubmissionReferenceNumberId.toString -> SchemeSubmissionResponse(submissionReferenceNumber)
   )
+  private val view = injector.instanceOf[schemeSuccess]
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
                          new FakeDataRetrievalAction(Some(validData))): SchemeSuccessController =
@@ -66,12 +69,13 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      fakePensionAdminstratorConnector
+      fakePensionAdminstratorConnector,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(): String =
-    schemeSuccess(
-      frontendAppConfig,
+    view(
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false,

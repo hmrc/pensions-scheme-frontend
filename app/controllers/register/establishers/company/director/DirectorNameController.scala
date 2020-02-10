@@ -23,15 +23,16 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import javax.inject.Inject
 import models.person.PersonName
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, SectionComplete, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -46,12 +47,16 @@ class DirectorNameController @Inject()(
                                         getData: DataRetrievalAction,
                                         allowAccess: AllowAccessActionProvider,
                                         requireData: DataRequiredAction,
-                                        formProvider: PersonNameFormProvider
-                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        formProvider: PersonNameFormProvider,
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: personName
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider("messages__error__director")
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
 
-  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+               (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
     postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorName__title"),
     heading = Message("messages__directorName__heading"),
@@ -65,8 +70,7 @@ class DirectorNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(personName(
-          appConfig, preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -74,8 +78,7 @@ class DirectorNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(personName(
-              appConfig, formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(

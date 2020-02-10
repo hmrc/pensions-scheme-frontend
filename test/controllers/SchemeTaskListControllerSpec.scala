@@ -25,13 +25,14 @@ import models._
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when, _}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.libs.json.JsNull
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import viewmodels._
-import views.html.schemeDetailsTaskList
+import views.html.{error_template, error_template_page_not_found, schemeDetailsTaskList}
 
 import scala.concurrent.Future
 
@@ -52,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe view(schemeDetailsTL)(fakeRequest, messages).toString()
 
       }
     }
@@ -164,6 +165,10 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
+  private val view = injector.instanceOf[schemeDetailsTaskList]
+  private val notFoundView = injector.instanceOf[error_template_page_not_found]
+  private val errorView = injector.instanceOf[error_template]
+
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
@@ -172,11 +177,13 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
-      new ErrorHandler(frontendAppConfig, messagesApi),
+      new ErrorHandler(frontendAppConfig, messagesApi, notFoundView, errorView),
       fakeLockConnector,
       fakeSchemeDetailsReadOnlyCacheConnector,
       fakeUpdateCacheConnector,
-      fakeMinimalPsaConnector
+      fakeMinimalPsaConnector,
+      stubMessagesControllerComponents(),
+      view
     )
 
   val fakeSchemeDetailsConnector: SchemeDetailsConnector                           = mock[SchemeDetailsConnector]

@@ -22,26 +22,30 @@ import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNoNINOReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.Enumerable
-import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
 class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
-                                              val messagesApi: MessagesApi,
+                                              override val messagesApi: MessagesApi,
                                               val userAnswersService: UserAnswersService,
                                               val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
-                                              formProvider: ReasonFormProvider
+                                              formProvider: ReasonFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
                                             with I18nSupport with Enumerable.Implicits {
 
@@ -54,12 +58,13 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def form(name: String) = formProvider("messages__reason__error_ninoRequired", name)
+  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider("messages__reason__error_ninoRequired", name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoNINOReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__whyNoNINO", Message("messages__theIndividual")),
       heading = Message("messages__whyNoNINO", name),
       srn = srn
     )

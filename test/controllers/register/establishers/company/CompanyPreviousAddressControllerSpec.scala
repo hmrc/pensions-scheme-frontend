@@ -18,7 +18,6 @@ package controllers.register.establishers.company
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -32,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -62,6 +62,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
     )
   )
 
+  private val view = injector.instanceOf[manualAddress]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPreviousAddressController =
     new CompanyPreviousAddressController(
       frontendAppConfig,
@@ -74,12 +76,13 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
-      fakeAuditService
+      fakeAuditService,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    manualAddress(
-      frontendAppConfig,
+    view(
       form,
       ManualAddressViewModel(
         routes.CompanyPreviousAddressController.onSubmit(NormalMode, None, index),
