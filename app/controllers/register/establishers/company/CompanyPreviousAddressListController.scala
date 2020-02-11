@@ -24,11 +24,10 @@ import controllers.address.AddressListController
 import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models._
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Redirect, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
