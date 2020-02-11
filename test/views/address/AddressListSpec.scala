@@ -36,10 +36,20 @@ class AddressListSpec extends ViewBehaviours {
   private val addresses = Seq(address("postcode 1"), address("postcode 2"))
   private val addressIndexes = Seq.range(0, 2)
   private val call = controllers.routes.IndexController.onPageLoad()
-  private val subHeading = "sub-heading"
 
-  private val viewModel = AddressListViewModel(call, call, addresses)
-  private val updateViewModel = AddressListViewModel(call, call, addresses, srn = Some("srn"))
+  private val viewModel = AddressListViewModel(
+    postCall = call,
+    manualInputCall = call,
+    addresses = addresses,
+    entityName = "test name"
+  )
+  private val updateViewModel = AddressListViewModel(
+    postCall = call,
+    manualInputCall = call,
+    addresses = addresses,
+    srn = Some("srn"),
+    entityName = "test name"
+  )
 
   private def address(postCode: String): TolerantAddress =
     TolerantAddress(

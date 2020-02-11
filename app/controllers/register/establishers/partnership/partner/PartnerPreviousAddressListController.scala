@@ -23,12 +23,11 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.establishers.partnership.partner._
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -53,58 +52,44 @@ class PartnerPreviousAddressListController @Inject()(
     with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      (partnerName(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            get(viewmodel(mode, establisherIndex, partnerIndex, srn, name, addresses))
-        }
-        .left
-        .map(_ =>
-          Future.successful(
-            Redirect(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))))
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, partnerIndex, srn).right.map(get)
+
     }
 
-  private def viewmodel(mode: Mode,
-                        establisherIndex: Index,
-                        directorIndex: Index,
-                        srn: Option[String],
-                        name: String,
-                        addresses: Seq[TolerantAddress])(implicit request: DataRequest[AnyContent]): AddressListViewModel = {
-    AddressListViewModel(
-      postCall = routes.PartnerPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      manualInputCall = routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
-      addresses = addresses,
-      title = Message("messages__select_the_previous_address__heading", Message("messages__thePartner")),
-      heading = Message("messages__select_the_previous_address__heading", name),
-      srn = srn
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+
+    (PartnerNameId(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)).retrieve.right.map {
+      case name ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.PartnerPreviousAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+          manualInputCall = routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
+          addresses = addresses,
+          title = Message("messages__select_the_previous_address__heading", Message("messages__thePartner")),
+          heading = Message("messages__select_the_previous_address__heading", name.fullName),
+          srn = srn,
+          entityName = name.fullName
+        )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn)))
     )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
-      (partnerName(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            val context = s"Partnership Partner Previous Address: $name"
-            post(
-              viewmodel(mode, establisherIndex, partnerIndex, srn, name, addresses),
-              PartnerPreviousAddressListId(establisherIndex, partnerIndex),
-              PartnerPreviousAddressId(establisherIndex, partnerIndex),
-              mode,
-              context,
-              PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
-            )
-        }
-        .left
-        .map(_ =>
-          Future.successful(
-            Redirect(routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, partnerIndex, srn))))
-    }
 
-  private def partnerName =
-    (establisherIndex: Index, partnerIndex: Index) =>
-      Retrieval { implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(_.fullName)
-      }
+    def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, partnerIndex, srn).right.map { vm =>
+          post(
+            viewModel = vm,
+            navigatorId = PartnerPreviousAddressListId(establisherIndex, partnerIndex),
+            dataId = PartnerPreviousAddressId(establisherIndex, partnerIndex),
+            mode = mode,
+            context = s"Partnership Partner Previous Address: ${vm.entityName}",
+            postCodeLookupIdForCleanup = PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
+          )
+        }
+    }
 }

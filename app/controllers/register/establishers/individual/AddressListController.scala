@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressListController => GenericAddressListController}
-import identifiers.register.establishers.individual.{AddressId, AddressListId, PostCodeLookupId}
+import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherNameId, PostCodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -46,36 +46,46 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
                                       val auditService: AuditService,
                                       val view: addressList,
                                       val controllerComponents: MessagesControllerComponents
-                                     )(implicit val ec: ExecutionContext)
-    extends GenericAddressListController
-    with Retrievals {
+                                     )(implicit val ec: ExecutionContext) extends GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      retrieveEstablisherName(index) (viewmodel(mode, index, srn, _).right.map(get))
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map(get)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      retrieveEstablisherName(index) { name =>
-        val context = s"Establisher Individual Address: $name"
-        viewmodel(mode, index, srn, name).right.map( post(_, AddressListId(index), AddressId(index), mode,context, PostCodeLookupId(index))) }
-  }
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map {
+          vm =>
+           post(
+             viewModel = vm,
+             navigatorId = AddressListId(index),
+             dataId = AddressId(index),
+             mode = mode,
+             context = s"Establisher Individual Address: ${vm.entityName}",
+             postCodeLookupIdForCleanup = PostCodeLookupId(index)
+           )
+        }
+      }
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], establisherName: String)(
-      implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    PostCodeLookupId(index).retrieve.right
-      .map { addresses =>
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    (EstablisherNameId(index) and PostCodeLookupId(index)).retrieve.right.map {
+      case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.AddressListController.onSubmit(mode, index, srn),
           manualInputCall = routes.AddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
           srn = srn,
-          heading = Message("messages__dynamic_whatIsAddress", establisherName),
-          title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve)
+          heading = Message("messages__dynamic_whatIsAddress", name.fullName),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve),
+          entityName = name.fullName
         )
-      }
-      .left
-      .map(_ => Future.successful(Redirect(routes.PostCodeLookupController.onPageLoad(mode, index, srn))))
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.PostCodeLookupController.onPageLoad(mode, index, srn)))
+    )
   }
 }

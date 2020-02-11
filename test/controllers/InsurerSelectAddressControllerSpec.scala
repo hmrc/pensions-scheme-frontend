@@ -78,7 +78,8 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
         routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
         addresses,
         heading = Message("messages__dynamic_whatIsAddress", insurerCompanyName),
-        title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany"))
+        title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany")),
+        entityName = insurerCompanyName
       ),
       None
     )(fakeRequest, messages).toString

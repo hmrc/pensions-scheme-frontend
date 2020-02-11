@@ -158,7 +158,8 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
       routes.PartnerPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       title = previousAddressTitle,
-      heading = previousAddressHeading
+      heading = previousAddressHeading,
+      entityName = partnerDetails.fullName
     )
   }
 }

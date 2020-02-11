@@ -59,7 +59,14 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
     implicit request =>
       viewModel(mode, srn).right.map {
         vm =>
-          post(vm, InsurerSelectAddressId, InsurerConfirmAddressId, mode, "Insurer Address",InsurerEnterPostCodeId)
+          post(
+            viewModel = vm,
+            navigatorId = InsurerSelectAddressId,
+            dataId = InsurerConfirmAddressId,
+            mode = mode,
+            context = s"Insurer Address: ${vm.entityName}",
+            postCodeLookupIdForCleanup = InsurerEnterPostCodeId
+          )
       }
   }
 
@@ -73,8 +80,11 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
           addresses = addresses,
           srn = srn,
           heading = Message("messages__dynamic_whatIsAddress", name),
-          title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany"))
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany")),
+          entityName = name
         )
-    }.left.map(_ => Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn))))
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.InsurerEnterPostcodeController.onPageLoad(mode, srn)))
+    )
   }
 }

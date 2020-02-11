@@ -159,7 +159,8 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
       routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
       addresses,
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
-      heading = Message("messages__dynamic_whatIsAddress", directorDetails.fullName)
+      heading = Message("messages__dynamic_whatIsAddress", directorDetails.fullName),
+      entityName = directorDetails.fullName
     )
   }
 

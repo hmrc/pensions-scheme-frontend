@@ -267,7 +267,8 @@ object AddressListControllerSpec {
       title = Message("title text"),
       heading = Message("heading text"),
       selectAddress = Message("select an address text"),
-      selectAddressLink = Message("select an address link text")
+      selectAddressLink = Message("select an address link text"),
+      entityName = "test name"
     )
 
 }

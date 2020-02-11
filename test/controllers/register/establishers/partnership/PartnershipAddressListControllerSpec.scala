@@ -156,7 +156,8 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
       routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
       addresses,
       title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
-      heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name)
+      heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name),
+      entityName = partnershipDetails.name
     )
   }
 }

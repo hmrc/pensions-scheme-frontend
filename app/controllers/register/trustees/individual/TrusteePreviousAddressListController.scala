@@ -23,12 +23,11 @@ import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -46,55 +45,47 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      requireData: DataRequiredAction,
                                                      val auditService: AuditService,
                                                      val controllerComponents: MessagesControllerComponents,
-                                                     val view: addressList)(implicit val ec: ExecutionContext)
-    extends AddressListController
-    with Retrievals
-    with I18nSupport {
+                                                     val view: addressList
+                                                    )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals with I18nSupport {
 
-  def viewmodel(mode: Mode, index: Index, srn: Option[String], name: String, addresses: Seq[TolerantAddress])(
-      implicit request: DataRequest[AnyContent]): AddressListViewModel =
-    AddressListViewModel(
-      routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
-      routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
-      addresses,
-      title = Message("messages__trustee__individual__previous__address__heading", Message("messages__theIndividual")),
-      heading = Message("messages__trustee__individual__previous__address__heading", name),
-      srn = srn
+  def viewModel(mode: Mode, index: Index, srn: Option[String])
+               (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
+
+    (TrusteeNameId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right.map {
+      case name ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),
+          manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
+          addresses = addresses,
+          title = Message("messages__trustee__individual__previous__address__heading", Message("messages__theIndividual")),
+          heading = Message("messages__trustee__individual__previous__address__heading", name.fullName),
+          srn = srn,
+          entityName = name.fullName
+        )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)))
     )
 
+
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
-      (trusteeName(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            get(viewmodel(mode, index, srn, name, addresses))
-        }
-        .left
-        .map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map(get)
     }
 
-  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) =>
-    Retrieval { implicit request =>
-      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-  }
-
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async { implicit request =>
-      (trusteeName(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right
-        .map {
-          case name ~ addresses =>
-            val context = s"Trustee Individual Previous Address: $name"
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map {
+          vm =>
             post(
-              viewmodel(mode, index, srn, name, addresses),
-              TrusteePreviousAddressListId(index),
-              TrusteePreviousAddressId(index),
-              mode,
-              context,
-              IndividualPreviousAddressPostCodeLookupId(index)
+              viewModel = vm,
+              navigatorId = TrusteePreviousAddressListId(index),
+              dataId = TrusteePreviousAddressId(index),
+              mode = mode,
+              context = s"Trustee Individual Previous Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = IndividualPreviousAddressPostCodeLookupId(index)
             )
         }
-        .left
-        .map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn))))
-
     }
 }
