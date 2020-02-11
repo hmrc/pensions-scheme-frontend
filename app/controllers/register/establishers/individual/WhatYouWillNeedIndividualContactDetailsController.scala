@@ -25,9 +25,9 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
@@ -35,14 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualContactDetailsController @Inject()(
                                                                    val appConfig: FrontendAppConfig,
-                                                                   val messagesApi: MessagesApi,
+                                                                   override val messagesApi: MessagesApi,
                                                                    val userAnswersService: UserAnswersService,
                                                                    val navigator: Navigator,
                                                                    authenticate: AuthAction,
                                                                    getData: DataRetrievalAction,
                                                                    allowAccess: AllowAccessActionProvider,
-                                                                   requireData: DataRequiredAction
-                                                                 )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                                   requireData: DataRequiredAction,
+                                                                   val controllerComponents: MessagesControllerComponents,
+                                                                   val view: whatYouWillNeedContactDetails
+                                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -52,7 +54,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(
         EstablisherNameId(index).retrieve.right.map {
           name =>
             Future.successful(Ok(
-              whatYouWillNeedContactDetails(appConfig, existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))
+              view(existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))
         }
       }
     }

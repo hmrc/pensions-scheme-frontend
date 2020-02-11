@@ -20,14 +20,17 @@
 @import viewmodels.CommonFormWithHintViewModel
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, viewmodel.title),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, viewmodel.title)) {
 
-    @helpers.form(action = viewmodel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 

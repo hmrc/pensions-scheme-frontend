@@ -22,9 +22,9 @@ import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.director.DirectorHasUTRId
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -91,6 +91,8 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
     hint = Some(Message("messages__hasUtr__p1"))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorHasUTRController =
     new DirectorHasUTRController(
       frontendAppConfig,
@@ -101,9 +103,11 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 }
 

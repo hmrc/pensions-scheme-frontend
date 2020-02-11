@@ -17,7 +17,6 @@
 package identifiers.register.establishers.company
 
 import base.SpecBase
-import com.thoughtworks.selenium.webdriven.commands.IsEditable
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.requests.DataRequest

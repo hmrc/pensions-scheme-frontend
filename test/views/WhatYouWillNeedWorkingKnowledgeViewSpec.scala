@@ -24,7 +24,9 @@ class WhatYouWillNeedWorkingKnowledgeViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "what_you_will_need_wk"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedWorkingKnowledge(frontendAppConfig, None)(fakeRequest, messages)
+  val view: whatYouWillNeedWorkingKnowledge = app.injector.instanceOf[whatYouWillNeedWorkingKnowledge]
+
+  def createView: () => HtmlFormat.Appendable = () => view(None)(fakeRequest, messages)
 
   "WhatYouWillNeedWorkingKnowledge view" must {
 

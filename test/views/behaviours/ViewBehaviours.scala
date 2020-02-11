@@ -16,7 +16,7 @@
 
 package views.behaviours
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -36,12 +36,12 @@ trait ViewBehaviours extends ViewSpecBase {
           val doc = asDocument(view())
           val nav = doc.getElementById("proposition-menu")
           val span = nav.children.first
-          span.text mustBe messagesApi("site.service_name")
+          span.text mustBe messages("site.service_name")
         }
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", title + " - " + messagesApi("messages__pension_scheme_registration__title"))
+          assertEqualsMessage(doc, "title", title + " - " + messages("messages__pension_scheme_registration__title"))
         }
 
         "display the correct page header" in {
@@ -70,12 +70,12 @@ trait ViewBehaviours extends ViewSpecBase {
           val doc = asDocument(view())
           val nav = doc.getElementById("proposition-menu")
           val span = nav.children.first
-          span.text mustBe messagesApi("site.service_name")
+          span.text mustBe messages("site.service_name")
         }
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", title + " - " + messagesApi("messages__pension_scheme_registration__title"))
+          assertEqualsMessage(doc, "title", title + " - " + messages("messages__pension_scheme_registration__title"))
         }
 
         "display the correct page header" in {
@@ -102,7 +102,7 @@ trait ViewBehaviours extends ViewSpecBase {
           val doc = asDocument(view())
           val nav = doc.getElementById("proposition-menu")
           val span = nav.children.first
-          span.text mustBe messagesApi("site.service_name")
+          span.text mustBe messages("site.service_name")
         }
 
         "display the correct page title" in {
@@ -130,7 +130,7 @@ trait ViewBehaviours extends ViewSpecBase {
       "rendered" must {
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", pageHeader + " - " + messagesApi("messages__pension_scheme_registration__title"))
+          assertEqualsMessage(doc, "title", pageHeader + " - " + messages("messages__pension_scheme_registration__title"))
         }
 
       }
@@ -146,7 +146,7 @@ trait ViewBehaviours extends ViewSpecBase {
     normalPageWithTitle(
       view,
       messageKeyPrefix,
-      messagesApi(s"messages__${messageKeyPrefix}__title"),
+      messages(s"messages__${messageKeyPrefix}__title"),
       pageHeader,
       expectedGuidanceKeys: _*
     )
@@ -159,7 +159,7 @@ trait ViewBehaviours extends ViewSpecBase {
     normalPageWithTitle(
       view,
       messageKeyPrefix,
-      messagesApi(s"messages__${messageKeyPrefix}__title", msgArgs: _*),
+      messages(s"messages__${messageKeyPrefix}__title", msgArgs: _*),
       pageHeader
     )
   }
@@ -222,7 +222,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
     val day = LocalDate.now().getDayOfMonth
     val year = LocalDate.now().getYear
-    val month = LocalDate.now().getMonthOfYear
+    val month = LocalDate.now().getMonthValue
 
 
     val validData: Map[String, String] = Map(
@@ -284,7 +284,7 @@ trait ViewBehaviours extends ViewSpecBase {
         "firstName" -> "testFirstName",
         "lastName" -> "testLastName",
         "date.day" -> s"${tomorrow.getDayOfMonth}",
-        "date.month" -> s"${tomorrow.getMonthOfYear}",
+        "date.month" -> s"${tomorrow.getMonthValue}",
         "date.year" -> s"${tomorrow.getYear}"
       )
       val doc = asDocument(view(form.bind(invalidData)))

@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
 
@@ -35,36 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import TypeOfBenefitsControllerSpec._
-
-  "Type of benefits Controller" when {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(TypeOfBenefits.values.head),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswers(
-      saveAction(this),
-      postRequest,
-      TypeOfBenefitsId,
-      TypeOfBenefits.values.head
-    )
-  }
-}
-object TypeOfBenefitsControllerSpec {
+  private val view = injector.instanceOf[typeOfBenefits]
   private val formProvider = new TypeOfBenefitsFormProvider()
   private val form = formProvider.apply()
   private val validData: UserAnswers = UserAnswers(Json.obj(
@@ -72,34 +44,63 @@ object TypeOfBenefitsControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    typeOfBenefits(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"))(base.fakeRequest, base.messages).toString()
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): TypeOfBenefitsController =
     new TypeOfBenefitsController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode)
+  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode)
+
+  "Type of benefits Controller" when {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(TypeOfBenefits.values.head),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction,
+      postRequest,
+      TypeOfBenefitsId,
+      TypeOfBenefits.values.head
+    )
+  }
 }
 

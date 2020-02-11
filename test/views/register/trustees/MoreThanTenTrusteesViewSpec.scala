@@ -28,13 +28,16 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "moreThanTenTrustees"
   val form = new MoreThanTenTrusteesFormProvider()()
   val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
-  private def createView() = () => moreThanTenTrustees(
-    frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
-  private def createUpdateView = () => moreThanTenTrustees(
-    frontendAppConfig, form, UpdateMode, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(
-    frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
+  val view: moreThanTenTrustees = app.injector.instanceOf[moreThanTenTrustees]
+
+  private def createView() = () => view(
+    form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => view(
+    form, UpdateMode, None, submitUrl, Some("srn"))(fakeRequest, messages)
+
+  private def createViewUsingForm = (form: Form[_]) => view(
+    form, NormalMode, None, submitUrl, None)(fakeRequest, messages)
 
   "MoreThanTenTrustees view" must {
 

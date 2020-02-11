@@ -32,14 +32,16 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
   val form = new WorkingKnowledgeFormProvider()()
 
+  val view: workingKnowledge = app.injector.instanceOf[workingKnowledge]
+
   def createView: () => HtmlFormat.Appendable = () =>
-    workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+    view(form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    workingKnowledge(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
+    view(form, CheckMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+    view(form, NormalMode, scheme)(fakeRequest, messages)
 
   "Working Knowledge view" must {
 

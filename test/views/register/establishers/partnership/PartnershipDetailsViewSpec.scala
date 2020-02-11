@@ -32,13 +32,16 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   private val firstIndex = Index(1)
 
   private val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
+
+  val view: partnershipDetails = app.injector.instanceOf[partnershipDetails]
+
   private def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
   private def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
+    view(form, NormalMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
   "PartnershipDetails view" must {
 

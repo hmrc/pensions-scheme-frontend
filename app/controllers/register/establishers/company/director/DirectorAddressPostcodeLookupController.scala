@@ -27,11 +27,12 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -43,9 +44,11 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          @EstablishersCompanyDirector override val navigator: Navigator,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
-                                                          allowAccess: AllowAccessActionProvider,
-                                                          requireData: DataRequiredAction,
-                                                         formProvider: PostCodeLookupFormProvider
+                                                         allowAccess: AllowAccessActionProvider,
+                                                         requireData: DataRequiredAction,
+                                                         formProvider: PostCodeLookupFormProvider,
+                                                         val view: postcodeLookup,
+                                                         val controllerComponents: MessagesControllerComponents
                                                        )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
@@ -83,7 +86,7 @@ class DirectorAddressPostcodeLookupController @Inject()(
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
   }
 
 }

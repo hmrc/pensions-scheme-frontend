@@ -17,18 +17,18 @@
 package controllers
 
 import audit.testdoubles.StubSuccessfulAuditService
-import controllers.InsurerConfirmAddressControllerSpec.fakeAuditService
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import models.NormalMode
 import models.address.TolerantAddress
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -52,6 +52,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
 
   val form: Form[_] = formProvider(Seq(0))
 
+  private val view = injector.instanceOf[addressList]
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs,
                   userAnswersService: UserAnswersService = FakeUserAnswersService
@@ -64,12 +65,13 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      fakeAuditService
+      fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
-    addressList(
-      frontendAppConfig,
+    view(
       form,
       AddressListViewModel(
         routes.InsurerSelectAddressController.onSubmit(NormalMode, None),

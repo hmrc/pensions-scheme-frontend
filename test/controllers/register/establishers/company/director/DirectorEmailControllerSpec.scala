@@ -23,15 +23,15 @@ import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.{FakeNavigator, UserAnswers, _}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
-import utils._
 
 class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -43,6 +43,8 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
 
   private val estCompanyDirector = UserAnswers().set(DirectorNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
 
+  private val view = injector.instanceOf[emailAddress]
+
   def controller(dataRetrievalAction: DataRetrievalAction = estCompanyDirector): DirectorEmailController =
     new DirectorEmailController(frontendAppConfig,
       messagesApi,
@@ -52,12 +54,13 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    emailAddress(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),

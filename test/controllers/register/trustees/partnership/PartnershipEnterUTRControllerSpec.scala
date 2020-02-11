@@ -16,24 +16,24 @@
 
 package controllers.register.trustees.partnership
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasUTRId, PartnershipNoUTRReasonId, PartnershipEnterUTRId}
-import models.{CheckUpdateMode, Index, NormalMode, PartnershipDetails, ReferenceValue}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
+import models.{Index, NormalMode, PartnershipDetails, ReferenceValue}
 import org.scalatest.MustMatchers
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import PartnershipEnterUTRControllerSpec._
 
@@ -89,8 +89,10 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
     srn = srn
   )
 
+  private val view = injector.instanceOf[utr]
+
   def viewAsString(form: Form[_] = form) =
-    utr(frontendAppConfig, form, viewModel, schemeName = None)(fakeRequest, messages).toString
+    view(form, viewModel, schemeName = None)(fakeRequest, messages).toString
 
   def getDataWithNoUtrReason: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -114,7 +116,9 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 }
 

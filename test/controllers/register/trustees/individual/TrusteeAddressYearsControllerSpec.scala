@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -118,6 +119,8 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
+  private val view = injector.instanceOf[addressYears]
+
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new TrusteeAddressYearsController(
       frontendAppConfig,
@@ -127,7 +130,9 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl()
+      new DataRequiredActionImpl(),
+      stubMessagesControllerComponents(),
+      view
     )
 
   private val viewModel =
@@ -140,8 +145,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[AddressYears] = form) =
-    addressYears(
-      frontendAppConfig,
+    view(
       form,
       viewModel,
       None

@@ -18,8 +18,8 @@ package views
 
 import controllers.routes
 import forms.register.DeclarationFormProvider
-import org.jsoup.Jsoup
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.variationDeclaration
@@ -27,13 +27,15 @@ import views.html.variationDeclaration
 class VariationDeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   private val messageKeyPrefix = "variationDeclaration"
 
-  val srn = Some("srn")
+  val srn: Option[String] = Some("srn")
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  val postCall = routes.VariationDeclarationController.onClickAgree(srn)
+  val postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
+  val view: variationDeclaration = app.injector.instanceOf[variationDeclaration]
 
-  def createView: () => HtmlFormat.Appendable = () => variationDeclaration(frontendAppConfig,
+
+  def createView: () => HtmlFormat.Appendable = () => view(
     Some(schemeName), srn, postCall)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {

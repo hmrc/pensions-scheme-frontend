@@ -20,9 +20,10 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.membershipPensionRegulator
 
@@ -30,6 +31,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
+  private val view = injector.instanceOf[membershipPensionRegulator]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MembershipPensionRegulatorController =
     new MembershipPensionRegulatorController(frontendAppConfig,
       messagesApi,
@@ -37,10 +39,12 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
       FakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl()
+      new DataRequiredActionImpl(),
+      stubMessagesControllerComponents(),
+      view
     )
 
-  def viewAsString(): String = membershipPensionRegulator(frontendAppConfig, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(NormalMode, None)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 

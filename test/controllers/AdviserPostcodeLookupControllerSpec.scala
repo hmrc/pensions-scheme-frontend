@@ -16,9 +16,8 @@
 
 package controllers
 
-import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.NormalMode
@@ -28,23 +27,25 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.annotations.Adviser
 import utils.FakeNavigator
+import utils.annotations.Adviser
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   def onwardRoute: Call = controllers.routes.AdviserAddressListController.onPageLoad(NormalMode)
 
@@ -62,12 +63,13 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
   private val testAnswer = "AB12 1AB"
 
   val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
+  private val view = injector.instanceOf[postcodeLookup]
 
-  lazy val viewModel = PostcodeLookupViewModel(
+  lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
     manualInputCall = manualInputCall,
     title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
@@ -91,15 +93,14 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-          val request = addToken(FakeRequest(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
+          val request = addCSRFToken(FakeRequest(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual postcodeLookup(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
             viewModel,
             None
@@ -109,7 +110,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
+  //    val call: Call = routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
 
       val validPostcode = "ZZ1 1ZZ"
 
@@ -131,11 +132,10 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(call)
-            .withFormUrlEncodedBody("postcode" -> validPostcode)
-            .withHeaders("Csrf-Token" -> "nocheck"))
-
-          val result = route(app, fakeRequest).value
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody("postcode" -> validPostcode))
+          val controller = app.injector.instanceOf[AdviserPostCodeLookupController]
+          val result = controller.onSubmit(NormalMode)(fakeRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardRoute.url

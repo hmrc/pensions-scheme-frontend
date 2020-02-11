@@ -31,13 +31,14 @@ import models.{CompanyDetails, PartnershipDetails}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
@@ -164,6 +165,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val psaId = PsaId("A0000000")
 
+  private val view = injector.instanceOf[declaration]
+
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector
                         ): DeclarationController =
@@ -178,13 +181,14 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       applicationCrypto,
-      fakePensionAdminstratorConnector
+      fakePensionAdminstratorConnector,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
-    declaration(
-      frontendAppConfig,
+    view(
       isCompany,
       isDormant,
       showMasterTrustDeclaration,

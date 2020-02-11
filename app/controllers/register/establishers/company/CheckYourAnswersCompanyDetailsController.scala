@@ -27,9 +27,9 @@ import models.Mode.checkMode
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
@@ -49,10 +49,11 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           implicit val countryOptions: CountryOptions,
                                                           @EstablishersCompany navigator: Navigator,
                                                           userAnswersService: UserAnswersService,
-                                                          allowChangeHelper: AllowChangeHelper
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+                                                          allowChangeHelper: AllowChangeHelper,
+                                                          val controllerComponents: MessagesControllerComponents,
+                                                          val view: checkYourAnswers
+                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
-
 
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -78,7 +79,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val titleCompanyDetails:Message = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
+        val titleCompanyDetails: Message = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
@@ -89,9 +90,9 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titleCompanyDetails,
-          h1 =  headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+          h1 = headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig,vm )))
+        Future.successful(Ok(view(vm)))
     }
 }

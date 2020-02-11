@@ -16,6 +16,8 @@
 
 package controllers.register.establishers
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
@@ -25,11 +27,11 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.person.PersonName
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 
@@ -131,6 +133,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
+  private val view = injector.instanceOf[addEstablisher]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
     new AddEstablisherController(
       frontendAppConfig,
@@ -140,12 +144,13 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
-    addEstablisher(
-      frontendAppConfig,
+    view(
       form,
       NormalMode,
       allEstablishers,
@@ -154,7 +159,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth
-  private val month = LocalDate.now().getMonthOfYear
+  private val month = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear - 20
 
   private val personDetails = PersonName("John", "Doe")

@@ -18,7 +18,6 @@ package controllers.register.trustees.partnership
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -32,6 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -42,25 +42,26 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val form = formProvider()
+  val form: Form[Address] = formProvider()
   val partnershipName = "test partnership name"
-  val index = Index(0)
+  val index: Index = Index(0)
   val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  val address = Address("address line 1", "address line 2", None, None, None, "GB")
+  val address: Address = Address("address line 1", "address line 2", None, None, None, "GB")
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
   private val validData = Json.obj(
     TrusteesId.toString -> Json.arr(
       Json.obj(
-        PartnershipDetailsId.toString -> PartnershipDetails(partnershipName, false),
+        PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
         PartnershipPreviousAddressId.toString -> address
       )
     )
   )
+  private val view = injector.instanceOf[manualAddress]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipPreviousAddressController =
     new PartnershipPreviousAddressController(
@@ -74,12 +75,13 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
-      fakeAuditService
+      fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    manualAddress(
-      frontendAppConfig,
+    view(
       form,
       ManualAddressViewModel(
         routes.PartnershipPreviousAddressController.onSubmit(NormalMode, index, None),

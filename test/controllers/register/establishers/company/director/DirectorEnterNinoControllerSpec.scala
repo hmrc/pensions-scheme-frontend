@@ -32,10 +32,11 @@ import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 //scalastyle:off magic.number
 
-class DirectorNinoNewControllerSpec extends ControllerSpecBase {
+class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -76,10 +77,11 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
     )
   )
 
+  private val view = injector.instanceOf[nino]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorEnterNINOController =
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
 
   def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
@@ -90,7 +92,7 @@ class DirectorNinoNewControllerSpec extends ControllerSpecBase {
       srn = None
     )
 
-    nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+    view(form, viewmodel, None)(fakeRequest, messages).toString
   }
 
   "DirectorNino Controller" must {

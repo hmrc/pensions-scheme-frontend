@@ -22,14 +22,16 @@ import views.html.service_unavailable
 
 class ServiceUnavailableViewSpec extends ViewBehaviours {
 
-  def view: () => HtmlFormat.Appendable = () => service_unavailable(frontendAppConfig)(fakeRequest, messages)
+  val view: service_unavailable = app.injector.instanceOf[service_unavailable]
+
+  def createView: () => HtmlFormat.Appendable = () => view()(fakeRequest, messages)
 
   "Service Unavailable view" must {
 
-    behave like normalPage(view, "service_unavailable", messages("messages__service_unavailable__title"))
+    behave like normalPage(createView, "service_unavailable", messages("messages__service_unavailable__title"))
 
     "have a gov uk link" in {
-      val doc = asDocument(view())
+      val doc = asDocument(createView())
       assertRenderedById(doc, "gov-uk-link")
     }
   }

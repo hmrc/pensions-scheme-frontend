@@ -18,12 +18,14 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@(schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__whatYouWillNeedAddress__title"),
-    appConfig = appConfig,
-    bodyClasses = None
+    title = messages("messages__whatYouWillNeedAddress__title")
 ) {
     @components.back_link()
     @components.heading(headingKey = messages("messages__addressFor", companyName))

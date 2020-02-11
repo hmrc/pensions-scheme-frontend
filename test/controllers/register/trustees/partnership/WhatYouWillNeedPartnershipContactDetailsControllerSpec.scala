@@ -23,7 +23,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
-import viewmodels.{CommonFormWithHintViewModel, Message}
+import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
@@ -31,9 +31,8 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
   def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
-
-  def viewAsString(): String = whatYouWillNeedContactDetails(
-    frontendAppConfig,
+  private val view = injector.instanceOf[whatYouWillNeedContactDetails]
+  def viewAsString(): String = view(
     None,
     controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
     None,

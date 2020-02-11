@@ -25,14 +25,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.ReasonViewModel
 import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ReasonController extends FrontendController with Retrievals with I18nSupport {
+trait ReasonController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -42,6 +42,8 @@ trait ReasonController extends FrontendController with Retrievals with I18nSuppo
 
   protected def navigator: Navigator
 
+  protected def view: reason
+
   def get(id: TypedIdentifier[String], viewmodel: ReasonViewModel, form: Form[String])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id) match {
@@ -49,14 +51,14 @@ trait ReasonController extends FrontendController with Retrievals with I18nSuppo
       case _ => form
     }
 
-    Future.successful(Ok(reason(appConfig, preparedForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[String], mode: Mode, viewmodel: ReasonViewModel, form: Form[String])
           (implicit request: DataRequest[AnyContent]): Future[Result] =
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(reason(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       reason =>
         userAnswersService.save(mode, viewmodel.srn, id, reason).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))

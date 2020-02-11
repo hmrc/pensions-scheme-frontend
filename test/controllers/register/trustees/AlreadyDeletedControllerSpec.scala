@@ -22,6 +22,7 @@ import models.register.trustees.TrusteeKind
 import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
@@ -37,17 +38,21 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
     returnCall = onwardRoute
   )
 
+
+  private val view = injector.instanceOf[alreadyDeleted]
+
   def controller(dataRetrievalAction: DataRetrievalAction): AlreadyDeletedController =
     new AlreadyDeletedController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  def viewAsString(trusteeName: String): String = alreadyDeleted(
-    frontendAppConfig,
+  def viewAsString(trusteeName: String): String = view(
     viewmodel(trusteeName)
   )(fakeRequest, messages).toString
 

@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherEnterNINOId}
+import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -28,6 +28,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.NinoViewModel
 import views.html.nino
@@ -122,6 +123,8 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
         SchemeNameId.toString -> schemeName
       )))
 
+  private val view = injector.instanceOf[nino]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = basicData): EstablisherEnterNINOController =
     new EstablisherEnterNINOController(
       frontendAppConfig,
@@ -132,7 +135,9 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
@@ -144,6 +149,6 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       srn = srn
     )
 
-    nino(frontendAppConfig, form, vm, Some(schemeName))(fakeRequest, messages).toString
+    view(form, vm, Some(schemeName))(fakeRequest, messages).toString
   }
 }

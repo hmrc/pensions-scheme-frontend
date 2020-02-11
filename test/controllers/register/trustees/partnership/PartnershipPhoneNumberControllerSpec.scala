@@ -21,7 +21,7 @@ import forms.PhoneFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -43,10 +43,10 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
   private val trusteePartnershipDetails = PartnershipDetails("test partnership")
 
   private val fullAnswers = UserAnswers().trusteePartnershipDetails(firstIndex, trusteePartnershipDetails)
+  private val view = injector.instanceOf[phoneNumber]
 
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, None),

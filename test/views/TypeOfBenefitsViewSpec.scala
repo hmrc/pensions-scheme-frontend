@@ -29,11 +29,13 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
   val form = new TypeOfBenefitsFormProvider()()
   val schemeName = "schemename"
 
+  val view: typeOfBenefits = app.injector.instanceOf[typeOfBenefits]
+
   private def createView() = () =>
-    typeOfBenefits(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    view(form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    typeOfBenefits(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    view(form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   "Type of benefits view" when {
     "rendered" must {

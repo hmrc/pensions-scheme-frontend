@@ -33,9 +33,9 @@ import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.Establishers
 import views.html.register.establishers.confirmDeleteEstablisher
@@ -51,8 +51,10 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     getData: DataRetrievalAction,
                                                     allowAccess: AllowAccessActionProvider,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: ConfirmDeleteEstablisherFormProvider
-                                                  )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                    formProvider: ConfirmDeleteEstablisherFormProvider,
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    val view: confirmDeleteEstablisher
+                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -66,8 +68,7 @@ class ConfirmDeleteEstablisherController @Inject()(
             } else {
               Future.successful(
                 Ok(
-                  confirmDeleteEstablisher(
-                    appConfig,
+                  view(
                     form,
                     establisher.name,
                     getHintText(establisherKind),
@@ -81,7 +82,7 @@ class ConfirmDeleteEstablisherController @Inject()(
         } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
 
-  private def getHintText(establisherKind: EstablisherKind): Option[String] = {
+  private def getHintText(establisherKind: EstablisherKind)(implicit request: DataRequest[AnyContent]): Option[String] = {
     establisherKind match {
       case EstablisherKind.Company =>
         Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
@@ -132,8 +133,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     srn: Option[String])(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(confirmDeleteEstablisher(
-          appConfig,
+        Future.successful(BadRequest(view(
           formWithErrors,
           name,
           getHintText(establisherKind),

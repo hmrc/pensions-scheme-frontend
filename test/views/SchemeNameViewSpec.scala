@@ -29,13 +29,15 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
   override val form = new SchemeNameFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+  val view: schemeName = app.injector.instanceOf[schemeName]
+
+  def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+    view(form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    schemeName(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
+    view(form, CheckMode, scheme)(fakeRequest, messages)
 
   "SchemeName view" must {
 

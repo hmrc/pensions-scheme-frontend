@@ -30,13 +30,16 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None)
-  private def createView() = () => companyDetails(
-    frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
-  private def createUpdateView = () => companyDetails(
-    frontendAppConfig, form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
+
+  val view: companyDetails = app.injector.instanceOf[companyDetails]
+
+  private def createView() = () => view(
+    form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+  private def createUpdateView = () => view(
+    form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {

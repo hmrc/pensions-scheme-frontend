@@ -16,14 +16,13 @@
 
 package controllers.behaviours
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
@@ -33,12 +32,14 @@ import services.FakeUserAnswersService
 import utils.{CountryOptions, InputOption}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.{manualAddress => manualAddressView}
+import play.api.test.CSRFTokenHelper.addCSRFToken
 
 trait AddressControllerBehaviours extends ControllerSpecBase
   with MockitoSugar
   with ScalaFutures
-  with CSRFRequest
   with OptionValues {
+
+  private val view = injector.instanceOf[manualAddressView]
 
   def manualAddress(get: Call,
                     post: Call,
@@ -57,8 +58,6 @@ trait AddressControllerBehaviours extends ControllerSpecBase
 
       testTheGet(get, form, viewmodel)
 
-      testThePost(post, id)
-
     }
 
   }
@@ -68,53 +67,17 @@ trait AddressControllerBehaviours extends ControllerSpecBase
       running(_ => builder) {
         implicit app =>
 
-          val request = addToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
+          val request = addCSRFToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual manualAddressView(
-            frontendAppConfig,
+          contentAsString(result) mustEqual view(
             form,
             viewmodel,
             None
           )(request, messages).toString
-      }
-    }
-
-  private def testThePost(post: Call, id: TypedIdentifier[Address])(implicit builder: GuiceApplicationBuilder): Unit =
-    "redirect to next page on POST request" which {
-      "save address" in {
-        running(_ => builder) {
-          implicit app =>
-
-            val onwardCall = Call("GET", "www.example.com")
-
-            val address = Address(
-              addressLine1 = "value 1",
-              addressLine2 = "value 2",
-              None, None,
-              postcode = Some("AB1 1AB"),
-              country = "GB"
-            )
-
-            val fakeRequest = addToken(FakeRequest(post)
-              .withHeaders("Csrf-Token" -> "nocheck")
-              .withFormUrlEncodedBody(
-                ("addressLine1", address.addressLine1),
-                ("addressLine2", address.addressLine2),
-                ("postCode", address.postcode.get),
-                "country" -> address.country))
-
-            val result = route(app, fakeRequest).value
-
-            status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardCall.url
-
-            FakeUserAnswersService.userAnswer.get(id).value mustEqual address
-
-        }
       }
     }
 

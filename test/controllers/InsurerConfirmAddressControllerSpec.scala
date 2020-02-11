@@ -18,7 +18,6 @@ package controllers
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
@@ -31,6 +30,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -40,27 +40,73 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
 
   import InsurerConfirmAddressControllerSpec._
 
+  val view = injector.instanceOf[manualAddress]
+
+  def viewAsString(form: Form[_]): Form[_] => String =
+    form =>
+      view(
+        form,ManualAddressViewModel(
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
+          options,
+          Message("messages__insurer_confirm_address__title"),
+          Message("messages__common__confirmAddress__h1", insuranceCompanyName),
+          None
+        ),
+        Some(schemeName)
+      )(fakeRequest, messages).toString()
+
+  private def controller(
+                          dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                          authAction: AuthAction = FakeAuthAction,
+                          navigator: Navigator = FakeNavigator,
+                          cache: UserAnswersService = FakeUserAnswersService
+                        ): InsurerConfirmAddressController =
+    new InsurerConfirmAddressController(
+      frontendAppConfig,
+      messagesApi,
+      cache,
+      navigator,
+      authAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl(),
+      formProvider,
+      countryOptions,
+      fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
+    )
+
+  def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+
+  def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+
+  def saveAction(cachex: UserAnswersService): Action[AnyContent] =
+    controller(cache = cachex).onSubmit(NormalMode, None)
+
   "InsurerConfirmAddressController" when {
 
     behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
+      onPageLoadAction,
       minData,
       validData.dataRetrievalAction,
       form,
       form.fill(insurerAddressData),
-      viewAsString(this)(form)
+      viewAsString(form)
     )
 
     behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
+      onSubmitAction(navigator),
       validData.dataRetrievalAction,
       form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
+      viewAsString(form),
       postRequest
     )
 
     behave like controllerThatUpsertUserAnswersWithService(
-      saveAction(this),
+      saveAction,
       postRequest,
       InsurerConfirmAddressId,
       insurerAddressData
@@ -73,7 +119,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       val validData: UserAnswers = UserAnswers().schemeName(schemeName)
         .insuranceCompanyName(insuranceCompanyName)
         .insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
-      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
 
       whenReady(result) {
         _ =>
@@ -99,7 +145,6 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
 
 object InsurerConfirmAddressControllerSpec {
 
-  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   private val schemeName = "test scheme"
   private val insuranceCompanyName = "test insurance company"
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
@@ -122,46 +167,4 @@ object InsurerConfirmAddressControllerSpec {
   val formProvider: AddressFormProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider.apply()
 
-  def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String =
-    form =>
-      manualAddress(
-        base.frontendAppConfig,
-        form,ManualAddressViewModel(
-          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
-          options,
-          Message("messages__insurer_confirm_address__title"),
-          Message("messages__common__confirmAddress__h1", insuranceCompanyName),
-          None
-        ),
-        Some(schemeName)
-      )(base.fakeRequest, base.messages).toString()
-
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
-    authAction: AuthAction = FakeAuthAction,
-    navigator: Navigator = FakeNavigator,
-    cache: UserAnswersService = FakeUserAnswersService
-  ): InsurerConfirmAddressController =
-    new InsurerConfirmAddressController(
-      base.frontendAppConfig,
-      base.messagesApi,
-      cache,
-      navigator,
-      authAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl(),
-      formProvider,
-      countryOptions,
-      fakeAuditService
-    )
-
-  def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
-
-  def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
-
-  def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode, None)
 }

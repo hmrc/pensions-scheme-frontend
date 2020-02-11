@@ -25,7 +25,9 @@ class BeforeYouStartViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "before_you_start"
   private val psaName = "Psa Name"
 
-  def createView: () => HtmlFormat.Appendable = () => beforeYouStart(frontendAppConfig, psaName)(fakeRequest, messages)
+  val view: beforeYouStart = app.injector.instanceOf[beforeYouStart]
+
+  def createView: () => HtmlFormat.Appendable = () => view(psaName)(fakeRequest, messages)
 
   "BeforeYouStart view" must {
 

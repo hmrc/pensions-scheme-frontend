@@ -26,11 +26,12 @@ import models.{Mode, NormalMode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -55,11 +56,15 @@ class NinoControllerSpec extends ControllerSpecBase {
   val formProvider = new NINOFormProvider()
   val form = formProvider("Mark")
 
+  private val view = injector.instanceOf[nino]
+
   class TestNinoController @Inject()(
                                       override val appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
                                       override val userAnswersService: UserAnswersService,
-                                      override val navigator: Navigator
+                                      override val navigator: Navigator,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: nino
                                     )(implicit val ec: ExecutionContext) extends NinoController {
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
@@ -76,10 +81,12 @@ class NinoControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
-      new FakeNavigator(desiredRoute = onwardRoute)
+      new FakeNavigator(desiredRoute = onwardRoute),
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewmodel, None)(fakeRequest, messages).toString
 
 
   "NinoController" must {

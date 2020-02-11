@@ -41,11 +41,13 @@ class EnterVATViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     srn = srn
   )
 
+  val view: enterVATView = app.injector.instanceOf[enterVATView]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    enterVATView(frontendAppConfig, form, viewModel(Some("srn")), None)(fakeRequest, messages)
+    view(form, viewModel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    enterVATView(frontendAppConfig, form, viewModel(None), None)(fakeRequest, messages)
+    view(form, viewModel(None), None)(fakeRequest, messages)
 
   "Vat Variations view" when {
     "rendered" must {

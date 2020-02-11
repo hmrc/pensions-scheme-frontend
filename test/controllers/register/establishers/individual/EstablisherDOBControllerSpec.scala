@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.individual
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
@@ -24,18 +26,21 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
-import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import EstablisherDOBControllerSpec._
+
+  private val view = injector.instanceOf[DOB]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherDOBController =
     new EstablisherDOBController(
@@ -47,7 +52,10 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
+    )
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
@@ -81,14 +89,14 @@ object EstablisherDOBControllerSpec extends MockitoSugar {
   val index: Index = Index(0)
 
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherNameId.toString -> PersonName("Test", "Name"),
-        EstablisherDOBId.toString -> new LocalDate(year, month, day)
+        EstablisherDOBId.toString -> LocalDate.of(year, month, day)
       )
     )
   )

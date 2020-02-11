@@ -40,11 +40,13 @@ class UTRViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     srn = srn
   )
 
+  val view: utr = app.injector.instanceOf[utr]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    utr(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    view(form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    utr(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   "UTR view" when {
     "rendered" must {

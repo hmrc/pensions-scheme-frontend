@@ -33,11 +33,11 @@ import models.requests.DataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
@@ -55,8 +55,11 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                       pensionAdministratorConnector: PensionAdministratorConnector,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: declaration
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                        with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -90,7 +93,7 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            declaration(appConfig, isCompany, isDormant = isDeclarationDormant,
+            view(isCompany, isDormant = isDeclarationDormant,
               request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName, href)
           )
         )

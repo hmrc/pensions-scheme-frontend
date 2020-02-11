@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.partnership.partner
 
+import java.time.LocalDate
+
 import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
@@ -25,9 +27,9 @@ import models.Mode.checkMode
 import models.address.Address
 import models.person.PersonName
 import models.{Index, _}
-import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -38,6 +40,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   implicit val countryOptions = new FakeCountryOptions()
   implicit val request = FakeDataRequest(partnerAnswers)
+
+  private val view = injector.instanceOf[checkYourAnswers]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
@@ -51,13 +55,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
       countryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(mode: Mode = NormalMode,
                            answerSection: Seq[AnswerSection] = Seq.empty,
-                           srn: Option[String] = None, title:Message, h1:Message) = checkYourAnswers(
-    frontendAppConfig,
+                           srn: Option[String] = None, title:Message, h1:Message) = view(
     CYAViewModel(
       answerSections = answerSection,
       href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
@@ -141,7 +146,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)
-    .flatMap(_.set(PartnerDOBId(firstIndex, firstIndex))(new LocalDate(1962, 6, 9)))
+    .flatMap(_.set(PartnerDOBId(firstIndex, firstIndex))(LocalDate.of(1962, 6, 9)))
     .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(address))
     .flatMap(_.set(PartnerAddressYearsId(firstIndex, firstIndex))(AddressYears.UnderAYear))
     .flatMap(_.set(PartnerPreviousAddressId(firstIndex, firstIndex))(address))

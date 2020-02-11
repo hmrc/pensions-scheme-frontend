@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
@@ -27,43 +27,13 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insuranceCompanyName
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehaviours {
-
-  import InsuranceCompanyNameControllerSpec._
-
-  "InsuranceCompanyName Controller" must {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(companyName),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswersWithService(
-      saveAction(this),
-      postRequest,
-      InsuranceCompanyNameId,
-      companyName
-    )
-  }
-}
-object InsuranceCompanyNameControllerSpec extends SpecBase {
 
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
@@ -76,38 +46,68 @@ object InsuranceCompanyNameControllerSpec extends SpecBase {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
-  private val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+  private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName), postCall, None)(base.fakeRequest, base.messages).toString()
+  private val view = injector.instanceOf[insuranceCompanyName]
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersService = FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode, None)
+  private def saveAction(cache: UserAnswersService): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode, None)
+
+  "InsuranceCompanyName Controller" must {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(companyName),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswersWithService(
+      saveAction,
+      postRequest,
+      InsuranceCompanyNameId,
+      companyName
+    )
+  }
 }
 
 

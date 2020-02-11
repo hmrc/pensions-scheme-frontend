@@ -16,19 +16,16 @@
 
 package controllers
 
-import base.CSRFRequest
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
 import models.NormalMode
 import models.address.TolerantAddress
 import navigators.Navigator
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -38,11 +35,12 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-import scala.concurrent.Future
-
-class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
+class AdviserAddressListControllerSpec extends ControllerSpecBase {
 
   import AdviserAddressListControllerSpec._
+
+
+  private val view = injector.instanceOf[addressList]
 
   "Adviser Address List Controller" must {
 
@@ -50,70 +48,113 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       val viewModel: AddressListViewModel = addressListViewModel(addresses)
       val form = new AddressListFormProvider()(viewModel.addresses)
 
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onPageLoad(NormalMode))),
-        retrievalAction,
-        (request, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(retrievalAction),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString()
-        }
-      )
+          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
+      }
     }
 
     "redirect to Adviser Address Post Code Lookup if no address data on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onPageLoad(NormalMode))),
-        getEmptyData,
-        (_, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(getEmptyData),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
-        }
-      )
+      }
     }
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
 
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onPageLoad(NormalMode))), dontGetAnyData,
-        (_, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(dontGetAnyData),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-      )
+      }
     }
 
     "redirect to the next page on POST of valid data" in {
 
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onSubmit(NormalMode))
-          .withFormUrlEncodedBody(("value", "0"))), retrievalAction,
-        (_, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(retrievalAction),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
-      )
+      }
     }
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onSubmit(NormalMode))
-          .withFormUrlEncodedBody(("value", "0"))), dontGetAnyData,
-        (_, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(dontGetAnyData),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-      )
+      }
     }
 
     "redirect to Adviser Address Post Code Lookup if no address data on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onSubmit(NormalMode))
-          .withFormUrlEncodedBody(("value", "0"))), getEmptyData,
-        (_, result) => {
+      running(
+        _.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[UserAnswersService].to(FakeUserAnswersService),
+          bind[DataRetrievalAction].to(getEmptyData),
+          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        )
+      ) {
+        implicit app =>
+          val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          val controller = app.injector.instanceOf[AdviserAddressListController]
+          val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
-        }
-      )
+      }
     }
   }
 }
@@ -142,7 +183,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
   )
 
   private val data =
-    UserAnswers(Json.obj(AdviserNameId.toString ->adviserName))
+    UserAnswers(Json.obj(AdviserNameId.toString -> adviserName))
       .set(AdviserAddressPostCodeLookupId)(addresses)
       .asOpt.map(_.json)
 
@@ -157,23 +198,6 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
       entityName = adviserName
     )
-  }
-
-  private def requestResult[T](request: Application => Request[T], data: DataRetrievalAction,
-                               test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
-    running(
-      _.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].to(FakeUserAnswersService),
-        bind[DataRetrievalAction].to(data),
-        bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
-      )
-    ) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
   }
 }
 

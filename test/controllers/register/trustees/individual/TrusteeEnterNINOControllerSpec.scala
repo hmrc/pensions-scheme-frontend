@@ -28,6 +28,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -96,7 +97,7 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   val formProvider       = new NINOFormProvider()
   private val srn        = Some("srn")
-  val form               = formProvider("First Name Last Name")
+  val form: Form[ReferenceValue] = formProvider("First Name Last Name")
   private val index      = Index(0)
   private val ninoData   = "CS700100A"
   val trusteeFullName    = "Test Name"
@@ -105,7 +106,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   private val alreadySubmittedData: JsObject = Json.obj(
     "trustees" -> Json.arr(
       Json.obj(
-        TrusteeNameId.toString -> PersonName("Test", "Name", false),
+        TrusteeNameId.toString -> PersonName("Test", "Name"),
         TrusteeEnterNINOId.toString -> Json.obj(
           "value" -> ninoData
         )
@@ -115,6 +116,8 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   )
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private val view = injector.instanceOf[nino]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeEnterNINOController =
     new TrusteeEnterNINOController(
@@ -126,10 +129,12 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String = trusteeFullName): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String =trusteeFullName): String = {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),
@@ -139,6 +144,6 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
       srn = srn
     )
 
-    nino(frontendAppConfig, form, vm, Some(schemeName))(fakeRequest, messages).toString
+    view(form, vm, Some(schemeName))(fakeRequest, messages).toString
   }
 }

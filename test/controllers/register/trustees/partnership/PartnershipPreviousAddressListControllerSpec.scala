@@ -29,6 +29,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -37,10 +38,11 @@ import views.html.address.addressList
 class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val view = injector.instanceOf[addressList]
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
-  val form = formProvider(Seq(0, 1))
-  val index = Index(0)
+  val form: Form[Int] = formProvider(Seq(0, 1))
+  val index: Index = Index(0)
   val partnershipName = "test partnership name"
   val schemeName = "test scheme name"
   val addresses = Seq(
@@ -73,12 +75,13 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    addressList(
-      frontendAppConfig,
+    view(
       form,
       AddressListViewModel(
         routes.PartnershipPreviousAddressListController.onSubmit(NormalMode, index, None),

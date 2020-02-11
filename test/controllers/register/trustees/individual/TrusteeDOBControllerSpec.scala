@@ -24,20 +24,25 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
-import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
+import java.time.LocalDate
+
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, SectionComplete}
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 //scalastyle:off magic.number
 
 class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthControllerBehaviours {
 
   import TrusteeDOBControllerSpec._
+
+  private val view = injector.instanceOf[DOB]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): TrusteeDOBController =
     new TrusteeDOBController(
@@ -49,7 +54,9 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
   private val postCall = routes.TrusteeDOBController.onSubmit _
 
@@ -86,14 +93,14 @@ private object TrusteeDOBControllerSpec extends MockitoSugar {
   val mockSectionComplete: SectionComplete = mock[SectionComplete]
 
   val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
+  val month: Int = LocalDate.now().getMonthValue
   val year: Int = LocalDate.now().getYear - 20
 
   val validData: JsObject = Json.obj(
     TrusteesId.toString -> Json.arr(
       Json.obj(
         TrusteeNameId.toString -> PersonName("Test", "Name"),
-        TrusteeDOBId.toString  -> new LocalDate(year, month, day)
+        TrusteeDOBId.toString  -> LocalDate.of(year, month, day)
       )
     )
   )

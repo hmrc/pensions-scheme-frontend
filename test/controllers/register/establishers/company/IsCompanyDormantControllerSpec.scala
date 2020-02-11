@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.IsDormantFormProvider
@@ -28,6 +27,8 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.isDormant
 
@@ -37,6 +38,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
   val formProvider = new IsDormantFormProvider()
   val form = formProvider()
+  private val view = injector.instanceOf[isDormant]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): IsCompanyDormantController =
     new IsCompanyDormantController(
@@ -47,7 +49,9 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   val index = 0
@@ -64,7 +68,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       )
     )
 
-  def viewAsString(form: Form[_] = form): String = isDormant(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, companyName, postCall, None)(fakeRequest, messages).toString
 
   "IsCompanyDormant Controller" must {
 

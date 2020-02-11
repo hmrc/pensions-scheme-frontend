@@ -19,7 +19,7 @@ package views
 import controllers.routes
 import forms.BankAccountDetailsFormProvider
 import models.{BankAccountDetails, NormalMode}
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import views.behaviours.QuestionViewBehaviours
 import views.html.bankAccountDetails
 
@@ -31,11 +31,13 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetai
 
   private val schemeName = "Test Scheme Name"
 
+  val view: bankAccountDetails = app.injector.instanceOf[bankAccountDetails]
+
   private def createView() = () =>
-    bankAccountDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    bankAccountDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, schemeName)(fakeRequest, messages)
 
   "Bank Account Details view" must {
 

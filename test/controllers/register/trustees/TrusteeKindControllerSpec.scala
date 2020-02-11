@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsString, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.trustees.trusteeKind
 
@@ -35,15 +36,21 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new TrusteeKindFormProvider()
-  val form = formProvider()
-  val index = Index(0)
+  val form: Form[TrusteeKind] = formProvider()
+  val index: Index = Index(0)
+
+
+  private val view = injector.instanceOf[trusteeKind]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeKindController =
     new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-  val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
-  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages).toString
+  val submitUrl: Call = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)
+
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, index, None, submitUrl, None)(fakeRequest, messages).toString
 
   "TrusteeKind Controller" must {
 

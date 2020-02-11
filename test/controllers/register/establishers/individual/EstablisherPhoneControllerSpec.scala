@@ -17,11 +17,13 @@
 package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
+import controllers.register.establishers.individual.routes.EstablisherPhoneController
 import forms.PhoneFormProvider
-import models.{Index, NormalMode, PartnershipDetails}
+import models.person.PersonName
+import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -31,8 +33,6 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
-import controllers.register.establishers.individual.routes.EstablisherPhoneController
-import models.person.PersonName
 
 class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -45,9 +45,10 @@ class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSuga
   private val establisherName = PersonName("test", "name")
   private val fullAnswers = UserAnswers().establishersIndividualName(firstIndex, establisherName)
 
+  private val view = injector.instanceOf[phoneNumber]
+
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         EstablisherPhoneController.onSubmit(NormalMode, firstIndex, None),

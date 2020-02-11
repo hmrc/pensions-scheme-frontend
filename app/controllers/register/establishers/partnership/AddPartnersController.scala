@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.addPartners
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,8 +40,10 @@ class AddPartnersController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: AddPartnersFormProvider
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                       formProvider: AddPartnersFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: addPartners
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -49,12 +51,12 @@ class AddPartnersController @Inject()(
 
   def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      retrievePartnershipName(index) { _ =>
-        val partners = request.userAnswers.allPartnersAfterDelete(index)
-        Future.successful(Ok(addPartners(appConfig, form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
-      }
-  }
+      implicit request =>
+        retrievePartnershipName(index) { _ =>
+          val partners = request.userAnswers.allPartnersAfterDelete(index)
+          Future.successful(Ok(view(form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
+        }
+    }
 
   def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
@@ -70,8 +72,7 @@ class AddPartnersController @Inject()(
               _ =>
                 Future.successful(
                   BadRequest(
-                    addPartners(
-                      appConfig,
+                    view(
                       formWithErrors,
                       partners,
                       postUrl(index, mode, srn),

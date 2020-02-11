@@ -27,6 +27,7 @@ import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
@@ -86,6 +87,7 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     heading = Message("messages__whyNoUTR", "first last"),
     srn = srn
   )
+  private val view = injector.instanceOf[reason]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompanyDirectorWithDirectorName): DirectorNoUTRReasonController =
     new DirectorNoUTRReasonController(
@@ -97,9 +99,11 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 }
 

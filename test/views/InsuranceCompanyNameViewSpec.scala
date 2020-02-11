@@ -31,14 +31,16 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
   override val form = new InsuranceCompanyNameFormProvider()()
   val postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
-  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(
-    frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+  val view: insuranceCompanyName = app.injector.instanceOf[insuranceCompanyName]
 
-  def createUpdateView: () => HtmlFormat.Appendable = () => insuranceCompanyName(
-    frontendAppConfig, form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => view(
+    form, NormalMode, None, postCall, None)(fakeRequest, messages)
+
+  def createUpdateView: () => HtmlFormat.Appendable = () => view(
+    form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insuranceCompanyName(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+    view(form, NormalMode, None, postCall, None)(fakeRequest, messages)
 
   "InsuranceCompanyName view" must {
 

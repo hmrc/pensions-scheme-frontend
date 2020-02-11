@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import base.CSRFRequest
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -28,12 +27,12 @@ import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import play.api.Application
-import play.api.http.Writeable
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -45,31 +44,49 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
+class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import IndividualPreviousAddressPostCodeLookupControllerSpec._
+  private val view = injector.instanceOf[postcodeLookup]
 
   "IndividualPreviousAddressPostCodeLookup Controller" must {
     "render postCodeLookup from a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(retrieval),
+        bind[DataRequiredAction].to(new DataRequiredActionImpl),
+        bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[PostCodeLookupFormProvider].to(formProvider)
+      )) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
+        val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
-      )
     }
 
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
-        requestResult(
-          implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None))
-            .withFormUrlEncodedBody("postcode" -> validPostcode)),
-          (_, result) => {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(retrieval),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl),
+          bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
+          bind(classOf[Navigator]).toInstance(fakeNavigator),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService),
+          bind[PostCodeLookupFormProvider].to(formProvider)
+        )) {
+          implicit app =>
+            val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
+            val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
+            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
           }
-        )
       }
     }
   }
@@ -79,15 +96,15 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
   val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
-  val personDetails = PersonName("Firstname", "Last")
+  val form: Form[String] = formProvider()
+  val personDetails: PersonName = PersonName("Firstname", "Last")
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
+  val address: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
-  lazy val viewModel = PostcodeLookupViewModel(
+  lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
     manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
     title = Message("messages__trustee_individual_previous_address__heading", Message("messages__theIndividual")),
@@ -107,23 +124,6 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
     override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext):
     Future[Seq[TolerantAddress]] = {
       Future.successful(Seq(address))
-    }
-  }
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(retrieval),
-      bind[DataRequiredAction].to(new DataRequiredActionImpl),
-      bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).toInstance(fakeNavigator),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[PostCodeLookupFormProvider].to(formProvider)
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
     }
   }
 }

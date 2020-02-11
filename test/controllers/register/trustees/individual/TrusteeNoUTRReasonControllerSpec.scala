@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -33,7 +33,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
 import utils.FakeNavigator
-import utils.annotations.TrusteesIndividual
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
@@ -53,7 +52,9 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     srn = None
   )
 
-  private def viewAsString(form: Form[_] = form) = reason(frontendAppConfig, form, viewModel, None)(fakeRequest, messages).toString
+  private val view = injector.instanceOf[reason]
+
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "TrusteeNoUTRReasonController" must {
     "return OK and the correct view for a GET" in {

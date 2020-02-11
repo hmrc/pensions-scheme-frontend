@@ -23,8 +23,8 @@ import identifiers.register.establishers.company.director.DirectorNameId
 import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
@@ -36,14 +36,16 @@ class AlreadyDeletedController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          requireData: DataRequiredAction,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: alreadyDeleted
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(srn = srn) andThen requireData).async {
     implicit request =>
       DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName, srn))))
+          Future.successful(Ok(view(vm(establisherIndex, details.fullName, srn))))
       }
 
   }
@@ -53,6 +55,5 @@ class AlreadyDeletedController @Inject()(
     directorName,
     controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn, establisherIndex)
   )
-
 
 }

@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.EnterVATFormProvider
@@ -27,74 +26,71 @@ import play.api.Application
 import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesCompany
 import utils.FakeNavigator
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
 import scala.concurrent.Future
 
-class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterVATControllerSpec._
+
+  private val view = injector.instanceOf[enterVATView]
 
   "CompanyEnterVATController" must {
 
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterVATController.onPageLoad(NormalMode, firstIndex, None))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+      )) {
+        implicit app =>
+        val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[CompanyEnterVATController]
+        val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe enterVATView(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
-      )
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None))
-          .withFormUrlEncodedBody(("vat", "123456789"))),
-        (_, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+      )) {
+        implicit app =>
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("vat", "123456789")))
+        val controller = app.injector.instanceOf[CompanyEnterVATController]
+        val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
-      )
     }
   }
 }
 object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
 
   val form = new EnterVATFormProvider()("test company")
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val viewModel = EnterVATViewModel(
+  val viewModel: EnterVATViewModel = EnterVATViewModel(
     routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None),
     title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
     heading = Message("messages__enterVAT", "test company name"),
     hint = Message("messages__enterVAT__hint", "test company name"),
     subHeading = None
   )
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService)
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 }
 
 

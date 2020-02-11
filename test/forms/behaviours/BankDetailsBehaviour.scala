@@ -21,10 +21,10 @@ import forms.mappings.BankDetailsMapping
 import generators.Generators
 import models.register.SortCode
 import org.scalacheck.Gen
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 
-trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with PropertyChecks with Generators {
+trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping with ScalaCheckPropertyChecks with Generators {
 
   def formWithSortCode[T](testForm: Form[T],
                           keyRequired: String,

@@ -35,14 +35,16 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
 
   val form = new EstablishedCountryFormProvider(countryOptions)()
 
+  val view: establishedCountry = app.injector.instanceOf[establishedCountry]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    establishedCountry(frontendAppConfig, form, NormalMode, Seq.empty, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, Seq.empty, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    establishedCountry(frontendAppConfig, form, CheckMode, Seq.empty, schemeName)(fakeRequest, messages)
+    view(form, CheckMode, Seq.empty, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
-    establishedCountry(frontendAppConfig, form, NormalMode, inputOptions, schemeName)(fakeRequest, messages)
+    view(form, NormalMode, inputOptions, schemeName)(fakeRequest, messages)
 
   "EstablishedCountry view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))

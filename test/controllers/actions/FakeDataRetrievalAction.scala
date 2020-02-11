@@ -16,13 +16,13 @@
 
 package controllers.actions
 
-import models.{Mode, NormalMode}
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
+import models.{Mode, NormalMode}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class FakeDataRetrievalAction(json: Option[JsValue], mode: Mode = NormalMode, viewOnly: Boolean = false) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String]): DataRetrieval = new FakeDataRetrieval(json, mode, viewOnly)
@@ -38,4 +38,6 @@ class FakeDataRetrieval(optionalJson: Option[JsValue], mode: Mode = NormalMode, 
         Future.successful(OptionalDataRequest(request.request, request.externalId,
           Some(new UserAnswers(json)), PsaId("A0000000"), viewOnly = viewOnly))
     }
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 }

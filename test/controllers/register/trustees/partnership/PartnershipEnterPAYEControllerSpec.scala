@@ -16,11 +16,11 @@
 
 package controllers.register.trustees.partnership
 
-import base.CSRFRequest
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.Application
@@ -37,31 +37,49 @@ import views.html.paye
 
 import scala.concurrent.Future
 
-class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import PartnershipEnterPAYEControllerSpec._
+
+  private val view = injector.instanceOf[paye]
 
   "PartnershipEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, firstIndex, srn))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
+      )) {
+        app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
-      )
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn))
-          .withFormUrlEncodedBody(("paye", "123456789"))),
-        (_, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+
+      )) {
+        app =>
+          val request =
+            addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
+          val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
+          val result = controller.onSubmit(NormalMode, Index(0), None)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
-      )
     }
 
   }
@@ -84,24 +102,6 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
     srn = srn,
     entityName = Some("test partnership name")
   )
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 
 }
 

@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.AboutMembers
 import utils.{Enumerable, UserAnswers}
 import views.html.futureMembers
@@ -41,8 +41,10 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: FutureMembersFormProvider
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                        formProvider: FutureMembersFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: futureMembers
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
@@ -53,7 +55,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(futureMembers(appConfig, preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName)))
       }
   }
 
@@ -62,7 +64,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(futureMembers(appConfig, formWithErrors, mode, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, FutureMembersId, value).map(cacheMap =>

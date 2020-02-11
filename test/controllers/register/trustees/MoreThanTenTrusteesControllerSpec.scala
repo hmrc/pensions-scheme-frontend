@@ -16,7 +16,6 @@
 
 package controllers.register.trustees
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
@@ -26,6 +25,8 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.trustees.moreThanTenTrustees
 
@@ -34,19 +35,25 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MoreThanTenTrusteesFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
   val schemeName = "Test Scheme Name"
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )
 
+
+  private val view = injector.instanceOf[moreThanTenTrustees]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MoreThanTenTrusteesController =
     new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
-  val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
+      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view)
 
-  def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, None, submitUrl, None)(fakeRequest, messages).toString
+  val submitUrl: Call = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
+
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None, submitUrl, None)(fakeRequest, messages).toString
 
   "MoreThanTenTrustees Controller" must {
 

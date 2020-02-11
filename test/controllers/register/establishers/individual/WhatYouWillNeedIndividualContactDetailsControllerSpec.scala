@@ -34,8 +34,10 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
 
   private def onwardRoute(mode: Mode, srn: Option[String]): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = whatYouWillNeedContactDetails(
-    frontendAppConfig, None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
+  private val view = injector.instanceOf[whatYouWillNeedContactDetails]
+
+  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = view(
+    None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
     "in Subscription" must {

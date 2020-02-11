@@ -18,7 +18,6 @@ package controllers.register.trustees.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import base.CSRFRequest
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -34,6 +33,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -42,19 +42,20 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
+class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val view = injector.instanceOf[manualAddress]
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
   private val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val trusteeDetails = person.PersonName("Test", "Name")
-  val trusteeName = PersonName("Test", "Name")
+  val trusteeDetails: PersonName = person.PersonName("Test", "Name")
+  val trusteeName: PersonName = PersonName("Test", "Name")
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val fakeAuditService = new StubSuccessfulAuditService()
   val form: Form[Address] = formProvider()
@@ -86,7 +87,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
               Message("messages__common__confirmPreviousAddress__h1", trusteeDetails.fullName)
             )
 
-            val request = addToken(
+            val request = addCSRFToken(
               FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
                 .withHeaders("Csrf-Token" -> "nocheck")
             )
@@ -95,8 +96,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
             status(result) must be(OK)
 
-            contentAsString(result) mustEqual manualAddress(
-              frontendAppConfig,
+            contentAsString(result) mustEqual view(
               form,
               viewmodel,
               None
@@ -129,7 +129,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           )) {
             implicit app =>
 
-              val fakeRequest = addToken(FakeRequest(TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))
+              val fakeRequest = addCSRFToken(FakeRequest()
                 .withHeaders("Csrf-Token" -> "nocheck")
                 .withFormUrlEncodedBody(
                   ("addressLine1", address.addressLine1),
@@ -137,7 +137,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
                   ("postCode", address.postcode.get),
                   "country" -> address.country))
 
-              val result = route(app, fakeRequest).value
+              val controller = app.injector.instanceOf[TrusteePreviousAddressController]
+              val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
               status(result) must be(SEE_OTHER)
               redirectLocation(result).value mustEqual onwardRoute.url
@@ -167,7 +168,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[AuditService].toInstance(fakeAuditService))) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex, None))
+            val fakeRequest = addCSRFToken(FakeRequest()
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -177,7 +178,8 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
             fakeAuditService.reset()
 
-            val result = route(app, fakeRequest).value
+            val controller = app.injector.instanceOf[TrusteePreviousAddressController]
+            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
             whenReady(result) {
               _ =>

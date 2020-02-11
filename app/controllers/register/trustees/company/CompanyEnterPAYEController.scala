@@ -22,13 +22,15 @@ import controllers.PayeController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.PayeFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterPAYEId}
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, PayeViewModel}
+import views.html.paye
 
 import scala.concurrent.ExecutionContext
 
@@ -41,14 +43,16 @@ class CompanyEnterPAYEController @Inject()(
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
-                                                 formProvider: PayeFormProvider
+                                                 formProvider: PayeFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: paye
                                                )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
-  protected def form(companyName: String): Form[ReferenceValue] = formProvider(companyName)
+  protected def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
+      title = Message("messages__enterPAYE", Message("messages__theCompany")),
       heading = Message("messages__enterPAYE", companyName),
       hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,

@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.company.director
 
+import java.time.LocalDate
+
 import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -26,12 +28,12 @@ import models._
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
-import org.joda.time.LocalDate
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.checkyouranswers.Ops._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
+import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -40,6 +42,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   import CheckYourAnswersControllerSpec._
 
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
+
+  private val view = injector.instanceOf[checkYourAnswers]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
@@ -52,7 +56,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       countryOptions,
-      allowChangeHelper
+      allowChangeHelper,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(mode: Mode,
@@ -69,8 +75,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
                            srn: Option[String] = None,
                            title: Message,
                            h1: Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSection,
         href = href,

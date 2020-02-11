@@ -21,7 +21,9 @@ import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import play.api.libs.json._
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.cannotMakeChanges
+
 
 class CannotMakeChangesControllerSpec extends ControllerSpecBase {
   appRunning()
@@ -32,11 +34,13 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
     MoreThanTenTrusteesId.toString -> false
   )
 
+  lazy val view: cannotMakeChanges = injector.instanceOf[cannotMakeChanges]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): CannotMakeChangesController =
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
-      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl)
+      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, stubMessagesControllerComponents(), view)
 
-  def viewAsString(): String = cannotMakeChanges(frontendAppConfig, srn, Some(schemeName))(fakeRequest, messages).toString
+  def viewAsString(): String = view(srn, Some(schemeName))(fakeRequest, messages).toString
 
   "CannotMakeChanges Controller" must {
     "return OK and the correct view for a GET" in {

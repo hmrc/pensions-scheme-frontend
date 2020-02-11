@@ -21,7 +21,7 @@ import forms.mappings.Constraints
 import models._
 import models.register.SortCode
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints with BankDetailsBehaviour {
 
@@ -31,7 +31,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
   val testAccountNumber: String = RandomUtils.nextInt(10000000, 99999999).toString
 
   private val day = LocalDate.now().getDayOfMonth
-  private val month = LocalDate.now().getMonthOfYear
+  private val month = LocalDate.now().getMonthValue
   private val year = LocalDate.now().getYear
 
   val validData: Map[String, String] = Map(

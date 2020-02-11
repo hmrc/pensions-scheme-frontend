@@ -22,13 +22,15 @@ import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,13 +43,17 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: HasPAYEFormProvider,
-                                         implicit val ec: ExecutionContext
+                                         val view: hasReferenceNumber,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call =
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
 
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
@@ -57,7 +63,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       formFieldName = Some("hasPaye")
     )
 
-  private def form(companyName: String) = formProvider("messages__companyPayeRef__error__required", companyName)
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__companyPayeRef__error__required", companyName)
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

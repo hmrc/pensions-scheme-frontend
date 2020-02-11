@@ -24,6 +24,7 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -44,6 +45,8 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     hint = None
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): HasBeenTradingCompanyController =
     new HasBeenTradingCompanyController(
       frontendAppConfig,
@@ -55,10 +58,12 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
+      view,
+      stubMessagesControllerComponents(),
       global
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyVatController" must {
 

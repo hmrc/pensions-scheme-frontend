@@ -52,8 +52,10 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
     srn = srn
   )
 
+  private val view = injector.instanceOf[utr]
+
   private def viewAsString(form: Form[_] = form): String =
-    utr(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+    view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipHasUTRController" when {
     "on a GET" must {

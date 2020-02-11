@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
@@ -27,6 +26,8 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.company.otherDirectors
 
@@ -55,6 +56,8 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
     )
   )
 
+  private val view = injector.instanceOf[otherDirectors]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): OtherDirectorsController =
     new OtherDirectorsController(
       frontendAppConfig,
@@ -65,12 +68,13 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    otherDirectors(
-      frontendAppConfig,
+    view(
       form,
       NormalMode,
       index,

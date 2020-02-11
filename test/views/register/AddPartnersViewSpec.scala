@@ -41,13 +41,14 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
   val form = new AddPartnersFormProvider()()
-  private val johnDoeEntity = PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, true, 2)
-  private val joeBloggsEntity = PartnerEntity(PartnerNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, true, 2)
+  private val johnDoeEntity = PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = true, 2)
+  private val joeBloggsEntity = PartnerEntity(PartnerNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true, isNewEntity = true, 2)
 
+
+  val view: addPartners = app.injector.instanceOf[addPartners]
   private def createView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     () =>
-      addPartners(
-        frontendAppConfig,
+      view(
         form,
         partners,
         postUrl,
@@ -59,8 +60,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
   private def createUpdateView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     () =>
-      addPartners(
-        frontendAppConfig,
+      view(
         form,
         partners,
         postUrl,
@@ -72,8 +72,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
 
   private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
     (form: Form[_]) =>
-      addPartners(
-        frontendAppConfig,
+      view(
         form,
         partners,
         postUrl,

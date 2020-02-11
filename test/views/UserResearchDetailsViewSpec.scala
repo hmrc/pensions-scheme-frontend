@@ -29,9 +29,11 @@ class UserResearchDetailsViewSpec extends QuestionViewBehaviours[UserResearchDet
 
   override val form = new UserResearchDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => userResearchDetails(frontendAppConfig, form)(fakeRequest, messages)
+  val view: userResearchDetails = app.injector.instanceOf[userResearchDetails]
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => userResearchDetails(frontendAppConfig, form)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => view(form)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => view(form)(fakeRequest, messages)
 
   "UserResearchContactDetails view" must {
 

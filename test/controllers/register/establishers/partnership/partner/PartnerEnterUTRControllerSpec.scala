@@ -16,52 +16,48 @@
 
 package controllers.register.establishers.partnership.partner
 
-import base.CSRFRequest
 import controllers.ControllerSpecBase
-import controllers.actions._
 import forms.UTRFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
-import play.api.test.FakeRequest
+import play.api.inject.guice.GuiceableModule
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
+import utils.annotations.EstablishersPartner
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-import scala.concurrent.Future
-
-class PartnerEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class PartnerEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import PartnerEnterUTRControllerSpec._
 
   "PartnerEnterUTRController" must {
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnerEnterUTRController.onPageLoad(NormalMode, establisherIndex, partnerIndex, srn))),
-        (request, result) => {
-
-          val expected = utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+      running(_.overrides(modules(getMandatoryPartner): _*)) {
+        app =>
+          val controller = app.injector.instanceOf[PartnerEnterUTRController]
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
           status(result) mustBe OK
-          contentAsString(result) mustBe expected
-        }
-      )
+          contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
+      }
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn))
-          .withFormUrlEncodedBody(("utr", "1234567890"))),
-        (_, result) => {
+      running(_.overrides(modules(getMandatoryPartner) ++
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) {
+        app =>
+          val controller = app.injector.instanceOf[PartnerEnterUTRController]
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
-      )
+      }
     }
   }
 }
@@ -83,20 +79,6 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
     srn = srn
   )
 
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
+  private val view = injector.instanceOf[utr]
 
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryPartner),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 }

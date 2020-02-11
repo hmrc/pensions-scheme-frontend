@@ -23,15 +23,15 @@ import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.{FakeNavigator, UserAnswers, _}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
-import utils._
 
 class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
@@ -42,7 +42,7 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val firstIndex = Index(0)
 
   private val estCompanyPartner = UserAnswers().set(PartnerNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
-
+  private val view = injector.instanceOf[emailAddress]
   def controller(dataRetrievalAction: DataRetrievalAction = estCompanyPartner): PartnerEmailController =
     new PartnerEmailController(frontendAppConfig,
       messagesApi,
@@ -52,12 +52,13 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(form: Form[_] = form): String =
-    emailAddress(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.PartnerEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),

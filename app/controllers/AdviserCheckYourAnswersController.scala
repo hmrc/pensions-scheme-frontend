@@ -24,8 +24,8 @@ import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
@@ -41,8 +41,10 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   @WorkingKnowledge navigator: Navigator,
-                                                  implicit val countryOptions: CountryOptions
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                  implicit val countryOptions: CountryOptions,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: checkYourAnswers
+                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -67,6 +69,6 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         h1 = Message("checkYourAnswers.hs.title")
       )
 
-      Future.successful(Ok(checkYourAnswers(appConfig, vm)))
+      Future.successful(Ok(view(vm)))
   }
 }

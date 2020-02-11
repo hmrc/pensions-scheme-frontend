@@ -16,16 +16,16 @@
 
 package identifiers.register.trustees.individual
 
+import java.time.LocalDate
+
 import identifiers._
-import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.Link
-import org.joda.time.LocalDate
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{DateHelper, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.{AnswerRow, Message}
+import utils.{DateHelper, UserAnswers}
+import viewmodels.AnswerRow
 
 case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDOBId.toString

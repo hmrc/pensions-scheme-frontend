@@ -24,7 +24,9 @@ class WhatYouWillNeedBankDetailsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "what_you_will_need_bank_details"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedBankDetails(frontendAppConfig, None)(fakeRequest, messages)
+  val view: whatYouWillNeedBankDetails = app.injector.instanceOf[whatYouWillNeedBankDetails]
+
+  def createView: () => HtmlFormat.Appendable = () => view(None)(fakeRequest, messages)
 
   "WhatYouWillNeedBankDetails view" must {
 

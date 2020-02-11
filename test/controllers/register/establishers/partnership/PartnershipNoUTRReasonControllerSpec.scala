@@ -50,8 +50,10 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
     srn = srn
   )
 
+  private val view = injector.instanceOf[reason]
+
   private def viewAsString(form: Form[_] = form): String =
-    reason(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+    view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipNoUTRReasonController" when {
     "on a GET" must {

@@ -17,12 +17,14 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@(schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__detailsFor", messages("messages__thePartnership")).capitalize,
-    appConfig = appConfig,
-    bodyClasses = None
+    title = messages("messages__detailsFor", messages("messages__thePartnership")).capitalize
 ) {
     @components.back_link()
     @components.heading(headingKey = messages("messages__detailsFor", partnershipName))

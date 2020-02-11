@@ -31,13 +31,16 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
   val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, firstIndex, None)
-  def createView(): () => HtmlFormat.Appendable = () => partnershipDetails(
-    frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
-  def createUpdateView: () => HtmlFormat.Appendable = () => partnershipDetails(
-    frontendAppConfig, form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
+
+  val view: partnershipDetails = app.injector.instanceOf[partnershipDetails]
+
+  def createView(): () => HtmlFormat.Appendable = () => view(
+    form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+  def createUpdateView: () => HtmlFormat.Appendable = () => view(
+    form, UpdateMode, firstIndex, None, submitUrl, Some("srn"))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
+    view(form, NormalMode, firstIndex, None, submitUrl, None)(fakeRequest, messages)
 
 
   "PartnershipDetails view" must {
@@ -45,7 +48,7 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
     behave like normalPageWithHeaderCheck(
       createView(),
       messageKeyPrefix,
-      messagesApi(s"messages__${messageKeyPrefix}__title"),
+      messages(s"messages__${messageKeyPrefix}__title"),
       messages(s"messages__${messageKeyPrefix}__title")
     )
     behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix,

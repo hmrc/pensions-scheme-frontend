@@ -16,6 +16,7 @@
 
 package controllers
 
+import com.google.inject.Inject
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -24,25 +25,29 @@ import models.requests.{DataRequest, IdentifiedRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeDataRequest, FakeOptionalDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
-class RetrievalsSpec extends ControllerSpecBase with FrontendController with Retrievals with EitherValues with ScalaFutures {
+class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValues with ScalaFutures {
 
   def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data), PsaId("A0000000"))
 
-  class TestController extends FrontendController with Retrievals
+  class TestController @Inject()(
+                                  val controllerComponents: MessagesControllerComponents
+                                ) extends FrontendBaseController with Retrievals
 
-  val controller = new TestController()
+  val controller = new TestController(stubMessagesControllerComponents())
 
-  val success: (String) => Future[Result] = { _: String =>
+  val success: String => Future[Result] = { _: String =>
     Future.successful(Ok("Success"))
   }
 
@@ -66,7 +71,7 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
     }
   }
 
-  val validData = Json.obj(SchemeNameId.toString -> "Test Scheme")
+  val validData: JsObject = Json.obj(SchemeNameId.toString -> "Test Scheme")
 
   "static" must {
     "return a retrieval which always successfully returns the argument" in {
@@ -151,22 +156,22 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
     "existingSchemeName" must{
 
       "return data if calling with DataRequest" in {
-        implicit val request = FakeDataRequest(UserAnswers(validData))
+        implicit val request: FakeDataRequest = FakeDataRequest(UserAnswers(validData))
         controller.existingSchemeName mustBe  Some("Test Scheme")
       }
 
       "return data if calling with OptionalDataRequest" in {
-        implicit val request = FakeOptionalDataRequest(Some(UserAnswers(validData)))
+        implicit val request: FakeOptionalDataRequest = FakeOptionalDataRequest(Some(UserAnswers(validData)))
         controller.existingSchemeName mustBe  Some("Test Scheme")
       }
 
       "return none if calling with FakeOptionalDataRequest" in {
-        implicit val request = FakeOptionalDataRequest(Some(UserAnswers(Json.obj())))
+        implicit val request: FakeOptionalDataRequest = FakeOptionalDataRequest(Some(UserAnswers(Json.obj())))
         controller.existingSchemeName mustBe None
       }
 
       "return none if calling with FakeOtherDataRequest" in {
-        implicit val request = FakeOtherDataRequest()
+        implicit val request: FakeOtherDataRequest = FakeOtherDataRequest()
         controller.existingSchemeName mustBe None
       }
     }

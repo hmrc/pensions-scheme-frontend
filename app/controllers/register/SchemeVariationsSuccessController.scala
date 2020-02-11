@@ -23,8 +23,8 @@ import controllers.actions._
 import javax.inject.Inject
 import models.UpdateMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.ExecutionContext
@@ -33,16 +33,18 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   cacheConnector: UpdateSchemeCacheConnector,
                                                   authenticate: AuthAction,
-                                                  getData: DataRetrievalAction)
-                                                 (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                  getData: DataRetrievalAction,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: schemeVariationsSuccess
+                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                  with I18nSupport with Retrievals {
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
     implicit request =>
       val schemeName = existingSchemeName
       cacheConnector.removeAll(srn).map { _ =>
         Ok(
-          schemeVariationsSuccess(
-            appConfig, schemeName, Some(srn)
+          view(schemeName, Some(srn)
           )
         )
       }

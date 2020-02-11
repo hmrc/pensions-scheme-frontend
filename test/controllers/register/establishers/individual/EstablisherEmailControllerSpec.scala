@@ -44,9 +44,10 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
 
   private val fullAnswers = UserAnswers().establishersIndividualName(firstIndex, establisherName)
 
+  private val view = injector.instanceOf[emailAddress]
+
   private def viewAsString(form: Form[_] = form): String =
-    emailAddress(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         EstablisherEmailController.onSubmit(NormalMode, firstIndex, None),

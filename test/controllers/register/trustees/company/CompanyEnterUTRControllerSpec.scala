@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
@@ -37,31 +37,48 @@ import views.html.utr
 
 import scala.concurrent.Future
 
-class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers with CSRFRequest {
+class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterUTRControllerSpec._
+
+  private val view = injector.instanceOf[utr]
 
   "CompanyEnterUTRController" must {
 
     "render the view correctly on a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onPageLoad(CheckUpdateMode, srn, firstIndex))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      )) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[CompanyEnterUTRController]
+          val result = controller.onPageLoad(CheckUpdateMode, srn, firstIndex)(request)
           status(result) mustBe OK
-          contentAsString(result) mustBe utr(frontendAppConfig, form, viewModel, Some("pension scheme details"))(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
-      )
     }
 
     "redirect to the next page on a POST request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex))
-          .withFormUrlEncodedBody(("utr", "1234567890"))),
-        (_, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+      )) {
+        implicit app =>
+          val request = addCSRFToken(FakeRequest() .withFormUrlEncodedBody(("utr", "1234567890")))
+          val controller = app.injector.instanceOf[CompanyEnterUTRController]
+          val result = controller.onSubmit(CheckUpdateMode, srn, firstIndex)(request)
+
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
-      )
+
     }
   }
 }
@@ -83,23 +100,6 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
     hint = Message("messages_utr__hint"),
     srn = srn
   )
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
-                              (implicit writeable: Writeable[T]): Unit = {
-
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-      bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-      bind[UserAnswersService].toInstance(FakeUserAnswersService),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
-    }
-  }
 }
 
 

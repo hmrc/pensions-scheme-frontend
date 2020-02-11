@@ -20,7 +20,7 @@ import base.SpecBase
 import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
@@ -30,7 +30,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
+class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   "Cleanup" when {
 

@@ -18,7 +18,7 @@ package views.register
 
 import forms.DOBFormProvider
 import models.{Index, Mode, NormalMode, UpdateMode}
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import viewmodels.dateOfBirth.DateOfBirthViewModel
@@ -29,8 +29,8 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   val messageKeyPrefix = "DOB"
 
-  val index = Index(1)
-  val personName = "John Doe"
+  val index: Index = Index(1)
+  val personName: String = "John Doe"
   private val postCall = controllers.routes.IndexController.onPageLoad()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
@@ -42,10 +42,9 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
   }
 
   override val form = new DOBFormProvider()()
-
+  val view: DOB = app.injector.instanceOf[DOB]
   def createView(): () => HtmlFormat.Appendable = () =>
-    DOB(
-      frontendAppConfig,
+    view(
       form,
       NormalMode,
       None,
@@ -54,8 +53,7 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
     )(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    DOB(
-      frontendAppConfig,
+    view(
       form,
       UpdateMode,
       Some("srn"),
@@ -64,8 +62,7 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
     )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    DOB(
-      frontendAppConfig,
+    view(
       form,
       NormalMode,
       None,
@@ -75,7 +72,7 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear
-  private val month = LocalDate.now().getMonthOfYear
+  private val month = LocalDate.now().getMonthValue
 
   val validData: Map[String, String] = Map(
     "date.day" -> s"$day",
@@ -134,7 +131,7 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
       val expectedError = s"${messages("site.error")} ${messages("messages__error__date_future")}"
       val invalidData: Map[String, String] = Map(
         "date.day" -> s"${tomorrow.getDayOfMonth}",
-        "date.month" -> s"${tomorrow.getMonthOfYear}",
+        "date.month" -> s"${tomorrow.getMonthValue}",
         "date.year" -> s"${tomorrow.getYear}"
       )
       val doc = asDocument(createViewUsingForm(form.bind(invalidData)))

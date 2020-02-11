@@ -33,6 +33,7 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
@@ -165,6 +166,9 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
+
+  private val view = injector.instanceOf[confirmDeleteTrustee]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new ConfirmDeleteTrusteeController(
       frontendAppConfig,
@@ -175,12 +179,13 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind, form: Form[_] = form) =
-    confirmDeleteTrustee(
-      frontendAppConfig,
+    view(
       form,
       trusteeName,
       routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, trusteeKind, None),

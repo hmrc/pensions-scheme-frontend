@@ -27,10 +27,11 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Redirect}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +43,9 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
-                                              val auditService: AuditService
+                                              val auditService: AuditService,
+                                              val view: addressList,
+                                              val controllerComponents: MessagesControllerComponents
                                              )(implicit val ec: ExecutionContext) extends GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

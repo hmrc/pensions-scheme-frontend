@@ -18,8 +18,11 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.director.routes._
 
+@this(
+    main_template: main_template
+)
+
 @(
-        appConfig: FrontendAppConfig,
         schemeName: Option[String],
         srn: Option[String],
         href: Call
@@ -29,9 +32,7 @@
 )
 
 @main_template(
-    title = messages("messages__directors__heading"),
-    appConfig = appConfig,
-    bodyClasses = None
+    title = messages("messages__directors__heading")
 ) {
     @components.back_link()
     @components.heading(messages("messages__directors__heading"))

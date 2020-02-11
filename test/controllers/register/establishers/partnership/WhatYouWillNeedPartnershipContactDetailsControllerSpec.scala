@@ -31,9 +31,8 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
   private val establisherPartnership = PartnershipDetails("partnership Name")
 
   def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
-
-  def viewAsString(): String = whatYouWillNeedContactDetails(
-    frontendAppConfig,
+  private val view = injector.instanceOf[whatYouWillNeedContactDetails]
+  def viewAsString(): String = view(
     None,
     controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
     None,

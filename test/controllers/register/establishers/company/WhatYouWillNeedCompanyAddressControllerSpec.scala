@@ -20,12 +20,14 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
 
 class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  private val view = injector.instanceOf[whatYouWillNeedCompanyAddress]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedCompanyAddressController =
     new WhatYouWillNeedCompanyAddressController(frontendAppConfig,
@@ -33,12 +35,14 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      view,
+      stubMessagesControllerComponents()
     )
 
   val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, index=Index(0))
 
-  def viewAsString(): String = whatYouWillNeedCompanyAddress(frontendAppConfig, None, href, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 

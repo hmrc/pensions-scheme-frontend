@@ -20,32 +20,37 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerEnterNINOId}
+import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, NinoViewModel}
+import views.html.nino
 
 import scala.concurrent.ExecutionContext
 
 class PartnerEnterNINOController @Inject()(
                                           val appConfig: FrontendAppConfig,
-                                          val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           val userAnswersService: UserAnswersService,
                                           val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          val formProvider: NINOFormProvider
+                                          val formProvider: NINOFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: nino
                                         )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterNINOController.onSubmit _
 
-  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): NinoViewModel =
+  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
       title = Message("messages__enterNINO", Message("messages__thePartner").resolve),

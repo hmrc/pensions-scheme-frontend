@@ -26,13 +26,15 @@ class YouNeedToRegisterViewSpec extends ViewBehaviours with SpecBase{
 
   val messageKeyPrefix = "youNeedToRegister"
 
-  val message1 = Message("messages__youNeedToRegister__p1__link").resolve
-  val message2 = Message("messages__youNeedToRegister__p2__link").resolve
+  val message1: String = Message("messages__youNeedToRegister__p1__link").resolve
+  val message2: String = Message("messages__youNeedToRegister__p2__link").resolve
 
   val link1 = s"""<a id="psa-gov-uk-link" href="${frontendAppConfig.pensionAdministratorGovUkLink}">$message1</a>"""
   val link2 = s"""<a id="psp-gov-uk-link" href="${frontendAppConfig.pensionPractitionerGovUkLink}">$message2</a>"""
 
-  private def createView = () => youNeedToRegister(frontendAppConfig)(fakeRequest, messages)
+  val view: youNeedToRegister = app.injector.instanceOf[youNeedToRegister]
+
+  private def createView = () => view()(fakeRequest, messages)
 
   "YouNeedToRegister view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"), "_lede")

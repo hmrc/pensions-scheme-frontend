@@ -31,6 +31,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -52,6 +53,8 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
+  private val view = injector.instanceOf[manualAddress]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressController =
     new PreviousAddressController(
       frontendAppConfig,
@@ -63,12 +66,13 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
-      fakeAuditService
+      fakeAuditService,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    manualAddress(
-      frontendAppConfig,
+    view(
       form,
       ManualAddressViewModel(
         postCall = routes.PreviousAddressController.onSubmit(NormalMode, firstIndex, None),

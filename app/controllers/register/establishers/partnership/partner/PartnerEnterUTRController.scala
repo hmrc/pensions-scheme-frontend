@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
@@ -41,12 +43,15 @@ class PartnerEnterUTRController @Inject()(
                                       getData: DataRetrievalAction,
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
-                                      formProvider: UTRFormProvider
+                                      formProvider: UTRFormProvider,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: utr
                                     )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__enterUTR", Message("messages__thePartner").resolve),

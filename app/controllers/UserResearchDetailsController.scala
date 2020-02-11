@@ -27,8 +27,8 @@ import models.NormalMode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.Register
 import utils.UserAnswers
 import views.html.userResearchDetails
@@ -44,21 +44,23 @@ class UserResearchDetailsController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: UserResearchDetailsFormProvider,
-                                               auditService: AuditService
-                                             )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                               auditService: AuditService,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: userResearchDetails
+                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(userResearchDetails(appConfig, form))
+      Ok(view(form))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-        BadRequest(userResearchDetails(appConfig, formWithErrors)),
+        BadRequest(view(formWithErrors)),
         value => {
           auditService.sendEvent(UserResearchEvent.userResearchAgreementSchemeEvent(request.externalId, value.name, value.email))
           Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers()))

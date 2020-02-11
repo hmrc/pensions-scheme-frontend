@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.CSRFRequest
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -43,17 +43,29 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
+class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import InsurerEnterPostCodeControllerSpec._
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val view = injector.instanceOf[postcodeLookup]
 
   "InsurerEnterPostCodeController Controller" must {
     "render postCodeLookup from a GET request" in {
-      requestResult(
-        implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, None))),
-        (request, result) => {
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].toInstance(retrieval),
+        bind[DataRequiredAction].to(new DataRequiredActionImpl),
+        bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
+        bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
+        bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
+        bind[PostCodeLookupFormProvider].to(formProvider)
+      )) {
+        implicit app =>
+
+          val request = addCSRFToken(FakeRequest())
+          val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
+          val result = controller.onPageLoad(NormalMode, None)(request)
 
           val viewModel = PostcodeLookupViewModel(
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
@@ -64,21 +76,28 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with CSRFReq
           )
 
           status(result) mustBe OK
-          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, Some("Test Scheme Name"))(request, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, Some("Test Scheme Name"))(request, messages).toString()
         }
-      )
     }
 
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
-        requestResult(
-          implicit app => addToken(FakeRequest(routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None))
-            .withFormUrlEncodedBody("postcode" -> validPostcode)),
-          (_, result) => {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(retrieval),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl),
+          bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
+          bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
+          bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
+          bind[PostCodeLookupFormProvider].to(formProvider)
+        )) {
+          implicit app =>
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
+          val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
+          val result = controller.onSubmit(NormalMode, None)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
           }
-        )
       }
     }
   }
@@ -109,25 +128,6 @@ object InsurerEnterPostCodeControllerSpec extends OptionValues {
   private val fakeAddressLookupConnector = new AddressLookupConnector {
     override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
       Future.successful(Seq(tolerantAddress))
-    }
-  }
-
-  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit,
-                               data: DataRetrievalAction = retrieval)
-                              (implicit writeable: Writeable[T]): Unit = {
-    running(_.overrides(
-      bind[AuthAction].to(FakeAuthAction),
-      bind[DataRetrievalAction].toInstance(data),
-      bind[DataRequiredAction].to(new DataRequiredActionImpl),
-      bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
-      bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
-      bind[PostCodeLookupFormProvider].to(formProvider)
-    )) {
-      app =>
-        val req = request(app)
-        val result = route[T](app, req).value
-        test(req, result)
     }
   }
 

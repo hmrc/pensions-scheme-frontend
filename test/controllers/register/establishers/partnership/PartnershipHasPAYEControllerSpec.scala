@@ -48,8 +48,9 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
     formFieldName = Some("hasPaye")
   )
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
+  private val view = injector.instanceOf[hasReferenceNumber]
   private def viewAsString(form: Form[_] = form): String =
-    hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+    view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipHasPAYEController" when {
     "on a GET" must {

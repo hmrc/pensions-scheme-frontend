@@ -22,13 +22,14 @@ import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNoUTRReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -40,12 +41,16 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
                                              getData: DataRetrievalAction,
                                              allowAccess: AllowAccessActionProvider,
                                              requireData: DataRequiredAction,
-                                             formProvider: ReasonFormProvider
+                                             formProvider: ReasonFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  private def form(partnerName: String) = formProvider("messages__reason__error_utrRequired", partnerName)
+  private def form(partnerName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__reason__error_utrRequired", partnerName)
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.PartnerNoUTRReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__whyNoUTR", Message("messages__thePartner").resolve),

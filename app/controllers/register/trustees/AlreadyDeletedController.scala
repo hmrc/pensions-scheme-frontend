@@ -28,8 +28,8 @@ import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
@@ -41,15 +41,18 @@ class AlreadyDeletedController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          requireData: DataRequiredAction,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: alreadyDeleted
+                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                            with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index, trusteeKind, srn) match {
         case Right(trusteeName) =>
-          Future.successful(Ok(alreadyDeleted(appConfig, vm(index, trusteeName, mode, srn, existingSchemeName))))
+          Future.successful(Ok(view(vm(index, trusteeName, mode, srn, existingSchemeName))))
         case Left(result) => result
       }
   }

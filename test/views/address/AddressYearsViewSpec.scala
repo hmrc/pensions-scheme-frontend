@@ -41,11 +41,13 @@ class AddressYearsViewSpec extends ViewBehaviours {
     legend = "legend"
   )
 
+  val view: addressYears = app.injector.instanceOf[addressYears]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    view(form, viewmodel, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
+    view(form, viewmodel, None)(fakeRequest, messages)
 
   "AddressYears view" when {
     "rendered" must {

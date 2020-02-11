@@ -41,14 +41,16 @@ class NinoViewSpec extends QuestionViewBehaviours[ReferenceValue] {
     srn = srn
   )
 
+  val view: nino = app.injector.instanceOf[nino]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    nino(frontendAppConfig, form, viewmodel(Some("srn")), None)(fakeRequest, messages)
+    view(form, viewmodel(Some("srn")), None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    nino(frontendAppConfig, form, viewmodel(None), None)(fakeRequest, messages)
+    view(form, viewmodel(None), None)(fakeRequest, messages)
 
   "Nino view" when {
 

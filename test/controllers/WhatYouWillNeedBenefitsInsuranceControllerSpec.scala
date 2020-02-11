@@ -19,23 +19,27 @@ package controllers
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.whatYouWillNeedBenefitsInsurance
 
 class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)
 
+  private val view = injector.instanceOf[whatYouWillNeedBenefitsInsurance]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
     new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  def viewAsString(): String = whatYouWillNeedBenefitsInsurance(frontendAppConfig, None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedBenefitsInsuranceController" when {
 

@@ -24,6 +24,7 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -89,7 +90,7 @@ object PartnerHasUTRControllerSpec extends ControllerSpecBase {
     heading = Message("messages__hasUTR", "first last"),
     hint = Some(Message("messages__hasUtr__p1"))
   )
-
+  private val view = injector.instanceOf[hasReferenceNumber]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerHasUTRController =
     new PartnerHasUTRController(
       frontendAppConfig,
@@ -100,9 +101,11 @@ object PartnerHasUTRControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 }
 

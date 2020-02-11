@@ -26,11 +26,12 @@ import models.Mode
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +43,9 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,
                                                requireData: DataRequiredAction,
-                                               val auditService: AuditService
+                                               val auditService: AuditService,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: addressList
                                               )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 

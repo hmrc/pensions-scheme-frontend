@@ -25,8 +25,8 @@ import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, _}
@@ -43,8 +43,10 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                              requireData: DataRequiredAction,
                                                              implicit val countryOptions: CountryOptions,
-                                                             allowChangeHelper: AllowChangeHelper
-                                                            )(implicit val ec: ExecutionContext) extends FrontendController
+                                                             allowChangeHelper: AllowChangeHelper,
+                                                             val controllerComponents: MessagesControllerComponents,
+                                                             val view: checkYourAnswers
+                                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -74,7 +76,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
-        Future.successful(Ok(checkYourAnswers(appConfig,vm)))
+        Future.successful(Ok(view(vm)))
 
     }
 }

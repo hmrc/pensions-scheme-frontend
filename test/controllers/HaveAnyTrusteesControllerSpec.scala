@@ -41,6 +41,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.haveAnyTrustees
 
@@ -52,11 +53,15 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   private val formProvider = new HaveAnyTrusteesFormProvider()
   private val form = formProvider()
 
+  private val view = injector.instanceOf[haveAnyTrustees]
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 

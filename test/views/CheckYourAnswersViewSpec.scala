@@ -42,14 +42,15 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private val srn = Some("S123")
 
+  val view: checkYourAnswers = app.injector.instanceOf[checkYourAnswers]
+
   def createView(returnOverview: Boolean = false,
                  mode: Mode = NormalMode,
                  hideEditLinks: Boolean = false,
                  srn: Option[String] = None,
                  hideSaveAndContinueButton: Boolean
                 ): () => HtmlFormat.Appendable = () =>
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = emptyAnswerSections,
         href = routes.IndexController.onPageLoad(),
@@ -64,8 +65,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section], Mode, Boolean) => HtmlFormat.Appendable = (sections, mode, viewOnly) =>
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = sections,
         href = routes.IndexController.onPageLoad(),

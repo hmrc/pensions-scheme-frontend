@@ -16,27 +16,26 @@
 
 package controllers.register.establishers.partnership
 
-import base.CSRFRequest
-import services.{FakeUserAnswersService, UserAnswersService}
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.FakeDataRetrievalAction
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablisherPartnership
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
+class PartnershipAddressListControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = routes.PartnershipAddressYearsController.onPageLoad(NormalMode, 0, None)
 
@@ -70,126 +69,84 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-
+  private val view = injector.instanceOf[addressList]
 
   "Partnership Address List Controller" must {
     "return Ok and the correct view on a GET Request" in {
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
-      )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
-
+      running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val view = app.injector.instanceOf[addressList]
+        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
         status(result) mustBe OK
 
         val viewModel: AddressListViewModel = addressListViewModel(addresses)
         val form = new AddressListFormProvider()(viewModel.addresses)
 
-        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
+        contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString
       }
 
     }
 
     "redirect to Post Code Lookup if no address data on a GET request" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
-      )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+      running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
-
     }
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
-      )) { implicit app =>
-        val request = addToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+      running(_.overrides(modules(dontGetAnyData): _*)) { app =>
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
-
     }
 
     "redirect to the next page on POST of valid data" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
-      )) { implicit app =>
-        val request =
-          addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
-
-        val result = route(app, request).value
+      running(_.overrides(modules(dataRetrievalAction) ++
+        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result).value mustBe onwardRoute.url
       }
     }
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
-      )) { implicit app =>
-        val request =
-          addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
-
-        val result = route(app, request).value
+      running(_.overrides(modules(dontGetAnyData) ++
+        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
-
     }
 
     "redirect to Post Code Lookup if no address data on a POST request" in {
-
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator)
-      )) { implicit app =>
-        val request =
-          addToken(
-            FakeRequest(routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
-
-        val result = route(app, request).value
+      running(_.overrides(modules(getEmptyData) ++
+        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
+        val controller = app.injector.instanceOf[PartnershipAddressListController]
+        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
       }
-
     }
   }
 

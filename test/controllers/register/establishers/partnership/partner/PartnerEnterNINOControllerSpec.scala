@@ -22,7 +22,7 @@ import controllers.register.establishers.partnership.partner.routes.PartnerEnter
 import forms.NINOFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerEnterNINOId}
+import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerNameId}
 import models._
 import models.person.PersonName
 import play.api.data.Form
@@ -30,6 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -40,9 +41,11 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
  import PartnerEnterNINOControllerSpec._
 
   private val form = formProvider(partnerName)
+
+  private val view = injector.instanceOf[nino]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerEnterNINOController =
     new PartnerEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
 
   private def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
@@ -53,7 +56,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
       srn = None
     )
 
-    nino(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages).toString
+    view(form, viewmodel, None)(fakeRequest, messages).toString
   }
   "PartnerNino Controller " must {
 

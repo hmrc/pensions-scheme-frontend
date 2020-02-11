@@ -21,18 +21,19 @@ import controllers.actions.{AuthAction, DataRetrievalAction}
 import identifiers.register.ContinueRegistrationId
 import models.NormalMode
 import navigators.Navigator
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.Register
 
 import scala.concurrent.ExecutionContext
 
 class ContinueRegistrationController @Inject()(
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
-                                                @Register navigator: Navigator
-                                              )(implicit val ec: ExecutionContext) extends FrontendController {
+                                                @Register navigator: Navigator,
+                                                 val controllerComponents: MessagesControllerComponents
+                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>

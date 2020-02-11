@@ -23,12 +23,13 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.{Index, NormalMode, person}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -56,6 +57,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         EstablisherUTRId.toString -> "1234567891"
     )))
 
+  private val view = injector.instanceOf[addressList]
+
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                   dataCacheConnector: UserAnswersService = FakeUserAnswersService
@@ -68,12 +71,13 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      fakeAuditService
+      fakeAuditService,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
-    addressList(
-      frontendAppConfig,
+    view(
       form,
       AddressListViewModel(
         postCall = routes.AddressListController.onSubmit(NormalMode, firstIndex, None),

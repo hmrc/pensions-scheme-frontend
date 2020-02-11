@@ -20,10 +20,10 @@ import forms.FormSpec
 import forms.mappings.{CrnMapping, Transforms}
 import generators.Generators
 import models.ReferenceValue
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 
-trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators with Transforms {
+trait CrnBehaviour extends FormSpec with CrnMapping with ScalaCheckPropertyChecks with Generators with Transforms {
 
   def formWithCrnVariations(testForm: Form[ReferenceValue],
                             crnLengthKey: String,

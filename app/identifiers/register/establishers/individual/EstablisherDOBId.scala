@@ -16,10 +16,11 @@
 
 package identifiers.register.establishers.individual
 
+import java.time.LocalDate
+
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Link
-import org.joda.time.LocalDate
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.{DateHelper, UserAnswers}

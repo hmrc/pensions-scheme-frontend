@@ -20,12 +20,15 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import viewmodels.Message
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  private val view = injector.instanceOf[whatYouWillNeedCompanyDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): WhatYouWillNeedCompanyDetailsController =
     new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
@@ -33,12 +36,14 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  lazy val postCall = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
+  lazy val postCall: Call = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
 
-  def viewAsString(): String = whatYouWillNeedCompanyDetails(frontendAppConfig, None, postCall, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, postCall, None, "test company name")(fakeRequest, messages).toString
 
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {

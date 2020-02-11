@@ -33,7 +33,7 @@ class TestOnlyCacheConnector @Inject()(
 
   def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     http.url(url(collectionName))
-      .withHeaders(hc.headers: _*)
+      .withHttpHeaders(hc.headers: _*)
       .delete().map(_ => Ok)
   }
 }

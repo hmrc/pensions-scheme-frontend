@@ -31,8 +31,10 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   private val href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
+  val view: whatYouWillNeed = app.injector.instanceOf[whatYouWillNeed]
+
   private def createView: () => HtmlFormat.Appendable =
-    () => whatYouWillNeed(frontendAppConfig, Some("testScheme"), None, partnershipName, href)(fakeRequest, messages)
+    () => view(Some("testScheme"), None, partnershipName, href)(fakeRequest, messages)
 
   private val messageKeys = (1 to 8).map(num => s"_item$num").toList
 

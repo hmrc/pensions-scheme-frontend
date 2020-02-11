@@ -23,13 +23,16 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
-import models.{Index, Mode}
+import models.requests.DataRequest
+import models.{AddressYears, Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
 
@@ -41,10 +44,13 @@ class PartnershipAddressYearsController @Inject()(
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
                                                    allowAccess: AllowAccessActionProvider,
-                                                   requireData: DataRequiredAction
+                                                   requireData: DataRequiredAction,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   val view: addressYears
                                                  )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
-  private def form(partnershipName: String) = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))
+  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[AddressYears] =
+    new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -63,7 +69,7 @@ class PartnershipAddressYearsController @Inject()(
 
   private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership").resolve),
+    title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership")),
     heading = Message("messages__trusteeAddressYears__heading", partnershipName),
     legend = Message("messages__trusteeAddressYears__heading", partnershipName),
     subHeading = Some(Message(partnershipName)),

@@ -31,11 +31,13 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
   val form = new OccupationalPensionSchemeFormProvider()()
   val schemeName = "schemename"
 
+  val view: occupationalPensionScheme = app.injector.instanceOf[occupationalPensionScheme]
+
   def createView(): () => HtmlFormat.Appendable = () =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    view(form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    view(form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   "OccupationalPensionScheme view " must {
 

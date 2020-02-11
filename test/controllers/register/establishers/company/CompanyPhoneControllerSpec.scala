@@ -21,13 +21,14 @@ import controllers.actions._
 import forms.PhoneFormProvider
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
-import viewmodels.{Message, CommonFormWithHintViewModel}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -38,6 +39,8 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val form: Form[String] = formProvider()
   val firstIndex = Index(0)
 
+  private val view = injector.instanceOf[phoneNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPhoneController =
     new CompanyPhoneController(frontendAppConfig,
       messagesApi,
@@ -47,12 +50,13 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    phoneNumber(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),

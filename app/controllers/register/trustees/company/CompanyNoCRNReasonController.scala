@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoCRNReasonId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.{Message, ReasonViewModel}
+import views.html.reason
 
 import scala.concurrent.ExecutionContext
 
@@ -40,15 +42,17 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
-                                          formProvider: NoCompanyNumberFormProvider
+                                          formProvider: NoCompanyNumberFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: reason
                                          )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
-  protected def form(name: String) = formProvider(name)
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider(name)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
+      title = Message("messages__whyNoCRN", Message("messages__theCompany")),
       heading = Message("messages__whyNoCRN", companyName),
       srn = srn
     )

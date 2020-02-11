@@ -16,22 +16,25 @@
 
 package controllers.register.establishers.company.director
 
+import java.time.LocalDate
+
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
+import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
 
@@ -44,18 +47,21 @@ class DirectorDOBController @Inject()(
                                        getData: DataRetrievalAction,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                       formProvider: DOBFormProvider
+                                       formProvider: DOBFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: DOB
                                      )(implicit val ec: ExecutionContext) extends DateOfBirthController {
 
   val form: Form[LocalDate] = formProvider()
 
   private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: Message)
+                       (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, directorIndex, srn),
       srn = srn,
-      token = token
+      token = token.resolve
     )
   }
 
@@ -65,7 +71,7 @@ class DirectorDOBController @Inject()(
         get(
           DirectorDOBId(establisherIndex, directorIndex),
           DirectorNameId(establisherIndex, directorIndex),
-          viewModel(mode, establisherIndex, directorIndex, srn, Message("messages__theDirector").resolve),
+          viewModel(mode, establisherIndex, directorIndex, srn, Message("messages__theDirector")),
           mode
         )
     }
@@ -76,7 +82,7 @@ class DirectorDOBController @Inject()(
         post(
           DirectorDOBId(establisherIndex, directorIndex),
           DirectorNameId(establisherIndex, directorIndex),
-          viewModel(mode, establisherIndex, directorIndex, srn, Message("messages__theDirector").resolve),
+          viewModel(mode, establisherIndex, directorIndex, srn, Message("messages__theDirector")),
           mode
         )
     }

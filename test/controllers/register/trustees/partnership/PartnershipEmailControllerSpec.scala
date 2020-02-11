@@ -44,9 +44,10 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
 
   private val fullAnswers = UserAnswers().trusteePartnershipDetails(firstIndex, trusteePartnershipDetails)
 
+  private val view = injector.instanceOf[emailAddress]
+
   def viewAsString(form: Form[_] = form): String =
-    emailAddress(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),

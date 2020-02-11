@@ -22,30 +22,36 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.UTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
 class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         override val userAnswersService: UserAnswersService,
-                                         val navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
-                                         requireData: DataRequiredAction,
-                                         formProvider: UTRFormProvider)
-                                        (implicit val ec: ExecutionContext) extends UTRController {
+                                              override val messagesApi: MessagesApi,
+                                              override val userAnswersService: UserAnswersService,
+                                              val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: UTRFormProvider,
+                                              val view: utr,
+                                              val controllerComponents: MessagesControllerComponents
+                                             )
+                                             (implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.EstablisherEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),

@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{NormalMode, PartnershipDetails}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -30,11 +30,11 @@ import views.html.register.whatYouWillNeedPartnershipDetails
 class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
-
+  private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
   def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
 
-  def viewAsString(): String = whatYouWillNeedPartnershipDetails(
-    frontendAppConfig, None, onwardRoute, trusteePartnership.name, None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(
+    None, onwardRoute, trusteePartnership.name, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipDetailsController" when {
 

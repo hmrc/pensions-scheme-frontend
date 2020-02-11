@@ -22,11 +22,12 @@ import identifiers.{PstrId, SchemeNameId}
 import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.variationDeclaration
 
@@ -35,7 +36,7 @@ import scala.concurrent.Future
 class VariationDeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
   val srnNumber = "S12345"
-  val srn = Some("S12345")
+  val srn: Option[String] = Some(srnNumber)
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
@@ -52,9 +53,13 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
   def controller(dataRetrievalAction: DataRetrievalAction = validData): VariationDeclarationController =
     new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector, viewConnector)
+      pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector, viewConnector,
+      stubMessagesControllerComponents(),
+      view
+    )
 
-  private def viewAsString(): String = variationDeclaration(frontendAppConfig, Some(schemeName), srn, postCall)(fakeRequest, messages).toString
+  private val view = injector.instanceOf[variationDeclaration]
+  private def viewAsString(): String = view(Some(schemeName), srn, postCall)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 

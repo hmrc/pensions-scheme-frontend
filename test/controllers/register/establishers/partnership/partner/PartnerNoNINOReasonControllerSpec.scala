@@ -25,6 +25,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
@@ -45,7 +46,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
     heading = Message("messages__whyNoNINO", name),
     srn = srn
   )
-
+  private val view = injector.instanceOf[reason]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerNoNINOReasonController =
     new PartnerNoNINOReasonController(
       frontendAppConfig,
@@ -56,10 +57,12 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form): String = reason(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyCRNController" must {
 

@@ -17,18 +17,19 @@
 package controllers
 
 import akka.stream.Materializer
+import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.UTRFormProvider
 import identifiers.TypedIdentifier
-import models.{NormalMode, ReferenceValue}
 import models.requests.DataRequest
+import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -39,11 +40,12 @@ import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures {
+class UTRControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   import UTRControllerSpec._
 
-  val viewmodel = UTRViewModel(
+  private val view = injector.instanceOf[utr]
+  val viewmodel: UTRViewModel = UTRViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
@@ -61,7 +63,6 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[UTRFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -69,7 +70,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual utr(appConfig, formProvider(), viewmodel, None)(request, messages).toString
+          contentAsString(result) mustEqual view(formProvider(), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -82,7 +83,6 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[UTRFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -91,8 +91,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           val result = controller.onPageLoad(viewmodel, answers)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual utr(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider().fill(ReferenceValue("1234567890")),
             viewmodel,
             None
@@ -136,7 +135,6 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
 
           implicit val materializer: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[UTRFormProvider]
           val controller = app.injector.instanceOf[TestController]
           val request = FakeRequest().withFormUrlEncodedBody(("utr", "123456789012345"))
@@ -146,8 +144,7 @@ class UTRControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual utr(
-            appConfig,
+          contentAsString(result) mustEqual view(
             formProvider().bind(Map("utr" -> "123456789012345")),
             viewmodel,
             None
@@ -169,7 +166,9 @@ object UTRControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val userAnswersService: UserAnswersService,
                                   override val navigator: Navigator,
-                                  val formProvider: UTRFormProvider
+                                  val formProvider: UTRFormProvider,
+                                  val controllerComponents: MessagesControllerComponents,
+                                  val view: utr
                                 )(implicit val ec: ExecutionContext) extends UTRController {
 
     def onPageLoad(viewmodel: UTRViewModel, answers: UserAnswers): Future[Result] = {

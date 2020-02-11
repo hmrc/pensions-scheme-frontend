@@ -23,15 +23,15 @@ import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.trustees.individual._
 import javax.inject.Inject
-import models.address.TolerantAddress
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result, Redirect}
 import services.UserAnswersService
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +43,9 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                      getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
-                                                     val auditService: AuditService
+                                                     val auditService: AuditService,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     val view: addressList
                                                     )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals with I18nSupport {
 
   def viewModel(mode: Mode, index: Index, srn: Option[String])

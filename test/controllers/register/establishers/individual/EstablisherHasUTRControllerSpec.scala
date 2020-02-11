@@ -25,6 +25,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -45,6 +46,8 @@ class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
     hint = Some(Message("messages__hasUtr__p1"))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherIndividual): EstablisherHasUTRController =
     new EstablisherHasUTRController(
       frontendAppConfig,
@@ -55,10 +58,12 @@ class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "EstablisherHasUTRController" must {
 

@@ -25,14 +25,14 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.PayeViewModel
 import views.html.paye
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait PayeController extends FrontendController with Retrievals with I18nSupport {
+trait PayeController extends FrontendBaseController with Retrievals with I18nSupport {
 
   protected implicit def ec: ExecutionContext
 
@@ -42,13 +42,15 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
 
   protected def navigator: Navigator
 
+  protected def view: paye
+
   protected def get(id: TypedIdentifier[ReferenceValue], form: Form[ReferenceValue], viewmodel: PayeViewModel)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val filledForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(paye(appConfig, filledForm, viewmodel, existingSchemeName)))
+    Future.successful(Ok(view(filledForm, viewmodel, existingSchemeName)))
   }
 
   protected def post(
@@ -59,7 +61,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(paye(appConfig, formWithErrors, viewmodel, existingSchemeName))),
+        Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       paye =>
         userAnswersService.save(mode, viewmodel.srn, id, paye.copy(isEditable = true)).map {
           answers =>

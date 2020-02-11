@@ -28,6 +28,7 @@ import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory, UserAnswers}
 import views.html.schemeType
 
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTypeControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val view = injector.instanceOf[schemeType]
 
   val formProvider = new SchemeTypeFormProvider()
   val form = formProvider()
@@ -64,10 +66,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
-      FakeNameMatchingFactory
+      FakeNameMatchingFactory,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "SchemeType Controller" must {
 

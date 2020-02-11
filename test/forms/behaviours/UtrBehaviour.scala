@@ -19,11 +19,11 @@ package forms.behaviours
 import forms.FormSpec
 import forms.mappings.UtrMapping
 import generators.Generators
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
 import wolfendale.scalacheck.regexp.RegexpGen
 
-trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Generators with StringFieldBehaviours {
+trait UtrBehaviour extends FormSpec with UtrMapping with ScalaCheckPropertyChecks with Generators with StringFieldBehaviours {
 
   //  scalastyle:off magic.number
 

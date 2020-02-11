@@ -22,6 +22,12 @@ import org.scalatest.{MustMatchers, WordSpec}
 
 class DateSpec extends WordSpec with MustMatchers {
 
+  private val validDate = "2012-08-10"
+  private val startOfYear = "2000-01-01"
+  private val endOfYear = "2000-12-31"
+  private val invalidDate = "21 July 2012"
+  private val notADate = "not a date"
+
   "The date formatter" must {
     "display the date in the format e.g. 29 November 2017" in {
       Date.IsoLocalToViewDate(validDate) mustBe "10 August 2012"
@@ -45,11 +51,5 @@ class DateSpec extends WordSpec with MustMatchers {
       }
     }
   }
-
-  private val validDate = "2012-08-10"
-  private val startOfYear = "2000-01-01"
-  private val endOfYear = "2000-12-31"
-  private val invalidDate = "21 July 2012"
-  private val notADate = "not a date"
 }
 

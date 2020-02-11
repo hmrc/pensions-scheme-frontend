@@ -26,13 +26,14 @@ import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -49,6 +50,8 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
     title = Message("messages__directorName__title"),
     heading = Message("messages__directorName__heading"))
 
+  private val view = injector.instanceOf[personName]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorNameController =
     new DirectorNameController(
       frontendAppConfig,
@@ -59,11 +62,13 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
+    )
 
 
-  def viewAsString(form: Form[_] = form): String = personName(
-    frontendAppConfig,
+  def viewAsString(form: Form[_] = form): String = view(
     form,
     viewmodel,
     None)(fakeRequest, messages).toString

@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership.{PartnershipEmailId, Partne
 import models.Mode.checkMode
 import models._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -64,10 +64,11 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     ))
   }
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

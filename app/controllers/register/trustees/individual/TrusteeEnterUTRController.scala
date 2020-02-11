@@ -22,30 +22,35 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import viewmodels.{Message, UTRViewModel}
+import views.html.utr
 
 import scala.concurrent.ExecutionContext
 
 class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
-                                     val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                      val userAnswersService: UserAnswersService,
                                      val navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      allowAccess: AllowAccessActionProvider,
                                      requireData: DataRequiredAction,
-                                     formProvider: UTRFormProvider
+                                     formProvider: UTRFormProvider,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val view: utr
                                      )(implicit val ec: ExecutionContext) extends UTRController {
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String
+                       )(implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.TrusteeEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),

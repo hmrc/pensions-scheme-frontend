@@ -20,12 +20,13 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasPAYEFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasPAYEId, PartnershipEnterPAYEId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId, PartnershipHasPAYEId}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -58,6 +59,8 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
     ))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasPAYEController =
     new PartnershipHasPAYEController(
       frontendAppConfig,
@@ -68,10 +71,12 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def viewAsString(form: Form[_] = form) = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipHasPAYEController" must {
 

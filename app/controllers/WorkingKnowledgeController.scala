@@ -27,8 +27,8 @@ import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils._
 import utils.annotations.BeforeYouStart
 import views.html.workingKnowledge
@@ -43,8 +43,10 @@ class WorkingKnowledgeController @Inject()(
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
-                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
+                                            sectionComplete: SectionComplete,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: workingKnowledge
+                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -58,14 +60,14 @@ class WorkingKnowledgeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(workingKnowledge(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
 
           dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>

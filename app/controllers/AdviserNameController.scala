@@ -26,8 +26,8 @@ import models.Mode
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
 import utils.UserAnswers
 import utils.annotations.WorkingKnowledge
 import views.html.adviserName
@@ -42,8 +42,10 @@ class AdviserNameController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: AdviserNameFormProvider
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                       formProvider: AdviserNameFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: adviserName
+                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -53,14 +55,14 @@ class AdviserNameController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(adviserName(appConfig, preparedForm, mode, existingSchemeName))
+      Ok(view(preparedForm, mode, existingSchemeName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(adviserName(appConfig, formWithErrors, mode, existingSchemeName))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
             Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap)))

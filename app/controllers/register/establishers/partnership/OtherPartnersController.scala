@@ -26,10 +26,9 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablisherPartnership
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import views.html.register.establishers.partnership.otherPartners
 
@@ -44,35 +43,37 @@ class OtherPartnersController @Inject()(
                                          getData: DataRetrievalAction,
                                          allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
-                                         formProvider: OtherPartnersFormProvider
-                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                         formProvider: OtherPartnersFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: otherPartners
+                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      retrievePartnershipName(establisherIndex) { _ =>
-        val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
-        val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-        Future.successful(Ok(otherPartners(appConfig, preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
-      }
+      implicit request =>
+        retrievePartnershipName(establisherIndex) { _ =>
+          val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
+          val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
+          Future.successful(Ok(view(preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
+        }
 
-  }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      retrievePartnershipName(establisherIndex) {_ =>
+      implicit request =>
+        retrievePartnershipName(establisherIndex) { _ =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
+              Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
             },
             value =>
               userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
           )
-      }
-  }
+        }
+    }
 }

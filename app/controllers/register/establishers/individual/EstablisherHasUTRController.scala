@@ -20,16 +20,16 @@ import config.FrontendAppConfig
 import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasUTRFormProvider
-import identifiers.register.establishers.company.HasCompanyUTRId
 import identifiers.register.establishers.individual.{EstablisherHasUTRId, EstablisherNameId}
 import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.EstablishersIndividual
 import viewmodels.{CommonFormWithHintViewModel, Message}
+import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
 
@@ -41,10 +41,14 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             allowAccess: AllowAccessActionProvider,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            formProvider: HasUTRFormProvider)(implicit val ec: ExecutionContext)
+                                            formProvider: HasUTRFormProvider,
+                                            val view: hasReferenceNumber,
+                                            val controllerComponents: MessagesControllerComponents)
+                                           (implicit val executionContext: ExecutionContext)
     extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
@@ -53,7 +57,8 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
       srn = srn
     )
 
-  private def form(establisherName: String) = formProvider("messages__hasUTR__error__required", establisherName)
+  private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasUTR__error__required", establisherName)
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>

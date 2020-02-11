@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.SpecBase
+
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
@@ -35,37 +36,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import BenefitsSecuredByInsuranceControllerSpec._
-
-  "Benefits secured by insurance Controller" when {
-
-    behave like controllerWithOnPageLoadMethod(
-      onPageLoadAction(this),
-      getMandatorySchemeNameHs,
-      validData.dataRetrievalAction,
-      form,
-      form.fill(true),
-      viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnSubmitMethod(
-      onSubmitAction(this, navigator),
-      validData.dataRetrievalAction,
-      form.bind(Map.empty[String, String]),
-      viewAsString(this)(form),
-      postRequest
-    )
-
-    behave like controllerThatSavesUserAnswersWithService(
-      saveAction(this),
-      postRequest,
-      BenefitsSecuredByInsuranceId,
-      true
-    )
-  }
-}
-
-object BenefitsSecuredByInsuranceControllerSpec {
   private val formProvider = new BenefitsSecuredByInsuranceFormProvider()
   private val form = formProvider.apply()
   private val validData: UserAnswers = UserAnswers(Json.obj(
@@ -74,36 +44,66 @@ object BenefitsSecuredByInsuranceControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
   private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"), postCall, None)(base.fakeRequest, base.messages).toString()
+  private val view = injector.instanceOf[benefitsSecuredByInsurance]
+  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+    view(form, NormalMode, Some("Test Scheme Name"), postCall, None)(fakeRequest, messages).toString()
 
-  private def controller(base: ControllerSpecBase)(
-    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+  private def controller(
+    dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersService = FakeUserAnswersService
   ): BenefitsSecuredByInsuranceController =
     new BenefitsSecuredByInsuranceController(
-      base.frontendAppConfig,
-      base.messagesApi,
+      frontendAppConfig,
+      messagesApi,
       cache,
       navigator,
       authAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
-      formProvider
+      formProvider,
+      stubMessagesControllerComponents(),
+      view
     )
 
-  private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+  private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
-  private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
+  private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode, None)
+  private def saveAction(cache: UserAnswersService): Action[AnyContent] =
+    controller(cache = cache).onSubmit(NormalMode, None)
+
+  "Benefits secured by insurance Controller" when {
+
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction,
+      getMandatorySchemeNameHs,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(true),
+      viewAsString(form)
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswersWithService(
+      saveAction,
+      postRequest,
+      BenefitsSecuredByInsuranceId,
+      true
+    )
+  }
 }
 
 

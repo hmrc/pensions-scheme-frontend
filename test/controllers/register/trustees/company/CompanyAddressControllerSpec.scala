@@ -29,18 +29,20 @@ import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{CountryOptions, FakeNavigator, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
+import play.api.test.CSRFTokenHelper.addCSRFToken
 
 class CompanyAddressControllerSpec extends AddressControllerBehaviours {
 
-  val firstIndex = Index(0)
+  val firstIndex: Index = Index(0)
 
-  val companyDetails = CompanyDetails("companyName")
+  val companyDetails: CompanyDetails = CompanyDetails("companyName")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -64,7 +66,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
 
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
-  val viewmodel = ManualAddressViewModel(
+  val viewmodel: ManualAddressViewModel = ManualAddressViewModel(
     controller.postCall(NormalMode, firstIndex, None),
     countryOptions.options,
     Message(controller.title,Message("messages__theCompany")),
@@ -77,6 +79,38 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
     CompanyAddressId(firstIndex),
     viewmodel
   )
+
+  "save address and redirect to next page on POST request" in {
+    running(_ => builder) {
+      implicit app =>
+
+        val onwardCall = Call("GET", "www.example.com")
+
+        val address = Address(
+          addressLine1 = "value 1",
+          addressLine2 = "value 2",
+          None, None,
+          postcode = Some("AB1 1AB"),
+          country = "GB"
+        )
+
+        val fakeRequest = addCSRFToken(FakeRequest()
+          .withHeaders("Csrf-Token" -> "nocheck")
+          .withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country))
+
+        val controller = app.injector.instanceOf[CompanyAddressController]
+        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).value mustEqual onwardCall.url
+
+        FakeUserAnswersService.userAnswer.get(CompanyAddressId(firstIndex)).value mustEqual address
+    }
+  }
 
   "send an audit event when valid data is submitted" in {
 
@@ -99,7 +133,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
     )) {
       implicit app =>
 
-        val fakeRequest = addToken(FakeRequest(routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None))
+        val fakeRequest = addCSRFToken(FakeRequest()
           .withHeaders("Csrf-Token" -> "nocheck")
           .withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),
@@ -109,7 +143,8 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
 
         fakeAuditService.reset()
 
-        val result = route(app, fakeRequest).value
+        val controller = app.injector.instanceOf[CompanyAddressController]
+        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
 
         whenReady(result) {
           _ =>

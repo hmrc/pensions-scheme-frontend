@@ -21,25 +21,31 @@ import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes.PartnerNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val partnershipName = "test partnership name"
+
+  private val view = injector.instanceOf[whatYouWillNeed]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): WhatYouWillNeedPartnerController =
     new WhatYouWillNeedPartnerController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
-  private def viewAsString(): String = whatYouWillNeed(frontendAppConfig, None, None, partnershipName, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, None, partnershipName, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnerControllerSpec" when {
 

@@ -26,13 +26,14 @@ import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Mockito._
 import org.mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -80,6 +81,8 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     )
   )
 
+  private val view = injector.instanceOf[postcodeLookup]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPreviousAddressPostcodeLookupController =
     new CompanyPreviousAddressPostcodeLookupController(
       frontendAppConfig,
@@ -91,12 +94,13 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    postcodeLookup(
-      frontendAppConfig,
+    view(
       form,
       PostcodeLookupViewModel(
         routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, None, index),

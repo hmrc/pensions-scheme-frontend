@@ -61,10 +61,11 @@ class AddressListSpec extends ViewBehaviours {
       Some("GB")
     )
 
+  val view: addressList = app.injector.instanceOf[addressList]
+
   private def createView(): () => HtmlFormat.Appendable =
     () =>
-      addressList(
-        frontendAppConfig,
+      view(
         form,
         viewModel,
         None
@@ -72,8 +73,7 @@ class AddressListSpec extends ViewBehaviours {
 
   private def createUpdateView(): () => HtmlFormat.Appendable =
     () =>
-      addressList(
-        frontendAppConfig,
+      view(
         form,
         updateViewModel,
         None
@@ -81,8 +81,7 @@ class AddressListSpec extends ViewBehaviours {
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
     (form: Form[_]) =>
-      addressList(
-        frontendAppConfig,
+      view(
         form,
         viewModel,
         None

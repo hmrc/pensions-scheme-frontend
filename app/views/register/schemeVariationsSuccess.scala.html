@@ -17,19 +17,21 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes
-@import org.joda.time.LocalDate
+@import java.time.LocalDate
 @import utils.DateHelper
 @import viewmodels.Message
 @import models.UpdateMode
 
-@(appConfig: FrontendAppConfig, schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template
+)
+
+@(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
 @main_template(
-    title = messages("messages__variations_complete__title"),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = messages("messages__variations_complete__title")) {
 
     <div class="govuk-box-highlight">
         @components.heading(messages("messages__variations_complete__heading"), "heading-xlarge")

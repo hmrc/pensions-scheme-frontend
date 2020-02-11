@@ -17,36 +17,36 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
 import controllers.register.trustees.individual.routes.TrusteeNameController
 import forms.register.PersonNameFormProvider
+import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, SectionComplete}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.Future
 
-class TrusteeNameControllerSpec extends ControllerSpecBase with OneAppPerSuite {
+class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSuite {
 
   import TrusteeNameControllerSpec._
 
-  def viewAsString(form: Form[_] = form): String = personName(
-    frontendAppConfig,
+  private val view = injector.instanceOf[personName]
+
+  def viewAsString(form: Form[_] = form): String = view(
     form,
     viewmodel,
     None

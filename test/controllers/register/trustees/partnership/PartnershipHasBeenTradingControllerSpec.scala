@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -63,6 +64,8 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     ))
   )
 
+  private val view = injector.instanceOf[hasReferenceNumber]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipHasBeenTradingController =
     new PartnershipHasBeenTradingController(
       frontendAppConfig,
@@ -74,10 +77,12 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
+      stubMessagesControllerComponents(),
+      view)(
       global
     )
 
-  private def viewAsString(form: Form[_] = form): String = hasReferenceNumber(frontendAppConfig, form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipHasBeenTradingController" must {
 

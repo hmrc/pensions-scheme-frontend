@@ -21,11 +21,12 @@ import controllers.actions._
 import forms.EmailFormProvider
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
@@ -38,6 +39,8 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val form: Form[String] = formProvider()
   val firstIndex = Index(0)
 
+  private val view = injector.instanceOf[emailAddress]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyEmailController =
     new CompanyEmailController(frontendAppConfig,
       messagesApi,
@@ -47,12 +50,13 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
-      formProvider
+      formProvider,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    emailAddress(
-      frontendAppConfig,
+    view(
       form,
       CommonFormWithHintViewModel(
         routes.CompanyEmailController.onSubmit(NormalMode, None, firstIndex),

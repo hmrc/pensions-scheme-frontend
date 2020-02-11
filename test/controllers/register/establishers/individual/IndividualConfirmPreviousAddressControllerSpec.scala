@@ -29,6 +29,7 @@ import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -66,6 +67,8 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
   val index = 0
   val srn = Some("srn")
 
+  private val view = injector.instanceOf[confirmPreviousAddress]
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
     new IndividualConfirmPreviousAddressController(
       frontendAppConfig,
@@ -76,12 +79,13 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
       FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      countryOptions
+      countryOptions,
+      view,
+      stubMessagesControllerComponents()
     )
 
   def viewAsString(form: Form[_] = form): String =
-    confirmPreviousAddress(
-      frontendAppConfig,
+    view(
       form,
       viewmodel,
       countryOptions,

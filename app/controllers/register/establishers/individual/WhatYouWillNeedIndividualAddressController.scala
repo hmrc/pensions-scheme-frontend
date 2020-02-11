@@ -23,20 +23,22 @@ import identifiers.register.establishers.individual.EstablisherNameId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
-                                                           val messagesApi: MessagesApi,
+                                                           override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
-                                                           requireData: DataRequiredAction
-                                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                           requireData: DataRequiredAction,
+                                                           val controllerComponents: MessagesControllerComponents,
+                                                           val view: whatYouWillNeedAddress
+                                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -45,7 +47,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
           establisherName =>
             val name = establisherName.fullName
             val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn)
-            Future.successful(Ok(whatYouWillNeedAddress(appConfig, existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
+            Future.successful(Ok(view(existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
         }
     }
 }

@@ -38,10 +38,12 @@ class PhoneNumberViewSpec extends QuestionViewBehaviours[String] {
     None
   )
 
-  private val createView: () => HtmlFormat.Appendable = () => phoneNumber(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
+  val view: phoneNumber = app.injector.instanceOf[phoneNumber]
+
+  private val createView: () => HtmlFormat.Appendable = () => view(form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => phoneNumber(frontendAppConfig, form, viewModel, Some("test scheme"))(fakeRequest, messages)
+    (form: Form[String]) => view(form, viewModel, Some("test scheme"))(fakeRequest, messages)
 
   behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__trustee_phone__title"), messages("messages__enterPhoneNumber", companyName))
 

@@ -21,10 +21,13 @@ import controllers.actions._
 import models.NormalMode
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase {
+
+  private val view = injector.instanceOf[whatYouWillNeedAddress]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee): WhatYouWillNeedIndividualAddressController =
     new WhatYouWillNeedIndividualAddressController(frontendAppConfig,
@@ -32,13 +35,15 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, None)
 
   private def viewAsString(): String =
-    whatYouWillNeedAddress(frontendAppConfig, None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
+    view(None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 

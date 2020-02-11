@@ -16,19 +16,22 @@
 
 package controllers
 
-import javax.inject.Inject
 import config.FrontendAppConfig
+import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.service_unavailable
 
 import scala.concurrent.ExecutionContext
 
 class ServiceUnavailableController @Inject()(val appConfig: FrontendAppConfig,
-                                             val messagesApi: MessagesApi)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                             override val messagesApi: MessagesApi,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: service_unavailable
+                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(service_unavailable(appConfig))
+    Ok(view())
   }
 }

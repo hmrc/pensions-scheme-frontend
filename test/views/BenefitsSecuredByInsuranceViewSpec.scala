@@ -20,6 +20,7 @@ import controllers.routes
 import forms.BenefitsSecuredByInsuranceFormProvider
 import models.{NormalMode, UpdateMode}
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
 import views.html.benefitsSecuredByInsurance
@@ -30,17 +31,19 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
   val schemeName = "schemename"
 
   val form = new BenefitsSecuredByInsuranceFormProvider()()
-  def postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
+  def postCall: Call = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
+
+  val view: benefitsSecuredByInsurance = app.injector.instanceOf[benefitsSecuredByInsurance]
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages)
+    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages)
 
   def createUpdateView(): () => HtmlFormat.Appendable = () =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
+    view(form, UpdateMode, None, postCall, Some("srn"))(fakeRequest, messages)
 
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None, postCall, None)(fakeRequest, messages)
+    view(form, NormalMode, None, postCall, None)(fakeRequest, messages)
 
   "BenefitsSecuredByInsurance view " must {
 

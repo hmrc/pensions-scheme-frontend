@@ -24,10 +24,11 @@ import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -62,6 +63,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     ))
   }
 
+  private val view = injector.instanceOf[checkYourAnswers]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
     new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
@@ -72,12 +75,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
-      FakeUserAnswersService
+      FakeUserAnswersService,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), title:Message, h1:Message): String =
-    checkYourAnswers(
-      frontendAppConfig,
+    view(
       CYAViewModel(
         answerSections = answerSections,
         href = postUrl,

@@ -29,8 +29,8 @@ class WhatYouWillNeedAddressViewSpec extends ViewBehaviours {
   private val token = messages("messages__theTrustee")
 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index = 0, None)
-
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedAddress(frontendAppConfig,
+  val view: whatYouWillNeedAddress = app.injector.instanceOf[whatYouWillNeedAddress]
+  def createView: () => HtmlFormat.Appendable = () => view(
     Some("testScheme"), href, None, testUser, token)(fakeRequest, messages)
 
   "whatYouWillNeedCompanyAddress view" must {

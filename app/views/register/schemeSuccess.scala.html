@@ -17,19 +17,23 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes
-@import org.joda.time.LocalDate
+@import java.time.LocalDate
 @import utils.DateHelper
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
+)
+
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
 
 @yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
 @main_template(
-    title = messages("messages__complete__title"),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = messages("messages__complete__title")) {
 
     <div class="govuk-box-highlight">
         @components.heading(messages("messages__complete__heading"), "heading-xlarge")
@@ -64,7 +68,7 @@
     </p>
 
 
-    @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__finish")
     }
 

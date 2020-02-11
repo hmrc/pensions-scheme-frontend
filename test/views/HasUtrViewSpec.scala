@@ -41,11 +41,14 @@ class HasUtrViewSpec@Inject()(appConfig: FrontendAppConfig) extends YesNoViewBeh
     hint = Some(Message("messages__hasUtr__p1")),
     srn = srn
   )
+
+  val view: hasReferenceNumber = app.injector.instanceOf[hasReferenceNumber]
+
   def createView(srn : Option[String] = None): () => HtmlFormat.Appendable = () =>
-    hasReferenceNumber(frontendAppConfig, form, viewModel(srn), schemeName)(fakeRequest, messages)
+    view(form, viewModel(srn), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    hasReferenceNumber(frontendAppConfig, form, viewModel(), schemeName)(fakeRequest, messages)
+    view(form, viewModel(), schemeName)(fakeRequest, messages)
 
   "HasCompanyNumber view" must {
 

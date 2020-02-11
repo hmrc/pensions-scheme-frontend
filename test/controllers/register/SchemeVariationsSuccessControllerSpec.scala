@@ -22,10 +22,11 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.Future
@@ -39,6 +40,7 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   val validData: JsObject = Json.obj(
     SchemeNameId.toString -> schemeName
   )
+  private val view = injector.instanceOf[schemeVariationsSuccess]
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
                          new FakeDataRetrievalAction(Some(validData))): SchemeVariationsSuccessController =
@@ -47,12 +49,13 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
       messagesApi,
       fakeUserAnswersCacheConnector,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      stubMessagesControllerComponents(),
+      view
     )
 
   def viewAsString(): String =
-    schemeVariationsSuccess(
-      frontendAppConfig,
+    view(
       Some(schemeName),
       Some(srn)
     )(fakeRequest, messages).toString

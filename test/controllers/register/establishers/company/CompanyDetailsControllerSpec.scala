@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
@@ -27,6 +26,8 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.register.establishers.company.companyDetails
 
@@ -41,11 +42,13 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val postCall = routes.CompanyDetailsController.onSubmit _
 
+  private val view = injector.instanceOf[companyDetails]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
 
-  def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None,
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, None, 0), None)(fakeRequest, messages).toString
 
   private val validData = Json.obj(

@@ -22,14 +22,17 @@
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 
-@(appConfig: FrontendAppConfig, form: Form[_], srn: Option[String], index:Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
+@this(
+    main_template: main_template,
+    formHelper: FormWithCSRF
+)
+
+@(form: Form[_], srn: Option[String], index:Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__establisher__type__title")),
-    appConfig = appConfig,
-    bodyClasses = None) {
+    title = titleWithErrors(form, messages("messages__establisher__type__title"))) {
 
-    @helpers.form(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 

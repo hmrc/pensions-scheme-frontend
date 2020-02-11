@@ -24,28 +24,31 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
-import models.address.TolerantAddress
 import models.requests.DataRequest
-import models.{CompanyDetails, Index, Mode}
+import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Result, MessagesControllerComponents, Redirect}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CompanyAddressListController @Inject()(override val appConfig: FrontendAppConfig,
-                                             val userAnswersService: UserAnswersService,
-                                             @EstablishersCompany override val navigator: Navigator,
-                                             override val messagesApi: MessagesApi,
-                                             authenticate: AuthAction,
-                                             getData: DataRetrievalAction,
-                                             allowAccess: AllowAccessActionProvider,
-                                             requireData: DataRequiredAction,
-                                             val auditService: AuditService
+class CompanyAddressListController @Inject()(
+                                              override val appConfig: FrontendAppConfig,
+                                              val userAnswersService: UserAnswersService,
+                                              @EstablishersCompany override val navigator: Navigator,
+                                              override val messagesApi: MessagesApi,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              val auditService: AuditService,
+                                              val view: addressList,
+                                              val controllerComponents: MessagesControllerComponents
                                             )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index)

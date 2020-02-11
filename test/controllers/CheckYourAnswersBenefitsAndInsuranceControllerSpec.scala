@@ -23,6 +23,7 @@ import models.address.Address
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -88,6 +89,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true)
     .insuranceCompanyName(insuranceCompanyName).dataRetrievalAction
 
+  private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
       frontendAppConfig,
@@ -97,7 +99,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      stubMessagesControllerComponents(),
+      view
     )
 
   private def benefitsAndInsuranceSection(mode : Mode) = AnswerSection(
@@ -206,10 +210,10 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   )
 
   private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String =
-    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton, benefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
+    view(vm(mode, hideSaveAndContinueButton, benefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
   private def viewAsStringWithLessData(mode : Mode): String =
-    checkYourAnswers(frontendAppConfig, vm(mode, hideSaveAndContinueButton = true, updateBenefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
+    view(vm(mode, hideSaveAndContinueButton = true, updateBenefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
 }
 

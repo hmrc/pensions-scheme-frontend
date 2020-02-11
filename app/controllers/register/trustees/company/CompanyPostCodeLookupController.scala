@@ -27,11 +27,11 @@ import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +45,9 @@ class CompanyPostCodeLookupController @Inject()(
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
                                                  formProvider: PostCodeLookupFormProvider,
-                                                 val addressLookupConnector: AddressLookupConnector
+                                                 val addressLookupConnector: AddressLookupConnector,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 val view: postcodeLookup
                                                )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
 
   private[controllers] val manualAddressCall = routes.CompanyAddressController.onPageLoad _
