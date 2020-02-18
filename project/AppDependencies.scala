@@ -16,7 +16,7 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
     "uk.gov.hmrc" %% "play-language" % "4.2.0-play-26",
     "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-    "uk.gov.hmrc" %% "play-whitelist-filter" % "2.0.0",
+    "uk.gov.hmrc" %% "play-whitelist-filter" % "3.1.0-play-26",
     "com.typesafe.play" %% "play-json-joda" % "2.6.10",
     "com.google.inject.extensions" % "guice-multibindings" % "4.2.2"
   )
