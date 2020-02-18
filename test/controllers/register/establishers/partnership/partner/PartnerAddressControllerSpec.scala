@@ -51,11 +51,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   private val postCall = routes.PartnerAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(partnerIndex), None)
   private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
-  val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getDayOfMonth
-  val year: Int = LocalDate.now().getYear
 
-  val date = LocalDate.of(year, month, day)
   val partner = PersonName("first", "last")
 
   val countryOptions = new CountryOptions(
