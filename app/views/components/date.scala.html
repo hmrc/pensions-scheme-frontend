@@ -58,15 +58,15 @@ hint: Option[String] = None
         <div class="form-date">
             <div class="form-group form-group-day">
                 <label class="form-label bold" for="@{id}.day">@messages("date.day")</label>
-                <input class="form-control" id="@{id}.day" name="@{id}.day" type="text" min="1" max="31" aria-describedby="@if(dayErrorKey.nonEmpty){error-message-@{id}-day} else {@{id}-date-hint}" value="@valueDay" />
+                <input class="form-control" id="@{id}.day" name="@{id}.day" type="text" pattern="[0-9]*" inputmode="numeric" aria-describedby="@if(dayErrorKey.nonEmpty){error-message-@{id}-day} else {@{id}-date-hint}" value="@valueDay" />
             </div>
             <div class="form-group form-group-month">
                 <label class="form-label bold" for="@{id}.month">@messages("date.month")</label>
-                <input class="form-control" id="@{id}.month" name="@{id}.month" type="text" min="1" max="12" @if(monthErrorKey.nonEmpty){aria-describedby="error-message-@{id}-month" } value="@valueMonth" />
+                <input class="form-control" id="@{id}.month" name="@{id}.month" type="text" pattern="[0-9]*" inputmode="numeric" @if(monthErrorKey.nonEmpty){aria-describedby="error-message-@{id}-month" } value="@valueMonth" />
             </div>
             <div class="form-group form-group-year">
                 <label class="form-label bold" for="@{id}.year">@messages("date.year")</label>
-                <input class="form-control" id="@{id}.year" name="@{id}.year" type="text" min="1900" max="2050" @if(yearErrorKey.nonEmpty){aria-describedby="error-message-@{id}-year" } value="@valueYear" />
+                <input class="form-control" id="@{id}.year" name="@{id}.year" type="text" pattern="[0-9]*" inputmode="numeric" @if(yearErrorKey.nonEmpty){aria-describedby="error-message-@{id}-year" } value="@valueYear" />
             </div>
         </div>
     </fieldset>
