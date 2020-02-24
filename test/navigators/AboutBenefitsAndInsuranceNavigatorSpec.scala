@@ -39,7 +39,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
     Writes(value => JsString(value.toString))
   }
 
-  "AboutBankDetailsNavigator" when {
+  "AboutBenefitsAndInsuranceNavigator" when {
 
     "in NormalMode" must {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
