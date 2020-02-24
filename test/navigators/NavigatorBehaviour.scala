@@ -57,8 +57,11 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
     Tuple3(id, userAnswers, call)
   }
 
-  protected def rowNoValue(id: TypedIdentifier.PathDependent)(call: Call, ua: Option[UserAnswers] = None): (id.type, UserAnswers, Call) =
+  protected def rowNoValue(id: Identifier)(call: Call, ua: Option[UserAnswers] = None): (id.type, UserAnswers, Call) =
     Tuple3(id, ua.getOrElse(UserAnswers()), call)
+//
+//  protected def rowNoValue(id: Identifier)(call: Call, ua: Option[UserAnswers] = None): (id.type, UserAnswers, Call) =
+//    Tuple3(id, ua.getOrElse(UserAnswers()), call)
 
   protected def anyMoreChangesPage(srn: Option[String] = None): Call = AnyMoreChangesController.onPageLoad(srn)
 
