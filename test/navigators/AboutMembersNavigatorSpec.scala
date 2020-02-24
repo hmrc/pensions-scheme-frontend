@@ -17,59 +17,60 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
-import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
+import controllers.actions.FakeDataRetrievalAction
+import identifiers._
 import models._
-import play.api.libs.json.Json
+import org.scalatest.prop.TableFor3
+import play.api.libs.json.{JsString, Json, Writes}
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 
 class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import AboutMembersNavigatorSpec._
 
-  private def routes() = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (CurrentMembersId, emptyAnswers, sessionExpiredPage, false, Some(sessionExpiredPage), false),
-    (CurrentMembersId, noMembers, futureMembers(NormalMode), false, Some(cya), false),
-    (CurrentMembersId, oneMember, futureMembers(NormalMode), false, Some(cya), false),
-    (CurrentMembersId, twoToElevenMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
-    (CurrentMembersId, twelveToFiftyMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
-    (CurrentMembersId, fiftyOneToTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
-    (CurrentMembersId, moreThanTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
-    (MembershipPensionRegulatorId, emptyAnswers, futureMembers(NormalMode), false, Some(cya), false),
-    (FutureMembersId, emptyAnswers, cya, false, Some(cya), false)
-  )
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  private val navigator = new AboutMembersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private implicit def writes[A: Enumerable]: Writes[A] = {
+    Writes(value => JsString(value.toString))
+  }
 
-  s"${navigator.getClass.getSimpleName}" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+  "in NormalMode" must {
+    def navigation: TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Next Page"),
+        row(CurrentMembersId)(Members.None, futureMembers(NormalMode)),
+        row(CurrentMembersId)(Members.One, futureMembers(NormalMode)),
+        row(CurrentMembersId)(Members.TwoToEleven, membershipPensionRegulator(NormalMode)),
+        row(CurrentMembersId)(Members.TwelveToFifty, membershipPensionRegulator(NormalMode)),
+        row(CurrentMembersId)(Members.FiftyOneToTenThousand, membershipPensionRegulator(NormalMode)),
+        row(CurrentMembersId)(Members.MoreThanTenThousand, membershipPensionRegulator(NormalMode)),
+        rowNoValue(MembershipPensionRegulatorId)(futureMembers(NormalMode)),
+        rowNoValue(FutureMembersId)(cya)
+      )
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+  }
+
+  "in CheckMode" must {
+    def navigation: TableFor3[Identifier, UserAnswers, Call] =
+      Table(
+        ("Id", "UserAnswers", "Next Page"),
+        row(CurrentMembersId)(Members.None, cya),
+        row(CurrentMembersId)(Members.One, cya),
+        row(CurrentMembersId)(Members.TwoToEleven, membershipPensionRegulator(CheckMode)),
+        row(CurrentMembersId)(Members.TwelveToFifty, membershipPensionRegulator(CheckMode)),
+        row(CurrentMembersId)(Members.FiftyOneToTenThousand, membershipPensionRegulator(CheckMode)),
+        row(CurrentMembersId)(Members.MoreThanTenThousand, membershipPensionRegulator(CheckMode)),
+        rowNoValue(MembershipPensionRegulatorId)(cya),
+        rowNoValue(FutureMembersId)(cya)
+      )
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
   }
 }
 
 object AboutMembersNavigatorSpec {
-
-  private val emptyAnswers = UserAnswers(Json.obj())
-
-  private val noMembers = UserAnswers().currentMembers(Members.None)
-  private val oneMember = UserAnswers().currentMembers(Members.One)
-  private val twoToElevenMembers = UserAnswers().currentMembers(Members.TwoToEleven)
-  private val twelveToFiftyMembers = UserAnswers().currentMembers(Members.TwelveToFifty)
-  private val fiftyOneToTenThousandMembers = UserAnswers().currentMembers(Members.FiftyOneToTenThousand)
-  private val moreThanTenThousandMembers = UserAnswers().currentMembers(Members.MoreThanTenThousand)
-
-  private def futureMembers(mode: Mode): Call = controllers.routes.FutureMembersController.onPageLoad(mode)
-
+  private def futureMembers(mode: Mode): Call              = controllers.routes.FutureMembersController.onPageLoad(mode)
   private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
-
-  private def cya: Call = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
-  private val sessionExpiredPage: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  private def cya: Call                                    = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
 }
-
-
