@@ -18,11 +18,12 @@ package navigators
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
 import identifiers.register._
-import identifiers.{UserResearchDetailsId, VariationDeclarationId}
+import identifiers.{Identifier, UserResearchDetailsId, VariationDeclarationId}
 import models._
 import models.register.SchemeType
+import org.scalatest.prop.TableFor3
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -33,48 +34,40 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   import RegisterNavigatorSpec._
 
-  private def routesWithRestrictedEstablisher = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    // Start - continue or what you will need
-    (ContinueRegistrationId, emptyAnswers, beforeYouStart, false, None, false),
-    (ContinueRegistrationId, beforeYouStartInProgress, beforeYouStart, false, None, false),
-    (ContinueRegistrationId, beforeYouStartCompleted, taskList, false, None, false),
-    (DeclarationDormantId, beforeYouStartCompleted, declaration, false, None, false),
+  val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-    // Review, declarations, success - return from establishers
-    (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
+  "RegisterNavigator" when {
 
-    // User Research page - return to SchemeOverview
-    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
-  )
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(DeclarationId)(schemeSuccess, ua = Some(hasEstablishers)),
+          rowNoValue(DeclarationDormantId)(declaration, ua = Some(beforeYouStartCompleted)),
+          rowNoValue(ContinueRegistrationId)(taskList, ua = Some(beforeYouStartCompleted)),
+          rowNoValue(ContinueRegistrationId)(beforeYouStart, ua = Some(beforeYouStartInProgress)),
+          rowNoValue(ContinueRegistrationId)(beforeYouStart),
 
-  private def updateRoute = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    // Start - continue or what you will need
-    (VariationDeclarationId, emptyAnswers, variationSucess, false, None, false)
-  )
+          rowNoValue(UserResearchDetailsId)(schemeOverview(frontendAppConfig))
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
 
-  "RegisterNavigator" must {
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber, NormalMode)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoute, dataDescriber, UpdateMode, Some("srn"))
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(VariationDeclarationId)(variationSucess)
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, Some("srn"))
+    }
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object RegisterNavigatorSpec extends OptionValues{
-
-  private val lastPage: Call = Call("GET", "http://www.test.com")
-
-  private val emptyAnswers = UserAnswers(Json.obj())
-  private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
-  private val ukBankAccountFalse = UserAnswers().ukBankAccount(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name"))
-  private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
-  private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
   private val beforeYouStartInProgress = UserAnswers().schemeName("Test Scheme")
   private val beforeYouStartCompleted = beforeYouStartInProgress.schemeType(SchemeType.SingleTrust).
     establishedCountry(country = "GB").declarationDuties(haveWorkingKnowledge = true)
@@ -85,13 +78,8 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
 
-  private def expired = controllers.routes.SessionExpiredController.onPageLoad()
-
   private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
   private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
-
 }
