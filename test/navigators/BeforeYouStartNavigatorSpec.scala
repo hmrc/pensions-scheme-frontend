@@ -29,10 +29,6 @@ import utils.{Enumerable, UserAnswers}
 
 class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
-  private implicit def writes[A: Enumerable]: Writes[A] = {
-    Writes(value => JsString(value.toString))
-  }
-
   import BeforeYouStartNavigatorSpec._
 
   val navigator: Navigator =

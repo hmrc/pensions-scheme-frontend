@@ -35,10 +35,6 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  private implicit def writes[A: Enumerable]: Writes[A] = {
-    Writes(value => JsString(value.toString))
-  }
-
   "AboutBenefitsAndInsuranceNavigator" when {
 
     "in NormalMode" must {
@@ -104,6 +100,9 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
 }
 
 object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
+
+  private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
+
   private def occupationalPension: Call                         = OccupationalPensionSchemeController.onPageLoad(NormalMode)
   private def typesofBenefits: Call                             = TypeOfBenefitsController.onPageLoad(NormalMode)
   private def benefitsSecured: Call                             = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)

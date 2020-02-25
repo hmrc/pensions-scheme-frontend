@@ -69,7 +69,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
           rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(NormalMode)),
           rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(NormalMode, 0)),
           row(AddCompanyDirectorsId(0))(true, directorName(NormalMode, 0)),
-          row(AddCompanyDirectorsId(0))(true, otherDirectors(NormalMode), ua = Some(addCompanyDirectorsMoreThan10)),
+          row(AddCompanyDirectorsId(0))(true, otherDirectors(NormalMode), ua = Some(addCompanyDirectorsMoreThanTen)),
           rowNoValue(OtherDirectorsId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */taskList(NormalMode)),
           rowNoValue(CheckYourAnswersId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */addCompanyDirectors(0, NormalMode)),
           rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(NormalMode)),
@@ -154,7 +154,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
           rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(UpdateMode)),
           rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(UpdateMode, 0)),
           row(AddCompanyDirectorsId(0))(true, directorName(UpdateMode, 0)),
-          row(AddCompanyDirectorsId(0))(true, otherDirectors(UpdateMode), ua = Some(addCompanyDirectorsMoreThan10)),
+          row(AddCompanyDirectorsId(0))(true, otherDirectors(UpdateMode), ua = Some(addCompanyDirectorsMoreThanTen)),
           rowNoValue(OtherDirectorsId(0))(anyMoreChanges),
           rowNoValue(CheckYourAnswersId(0))(anyMoreChanges),
           rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(UpdateMode)),
@@ -213,7 +213,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
           rowNoValueNewEstablisher(CompanyAddressListId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode)))
         )
       behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
-    }    
+    }
   }
 }
 
@@ -384,7 +384,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def addCompanyDirectorsFalseNewDir = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private def addCompanyDirectorsMoreThan10 =
+  private def addCompanyDirectorsMoreThanTen =
     UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
 
   private def addOneCompanyDirectors =

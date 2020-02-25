@@ -32,10 +32,6 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  private implicit def writes[A: Enumerable]: Writes[A] = {
-    Writes(value => JsString(value.toString))
-  }
-
   "in NormalMode" must {
     def navigation: TableFor3[Identifier, UserAnswers, Call] =
       Table(
@@ -70,6 +66,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
 }
 
 object AboutMembersNavigatorSpec {
+  private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
   private def futureMembers(mode: Mode): Call              = controllers.routes.FutureMembersController.onPageLoad(mode)
   private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
   private def cya: Call                                    = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
