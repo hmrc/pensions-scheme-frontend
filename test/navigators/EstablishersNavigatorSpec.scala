@@ -17,10 +17,12 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
+import identifiers.Identifier
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
 import models.{Mode, NormalMode, UpdateMode}
+import org.scalatest.prop.TableFor3
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -30,35 +32,47 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
 
   import EstablishersNavigatorSpec._
 
-  private def routes(mode: Mode) = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AddEstablisherId(None), emptyAnswers, establisherKind(mode), true, None: Option[Call], false),
-    (AddEstablisherId(Some(true)), addEstablishersTrue, establisherKind(mode), true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalse, taskList(mode), false, None: Option[Call], false),
-    (EstablisherKindId(0), company, companyDetails(mode), true, None: Option[Call], false),
-    (EstablisherKindId(0), individual, individualName(mode), true, None, false),
-    (EstablisherKindId(0), partnership, partnershipDetails(mode), true, None: Option[Call], false),
-    (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
-    (ConfirmDeleteEstablisherId, emptyAnswers, if(mode==UpdateMode) controllers.routes.AnyMoreChangesController.onPageLoad(None) else addEstablisher(mode), true, None, false)
-  )
+  val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  "EstablishersNavigator" must {
-    val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(NormalMode), dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(UpdateMode), dataDescriber, UpdateMode)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+  "EstablishersNavigator" when {
+
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(AddEstablisherId(None))(establisherKind(NormalMode)),
+          rowNoValue(AddEstablisherId(Some(true)))(establisherKind(NormalMode), ua = Some(addEstablishersTrue)),
+          rowNoValue(AddEstablisherId(Some(false)))(taskList(NormalMode), ua = Some(addEstablishersFalse)),
+          row(EstablisherKindId(0))(EstablisherKind.Company, companyDetails(NormalMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(NormalMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(NormalMode)),
+
+          rowNoValue(ConfirmDeleteEstablisherId)(addEstablisher(NormalMode))
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
+
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(AddEstablisherId(None))(establisherKind(UpdateMode)),
+          rowNoValue(AddEstablisherId(Some(true)))(establisherKind(UpdateMode), ua = Some(addEstablishersTrue)),
+          rowNoValue(AddEstablisherId(Some(false)))(taskList(UpdateMode), ua = Some(addEstablishersFalse)),
+          row(EstablisherKindId(0))(EstablisherKind.Company, companyDetails(UpdateMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(UpdateMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(UpdateMode)),
+          
+          rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(None))
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+    }
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
-  private val emptyAnswers = UserAnswers(Json.obj())
-  private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
-  private val individual = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
-  private val partnership = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Partnership).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
@@ -72,10 +86,5 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
-  private def expired = controllers.routes.SessionExpiredController.onPageLoad()
-
   private def taskList(mode: Mode) = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
-
 }

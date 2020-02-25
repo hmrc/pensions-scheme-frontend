@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
-//import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.Mode.checkMode
