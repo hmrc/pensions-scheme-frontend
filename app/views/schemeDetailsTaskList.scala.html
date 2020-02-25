@@ -31,14 +31,6 @@
 
 @(taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
-@variationsOnly(html:String)=@{
-    if(taskSections.srn.isDefined){
-        Option(Html(html))
-    }else{
-        None
-    }
-}
-
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {
         "messages__schemeTaskList__completed"
@@ -134,8 +126,6 @@
             <h2 id="section-establishers-header" class="heading-large">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
-                @variationsOnly("<p>")
-
                 @taskSections.addEstablisherHeader.map { header =>
 
                     @header.link.map { link =>
@@ -148,8 +138,6 @@
                         <p>@messages(text)</p>
                     }
                 }
-
-                @variationsOnly("</p>")
 
                 @for((item, i) <- taskSections.establishers.zipWithIndex){
                     @item.header.map{hdr=>
@@ -173,7 +161,6 @@
         </section>
 
         <section aria-labelledby="section-trustees-header">
-            @variationsOnly("<p>")
             @taskSections.addTrusteeHeader.map { header =>
                 <h2 id="section-trustees-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
@@ -196,24 +183,23 @@
                     <span class="task-status @statusClass(isCompleted)" id="section-trustees-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                 }
             }
-            @variationsOnly("</p>")
-                @for((item, i) <- taskSections.trustees.zipWithIndex){
-                    @item.header.map{hdr=>
-                       <h3 class="task-list-section">@messages(hdr)</h3>
-                    }
-                    <ul class="task-list-items">
-                        @for((entity, j) <- item.entities.zipWithIndex){
-                            <li class="task-list-item">
-                                <a id="section-trustees-link-@i-@j" class="task-name" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty){aria-describedby="section-trustees-status-@i-@j"}>
-                                    @messages(entity.link.text)
-                                </a>
-                                @entity.isCompleted.map{ isCompleted =>
-                                    <span class="task-status @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
-                                }
-                            </li>
-                        }
-                    </ul>
+            @for((item, i) <- taskSections.trustees.zipWithIndex){
+                @item.header.map{hdr=>
+                   <h3 class="task-list-section">@messages(hdr)</h3>
                 }
+                <ul class="task-list-items">
+                    @for((entity, j) <- item.entities.zipWithIndex){
+                        <li class="task-list-item">
+                            <a id="section-trustees-link-@i-@j" class="task-name" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty){aria-describedby="section-trustees-status-@i-@j"}>
+                                @messages(entity.link.text)
+                            </a>
+                            @entity.isCompleted.map{ isCompleted =>
+                                <span class="task-status @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
         </section>
 
         @taskSections.declaration.map{declarationSection=>
@@ -228,7 +214,7 @@
                             }
                         }else{
                             @for((incompleteMessage, i) <- declarationSection.incompleteDeclarationText.zipWithIndex){
-                                <p id="section-declaration-text-@i">@messages(incompleteMessage)</p>
+                                <span id="section-declaration-text-@i">@messages(incompleteMessage)</span>
                             }
                         }
                 </p>
