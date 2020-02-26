@@ -40,7 +40,7 @@
         headingKey= messages("messages__declaration__heading")
     )
 
-    @components.paragraph_text(messages("messages__declaration__declare"), para_id="declaration_start")
+    @components.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
 
         <ol class="list list-bullet">
             @if(isCompany){
