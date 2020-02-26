@@ -17,15 +17,17 @@
 package navigators
 
 import base.SpecBase
+import controllers.actions.FakeDataRetrievalAction
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
-import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
+import identifiers.{Identifier, TypedIdentifier}
 import models.Mode._
 import models._
 import org.scalatest.MustMatchers
 import org.scalatest.prop.TableFor3
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -33,24 +35,165 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   import TrusteesCompanyNavigatorSpec._
 
-  "TrusteesCompanyNavigator" must {
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalAndUpdateModeRoutes(NormalMode), None)
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, routesCheckMode(CheckMode), None)
+  "TrusteesCompanyNavigator" when {
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, normalAndUpdateModeRoutes(UpdateMode), None)
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(CompanyDetailsId(0))(CompanyDetails(someStringValue), addTrusteePage(NormalMode)),
+          row(HasCompanyCRNId(0))(true, companyNoPage(NormalMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyNoPage(NormalMode)),
+          row(CompanyNoCRNReasonId(0))(someStringValue, hasCompanyUtrPage(NormalMode)),
+          row(CompanyEnterCRNId(0))(someRefValue, hasCompanyUtrPage(NormalMode)),
+          row(HasCompanyUTRId(0))(true, utrPage(NormalMode)),
+          row(HasCompanyUTRId(0))(false, noUtrPage(NormalMode)),
+          row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVatPage(NormalMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVatPage(NormalMode)),
+          row(HasCompanyVATId(0))(true, vatPage(NormalMode)),
+          row(HasCompanyVATId(0))(false, hasCompanyPayePage(NormalMode)),
+          row(CompanyEnterVATId(0))(someRefValue, hasCompanyPayePage(NormalMode)),
+          row(HasCompanyPAYEId(0))(true, payePage(NormalMode)),
+          row(HasCompanyPAYEId(0))(false, cyaPage(NormalMode)),
+          row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(NormalMode)),
+          row(CompanyPostcodeLookupId(0))(Seq(someTolerantAddress), selectAddressPage(NormalMode)),
+          row(CompanyAddressListId(0))(someTolerantAddress, addressYearsPage(NormalMode)),
+          row(CompanyAddressId(0))(someAddress, addressYearsPage(NormalMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(NormalMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode)),
+          row(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(NormalMode)),
+          row(HasBeenTradingCompanyId(0))(false, cyaAddressPage(NormalMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(NormalMode)),
+          row(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(NormalMode)),
+          row(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(NormalMode)),
+          row(CompanyEmailId(0))(someStringValue, phonePage(NormalMode)),
+          row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(NormalMode))
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, routesCheckUpdateMode(CheckUpdateMode), None)
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, setNewTrusteeIdentifier(routesCheckMode(CheckUpdateMode)), None)
+    "in CheckMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(HasCompanyCRNId(0))(true, companyNoPage(CheckMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyNoPage(CheckMode)),
+          row(CompanyNoCRNReasonId(0))(someStringValue, cyaPage(CheckMode)),
+          row(CompanyEnterCRNId(0))(someRefValue, cyaPage(CheckMode)),
+          row(HasCompanyUTRId(0))(true, utrPage(CheckMode)),
+          row(HasCompanyUTRId(0))(false, noUtrPage(CheckMode)),
+          row(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(CheckMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, cyaPage(CheckMode)),
+          row(HasCompanyVATId(0))(true, vatPage(CheckMode)),
+          row(HasCompanyVATId(0))(false, cyaPage(CheckMode)),
+          row(CompanyEnterVATId(0))(someRefValue, cyaPage(CheckMode)),
+          row(HasCompanyPAYEId(0))(true, payePage(CheckMode)),
+          row(HasCompanyPAYEId(0))(false, cyaPage(CheckMode)),
+          row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(CheckMode)),
+          row(CompanyAddressId(0))(someAddress, cyaAddressPage(CheckMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(CheckMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode)),
+          row(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(CheckMode)),
+          row(HasBeenTradingCompanyId(0))(false, cyaAddressPage(CheckMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(CheckMode)),
+          row(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(CheckMode)),
+          row(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(CheckMode)),
+          row(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(CheckMode)),
+          row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(CheckMode))
+        )
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    }
+
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(CompanyDetailsId(0))(CompanyDetails(someStringValue), addTrusteePage(UpdateMode)),
+          row(HasCompanyCRNId(0))(true, companyNoPage(UpdateMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyNoPage(UpdateMode)),
+          row(CompanyNoCRNReasonId(0))(someStringValue, hasCompanyUtrPage(UpdateMode)),
+          row(CompanyEnterCRNId(0))(someRefValue, hasCompanyUtrPage(UpdateMode)),
+          row(HasCompanyUTRId(0))(true, utrPage(UpdateMode)),
+          row(HasCompanyUTRId(0))(false, noUtrPage(UpdateMode)),
+          row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVatPage(UpdateMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVatPage(UpdateMode)),
+          row(HasCompanyVATId(0))(true, vatPage(UpdateMode)),
+          row(HasCompanyVATId(0))(false, hasCompanyPayePage(UpdateMode)),
+          row(CompanyEnterVATId(0))(someRefValue, hasCompanyPayePage(UpdateMode)),
+          row(HasCompanyPAYEId(0))(true, payePage(UpdateMode)),
+          row(HasCompanyPAYEId(0))(false, cyaPage(UpdateMode)),
+          row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(UpdateMode)),
+          row(CompanyPostcodeLookupId(0))(Seq(someTolerantAddress), selectAddressPage(UpdateMode)),
+          row(CompanyAddressListId(0))(someTolerantAddress, addressYearsPage(UpdateMode)),
+          row(CompanyAddressId(0))(someAddress, addressYearsPage(UpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(UpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(UpdateMode)),
+          row(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(UpdateMode)),
+          row(HasBeenTradingCompanyId(0))(false, cyaAddressPage(UpdateMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(UpdateMode)),
+          row(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(UpdateMode)),
+          row(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(UpdateMode)),
+          row(CompanyEmailId(0))(someStringValue, phonePage(UpdateMode)),
+          row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(UpdateMode))
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+    }
+
+    "in CheckUpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNewTrustee(HasCompanyCRNId(0))(true, companyNoPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyCRNId(0))(false, noCompanyNoPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyNoCRNReasonId(0))(someStringValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyEnterCRNId(0))(someRefValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyUTRId(0))(true, utrPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyUTRId(0))(false, noUtrPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyEnterUTRId(0))(someRefValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyVATId(0))(true, vatPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyVATId(0))(false, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyEnterVATId(0))(someRefValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyPAYEId(0))(true, payePage(CheckUpdateMode)),
+          rowNewTrustee(HasCompanyPAYEId(0))(false, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyEnterPAYEId(0))(someRefValue, cyaPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyAddressId(0))(someAddress, cyaAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(CheckUpdateMode)),
+          rowNewTrustee(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(CheckUpdateMode)),
+          rowNewTrustee(HasBeenTradingCompanyId(0))(false, cyaAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(CheckUpdateMode)),
+          rowNewTrustee(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(CheckUpdateMode)),
+          row(CompanyEnterCRNId(0))(someRefValue, anyMoreChangesPage()),
+          row(CompanyEnterUTRId(0))(someRefValue, anyMoreChangesPage()),
+          row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage()),
+          row(CompanyEnterPAYEId(0))(someRefValue, anyMoreChangesPage()),
+          row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
+          row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),
+          row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(CheckUpdateMode)),
+          row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage()),
+          row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage()),
+          row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage())
+        )
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+    }
   }
 }
 
 object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
-  private def setNewTrusteeIdentifier(table: TableFor3[Identifier, UserAnswers, Call]): TableFor3[Identifier, UserAnswers, Call] = table.map(tuple =>
-    (tuple._1, tuple._2.set(IsTrusteeNewId(0))(true).asOpt.value, tuple._3)
-  )
+  private def rowNewTrustee(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call)(
+      implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+    val userAnswers = newTrustee.set(id)(value).asOpt.value
+    Tuple3(id, userAnswers, call)
+  }
 
-  private val newTrustee = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt
+  private val newTrustee = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
 
   private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, None)
 
@@ -76,7 +219,8 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def cyaAddressPage(mode: Mode): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), 0, None)
 
-  private def cyaContactDetailsPage(mode: Mode): Call = CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, None)
+  private def cyaContactDetailsPage(mode: Mode): Call =
+    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, None)
 
   private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, None)
 
@@ -95,83 +239,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, None)
 
   private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, None)
-
-  def normalAndUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
-    Table(
-      ("Id", "UserAnswers", "Next Page"),
-      row(CompanyDetailsId(0))(CompanyDetails(someStringValue), addTrusteePage(mode)),
-      row(HasCompanyCRNId(0))(true, companyNoPage(mode)),
-      row(HasCompanyCRNId(0))(false, noCompanyNoPage(mode)),
-      row(CompanyNoCRNReasonId(0))(someStringValue, hasCompanyUtrPage(mode)),
-      row(CompanyEnterCRNId(0))(someRefValue, hasCompanyUtrPage(mode)),
-      row(HasCompanyUTRId(0))(true, utrPage(mode)),
-      row(HasCompanyUTRId(0))(false, noUtrPage(mode)),
-      row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVatPage(mode)),
-      row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVatPage(mode)),
-      row(HasCompanyVATId(0))(true, vatPage(mode)),
-      row(HasCompanyVATId(0))(false, hasCompanyPayePage(mode)),
-      row(CompanyEnterVATId(0))(someRefValue, hasCompanyPayePage(mode)),
-      row(HasCompanyPAYEId(0))(true, payePage(mode)),
-      row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
-      row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(mode)),
-      row(CompanyPostcodeLookupId(0))(Seq(someTolerantAddress), selectAddressPage(mode)),
-      row(CompanyAddressListId(0))(someTolerantAddress, addressYearsPage(mode)),
-      row(CompanyAddressId(0))(someAddress, addressYearsPage(mode)),
-      row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(mode)),
-      row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(mode)),
-      row(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(mode)),
-      row(HasBeenTradingCompanyId(0))(false, cyaAddressPage(mode)),
-      row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(mode)),
-      row(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(mode)),
-      row(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(mode)),
-      row(CompanyEmailId(0))(someStringValue, phonePage(mode)),
-      row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(mode))
-    )
-
-  def routesCheckMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
-    Table(
-      ("Id", "UserAnswers", "Next Page"),
-      row(HasCompanyCRNId(0))(true, companyNoPage(mode)),
-      row(HasCompanyCRNId(0))(false, noCompanyNoPage(mode)),
-      row(CompanyNoCRNReasonId(0))(someStringValue, cyaPage(mode)),
-      row(CompanyEnterCRNId(0))(someRefValue, cyaPage(mode)),
-      row(HasCompanyUTRId(0))(true, utrPage(mode)),
-      row(HasCompanyUTRId(0))(false, noUtrPage(mode)),
-      row(CompanyNoUTRReasonId(0))(someStringValue, cyaPage(mode)),
-      row(CompanyEnterUTRId(0))(someRefValue, cyaPage(mode)),
-      row(HasCompanyVATId(0))(true, vatPage(mode)),
-      row(HasCompanyVATId(0))(false, cyaPage(mode)),
-      row(CompanyEnterVATId(0))(someRefValue, cyaPage(mode)),
-      row(HasCompanyPAYEId(0))(true, payePage(mode)),
-      row(HasCompanyPAYEId(0))(false, cyaPage(mode)),
-      row(CompanyEnterPAYEId(0))(someRefValue, cyaPage(mode)),
-      row(CompanyAddressId(0))(someAddress, cyaAddressPage(mode)),
-      row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaAddressPage(mode)),
-      row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTradingPage(mode)),
-      row(HasBeenTradingCompanyId(0))(true, previousAddressLookupPage(mode)),
-      row(HasBeenTradingCompanyId(0))(false, cyaAddressPage(mode)),
-      row(CompanyPreviousAddressPostcodeLookupId(0))(Seq(someTolerantAddress), selectPreviousAddressPage(mode)),
-      row(CompanyPreviousAddressListId(0))(someTolerantAddress, cyaAddressPage(mode)),
-      row(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(mode)),
-      row(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(mode)),
-      row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(mode))
-    )
-
-  def routesCheckUpdateMode(mode: Mode): TableFor3[Identifier, UserAnswers, Call] = {
-    Table(
-      ("Id", "UserAnswers", "Next Page"),
-      row(CompanyEnterCRNId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyEnterUTRId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyEnterPAYEId(0))(someRefValue, anyMoreChangesPage()),
-      row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
-      row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),
-      row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(mode)),
-      row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage()),
-      row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage()),
-      row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage())
-    )
-  }
 
   val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigator]
 }

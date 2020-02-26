@@ -17,55 +17,60 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, NormalMode, UpdateMode}
-import play.api.libs.json.Json
+import models.{CheckMode, NormalMode}
+import org.scalatest.prop.TableFor3
+import play.api.libs.json.{JsString, Json, Writes}
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 
 class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import BeforeYouStartNavigatorSpec._
 
-  private def routes = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (SchemeNameId, emptyAnswers, schemeTypePage, false, Some(checkYourAnswersPage), false),
-    (SchemeTypeId, schemeTypeGroupLife, haveAnyTrusteesPage, false, Some(haveAnyTrusteesCheckPage), false),
-    (SchemeTypeId, schemeTypeSingleTrust, establishedCountryPage, false, Some(checkYourAnswersPage), false),
-    (SchemeTypeId, emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (HaveAnyTrusteesId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
-    (EstablishedCountryId, emptyAnswers, workingKnowledgePage, false, Some(checkYourAnswersPage), false),
-    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false)
-  )
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-  "BeforeYouStartNavigator" must {
+  "BeforeYouStartNavigator" when {
 
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(SchemeNameId)(someStringValue, schemeTypePage),
+          row(SchemeTypeId)(SchemeType.GroupLifeDeath, haveAnyTrusteesPage),
+          row(SchemeTypeId)(SchemeType.SingleTrust, establishedCountryPage),
+          rowNoValue(HaveAnyTrusteesId)(establishedCountryPage),
+          row(EstablishedCountryId)(someStringValue, workingKnowledgePage),
+          rowNoValue(DeclarationDutiesId)(checkYourAnswersPage)
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
+
+    "in CheckMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(SchemeNameId)(someStringValue, checkYourAnswersPage),
+          row(SchemeTypeId)(SchemeType.GroupLifeDeath, haveAnyTrusteesCheckPage),
+          row(SchemeTypeId)(SchemeType.SingleTrust, checkYourAnswersPage),
+          rowNoValue(HaveAnyTrusteesId)(checkYourAnswersPage),
+          row(EstablishedCountryId)(someStringValue, checkYourAnswersPage),
+          rowNoValue(DeclarationDutiesId)(checkYourAnswersPage)
+        )
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    }
   }
 }
 
 object BeforeYouStartNavigatorSpec {
-
-  private val emptyAnswers = UserAnswers(Json.obj())
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
-  private val schemeTypePage: Call = SchemeTypeController.onPageLoad(NormalMode)
-  private val haveAnyTrusteesPage: Call = HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val schemeTypePage: Call           = SchemeTypeController.onPageLoad(NormalMode)
+  private val haveAnyTrusteesPage: Call      = HaveAnyTrusteesController.onPageLoad(NormalMode)
   private val haveAnyTrusteesCheckPage: Call = HaveAnyTrusteesController.onPageLoad(CheckMode)
-  private val establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
-  private val workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
-  private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
-  private val taskListPage: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
-  private val sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
-
-  private val schemeTypeSingleTrust = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.SingleTrust))
-  private val schemeTypeGroupLife = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.GroupLifeDeath))
+  private val establishedCountryPage: Call   = EstablishedCountryController.onPageLoad(NormalMode)
+  private val workingKnowledgePage: Call     = WorkingKnowledgeController.onPageLoad(NormalMode)
+  private val checkYourAnswersPage: Call     = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
 }
-
-
-

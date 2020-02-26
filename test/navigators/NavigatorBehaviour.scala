@@ -48,6 +48,7 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
   protected val somePersonNameValue = PersonName("abc", "def")
   protected val someRefValue = ReferenceValue(someStringValue)
   protected val someTolerantAddress = TolerantAddress(None, None, None, None, None, None)
+  protected val someSeqTolerantAddress = Seq(someTolerantAddress)
   protected val someAddress = Address("line 1", "line 2", None, None, None, "GB")
 
   protected def row(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call, ua: Option[UserAnswers] = None)
@@ -56,6 +57,8 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
     Tuple3(id, userAnswers, call)
   }
 
+  protected def rowNoValue(id: Identifier)(call: Call, ua: Option[UserAnswers] = None): (id.type, UserAnswers, Call) =
+    Tuple3(id, ua.getOrElse(UserAnswers()), call)
   protected def anyMoreChangesPage(srn: Option[String] = None): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
@@ -139,25 +142,4 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
 
   //scalastyle:on method.length
   //scalastyle:on regex
-
-  def nonMatchingNavigator(navigator: Navigator, mode : Mode = NormalMode): Unit = {
-
-    val testId: Identifier = new Identifier {}
-
-    s"behaviour like a navigator without normalAndEditModeRoutes with $mode" when {
-      "navigating in NormalMode" must {
-        "return a call given a non-configured Id" in {
-          navigator.nextPage(testId, mode, UserAnswers()) mustBe a[Call]
-        }
-      }
-
-      "navigating in CheckMode" must {
-        "return a call given a non-configured Id" in {
-          navigator.nextPage(testId, checkMode(mode), UserAnswers()) mustBe a[Call]
-        }
-      }
-    }
-
-  }
-
 }

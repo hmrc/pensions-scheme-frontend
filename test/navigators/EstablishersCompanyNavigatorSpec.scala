@@ -17,18 +17,17 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
-import org.scalatest.prop.TableFor6
+import org.scalatest.prop.TableFor3
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
@@ -39,108 +38,200 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def routes(mode: Mode): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (HasCompanyCRNId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
-    (HasCompanyCRNId(0), hasCompanyNumber(true), companyRegistrationNumberNew(mode), true, Some(companyRegistrationNumberNew(checkMode(mode))), true),
-    (HasCompanyCRNId(0), hasCompanyNumber(false), noCompanyRegistrationNumber(mode), true, Some(noCompanyRegistrationNumber(checkMode(mode))), true),
-    (HasCompanyVATId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
-    (HasCompanyVATId(0), hasCompanyVat(true), companyVatNew(mode), true, Some(companyVatNew(checkMode(mode))), true),
-    (HasCompanyVATId(0), hasCompanyVat(false), hasCompanyPaye(mode), true, Some(cyaCompanyDetails(mode)), true),
-    (CompanyEnterVATId(0), emptyAnswers, sessionExpired, true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
-    (CompanyEnterVATId(0), establisherEnteredPAYE, companyHasPaye(mode), true, Some(exitJourney(mode, establisherEnteredPAYE, 0, cyaCompanyDetails(mode))), true),
-    (HasCompanyPAYEId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
-    (HasCompanyPAYEId(0), establisherHasPAYE(true), whatIsPAYE(mode), true, Some(whatIsPAYE(checkMode(mode))), true),
-    (HasCompanyUTRId(0), emptyAnswers, sessionExpired, true, Some(sessionExpired), true),
-    (HasCompanyUTRId(0), hasCompanyUtr(true), companyUTRNew(mode), true, Some(companyUTRNew(checkMode(mode))), true),
-    (HasCompanyUTRId(0), hasCompanyUtr(false), noCompanyUTR(mode), true, Some(noCompanyUTR(checkMode(mode))), true),
-    (CompanyEnterUTRId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
-    (CompanyEnterUTRId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
-    (CompanyNoUTRReasonId(0), emptyAnswers, hasCompanyVat(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyDetails(mode))), true),
-    (CompanyNoUTRReasonId(0), newEstablisher, hasCompanyVat(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyDetails(mode))), true),
-    (CompanyPostCodeLookupId(0), emptyAnswers, companyAddressList(mode), true, Some(companyAddressList(checkMode(mode))), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, cyaCompanyAddressDetails(mode) , true, Some(exitJourney(mode, addressYearsOverAYear, 0, cyaCompanyAddressDetails(mode))), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYearNew, cyaCompanyAddressDetails(mode), true, Some(exitJourney(mode, addressYearsOverAYearNew, 0, cyaCompanyAddressDetails(mode))), true),
-    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressYes, none, false, Some(anyMoreChanges), false),
-    (CompanyConfirmPreviousAddressId(0), confirmPreviousAddressNo, none, false, Some(prevAddPostCodeLookup(checkMode(mode))), false),
-    (CompanyConfirmPreviousAddressId(0), emptyAnswers, none, false, Some(sessionExpired), false),
-    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(mode), true, Some(companyPaList(checkMode(mode))), true),
-    (CompanyEmailId(0), newEstablisher, companyPhoneNumber(mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyContactDetails(mode))), true),
-    (CompanyEmailId(0), emptyAnswers, companyPhoneNumber(mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyContactDetails(mode))), true),
-    (CompanyPreviousAddressListId(0), emptyAnswers, previousAddressRoutes( mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode))), true),
-    (CompanyPreviousAddressListId(0), newEstablisher, previousAddressRoutes( mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode))), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, previousAddressRoutes( mode), true, Some(exitJourney(mode, emptyAnswers, 0, cyaCompanyAddressDetails(mode))), true),
-    (CompanyPreviousAddressId(0), newEstablisher, previousAddressRoutes( mode), true, Some(exitJourney(mode, newEstablisher, 0, cyaCompanyAddressDetails(mode))), true),
-    (AddCompanyDirectorsId(0), emptyAnswers, startDirectorJourney( mode, 0), true, None, true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsTrue, directorName(mode) , true, None, true),
-    (AddCompanyDirectorsId(0), addOneCompanyDirectors, sessionExpired, false, None, false),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsMoreThan10, otherDirectors(mode), true, None, true),
-    (OtherDirectorsId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else taskList(mode), true, Some(taskList(mode)), true),
-    (CheckYourAnswersId(0), emptyAnswers, if (mode == UpdateMode) anyMoreChanges else addCompanyDirectors(0, mode), true, None, false),
-    (CheckYourAnswersId(0), newEstablisher, addCompanyDirectors(0, mode), true, None, false)
-  )
+  val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
+  "EstablishersCompanyNavigator" when {
 
-  private def normalOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
-    (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(NormalMode), true, Some(cyaCompanyContactDetails(NormalMode)), true),
-    (IsCompanyDormantId(0), emptyAnswers, cyaCompanyDetails(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
-    (HasCompanyPAYEId(0), establisherHasPAYE(false), isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode) ), true),
-    (CompanyNoCRNReasonId(0), emptyAnswers, hasCompanyUTR(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
-    (CompanyEnterPAYEId(0), emptyAnswers, isDormant(NormalMode), true, Some(cyaCompanyDetails(NormalMode)), true),
-    (CompanyAddressListId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
-    (CompanyAddressListId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true),
-    (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))), true),
-    (CompanyAddressId(0), newEstablisher, companyAddressYears(NormalMode), true, Some(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))), true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalse, taskList(NormalMode), true, None, true)
-  )
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(HasCompanyCRNId(0))(true, companyRegistrationNumberNew(NormalMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyRegistrationNumber(NormalMode)),
+          row(HasCompanyVATId(0))(true, companyVatNew(NormalMode)),
+          row(HasCompanyVATId(0))(false, hasCompanyPaye(NormalMode)),
+          row(CompanyEnterVATId(0))(someRefValue, companyHasPaye(NormalMode)),
+          row(HasCompanyPAYEId(0))(true, whatIsPAYE(NormalMode)),
+          row(HasCompanyUTRId(0))(true, companyUTRNew(NormalMode)),
+          row(HasCompanyUTRId(0))(false, noCompanyUTR(NormalMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(NormalMode)),
+          row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVat(NormalMode)),
+          rowNewEstablisher(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVat(NormalMode)),
+          rowNoValue(CompanyPostCodeLookupId(0))(companyAddressList(NormalMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(NormalMode)),
+          rowNewEstablisher(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(NormalMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(someSeqTolerantAddress, companyPaList(NormalMode)),
+          rowNoValueNewEstablisher(CompanyEmailId(0))(companyPhoneNumber(NormalMode)),
+          rowNoValue(CompanyEmailId(0))(companyPhoneNumber(NormalMode)),
+          rowNoValue(CompanyPreviousAddressListId(0))(previousAddressRoutes(NormalMode)),
+          rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(previousAddressRoutes(NormalMode)),
+          rowNoValue(CompanyPreviousAddressId(0))(previousAddressRoutes(NormalMode)),
+          rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(NormalMode)),
+          rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(NormalMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, directorName(NormalMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, otherDirectors(NormalMode), ua = Some(addCompanyDirectorsMoreThanTen)),
+          rowNoValue(OtherDirectorsId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */taskList(NormalMode)),
+          rowNoValue(CheckYourAnswersId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */addCompanyDirectors(0, NormalMode)),
+          rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(NormalMode)),
+          rowNoValue(CompanyEnterCRNId(0))(hasCompanyUTR(NormalMode)),
+          rowNoValue(CompanyPhoneId(0))(cyaCompanyContactDetails(NormalMode)),
+          rowNoValue(IsCompanyDormantId(0))(cyaCompanyDetails(NormalMode)),
+          row(HasCompanyPAYEId(0))(false, isDormant(NormalMode)),
+          rowNoValue(CompanyNoCRNReasonId(0))(hasCompanyUTR(NormalMode)),
+          rowNoValue(CompanyEnterPAYEId(0))(isDormant(NormalMode)),
+          rowNoValue(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
+          row(AddCompanyDirectorsId(0))(false, taskList(NormalMode), ua = Some(addOneCompanyDirectors))
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
 
+    "in CheckMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(HasCompanyCRNId(0))(true, companyRegistrationNumberNew(CheckMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyRegistrationNumber(CheckMode)),
+          row(HasCompanyVATId(0))(true, companyVatNew(CheckMode)),
+          row(HasCompanyVATId(0))(false, cyaCompanyDetails(NormalMode)),
+          row(CompanyEnterVATId(0))(someRefValue, exitJourney(NormalMode, establisherEnteredPAYE, 0, cyaCompanyDetails(NormalMode))),
+          row(HasCompanyPAYEId(0))(true, whatIsPAYE(CheckMode)),
+          row(HasCompanyUTRId(0))(true, companyUTRNew(CheckMode)),
+          row(HasCompanyUTRId(0))(false, noCompanyUTR(CheckMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyDetails(NormalMode))),
+          row(CompanyNoUTRReasonId(0))(someStringValue, exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyDetails(NormalMode))),
+          rowNewEstablisher(CompanyNoUTRReasonId(0))(someStringValue, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyDetails(NormalMode))),
+          rowNoValue(CompanyPostCodeLookupId(0))(companyAddressList(CheckMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(NormalMode)),
+          rowNewEstablisher(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(NormalMode)),
+          row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChanges),
+          row(CompanyConfirmPreviousAddressId(0))(false, prevAddPostCodeLookup(CheckMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(someSeqTolerantAddress, companyPaList(CheckMode)),
+          rowNoValueNewEstablisher(CompanyEmailId(0))(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyContactDetails(NormalMode))),
+          rowNoValue(CompanyEmailId(0))(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyContactDetails(NormalMode))),
+          rowNoValue(CompanyPreviousAddressListId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
+          rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
+          rowNoValue(CompanyPreviousAddressId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
+          rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
+          rowNoValue(OtherDirectorsId(0))(taskList(NormalMode)),
+          rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyDetails(NormalMode))),
+          rowNoValue(CompanyEnterCRNId(0))(cyaCompanyDetails(NormalMode)),
+          rowNoValue(CompanyPhoneId(0))(cyaCompanyContactDetails(NormalMode)),
+          rowNoValue(IsCompanyDormantId(0))(cyaCompanyDetails(NormalMode)),
+          row(HasCompanyPAYEId(0))(false, cyaCompanyDetails(NormalMode)),
+          rowNoValue(CompanyNoCRNReasonId(0))(cyaCompanyDetails(NormalMode)),
+          rowNoValue(CompanyEnterPAYEId(0))(cyaCompanyDetails(NormalMode)),
+          rowNoValue(CompanyAddressListId(0))(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))(getCya(NormalMode, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))))
+        )
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    }
 
-  private def updateOnlyRoutes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (UpdateMode Mode)", "Save (NM)", "Next Page (CheckUpdateMode Mode)", "Save (CM)"),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, hasBeenTrading(UpdateMode) , true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYearWithExistingCurrentAddress, hasBeenTrading(UpdateMode), true, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), true),
-    (CompanyPhoneId(0), emptyAnswers, cyaCompanyContactDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))), true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseWithChanges, anyMoreChanges, true, None, true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalseNewDir, anyMoreChanges, true, None, true),
-    (CompanyEnterPAYEId(0), emptyAnswers, cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
-    (CompanyEnterCRNId(0), emptyAnswers, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))), true),
-    (HasCompanyPAYEId(0), establisherHasPAYE(false), cyaCompanyDetails(UpdateMode), true, Some(exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))), true),
-    (CompanyNoCRNReasonId(0), newEstablisher, hasCompanyUTR(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))), true),
-    (CompanyAddressListId(0), emptyAnswers, companyAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
-    (CompanyAddressListId(0), newEstablisher, companyAddressYears(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))), true),
-    (CompanyAddressId(0), emptyAnswers, companyAddressYears(UpdateMode), true, Some(confirmPreviousAddress), true),
-    (CompanyAddressId(0), newEstablisher, companyAddressYears(UpdateMode), true, Some(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))), true)
-  )
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(HasCompanyCRNId(0))(true, companyRegistrationNumberNew(UpdateMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyRegistrationNumber(UpdateMode)),
+          row(HasCompanyVATId(0))(true, companyVatNew(UpdateMode)),
+          row(HasCompanyVATId(0))(false, hasCompanyPaye(UpdateMode)),
+          row(CompanyEnterVATId(0))(someRefValue, companyHasPaye(UpdateMode)),
+          row(HasCompanyPAYEId(0))(true, whatIsPAYE(UpdateMode)),
+          row(HasCompanyUTRId(0))(true, companyUTRNew(UpdateMode)),
+          row(HasCompanyUTRId(0))(false, noCompanyUTR(UpdateMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(UpdateMode)),
+          row(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVat(UpdateMode)),
+          rowNewEstablisher(CompanyNoUTRReasonId(0))(someStringValue, hasCompanyVat(UpdateMode)),
+          rowNoValue(CompanyPostCodeLookupId(0))(companyAddressList(UpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(UpdateMode)),
+          rowNewEstablisher(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(UpdateMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(someSeqTolerantAddress, companyPaList(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyEmailId(0))(companyPhoneNumber(UpdateMode)),
+          rowNoValue(CompanyEmailId(0))(companyPhoneNumber(UpdateMode)),
+          rowNoValue(CompanyPreviousAddressListId(0))(previousAddressRoutes(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(previousAddressRoutes(UpdateMode)),
+          rowNoValue(CompanyPreviousAddressId(0))(previousAddressRoutes(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(UpdateMode)),
+          rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(UpdateMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, directorName(UpdateMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, otherDirectors(UpdateMode), ua = Some(addCompanyDirectorsMoreThanTen)),
+          rowNoValue(OtherDirectorsId(0))(anyMoreChanges),
+          rowNoValue(CheckYourAnswersId(0))(anyMoreChanges),
+          rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(UpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTrading(UpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, hasBeenTrading(UpdateMode), ua = Some(addressYearsUnderAYearWithExistingCurrentAddress)),
+          rowNoValue(CompanyPhoneId(0))(cyaCompanyContactDetails(UpdateMode)),
+          rowNoValue(AddCompanyDirectorsId(0))(anyMoreChanges, ua = Some(addCompanyDirectorsFalseWithChanges)),
+          rowNoValue(AddCompanyDirectorsId(0))(anyMoreChanges, ua = Some(addCompanyDirectorsFalseNewDir)),
+          rowNoValue(CompanyEnterPAYEId(0))(cyaCompanyDetails(UpdateMode)),
+          rowNoValue(CompanyEnterCRNId(0))(hasCompanyUTR(UpdateMode)),
+          row(HasCompanyPAYEId(0))(false, cyaCompanyDetails(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyNoCRNReasonId(0))( hasCompanyUTR(UpdateMode)),
+          rowNoValue(CompanyAddressListId(0))( companyAddressYears(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))( companyAddressYears(UpdateMode))
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+    }
 
-  private def normalRoutes = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    routes(NormalMode) ++ normalOnlyRoutes: _*
-  )
-
-  private def updateRoutes = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    routes(UpdateMode) ++ updateOnlyRoutes: _*
-  )
-
-  s"Establisher Company Navigator" must {
-    appRunning()
-    val navigator: EstablishersCompanyNavigator =
-      new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, normalRoutes, dataDescriber)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode)
+    "in CheckUpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(HasCompanyCRNId(0))(true, companyRegistrationNumberNew(CheckUpdateMode)),
+          row(HasCompanyCRNId(0))(false, noCompanyRegistrationNumber(CheckUpdateMode)),
+          row(HasCompanyVATId(0))(true, companyVatNew(CheckUpdateMode)),
+          row(HasCompanyVATId(0))(false, cyaCompanyDetails(UpdateMode)),
+          row(CompanyEnterVATId(0))(someRefValue, exitJourney(UpdateMode, establisherEnteredPAYE, 0, cyaCompanyDetails(UpdateMode))),
+          row(HasCompanyPAYEId(0))(true, whatIsPAYE(CheckUpdateMode)),
+          row(HasCompanyUTRId(0))(true, companyUTRNew(CheckUpdateMode)),
+          row(HasCompanyUTRId(0))(false, noCompanyUTR(CheckUpdateMode)),
+          row(CompanyEnterUTRId(0))(someRefValue, exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),
+          row(CompanyNoUTRReasonId(0))(someStringValue, exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),
+          rowNewEstablisher(CompanyNoUTRReasonId(0))(someStringValue, exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))),
+          rowNoValue(CompanyPostCodeLookupId(0))(companyAddressList(CheckUpdateMode)),
+          row(CompanyAddressYearsId(0))(AddressYears.OverAYear, anyMoreChanges),
+          rowNewEstablisher(CompanyAddressYearsId(0))(AddressYears.OverAYear, cyaCompanyAddressDetails(UpdateMode)),
+          row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChanges),
+          row(CompanyConfirmPreviousAddressId(0))(false, prevAddPostCodeLookup(CheckUpdateMode)),
+          row(CompanyPreviousAddressPostcodeLookupId(0))(someSeqTolerantAddress, companyPaList(CheckUpdateMode)),
+          rowNoValueNewEstablisher(CompanyEmailId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyContactDetails(UpdateMode))),
+          rowNoValue(CompanyEmailId(0))(anyMoreChanges),
+          rowNoValue(CompanyPreviousAddressListId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyAddressDetails(UpdateMode))),
+          rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))),
+          rowNoValue(CompanyPreviousAddressId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyAddressDetails(UpdateMode))),
+          rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode))),
+          rowNoValue(OtherDirectorsId(0))(taskList(UpdateMode)),
+          rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))),
+          row(CompanyAddressYearsId(0))(AddressYears.UnderAYear, addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear)),
+          rowNoValue(CompanyAddressYearsId(0))(addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYearWithExistingCurrentAddress), ua = Some(addressYearsUnderAYearWithExistingCurrentAddress)),
+          rowNoValue(CompanyPhoneId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyContactDetails(UpdateMode))),
+          rowNoValue(CompanyEnterPAYEId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),
+          rowNoValue(CompanyEnterCRNId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),
+          row(HasCompanyPAYEId(0))(false, exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))),
+          rowNoValueNewEstablisher(CompanyNoCRNReasonId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))),
+          rowNoValue(CompanyAddressListId(0))( confirmPreviousAddress),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode)))
+        )
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+    }
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
+//scalastyle:off number.of.methods
 object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
+  private def rowNoValueNewEstablisher(id: TypedIdentifier.PathDependent)(call: Call): (id.type, UserAnswers, Call) = Tuple3(id, newEstablisher, call)
+
+  private def rowNewEstablisher(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call)(
+    implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
+    val userAnswers = newEstablisher.set(id)(value).asOpt.value
+    Tuple3(id, userAnswers, call)
+  }
+
   private val emptyAnswers = UserAnswers(Json.obj())
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
   private val establisherIndex = Index(0)
-  private val directorIndex = Index(0)
   private val directorIndexNew = Index(1)
 
   private def establisherHasPAYE(v: Boolean) = UserAnswers(Json.obj())
@@ -149,24 +240,16 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def establisherEnteredPAYE = UserAnswers(Json.obj())
     .set(CompanyEnterVATId(0))(ReferenceValue("123456789")).asOpt.value
 
-  private def hasCompanyNumber(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyCRNId(0))(yesNo).asOpt.value
-
-  private def underAYearRoute(mode: Mode) = hasBeenTrading(mode)
-
-  private def hasCompanyUtr(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyUTRId(0))(yesNo).asOpt.value
-
   private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
   private val johnDoe = PersonName("John", "Doe")
-
-
 
   private def validData(directors: PersonName*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails("test company name"),
-          "director" -> directors.map(d => Json.obj(DirectorNameId.toString -> Json.toJson(d)))
+          "director" -> directors.map(d => Json.obj(identifiers.register.establishers.company.director.DirectorNameId.toString -> Json.toJson(d)))
         )
       )
     )
@@ -219,7 +302,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def hasBeenTrading(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onPageLoad(mode, None, 0)
 
-
   private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
 
   private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, 0)
@@ -270,19 +352,15 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       userAnswers.get(IsEstablisherNewId(0)).getOrElse(false)
     ) match {
       case (Some(AddressYears.UnderAYear), false) =>
-        Some(confirmPreviousAddress)
+        confirmPreviousAddress
       case (Some(AddressYears.UnderAYear), _) =>
-        Some(hasBeenTrading(checkMode(mode)))
+        hasBeenTrading(checkMode(mode))
       case (Some(AddressYears.OverAYear), _) =>
-        Some(exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode)))
+        exitJourney(mode, userAnswers, 0, cyaCompanyAddressDetails(mode))
       case _ =>
-        Some(sessionExpired)
+        sessionExpired
     }
 
-
-  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
-
-  private def companyNameRouting(mode: Mode) = addEstablisher(mode)
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
 
@@ -290,10 +368,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def taskList(mode: Mode): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
 
-  private val addressYearsOverAYearNew = UserAnswers(Json.obj())
-    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
-  private val addressYearsOverAYear = UserAnswers(Json.obj())
-    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
   private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
@@ -310,18 +384,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def addCompanyDirectorsFalseNewDir = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private def addCompanyDirectorsMoreThan10 =
+  private def addCompanyDirectorsMoreThanTen =
     UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
 
   private def addOneCompanyDirectors =
     UserAnswers(validData(johnDoe))
-
-  private val confirmPreviousAddressYes = UserAnswers(Json.obj())
-    .set(CompanyConfirmPreviousAddressId(0))(true).asOpt.value
-  private val confirmPreviousAddressNo = UserAnswers(Json.obj())
-    .set(CompanyConfirmPreviousAddressId(0))(false).asOpt.value
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def getCya(mode: Mode, cyaPage: Call) =  cyaPage
 

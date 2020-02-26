@@ -17,57 +17,50 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{NormalMode, UpdateMode}
+import models.UpdateMode
 import org.scalatest.OptionValues
+import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import utils.UserAnswers
 
 class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import VariationsNavigatorSpec._
 
-  private def updateRoutes() = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AnyMoreChangesId, someMoreChanges, variationsTaskList, false, None, false),
-    (AnyMoreChangesId, noMoreChangesWithComplete, declaration, false, None, false),
-    (AnyMoreChangesId, noMoreChangesWithIncomplete, stillChanges, false, None, false),
-    (AnyMoreChangesId, emptyAnswers, sessionExpired, false, None, false)
-  )
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  "VariationsNavigator" must {
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, updateRoutes, dataDescriber, UpdateMode, srn)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
-    behave like nonMatchingNavigator(navigator, NormalMode)
+  "RegisterNavigator" when {
+
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(AnyMoreChangesId)(true, variationsTaskList),
+          row(AnyMoreChangesId)(false, declaration, ua = Some(complete)),
+          row(AnyMoreChangesId)(false, stillChanges)
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
+    }
   }
 }
 
-
-
-
 object VariationsNavigatorSpec extends SpecBase with OptionValues {
-
-  private val navigator = new VariationsNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-  private val emptyAnswers = UserAnswers(Json.obj())
-  val srnValue = "S123"
-  val srn = Some(srnValue)
-
-  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private val srnValue = "S123"
+  private val srn      = Some(srnValue)
 
   private def variationsTaskList = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
-  private def stillChanges = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
-  private def declaration = controllers.routes.VariationDeclarationController.onPageLoad(srn)
+  private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
+  private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(srn)
 
-  val someMoreChanges = UserAnswers(Json.obj()).set(AnyMoreChangesId)(true).asOpt.value
-
-  val noMoreChangesWithComplete = UserAnswers().set(AnyMoreChangesId)(false).flatMap(
-    _.set(BenefitsSecuredByInsuranceId)(false).flatMap(
-    _.set(InsuranceDetailsChangedId)(true)
-  )).asOpt.value
-
-  val noMoreChangesWithIncomplete = UserAnswers().set(AnyMoreChangesId)(false).asOpt.value
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
-
+  private val complete = UserAnswers()
+    .set(BenefitsSecuredByInsuranceId)(false)
+    .asOpt
+    .value
+    .set(InsuranceDetailsChangedId)(true)
+    .asOpt
+    .value
 }

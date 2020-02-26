@@ -17,9 +17,10 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeUserAnswersCacheConnector
+import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
+import models.{CheckMode, Mode, NormalMode}
+import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -28,33 +29,44 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import WorkingKnowledgeNavigatorSpec._
 
-  private def routes() = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AdviserNameId, emptyAnswers, adviserEmail(NormalMode), true, Some(adviserCYA), true),
-    (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
-    (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true),
-    (AdviserAddressPostCodeLookupId, emptyAnswers, adviserAddressList(NormalMode), true, Some(adviserAddressList(CheckMode)), true),
-    (AdviserAddressListId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
-    (AdviserAddressId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
-    (AdviserCheckYourAnswersId, emptyAnswers, taskList, true, None, false)
-  )
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
-  "WorkingKnowledgeNavigator" must {
-    val navigator = new WorkingKnowledgeNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  "WorkingKnowledgeNavigator" when {
 
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-    behave like nonMatchingNavigator(navigator, UpdateMode)
+    "in NormalMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(AdviserNameId)(adviserEmail(NormalMode)),
+          rowNoValue(AdviserEmailId)(adviserPhone(NormalMode)),
+          rowNoValue(AdviserPhoneId)(adviserPostCodeLookup(NormalMode)),
+          rowNoValue(AdviserAddressPostCodeLookupId)(adviserAddressList(NormalMode)),
+          rowNoValue(AdviserAddressListId)(checkYourAnswersPage),
+          rowNoValue(AdviserAddressId)(checkYourAnswersPage),
+          rowNoValue(AdviserCheckYourAnswersId)(taskList)
+        )
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    }
+
+    "in CheckMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          rowNoValue(AdviserNameId)(adviserCYA),
+          rowNoValue(AdviserEmailId)(adviserCYA),
+          rowNoValue(AdviserAddressPostCodeLookupId)(adviserAddressList(CheckMode)),
+          rowNoValue(AdviserAddressListId)(checkYourAnswersPage),
+          rowNoValue(AdviserAddressId)(checkYourAnswersPage),
+          rowNoValue(AdviserPhoneId)(adviserCYA)
+        )
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    }
   }
 }
 
 object WorkingKnowledgeNavigatorSpec {
-
-  private val emptyAnswers = UserAnswers(Json.obj())
-
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
-
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def adviserAddress(mode: Mode) = controllers.routes.AdviserAddressController.onPageLoad(mode)
 
@@ -68,7 +80,4 @@ object WorkingKnowledgeNavigatorSpec {
   private def adviserPhone(mode: Mode): Call = controllers.routes.AdviserPhoneController.onPageLoad(NormalMode)
 
   private def adviserCYA: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
-
 }
-
-
