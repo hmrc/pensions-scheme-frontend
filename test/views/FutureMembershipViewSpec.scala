@@ -28,7 +28,7 @@ class FutureMembershipViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "future_members"
   private val schemeName = "Test Scheme Name"
 
-  val form = new FutureMembersFormProvider()()
+  val form = new FutureMembersFormProvider()(schemeName)
 
   val view: futureMembers = app.injector.instanceOf[futureMembers]
 

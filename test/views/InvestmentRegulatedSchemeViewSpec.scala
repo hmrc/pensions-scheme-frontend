@@ -28,7 +28,7 @@ class InvestmentRegulatedSchemeViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "investment_regulated_scheme"
   private val schemeName = "schemeName"
 
-  val form = new InvestmentRegulatedSchemeFormProvider()()
+  val form = new InvestmentRegulatedSchemeFormProvider()(schemeName)
 
   val view: investmentRegulatedScheme = app.injector.instanceOf[investmentRegulatedScheme]
 

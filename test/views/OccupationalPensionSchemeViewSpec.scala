@@ -28,8 +28,8 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "occupational_pension_scheme"
 
-  val form = new OccupationalPensionSchemeFormProvider()()
   val schemeName = "schemename"
+  val form = new OccupationalPensionSchemeFormProvider()(schemeName)
 
   val view: occupationalPensionScheme = app.injector.instanceOf[occupationalPensionScheme]
 

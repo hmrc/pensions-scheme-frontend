@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -49,9 +49,10 @@ class ConfirmDeletePartnerController @Inject()(
                                                 formProvider: ConfirmDeletePartnerFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: confirmDeletePartner
-                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                              )(implicit val executionContext: ExecutionContext
+) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
   def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]
                    )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] =
@@ -70,7 +71,7 @@ class ConfirmDeletePartnerController @Inject()(
               Future.successful(
                 Ok(
                   view(
-                    form,
+                    form(partner.fullName),
                     partner.fullName,
                     routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
                     existingSchemeName
@@ -86,7 +87,7 @@ class ConfirmDeletePartnerController @Inject()(
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           partnerDetails =>
-            form.bindFromRequest().fold(
+            form(partnerDetails.fullName).bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
                 Future.successful(BadRequest(view(
                   formWithErrors,

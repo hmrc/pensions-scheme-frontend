@@ -31,7 +31,7 @@ class ConfirmDeletePartnerViewSpec extends YesNoViewBehaviours{
   private val partnerName = "John Doe"
   private val postCall = ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
 
-  val form = new ConfirmDeletePartnerFormProvider()()
+  val form = new ConfirmDeletePartnerFormProvider()(partnerName)
 
   val view: confirmDeletePartner = app.injector.instanceOf[confirmDeletePartner]
 

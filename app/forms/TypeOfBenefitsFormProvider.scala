@@ -20,11 +20,13 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import models.TypeOfBenefits
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class TypeOfBenefitsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[TypeOfBenefits] =
+  def apply(schemeName: String)(implicit messages: Messages): Form[TypeOfBenefits] =
     Form(
-      "value" -> enumerable[TypeOfBenefits]("messages__error__selection")
+      "value" -> enumerable[TypeOfBenefits](Message("messages__type_of_benefits__error_required", schemeName))
     )
 }

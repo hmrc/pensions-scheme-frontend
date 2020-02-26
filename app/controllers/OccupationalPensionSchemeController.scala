@@ -20,12 +20,12 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.OccupationalPensionSchemeFormProvider
-import identifiers.OccupationalPensionSchemeId
+import identifiers.{OccupationalPensionSchemeId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
@@ -46,25 +46,29 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                                      val view: occupationalPensionScheme
                                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(OccupationalPensionSchemeId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeNameId.retrieve.right.map { schemeName =>
+        val preparedForm = request.userAnswers.get(OccupationalPensionSchemeId) match {
+          case None => form(schemeName)
+          case Some(value) => form(schemeName).fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
       }
-      Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
-        value =>
-          dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap))))
-      )
+      SchemeNameId.retrieve.right.map { schemeName =>
+        form(schemeName).bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+          value =>
+            dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap))))
+        )
+      }
   }
 }

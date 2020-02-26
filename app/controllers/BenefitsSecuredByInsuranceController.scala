@@ -19,12 +19,12 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
-import identifiers.BenefitsSecuredByInsuranceId
+import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -47,29 +47,33 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                        val view: benefitsSecuredByInsurance
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
   val postCall: (Mode, Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
-          case None => form
-          case Some(value) => form.fill(value)
+        SchemeNameId.retrieve.right.map { schemeName =>
+          val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
+            case None => form(schemeName)
+            case Some(value) => form(schemeName).fill(value)
+          }
+          Future.successful(Ok(view(preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
         }
-        Future.successful(Ok(view(preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
-        value =>
-          userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map { userAnswers =>
-            Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(userAnswers), srn))
-          }
-      )
+      SchemeNameId.retrieve.right.map { schemeName =>
+        form(schemeName).bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
+          value =>
+            userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map { userAnswers =>
+              Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(userAnswers), srn))
+            }
+        )
+      }
   }
 }

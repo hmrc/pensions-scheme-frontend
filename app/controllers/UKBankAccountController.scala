@@ -25,7 +25,7 @@ import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
@@ -46,14 +46,14 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                        val view: uKBankAccount
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
         val preparedForm = request.userAnswers.get(UKBankAccountId) match {
-          case None => form
-          case Some(value) => form.fill(value)
+          case None => form(schemeName)
+          case Some(value) => form(schemeName).fill(value)
         }
         Future.successful(Ok(view(preparedForm, mode, schemeName)))
       }
@@ -61,15 +61,16 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          SchemeNameId.retrieve.right.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
-          },
-        value =>
-          dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
-            Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap)))
-          }
-      )
+      SchemeNameId.retrieve.right.map { schemeName =>
+        form(schemeName).bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
+          value =>
+            dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
+              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap)))
+            }
+        )
+      }
   }
 }

@@ -38,7 +38,7 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
   private val view = injector.instanceOf[futureMembers]
   private val schemeName = "Test Scheme Name"
   private val formProvider = new FutureMembersFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply(schemeName)
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).futureMembers(Members.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))

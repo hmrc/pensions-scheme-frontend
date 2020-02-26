@@ -16,15 +16,18 @@
 
 package forms.register.establishers.company.director
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import viewmodels.Message
 
-class ConfirmDeleteDirectorFormProviderSpec extends BooleanFieldBehaviours {
+class ConfirmDeleteDirectorFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  val requiredKey = "messages__error__selection"
+  private val name = "Test name"
+  private val requiredKey = Message("messages__confirmDelete__error_required", name)
   val invalidKey = "error.boolean"
 
-  val form = new ConfirmDeleteDirectorFormProvider()()
+  val form = new ConfirmDeleteDirectorFormProvider()(name)
 
   "ConfirmDeleteDirector Form Provider" must {
 

@@ -32,7 +32,7 @@ import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -56,7 +56,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
                                                 with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -68,7 +68,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           } else {
             Future.successful(
               Ok(
-                view(form,
+                view(form(trustee.name),
                   trustee.name,
                   routes.ConfirmDeleteTrusteeController.onSubmit(mode, index, trusteeKind, srn),
                   existingSchemeName,
@@ -108,7 +108,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 trusteeDetails: Option[PersonName],
                                 srn: Option[String],
                                 mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
-    form.bindFromRequest().fold(
+    form(name).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(
           formWithErrors,
