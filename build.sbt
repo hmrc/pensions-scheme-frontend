@@ -75,7 +75,6 @@ lazy val root = Project(appName, file("."))
         "javascripts/show-hide-content.js",
         "javascripts/textarea/polyfill.js",
         "javascripts/textarea/textarea.js",
-        //"javascripts/autocomplete/location-autocomplete.min.js",
         "javascripts/pensionsschemefrontend.js"
       ))),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
