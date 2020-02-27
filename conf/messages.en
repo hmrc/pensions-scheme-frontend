@@ -1452,10 +1452,8 @@ messages__what_you_will_need_bank_details__title = Bank details
 messages__what_you_will_need_bank_details__h1 = Bank details
 messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
 messages__what_you_will_need_bank_details__p2 = If the scheme does have a bank account, you will also need to tell us the:
-messages__what_you_will_need_bank_details__item_1 = name of the bank
-messages__what_you_will_need_bank_details__item_2 = account name
-messages__what_you_will_need_bank_details__item_3 = sort code
-messages__what_you_will_need_bank_details__item_4 = account number
+messages__what_you_will_need_bank_details__item_1 = sort code
+messages__what_you_will_need_bank_details__item_2 = account number
 
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is {0} investment regulated?
