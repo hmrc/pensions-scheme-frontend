@@ -430,7 +430,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
 
     "return true when all the answers are completed with uk bank account" in {
       val answers = UserAnswers().ukBankAccount(true).
-        bankAccountDetails(BankAccountDetails("name", "acc", SortCode("12", "34", "56"), "no"))
+        bankAccountDetails(BankAccountDetails(SortCode("12", "34", "56"), "no"))
       answers.isBankDetailsCompleted.value mustBe true
     }
 

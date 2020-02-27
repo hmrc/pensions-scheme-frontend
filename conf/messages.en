@@ -301,23 +301,13 @@ messages__complete__pension_regulator = {0} for this scheme to be authorised. HM
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
-messages__uk_bank_account_details__bank_name = Bank name
-messages__uk_bank_account_details__account_name = Account name
 messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
 
-messages__error__bank_name = Enter the bank name
-messages__error__account_name = Enter the account name
 messages__error__account_number = Enter the account number
 messages__error__sort_code = Enter the sort code
-
-messages__error__bank_name__blank = Enter a bank name
-messages__error__bank_name__length = Enter bank name using 28 characters or less
-
-messages__error__bank_account_holder_name__blank = Enter an account name
-messages__error__bank_account_holder_name__length = Account name must be 28 characters or fewer
 
 messages__error__sort_code__blank = Enter a bank sort code
 messages__error__sort_code__length = Sort code must be 6 numbers
@@ -326,8 +316,6 @@ messages__error__sort_code__invalid = Enter a bank sort code using only numbers
 messages__error__bank_accno__blank = Enter a bank account number
 messages__error__bank_accno__invalid = Account number must be 8 numbers
 
-messages__error__bank_name_length = The bank name cannot be more than 28 characters
-messages__error__account_name_length = The account name cannot be more than 28 characters
 messages__error__sort_code_length = Enter the sort code using 6 numbers
 messages__error__sort_code_invalid = Enter the sort code using 6 numbers
 messages__error__account_number_length = The account number cannot be more than 8 numbers

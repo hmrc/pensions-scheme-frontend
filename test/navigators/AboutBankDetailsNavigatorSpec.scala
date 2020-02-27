@@ -59,7 +59,7 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 }
 object AboutBankDetailsNavigatorSpec {
-  private val bankDetails = BankAccountDetails("test bank", "test account", SortCode("34", "45", "67"), "1234567890")
+  private val bankDetails = BankAccountDetails(SortCode("34", "45", "67"), "1234567890")
 
   private val ukBankDetailsPage: Call    = controllers.routes.BankAccountDetailsController.onPageLoad(NormalMode)
   private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad()
