@@ -9,7 +9,6 @@
 
 @import 'partials/_shame';
 
-
 @import 'partials/page-heading';
 @import 'partials/scheme__list';
 
@@ -91,21 +90,21 @@ $task-list-indent: 35px;
 }
 
 .task-status--in-progress {
-    display: inline-block;
-    font-family: "nta", Arial, sans-serif;
-    padding: 4px 4px 4px;
-    font-size:19px;
-    line-height: 1.14286;
-    letter-spacing: 1px;
-    float: right;
-    color: #0B0C0C;
+  display: inline-block;
+  font-family: "nta", Arial, sans-serif;
+  padding: 4px 4px 4px;
+  font-size: 19px;
+  line-height: 1.14286;
+  letter-spacing: 1px;
+  float: right;
+  color: #0B0C0C;
 }
+
 .task-status--completed {
-    display: inline-block;
-    font-family: "nta", Arial, sans-serif;
-    padding: 4px 4px 4px;
-    font-size: 19px;
-    line-height: 1.14286;
-    letter-spacing: 1px;
-    float: right;
+  display: inline-block;
+  font-family: "nta", Arial, sans-serif;
+  padding: 4px 4px 4px;
+  font-size: 19px;
+  line-height: 1.14286;
+  float: right;
 }
