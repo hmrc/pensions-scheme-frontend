@@ -14,31 +14,28 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
-@import models.Mode
-@import viewmodels.{Message, AlreadyDeletedViewModel}
+@import viewmodels.AlreadyDeletedViewModel
 
 @this(
     main_template: main_template
 )
 
-@(viewmodel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = viewmodel.title) {
+@main_template(title = viewModel.title) {
 
     @components.back_link()
+
     @components.heading(
-            headingKey=components.hyphen(Message("messages__alreadyDeleted__heading",viewmodel.deletedEntity))
-            .toString
+        headingKey = messages("messages__alreadyDeleted__heading", viewModel.deletedEntity)
     )
 
-    <p>@messages("messages__alreadyDeleted__lede", viewmodel.deletedEntity)</p>
+    <p>@messages("messages__alreadyDeleted__lede", viewModel.deletedEntity)</p>
+
     <p>@messages("messages__alreadyDeleted__text")</p>
 
-    @components.button_link("site.continue", viewmodel.returnCall.url, "return-to-list")
+    @components.button_link("site.continue", viewModel.returnCall.url, "return-to-list")
 
-    @components.return_link("messages__schemeTaskList__returnlink", viewmodel.schemeName, None, viewmodel.srn)
+    @components.return_link("messages__schemeTaskList__returnlink", viewModel.schemeName, None, viewModel.srn)
 
 }
