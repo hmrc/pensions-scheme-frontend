@@ -27,7 +27,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
-import utils.annotations.EstablishersPartner
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 

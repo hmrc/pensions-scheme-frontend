@@ -29,7 +29,6 @@ import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.EstablishersPartner
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -110,7 +109,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page on POST of valid data" ignore {
       running(_.overrides(modules(dataRetrievalAction) ++
-        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersPartner]).toInstance(new FakeNavigator(onwardRoute)),
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
@@ -124,7 +123,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {
       running(_.overrides(modules(dontGetAnyData) ++
-        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersPartner]).toInstance(new FakeNavigator(onwardRoute)),
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
@@ -138,7 +137,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to Partner Address Post Code Lookup if no address data on a POST request" in {
       running(_.overrides(modules(getEmptyData) ++
-        Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersPartner]).toInstance(new FakeNavigator(onwardRoute)),
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))

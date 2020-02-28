@@ -19,8 +19,8 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.VariationDeclarationId
 import identifiers.register._
-import identifiers.{UserResearchDetailsId, VariationDeclarationId}
 import models.NormalMode
 import utils.UserAnswers
 
@@ -36,7 +36,6 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.dontSave(controllers.register.routes.DeclarationController.onPageLoad())
       case DeclarationId =>
         NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
-      case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
       case _ => None
     }
 

@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company.director
+package forms.address
 
+import base.SpecBase
 import forms.behaviours.FormBehaviours
 import models.{AddressYears, Field, Invalid, Required}
+import play.api.data.Form
 
-class DirectorAddressYearsFormProviderSpec extends FormBehaviours {
+class AddressYearsFormProviderSpec extends FormBehaviours with SpecBase{
 
   val validData: Map[String, String] = Map(
     "value" -> AddressYears.options.head.value
   )
 
-  val form = new DirectorAddressYearsFormProvider()()
+  val form: Form[_] = new AddressYearsFormProvider().apply("messages__common_error__current_address_years")
 
-  "DirectorAddressYearsFormProviderSpec form" must {
+  "AddressYearsFormProviderSpec form" must {
 
     behave like questionForm[AddressYears](AddressYears.values.head)
 

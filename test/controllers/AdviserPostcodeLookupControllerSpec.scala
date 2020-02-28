@@ -38,7 +38,6 @@ import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, 
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
-import utils.annotations.Adviser
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -89,7 +88,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryWorkingKnowledgePerson),
-        bind[Navigator].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator(onwardRoute))
+        bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
       )) {
         implicit app =>
 
@@ -128,7 +127,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryWorkingKnowledgePerson),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider),
-        bind[Navigator].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator(onwardRoute))
+        bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
       )) {
         implicit app =>
 

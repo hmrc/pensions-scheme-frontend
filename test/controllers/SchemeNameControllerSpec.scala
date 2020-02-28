@@ -32,7 +32,7 @@ import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -80,7 +80,6 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       formProvider,
       nameMatchingFactory,
       mockPensionAdministratorConnector,
-      FakeSectionComplete,
       stubMessagesControllerComponents(),
       view
     )

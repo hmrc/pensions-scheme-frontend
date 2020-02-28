@@ -43,7 +43,6 @@ class WorkingKnowledgeController @Inject()(
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
-                                            sectionComplete: SectionComplete,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: workingKnowledge
                                           )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals with Enumerable.Implicits {

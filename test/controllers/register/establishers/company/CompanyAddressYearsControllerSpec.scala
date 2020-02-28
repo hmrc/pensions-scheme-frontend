@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.AddressYearsFormProvider
+import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, CompanyDetails, Index, NormalMode}
@@ -40,7 +40,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  private val form = formProvider()
+  private val form = formProvider("")
   private val firstIndex = Index(0)
   private val invalidIndex = Index(10)
   private val companyName = "test company"

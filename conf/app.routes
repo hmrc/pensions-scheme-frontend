@@ -20,16 +20,11 @@ GET         /this-service-has-been-reset                             controllers
 
 GET         /unauthorised                                            controllers.UnauthorisedController.onPageLoad
 
-GET         /unable-to-send-details                                  controllers.ServiceUnavailableController.onPageLoad
-
 GET         /logout                                                  controllers.LogoutController.onPageLoad
 
 GET         /you-need-to-register                                    controllers.YouNeedToRegisterController.onPageLoad()
 
 GET         /continue-registration                                   controllers.ContinueRegistrationController.continue()
-
-GET         /user-research-details                                   controllers.UserResearchDetailsController.onPageLoad()
-POST        /user-research-details                                   controllers.UserResearchDetailsController.onSubmit()
 
 GET         /what-you-will-need-members                              controllers.WhatYouWillNeedMembersController.onPageLoad
 POST        /what-you-will-need-members                              controllers.WhatYouWillNeedMembersController.onSubmit
@@ -44,9 +39,6 @@ POST        /:mode/sharing-scheme-details                            controllers
 
 GET         /what-you-will-need-bank-details                         controllers.WhatYouWillNeedBankDetailsController.onPageLoad
 POST        /what-you-will-need-bank-details                         controllers.WhatYouWillNeedBankDetailsController.onSubmit
-
-GET         /having-pensions-working-knowledge                       controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = NormalMode)
-POST        /having-pensions-working-knowledge                       controllers.WorkingKnowledgeController.onSubmit(mode: Mode = NormalMode)
 
 GET         /:mode/having-pensions-working-knowledge                 controllers.WorkingKnowledgeController.onPageLoad(mode: Mode)
 POST        /:mode/having-pensions-working-knowledge                 controllers.WorkingKnowledgeController.onSubmit(mode: Mode)

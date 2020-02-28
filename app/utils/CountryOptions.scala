@@ -50,8 +50,4 @@ class CountryOptions(val options: Seq[InputOption]) {
       .getOrElse(code)
 
   def getCountryNameFromCode(address: Address): String = getCountryNameFromCode(address.country)
-
-  def getCountryNameFromCode(address: TolerantAddress): Option[String] = {
-    address.country.map(getCountryNameFromCode)
-  }
 }

@@ -24,12 +24,11 @@ import play.api.data.Form
 class BankDetailsMappingSpec extends BankDetailsBehaviour {
 
   "SortCodeMapping" should {
-    val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMapping("error.required", "error.invalid", "error.max.error"))
+    val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMappingHS("error.required", "error.invalid", "error.max.error"))
 
-    behave like formWithSortCode(
+    behave like formWithSortCodeHS(
       testForm,
       "error.required",
-      "error.invalid",
       "error.max.error",
       Map.empty,
       (sortCode: SortCode) => sortCode

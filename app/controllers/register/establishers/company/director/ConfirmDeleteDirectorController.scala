@@ -31,8 +31,8 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import utils.UserAnswers
 import utils.annotations.EstablishersCompanyDirector
-import utils.{SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,6 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
                                                  requireData: DataRequiredAction,
-                                                 sectionComplete: SectionComplete,
                                                  formProvider: ConfirmDeleteDirectorFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  val view: confirmDeleteDirector

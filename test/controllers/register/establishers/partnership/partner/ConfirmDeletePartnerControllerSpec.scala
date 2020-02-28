@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.{FakeNavigator, FakeSectionComplete}
+import utils.FakeNavigator
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
@@ -165,7 +165,6 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeSectionComplete,
       formProvider,
       stubMessagesControllerComponents(),
       view

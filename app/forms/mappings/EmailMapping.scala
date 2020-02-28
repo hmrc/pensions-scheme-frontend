@@ -23,16 +23,6 @@ trait EmailMapping extends Mappings with Transforms {
 
   import EmailMapping._
 
-  def emailMapping(keyEmailRequired: String, keyEmailLength: String, keyEmailInvalid: String): Mapping[String] = {
-    text(keyEmailRequired)
-      .verifying(
-        returnOnFirstFailure(
-          maxLength(maxEmailLength, keyEmailLength),
-          emailAddressRestrictive(keyEmailInvalid)
-        )
-      )
-  }
-
   def emailMappingWithAllErrors(requiredKey: String = requiredKey,
                                 maxLengthKey: String = maxLengthKey,
                                 invalidKey: String = invalidKey): Mapping[String] = {

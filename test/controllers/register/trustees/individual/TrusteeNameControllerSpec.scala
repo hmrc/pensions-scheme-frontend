@@ -34,7 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-import utils.{FakeNavigator, SectionComplete}
+import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -144,7 +144,6 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val firstTrusteeIndex: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private val mockSectionComplete: SectionComplete = mock[SectionComplete]
   private def onwardRoute: Call = Call("GET", "/foward-url")
 
 

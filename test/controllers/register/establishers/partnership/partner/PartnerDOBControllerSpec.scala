@@ -24,7 +24,7 @@ import controllers.behaviours.DateOfBirthControllerBehaviours
 import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode, PartnershipDetails}
 import org.scalatestplus.mockito.MockitoSugar
@@ -100,7 +100,7 @@ object PartnerDOBControllerSpec extends MockitoSugar {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString -> PartnershipDetails("test partnership name"),
-        PartnerId.toString -> Json.arr(
+        "partner" -> Json.arr(
           Json.obj(
             PartnerNameId.toString -> PersonName("first", "last"),
             PartnerDOBId.toString  -> LocalDate.of(year, month, day)
