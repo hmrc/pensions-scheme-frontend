@@ -26,8 +26,8 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "type_of_benefits"
 
-  val form = new TypeOfBenefitsFormProvider()()
   val schemeName = "schemename"
+  val form = new TypeOfBenefitsFormProvider()(schemeName)
 
   val view: typeOfBenefits = app.injector.instanceOf[typeOfBenefits]
 

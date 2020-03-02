@@ -36,7 +36,7 @@ class InvestmentRegulatedSchemeControllerSpec extends SpecBase with ControllerWi
 
   private val schemeName = "Test Scheme Name"
   private val formProvider = new InvestmentRegulatedSchemeFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply(schemeName)
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).investmentRegulated(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))

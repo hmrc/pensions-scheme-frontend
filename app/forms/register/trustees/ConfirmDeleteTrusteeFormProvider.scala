@@ -19,11 +19,13 @@ package forms.register.trustees
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class ConfirmDeleteTrusteeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(name: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("messages__error__selection")
+      "value" -> boolean(Message("messages__confirmDelete__error_required", name))
     )
 }

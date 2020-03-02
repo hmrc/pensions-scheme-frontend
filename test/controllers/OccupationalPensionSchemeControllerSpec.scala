@@ -36,7 +36,7 @@ import views.html.occupationalPensionScheme
 class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWithQuestionPageBehaviours {
 
   private val formProvider = new OccupationalPensionSchemeFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply("Test Scheme Name")
   private val validData: UserAnswers = UserAnswers(Json.obj(
     SchemeNameId.toString -> "Test Scheme Name")).occupationalPensionScheme(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =

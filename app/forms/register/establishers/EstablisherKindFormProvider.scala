@@ -25,6 +25,6 @@ class EstablisherKindFormProvider @Inject() extends Mappings {
 
   def apply(): Form[EstablisherKind] =
     Form(
-      "value" -> enumerable[EstablisherKind]("messages__error__selection")
+      "value" -> enumerable[EstablisherKind]("messages__establisher__type__error_required")
     )
 }

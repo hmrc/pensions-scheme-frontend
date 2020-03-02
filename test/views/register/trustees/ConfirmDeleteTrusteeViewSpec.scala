@@ -50,7 +50,7 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
   private val messageKeyPrefix = "confirmDeleteTrustee"
   private val trusteeName = "test-trustee-name"
 
-  val formLocal = new ConfirmDeleteTrusteeFormProvider()()
+  val formLocal = new ConfirmDeleteTrusteeFormProvider()(trusteeName)
 
   val postCall = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, Company, None)
 

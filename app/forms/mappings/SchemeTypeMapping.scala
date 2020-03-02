@@ -24,7 +24,7 @@ import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
 trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
 
-  protected def schemeTypeMapping(requiredTypeKey: String = "messages__error__selection",
+  protected def schemeTypeMapping(requiredTypeKey: String = "messages__scheme_type__error__required",
                                   invalidTypeKey: String = "messages__error__scheme_type_invalid",
                                   requiredOtherKey: String = "messages__error__scheme_type_information",
                                   lengthOtherKey: String = "messages__error__scheme_type_other_length",

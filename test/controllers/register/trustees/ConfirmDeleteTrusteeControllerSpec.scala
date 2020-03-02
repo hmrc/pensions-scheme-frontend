@@ -139,7 +139,7 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val formProvider = new ConfirmDeleteTrusteeFormProvider()
-  private val form         = formProvider.apply()
+  private val form         = formProvider.apply("test-company-name")
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))

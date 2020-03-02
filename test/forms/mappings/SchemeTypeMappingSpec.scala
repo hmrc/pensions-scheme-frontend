@@ -24,7 +24,7 @@ import play.api.data.Form
 class SchemeTypeMappingSpec extends SchemeTypeBehaviours {
 
 
-  private val requiredTypeKey = "messages__error__selection"
+  private val requiredTypeKey = "messages__scheme_type__error__required"
   private val invalidTypeKey = "messages__error__scheme_type_invalid"
   private val requiredOtherKey = "messages__error__scheme_type_information"
   private val lengthOtherKey = "messages__error__scheme_type_other_length"

@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class MoreThanTenTrusteesFormProviderSpec extends FormSpec {
 
-  val requiredKey = "messages__error__selection"
+  val requiredKey = "messages__moreThanTenTrustees__error_required"
   val invalidKey = "error.boolean"
 
   val formProvider = new MoreThanTenTrusteesFormProvider()

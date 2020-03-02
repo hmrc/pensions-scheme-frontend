@@ -25,6 +25,6 @@ class TrusteeKindFormProvider @Inject() extends Mappings {
 
   def apply(): Form[TrusteeKind] =
     Form(
-      "value" -> enumerable[TrusteeKind]("messages__error__selection")
+      "value" -> enumerable[TrusteeKind]("messages__trusteeKind__error_required")
     )
 }

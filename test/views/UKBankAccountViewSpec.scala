@@ -30,7 +30,7 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "scheme_uk_bank_account"
   private val schemeName = "Test Scheme Name"
 
-  val form = new UKBankAccountFormProvider()()
+  val form = new UKBankAccountFormProvider()(schemeName)
 
   val view: uKBankAccount = app.injector.instanceOf[uKBankAccount]
 

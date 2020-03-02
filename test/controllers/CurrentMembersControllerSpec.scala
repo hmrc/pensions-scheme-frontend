@@ -35,7 +35,7 @@ class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours 
 
   private val schemeName = "Test Scheme Name"
   private val formProvider = new CurrentMembersFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply(schemeName)
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).currentMembers(Members.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))

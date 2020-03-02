@@ -17,7 +17,7 @@
 package controllers
 
 
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
@@ -32,12 +32,10 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPageBehaviours {
 
   private val formProvider = new BenefitsSecuredByInsuranceFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider("Test Scheme Name")
   private val validData: UserAnswers = UserAnswers(Json.obj(
     SchemeNameId.toString -> "Test Scheme Name")).benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =

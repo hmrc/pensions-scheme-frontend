@@ -28,9 +28,9 @@ class ConfirmDeleteDirectorViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "confirmDeleteDirector"
 
-  val form = new ConfirmDeleteDirectorFormProvider()()
-
   private val directorName = "John Doe"
+
+  val form = new ConfirmDeleteDirectorFormProvider()(directorName)
   private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0, NormalMode, None)
 
   val view: confirmDeleteDirector = app.injector.instanceOf[confirmDeleteDirector]

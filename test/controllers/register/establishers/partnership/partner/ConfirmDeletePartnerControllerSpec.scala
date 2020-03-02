@@ -125,10 +125,10 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   private val partnershipName = "My Partnership Ltd"
 
   private val formProvider = new ConfirmDeletePartnerFormProvider()
-  private val form = formProvider.apply()
-
-  private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
   private val partnerName = PersonName("John", "Doe")
+
+  private val form = formProvider.apply(partnerName.fullName)
+  private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))

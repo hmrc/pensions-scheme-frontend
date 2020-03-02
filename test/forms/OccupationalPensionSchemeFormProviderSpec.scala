@@ -16,15 +16,18 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import viewmodels.Message
 
-class OccupationalPensionSchemeFormProviderSpec extends BooleanFieldBehaviours {
+class OccupationalPensionSchemeFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  private val requiredKey = "messages__error__selection"
+  private val schemeName = "Scheme name"
+  private val requiredKey = Message("messages__occupational_pension_scheme__error_required", schemeName)
   private val invalidKey = "error.boolean"
 
-  val form = new OccupationalPensionSchemeFormProvider()()
+  val form = new OccupationalPensionSchemeFormProvider()(schemeName)
   private val fieldName = "value"
 
   "OccupationalPensionScheme Form Provider" must {

@@ -59,10 +59,10 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
 
   val messageKeyPrefix = "confirmDeleteEstablisher"
 
-  val formLocal = new ConfirmDeleteEstablisherFormProvider()()
-
-  private val firstIndex = Index(0)
   private val establisherName = "John Doe"
+
+  val formLocal = new ConfirmDeleteEstablisherFormProvider()(establisherName)
+  private val firstIndex = Index(0)
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(NormalMode, firstIndex, EstablisherKind.Indivdual, None)
 
   val view: confirmDeleteEstablisher = app.injector.instanceOf[confirmDeleteEstablisher]

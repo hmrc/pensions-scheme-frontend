@@ -35,7 +35,7 @@ class TrusteeKindFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__error__selection",
+        Required -> "messages__trusteeKind__error_required",
         Invalid -> "error.invalid"),
       TrusteeKind.options.map(_.value): _*)
   }

@@ -16,16 +16,19 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.FormBehaviours
 import models.{Field, Invalid, Required, TypeOfBenefits}
+import viewmodels.Message
 
-class TypeOfBenefitsFormProviderSpec extends FormBehaviours {
+class TypeOfBenefitsFormProviderSpec extends FormBehaviours with SpecBase {
 
+  private val schemeName = "Scheme name"
   val validData: Map[String, String] = Map(
     "value" -> TypeOfBenefits.options.head.value
   )
 
-  val form = new TypeOfBenefitsFormProvider()()
+  val form = new TypeOfBenefitsFormProvider()(schemeName)
 
   "Benefits form" must {
 
@@ -34,7 +37,7 @@ class TypeOfBenefitsFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__error__selection",
+        Required -> Message("messages__type_of_benefits__error_required", schemeName),
         Invalid -> "error.invalid"),
       TypeOfBenefits.options.map(_.value): _*)
   }

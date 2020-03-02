@@ -16,15 +16,18 @@
 
 package forms.register.establishers
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import viewmodels.Message
 
-class ConfirmDeleteEstablisherFormProviderSpec extends BooleanFieldBehaviours {
+class ConfirmDeleteEstablisherFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  val requiredKey = "messages__error__selection"
+  private val name = "Test name"
+  private val requiredKey = Message("messages__confirmDelete__error_required", name)
   val invalidKey = "error.boolean"
 
-  val form = new ConfirmDeleteEstablisherFormProvider()()
+  val form = new ConfirmDeleteEstablisherFormProvider()(name)
 
   "UKBankAccount Form Provider" must {
 
