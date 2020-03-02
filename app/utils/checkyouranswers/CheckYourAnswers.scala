@@ -228,8 +228,7 @@ case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Optio
           bankDetails =>
             Seq(AnswerRow(
               label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
-              Seq(bankDetails.bankName,
-                bankDetails.accountName,
+              Seq(
                 s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
                 bankDetails.accountNumber),
               answerIsMessageKey = false,

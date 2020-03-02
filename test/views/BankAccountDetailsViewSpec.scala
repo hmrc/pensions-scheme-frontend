@@ -46,8 +46,7 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetai
     behave like pageWithErrorOutsideLabel(
       createViewUsingForm,
       messageKeyPrefix,
-      routes.BankAccountDetailsController.onSubmit(NormalMode).url,
-      "bankName", "accountName", "accountNumber", "sortCode"
+      routes.BankAccountDetailsController.onSubmit(NormalMode).url, "accountNumber", "sortCode"
     )
 
     behave like pageWithReturnLink(createView(), getReturnLink)

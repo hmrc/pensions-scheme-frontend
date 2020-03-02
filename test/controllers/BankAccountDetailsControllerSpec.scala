@@ -41,13 +41,11 @@ class BankAccountDetailsControllerSpec extends ControllerWithQuestionPageBehavio
   private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
   //scalastyle:on magic.number
 
-  val bankDetails: BankAccountDetails = BankAccountDetails("test bank", "test account",
-    SortCode("34", "45", "67"), accountNo)
+  val bankDetails: BankAccountDetails = BankAccountDetails(SortCode("34", "45", "67"), accountNo)
 
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).bankAccountDetails(bankDetails)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("bankName", "test bank"),
-      ("accountName", "test account"),
+    FakeRequest().withFormUrlEncodedBody(
       ("sortCode", "344567"),
       ("accountNumber", accountNo))
 

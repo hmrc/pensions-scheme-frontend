@@ -31,7 +31,7 @@ class WhatYouWillNeedBankDetailsViewSpec extends ViewBehaviours {
   "WhatYouWillNeedBankDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_p1", "_p2", "_item_1", "_item_2", "_item_3", "_item_4")
+      "_p1", "_p2", "_item_1", "_item_2")
 
     behave like pageWithSubmitButton(createView)
 
