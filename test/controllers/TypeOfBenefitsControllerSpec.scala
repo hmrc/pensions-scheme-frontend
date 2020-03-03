@@ -38,7 +38,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
 
   private val view = injector.instanceOf[typeOfBenefits]
   private val formProvider = new TypeOfBenefitsFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply("Test Scheme Name")
   private val validData: UserAnswers = UserAnswers(Json.obj(
     SchemeNameId.toString -> "Test Scheme Name")).typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =

@@ -20,11 +20,13 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import models.Members
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class FutureMembersFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Members] =
+  def apply(schemeName: String)(implicit messages: Messages): Form[Members] =
     Form(
-      "value" -> enumerable[Members]("messages__error__selection")
+      "value" -> enumerable[Members](Message("messages__future_members__error_required", schemeName))
     )
 }

@@ -19,11 +19,13 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
 class UKBankAccountFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(schemeName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("messages__error__selection")
+      "value" -> boolean(Message("messages__scheme_uk_bank_account__error_required", schemeName))
     )
 }

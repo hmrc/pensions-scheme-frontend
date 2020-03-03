@@ -40,7 +40,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
-  private val form = formProvider("")
+  private val form = formProvider("messages__common_error__current_address_years")
   private val firstIndex = Index(0)
   private val invalidIndex = Index(10)
   private val companyName = "test company"

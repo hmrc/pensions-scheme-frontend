@@ -22,12 +22,10 @@ import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -49,35 +47,28 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  formProvider: ConfirmDeleteDirectorFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  val view: confirmDeleteDirector
-                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                               )(implicit val executionContext: ExecutionContext
+) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
-
-  private def deleteDirector(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]
-                            )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] = {
-    request.userAnswers.get(DirectorNameId(establisherIndex, directorIndex)).map { director =>
-      userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true))
-    }
-  }
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
-          director.isDeleted match {
-            case false =>
-              Future.successful(
-                Ok(
-                  view(
-                    form,
-                    director.fullName,
-                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                    existingSchemeName
-                  )
+          if (director.isDeleted) {
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
+          } else {
+            Future.successful(
+              Ok(
+                view(
+                  form(director.fullName),
+                  director.fullName,
+                  routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
+                  existingSchemeName
                 )
               )
-            case true =>
-              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
+            )
           }
         }
     }
@@ -88,7 +79,7 @@ class ConfirmDeleteDirectorController @Inject()(
 
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
 
-          form.bindFromRequest().fold(
+          form(director.fullName).bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(view(
                 formWithErrors,

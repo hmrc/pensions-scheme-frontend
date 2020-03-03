@@ -214,7 +214,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
 
   private val formProvider = new ConfirmDeleteEstablisherFormProvider()
-  private val form = formProvider.apply()
+  private val form = formProvider.apply(establisherName)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))

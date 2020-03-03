@@ -16,15 +16,18 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import viewmodels.Message
 
-class InvestmentRegulatedSchemeFormProviderSpec extends BooleanFieldBehaviours {
+class InvestmentRegulatedSchemeFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  private val requiredKey = "messages__error__selection"
+  private val schemeName = "Scheme name"
+  private val requiredKey = Message("messages__investment_regulated_scheme__error_required", schemeName)
   private val invalidKey = "error.boolean"
 
-  private val form = new InvestmentRegulatedSchemeFormProvider()()
+  private val form = new InvestmentRegulatedSchemeFormProvider()(schemeName)
   private val fieldName = "value"
 
   "Investment Regulated Scheme Form Provider" must {

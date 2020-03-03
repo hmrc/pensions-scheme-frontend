@@ -73,6 +73,20 @@ $task-list-indent: 35px;
   }
 }
 
+.form-group textarea {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.govuk-error-message {
+    font-weight: 700;
+    line-height: 1.25;
+    display: block;
+    margin-bottom: 15px;
+    clear: both;
+    color: #d4351c;
+}
+
 .task-list-item {
   border-bottom: 1px solid #bfc1c3;
   padding-top: 10px;

@@ -27,9 +27,9 @@ class CurrentMembersViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "current_members"
 
-  val form = new CurrentMembersFormProvider()()
-
   private val schemeName = "Test Scheme Name"
+
+  val form = new CurrentMembersFormProvider()(schemeName)
 
   val view: currentMembers = app.injector.instanceOf[currentMembers]
 
