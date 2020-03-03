@@ -61,8 +61,7 @@
                 labelClass = Some("visually-hidden")
             )
         </div>
-
-        @components.submit_button()
+        @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
