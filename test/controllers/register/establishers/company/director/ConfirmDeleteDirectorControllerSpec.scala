@@ -124,7 +124,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val companyName      = "MyCo Ltd"
   private val directorName     = "John Doe"
   private lazy val postCall    = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, NormalMode, None)
-  private val directorDetails  = PersonName("John", "Doe", false)
+  private val directorDetails  = PersonName("John", "Doe")
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
   private val postRequestForCancel: FakeRequest[AnyContentAsFormUrlEncoded] =
@@ -149,7 +149,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new ConfirmDeleteDirectorFormProvider()
-  private val form         = formProvider.apply()
+  private val form         = formProvider.apply(directorName)
 
   private val view = injector.instanceOf[confirmDeleteDirector]
 

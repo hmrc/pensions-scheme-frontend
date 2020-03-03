@@ -29,12 +29,6 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
 
   def apply(): Form[BankAccountDetails] = Form(
     mapping(
-      "bankName" ->
-        text("messages__error__bank_name__blank").
-          verifying(maxLength(nameMaxLength, "messages__error__bank_name__length")),
-      "accountName" ->
-        text("messages__error__bank_account_holder_name__blank").
-          verifying(maxLength(nameMaxLength, "messages__error__bank_account_holder_name__length")),
       "sortCode" ->
         sortCodeMappingHS("messages__error__sort_code__blank",
           "messages__error__sort_code__invalid",

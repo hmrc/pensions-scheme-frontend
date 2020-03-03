@@ -28,8 +28,7 @@ class UKBankAccountIdSpec extends WordSpec with MustMatchers with OptionValues w
 
     val answers = UserAnswers(Json.obj())
       .set(UKBankAccountId)(true)
-      .flatMap(_.set(BankAccountDetailsId)(BankAccountDetails("test bank name", "test account name",
-        SortCode("11", "11", "11"), "test account number")))
+      .flatMap(_.set(BankAccountDetailsId)(BankAccountDetails(SortCode("11", "11", "11"), "test account number")))
       .asOpt.value
 
     "`UKBankAccountId` is set to `false`" when {

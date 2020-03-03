@@ -64,8 +64,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  val bankDetails = BankAccountDetails("test bank name", "test account name",
-    SortCode("34", "45", "67"), "test account number")
+  val bankDetails = BankAccountDetails(SortCode("34", "45", "67"), "test account number")
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -88,8 +87,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       ),
       AnswerRow(
         messages("uKBankDetails.checkYourAnswersLabel", "Test Scheme Name"),
-        Seq(bankDetails.bankName,
-          bankDetails.accountName,
+        Seq(
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
           bankDetails.accountNumber),
         answerIsMessageKey = false,

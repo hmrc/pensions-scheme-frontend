@@ -16,15 +16,18 @@
 
 package forms
 
+import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import viewmodels.Message
 
-class UKBankAccountFormProviderSpec extends BooleanFieldBehaviours {
+class UKBankAccountFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
-  val requiredKey = "messages__error__selection"
+  private val schemeName = "Scheme name"
+  val requiredKey: Message = Message("messages__scheme_uk_bank_account__error_required", schemeName)
   val invalidKey = "error.boolean"
 
-  val form = new UKBankAccountFormProvider()()
+  val form = new UKBankAccountFormProvider()(schemeName)
 
   "UKBankAccount Form Provider" must {
 

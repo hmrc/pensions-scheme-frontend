@@ -20,12 +20,25 @@ $(document).ready(function() {
     numberInputs();
 
     // =====================================================
+    // Initialise character counter for textareas
+    // =====================================================
+    var $count = document.querySelector('[data-module="govuk-character-count"]')
+    if ($count) {
+        new CharacterCount($count).init()
+    }
+
+    // =====================================================
     // Back link mimics browser back functionality
     // =====================================================
     $('#back-link').on('click', function(e) {
         e.preventDefault();
         window.history.back();
     });
+
+  // If there is an error summary, set focus to the summary
+    if ($('.error-summary--show').length) {
+      $('.error-summary--show').focus()
+    }
 
     $("#declarationId").submit(function() {
         $(this).find(':submit').attr('disabled', 'disabled');

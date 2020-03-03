@@ -14,9 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import models.Mode
 @import utils.CountryOptions
 @import viewmodels.address.ConfirmAddressViewModel
 @import utils.ViewHelper.titleWithErrors
@@ -28,47 +26,43 @@
 
 @(
     form: Form[_],
-    viewmodel: ConfirmAddressViewModel,
+    viewModel: ConfirmAddressViewModel,
     countryOptions: CountryOptions,
     schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages(viewmodel.title))) {
+@main_template(title = titleWithErrors(form, messages(viewModel.title))) {
 
-    @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-        headingKey=components.hyphen(messages(viewmodel.heading)).toString
-        )
+            @components.heading(
+                headingKey = messages(viewModel.heading)
+            )
 
-        @viewmodel.hint.map{hintText =>
-        <p>@messages(hintText)</p>
-        }
+            @viewModel.hint.map{ hintText =>
+                <p>@messages(hintText)</p>
+            }
 
-        <div class="tabular-data__data tabular-data__data--3-12">
-            <p>
-                @for((line, i) <- viewmodel.address.lines(countryOptions).zipWithIndex) {
-                <span id="address-value-@i" class="address-multi-line">@line</span>
-                }
-            </p>
+            <div class="tabular-data__data tabular-data__data--3-12">
+                <p>
+                    @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
+                        <span id="address-value-@i" class="address-multi-line">@line</span>
+                    }
+                </p>
+            </div>
+
+            @components.input_yes_no(
+                field = form("value"),
+                label = messages(viewModel.heading),
+                labelClass = Some("visually-hidden")
+            )
         </div>
-
-        @components.input_yes_no(
-            field = form("value"),
-            label = messages(viewmodel.heading),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = false
-        )
-
-        </div>
-
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }

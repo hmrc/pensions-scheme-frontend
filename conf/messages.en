@@ -84,7 +84,6 @@ messages__error__last_name = Enter the {0} last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
 messages__error__date_past = The date of birth must be after 1900
-messages__error__selection = You must make a selection
 messages__addEstablisher_error__selection = Select yes if you want to add another establisher
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
@@ -301,23 +300,13 @@ messages__complete__pension_regulator = {0} for this scheme to be authorised. HM
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
-messages__uk_bank_account_details__bank_name = Bank name
-messages__uk_bank_account_details__account_name = Account name
 messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
 
-messages__error__bank_name = Enter the bank name
-messages__error__account_name = Enter the account name
 messages__error__account_number = Enter the account number
 messages__error__sort_code = Enter the sort code
-
-messages__error__bank_name__blank = Enter a bank name
-messages__error__bank_name__length = Enter bank name using 28 characters or less
-
-messages__error__bank_account_holder_name__blank = Enter an account name
-messages__error__bank_account_holder_name__length = Account name must be 28 characters or fewer
 
 messages__error__sort_code__blank = Enter a bank sort code
 messages__error__sort_code__length = Sort code must be 6 numbers
@@ -326,8 +315,6 @@ messages__error__sort_code__invalid = Enter a bank sort code using only numbers
 messages__error__bank_accno__blank = Enter a bank account number
 messages__error__bank_accno__invalid = Account number must be 8 numbers
 
-messages__error__bank_name_length = The bank name cannot be more than 28 characters
-messages__error__account_name_length = The account name cannot be more than 28 characters
 messages__error__sort_code_length = Enter the sort code using 6 numbers
 messages__error__sort_code_invalid = Enter the sort code using 6 numbers
 messages__error__account_number_length = The account number cannot be more than 8 numbers
@@ -669,7 +656,7 @@ messages__schemeReview__trustees__changeLink = Change trustees
 messages__otherDirectors__title=Do you need to tell us about other directors?
 messages__otherDirectors__heading=Do you need to tell us about other directors?
 messages__otherDirectors__lede=You do not have to add them now. We may contact you if we need this information.
-messages__otherDirectors__error__required=You must make a selection
+messages__otherDirectors__error__required = Select yes if you need to tell us about other directors
 
 messages_cya_secondary_header = Register a new pension scheme
 messages__scheme_benefits_section=Scheme benefits
@@ -981,7 +968,7 @@ messages__partnershipPaye__title = Does the partnership have a PAYE employer ref
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
 
 messages__addPartners__heading = Partners
-messages__addPartners__error__required = You must make a selection
+messages__addPartners__error__required = Select yes if you want to add another partner
 messages__addPartners_add_more = Do you want to add another partner?
 messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using the digital service.
 messages__addPartners_add_partner = Add a partner
@@ -1464,10 +1451,8 @@ messages__what_you_will_need_bank_details__title = Bank details
 messages__what_you_will_need_bank_details__h1 = Bank details
 messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
 messages__what_you_will_need_bank_details__p2 = If the scheme does have a bank account, you will also need to tell us the:
-messages__what_you_will_need_bank_details__item_1 = name of the bank
-messages__what_you_will_need_bank_details__item_2 = account name
-messages__what_you_will_need_bank_details__item_3 = sort code
-messages__what_you_will_need_bank_details__item_4 = account number
+messages__what_you_will_need_bank_details__item_1 = sort code
+messages__what_you_will_need_bank_details__item_2 = account number
 
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is {0} investment regulated?
@@ -1487,7 +1472,7 @@ messages__type_of_benefits_cya_label = How does {0} provide benefits?
 messages__visuallyhidden__type_of_benefits_change = how {0} provides benefits
 
 messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
-messages__benefits_secured_by_insurance__h1 = Are any of {0} benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__h1 = Are any of {0}’s benefits secured by a contract of insurance or annuity?
 messages__benefits_secured_by_insurance__lede = Benefits can be secured by a contract of insurance or an annuity contract by an insurance company that provides administration services to the scheme.
 securedBenefits.checkYourAnswersLabel = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__visuallyhidden__securedBenefits = if any of the scheme benefits are secured by a contract of insurance or annuity
@@ -1818,3 +1803,15 @@ messages__benefitsAndInsuranceDetailsFor = {0}’s benefits and insurance detail
 
 messages__theInsuranceCompany = the insurance company
 messages__theAdviser = the adviser
+
+messages__benefits_secured_by_insurance__error_required = Select yes if any of {0}’s benefits are secured by a contract of insurance or annuity
+messages__investment_regulated_scheme__error_required = Select yes if {0} is investment regulated
+messages__occupational_pension_scheme__error_required = Select yes if {0} is an occupational pension scheme
+messages__scheme_uk_bank_account__error_required = Select yes if {0} has a UK bank account
+messages__confirmDelete__error_required = Select yes if you want to delete {0}
+messages__moreThanTenTrustees__error_required = Select yes if you need to tell us about other trustees
+messages__current_members__error_required = Select how many members {0} currently has
+messages__future_members__error_required = Select how many scheme members you expect {0} to have in 12 months time
+messages__type_of_benefits__error_required = Select how {0} provides benefits
+messages__establisher__type__error_required = Select what kind of establisher you are adding
+messages__trusteeKind__error_required = Select what kind of trustee you are adding

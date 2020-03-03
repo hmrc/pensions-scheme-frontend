@@ -56,7 +56,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     val view: confirmDeleteEstablisher
                                                   )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  private val form: Form[Boolean] = formProvider()
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,7 +69,7 @@ class ConfirmDeleteEstablisherController @Inject()(
               Future.successful(
                 Ok(
                   view(
-                    form,
+                    form(establisher.name),
                     establisher.name,
                     getHintText(establisherKind),
                     routes.ConfirmDeleteEstablisherController.onSubmit(mode, index, establisherKind, srn),
@@ -111,9 +111,9 @@ class ConfirmDeleteEstablisherController @Inject()(
                 Some(companyDetails), None, None, mode, srn)
             }
           case Indivdual =>
-            EstablisherNameId(establisherIndex).retrieve.right.map { trusteeDetails =>
-              updateEstablisherKind(trusteeDetails.fullName, establisherKind, establisherIndex,
-                None, Some(trusteeDetails), None, mode, srn)
+            EstablisherNameId(establisherIndex).retrieve.right.map { establisherDetails =>
+              updateEstablisherKind(establisherDetails.fullName, establisherKind, establisherIndex,
+                None, Some(establisherDetails), None, mode, srn)
             }
           case Partnership =>
             PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
@@ -131,7 +131,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     partnershipDetails: Option[PartnershipDetails],
                                     mode: Mode,
                                     srn: Option[String])(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
-    form.bindFromRequest().fold(
+    form(name).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(
           formWithErrors,

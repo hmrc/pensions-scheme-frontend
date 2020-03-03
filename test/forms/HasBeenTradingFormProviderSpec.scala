@@ -27,7 +27,8 @@ class HasBeenTradingFormProviderSpec extends BooleanFieldBehaviours with SpecBas
   private val invalidKey = "error.boolean"
   private val fieldName = "value"
 
-  private def formProvider(companyName:String) = new HasBeenTradingFormProvider()("messages__hasBeenTradingCompany__error__required", companyName)
+  private def formProvider(companyName:String) =
+    new HasBeenTradingFormProvider()("messages__hasBeenTradingCompany__error__required", companyName)
 
   "HasBeenTrading Form Provider" must {
 

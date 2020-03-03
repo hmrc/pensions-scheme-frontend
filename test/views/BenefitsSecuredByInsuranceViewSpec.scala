@@ -30,7 +30,7 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "benefits_secured_by_insurance"
   val schemeName = "schemename"
 
-  val form = new BenefitsSecuredByInsuranceFormProvider()()
+  val form = new BenefitsSecuredByInsuranceFormProvider()(schemeName)
   def postCall: Call = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   val view: benefitsSecuredByInsurance = app.injector.instanceOf[benefitsSecuredByInsurance]

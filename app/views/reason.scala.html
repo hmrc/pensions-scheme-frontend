@@ -41,9 +41,10 @@
             messages(viewmodel.heading).toString
         )
 
-        @components.input_text(
+        @components.text_area_with_character_count(
             field = form("reason"),
             label = messages(viewmodel.title),
+            charLimit = 160,
             labelClass = Some("visually-hidden")
         )
         </div>
