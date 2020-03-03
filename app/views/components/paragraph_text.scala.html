@@ -14,5 +14,5 @@
  * limitations under the License.
  *@
 
-@(text: String, para_id:String = "para1")
-<p id="@para_id">@text</p>
+@(text: String, para_id: Option[String] = None)
+<p @if(para_id.nonEmpty) {id="@para_id"} >@text</p>
