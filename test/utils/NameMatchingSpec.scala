@@ -152,6 +152,49 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
 
         nameMatching.isMatch mustBe false
       }
+
+      "names after transformation do not match for  The Ground Waste Recycling Limited SSAS" in {
+        val nameMatching = NameMatching("The Ground Waste Recycling Limited SSAS", "Ground Waste Recycling Ltd")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for DENSO Automotive UK Group Life Scheme" in {
+        val nameMatching = NameMatching("DENSO Automotive UK Group Life Scheme", "DENSO AUTOMOTIVE UK LTD")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for PPUL Ltd SSAS" in {
+        val nameMatching = NameMatching("PPUL Ltd SSAS", "PPUL Ltd")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for LION&EAGLE pensions" in {
+        val nameMatching = NameMatching("LION&EAGLE pensions", "LION&EAGLE LTD")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for IGY Employee Benefit Scheme" in {
+        val nameMatching = NameMatching("IGY Employee Benefit Scheme", "IGY SERVICES UK LIMITED")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for WHITTAN INDUSTRIAL BENEFITS Scheme" in {
+        val nameMatching = NameMatching("WHITTAN INDUSTRIAL BENEFITS Scheme", "WHITTAN INDUSTRIAL LTD")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for Ground waste Recycling Limited FASC" in {
+        val nameMatching = NameMatching("Ground waste Recycling Limited FASC", "Ground Waste Recycling Limited ")
+
+        nameMatching.isMatch mustBe false
+      }
+
     }
   }
 }
