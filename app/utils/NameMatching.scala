@@ -92,8 +92,8 @@ case class NameMatching(name1: String, name2: String) {
 
 
   private def shorten(long: String, short: String, x: Int): String = {
-    val x_percent_of_long = long.length * x * 0.01
-    val len_of_short = short.length
+    val x_percent_of_long = long.length * x * 0.01 // 14
+    val len_of_short = short.length //12
     if (x_percent_of_long < len_of_short)
       long.take(len_of_short)
     else
@@ -102,7 +102,8 @@ case class NameMatching(name1: String, name2: String) {
 
   def isEqual: Boolean = name1.equals(name2)
 
-  def isMatch: Boolean = {
+
+    def isMatch: Boolean = {
     val interimResultSteps1to7 = this.convertToUpper
       .removeSpaces
       .removeSpecialWords

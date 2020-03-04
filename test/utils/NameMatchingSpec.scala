@@ -129,10 +129,15 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
 
   "isMatch" must {
     "return true" when {
-      "names after transformation match" in {
+      "names after transformation match for example 1" in {
         val nameMatching = NameMatching("CHRI$S AND WILLIAMS!", "CHRI%S WILLI@AMS UNLIMITED.")
         nameMatching.isMatch mustBe true
       }
+      "names after transformation match for example 2" in {
+        val nameMatching = NameMatching("The Bill Bloggs Company Ltd", "THE BiLl BlO  gGs CO Limited")
+        nameMatching.isMatch mustBe true
+      }
+
     }
 
     "return false" when {
@@ -152,6 +157,12 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
 
         nameMatching.isMatch mustBe false
       }
+
+/*
+  "match" means "scheme name is NOT a valid one and an error page is displayed"
+  "not match" means "scheme name is a valid one"
+ */
+
 
       "names after transformation do not match for  The Ground Waste Recycling Limited SSAS" in {
         val nameMatching = NameMatching("The Ground Waste Recycling Limited SSAS", "Ground Waste Recycling Ltd")
@@ -192,6 +203,11 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
       "names after transformation do not match for Ground waste Recycling Limited FASC" in {
         val nameMatching = NameMatching("Ground waste Recycling Limited FASC", "Ground Waste Recycling Limited ")
 
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match for Bill Bloggs Ltd Scheme AABB" in {
+        val nameMatching = NameMatching("Bill Bloggs", "Bill Bloggs Ltd Scheme AABB")
         nameMatching.isMatch mustBe false
       }
 
