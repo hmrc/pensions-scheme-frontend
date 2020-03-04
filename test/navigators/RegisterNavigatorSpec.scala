@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register._
-import identifiers.{Identifier, UserResearchDetailsId, VariationDeclarationId}
+import identifiers.{Identifier, VariationDeclarationId}
 import models._
 import models.register.SchemeType
 import org.scalatest.prop.TableFor3
@@ -46,9 +46,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
           rowNoValue(DeclarationDormantId)(declaration, ua = Some(beforeYouStartCompleted)),
           rowNoValue(ContinueRegistrationId)(taskList, ua = Some(beforeYouStartCompleted)),
           rowNoValue(ContinueRegistrationId)(beforeYouStart, ua = Some(beforeYouStartInProgress)),
-          rowNoValue(ContinueRegistrationId)(beforeYouStart),
-
-          rowNoValue(UserResearchDetailsId)(schemeOverview(frontendAppConfig))
+          rowNoValue(ContinueRegistrationId)(beforeYouStart)
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
     }

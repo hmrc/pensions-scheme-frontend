@@ -21,24 +21,6 @@ import play.api.data.{Form, Mapping}
 
 class EmailMappingSpec extends EmailBehaviours {
 
-  "Email mapping" should {
-    val fieldName = "email"
-    val keyEmailRequired = "contactDetails.error.email.required"
-    val keyEmailLength = "contactDetails.error.email.length"
-    val keyEmailInvalid = "contactDetails.error.email.invalid"
-
-    val mapping: Mapping[String] = emailMapping(keyEmailRequired, keyEmailLength, keyEmailInvalid)
-    val form: Form[String] = Form(fieldName -> mapping)
-
-    behave like formWithEmailField(
-      form,
-      fieldName,
-      keyEmailRequired,
-      keyEmailLength,
-      keyEmailInvalid
-    )
-  }
-
   "Email mapping with all errors" should {
     val fieldName = "email"
     val keyEmailRequired = "messages__error__adviser__email__address__required"

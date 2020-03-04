@@ -16,6 +16,8 @@
 
 package controllers.register.trustees.individual
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
@@ -24,14 +26,12 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
-import java.time.LocalDate
-
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.{FakeNavigator, SectionComplete}
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
@@ -89,8 +89,6 @@ private object TrusteeDOBControllerSpec extends MockitoSugar {
   val form: Form[LocalDate] = formProvider()
 
   val index: Index = Index(0)
-
-  val mockSectionComplete: SectionComplete = mock[SectionComplete]
 
   val day: Int = LocalDate.now().getDayOfMonth
   val month: Int = LocalDate.now().getMonthValue

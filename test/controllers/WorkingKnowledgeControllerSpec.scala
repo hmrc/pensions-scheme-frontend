@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.{FakeNavigator, FakeSectionComplete}
+import utils.FakeNavigator
 import views.html.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
@@ -45,7 +45,6 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
-      FakeSectionComplete,
       stubMessagesControllerComponents(),
       view
     )

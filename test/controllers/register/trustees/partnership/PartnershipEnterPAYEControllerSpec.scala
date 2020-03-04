@@ -16,26 +16,21 @@
 
 package controllers.register.trustees.partnership
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.TrusteesPartnership
 import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
-
-import scala.concurrent.Future
 
 class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
 

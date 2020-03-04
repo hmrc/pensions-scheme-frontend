@@ -23,7 +23,6 @@ import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import javax.inject.Inject
 import models.Mode
-import models.PSAName._
 import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.Logger
@@ -48,7 +47,6 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                     sectionComplete: SectionComplete,
                                      val controllerComponents: MessagesControllerComponents,
                                      val view: schemeName
                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {

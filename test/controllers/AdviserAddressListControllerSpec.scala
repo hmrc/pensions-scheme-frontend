@@ -29,7 +29,6 @@ import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.annotations.Adviser
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -53,7 +52,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(retrievalAction),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
@@ -71,7 +70,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(getEmptyData),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
@@ -90,7 +89,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(dontGetAnyData),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
@@ -109,7 +108,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(retrievalAction),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
@@ -127,7 +126,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(dontGetAnyData),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
@@ -145,7 +144,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(getEmptyData),
-          bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
         implicit app =>
