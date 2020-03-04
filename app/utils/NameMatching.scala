@@ -103,23 +103,18 @@ case class NameMatching(name1: String, name2: String) {
   def isEqual: Boolean = name1.equals(name2)
 
   def isMatch: Boolean = {
-    val interimResult = this.convertToUpper
+    val interimResultSteps1to7 = this.convertToUpper
       .removeSpaces
       .removeSpecialWords
       .lengthCheck
       .removeSpecialCharacters
       .removeNonAlphaNumeric
       .lengthCheck
-      .shortenLongest
+
+    val interimResult = interimResultSteps1to7.shortenLongest
     val finalResult = if (interimResult.isEqual) {
-      val reversedNameMatching = this.copy(name1 = this.name1.reverse, name2 = this.name2.reverse)
-      reversedNameMatching.convertToUpper
-        .removeSpaces
-        .removeSpecialWords
-        .lengthCheck
-        .removeSpecialCharacters
-        .removeNonAlphaNumeric
-        .lengthCheck
+      val reversedNameMatching = interimResultSteps1to7.copy(name1 = interimResultSteps1to7.name1.reverse, name2 = interimResultSteps1to7.name2.reverse)
+      reversedNameMatching
         .shortenLongest
     } else {
       interimResult
