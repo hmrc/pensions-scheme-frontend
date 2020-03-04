@@ -111,13 +111,13 @@ case class NameMatching(name1: String, name2: String) {
       .removeNonAlphaNumeric
       .lengthCheck
 
-    val interimResult = interimResultSteps1to7.shortenLongest
-    val finalResult = if (interimResult.isEqual) {
-      val reversedNameMatching = interimResultSteps1to7.copy(name1 = interimResultSteps1to7.name1.reverse, name2 = interimResultSteps1to7.name2.reverse)
-      reversedNameMatching
+    val interimResultStep8 = interimResultSteps1to7.shortenLongest
+    val finalResult = if (interimResultStep8.isEqual) {
+      interimResultSteps1to7
+        .copy(name1 = interimResultSteps1to7.name1.reverse, name2 = interimResultSteps1to7.name2.reverse)
         .shortenLongest
     } else {
-      interimResult
+      interimResultStep8
     }
 
     finalResult.isEqual
