@@ -73,9 +73,7 @@ lazy val root = Project(appName, file("."))
     Concat.groups := Seq(
       "javascripts/pensionsschemefrontend-app.js" -> group(Seq(
         "javascripts/show-hide-content.js",
-        "javascripts/textarea/textarea.js",
-        "javascripts/pensionsschemefrontend.js",
-        "javascripts/textarea/polyfills.js"
+        "javascripts/pensionsschemefrontend.js"
       ))),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
