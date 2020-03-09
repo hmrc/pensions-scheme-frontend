@@ -20,7 +20,8 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.SchemeTypeId
+import helpers.DataCompletionHelper
+import identifiers.{HaveAnyTrusteesId, InsuranceDetailsChangedId, SchemeNameId, SchemeTypeId}
 import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherNameId
@@ -44,11 +45,17 @@ import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
+class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures{
 
   import DeclarationControllerSpec._
 
   "Declaration Controller" must {
+
+    "return OK and correct view when declaration is enabled" in {
+
+
+
+    }
 
     "return OK and don't save the DeclarationDormant " when {
 
@@ -157,7 +164,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
 }
 
-object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
+object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new DeclarationFormProvider()
@@ -166,6 +173,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   val psaId = PsaId("A0000000")
 
   private val view = injector.instanceOf[declaration]
+
+  private def completeUa: UserAnswers = setCompleteBeforeYouStart(isComplete = true,
+    setCompleteMembers(isComplete = true,
+      setCompleteBank(isComplete = true,
+        setCompleteBenefits(isComplete = true,
+          setCompleteEstIndividual(UserAnswers().schemeName("test Scheme"), 0)))))
+    .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector
@@ -193,25 +207,28 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       isDormant,
       showMasterTrustDeclaration,
       hasWorkingKnowledge,
-      None,
+      Some("test Scheme"),
       href
     )(fakeRequest, messages).toString
 
-  private val individual =
-    UserAnswers()
-      .individualEstablisher()
+  private def individual: DataRetrievalAction = {
+    println("\n\n\n ggggg"+setCompleteWorkingKnowledge(true, completeUa)
+      .set(identifiers.DeclarationDutiesId)(false).asOpt
+      .value)
+    setCompleteWorkingKnowledge(true, completeUa)
       .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value
-      .asDataRetrievalAction()
+      .dataRetrievalAction
+  }
 
   private val nonDormantCompany =
-    UserAnswers()
+    completeUa
       .companyEstablisher(0)
       .dormant(false)
       .asDataRetrievalAction()
 
   private val nonDormantCompanyAndPartnership =
-    UserAnswers()
+    completeUa
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
@@ -221,7 +238,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .asDataRetrievalAction()
 
   private val dormantCompanyAndNonDormantPartnership =
-    UserAnswers()
+    completeUa
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
@@ -233,7 +250,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .asDataRetrievalAction()
 
   private val dormantPartnershipAndNonDormantCompany =
-    UserAnswers()
+    completeUa
       .companyEstablisher(0)
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt

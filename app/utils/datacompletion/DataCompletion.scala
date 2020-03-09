@@ -129,8 +129,11 @@ trait DataCompletion {
     isAnswerComplete(AdviserAddressId)
   ))
 
-  def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {
-    case Some(false) => isAdviserCompleted
-    case _ => get(DeclarationDutiesId)
+  def isWorkingKnowledgeCompleted: Option[Boolean] = {
+    println("\n\n\n get(DeclarationDutiesId): "+get(DeclarationDutiesId))
+    get(DeclarationDutiesId) match {
+      case Some(false) => isAdviserCompleted
+      case _ => get(DeclarationDutiesId)
+    }
   }
 }

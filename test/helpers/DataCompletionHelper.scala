@@ -21,17 +21,20 @@ import models._
 import models.address.Address
 import models.register.SchemeType
 import java.time.LocalDate
+
+import models.person.PersonName
+import models.register.establishers.EstablisherKind
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
 
 trait DataCompletionHelper extends OptionValues {
-  private val address     = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val stringValue = "value"
-  private val refValue    = ReferenceValue(stringValue)
-  private val firstName   = "firstName"
-  private val lastName    = "lastName"
-  private val dateValue   = LocalDate.of(2000, 6, 9)
+  private val refValue = ReferenceValue(stringValue)
+  private val firstName = "firstName"
+  private val lastName = "lastName"
+  private val dateValue = LocalDate.of(2000, 6, 9)
 
   protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value
@@ -100,15 +103,15 @@ trait DataCompletionHelper extends OptionValues {
       isComplete,
       index,
       setTrusteeCompletionStatusJsResultAddressDetails(isComplete,
-                                                       index,
-                                                       setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value).asOpt.value
+        index,
+        setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value).asOpt.value
     )
 
   protected def setTrusteeCompletionStatus(isComplete: Boolean, index: Int, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResult(isComplete, index, ua).asOpt.value
 
   protected def setCompleteBeforeYouStart(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if(isComplete) {
+    if (isComplete) {
       ua.schemeName(schemeName = "Test Scheme").
         schemeType(SchemeType.SingleTrust).establishedCountry(country = "GB").
         declarationDuties(haveWorkingKnowledge = true)
@@ -118,15 +121,15 @@ trait DataCompletionHelper extends OptionValues {
   }
 
   protected def setCompleteMembers(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if(isComplete) ua.currentMembers(Members.One).futureMembers(Members.One) else ua.currentMembers(Members.One)
+    if (isComplete) ua.currentMembers(Members.One).futureMembers(Members.One) else ua.currentMembers(Members.One)
   }
 
   protected def setCompleteBank(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if(isComplete) ua.ukBankAccount(ukBankAccount = false) else ua.ukBankAccount(ukBankAccount = true)
+    if (isComplete) ua.ukBankAccount(ukBankAccount = false) else ua.ukBankAccount(ukBankAccount = true)
   }
 
   protected def setCompleteBenefits(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if(isComplete) {
+    if (isComplete) {
       ua.occupationalPensionScheme(isOccupational = true).
         investmentRegulated(isInvestmentRegulated = true).typeOfBenefits(TypeOfBenefits.MoneyPurchase).
         benefitsSecuredByInsurance(isInsured = false)
@@ -135,8 +138,16 @@ trait DataCompletionHelper extends OptionValues {
     }
   }
 
+  protected def setCompleteEstIndividual(ua: UserAnswers, index: Int): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Indivdual)
+      .establishersIndividualName(index, PersonName("first", "last")).establishersIndividualDOB(index, LocalDate.now().minusYears(20))
+      .establishersIndividualNino(index, ReferenceValue("AB100100A")).establishersIndividualUtr(index, ReferenceValue("1111111111")).
+      establishersIndividualAddress(index, address).establishersIndividualAddressYears(index, AddressYears.OverAYear)
+      .establishersIndividualEmail(index, "s@s.com").establishersIndividualPhone(index, "123")
+  }
+
   protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if(isComplete) {
+    if (isComplete) {
       ua.adviserName(name = "test adviser").adviserEmailAddress(email = "s@s.com").
         adviserPhone("123").advisersAddress(Address("a", "b", None, None, None, "GB"))
     } else {

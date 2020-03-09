@@ -39,6 +39,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
+import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
@@ -63,7 +64,13 @@ class DeclarationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      showPage(Ok.apply)
+      val ua = request.userAnswers
+      println("\n\n\n new HsTaskListHelperRegistration(ua).declarationEnabled(ua) : "+new HsTaskListHelperRegistration(ua).declarationEnabled(ua))
+      if(new HsTaskListHelperRegistration(ua).declarationEnabled(ua)) {
+        showPage(Ok.apply)
+      } else {
+        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
+      }
   }
 
   def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
@@ -78,7 +85,7 @@ class DeclarationController @Inject()(
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val isCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 

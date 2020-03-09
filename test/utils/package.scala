@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import java.time.LocalDate
+
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.trustees.IsTrusteeNewId
@@ -26,6 +28,7 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
+import models.register.establishers.EstablisherKind
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
 import play.api.i18n.Messages
@@ -129,12 +132,30 @@ package object utils {
       answers.set(establishers.individual.PreviousAddressId(index))(address).asOpt.value
     }
 
+    def establishersIndividualNino(index: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(establishers.individual.EstablisherHasNINOId(index))(true).asOpt.value.
+      set(establishers.individual.EstablisherEnterNINOId(index))(nino).asOpt.value
+    }
+
+    def establishersIndividualUtr(index: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(establishers.individual.EstablisherHasUTRId(index))(true).asOpt.value.
+        set(establishers.individual.EstablisherUTRId(index))(utr).asOpt.value
+    }
+
     def establishersIndividualPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
     }
 
+    def establisherKind(index:Int, kind: EstablisherKind): UserAnswers = {
+      answers.set(EstablisherKindId(index))(kind).asOpt.value
+    }
+
     def establishersIndividualName(index: Int, name: PersonName): UserAnswers = {
       answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
+    }
+
+    def establishersIndividualDOB(index: Int, dob: LocalDate): UserAnswers = {
+      answers.set(establishers.individual.EstablisherDOBId(index))(dob).asOpt.value
     }
 
     def establishersIndividualEmail(index: Int, email: String): UserAnswers = {
