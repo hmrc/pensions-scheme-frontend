@@ -280,13 +280,44 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
 
   "establishers" must {
     "return the seq of establishers sub sections" in {
+
+      /*
+        override def establishersSection(mode: Mode, srn: Option[String]): Unit = {
+
+    def dynamicContentForChangeLink(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
+    messages(if(srn.isDefined) variationsKey else registrationKey, name)
+
+    def modeBasedCompletion(completion: Option[Boolean]): Option[Boolean] = if (mode == NormalMode) completion else None
+
+    "return the seq of establishers sub sections" in {
+      val userAnswers = establisherCompany()
+      val helper = createTaskListHelper(userAnswers)
+      helper.establishers(userAnswers, mode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(dynamicContentForChangeLink(srn, "test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
+            ), Some("test company"))
+        )
+    }
+  }
+       */
+
+
       val userAnswers = establisherCompany()
       val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
       helper.establishersSection(userAnswers, UpdateMode, srn) mustBe
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+              EntitySpoke(Link(messages("messages__schemeTaskList__view_details", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), Some(false)),
               EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(UpdateMode, srn, 0).url), None),
