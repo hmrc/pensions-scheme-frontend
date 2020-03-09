@@ -16,6 +16,10 @@
 
 package utils
 
+import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
+import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
+import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{DeclarationDutiesId, SchemeNameId, _}
@@ -23,8 +27,8 @@ import models._
 import models.person.PersonName
 import models.register.SchemeType
 import utils.behaviours.HsTaskListHelperBehaviour
-import utils.hstasklisthelper.HsTaskListHelperVariations
-import viewmodels.{SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
 
@@ -274,11 +278,27 @@ class HsTaskListHelperVariationsSpec extends HsTaskListHelperBehaviour with Enum
     }
   }
 
-  //  "establishers" must {
-  //
-  //    behave like establishersSection(UpdateMode, srn)
-  //  }
-  //
+  "establishers" must {
+    "return the seq of establishers sub sections" in {
+      val userAnswers = establisherCompany()
+      val helper = new HsTaskListHelperVariations(userAnswers, viewOnly = false, srn)
+      helper.establishersSection(userAnswers, UpdateMode, srn) mustBe
+        Seq(
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(
+              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(UpdateMode, srn, 0).url), Some(false)),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(UpdateMode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+                establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(UpdateMode, srn, 0).url), None),
+              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(UpdateMode, srn, 0).url), None)
+            ), Some("test company"))
+        )
+    }
+  }
+
   //  "trustees" must {
   //
   //    behave like trusteesSection(UpdateMode, srn)
