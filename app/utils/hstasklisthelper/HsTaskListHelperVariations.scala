@@ -28,13 +28,13 @@ class HsTaskListHelperVariations(answers: UserAnswers,
                                 )(implicit messages: Messages) extends HsTaskListHelper(answers) {
   import HsTaskListHelperVariations._
 
-  private def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     SchemeDetailsTaskListSection(
       isCompleted = None,
       link = Link(
         messages("messages__schemeTaskList__scheme_info_link_text"),
         if (answers.isBeforeYouStartCompleted(UpdateMode)) {
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, None).url
+          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url
         } else {
           controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
         }
@@ -68,7 +68,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] =
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (true, true) => Some(SchemeDetailsTaskListHeader(plainText = Some(noTrusteesText)))
       case (true, false) => Some(SchemeDetailsTaskListHeader(
@@ -80,6 +80,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       }
       case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
     }
+  }
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] = {
     def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
