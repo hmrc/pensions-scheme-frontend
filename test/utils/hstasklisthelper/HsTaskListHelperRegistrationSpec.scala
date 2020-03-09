@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.hstasklisthelper
 
 import base.{JsonFileReader, SpecBase}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
@@ -31,7 +31,7 @@ import models._
 import models.person.PersonName
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
-import utils.hstasklisthelper.HsTaskListHelperRegistration
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperRegistrationSpec extends SpecBase
@@ -363,33 +363,23 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
 
 object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
 
-  protected val schemeName = "scheme"
-  protected val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
+  private val schemeName = "scheme"
+  private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
-  protected lazy val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  protected lazy val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  protected lazy val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
-
-  protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
-    userAnswersWithSchemeName.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(establisherCompanyPath.HasCompanyPAYEId(0))(false)
-      )).asOpt.value
-  }
-
-  protected def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-
-  protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
-    userAnswersWithSchemeName.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsTrusteeNewId(0))(true)).asOpt.value
-
+  private val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  private val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  private val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
   private val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
-  protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
-  protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
-  protected lazy val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text", schemeName)
-  protected lazy val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  protected lazy val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  protected lazy val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
+  private val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
+  private val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text", schemeName)
+  private val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  private val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+
+  private def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+
+
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,
@@ -408,6 +398,17 @@ object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with 
             setCompleteWorkingKnowledge(isCompleteWk,
               setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, userAnswersWithSchemeName).asOpt.value)))))
   }
+
+  private def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
+    userAnswersWithSchemeName.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
+      _.set(IsEstablisherNewId(0))(true).flatMap(
+        _.set(establisherCompanyPath.HasCompanyPAYEId(0))(false)
+      )).asOpt.value
+  }
+
+  private def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
+    userAnswersWithSchemeName.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
+      _.set(IsTrusteeNewId(0))(true)).asOpt.value
 
   private def mustNotHaveDeclarationLink(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers): Unit =
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
