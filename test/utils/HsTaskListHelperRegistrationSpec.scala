@@ -16,21 +16,28 @@
 
 package utils
 
+import base.{JsonFileReader, SpecBase}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
+import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
+import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.{IsTrusteeNewId, company => trusteesCompany}
 import models._
 import models.person.PersonName
 import models.register.SchemeType
-import utils.behaviours.HsTaskListHelperBehaviour
+import org.scalatest.{MustMatchers, OptionValues}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
-class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with Enumerable.Implicits {
+class HsTaskListHelperRegistrationSpec extends SpecBase
+  with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader with Enumerable.Implicits {
+
+  import HsTaskListHelperRegistrationSpec._
 
   "h1" must {
     "display appropriate heading" in {
@@ -163,7 +170,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   }
 
   "addEstablisherHeader " must {
-
     "return the link to establisher kind page when no establishers are added " in {
       val userAnswers = userAnswersWithSchemeName
       val helper = new HsTaskListHelperRegistration(userAnswers) // createTaskListHelper(userAnswers)
@@ -211,7 +217,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None,
           None)
     }
-
 
     s"display and link should go to trustee kind page when do you have any trustees is true and no trustees are added" in {
       val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
@@ -269,7 +274,6 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
   }
 
   "trustees" must {
-
     "return the seq of trustees sub sections when all spokes are uninitiated" in {
       val userAnswers = trusteeCompany(false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
@@ -321,17 +325,9 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
   }
 
-    protected def mustNotHaveDeclarationLink(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers): Unit =
-      helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
-
-  private def mustHaveDeclarationLinkEnabled(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers, url: Option[String] = None): Unit = {
-    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
-      Some(Link(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
-  }
-
   "declaration" must {
     "have a declaration section" in {
-      val userAnswers = answersData()
+      val userAnswers = answersDataAllComplete()
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.declarationSection(userAnswers).isDefined mustBe true
     }
@@ -352,16 +348,72 @@ class HsTaskListHelperRegistrationSpec extends HsTaskListHelperBehaviour with En
     }
 
     "not have link when about bank details section not completed" in {
-      val userAnswers = answersData(isCompleteAboutBank = false)
+      val userAnswers = answersDataAllComplete(isCompleteAboutBank = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       mustNotHaveDeclarationLink(helper, userAnswers)
     }
 
     "not have link when working knowledge section not completed" in {
-      val userAnswers = answersData(isCompleteWk = false)
+      val userAnswers = answersDataAllComplete(isCompleteWk = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       mustNotHaveDeclarationLink(helper, userAnswers)
     }
   }
 }
 
+object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
+
+  protected val schemeName = "scheme"
+  protected val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
+
+  protected lazy val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  protected lazy val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  protected lazy val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
+
+  protected def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
+    userAnswersWithSchemeName.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
+      _.set(IsEstablisherNewId(0))(true).flatMap(
+        _.set(establisherCompanyPath.HasCompanyPAYEId(0))(false)
+      )).asOpt.value
+  }
+
+  protected def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+
+  protected def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
+    userAnswersWithSchemeName.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
+      _.set(IsTrusteeNewId(0))(true)).asOpt.value
+
+  private val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
+  protected lazy val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
+  protected lazy val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
+  protected lazy val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text", schemeName)
+  protected lazy val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  protected lazy val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  protected lazy val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+
+  private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
+                                     isCompleteAboutMembers: Boolean = true,
+                                     isCompleteAboutBank: Boolean = true,
+                                     isCompleteAboutBenefits: Boolean = true,
+                                     isCompleteWk: Boolean = true,
+                                     isCompleteEstablishers: Boolean = true,
+                                     isCompleteTrustees: Boolean = true,
+                                     isChangedInsuranceDetails: Boolean = true,
+                                     isChangedEstablishersTrustees: Boolean = true
+                                    ): UserAnswers = {
+    setCompleteBeforeYouStart(isCompleteBeforeStart,
+      setCompleteMembers(isCompleteAboutMembers,
+        setCompleteBank(isCompleteAboutBank,
+          setCompleteBenefits(isCompleteAboutBenefits,
+            setCompleteWorkingKnowledge(isCompleteWk,
+              setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, userAnswersWithSchemeName).asOpt.value)))))
+  }
+
+  private def mustNotHaveDeclarationLink(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers): Unit =
+    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
+
+  private def mustHaveDeclarationLinkEnabled(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers, url: Option[String] = None): Unit = {
+    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
+      Some(Link(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
+  }
+}
