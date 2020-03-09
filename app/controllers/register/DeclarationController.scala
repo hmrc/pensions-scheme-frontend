@@ -64,8 +64,7 @@ class DeclarationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      val ua = request.userAnswers
-      if(HsTaskListHelperRegistration.declarationEnabled(ua)) {
+      if(HsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
         showPage(Ok.apply)
       } else {
         Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
