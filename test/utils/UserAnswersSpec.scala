@@ -358,31 +358,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       answers.hasCompanies(mode) mustBe true
     }
 
-    "return true if an establisher is a partnership" in {
-      val answers =
-        UserAnswers()
-          .set(EstablisherNameId(0))(person)
-          .flatMap(_.set(PartnershipDetailsId(1))(partnershipDetails))
-          .asOpt
-          .value
-
-      answers.hasCompanies(mode) mustBe true
-    }
-
-    "return true if both an establisher and a trustee are companies" in {
-      val answers =
-        UserAnswers()
-          .set(EstablisherNameId(0))(person)
-          .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
-          .flatMap(_.set(TrusteeNameId(0))(person))
-          .flatMap(_.set(TrusteeCompanyDetailsId(1))(company))
-          .asOpt
-          .value
-
-      answers.hasCompanies(mode) mustBe true
-    }
-
-    "return false if no establishers or trustees are companies" in {
+    "return false if no establishers are companies" in {
       val answers =
         UserAnswers()
           .set(EstablisherNameId(0))(person)
@@ -455,7 +431,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 }
 
 object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonFileReader {
-  private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[_] = {
+  private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind,
+                                isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[_] = {
     establisherKind match {
       case Indivdual =>
         EstablisherIndividualEntity(EstablisherNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)

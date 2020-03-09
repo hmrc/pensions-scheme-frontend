@@ -39,7 +39,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
-import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration}
+import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
@@ -65,8 +65,7 @@ class DeclarationController @Inject()(
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       val ua = request.userAnswers
-      println("\n\n\n new HsTaskListHelperRegistration(ua).declarationEnabled(ua) : "+new HsTaskListHelperRegistration(ua).declarationEnabled(ua))
-      if(new HsTaskListHelperRegistration(ua).declarationEnabled(ua)) {
+      if(HsTaskListHelperRegistration.declarationEnabled(ua)) {
         showPage(Ok.apply)
       } else {
         Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
@@ -86,11 +85,11 @@ class DeclarationController @Inject()(
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    val isCompany = request.userAnswers.hasCompanies(NormalMode)
+    val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
-    val readyForRender = if (isCompany) {
+    val readyForRender = if (isEstCompany) {
       dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
     } else {
       Future.successful(())
@@ -100,7 +99,7 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            view(isCompany, isDormant = isDeclarationDormant,
+            view(isEstCompany, isDormant = isDeclarationDormant,
               request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName, href)
           )
         )

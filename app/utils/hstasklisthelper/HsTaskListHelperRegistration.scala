@@ -193,7 +193,7 @@ object HsTaskListHelperRegistration {
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
       userAnswers.allEstablishersAfterDelete(mode).forall(_.isCompleted)
 
-  private def declarationEnabled(userAnswers: UserAnswers): Boolean =
+  def declarationEnabled(userAnswers: UserAnswers): Boolean =
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,

@@ -146,6 +146,28 @@ trait DataCompletionHelper extends OptionValues {
       .establishersIndividualEmail(index, "s@s.com").establishersIndividualPhone(index, "123")
   }
 
+  protected def setCompleteEstCompany(ua: UserAnswers, index: Int): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Company)
+      .establisherCompanyDetails(index, CompanyDetails("test company"))
+      .establisherCompanyNoCrnReason(index, "no Crn")
+      .establisherCompanyNoUtrReason(index, "no utr")
+      .establisherCompanyhasVat(index, false)
+      .establisherCompanyhasPaye(index, false)
+      .establishersCompanyAddress(index, address)
+      .establisherCompanyAddressYears(index, AddressYears.OverAYear)
+      .establishersCompanyEmail(index, "s@s.com")
+      .establishersCompanyPhone(index, "123")
+      .establishersCompanyDirectorName(index, 0, PersonName("dir", "One"))
+      .establishersCompanyDirectorDOB(index, 0, LocalDate.now().minusYears(30))
+      .establishersCompanyDirectorNino(index, 0, ReferenceValue("AB100100A"))
+      .establishersCompanyDirectorUtr(index, 0, ReferenceValue("123"))
+      .establishersCompanyDirectorAddress(index, 0, address)
+      .establishersCompanyDirectorAddressYears(index, 0, AddressYears.OverAYear)
+      .establishersCompanyDirectorEmail(index, 0, "s@s.com")
+      .establishersCompanyDirectorPhone(index, 0, "123")
+
+  }
+
   protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
     if (isComplete) {
       ua.adviserName(name = "test adviser").adviserEmailAddress(email = "s@s.com").
