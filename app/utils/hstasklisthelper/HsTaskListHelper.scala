@@ -24,19 +24,18 @@ import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompany
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models._
-import play.api.i18n.Messages
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers
-                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
+                               ) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
 
   protected def schemeName: String = answers.get(SchemeNameId).getOrElse("")
 
-  protected val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  protected val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  protected def workingKnowledgeLinkText: String = messages("messages__schemeTaskList__change_details", schemeName)
-  protected val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
+  protected val addEstablisherLinkText: Message = Message("messages__schemeTaskList__sectionEstablishers_add_link")
+  protected val addTrusteesLinkText: Message = Message("messages__schemeTaskList__sectionTrustees_add_link")
+  protected def workingKnowledgeLinkText: Message = Message("messages__schemeTaskList__change_details", schemeName)
+  protected val declarationLinkText: Message = Message("messages__schemeTaskList__declaration_link")
 
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
     val sections = userAnswers.allEstablishers(mode)

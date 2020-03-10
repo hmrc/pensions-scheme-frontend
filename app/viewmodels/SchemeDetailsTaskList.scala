@@ -16,11 +16,11 @@
 
 package viewmodels
 
-import models.{EntitySpoke, Link}
+import models.{EntitySpoke, TaskListLink}
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
-                                 aboutHeader:String,
+                                 aboutHeader:Message,
                                  about: Seq[SchemeDetailsTaskListSection],
                                  workingKnowledge: Option[SchemeDetailsTaskListSection],
                                  addEstablisherHeader : Option[SchemeDetailsTaskListHeader],
@@ -29,42 +29,23 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  trustees: Seq[SchemeDetailsTaskListEntitySection],
                                  declaration: Option[SchemeDetailsTaskListDeclarationSection] = None,
                                  h1: String,
-                                 h2: String,
-                                 h3: Option[String],
-                                 pageTitle: String,
+                                 h2: Message,
+                                 h3: Option[Message],
+                                 pageTitle: Message,
                                  srn: Option[String]
                                 ) {
 }
 
-case class SchemeDetailsTaskListDeclarationSection(header:String, declarationLink: Option[Link], incompleteDeclarationText: String*)
+case class SchemeDetailsTaskListDeclarationSection(header:String, declarationLink: Option[TaskListLink], incompleteDeclarationText: String*)
 
-object SchemeDetailsTaskListDeclarationSection {
-  implicit val formats: OFormat[SchemeDetailsTaskListDeclarationSection] = Json.format[SchemeDetailsTaskListDeclarationSection]
-}
-
-object SchemeDetailsTaskList {
-  implicit val formats: OFormat[SchemeDetailsTaskList] = Json.format[SchemeDetailsTaskList]
-}
-
-case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None, p1: Option[String] = None)
-
-object SchemeDetailsTaskListSection {
-  implicit val formats: OFormat[SchemeDetailsTaskListSection] = Json.format[SchemeDetailsTaskListSection]
-}
+case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, link: TaskListLink, header: Option[String] = None, p1: Option[String] = None)
 
 case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean] = None,
                                               entities: Seq[EntitySpoke],
                                               header: Option[String] = None,
                                               p1: Option[String] = None)
 
-object SchemeDetailsTaskListEntitySection {
-  implicit val formats: OFormat[SchemeDetailsTaskListEntitySection] = Json.format[SchemeDetailsTaskListEntitySection]
-}
+case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[TaskListLink] = None,
+                                       header: Option[Message] = None, p1: Option[String] = None, plainText: Option[Message] = None)
 
-case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[Link] = None,
-                                       header: Option[String] = None, p1: Option[String] = None, plainText: Option[String] = None)
-
-object SchemeDetailsTaskListHeader {
-  implicit val formats: OFormat[SchemeDetailsTaskListHeader] = Json.format[SchemeDetailsTaskListHeader]
-}
 

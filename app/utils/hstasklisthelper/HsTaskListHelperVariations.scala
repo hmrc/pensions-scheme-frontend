@@ -17,22 +17,21 @@
 package utils.hstasklisthelper
 
 import identifiers.SchemeNameId
-import models.{Link, Mode, NormalMode, UpdateMode}
-import play.api.i18n.Messages
+import models.{Mode, NormalMode, TaskListLink, UpdateMode}
 import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperVariations(answers: UserAnswers,
                                  viewOnly: Boolean,
                                  srn: Option[String]
-                                )(implicit messages: Messages) extends HsTaskListHelper(answers) {
+                                ) extends HsTaskListHelper(answers) {
   import HsTaskListHelperVariations._
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
     SchemeDetailsTaskListSection(
       isCompleted = None,
-      link = Link(
-        messages("messages__schemeTaskList__scheme_info_link_text"),
+      link = TaskListLink(
+        Message("messages__schemeTaskList__scheme_info_link_text"),
         if (answers.isBeforeYouStartCompleted(UpdateMode)) {
           controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url
         } else {
@@ -45,11 +44,13 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 
   private[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
     val membersLink = userAnswers.isMembersCompleted match {
-      case Some(true) => Link(aboutMembersViewLinkText(schemeName), controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
-      case _ => Link(aboutMembersViewLinkText(schemeName), controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
+      case Some(true) => TaskListLink(aboutMembersViewLinkText(schemeName),
+        controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
+      case _ => TaskListLink(aboutMembersViewLinkText(schemeName),
+        controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
     }
 
-    val benefitsAndInsuranceLink = Link(aboutBenefitsAndInsuranceViewLinkText(schemeName),
+    val benefitsAndInsuranceLink = TaskListLink(aboutBenefitsAndInsuranceViewLinkText(schemeName),
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
 
     Seq(SchemeDetailsTaskListSection(None, membersLink, None),
@@ -75,17 +76,17 @@ class HsTaskListHelperVariations(answers: UserAnswers,
         link = typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode)))
       case (false, false) => {
         Some(
-          SchemeDetailsTaskListHeader(None, Some(Link(viewTrusteesLinkText,
+          SchemeDetailsTaskListHeader(None, Some(TaskListLink(viewTrusteesLinkText,
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)), None))
       }
-      case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(messages("messages__schemeTaskList__sectionTrustees_header"))))
+      case (false, true) => Some(SchemeDetailsTaskListHeader(header = Some(Message("messages__schemeTaskList__sectionTrustees_header"))))
     }
   }
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] = {
-    def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[Link] = {
+    def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Option[TaskListLink] = {
       if (userAnswers.isUserAnswerUpdated) {
-        Some(Link(declarationLinkText,
+        Some(TaskListLink(declarationLinkText,
           if (userAnswers.areVariationChangesCompleted)
             controllers.routes.VariationDeclarationController.onPageLoad(srn).url
           else
@@ -111,7 +112,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
-      messages("messages__schemeTaskList__about_scheme_header", schemeName),
+      Message("messages__schemeTaskList__about_scheme_header", schemeName),
       aboutSection(answers),
       None,
       addEstablisherHeader(answers, UpdateMode, srn),
@@ -120,34 +121,34 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       trusteesSection(answers, UpdateMode, srn),
       declarationSection(answers),
       answers.get(SchemeNameId).getOrElse(""),
-      messages("messages__scheme_details__title"),
-      Some(messages("messages__schemeTaskList__scheme_information_link_text")),
-      messages("messages__scheme_details__title"),
+      Message("messages__scheme_details__title"),
+      Some(Message("messages__schemeTaskList__scheme_information_link_text")),
+      Message("messages__scheme_details__title"),
       srn
     )
   }
 }
 
 object HsTaskListHelperVariations {
-  private def aboutMembersViewLinkText(schemeName:String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_members_link_text_view", schemeName)
-  private def aboutBenefitsAndInsuranceViewLinkText(schemeName:String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName)
-  private def viewEstablisherLinkText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionEstablishers_view_link")
-  private def viewTrusteesLinkText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionTrustees_view_link")
-  private def noEstablishersText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionEstablishers_no_establishers")
-  private def noTrusteesText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionTrustees_no_trustees")
+  private def aboutMembersViewLinkText(schemeName:String): Message =
+    Message("messages__schemeTaskList__about_members_link_text_view", schemeName)
+  private def aboutBenefitsAndInsuranceViewLinkText(schemeName:String): Message =
+    Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName)
+  private def viewEstablisherLinkText: Message =
+    Message("messages__schemeTaskList__sectionEstablishers_view_link")
+  private def viewTrusteesLinkText: Message =
+    Message("messages__schemeTaskList__sectionTrustees_view_link")
+  private def noEstablishersText: Message =
+    Message("messages__schemeTaskList__sectionEstablishers_no_establishers")
+  private def noTrusteesText: Message =
+    Message("messages__schemeTaskList__sectionTrustees_no_trustees")
 
-  private def typeOfTrusteeLink(linkText: String, trusteeCount: Int, srn: Option[String], mode: Mode): Option[Link] =
-    Some(Link(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url))
+  private def typeOfTrusteeLink(linkText: Message, trusteeCount: Int, srn: Option[String], mode: Mode): Option[TaskListLink] =
+    Some(TaskListLink(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url))
 
-  private def typeOfEstablisherLink(linkText: String, establisherCount: Int, srn: Option[String], mode: Mode): Option[Link] =
-    Some(Link(linkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, establisherCount, srn).url))
+  private def typeOfEstablisherLink(linkText: Message, establisherCount: Int, srn: Option[String], mode: Mode): Option[TaskListLink] =
+    Some(TaskListLink(linkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, establisherCount, srn).url))
 
-  private def addEstablisherLink(linkText: String, srn: Option[String], mode: Mode): Option[Link] =
-    Some(Link(linkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url))
+  private def addEstablisherLink(linkText: Message, srn: Option[String], mode: Mode): Option[TaskListLink] =
+    Some(TaskListLink(linkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url))
 }

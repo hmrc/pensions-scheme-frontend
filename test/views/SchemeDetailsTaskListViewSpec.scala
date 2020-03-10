@@ -18,7 +18,7 @@ package views
 
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
-import models.{EntitySpoke, Link, NormalMode}
+import models.{EntitySpoke, TaskListLink, NormalMode}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.behaviours.ViewBehaviours
@@ -108,12 +108,12 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct h2" in {
       val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = schemeDetailsTaskListData().h2)
+      assertRenderedByIdWithText(doc, id = "section-before-you-start-header", text = messages(schemeDetailsTaskListData().h2))
     }
 
     "display correct h3" in {
       val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = "section-information-h3", text = schemeDetailsTaskListData().h3.getOrElse(""))
+      assertRenderedByIdWithText(doc, id = "section-information-h3", text = schemeDetailsTaskListData().h3.map(messages(_)).getOrElse(""))
     }
   }
 
@@ -174,13 +174,13 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       val journeyTaskListNoEstablisher: SchemeDetailsTaskList = SchemeDetailsTaskList(beforeYouStartSection, "test", Seq.empty, None,
         Some(SchemeDetailsTaskListHeader(
           None,
-          Some(Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+          Some(TaskListLink(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)),
           None
         )), Seq.empty,
         Some(SchemeDetailsTaskListHeader(
           None,
-          Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          Some(TaskListLink(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
           None
         )), Seq.empty, None, "h1", "h2", None, "pageTitle", None
@@ -284,12 +284,12 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         SchemeDetailsTaskList(beforeYouStartSection, "test", Seq.empty, None,
         Some(SchemeDetailsTaskListHeader(
           None,
-          Some(Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+          Some(TaskListLink(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)),
           None)), Seq.empty,
         Some(SchemeDetailsTaskListHeader(
           None,
-          Some(Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          Some(TaskListLink(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
           None,
           text)), Seq.empty, None, "h1", "h2", None, "pageTitle",
@@ -416,7 +416,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     "display correct link and no text for the Declaration section where there is a declaration section and a link" in {
       val completed = schemeDetailsTaskListData().copy(declaration =
         Some(SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header",
-          Some(Link(text = "text", target = "target")))))
+          Some(TaskListLink(text = "text", target = "target")))))
       val doc = asDocument(createView(completed)())
 
       assertNotRenderedById(doc, id = "section-declaration-text")
@@ -437,16 +437,16 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 }
 
 object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
-  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeDetailsTaskList__working_knowledge_link_text")
-  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
-  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private lazy val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text")
+  private lazy val aboutMembersLinkText = Message("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = Message("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = Message("messages__schemeTaskList__about_bank_details_link_text")
+  private lazy val workingKnowledgeLinkText = Message("messages__schemeDetailsTaskList__working_knowledge_link_text")
+  private lazy val changeEstablisherLinkText = Message("messages__schemeTaskList__sectionEstablishers_change_link")
+  private lazy val individualLinkText = Message("messages__schemeTaskList__individual_link")
+  private lazy val changeTrusteesLinkText = Message("messages__schemeTaskList__sectionTrustees_change_link")
   private val testAboutHeader = "testabout"
-  private val pageHeader = messages("messages__schemeTaskList__title")
+  private val pageHeader = Message("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
 
   private def schemeDetailsTaskListData(srn: Option[String] = None,
@@ -459,53 +459,53 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
 
   private def beforeYouStartSection: SchemeDetailsTaskListSection = {
     SchemeDetailsTaskListSection(Some(false),
-      Link(
-        messages(beforeYouStartLinkText),
+      TaskListLink(
+        Message(beforeYouStartLinkText),
         controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
       ), None)
   }
 
   private def aboutSection: Seq[SchemeDetailsTaskListSection] = {
     Seq(
-      SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
+      SchemeDetailsTaskListSection(Some(false), TaskListLink(aboutMembersLinkText,
         controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
-      SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
+      SchemeDetailsTaskListSection(Some(true), TaskListLink(aboutBenefitsAndInsuranceLinkText,
         controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
-      SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
+      SchemeDetailsTaskListSection(Some(true), TaskListLink(aboutBankDetailsLinkText,
         controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
     )
   }
 
   private def wkSection: SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
+    SchemeDetailsTaskListSection(Some(false), TaskListLink(workingKnowledgeLinkText,
       controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None)
   }
 
   private def addEstablisherHeader(): SchemeDetailsTaskListHeader = {
-    SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+    SchemeDetailsTaskListHeader(None, Some(TaskListLink(changeEstablisherLinkText,
       controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url)), None)
   }
 
   private def addTrusteesHeader(): SchemeDetailsTaskListHeader = {
-    SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+    SchemeDetailsTaskListHeader(None, Some(TaskListLink(changeTrusteesLinkText,
       controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
   }
 
   private def establisherCompany: Seq[SchemeDetailsTaskListEntitySection] = {
     Seq(SchemeDetailsTaskListEntitySection(Some(false),
       Seq(
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_details", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_details", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_address", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, 0).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_contact", "test company"),
           establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_directors", "test company"),
           establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, 0).url, None))
       ),
       Some("test company")),
 
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(TaskListLink(individualLinkText,
         controllers.register.establishers.individual.routes.CheckYourAnswersDetailsController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
@@ -514,39 +514,39 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   private def trusteeCompany: Seq[SchemeDetailsTaskListEntitySection] = {
     Seq(SchemeDetailsTaskListEntitySection(Some(false),
       Seq(
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_details", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_details", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_address", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, 0, None).url), None),
-        EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+        EntitySpoke(TaskListLink(messages("messages__schemeTaskList__add_contact", "test company"),
           trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), None)
       ),
       Some("test company")),
 
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(TaskListLink(individualLinkText,
         controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
   }
 
   private def establishers: Seq[SchemeDetailsTaskListEntitySection] = {
-    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
+    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(TaskListLink(individualLinkText,
       controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(NormalMode, 0, None).url),
       Some(false))),
       Some("firstName lastName")),
 
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(TaskListLink(individualLinkText,
         controllers.register.establishers.individual.routes.CheckYourAnswersDetailsController.onPageLoad(NormalMode, 1, None).url),
         Some(true))),
         Some("firstName lastName")))
   }
 
   private def trustees: Seq[SchemeDetailsTaskListEntitySection] = {
-    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(Link(individualLinkText,
+    Seq(SchemeDetailsTaskListEntitySection(Some(false), Seq(EntitySpoke(TaskListLink(individualLinkText,
       controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url),
       Some(false))),
       Some("firstName lastName")),
-      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(Link(individualLinkText,
+      SchemeDetailsTaskListEntitySection(Some(true), Seq(EntitySpoke(TaskListLink(individualLinkText,
         controllers.register.trustees.individual.routes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 0, None).url),
         Some(true))),
         Some("firstName lastName")))

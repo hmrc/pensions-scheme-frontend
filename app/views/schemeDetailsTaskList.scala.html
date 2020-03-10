@@ -61,7 +61,7 @@
 
             @taskSections.h3.map{item=>
                 <h3 id="section-information-h3" class="heading-medium">
-                  @item
+                    @messages(item)
                 </h3>
             }
 
@@ -85,7 +85,7 @@
 
         <section aria-labelledby="section-about-header">
             <h3 id="section-about-header" class="heading-medium">
-                @taskSections.aboutHeader
+                @messages(taskSections.aboutHeader)
             </h3>
                 <ul class="task-list-items">
                     @for((item, i) <- taskSections.about.zipWithIndex){

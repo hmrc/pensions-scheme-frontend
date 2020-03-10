@@ -32,7 +32,7 @@ import models.person.PersonName
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues}
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import viewmodels.{Message, SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
 
 class HsTaskListHelperRegistrationSpec extends SpecBase
   with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader with Enumerable.Implicits {
@@ -52,7 +52,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
     "display appropriate text" in {
       val userAnswers = userAnswersWithSchemeName
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h2 mustBe messages("messages__scheme_details__title")
+      helper.taskList.h2 mustBe Message("messages__scheme_details__title")
     }
   }
 
@@ -60,7 +60,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
     "display Before You Start" in {
       val userAnswers = userAnswersWithSchemeName
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__before_you_start_header"))
+      helper.taskList.h3 mustBe Some(Message("messages__schemeTaskList__before_you_start_header"))
     }
   }
 
@@ -69,7 +69,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val schemeName = "test scheme"
       val userAnswers = userAnswersWithSchemeName.set(SchemeNameId)(schemeName).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
+      helper.taskList.aboutHeader mustBe Message("messages__schemeTaskList__about_scheme_header", schemeName)
     }
   }
 
@@ -77,7 +77,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
     "display Pension scheme details" in {
       val userAnswers = userAnswersWithSchemeName
       val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
+      helper.taskList.pageTitle mustBe Message("messages__schemeTaskList__title")
     }
   }
 
@@ -87,8 +87,8 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.beforeYouStartSection(userAnswers) mustBe SchemeDetailsTaskListSection(
         isCompleted = Some(false),
-        link = Link(
-          messages("messages__schemeTaskList__before_you_start_link_text", schemeName),
+        link = TaskListLink(
+          Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
           controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
         ),
         header = None
@@ -100,8 +100,8 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.beforeYouStartSection(userAnswers) mustBe SchemeDetailsTaskListSection(
         isCompleted = Some(true),
-        link = Link(
-          messages("messages__schemeTaskList__before_you_start_link_text", schemeName),
+        link = TaskListLink(
+          Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
           controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
         ),
         header = None
@@ -117,11 +117,11 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
-          SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
+          SchemeDetailsTaskListSection(Some(false), TaskListLink(aboutMembersLinkText,
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
+          SchemeDetailsTaskListSection(Some(false), TaskListLink(aboutBenefitsAndInsuranceLinkText,
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBankDetailsLinkText,
+          SchemeDetailsTaskListSection(Some(false), TaskListLink(aboutBankDetailsLinkText,
             controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
         )
     }
@@ -135,11 +135,11 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.aboutSection(userAnswers) mustBe
         Seq(
-          SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
+          SchemeDetailsTaskListSection(Some(true), TaskListLink(aboutMembersLinkText,
             controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
+          SchemeDetailsTaskListSection(Some(true), TaskListLink(aboutBenefitsAndInsuranceLinkText,
             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
+          SchemeDetailsTaskListSection(Some(true), TaskListLink(aboutBankDetailsLinkText,
             controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url), None)
         )
     }
@@ -156,7 +156,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = setCompleteWorkingKnowledge(isComplete = false, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
-        SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
+        SchemeDetailsTaskListSection(Some(false), TaskListLink(workingKnowledgeLinkText,
           controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None)
     }
 
@@ -164,7 +164,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
-        SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
+        SchemeDetailsTaskListSection(Some(true), TaskListLink(workingKnowledgeLinkText,
           controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
     }
   }
@@ -174,7 +174,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = userAnswersWithSchemeName
       val helper = new HsTaskListHelperRegistration(userAnswers) // createTaskListHelper(userAnswers)
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(addEstablisherLinkText,
           controllers.register.establishers.routes.EstablisherKindController
             .onPageLoad(NormalMode, userAnswers.allEstablishers(NormalMode).size, None).url)), None)
     }
@@ -183,7 +183,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(changeEstablisherLinkText,
           controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url)), None)
     }
   }
@@ -195,7 +195,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers) //createTaskListHelper(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addDeleteTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(addDeleteTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
     }
 
@@ -204,7 +204,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         .set(SchemeTypeId)(SchemeType.BodyCorporate).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(addTrusteesLinkText,
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None, None)
     }
 
@@ -213,7 +213,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(addTrusteesLinkText,
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None,
           None)
     }
@@ -222,7 +222,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(addTrusteesLinkText,
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None)
     }
 
@@ -231,7 +231,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
       val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName")).asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
     }
 
@@ -241,7 +241,7 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         .asOpt.value
       val helper = new HsTaskListHelperRegistration(userAnswers)
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
+        SchemeDetailsTaskListHeader(None, Some(TaskListLink(changeTrusteesLinkText,
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
     }
 
@@ -260,13 +260,13 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, 0).url), Some(false)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test company"),
                 establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_directors", "test company"),
                 controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(NormalMode, None, 0).url), None)
             ), Some("test company"))
         )
@@ -281,11 +281,11 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_details", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, 0, None).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test company"),
                 trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), None)
             ), Some("test company"))
         )
@@ -298,27 +298,27 @@ class HsTaskListHelperRegistrationSpec extends SpecBase
         Seq(
           SchemeDetailsTaskListEntitySection(None,
             Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_address", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(NormalMode, 0, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_contact", "test company"),
                 trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true))
             ), Some("test company")),
           SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
+            Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", "firstName lastName"),
               trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_address", "firstName lastName"),
                 trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(NormalMode, 1, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_contact", "firstName lastName"),
                 trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true))
             ), Some("firstName lastName")),
           SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
+            Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", "test partnership"),
               trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_address", "test partnership"),
                 trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(NormalMode, 2, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
+              EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_contact", "test partnership"),
                 trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true))
             ), Some("test partnership"))
         )
@@ -366,16 +366,16 @@ object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with 
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
-  private val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  private val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
-  private val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
-  private val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
-  private val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
-  private val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text", schemeName)
-  private val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private val addEstablisherLinkText: Message = Message("messages__schemeTaskList__sectionEstablishers_add_link")
+  private val addTrusteesLinkText: Message = Message("messages__schemeTaskList__sectionTrustees_add_link")
+  private val declarationLinkText: Message = Message("messages__schemeTaskList__declaration_link")
+  private val aboutMembersLinkText: Message = Message("messages__schemeTaskList__about_members_link_text", schemeName)
+  private val aboutBenefitsAndInsuranceLinkText: Message = Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
+  private val aboutBankDetailsLinkText: Message = Message("messages__schemeTaskList__about_bank_details_link_text", schemeName)
+  private val workingKnowledgeLinkText: Message = Message("messages__schemeTaskList__change_details", schemeName)
+  private val changeEstablisherLinkText: Message = Message("messages__schemeTaskList__sectionEstablishers_change_link")
+  private val changeTrusteesLinkText: Message = Message("messages__schemeTaskList__sectionTrustees_change_link")
+  private val addDeleteTrusteesLinkText: Message = Message("messages__schemeTaskList__sectionTrustees_change_link")
 
   private def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 
@@ -415,6 +415,6 @@ object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with 
 
   private def mustHaveDeclarationLinkEnabled(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers, url: Option[String] = None): Unit = {
     helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
-      Some(Link(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
+      Some(TaskListLink(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
   }
 }
