@@ -54,52 +54,59 @@
         @components.heading(taskSections.h1)
 
     <div class="task-list">
+
         <section aria-labelledby="section-before-you-start-header">
             <h2 id="section-before-you-start-header" class="heading-large">
                 @messages(taskSections.h2)
             </h2>
 
-            @taskSections.h3.map{item=>
+            @taskSections.beforeYouStart.header.map{ item=>
                 <h3 id="section-information-h3" class="heading-medium">
                     @messages(item)
                 </h3>
             }
 
+            @taskSections.beforeYouStart.entities.map{ spoke =>
                 <ul class="task-list-items">
                     <li class="task-list-item">
-                        @if(taskSections.beforeYouStart.isCompleted.isEmpty){
-                            <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target">
-                                @messages(taskSections.beforeYouStart.link.text)
-                            </a>
+                        @if(spoke.isCompleted.isEmpty){
+                        <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target">
+                            @messages(spoke.link.text)
+                        </a>
                         }
-                        @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                            <a id="section-before-you-start-link" class="task-name" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
-                                @messages(taskSections.beforeYouStart.link.text)
-                            </a>
-                            <span class="task-status @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                        @spoke.isCompleted.map{ isCompleted =>
+                        <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target" aria-describedby="section-beforeYouStart-status">
+                            @messages(spoke.link.text)
+                        </a>
+                        <span class="task-status @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                         }
                     </li>
                 </ul>
+            }
 
-            </section>
+        </section>
 
         <section aria-labelledby="section-about-header">
-            <h3 id="section-about-header" class="heading-medium">
-                @messages(taskSections.aboutHeader)
-            </h3>
-                <ul class="task-list-items">
-                    @for((item, i) <- taskSections.about.zipWithIndex){
-                        <li class="task-list-item">
-                            <a id="section-about-link-@i" class="task-name" href="@{item.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>
-                                @messages(item.link.text)
-                            </a>
-                            @item.isCompleted.map{ isCompleted =>
-                                <span class="task-status @statusClass(isCompleted)" id="section-about-status-@i"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
-                            }
-                        </li>
-                    }
+            @taskSections.about.header.map{ item=>
+                <h3 id="section-about-header" class="heading-medium">
+                    @messages(item)
+                </h3>
+            }
 
+            @taskSections.beforeYouStart.entities.map{ spoke =>
+                <ul class="task-list-items">
+                    @for((item, i) <- taskSections.about.entities.zipWithIndex){
+                    <li class="task-list-item">
+                        <a id="section-about-link-@i" class="task-name" href="@{item.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>
+                            @messages(item.link.text)
+                        </a>
+                        @item.isCompleted.map{ isCompleted =>
+                        <span class="task-status @statusClass(isCompleted)" id="section-about-status-@i"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                        }
+                    </li>
+                    }
                 </ul>
+            }
         </section>
 
         @taskSections.workingKnowledge.map { wk =>

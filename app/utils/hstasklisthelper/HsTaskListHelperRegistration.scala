@@ -18,59 +18,29 @@ package utils.hstasklisthelper
 
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.{Mode, NormalMode, TaskListLink}
+import models.{EntitySpoke, Mode, NormalMode, TaskListLink}
 import utils.UserAnswers
 import viewmodels._
 
 class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelper(answers) {
   import HsTaskListHelperRegistration._
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(
-      isCompleted = Some(answers.isBeforeYouStartCompleted(NormalMode)),
-      link = TaskListLink(
-        Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
-        if (answers.isBeforeYouStartCompleted(NormalMode)) {
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
-        } else {
-          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
-        }
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
+    SchemeDetailsTaskListEntitySection(
+      None,
+      Seq(
+        EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
+          if (answers.isBeforeYouStartCompleted(NormalMode)) {
+            controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
+          } else {
+            controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
+          }
+        ),
+          Some(answers.isBeforeYouStartCompleted(NormalMode))
+        )
       ),
-      header = None
-    )
-  }
-
-  private[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.isMembersCompleted match {
-      case Some(true) =>
-        TaskListLink(aboutMembersLinkText(schemeName), controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case Some(false) => TaskListLink(aboutMembersLinkText(schemeName), controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-      case None        => TaskListLink(aboutMembersAddLinkText(schemeName), controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-    }
-
-    val benefitsAndInsuranceLink = userAnswers.isBenefitsAndInsuranceCompleted match {
-      case Some(true) =>
-        TaskListLink(aboutBenefitsAndInsuranceLinkText(schemeName),
-             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case Some(false) =>
-        TaskListLink(aboutBenefitsAndInsuranceLinkText(schemeName), controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
-      case None =>
-        TaskListLink(aboutBenefitsAndInsuranceAddLinkText(schemeName),
-             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
-    }
-
-    val bankDetailsLink = userAnswers.isBankDetailsCompleted match {
-      case Some(true) =>
-        TaskListLink(aboutBankDetailsLinkText(schemeName), controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case Some(false) =>
-        TaskListLink(aboutBankDetailsLinkText(schemeName), controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
-      case None => TaskListLink(aboutBankDetailsAddLinkText(schemeName), controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
-    }
-
-    Seq(
-      SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
-      SchemeDetailsTaskListSection(userAnswers.isBenefitsAndInsuranceCompleted, benefitsAndInsuranceLink, None),
-      SchemeDetailsTaskListSection(userAnswers.isBankDetailsCompleted, bankDetailsLink, None)
+      Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
 
@@ -151,8 +121,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
   override def taskList: SchemeDetailsTaskList =
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
-      Message("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
+      aboutSection(answers, NormalMode, None),
       workingKnowledgeSection(answers),
       addEstablisherHeader(answers, NormalMode, None),
       establishersSection(answers, NormalMode, None),
@@ -161,25 +130,12 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
       declarationSection(answers),
       answers.get(SchemeNameId).getOrElse(""),
       Message("messages__scheme_details__title"),
-      Some(Message("messages__schemeTaskList__before_you_start_header")),
       Message("messages__schemeTaskList__title"),
       None
     )
 }
 
 object HsTaskListHelperRegistration {
-  private def aboutMembersLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_members_link_text", schemeName)
-  private def aboutMembersAddLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
-  private def aboutBenefitsAndInsuranceLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
-  private def aboutBenefitsAndInsuranceAddLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
-  private def aboutBankDetailsLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_bank_details_link_text", schemeName)
-  private def aboutBankDetailsAddLinkText(schemeName: String): Message =
-    Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)
   private def changeEstablisherLinkText: Message =
     Message("messages__schemeTaskList__sectionEstablishers_change_link")
   private def changeTrusteesLinkText: Message =

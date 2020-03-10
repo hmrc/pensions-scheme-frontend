@@ -19,9 +19,8 @@ package viewmodels
 import models.{EntitySpoke, TaskListLink}
 import play.api.libs.json.{Json, OFormat}
 
-case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
-                                 aboutHeader:Message,
-                                 about: Seq[SchemeDetailsTaskListSection],
+case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListEntitySection,
+                                 about: SchemeDetailsTaskListEntitySection,
                                  workingKnowledge: Option[SchemeDetailsTaskListSection],
                                  addEstablisherHeader : Option[SchemeDetailsTaskListHeader],
                                  establishers: Seq[SchemeDetailsTaskListEntitySection],
@@ -30,7 +29,6 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  declaration: Option[SchemeDetailsTaskListDeclarationSection] = None,
                                  h1: String,
                                  h2: Message,
-                                 h3: Option[Message],
                                  pageTitle: Message,
                                  srn: Option[String]
                                 ) {
@@ -42,7 +40,7 @@ case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, lin
 
 case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean] = None,
                                               entities: Seq[EntitySpoke],
-                                              header: Option[String] = None,
+                                              header: Option[Message] = None,
                                               p1: Option[String] = None)
 
 case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[TaskListLink] = None,

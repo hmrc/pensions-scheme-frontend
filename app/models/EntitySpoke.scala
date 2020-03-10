@@ -16,6 +16,4 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
-
 case class EntitySpoke(link: TaskListLink, isCompleted: Option[Boolean] = None)

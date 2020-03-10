@@ -19,31 +19,41 @@ package utils.hstasklisthelper
 
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
+import models.Index.indexToInt
 import models._
 import models.register.Entity
+import utils.hstasklisthelper.spokes._
 import utils.{Enumerable, UserAnswers}
 
 trait HsTaskListHelperUtils extends Enumerable.Implicits {
 
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,
-                  mode: Mode, srn: Option[String], name: String, index: Int, isNew: Boolean): EntitySpoke = {
+                  mode: Mode, srn: Option[String], name: String, index: Option[Index], isNew: Option[Boolean]): EntitySpoke = {
 
     val isChangeLink = spoke.completeFlag(answers, index, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
 
     (isChangeLink, isNew) match {
-      case (_, false) => EntitySpoke(spoke.changeLink(name)(mode, srn, index))
+      case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index))
       case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
       case (Some(false), _) => EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
       case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index))
     }
   }
 
+  def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    Seq(
+      createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
+      createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, index, None)
+    ) ++ (if(srn.isEmpty) Seq(createSpoke(answers, AboutBankDetailsSpoke, mode, srn, name, index, None)) else Nil)
+  }
+
+
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
                                  spoke: Spoke,
-                                 mode: Mode, srn: Option[String], name: String, index: Int): EntitySpoke = {
+                                 mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
 
     val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
 
@@ -53,59 +63,59 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
       EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
   }
 
-  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(index), EstablisherCompanyDirectors, mode, srn, name, index)
+      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(indexToInt(index.getOrElse(Index(0)))), EstablisherCompanyDirectors, mode, srn, name, index)
     )
   }
 
-  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, EstablisherIndividualDetails, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherIndividualAddress, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherIndividualContactDetails, mode, srn, name, index, isEstablisherNew)
+      createSpoke(answers, EstablisherIndividualDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherIndividualAddress, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherIndividualContactDetails, mode, srn, name, index, Some(isEstablisherNew))
     )
   }
 
-  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isEstablisherNew = answers.get(IsEstablisherNewId(index)).getOrElse(false)
+  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, EstablisherPartnershipDetails, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherPartnershipAddress, mode, srn, name, index, isEstablisherNew),
-      createSpoke(answers, EstablisherPartnershipContactDetails, mode, srn, name, index, isEstablisherNew),
-      createDirectorPartnerSpoke(answers.allPartnersAfterDelete(index), EstablisherPartnershipPartner, mode, srn, name, index)
+      createSpoke(answers, EstablisherPartnershipDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherPartnershipAddress, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherPartnershipContactDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createDirectorPartnerSpoke(answers.allPartnersAfterDelete(indexToInt(index.getOrElse(Index(0)))), EstablisherPartnershipPartner, mode, srn, name, index)
     )
   }
 
-  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, TrusteeCompanyDetails, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteeCompanyAddress, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteeCompanyContactDetails, mode, srn, name, index, isTrusteeNew)
+      createSpoke(answers, TrusteeCompanyDetails, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteeCompanyAddress, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteeCompanyContactDetails, mode, srn, name, index, Some(isTrusteeNew))
     )
   }
 
-  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, TrusteeIndividualDetails, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteeIndividualAddress, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteeIndividualContactDetails, mode, srn, name, index, isTrusteeNew)
+      createSpoke(answers, TrusteeIndividualDetails, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteeIndividualAddress, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteeIndividualContactDetails, mode, srn, name, index, Some(isTrusteeNew))
     )
   }
 
-  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Int): Seq[EntitySpoke] = {
-    val isTrusteeNew = answers.get(IsTrusteeNewId(index)).getOrElse(false)
+  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
-      createSpoke(answers, TrusteePartnershipDetails, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteePartnershipAddress, mode, srn, name, index, isTrusteeNew),
-      createSpoke(answers, TrusteePartnershipContactDetails, mode, srn, name, index, isTrusteeNew)
+      createSpoke(answers, TrusteePartnershipDetails, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteePartnershipAddress, mode, srn, name, index, Some(isTrusteeNew)),
+      createSpoke(answers, TrusteePartnershipContactDetails, mode, srn, name, index, Some(isTrusteeNew))
     )
   }
 }

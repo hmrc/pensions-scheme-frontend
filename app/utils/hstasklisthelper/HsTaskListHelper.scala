@@ -37,6 +37,14 @@ abstract class HsTaskListHelper(answers: UserAnswers
   protected def workingKnowledgeLinkText: Message = Message("messages__schemeTaskList__change_details", schemeName)
   protected val declarationLinkText: Message = Message("messages__schemeTaskList__declaration_link")
 
+  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
+    SchemeDetailsTaskListEntitySection(
+      None,
+      getAboutSpokes(userAnswers, mode, srn, schemeName, None),
+      Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
+    )
+  }
+
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
     val sections = userAnswers.allEstablishers(mode)
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
@@ -45,21 +53,21 @@ abstract class HsTaskListHelper(answers: UserAnswers
           case establisherCompany.CompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, section.index),
+              getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
+              getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
           case _ =>
@@ -78,21 +86,21 @@ abstract class HsTaskListHelper(answers: UserAnswers
           case TrusteeCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
+              getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteeNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteePartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
+              getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 

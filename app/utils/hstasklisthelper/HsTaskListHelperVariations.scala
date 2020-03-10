@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 import identifiers.SchemeNameId
-import models.{Mode, NormalMode, TaskListLink, UpdateMode}
+import models._
 import utils.UserAnswers
 import viewmodels._
 
@@ -27,34 +27,23 @@ class HsTaskListHelperVariations(answers: UserAnswers,
                                 ) extends HsTaskListHelper(answers) {
   import HsTaskListHelperVariations._
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
+    SchemeDetailsTaskListEntitySection(
       isCompleted = None,
-      link = TaskListLink(
-        Message("messages__schemeTaskList__scheme_info_link_text"),
-        if (answers.isBeforeYouStartCompleted(UpdateMode)) {
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url
-        } else {
-          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
-        }
-      ),
-      header = None
+      Seq(
+        EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__scheme_info_link_text"),
+            if (answers.isBeforeYouStartCompleted(UpdateMode)) {
+              controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url
+            } else {
+              controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
+            }
+          )
+        )
+    ),
+      header = Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
-  }
-
-  private[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.isMembersCompleted match {
-      case Some(true) => TaskListLink(aboutMembersViewLinkText(schemeName),
-        controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url)
-      case _ => TaskListLink(aboutMembersViewLinkText(schemeName),
-        controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-    }
-
-    val benefitsAndInsuranceLink = TaskListLink(aboutBenefitsAndInsuranceViewLinkText(schemeName),
-      controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url)
-
-    Seq(SchemeDetailsTaskListSection(None, membersLink, None),
-      SchemeDetailsTaskListSection(None, benefitsAndInsuranceLink, None))
   }
 
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
@@ -112,8 +101,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
-      Message("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
+      aboutSection(answers, UpdateMode, srn),
       None,
       addEstablisherHeader(answers, UpdateMode, srn),
       establishersSection(answers, UpdateMode, srn),
@@ -122,7 +110,6 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       declarationSection(answers),
       answers.get(SchemeNameId).getOrElse(""),
       Message("messages__scheme_details__title"),
-      Some(Message("messages__schemeTaskList__scheme_information_link_text")),
       Message("messages__scheme_details__title"),
       srn
     )
@@ -130,10 +117,6 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 }
 
 object HsTaskListHelperVariations {
-  private def aboutMembersViewLinkText(schemeName:String): Message =
-    Message("messages__schemeTaskList__about_members_link_text_view", schemeName)
-  private def aboutBenefitsAndInsuranceViewLinkText(schemeName:String): Message =
-    Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName)
   private def viewEstablisherLinkText: Message =
     Message("messages__schemeTaskList__sectionEstablishers_view_link")
   private def viewTrusteesLinkText: Message =
