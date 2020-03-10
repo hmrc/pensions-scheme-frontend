@@ -28,7 +28,7 @@ import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers
-                               ) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
+                               ) extends Enumerable.Implicits with HsTaskListHelperUtils {
 
   protected def schemeName: String = answers.get(SchemeNameId).getOrElse("")
 
