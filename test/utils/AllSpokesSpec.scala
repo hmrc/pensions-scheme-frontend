@@ -31,8 +31,8 @@ import org.scalatest.{MustMatchers, OptionValues}
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels.Message
 
-class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionValues {
-  import HsTaskListHelperUtilsSpec._
+class AllSpokesSpec$ extends SpecBase with MustMatchers with OptionValues {
+  import AllSpokesSpec._
 
   "getEstablisherCompanySpokes" must {
     "display all spokes with appropriate links" when {
@@ -238,7 +238,7 @@ class HsTaskListHelperUtilsSpec extends SpecBase with MustMatchers with OptionVa
   }
 }
 
-object HsTaskListHelperUtilsSpec extends SpecBase with OptionValues with DataCompletionHelper with JsonFileReader {
+object AllSpokesSpec extends SpecBase with OptionValues with DataCompletionHelper with JsonFileReader {
 
   val srn = Some("S123")
   private val partnershipName = "test partnership"

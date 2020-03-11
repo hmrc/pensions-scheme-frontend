@@ -41,7 +41,7 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
         SchemeDetailsTaskListEntitySection(None,
           Seq(EntitySpoke(
             TaskListLink(
-              addEstablisherLinkText,
+              Message("messages__schemeTaskList__sectionEstablishers_add_link"),
               controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers(mode).size, srn).url
             ), None)), None
         )
@@ -50,7 +50,9 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
       Some(
         SchemeDetailsTaskListEntitySection(None,
           Seq(EntitySpoke(
-            TaskListLink(changeEstablisherLinkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
+            TaskListLink(
+              Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+              controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
             None
           )),
           None
@@ -65,7 +67,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
         Some(
           SchemeDetailsTaskListEntitySection(None,
             Seq(EntitySpoke(
-              TaskListLink(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
+              TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
               None
             )),
             None
@@ -75,7 +78,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
         Some(
           SchemeDetailsTaskListEntitySection(None,
             Seq(EntitySpoke(
-              TaskListLink(addTrusteesLinkText,
+              TaskListLink(
+                Message("messages__schemeTaskList__sectionTrustees_add_link"),
                 controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url),
               None
             )),
@@ -99,14 +103,16 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
     }
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
-    def declarationLink(userAnswers: UserAnswers): Seq[EntitySpoke] =
+    def declarationLink: Seq[EntitySpoke] =
       if (declarationEnabled(userAnswers))
-        Seq(EntitySpoke(TaskListLink(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)))
+        Seq(EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__declaration_link"),
+          controllers.register.routes.DeclarationController.onPageLoad().url)))
       else Nil
 
     Some(
       SchemeDetailsTaskListEntitySection(None,
-        declarationLink(userAnswers),
+        declarationLink,
         Some("messages__schemeTaskList__sectionDeclaration_header"),
         "messages__schemeTaskList__sectionDeclaration_incomplete"
       ))
@@ -114,6 +120,8 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
 
   override def taskList: SchemeDetailsTaskList =
     SchemeDetailsTaskList(
+      answers.get(SchemeNameId).getOrElse(""),
+      None,
       beforeYouStartSection(answers),
       aboutSection(answers, NormalMode, None),
       workingKnowledgeSection(answers),
@@ -121,18 +129,11 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
       establishersSection(answers, NormalMode, None),
       addTrusteeHeader(answers, NormalMode, None),
       trusteesSection(answers, NormalMode, None),
-      declarationSection(answers),
-      answers.get(SchemeNameId).getOrElse(""),
-      None
+      declarationSection(answers)
     )
 }
 
 object HsTaskListHelperRegistration {
-  private def changeEstablisherLinkText: Message =
-    Message("messages__schemeTaskList__sectionEstablishers_change_link")
-
-  private def changeTrusteesLinkText: Message =
-    Message("messages__schemeTaskList__sectionTrustees_change_link")
 
   private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean =
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)

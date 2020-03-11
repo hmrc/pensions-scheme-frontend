@@ -25,6 +25,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
                                  viewOnly: Boolean,
                                  srn: Option[String]
                                 ) extends HsTaskListHelper(answers) {
+
   import HsTaskListHelperVariations._
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
@@ -38,21 +39,24 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     (userAnswers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (true, true) =>
         Some(
-          SchemeDetailsTaskListEntitySection(None, Nil, None, noEstablishersText)
+          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionEstablishers_no_establishers"))
         )
       case (true, false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None, Seq(
-            EntitySpoke(typeOfEstablisherLink(addEstablisherLinkText, userAnswers.allEstablishers(mode).size, srn, mode), None)), None
+            EntitySpoke(
+              establisherKindLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+                userAnswers.allEstablishers(mode).size, srn, mode), None)), None
           )
         )
       case (false, false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None, Seq(
-            EntitySpoke(addEstablisherLink(viewEstablisherLinkText, srn, mode))), None
+            EntitySpoke(
+              addEstablisherLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"), srn, mode))), None
           )
         )
-      case (false, true)  => None
+      case (false, true) => None
     }
   }
 
@@ -60,18 +64,20 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (true, true) =>
         Some(
-          SchemeDetailsTaskListEntitySection(None, Nil, None, noTrusteesText)
+          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
         )
       case (true, false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None, Seq(
-            EntitySpoke(typeOfTrusteeLink(addTrusteesLinkText, userAnswers.allTrustees.size, srn, mode), None)), None
-          )
+            EntitySpoke(
+              trusteeKindLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
+                userAnswers.allTrustees.size, srn, mode), None)
+          ), None)
         )
       case (false, false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None, Seq(
-            EntitySpoke(TaskListLink(viewTrusteesLinkText,
+            EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
               controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)), None
           )
         )
@@ -85,7 +91,8 @@ class HsTaskListHelperVariations(answers: UserAnswers,
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
     def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Seq[EntitySpoke] = {
       if (userAnswers.isUserAnswerUpdated) {
-        Seq(EntitySpoke(TaskListLink(declarationLinkText,
+        Seq(EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__declaration_link"),
           if (userAnswers.areVariationChangesCompleted)
             controllers.routes.VariationDeclarationController.onPageLoad(srn).url
           else
@@ -95,13 +102,14 @@ class HsTaskListHelperVariations(answers: UserAnswers,
         Nil
       }
     }
+
     if (viewOnly) {
       None
     } else {
       Some(SchemeDetailsTaskListEntitySection(None,
         variationDeclarationLink(userAnswers, srn),
         Some("messages__schemeTaskList__sectionDeclaration_header"),
-          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
+        "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
       )
     }
@@ -109,6 +117,8 @@ class HsTaskListHelperVariations(answers: UserAnswers,
 
   override def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
+      answers.get(SchemeNameId).getOrElse(""),
+      srn,
       beforeYouStartSection(answers),
       aboutSection(answers, UpdateMode, srn),
       None,
@@ -116,27 +126,17 @@ class HsTaskListHelperVariations(answers: UserAnswers,
       establishersSection(answers, UpdateMode, srn),
       addTrusteeHeader(answers, UpdateMode, srn),
       trusteesSection(answers, UpdateMode, srn),
-      declarationSection(answers),
-      answers.get(SchemeNameId).getOrElse(""),
-      srn
+      declarationSection(answers)
     )
   }
 }
 
 object HsTaskListHelperVariations {
-  private def viewEstablisherLinkText: Message =
-    Message("messages__schemeTaskList__sectionEstablishers_view_link")
-  private def viewTrusteesLinkText: Message =
-    Message("messages__schemeTaskList__sectionTrustees_view_link")
-  private def noEstablishersText: Message =
-    Message("messages__schemeTaskList__sectionEstablishers_no_establishers")
-  private def noTrusteesText: Message =
-    Message("messages__schemeTaskList__sectionTrustees_no_trustees")
 
-  private def typeOfTrusteeLink(linkText: Message, trusteeCount: Int, srn: Option[String], mode: Mode): TaskListLink =
+  private def trusteeKindLink(linkText: Message, trusteeCount: Int, srn: Option[String], mode: Mode): TaskListLink =
     TaskListLink(linkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, trusteeCount, srn).url)
 
-  private def typeOfEstablisherLink(linkText: Message, establisherCount: Int, srn: Option[String], mode: Mode): TaskListLink =
+  private def establisherKindLink(linkText: Message, establisherCount: Int, srn: Option[String], mode: Mode): TaskListLink =
     TaskListLink(linkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, establisherCount, srn).url)
 
   private def addEstablisherLink(linkText: Message, srn: Option[String], mode: Mode): TaskListLink =

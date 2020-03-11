@@ -21,25 +21,25 @@ import utils.UserAnswers
 import viewmodels.Message
 
 case object AboutMembersSpoke extends Spoke {
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText(name, srn,
-      registrationLinkText = "messages__schemeTaskList__about_members_link_text_add",
-      variationsLinkText = "messages__schemeTaskList__about_members_link_text_view"),
+  private val variationsViewLinkText = "messages__schemeTaskList__about_members_link_text_view"
+  private val registrationAddLinkText = "messages__schemeTaskList__about_members_link_text_add"
+  private val registrationChangeLinkText = "messages__schemeTaskList__about_members_link_text"
+
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn, registrationAddLinkText, variationsViewLinkText),
     controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
   )
 
   override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
-      dynamicLinkText(name, srn,
-        registrationLinkText = "messages__schemeTaskList__about_members_link_text",
-        variationsLinkText = "messages__schemeTaskList__about_members_link_text_view"),
+      dynamicLinkText(name, srn, registrationChangeLinkText, variationsViewLinkText),
       controllers.routes.CheckYourAnswersMembersController.onPageLoad(mode, srn).url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText(name, srn,
-      registrationLinkText = "messages__schemeTaskList__about_members_link_text",
-      variationsLinkText = "messages__schemeTaskList__about_members_link_text_view"),
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn, registrationChangeLinkText, variationsViewLinkText),
     controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
   )
 
@@ -47,25 +47,25 @@ case object AboutMembersSpoke extends Spoke {
 }
 
 case object AboutBenefitsAndInsuranceSpoke extends Spoke {
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText(name, srn,
-      registrationLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_add",
-      variationsLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_view"),
+  private val variationsViewLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_view"
+  private val registrationAddLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_add"
+  private val registrationChangeLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text"
+
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn, registrationAddLinkText, variationsViewLinkText),
     controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url
   )
 
   override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
-      dynamicLinkText(name, srn,
-        registrationLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text",
-        variationsLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_view"),
+      dynamicLinkText(name, srn, registrationChangeLinkText, variationsViewLinkText),
       controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn).url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText(name, srn,
-      registrationLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text",
-      variationsLinkText = "messages__schemeTaskList__about_benefits_and_insurance_link_text_view"),
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn, registrationChangeLinkText, variationsViewLinkText),
     controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url
   )
 
@@ -73,7 +73,8 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
 }
 
 case object AboutBankDetailsSpoke extends Spoke {
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__about_bank_details_link_text_add", name),
     controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url
   )
@@ -84,7 +85,8 @@ case object AboutBankDetailsSpoke extends Spoke {
       controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__about_bank_details_link_text", name),
     controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url
   )

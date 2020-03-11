@@ -28,14 +28,9 @@ import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 abstract class HsTaskListHelper(answers: UserAnswers
-                               ) extends Enumerable.Implicits with HsTaskListHelperUtils {
+                               ) extends Enumerable.Implicits with AllSpokes {
 
   protected def schemeName: String = answers.get(SchemeNameId).getOrElse("")
-
-  protected val addEstablisherLinkText: Message = Message("messages__schemeTaskList__sectionEstablishers_add_link")
-  protected val addTrusteesLinkText: Message = Message("messages__schemeTaskList__sectionTrustees_add_link")
-  protected def workingKnowledgeLinkText: Message = Message("messages__schemeTaskList__change_details", schemeName)
-  protected val declarationLinkText: Message = Message("messages__schemeTaskList__declaration_link")
 
   protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(
