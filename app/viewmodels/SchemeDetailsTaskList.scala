@@ -16,34 +16,24 @@
 
 package viewmodels
 
-import models.{EntitySpoke, TaskListLink}
-import play.api.libs.json.{Json, OFormat}
+import models.EntitySpoke
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListEntitySection,
                                  about: SchemeDetailsTaskListEntitySection,
-                                 workingKnowledge: Option[SchemeDetailsTaskListSection],
-                                 addEstablisherHeader : Option[SchemeDetailsTaskListHeader],
+                                 workingKnowledge: Option[SchemeDetailsTaskListEntitySection],
+                                 addEstablisherHeader: Option[SchemeDetailsTaskListEntitySection],
                                  establishers: Seq[SchemeDetailsTaskListEntitySection],
-                                 addTrusteeHeader : Option[SchemeDetailsTaskListHeader],
+                                 addTrusteeHeader: Option[SchemeDetailsTaskListEntitySection],
                                  trustees: Seq[SchemeDetailsTaskListEntitySection],
-                                 declaration: Option[SchemeDetailsTaskListDeclarationSection] = None,
+                                 declaration: Option[SchemeDetailsTaskListEntitySection],
                                  h1: String,
-                                 h2: Message,
-                                 pageTitle: Message,
                                  srn: Option[String]
                                 ) {
 }
 
-case class SchemeDetailsTaskListDeclarationSection(header:String, declarationLink: Option[TaskListLink], incompleteDeclarationText: String*)
-
-case class SchemeDetailsTaskListSection(isCompleted: Option[Boolean] = None, link: TaskListLink, header: Option[String] = None, p1: Option[String] = None)
-
-case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean] = None,
+case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean],
                                               entities: Seq[EntitySpoke],
-                                              header: Option[Message] = None,
-                                              p1: Option[String] = None)
-
-case class SchemeDetailsTaskListHeader(isCompleted: Option[Boolean] = None, link: Option[TaskListLink] = None,
-                                       header: Option[Message] = None, p1: Option[String] = None, plainText: Option[Message] = None)
+                                              header: Option[Message],
+                                              p1: Message*)
 
 

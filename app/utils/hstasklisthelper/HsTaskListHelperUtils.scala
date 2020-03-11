@@ -43,13 +43,24 @@ trait HsTaskListHelperUtils extends Enumerable.Implicits {
     }
   }
 
+  def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    Seq(
+      createSpoke(answers, BeforeYouStartSpoke, mode, srn, name, index, None)
+    )
+  }
+
   def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
       createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, index, None)
-    ) ++ (if(srn.isEmpty) Seq(createSpoke(answers, AboutBankDetailsSpoke, mode, srn, name, index, None)) else Nil)
+    ) ++ (if (srn.isEmpty) Seq(createSpoke(answers, AboutBankDetailsSpoke, mode, srn, name, index, None)) else Nil)
   }
 
+  def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+    Seq(
+      createSpoke(answers, WorkingKnowledgeSpoke, mode, srn, name, index, None)
+    )
+  }
 
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
                                  spoke: Spoke,
