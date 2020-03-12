@@ -16,19 +16,20 @@
 
 package utils.hstasklisthelper
 
+import com.google.inject.Inject
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.{EntitySpoke, Mode, NormalMode, TaskListLink}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelper(answers) {
+class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTaskListHelper(allSpokes) {
 
   import HsTaskListHelperRegistration._
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None),
+      allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
       Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
@@ -94,10 +95,12 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
   private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] =
     userAnswers.get(DeclarationDutiesId) match {
       case Some(false) =>
-        Some(SchemeDetailsTaskListEntitySection(None,
-          getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None),
-          Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
-        ))
+        Some(
+          SchemeDetailsTaskListEntitySection(None,
+            allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+            None
+          )
+        )
       case _ =>
         None
     }
@@ -118,17 +121,17 @@ class HsTaskListHelperRegistration(answers: UserAnswers) extends HsTaskListHelpe
       ))
   }
 
-  override def taskList: SchemeDetailsTaskList =
+  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList =
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       None,
       beforeYouStartSection(answers),
-      aboutSection(answers, NormalMode, None),
+      aboutSection(answers, NormalMode, srn),
       workingKnowledgeSection(answers),
-      addEstablisherHeader(answers, NormalMode, None),
-      establishersSection(answers, NormalMode, None),
-      addTrusteeHeader(answers, NormalMode, None),
-      trusteesSection(answers, NormalMode, None),
+      addEstablisherHeader(answers, NormalMode, srn),
+      establishersSection(answers, NormalMode, srn),
+      addTrusteeHeader(answers, NormalMode, srn),
+      trusteesSection(answers, NormalMode, srn),
       declarationSection(answers)
     )
 }
@@ -142,7 +145,7 @@ object HsTaskListHelperRegistration {
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
       userAnswers.allEstablishersAfterDelete(mode).forall(_.isCompleted)
 
-  private def declarationEnabled(userAnswers: UserAnswers): Boolean =
+  private def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
@@ -153,4 +156,5 @@ object HsTaskListHelperRegistration {
       Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
+  }
 }

@@ -25,7 +25,7 @@ import models.register.Entity
 import utils.hstasklisthelper.spokes._
 import utils.{Enumerable, UserAnswers}
 
-trait AllSpokes extends Enumerable.Implicits {
+class AllSpokes extends Enumerable.Implicits {
 
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,

@@ -31,10 +31,10 @@ import org.scalatest.{MustMatchers, OptionValues}
 import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels.Message
 
-class AllSpokesSpec$ extends SpecBase with MustMatchers with OptionValues {
-  import AllSpokesSpec._
+class AllSpokesSpec extends SpecBase with MustMatchers with OptionValues {
+  //import AllSpokesSpec._
 
-  "getEstablisherCompanySpokes" must {
+/*  "getEstablisherCompanySpokes" must {
     "display all spokes with appropriate links" when {
       "in subscription journey when all spokes are uninitiated" in {
         subscriptionHelper.getEstablisherCompanySpokes(
@@ -235,8 +235,9 @@ class AllSpokesSpec$ extends SpecBase with MustMatchers with OptionValues {
       ) mustBe expectedCompletedTrusteePartnershipSpokes(UpdateMode, srn)
     }
     }
-  }
+  }*/
 }
+/*
 
 object AllSpokesSpec extends SpecBase with OptionValues with DataCompletionHelper with JsonFileReader {
 
@@ -487,4 +488,4 @@ object AllSpokesSpec extends SpecBase with OptionValues with DataCompletionHelpe
       "messages__schemeTaskList__view_contact"),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
   )
-}
+}*/

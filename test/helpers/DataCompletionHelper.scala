@@ -21,6 +21,10 @@ import models._
 import models.address.Address
 import models.register.SchemeType
 import java.time.LocalDate
+
+import models.person.PersonName
+import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
@@ -133,6 +137,43 @@ trait DataCompletionHelper extends OptionValues {
     } else {
       ua.occupationalPensionScheme(isOccupational = true)
     }
+  }
+
+  protected def setCompleteEstIndividual(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Indivdual)
+      .establishersIndividualName(index, PersonName("first", "last")).establishersIndividualDOB(index, LocalDate.now().minusYears(20))
+      .establishersIndividualNino(index, ReferenceValue("AB100100A")).establishersIndividualUtr(index, ReferenceValue("1111111111")).
+      establishersIndividualAddress(index, address).establishersIndividualAddressYears(index, AddressYears.OverAYear)
+      .establishersIndividualEmail(index, "s@s.com").establishersIndividualPhone(index, "123")
+  }
+
+  protected def setCompleteTrusteeIndividual(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.trusteeKind(index, TrusteeKind.Individual)
+      .trusteeName(index, PersonName("first", "last")).trusteeIndividualDOB(index, LocalDate.now().minusYears(20))
+      .trusteeIndividualNino(index, ReferenceValue("AB100100A")).trusteeIndividualUtr(index, ReferenceValue("1111111111")).
+      trusteesAddress(index, address).trusteesIndividualAddressYears(index, AddressYears.OverAYear)
+      .trusteeEmail(index, "s@s.com").trusteePhone(index, "123")
+  }
+
+  protected def setCompleteEstCompany(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Company)
+      .establisherCompanyDetails(index, CompanyDetails("test company"))
+      .establisherCompanyNoCrnReason(index, "no Crn")
+      .establisherCompanyNoUtrReason(index, "no utr")
+      .establisherCompanyhasVat(index, false)
+      .establisherCompanyhasPaye(index, false)
+      .establishersCompanyAddress(index, address)
+      .establisherCompanyAddressYears(index, AddressYears.OverAYear)
+      .establishersCompanyEmail(index, "s@s.com")
+      .establishersCompanyPhone(index, "123")
+      .establishersCompanyDirectorName(index, 0, PersonName("dir", "One"))
+      .establishersCompanyDirectorDOB(index, 0, LocalDate.now().minusYears(30))
+      .establishersCompanyDirectorNino(index, 0, ReferenceValue("AB100100A"))
+      .establishersCompanyDirectorUtr(index, 0, ReferenceValue("123"))
+      .establishersCompanyDirectorAddress(index, 0, address)
+      .establishersCompanyDirectorAddressYears(index, 0, AddressYears.OverAYear)
+      .establishersCompanyDirectorEmail(index, 0, "s@s.com")
+      .establishersCompanyDirectorPhone(index, 0, "123")
   }
 
   protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {

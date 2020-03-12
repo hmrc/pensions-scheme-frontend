@@ -16,26 +16,25 @@
 
 package utils.hstasklisthelper
 
+import com.google.inject.Inject
 import identifiers.SchemeNameId
 import models._
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperVariations(answers: UserAnswers,
-                                 viewOnly: Boolean,
-                                 srn: Option[String]
-                                ) extends HsTaskListHelper(answers) {
+class HsTaskListHelperVariations @Inject() (allSpokes: AllSpokes) extends HsTaskListHelper(allSpokes) {
 
   import HsTaskListHelperVariations._
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None),
+      allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, userAnswers.get(SchemeNameId).getOrElse(""), None),
       Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
   }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
+                                          mode: Mode, srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
     (userAnswers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (true, true) =>
         Some(
@@ -60,7 +59,8 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode,
+                                      srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
     (userAnswers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (true, true) =>
         Some(
@@ -88,7 +88,7 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
   }
 
-  private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def declarationSection(userAnswers: UserAnswers, srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
     def variationDeclarationLink(userAnswers: UserAnswers, srn: Option[String]): Seq[EntitySpoke] = {
       if (userAnswers.isUserAnswerUpdated) {
         Seq(EntitySpoke(TaskListLink(
@@ -115,18 +115,20 @@ class HsTaskListHelperVariations(answers: UserAnswers,
     }
   }
 
-  override def taskList: SchemeDetailsTaskList = {
+  override def taskList(answers: UserAnswers, viewOnlyOpt: Option[Boolean],
+                        srn: Option[String]): SchemeDetailsTaskList = {
+    val viewOnly = viewOnlyOpt.getOrElse(false)
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       srn,
-      beforeYouStartSection(answers),
+      beforeYouStartSection(answers, srn),
       aboutSection(answers, UpdateMode, srn),
       None,
-      addEstablisherHeader(answers, UpdateMode, srn),
+      addEstablisherHeader(answers, UpdateMode, srn, viewOnly),
       establishersSection(answers, UpdateMode, srn),
-      addTrusteeHeader(answers, UpdateMode, srn),
+      addTrusteeHeader(answers, UpdateMode, srn, viewOnly),
       trusteesSection(answers, UpdateMode, srn),
-      declarationSection(answers)
+      declarationSection(answers, srn, viewOnly)
     )
   }
 }

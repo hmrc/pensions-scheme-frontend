@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.TaskList
-import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import utils.hstasklisthelper.{AllSpokes, HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels.SchemeDetailsTaskList
 import views.html.schemeDetailsTaskList
 
@@ -49,7 +49,9 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          updateConnector: UpdateSchemeCacheConnector,
                                          minimalPsaConnector: MinimalPsaConnector,
                                          val controllerComponents: MessagesControllerComponents,
-                                         val view: schemeDetailsTaskList
+                                         val view: schemeDetailsTaskList,
+                                         hsTaskListHelperRegistration: HsTaskListHelperRegistration,
+                                         hsTaskListHelperVariations: HsTaskListHelperVariations
                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
@@ -57,7 +59,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          Future.successful(Ok(view(new HsTaskListHelperRegistration(userAnswers).taskList)))
+          Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
         case (Some(srnValue), optionUserAnswers) =>
           onPageLoadVariations(srnValue, optionUserAnswers)
         case _ =>
@@ -98,8 +100,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
-        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
+      val taskList: SchemeDetailsTaskList = hsTaskListHelperVariations.taskList(updatedUserAnswers, Some(viewOnly), Some(srn))
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
         Future.successful(Ok(view(taskList)))

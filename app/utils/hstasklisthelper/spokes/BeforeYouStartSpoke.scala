@@ -38,7 +38,7 @@ case object BeforeYouStartSpoke extends Spoke {
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
-      controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
+      controllers.routes.SchemeNameController.onPageLoad(mode).url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = Some(answers.isBeforeYouStartCompleted(mode))

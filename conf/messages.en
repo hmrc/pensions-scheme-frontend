@@ -201,8 +201,8 @@ messages__hs_what_you_will_need__other_link = There might be other things you ne
 messages__hs_what_you_will_need__p3 = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start again.
 
 messages__before_you_start__title = Before you start
-messages__before_you_start__p1 = There are a number of sections to complete when you apply to register a new pension scheme.
-messages__before_you_start__p2 = Before you start these sections, you will need to tell us:
+messages__before_you_start__p1 = There are a number of seqEstablishers to complete when you apply to register a new pension scheme.
+messages__before_you_start__p2 = Before you start these seqEstablishers, you will need to tell us:
 messages__before_you_start__item_1 = the pension scheme name
 messages__before_you_start__item_2 = the type of scheme
 messages__before_you_start__item_3 = which country the scheme was established in

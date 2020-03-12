@@ -16,10 +16,11 @@
 
 package utils.hstasklisthelper
 
+import com.google.inject.Inject
 import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.establishers.{company => establisherCompany}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -27,50 +28,48 @@ import models._
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper(answers: UserAnswers
-                               ) extends Enumerable.Implicits with AllSpokes {
-
-  protected def schemeName: String = answers.get(SchemeNameId).getOrElse("")
+abstract class HsTaskListHelper @Inject()(allSpokes: AllSpokes) extends Enumerable.Implicits {
 
   protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
+    val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskListEntitySection(
       None,
-      getAboutSpokes(userAnswers, mode, srn, schemeName, None),
+      allSpokes.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
       Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
     )
   }
 
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allEstablishers(mode)
-    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
-      if (section.isDeleted) None else {
-        section.id match {
-          case establisherCompany.CompanyDetailsId(_) =>
+    val seqEstablishers = userAnswers.allEstablishers(mode)
+    val nonDeletedEstablishers = for ((establisher, _) <- seqEstablishers.zipWithIndex) yield {
+      if (establisher.isDeleted) None else {
+        establisher.id match {
+          case EstablisherCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
-              Some(section.name))
+              allSpokes.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
 
           case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
-              Some(section.name))
+              allSpokes.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
 
           case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
-              Some(section.name))
+              allSpokes.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
           case _ =>
-            throw new RuntimeException("Unknown section id:" + section.id)
+            throw new RuntimeException("Unknown section id:" + establisher.id)
         }
       }
     }
-    notDeletedElements.flatten
+    nonDeletedEstablishers.flatten
   }
 
   protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
@@ -81,21 +80,21 @@ abstract class HsTaskListHelper(answers: UserAnswers
           case TrusteeCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              allSpokes.getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteeNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              allSpokes.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteePartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              allSpokes.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
@@ -107,5 +106,5 @@ abstract class HsTaskListHelper(answers: UserAnswers
     notDeletedElements.flatten
   }
 
-  def taskList: SchemeDetailsTaskList
+  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList
 }

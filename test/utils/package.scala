@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
+import java.time.LocalDate
+
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
-import identifiers.register.establishers.IsEstablisherNewId
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
-import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import identifiers.register.trustees.company.{CompanyEnterCRNId, CompanyEnterPAYEId, CompanyEnterUTRId}
-import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.individual._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
+import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
 import play.api.i18n.Messages
@@ -129,12 +133,30 @@ package object utils {
       answers.set(establishers.individual.PreviousAddressId(index))(address).asOpt.value
     }
 
+    def establishersIndividualNino(index: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(establishers.individual.EstablisherHasNINOId(index))(true).asOpt.value.
+        set(establishers.individual.EstablisherEnterNINOId(index))(nino).asOpt.value
+    }
+
+    def establishersIndividualUtr(index: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(establishers.individual.EstablisherHasUTRId(index))(true).asOpt.value.
+        set(establishers.individual.EstablisherUTRId(index))(utr).asOpt.value
+    }
+
     def establishersIndividualPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
     }
 
+    def establisherKind(index:Int, kind: EstablisherKind): UserAnswers = {
+      answers.set(EstablisherKindId(index))(kind).asOpt.value
+    }
+
     def establishersIndividualName(index: Int, name: PersonName): UserAnswers = {
       answers.set(establishers.individual.EstablisherNameId(index))(name).asOpt.value
+    }
+
+    def establishersIndividualDOB(index: Int, dob: LocalDate): UserAnswers = {
+      answers.set(establishers.individual.EstablisherDOBId(index))(dob).asOpt.value
     }
 
     def establishersIndividualEmail(index: Int, email: String): UserAnswers = {
@@ -150,12 +172,38 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
+    def establisherCompanyNoCrnReason(index: Int, reason: String): UserAnswers = {
+      answers.set(establishers.company.HasCompanyCRNId(index))(false).asOpt.value
+        .set(establishers.company.CompanyNoCRNReasonId(index))(reason).asOpt.value
+    }
+
+    def establisherCompanyNoUtrReason(index: Int, reason: String): UserAnswers = {
+      answers.set(establishers.company.HasCompanyUTRId(index))(false).asOpt.value
+        .set(establishers.company.CompanyNoUTRReasonId(index))(reason).asOpt.value
+    }
+
+    def establisherCompanyhasVat(index: Int, hasVat: Boolean): UserAnswers = {
+      answers.set(establishers.company.HasCompanyVATId(index))(hasVat).asOpt.value
+    }
+
+    def establisherCompanyhasPaye(index: Int, hasPaye: Boolean): UserAnswers = {
+      answers.set(establishers.company.HasCompanyPAYEId(index))(hasPaye).asOpt.value
+    }
+
     def establisherCompanyDormant(index: Int, isDormant: DeclarationDormant): UserAnswers = {
       answers.set(establishers.company.IsCompanyDormantId(index))(isDormant).asOpt.value
     }
 
     def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
       answers.set(establishers.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
+    }
+
+    def establishersCompanyEmail(index: Int, email: String): UserAnswers = {
+      answers.set(establishers.company.CompanyEmailId(index))(email).asOpt.value
+    }
+
+    def establishersCompanyPhone(index: Int, phone: String): UserAnswers = {
+      answers.set(establishers.company.CompanyPhoneId(index))(phone).asOpt.value
     }
 
     def establisherCompanyTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
@@ -183,6 +231,25 @@ package object utils {
     }
 
     //Establisher company director
+
+    def establishersCompanyDirectorName(establisherId: Int, directorId: Int, name: PersonName): UserAnswers = {
+      answers.set(establishers.company.director.DirectorNameId(establisherId, directorId))(name).asOpt.value
+    }
+
+    def establishersCompanyDirectorDOB(establisherId: Int, directorId: Int, dob: LocalDate): UserAnswers = {
+      answers.set(establishers.company.director.DirectorDOBId(establisherId, directorId))(dob).asOpt.value
+    }
+
+    def establishersCompanyDirectorNino(establisherId: Int, directorId: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(establishers.company.director.DirectorHasNINOId(establisherId, directorId))(true).asOpt.value.
+        set(establishers.company.director.DirectorEnterNINOId(establisherId, directorId))(nino).asOpt.value
+    }
+
+    def establishersCompanyDirectorUtr(establisherId: Int, directorId: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(establishers.company.director.DirectorHasUTRId(establisherId, directorId))(true).asOpt.value.
+        set(establishers.company.director.DirectorEnterUTRId(establisherId, directorId))(utr).asOpt.value
+    }
+
     def establishersCompanyDirectorAddress(establisherId: Int, directorId: Int, address: Address): UserAnswers = {
       answers.set(establishers.company.director.DirectorAddressId(establisherId, directorId))(address).asOpt.value
     }
@@ -198,6 +265,19 @@ package object utils {
     def establishersCompanyDirectorPreviousAddressList(establisherId: Int, directorId: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.company.director.DirectorPreviousAddressListId(establisherId, directorId))(selectedAddress).asOpt.value
     }
+
+    def establishersCompanyDirectorAddressYears(establisherId: Int, directorId: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.company.director.DirectorAddressYearsId(establisherId, directorId))(addressYears).asOpt.value
+    }
+
+    def establishersCompanyDirectorEmail(establisherId: Int, directorId: Int, email: String): UserAnswers = {
+      answers.set(establishers.company.director.DirectorEmailId(establisherId, directorId))(email).asOpt.value
+    }
+
+    def establishersCompanyDirectorPhone(establisherId: Int, directorId: Int, phone: String): UserAnswers = {
+      answers.set(establishers.company.director.DirectorPhoneNumberId(establisherId, directorId))(phone).asOpt.value
+    }
+
 
     // Establishers partnership
 
@@ -222,6 +302,10 @@ package object utils {
     }
 
     // Trustees company
+    def trusteeKind(index:Int, kind: TrusteeKind): UserAnswers = {
+      answers.set(TrusteeKindId(index))(kind).asOpt.value
+    }
+
     def trusteesCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.company.CompanyAddressId(index))(address).asOpt.value
     }
@@ -285,6 +369,20 @@ package object utils {
       answers.set(TrusteeNameId(index))(trusteeName).asOpt.value
     }
 
+    def trusteeIndividualDOB(index: Int, dob: LocalDate): UserAnswers = {
+      answers.set(TrusteeDOBId(index))(dob).asOpt.value
+    }
+
+    def trusteeIndividualNino(index: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(TrusteeHasNINOId(index))(true).asOpt.value.
+        set(TrusteeEnterNINOId(index))(nino).asOpt.value
+    }
+
+    def trusteeIndividualUtr(index: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(TrusteeHasUTRId(index))(true).asOpt.value.
+        set(TrusteeUTRId(index))(nino).asOpt.value
+    }
+
     def trusteesAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.individual.TrusteeAddressId(index))(address).asOpt.value
     }
@@ -304,6 +402,15 @@ package object utils {
     def trusteesPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(trustees.individual.TrusteePreviousAddressListId(index))(selectedAddress).asOpt.value
     }
+
+    def trusteeEmail(index: Int, email: String): UserAnswers = {
+      answers.set(trustees.individual.TrusteeEmailId(index))(email).asOpt.value
+    }
+
+    def trusteePhone(index: Int, phone: String): UserAnswers = {
+      answers.set(trustees.individual.TrusteePhoneId(index))(phone).asOpt.value
+    }
+
 
     //Trustee Partnership
     def trusteePartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
