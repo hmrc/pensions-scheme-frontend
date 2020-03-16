@@ -47,8 +47,16 @@
     }
 }
 
+@pageTitle = @{
+    if(taskSections.srn.isDefined){
+        messages("messages__scheme_details__title")
+    }else{
+        messages("messages__schemeTaskList__title")
+    }
+}
+
 @main_template(
-    title = messages("messages__scheme_details__title")
+    title = pageTitle
     ) {
         @components.back_link()
         @components.heading(taskSections.h1)

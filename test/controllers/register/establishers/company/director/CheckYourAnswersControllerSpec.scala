@@ -89,7 +89,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       )
     )(fakeRequest, messages).toString
 
-  "having set up answer seqEstablishers" when {
+  "having set up answer sections" when {
     val request: DataRequest[AnyContent]  = FakeDataRequest(directorAnswers)
     implicit val userAnswers: UserAnswers = request.userAnswers
     def answerSectionDirector(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] =

@@ -54,7 +54,8 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display the correct visually hidden text before status if in progress" in {
       val doc = asDocument(createView(inProgress)())
-      doc.getElementById(statusId).text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages("messages__schemeTaskList__inProgress")
+      doc.getElementById(statusId).text() mustBe
+        messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages("messages__schemeTaskList__inProgress")
     }
 
     "display the correct status if completed" in {
@@ -69,9 +70,19 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeDetailsTaskListView" should {
+  "SchemeDetailsTaskListView when in registration" must {
 
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("messages__scheme_details__title"), schemeDetailsTaskListData().h1)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix,
+      messages("messages__schemeTaskList__title"), schemeDetailsTaskListData().h1)
+  }
+
+  "SchemeDetailsTaskListView when in variation" must {
+
+    behave like normalPageWithTitle(createView(schemeDetailsTaskListData().copy(srn = Some("test-srn"))),
+      messageKeyPrefix, messages("messages__scheme_details__title"), schemeDetailsTaskListData().h1)
+  }
+
+  "SchemeDetailsTaskListView" must {
 
     "display the correct link when registration" in {
       val view = createView(schemeDetailsTaskListData())
@@ -92,7 +103,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeTaskListView Before start section" should {
+  "SchemeTaskListView Before start section" must {
 
     val notStarted = schemeDetailsTaskListData().copy(beforeYouStart = beforeYouStartSection(None))
     val inProgress = schemeDetailsTaskListData().copy(beforeYouStart = beforeYouStartSection(Some(false)))
@@ -118,7 +129,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeTaskListView Working knowledge of pensions section" should {
+  "SchemeTaskListView Working knowledge of pensions section" must {
     val notStarted = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection(None)))
     val inProgress = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection(Some(false))))
     val completed = schemeDetailsTaskListData().copy(workingKnowledge = Some(wkSection(Some(true))))
@@ -133,7 +144,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       completed = completed)
   }
 
-  "SchemeTaskListView About section" should {
+  "SchemeTaskListView About section" must {
     val view = createView(schemeDetailsTaskListData())
 
     "display correct header" in {
@@ -171,7 +182,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   "SchemeTaskListView Establishers section" when {
 
-    "no establishers" should {
+    "no establishers" must {
       val journeyTaskListNoEstablisher: SchemeDetailsTaskList = SchemeDetailsTaskList("h1", None, beforeYouStartSection(),
         SchemeDetailsTaskListEntitySection(None, Nil, None), None,
         Some(SchemeDetailsTaskListEntitySection(
@@ -204,7 +215,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       }
     }
 
-    "establishers defined and not completed" should {
+    "establishers defined and not completed" must {
 
       val view = createView(schemeDetailsTaskListData())
 
@@ -243,7 +254,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     }
 
-    "establisherCompanyEntity" should {
+    "establisherCompanyEntity" must {
 
       val view = createView(schemeDetailsTaskListData(establishers = establisherCompanyEntity))
 
@@ -277,9 +288,9 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
   }
 
-  "SchemeTaskListView Trustees section" should {
+  "SchemeTaskListView Trustees section" must {
 
-    "no trustees" should {
+    "no trustees" must {
 
       def journeyTaskListNoTrustees(text: Option[String] = None): SchemeDetailsTaskList =
         SchemeDetailsTaskList("h1", None, beforeYouStartSection(),
@@ -323,7 +334,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     }
 
-    "trustees defined and not completed" should {
+    "trustees defined and not completed" must {
 
       val view = createView(schemeDetailsTaskListData())
 
@@ -363,7 +374,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
       }
     }
 
-    "trusteeCompanyEntity" should {
+    "trusteeCompanyEntity" must {
 
       val view = createView(schemeDetailsTaskListData(trustees = trusteeCompanyEntity))
 
@@ -396,7 +407,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  "SchemeTaskListView Declaration section" should {
+  "SchemeTaskListView Declaration section" must {
     "not display where no declaration section in view model" in {
       val doc = asDocument(createView(schemeDetailsTaskListData())())
       assertNotRenderedById(doc, id = "section-declaration-header")
