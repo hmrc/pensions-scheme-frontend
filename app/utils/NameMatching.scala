@@ -18,9 +18,6 @@ package utils
 
 case class NameMatching(name1: String, name2: String) {
 
-  private val shortenPercentage = 50
-  private val maximumPermittedWordMatchPercentage = 75
-
   private val specialWords = List("AND", "CCC", "CIC", "COMPANIES", "COMPANY", "CORPORATION", "INCORPORATED",
     "CORP", "CO.", "CO", "INC.", "INC", "UNLIMITED", "LIMITED", "LLP", "LP", "ULTD", "UNLTD", "LTD",
     "PARTNERSHIP", "PLC", "THE")
@@ -62,65 +59,16 @@ case class NameMatching(name1: String, name2: String) {
     }
   }
 
-
-  def shortenLongest: NameMatching = {
-    if (entireWordmatchPercentage(name1, name2) > maximumPermittedWordMatchPercentage) {
-      name1.length < name2.length match {
-        case true => NameMatching(name1, shorten(name2, name1, shortenPercentage))
-        case false => NameMatching(shorten(name1, name2, shortenPercentage), name2)
-      }
-    }
-    else {
-      NameMatching(name1, name2)
-    }
-  }
-
-  def entireWordmatchPercentage(word1: String, word2: String): Int = {
-    if (word1.length < word2.length) {
-      getEntireWordPercentage(word1, word2)
-    } else {
-      getEntireWordPercentage(word2, word1)
-    }
-  }
-
-  private def getEntireWordPercentage(shortestWord: String, longestWord: String): Int = {
-    if (longestWord.contains(shortestWord)) {
-      (shortestWord.length * 100) / longestWord.length
-    }
-    else 0
-  }
-
-
-  private def shorten(long: String, short: String, x: Int): String = {
-    val x_percent_of_long = long.length * x * 0.01 // 14
-    val len_of_short = short.length //12
-    if (x_percent_of_long < len_of_short)
-      long.take(len_of_short)
-    else
-      long.take(x_percent_of_long.toInt)
-  }
-
   def isEqual: Boolean = name1.equals(name2)
 
-
-    def isMatch: Boolean = {
-    val interimResultSteps1to7 = this.convertToUpper
+  def isMatch: Boolean = {
+    this.convertToUpper
       .removeSpaces
       .removeSpecialWords
       .lengthCheck
       .removeSpecialCharacters
       .removeNonAlphaNumeric
       .lengthCheck
-
-    val interimResultStep8 = interimResultSteps1to7.shortenLongest
-    val finalResult = if (interimResultStep8.isEqual) {
-      interimResultSteps1to7
-        .copy(name1 = interimResultSteps1to7.name1.reverse, name2 = interimResultSteps1to7.name2.reverse)
-        .shortenLongest
-    } else {
-      interimResultStep8
-    }
-
-    finalResult.isEqual
+      .isEqual
   }
 }

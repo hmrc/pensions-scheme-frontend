@@ -68,65 +68,6 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
     }
   }
 
-  "shortenLongest" must {
-    "shorten the longer of the two values" when {
-
-      "x% of longer name is less than length of shorter name" in {
-        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS!", "CHRI$S WILLIAMS!")
-        val nameMatching = NameMatching("CHRI$S WILLIAMS!", "CHRI$S WILLIAMS! SONS")
-        nameMatching.shortenLongest mustEqual nameMatchingExp
-      }
-
-      "x% of longer name is more than length of shorter name" in {
-        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS! T", "CHRI$S WILLIAMS! T")
-        val nameMatching = NameMatching("CHRI$S WILLIAMS! TABLE", "CHRI$S WILLIAMS! T")
-        nameMatching.shortenLongest mustEqual nameMatchingExp
-      }
-    }
-
-    "not shorten anything" when {
-      "we are sure that the words are different" in {
-        val nameMatching = NameMatching("AIROOAUTOMOTIVEUK", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
-
-        nameMatching.shortenLongest mustEqual nameMatching
-      }
-    }
-  }
-
-  "matchpercentage" must {
-    "estimate a match percentage on two values" when {
-      "second value is the longest" in {
-        val nameMatching = NameMatching("AIROOAUTOMOTIVEUK", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
-
-        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 53
-      }
-
-      "second value is the longest and none of the words match" in {
-        val nameMatching = NameMatching("TTTTTTTT", "AAAAAAAAAAAAAAAAA")
-
-        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 0
-      }
-
-      "first value is the longest" in {
-        val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUK")
-
-        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 53
-      }
-
-      "both values have the same length" in {
-        val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
-
-        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 100
-      }
-
-      "one of the values is empty" in {
-        val nameMatching = NameMatching("", "TEST")
-
-        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 0
-      }
-    }
-  }
-
   "isMatch" must {
     "return true" when {
       "names after transformation match for example 1" in {
@@ -157,12 +98,6 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
 
         nameMatching.isMatch mustBe false
       }
-
-/*
-  "match" means "scheme name is NOT a valid one and an error page is displayed"
-  "not match" means "scheme name is a valid one"
- */
-
 
       "names after transformation do not match for  The Ground Waste Recycling Limited SSAS" in {
         val nameMatching = NameMatching("The Ground Waste Recycling Limited SSAS", "Ground Waste Recycling Ltd")
@@ -214,5 +149,3 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
     }
   }
 }
-
-
