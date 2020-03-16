@@ -34,7 +34,6 @@ class AllSpokes extends Enumerable.Implicits {
     val isChangeLink = spoke.completeFlag(answers, index, mode)
     val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
 
-
     (isChangeLink, isNew) match {
       case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index))
       case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)

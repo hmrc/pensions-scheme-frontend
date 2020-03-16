@@ -16,476 +16,818 @@
 
 package utils
 
-import base.{JsonFileReader, SpecBase}
+import controllers.register.establishers.company.director.{routes => establisherCompanyDirectorRoutes}
 import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
+import controllers.register.establishers.individual.{routes => establisherIndividualRoutes}
+import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import helpers.DataCompletionHelper
-import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath, partnership => establisherPartnershipPath}
-import identifiers.register.trustees.{IsTrusteeNewId, company => trusteeCompanyPath, individual => trusteeIndividualPath, partnership => trusteePartnershipPath}
+import identifiers.SchemeNameId
+import models.address.Address
 import models.person.PersonName
-import models.{CompanyDetails, EntitySpoke, Link, Mode, NormalMode, UpdateMode, _}
-import org.scalatest.{MustMatchers, OptionValues}
-import utils.hstasklisthelper.{HsTaskListHelper, HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import models.register.{DeclarationDormant, SchemeType}
+import models.{CompanyDetails, EntitySpoke, Mode, NormalMode, UpdateMode, _}
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import utils.hstasklisthelper.AllSpokes
 import viewmodels.Message
 
-class AllSpokesSpec extends SpecBase with MustMatchers with OptionValues {
-  //import AllSpokesSpec._
+class AllSpokesSpec extends WordSpec with MustMatchers with OptionValues with DataCompletionHelper {
 
-/*  "getEstablisherCompanySpokes" must {
-    "display all spokes with appropriate links" when {
-      "in subscription journey when all spokes are uninitiated" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompanyBlank, NormalMode, None, "test company", 0
-        ) mustBe expectedAddSpokes(NormalMode, None)
+  import AllSpokesSpec._
+
+  val allSpokes = new AllSpokes()
+
+  "getBeforeYouStartSpoke" when {
+    "in subscription" must {
+      "display the spoke with link to scheme name page with in progress status if the spoke is in progress" in {
+        val userAnswers = userAnswersWithSchemeName
+        val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
+          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
+
+        val result = allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are in progress" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          answersIncomplete, NormalMode, None, "test company", 0
-        ) mustBe expectedInProgressSpokes(NormalMode, None)
+      "display the spoke with link to cya page with complete status if the spoke is completed" in {
+        val userAnswers = userAnswersWithSchemeName.schemeType(SchemeType.SingleTrust).declarationDuties(haveWorkingKnowledge = true).
+          establishedCountry(country = "UK")
+        val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
+          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url), Some(true)))
+
+        val result = allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+
+    "in variation" must {
+      "display the spoke with link to scheme name page with no status if the spoke is in progress" in {
+        val userAnswers = userAnswersWithSchemeName
+        val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__scheme_info_link_text", schemeName),
+          controllers.routes.SchemeNameController.onPageLoad(UpdateMode).url), None))
+
+        val result = allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are complete" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          answersComplete, NormalMode, None, "test company", 0
-        ) mustBe expectedCompletedSpokes(NormalMode, None)
-      }
+      "display the spoke with link to cya page with no status if the spoke is completed" in {
+        val userAnswers = userAnswersWithSchemeName.schemeType(SchemeType.SingleTrust).declarationDuties(haveWorkingKnowledge = true).
+          establishedCountry(country = "UK")
+        val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__scheme_info_link_text", schemeName),
+          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url), None))
 
-      "in variations journey when all spokes are uninitiated" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          establisherCompanyBlank, UpdateMode, srn, "test company", 0
-        ) mustBe expectedAddSpokes(UpdateMode, srn)
-      }
-
-      "in variations journey when all spokes are in progress" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          answersIncomplete, UpdateMode, srn, "test company", 0
-        ) mustBe expectedInProgressSpokes(UpdateMode, srn)
-      }
-
-      "in variations journey when all spokes are complete" in {
-        subscriptionHelper.getEstablisherCompanySpokes(
-          answersComplete, UpdateMode, srn, "test company", 0
-        ) mustBe expectedCompletedSpokes(UpdateMode, srn)
+        val result = allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
     }
   }
 
-  "getEstablisherPartnershipSpokes" must {
-    "display all spokes with appropriate links" when {
-      "in subscription journey when all spokes are uninitiated" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          establisherPartnershipBlank, NormalMode, None, name = partnershipName, index = 0
-        ) mustBe expectedAddEstablisherPartnershipSpokes(NormalMode, None)
+  "getAboutSpoke" when {
+    "in subscription" must {
+      "display all the spokes with link to first page, blank status if the spoke is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_add", schemeName),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName),
+            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are in progress" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          answersIncomplete, NormalMode, None, name = partnershipName, index = 2
-        ) mustBe expectedInProgressEstablisherPartnershipSpokes(NormalMode, None)
+      "display all the spokes with link to first page, in progress status if the spoke is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true).
+          ukBankAccount(ukBankAccount = true)
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), Some(false)),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), Some(false)),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text", schemeName),
+            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), Some(false))
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are complete" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          answersComplete, NormalMode, None, name = partnershipName, index = 2
-        ) mustBe expectedCompletedEstablisherPartnershipSpokes(NormalMode, None)
+      "display all the spokes with link to cya page, complete status if the spoke is completed" in {
+        val userAnswers = setCompleteMembers(isComplete = true,
+          setCompleteBank(isComplete = true,
+            setCompleteBenefits(isComplete = true,
+              userAnswersWithSchemeName)))
+
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
+            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), Some(true)),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), Some(true)),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text", schemeName),
+            controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url), Some(true))
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+
+    "in variation" must {
+      "display members and benefits and insurance spokes with link to first page, blank status if the spoke is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are uninitiated" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          establisherCompanyBlank, UpdateMode, srn, name = partnershipName, index = 0
-        ) mustBe expectedAddEstablisherPartnershipSpokes(UpdateMode, srn)
+      "display members and benefits and insurance spokes with link to first page, blank status if the spoke is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true).
+          ukBankAccount(ukBankAccount = true)
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are in progress" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          answersIncomplete, UpdateMode, srn, name = partnershipName, index = 2
-        ) mustBe expectedInProgressEstablisherPartnershipSpokes(UpdateMode, srn)
-      }
+      "display members and benefits and insurance spokes with link to cya page, blank status if the spoke is completed" in {
+        val userAnswers = setCompleteMembers(isComplete = true,
+          setCompleteBank(isComplete = true,
+            setCompleteBenefits(isComplete = true,
+              userAnswersWithSchemeName)))
 
-      "in variations journey when all spokes are complete" in {
-        subscriptionHelper.getEstablisherPartnershipSpokes(
-          answersComplete, UpdateMode, srn, name = partnershipName, index = 2
-        ) mustBe expectedCompletedEstablisherPartnershipSpokes(UpdateMode, srn)
+        val expectedSpoke = Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
+            controllers.routes.CheckYourAnswersMembersController.onPageLoad(UpdateMode, srn).url), None),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName),
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url), None)
+        )
+
+        val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
     }
   }
 
-  "getTrusteeCompanySpokes" must {
-    "display all spokes with appropriate links" when {
-      "in subscription journey when all spokes are uninitiated" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          trusteeCompanyBlank, NormalMode, None, "test company", 0
-        ) mustBe expectedAddTrusteeCompanySpokes(NormalMode, None)
+  "getWorkingKnowledgeSpoke in subscription" must {
+    "display the spoke with link to wyn page with status as blank if the spoke is uninitiated" in {
+      val userAnswers = userAnswersWithSchemeName
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details_wk"),
+        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None))
+
+      val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      result mustBe expectedSpoke
+    }
+
+    "display the spoke with link to wyn page with in progress status if the spoke is in progress" in {
+      val userAnswers = userAnswersWithSchemeName.adviserName(name = "test adviser")
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details"),
+        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), Some(false)))
+
+      val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      result mustBe expectedSpoke
+    }
+
+    "display the spoke with link to cya page with completed status if the spoke is completed" in {
+      val userAnswers = setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName)
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details"),
+        controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), Some(true)))
+
+      val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      result mustBe expectedSpoke
+    }
+  }
+
+  "getEstablisherCompanySpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links, blank status when establisher company is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estCompanyAddSpokes(NormalMode, None)
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are in progress" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          answersIncomplete, NormalMode, None, "test company", 0
-        ) mustBe expectedInProgressTrusteeCompanySpokes(NormalMode, None)
+      "display all the spokes with appropriate links, in progress status when establisher company is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establisherCompanyDetails(index = 0, CompanyDetails("test company")).
+          establisherCompanyDormant(0, DeclarationDormant.Yes).establishersCompanyAddress(index = 0, address).
+          establishersCompanyEmail(index = 0, email = "s@s.com").establishersCompanyDirectorName(0, 0, PersonName("s", "l"))
+          .establishersCompanyDirectorNino(0, 0, ReferenceValue("AB100100A"))
+        val expectedSpoke = estCompanyInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are complete" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          answersComplete, NormalMode, None, "test company", 0
-        ) mustBe expectedCompletedTrusteeCompanySpokes(NormalMode, None)
+      "display all the spokes with appropriate links, complete status when establisher company is completed" in {
+        val userAnswers = setCompleteEstCompany(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true).
+          establisherCompanyDormant(0, DeclarationDormant.Yes)
+        val expectedSpoke = estCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+
+    "in variation" must {
+      "display all the spokes with appropriate links when establisher company is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estCompanyAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are uninitiated" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          trusteeCompanyBlank, UpdateMode, srn, "test company", 0
-        ) mustBe expectedAddTrusteeCompanySpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher company is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establisherCompanyDetails(index = 0, CompanyDetails("test company")).
+          establisherCompanyNoUtrReason(0, "no utr").establishersCompanyAddress(index = 0, address).
+          establishersCompanyEmail(index = 0, email = "s@s.com").establishersCompanyDirectorName(0, 0, PersonName("s", "l"))
+          .establishersCompanyDirectorNino(0, 0, ReferenceValue("AB100100A"))
+
+        val expectedSpoke = estCompanyInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are in progress" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          answersIncomplete, UpdateMode, srn, "test company", 0
-        ) mustBe expectedInProgressTrusteeCompanySpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher company is completed" in {
+        val userAnswers = setCompleteEstCompany(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are complete" in {
-        subscriptionHelper.getTrusteeCompanySpokes(
-          answersComplete, UpdateMode, srn, "test company", 0
-        ) mustBe expectedCompletedTrusteeCompanySpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher company is not new" in {
+        val userAnswers = setCompleteEstCompany(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
+        val expectedSpoke = estCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
     }
   }
 
-  "getTrusteeIndividualSpokes" must {
-    "display all spokes with appropriate links" when {
+  "getEstablisherPartnershipSpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links, blank status when establisher partnership is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estPartnershipAddSpokes(NormalMode, None)
 
-      "in subscription journey when all spokes are uninitiated" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividualBlank, NormalMode, None, "test individual", 0
-        ) mustBe expectedAddTrusteeIndividualSpokes(NormalMode, None)
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are in progress" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = false), NormalMode, None, "test individual", 0
-        ) mustBe expectedInProgressTrusteeIndividualSpokes(NormalMode, None)
+      "display all the spokes with appropriate links, in progress status when establisher partnership is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establisherPartnershipDetails(index = 0, PartnershipDetails("test partnership")).
+          establisherPartnershipHasVat(0, hasVat = false).establisherPartnershipAddress(index = 0, address).
+          establishersPartnershipEmail(index = 0, email = "s@s.com").establishersPartnershipPartnerName(0, 0, PersonName("s", "l"))
+          .establishersPartnershipPartnerNino(0, 0, ReferenceValue("AB100100A"))
+        val expectedSpoke = estPartnershipInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are complete" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = true), NormalMode, None, "test individual", 0
-        ) mustBe expectedCompletedTrusteeIndividualSpokes(NormalMode, None)
+      "display all the spokes with appropriate links, complete status when establisher partnership is completed" in {
+        val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
+        val expectedSpoke = estPartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+
+    "in variation" must {
+      "display all the spokes with appropriate links when establisher partnership is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estPartnershipAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are uninitiated" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividualBlank, UpdateMode, srn, "test individual", 0
-        ) mustBe expectedAddTrusteeIndividualSpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher partnership is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establisherPartnershipDetails(index = 0, PartnershipDetails("test partnership")).
+          establisherPartnershipHasVat(0, hasVat = false).establisherPartnershipAddress(index = 0, address).
+          establishersPartnershipEmail(index = 0, email = "s@s.com").establishersPartnershipPartnerName(0, 0, PersonName("s", "l"))
+          .establishersPartnershipPartnerNino(0, 0, ReferenceValue("AB100100A"))
+
+        val expectedSpoke = estPartnershipInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are in progress" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = false), UpdateMode, srn, "test individual", 0
-        ) mustBe expectedInProgressTrusteeIndividualSpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher partnership is completed" in {
+        val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estPartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in variations journey when all spokes are complete" in {
-        subscriptionHelper.getTrusteeIndividualSpokes(
-          trusteeIndividual(isComplete = true), UpdateMode, srn, "test individual", 0
-        ) mustBe expectedCompletedTrusteeIndividualSpokes(UpdateMode, srn)
+      "display all the spokes with appropriate links when establisher partnership is not new" in {
+        val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
+        val expectedSpoke = estPartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
     }
   }
 
-  "getTrusteePartnershipSpokes" must {
-    "display all spokes with appropriate links" when {
+  "getEstablisherIndividualSpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links, blank status when establisher individual is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estIndividualAddSpokes(NormalMode, None)
 
-      "in subscription journey when all spokes are uninitiated" in {
-        subscriptionHelper.getTrusteePartnershipSpokes(
-          trusteePartnershipBlank, NormalMode, None, "test partnership", 0
-        ) mustBe expectedAddTrusteePartnershipSpokes(NormalMode, None)
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-     "in subscription journey when all spokes are in progress" in {
-        subscriptionHelper.getTrusteePartnershipSpokes(
-          answersIncomplete, NormalMode, None, "test partnership", 2
-        ) mustBe expectedInProgressTrusteePartnershipSpokes(NormalMode, None)
+      "display all the spokes with appropriate links, in progress status when establisher individual is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establishersIndividualName(index = 0, PersonName("s", "l")).
+          establishersIndividualNino(0, ReferenceValue("AB100100A")).
+          establishersIndividualAddress(index = 0, address).
+          establishersIndividualEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = estIndividualInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
       }
 
-      "in subscription journey when all spokes are complete" in {
-        subscriptionHelper.getTrusteePartnershipSpokes(
-          answersComplete, NormalMode, None, "test partnership", 2
-        ) mustBe expectedCompletedTrusteePartnershipSpokes(NormalMode, None)
+      "display all the spokes with appropriate links, complete status when establisher individual is completed" in {
+        val userAnswers = setCompleteEstIndividual(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
+        val expectedSpoke = estIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+
+    "in variation" must {
+      "display all the spokes with appropriate links when establisher individual is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estIndividualAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
       }
 
+      "display all the spokes with appropriate links when establisher individual is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true).
+          establishersIndividualName(index = 0, PersonName("s", "l")).
+          establishersIndividualNino(0, ReferenceValue("AB100100A")).
+          establishersIndividualAddress(index = 0, address).
+          establishersIndividualEmail(index = 0, email = "s@s.com")
 
-    "in variations journey when all spokes are uninitiated" in {
-      subscriptionHelper.getTrusteePartnershipSpokes(
-        trusteePartnershipBlank, UpdateMode, srn, "test partnership", 0
-      ) mustBe expectedAddTrusteePartnershipSpokes(UpdateMode, srn)
+        val expectedSpoke = estIndividualInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when establisher individual is completed" in {
+        val userAnswers = setCompleteEstIndividual(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
+        val expectedSpoke = estIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when establisher individual is not new" in {
+        val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
+        val expectedSpoke = estIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+  }
+
+  "getTrusteeCompanySpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links, blank status when trustee company is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeCompanyAddSpokes(NormalMode, None)
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links, in progress status when trustee company is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteesCompanyDetails(index = 0, CompanyDetails("test company")).
+          trusteesCompanyHasUTR(0, true).
+          trusteesCompanyEnterUTR(0, ReferenceValue("test-utr")).
+          trusteesCompanyAddress(index = 0, address).
+          trusteeCompanyEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteeCompanyInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links, complete status when trustee company is completed" in {
+        val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
+        val expectedSpoke = trusteeCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
     }
 
-    "in variations journey when all spokes are in progress" in {
-      subscriptionHelper.getTrusteePartnershipSpokes(
-        answersIncomplete, UpdateMode, srn, "test partnership", 2
-      ) mustBe expectedInProgressTrusteePartnershipSpokes(UpdateMode, srn)
+    "in variation" must {
+      "display all the spokes with appropriate links when trustee company is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeCompanyAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee company is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteesCompanyDetails(index = 0, CompanyDetails("test company")).
+          trusteesCompanyEnterUTR(0, ReferenceValue("1231231231")).
+          trusteesCompanyAddress(index = 0, address).
+          trusteeCompanyEmail(index = 0, email = "s@s.com")
+
+        val expectedSpoke = trusteeCompanyInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee company is completed" in {
+        val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee company is not new" in {
+        val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
+        val expectedSpoke = trusteeCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+  }
+
+  "getTrusteePartnershipSpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links, blank status when trustee partnership is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteePartnershipAddSpokes(NormalMode, None)
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links, in progress status when trustee partnership is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteePartnershipDetails(index = 0, PartnershipDetails("test partnership")).
+          trusteesPartnershipHasVAT(0, hasVat = false).trusteePartnershipAddress(index = 0, address).
+          trusteePartnershipEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteePartnershipInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links, complete status when trustee partnership is completed" in {
+        val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
+        val expectedSpoke = trusteePartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
     }
 
-    "in variations journey when all spokes are complete" in {
-      subscriptionHelper.getTrusteePartnershipSpokes(
-        answersComplete, UpdateMode, srn, "test partnership", 2
-      ) mustBe expectedCompletedTrusteePartnershipSpokes(UpdateMode, srn)
+    "in variation" must {
+      "display all the spokes with appropriate links when trustee partnership is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteePartnershipAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee partnership is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteePartnershipDetails(index = 0, PartnershipDetails("test partnership")).
+          trusteesPartnershipHasVAT(0, hasVat = false).trusteePartnershipAddress(index = 0, address).
+          trusteePartnershipEmail(index = 0, email = "s@s.com")
+
+        val expectedSpoke = trusteePartnershipInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee partnership is completed" in {
+        val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteePartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee partnership is not new" in {
+        val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
+        val expectedSpoke = trusteePartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
     }
+  }
+
+  "getTrusteeIndividualSpokes" when {
+    "in subscription" must {
+      "display all the spokes with appropriate links when trustee individual is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeIndividualAddSpokes(NormalMode, None)
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee individual is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteeName(index = 0, PersonName("s", "l")).
+          trusteeIndividualNino(0, ReferenceValue("AB100100A")).
+          trusteesAddress(index = 0, address).
+          trusteeEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteeIndividualInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee individual is completed" in {
+        val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
+        val expectedSpoke = trusteeIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
     }
-  }*/
+
+    "in variation" must {
+      "display all the spokes with appropriate links when trustee individual is uninitiated" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeIndividualAddSpokes(UpdateMode, srn)
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee individual is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteeName(index = 0, PersonName("s", "l")).
+          trusteeIndividualNino(index = 0, ReferenceValue("AB100100A")).
+          trusteesAddress(index = 0, address).
+          trusteeEmail(index = 0, email = "s@s.com")
+
+        val expectedSpoke = trusteeIndividualInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee individual is completed" in {
+        val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
+        val expectedSpoke = trusteeIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+
+      "display all the spokes with appropriate links when trustee individual is not new" in {
+        val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
+        val expectedSpoke = trusteeIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+        val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+        result mustBe expectedSpoke
+      }
+    }
+  }
 }
-/*
 
-object AllSpokesSpec extends SpecBase with OptionValues with DataCompletionHelper with JsonFileReader {
 
-  val srn = Some("S123")
-  private val partnershipName = "test partnership"
+object AllSpokesSpec extends OptionValues with DataCompletionHelper {
 
-  protected def establisherCompanyBlank: UserAnswers = {
-    UserAnswers().set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsEstablisherNewId(0))(true)
-    )
-      .asOpt.value
-  }
+  private val srn = Some("S123")
+  private val schemeName = "scheme"
+  private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
+  private val address = Address("line1", "line2", None, None, None, "GB")
 
-  protected def establisherPartnershipBlank: UserAnswers = {
-    UserAnswers().set(establisherPartnershipPath.PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).flatMap(
-      _.set(IsEstablisherNewId(0))(true)
-    ).asOpt.value
-  }
-
-  protected def trusteeCompanyBlank: UserAnswers = {
-    UserAnswers().set(trusteeCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsTrusteeNewId(0))(true)
-    )
-      .asOpt.value
-  }
-
-  protected def trusteeIndividualBlank: UserAnswers = {
-    UserAnswers().set(trusteeIndividualPath.TrusteeNameId(0))(PersonName("test", "person")).flatMap(
-      _.set(IsTrusteeNewId(0))(true)
-    )
-      .asOpt.value
-  }
-
-  protected def trusteePartnershipBlank: UserAnswers = {
-    UserAnswers().set(trusteePartnershipPath.PartnershipDetailsId(0))(PartnershipDetails("test partnership")).flatMap(
-      _.set(IsTrusteeNewId(0))(true)
-    )
-      .asOpt.value
-  }
-
-  protected def establisherCompanyWithCompletedDirectors = UserAnswers(readJsonFromFile("/payload.json"))
-  protected def trusteeIndividual(isComplete: Boolean): UserAnswers = {
-    val ua = trusteeIndividualBlank
-      .set(IsTrusteeNewId(0))(true)
-      .asOpt.value
-    setTrusteeCompletionStatus(isComplete = isComplete, 0, ua)
-  }
-
-  protected def trusteePartnership(isComplete: Boolean): UserAnswers = {
-    val ua = trusteePartnershipBlank
-      .set(IsTrusteeNewId(0))(true)
-      .asOpt.value
-    setTrusteeCompletionStatus(isComplete = isComplete, 0, ua)
-  }
-
-  protected def answersComplete = UserAnswers(readJsonFromFile("/payload.json"))
-  protected def answersIncomplete = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
-
-  private def dynamicContentForChangeLink(srn:Option[String], name:String, registrationKey:String, variationsKey:String) =
-    Message(if(srn.isDefined) variationsKey else registrationKey, name)
-
-  def modeBasedCompletion(mode: Mode, completion: Option[Boolean]): Option[Boolean] = if(mode == NormalMode) completion else None
-
-  def subscriptionHelper: HsTaskListHelper = new HsTaskListHelperRegistration(UserAnswers())
-  def variationsHelper(viewOnly: Boolean = false): HsTaskListHelper = new HsTaskListHelperVariations(UserAnswers(), viewOnly, srn)
-
-  def expectedAddSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test company"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_directors", "test company"),
-      controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, 0).url), None)
+  private def aboutSpokeAddOrInprogessSpoke(status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_add", schemeName),
+      controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), status),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName),
+      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), status),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName),
+      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), status)
   )
 
-  def expectedInProgressSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_directors",
-      "messages__schemeTaskList__view_directors"),
-      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(false)))
+  private def estCompanyAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index = 0).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index = 0).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_directors", schemeName),
+      establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, establisherIndex = 0).url), None)
   )
 
-  def expectedCompletedSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
-      establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address", "messages__schemeTaskList__view_address"),
-      establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact", "messages__schemeTaskList__view_contact"),
-      establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_directors", "messages__schemeTaskList__view_directors"),
-      controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, 0).url), modeBasedCompletion(mode, Some(true)))
+  private def estCompanyInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_directors", schemeName),
+      establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index = 0).url), status)
   )
 
-  def expectedAddEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", partnershipName),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, 0).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", partnershipName),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", partnershipName),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_partners", partnershipName),
-      controllers.register.establishers.partnership.partner.routes.WhatYouWillNeedPartnerController.onPageLoad(mode, 0, srn).url), None)
+  private def estCompanyCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_directors", schemeName),
+      establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index = 0).url), status)
   )
 
-  def expectedInProgressEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,partnershipName, "messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, 2).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,partnershipName,"messages__schemeTaskList__change_partners",
-      "messages__schemeTaskList__view_partners"),
-      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
+  private def estPartnershipAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index = 0).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_partners", schemeName),
+      establisherPartnershipPartnerRoutes.WhatYouWillNeedPartnerController.onPageLoad(mode, 0, srn).url), None)
   )
 
-  def expectedCompletedEstablisherPartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,partnershipName,"messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn, partnershipName, "messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,  partnershipName, "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,partnershipName,"messages__schemeTaskList__change_partners",
-      "messages__schemeTaskList__view_partners"),
-      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
+  private def estPartnershipInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index = 0).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_partners", schemeName),
+      establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  def expectedAddTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", "test company"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test company"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test company"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), None)
+  private def estPartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_partners", schemeName),
+      establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  def expectedAddTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", "test individual"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test individual"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test individual"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), None)
+  private def estIndividualAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), None)
   )
 
-  def expectedAddTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", "test partnership"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", "test partnership"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 0, srn).url), None),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", "test partnership"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 0, srn).url), None)
+  private def estIndividualInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  def expectedInProgressTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company",
-      "messages__schemeTaskList__change_details", "messages__schemeTaskList__view_details"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
+  private def estIndividualCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      establisherIndividualRoutes.CheckYourAnswersAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  def expectedInProgressTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-      EntitySpoke(TaskListLink(
-        dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_details",
-          "messages__schemeTaskList__view_details"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))),
-      EntitySpoke(
-        TaskListLink(
-          dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_address",
-            "messages__schemeTaskList__view_address"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false))
-    ),
-    EntitySpoke(
-      TaskListLink(dynamicContentForChangeLink(srn,"test individual", "messages__schemeTaskList__change_contact",
-        "messages__schemeTaskList__view_contact"),
-      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(false)))
+  private def trusteeCompanyAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), None)
   )
 
-  def expectedInProgressTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))
-    ),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false))
-    ),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(false)))
+  private def trusteeCompanyInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  def expectedCompletedTrusteeCompanySpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company", "messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test company","messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
-    )
-
-  def expectedCompletedTrusteeIndividualSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] = Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test individual","messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, 0, srn).url), modeBasedCompletion(mode, Some(true)))
+  private def trusteeCompanyCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def expectedCompletedTrusteePartnershipSpokes(mode: Mode, srn: Option[String]): Seq[EntitySpoke] =
-    Seq(
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_details",
-      "messages__schemeTaskList__view_details"),
-      trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn,"test partnership", "messages__schemeTaskList__change_address",
-      "messages__schemeTaskList__view_address"),
-      trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true))),
-    EntitySpoke(TaskListLink(dynamicContentForChangeLink(srn, "test partnership", "messages__schemeTaskList__change_contact",
-      "messages__schemeTaskList__view_contact"),
-      trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, 2, srn).url), modeBasedCompletion(mode, Some(true)))
+  private def trusteePartnershipAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), None)
   )
-}*/
+
+  private def trusteePartnershipInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
+  )
+
+  private def trusteePartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
+  )
+
+  private def trusteeIndividualAddSpokes(mode: Mode, srn: Option[String]) = Seq(
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index = 0, srn).url), None),
+    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_contact", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), None)
+  )
+
+  private def trusteeIndividualInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
+  )
+
+  private def trusteeIndividualCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(mode, index = 0, srn).url), status),
+    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
+      trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
+  )
+}

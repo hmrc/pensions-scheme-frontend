@@ -23,8 +23,9 @@ import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
-import identifiers.register.trustees.company.{CompanyEnterCRNId, CompanyEnterPAYEId, CompanyEnterUTRId}
+import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
+import identifiers.register.trustees.partnership._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
@@ -285,6 +286,27 @@ package object utils {
       answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
     }
 
+    def establisherPartnershipHasVat(index: Int, hasVat: Boolean): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipHasVATId(index))(hasVat).asOpt.value
+    }
+
+    def establisherPartnershipNoUtrReason(index: Int, reason: String): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipHasUTRId(index))(false).asOpt.value
+        .set(establishers.partnership.PartnershipNoUTRReasonId(index))(reason).asOpt.value
+    }
+
+    def establisherPartnershiphasPaye(index: Int, hasPaye: Boolean): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipHasPAYEId(index))(hasPaye).asOpt.value
+    }
+
+    def establishersPartnershipEmail(index: Int, email: String): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipEmailId(index))(email).asOpt.value
+    }
+
+    def establishersPartnershipPhone(index: Int, phone: String): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipPhoneNumberId(index))(phone).asOpt.value
+    }
+
     def establishersPartnershipPreviousAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
     }
@@ -299,6 +321,40 @@ package object utils {
 
     def establisherPartnershipTradingTime(index: Int, hasBeenTrading: Boolean): UserAnswers = {
       answers.set(establishers.partnership.PartnershipHasBeenTradingId(index))(hasBeenTrading).asOpt.value
+    }
+
+    def establishersPartnershipPartnerName(establisherId: Int, partnerId: Int, name: PersonName): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerNameId(establisherId, partnerId))(name).asOpt.value
+    }
+
+    def establishersPartnershipPartnerDOB(establisherId: Int, partnerId: Int, dob: LocalDate): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerDOBId(establisherId, partnerId))(dob).asOpt.value
+    }
+
+    def establishersPartnershipPartnerNino(establisherId: Int, partnerId: Int, nino: ReferenceValue): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerHasNINOId(establisherId, partnerId))(true).asOpt.value.
+        set(establishers.partnership.partner.PartnerEnterNINOId(establisherId, partnerId))(nino).asOpt.value
+    }
+
+    def establishersPartnershipPartnerUtr(establisherId: Int, partnerId: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerHasUTRId(establisherId, partnerId))(true).asOpt.value.
+        set(establishers.partnership.partner.PartnerEnterUTRId(establisherId, partnerId))(utr).asOpt.value
+    }
+
+    def establishersPartnershipPartnerAddress(establisherId: Int, partnerId: Int, address: Address): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerAddressId(establisherId, partnerId))(address).asOpt.value
+    }
+
+    def establishersPartnershipPartnerAddressYears(establisherId: Int, partnerId: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerAddressYearsId(establisherId, partnerId))(addressYears).asOpt.value
+    }
+
+    def establishersPartnershipPartnerEmail(establisherId: Int, partnerId: Int, email: String): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerEmailId(establisherId, partnerId))(email).asOpt.value
+    }
+
+    def establishersPartnershipPartnerPhone(establisherId: Int, partnerId: Int, phone: String): UserAnswers = {
+      answers.set(establishers.partnership.partner.PartnerPhoneId(establisherId, partnerId))(phone).asOpt.value
     }
 
     // Trustees company
@@ -322,12 +378,32 @@ package object utils {
       answers.set(trustees.company.CompanyEnterVATId(index))(reference).asOpt.value
     }
 
+    def trusteesCompanyHasCRN(index: Int, hasCrn: Boolean): UserAnswers = {
+      answers.set(HasCompanyCRNId(index))(hasCrn).asOpt.value
+    }
+
     def trusteesCompanyEnterCRN(index: Int, crn: ReferenceValue): UserAnswers = {
       answers.set(CompanyEnterCRNId(index))(crn).asOpt.value
     }
 
+    def trusteesCompanyHasUTR(index: Int, hasUtr: Boolean): UserAnswers = {
+      answers.set(HasCompanyUTRId(index))(hasUtr).asOpt.value
+    }
+
     def trusteesCompanyEnterUTR(index: Int, utr: ReferenceValue): UserAnswers = {
       answers.set(CompanyEnterUTRId(index))(utr).asOpt.value
+    }
+
+    def trusteesCompanyHasVAT(index: Int, hasVat: Boolean): UserAnswers = {
+      answers.set(HasCompanyVATId(index))(hasVat).asOpt.value
+    }
+
+    def trusteesCompanyHasPAYE(index: Int, hasPaye: Boolean): UserAnswers = {
+      answers.set(HasCompanyPAYEId(index))(hasPaye).asOpt.value
+    }
+
+    def trusteesCompanyPAYE(index: Int, paye: ReferenceValue): UserAnswers = {
+      answers.set(CompanyEnterPAYEId(index))(paye).asOpt.value
     }
 
     def trusteesCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
@@ -415,6 +491,30 @@ package object utils {
     //Trustee Partnership
     def trusteePartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
       answers.set(trustees.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
+    }
+
+    def trusteesPartnershipHasUTR(index: Int, hasUtr: Boolean): UserAnswers = {
+      answers.set(PartnershipHasUTRId(index))(hasUtr).asOpt.value
+    }
+
+    def trusteesPartnershipEnterUTR(index: Int, utr: ReferenceValue): UserAnswers = {
+      answers.set(PartnershipEnterUTRId(index))(utr).asOpt.value
+    }
+
+    def trusteesPartnershipHasVAT(index: Int, hasVat: Boolean): UserAnswers = {
+      answers.set(PartnershipHasVATId(index))(hasVat).asOpt.value
+    }
+
+    def trusteesPartnershipEnterVAT(index: Int, reference: ReferenceValue): UserAnswers = {
+      answers.set(PartnershipEnterVATId(index))(reference).asOpt.value
+    }
+
+    def trusteesPartnershipHasPAYE(index: Int, hasPaye: Boolean): UserAnswers = {
+      answers.set(PartnershipHasPAYEId(index))(hasPaye).asOpt.value
+    }
+
+    def trusteesPartnershipPAYE(index: Int, paye: ReferenceValue): UserAnswers = {
+      answers.set(PartnershipEnterPAYEId(index))(paye).asOpt.value
     }
 
     def trusteePartnershipAddress(index: Int, address: Address): UserAnswers = {

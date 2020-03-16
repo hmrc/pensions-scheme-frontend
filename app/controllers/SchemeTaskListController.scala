@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
+import identifiers.{IsPsaSuspendedId, SchemeSrnId}
 import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import models.{Mode, VarianceLock}
@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.TaskList
-import utils.hstasklisthelper.{AllSpokes, HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels.SchemeDetailsTaskList
 import views.html.schemeDetailsTaskList
 
@@ -43,7 +43,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
-                                         errorHandler: ErrorHandler,
                                          lockConnector: PensionSchemeVarianceLockConnector,
                                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                          updateConnector: UpdateSchemeCacheConnector,
@@ -68,8 +67,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def onPageLoadVariations(srn: String,
-                                            ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
-                                                                     hc: HeaderCarrier): Future[Result] = {
+                                   ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
+                                                            hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
       case Some(VarianceLock) =>
         ua match {
@@ -106,7 +105,4 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(taskList)))
       }
     }
-
-  case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
-
 }

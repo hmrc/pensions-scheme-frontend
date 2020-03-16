@@ -26,7 +26,6 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, when, _}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.libs.json.JsNull
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -42,7 +41,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
   import SchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(fakeSchemeDetailsConnector, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector)
+    reset(fakeSchemeDetailsConnector, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector, fakeHsTaskListHelperRegistration)
   }
 
   "SchemeTaskList Controller" when {
@@ -50,12 +49,12 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "accessed in NormalMode with srn as None" must {
 
       "return OK and the correct view" in {
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        //contentAsString(result) mustBe view(schemeDetailsTL)(fakeRequest, messages).toString()
-
+        contentAsString(result) mustBe view(schemeDetailsTL)(fakeRequest, messages).toString()
       }
     }
 
@@ -76,6 +75,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+          Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
@@ -99,6 +101,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(None))
         when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
 
         val result = controller(dataRetrievalAction = userAnswersRejected).onPageLoad(UpdateMode, srn)(fakeRequest)
 
@@ -116,9 +119,11 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
+          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
+        )))
 
-        val result = controller(dataRetrievalAction = getEmptyData)
-          .onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(dataRetrievalAction = getEmptyData).onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
 
@@ -132,6 +137,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
         when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+          Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+            "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
         val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
           .onPageLoad(UpdateMode, srn)(fakeRequest)
@@ -150,6 +158,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
         when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
           .thenReturn(Future.successful(JsNull))
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
+          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
+        )))
 
         val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
           .onPageLoad(UpdateMode, srn)(fakeRequest)
@@ -167,8 +178,17 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
   private val view = injector.instanceOf[schemeDetailsTaskList]
-  private val notFoundView = injector.instanceOf[error_template_page_not_found]
-  private val errorView = injector.instanceOf[error_template]
+  private val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
+  private val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
+  private val fakeUpdateCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
+  private val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
+  private val fakeMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
+  private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
+  private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
+
+  private val srnValue = "S1000000456"
+  private val srn = Some(srnValue)
+  private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
@@ -178,72 +198,39 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       fakeSchemeDetailsConnector,
-      new ErrorHandler(frontendAppConfig, messagesApi, notFoundView, errorView),
       fakeLockConnector,
       fakeSchemeDetailsReadOnlyCacheConnector,
       fakeUpdateCacheConnector,
       fakeMinimalPsaConnector,
       stubMessagesControllerComponents(),
       view,
-      hsTaskListHelperRegistration,
-      hsTaskListHelperVariation
+      fakeHsTaskListHelperRegistration,
+      fakeHsTaskListHelperVariation
     )
 
-  val fakeSchemeDetailsConnector: SchemeDetailsConnector                           = mock[SchemeDetailsConnector]
-  val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
-  val fakeUpdateCacheConnector: UpdateSchemeCacheConnector                         = mock[UpdateSchemeCacheConnector]
-  val fakeLockConnector: PensionSchemeVarianceLockConnector                        = mock[PensionSchemeVarianceLockConnector]
-  val fakeMinimalPsaConnector: MinimalPsaConnector                                 = mock[MinimalPsaConnector]
-  val hsTaskListHelperRegistration: HsTaskListHelperRegistration                   = injector.instanceOf[HsTaskListHelperRegistration]
-  val hsTaskListHelperVariation: HsTaskListHelperVariations                   = injector.instanceOf[HsTaskListHelperVariations]
-  val config                                                                       = injector.instanceOf[Configuration]
+  private val userAnswersJson = readJsonFromFile("/payload.json")
+  private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
+  private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
+  private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
+  private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
+  private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
+    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
+  private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
+  private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
+  private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
 
-  val srnValue = "S1000000456"
-  val srn      = Some(srnValue)
-  val schemeName = "test scheme"
+  private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
 
-  private val userAnswersJson                           = readJsonFromFile("/payload.json")
-  private val userAnswersJsonRejected                   = readJsonFromFile("/payloadRejected.json")
-  private val userAnswers                               = new FakeDataRetrievalAction(Some(userAnswersJson))
-  private val userAnswersRejected                       = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
-  private lazy val beforeYouStartLinkText               = messages("messages__schemeTaskList__before_you_start_link_text", schemeName)
-  private lazy val addEstablisherLinkText               = messages("messages__schemeTaskList__sectionEstablishers_add_link", schemeName)
-  private lazy val aboutMembersAddLinkText              = messages("messages__schemeTaskList__about_members_link_text_add", schemeName)
-  private lazy val aboutBenefitsAndInsuranceAddLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
-  private lazy val aboutBankDetailsAddLinkText          = messages("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)
-  private lazy val addTrusteesLinkText                  = messages("messages__schemeTaskList__sectionTrustees_add_link", schemeName)
-
-  /*private val schemeDetailsTL = SchemeDetailsTaskList(
-    SchemeDetailsTaskListSection(Some(false), TaskListLink(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
-    messages("messages__schemeTaskList__about_scheme_header", "test scheme"),
-    Seq(
-      SchemeDetailsTaskListSection(None, TaskListLink(aboutMembersAddLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
-      SchemeDetailsTaskListSection(None,
-                                   TaskListLink(aboutBenefitsAndInsuranceAddLinkText, controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url),
-                                   None),
-      SchemeDetailsTaskListSection(None, TaskListLink(aboutBankDetailsAddLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)
-    ),
-    None,
-    Some(
-      SchemeDetailsTaskListHeader(
-        None,
-        Some(TaskListLink(addEstablisherLinkText, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url)),
-        None)),
-    Seq.empty,
-    Some(
-      SchemeDetailsTaskListHeader(
-        None,
-        Some(TaskListLink(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url)),
-        None)),
-    Seq.empty,
-    Some(
-      SchemeDetailsTaskListDeclarationSection("messages__schemeTaskList__sectionDeclaration_header",
-                                              None,
-                                              incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete")),
-    "test scheme",
-    messages("messages__scheme_details__title"),
-    Some(messages("messages__schemeTaskList__before_you_start_header")),
-    messages("messages__schemeTaskList__title"),
-    None
-  )*/
+  private val schemeDetailsTL = SchemeDetailsTaskList(
+    schemeName, None,
+    beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+    about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+    workingKnowledge = None,
+    addEstablisherHeader = None,
+    establishers = Nil,
+    addTrusteeHeader = None,
+    trustees = Nil,
+    declaration = None
+  )
 }
