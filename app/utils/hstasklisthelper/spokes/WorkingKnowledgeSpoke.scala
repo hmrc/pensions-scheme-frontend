@@ -28,12 +28,12 @@ case object WorkingKnowledgeSpoke extends Spoke {
 
   override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
-      Message("messages__schemeTaskList__change_details"), controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url
+      Message("messages__schemeTaskList__change_details", name), controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url
     )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
-     Message("messages__schemeTaskList__change_details"), controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url
+     Message("messages__schemeTaskList__change_details", name), controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url
   )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = answers.isAdviserCompleted

@@ -196,7 +196,7 @@ class AllSpokesSpec extends WordSpec with MustMatchers with OptionValues with Da
 
     "display the spoke with link to wyn page with in progress status if the spoke is in progress" in {
       val userAnswers = userAnswersWithSchemeName.adviserName(name = "test adviser")
-      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details"),
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
         controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), Some(false)))
 
       val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
@@ -205,7 +205,7 @@ class AllSpokesSpec extends WordSpec with MustMatchers with OptionValues with Da
 
     "display the spoke with link to cya page with completed status if the spoke is completed" in {
       val userAnswers = setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName)
-      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details"),
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
         controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), Some(true)))
 
       val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
