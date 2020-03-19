@@ -34,7 +34,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
 
   import HsTaskListHelperVariationsSpec._
 
-  private val mockAllSpokes = mock[AllSpokes]
+  private val mockAllSpokes = mock[SpokeCreationService]
   private val helper = new HsTaskListHelperVariations(mockAllSpokes)
 
   "h1" must {

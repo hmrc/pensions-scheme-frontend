@@ -28,7 +28,7 @@ import models._
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper @Inject()(allSpokes: AllSpokes) extends Enumerable.Implicits {
+abstract class HsTaskListHelper @Inject()(allSpokes: SpokeCreationService) extends Enumerable.Implicits {
 
   protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     val schemeName = userAnswers.get(SchemeNameId).getOrElse("")

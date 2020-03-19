@@ -34,7 +34,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
 
   import HsTaskListHelperRegistrationSpec._
 
-  private val mockAllSpokes = mock[AllSpokes]
+  private val mockAllSpokes = mock[SpokeCreationService]
   private val helper = new HsTaskListHelperRegistration(mockAllSpokes)
 
   "h1" must {

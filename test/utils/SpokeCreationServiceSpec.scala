@@ -31,14 +31,14 @@ import models.person.PersonName
 import models.register.{DeclarationDormant, SchemeType}
 import models.{CompanyDetails, EntitySpoke, Mode, NormalMode, UpdateMode, _}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import utils.hstasklisthelper.AllSpokes
+import utils.hstasklisthelper.SpokeCreationService
 import viewmodels.Message
 
-class AllSpokesSpec extends WordSpec with MustMatchers with OptionValues with DataCompletionHelper {
+class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionValues with DataCompletionHelper {
 
-  import AllSpokesSpec._
+  import SpokeCreationServiceSpec._
 
-  val allSpokes = new AllSpokes()
+  val allSpokes = new SpokeCreationService()
 
   "getBeforeYouStartSpoke" when {
     "in subscription" must {
@@ -641,7 +641,7 @@ class AllSpokesSpec extends WordSpec with MustMatchers with OptionValues with Da
 }
 
 
-object AllSpokesSpec extends OptionValues with DataCompletionHelper {
+object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
 
   private val srn = Some("S123")
   private val schemeName = "scheme"
