@@ -40,7 +40,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
   import SpokeCreationServiceSpec._
 
-  val allSpokes = new SpokeCreationService()
+  val spokeCreationService = new SpokeCreationService()
 
     "getBeforeYouStartSpoke" when {
       "in subscription" must {
@@ -49,7 +49,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
             controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
 
-          val result = allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -59,7 +59,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
             controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url), Some(true)))
 
-          val result = allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -70,7 +70,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__scheme_info_link_text", schemeName),
             controllers.routes.SchemeNameController.onPageLoad(UpdateMode).url), None))
 
-          val result = allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -80,7 +80,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__scheme_info_link_text", schemeName),
             controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(UpdateMode, srn).url), None))
 
-          val result = allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -99,7 +99,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -115,7 +115,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), Some(false))
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -134,7 +134,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url), Some(true))
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -149,7 +149,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -163,7 +163,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None)
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -180,7 +180,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
               controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url), None)
           )
 
-          val result = allSpokes.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -192,7 +192,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details_wk"),
           controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None))
 
-        val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -201,7 +201,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
           controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), Some(false)))
 
-        val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -210,7 +210,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
           controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), Some(true)))
 
-        val result = allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -221,7 +221,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estCompanyAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -233,7 +233,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             .establishersCompanyDirectorNino(0, 0, ReferenceValue("AB100100A"))
           val expectedSpoke = estCompanyInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -242,7 +242,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             establisherCompanyDormant(0, DeclarationDormant.Yes)
           val expectedSpoke = estCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -252,7 +252,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estCompanyAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -265,7 +265,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = estCompanyInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -273,7 +273,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstCompany(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -281,7 +281,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstCompany(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
           val expectedSpoke = estCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -293,7 +293,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estPartnershipAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -305,7 +305,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             .establishersPartnershipPartnerNino(0, 0, ReferenceValue("AB100100A"))
           val expectedSpoke = estPartnershipInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -313,7 +313,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
           val expectedSpoke = estPartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -323,7 +323,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estPartnershipAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -336,7 +336,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = estPartnershipInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -344,7 +344,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estPartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -352,7 +352,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
           val expectedSpoke = estPartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -364,7 +364,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estIndividualAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -376,7 +376,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             establishersIndividualEmail(index = 0, email = "s@s.com")
           val expectedSpoke = estIndividualInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -384,7 +384,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstIndividual(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
           val expectedSpoke = estIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -394,7 +394,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estIndividualAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -407,7 +407,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = estIndividualInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -415,7 +415,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstIndividual(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -423,7 +423,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = false)
           val expectedSpoke = estIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -435,7 +435,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeCompanyAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -448,7 +448,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             trusteeCompanyEmail(index = 0, email = "s@s.com")
           val expectedSpoke = trusteeCompanyInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -456,7 +456,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
           val expectedSpoke = trusteeCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -466,7 +466,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeCompanyAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -479,7 +479,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = trusteeCompanyInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -487,7 +487,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -495,7 +495,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
           val expectedSpoke = trusteeCompanyCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -507,7 +507,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteePartnershipAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -518,7 +518,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             trusteePartnershipEmail(index = 0, email = "s@s.com")
           val expectedSpoke = trusteePartnershipInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -526,7 +526,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
           val expectedSpoke = trusteePartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -536,7 +536,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteePartnershipAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -548,7 +548,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = trusteePartnershipInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -556,7 +556,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteePartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -564,7 +564,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
           val expectedSpoke = trusteePartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -576,7 +576,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeIndividualAddSpokes(NormalMode, None)
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -588,7 +588,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             trusteeEmail(index = 0, email = "s@s.com")
           val expectedSpoke = trusteeIndividualInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -596,7 +596,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
           val expectedSpoke = trusteeIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -606,7 +606,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeIndividualAddSpokes(UpdateMode, srn)
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -619,7 +619,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
           val expectedSpoke = trusteeIndividualInProgressSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -627,7 +627,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = true)
           val expectedSpoke = trusteeIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
 
@@ -635,7 +635,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(index = 0, flag = false)
           val expectedSpoke = trusteeIndividualCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
 
-          val result = allSpokes.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
         }
       }
@@ -643,7 +643,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
 
   "getAddEstablisherHeaderSpokes" must {
     "return no spokes when no establishers and view only" in {
-      val result = allSpokes.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
       result mustBe Nil
     }
 
@@ -654,7 +654,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, srn).url), None)
         )
 
-      val result = allSpokes.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -669,7 +669,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn).url), None)
         )
 
-      val result = allSpokes.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -686,7 +686,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           None
         ))
 
-      val result = allSpokes.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
       result mustBe expectedSpoke
     }
   }
@@ -702,7 +702,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), None)
         )
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -717,7 +717,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), None)
         )
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -732,7 +732,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           None
         ))
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -748,7 +748,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           None
         ))
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -761,7 +761,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           None
         ))
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -776,12 +776,12 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           None
         ))
 
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
     "return no spokes when no trustees and view only" in {
-      val result = allSpokes.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
       result mustBe Nil
     }
 

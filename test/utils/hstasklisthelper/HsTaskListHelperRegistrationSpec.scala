@@ -32,8 +32,8 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
 
   import HsTaskListHelperRegistrationSpec._
 
-  private val mockAllSpokes = mock[SpokeCreationService]
-  private val helper = new HsTaskListHelperRegistration(mockAllSpokes)
+  private val mockSpokeCreationService = mock[SpokeCreationService]
+  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService)
 
   "h1" must {
     "display appropriate heading" in {
@@ -47,7 +47,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
   "beforeYouStartSection " must {
     "return correct the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
 
       helper.beforeYouStartSection(userAnswers) mustBe expectedBeforeYouStartSection
@@ -58,7 +58,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
     "return the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
       val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
       helper.aboutSection(userAnswers, NormalMode, None) mustBe expectedAboutSection
     }
@@ -75,7 +75,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
       val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(false).asOpt.value
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(wkAddLinkText, wkWynPage), None))
       val expectedWkSection = SchemeDetailsTaskListEntitySection(None, expectedSpoke, None)
-      when(mockAllSpokes.getWorkingKnowledgeSpoke(any(), any(), any(), any(), any())).thenReturn(expectedSpoke)
+      when(mockSpokeCreationService.getWorkingKnowledgeSpoke(any(), any(), any(), any(), any())).thenReturn(expectedSpoke)
 
       helper.workingKnowledgeSection(userAnswers).value mustBe expectedWkSection
     }
@@ -86,7 +86,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
       val userAnswers = userAnswersWithSchemeName
       val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(None,
         testEstablishersEntitySpoke, None)
-      when(mockAllSpokes.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
     }
@@ -100,7 +100,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
       val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
         testTrusteeEntitySpoke, None)
-      when(mockAllSpokes.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
     }
@@ -115,9 +115,9 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         establisherPartnershipEntity(index = 4, isDeleted = true).
         establisherPartnershipEntity(index = 5)
 
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.establishersSection(userAnswers, NormalMode, None)
 
@@ -136,9 +136,9 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         trusteePartnershipEntity(index = 4).
         trusteePartnershipEntity(index = 5, isDeleted = true)
 
-      when(mockAllSpokes.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.trusteesSection(userAnswers, NormalMode, None)
 
@@ -158,7 +158,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
           "messages__schemeTaskList__sectionDeclaration_incomplete"
         )
       val userAnswers = answersDataAllComplete()
-      when(mockAllSpokes.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
+      when(mockSpokeCreationService.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
       helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
     }
@@ -182,11 +182,11 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         .set(HaveAnyTrusteesId)(false).asOpt.value
         .set(DeclarationDutiesId)(value = true).asOpt.value
 
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-      when(mockAllSpokes.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
       val result = helper.taskList(userAnswers, None, None)
 

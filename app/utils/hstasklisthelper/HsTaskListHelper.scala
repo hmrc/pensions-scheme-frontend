@@ -28,13 +28,13 @@ import models._
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper @Inject()(allSpokes: SpokeCreationService) extends Enumerable.Implicits {
+abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationService) extends Enumerable.Implicits {
 
   protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskListEntitySection(
       None,
-      allSpokes.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
+      spokeCreationService.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
       Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
     )
   }
@@ -47,21 +47,21 @@ abstract class HsTaskListHelper @Inject()(allSpokes: SpokeCreationService) exten
           case EstablisherCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
               Some(establisher.name))
             )
 
           case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
               Some(establisher.name))
             )
 
           case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
               Some(establisher.name))
             )
           case _ =>
@@ -80,21 +80,21 @@ abstract class HsTaskListHelper @Inject()(allSpokes: SpokeCreationService) exten
           case TrusteeCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              spokeCreationService.getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteeNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteePartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              allSpokes.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 

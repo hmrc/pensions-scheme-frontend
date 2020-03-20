@@ -23,13 +23,13 @@ import models.{Mode, NormalMode}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration @Inject()(spokeService: SpokeCreationService) extends HsTaskListHelper(spokeService) {
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      spokeService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+      spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
       Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
@@ -37,11 +37,11 @@ class HsTaskListHelperRegistration @Inject()(spokeService: SpokeCreationService)
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
                                           mode: Mode,
                                           srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
-    Some(SchemeDetailsTaskListEntitySection(None, spokeService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly = false), None))
+    Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly = false), None))
   }
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
-    spokeService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
+    spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes =>  Some(
         SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
@@ -53,7 +53,7 @@ class HsTaskListHelperRegistration @Inject()(spokeService: SpokeCreationService)
       case Some(false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None,
-            spokeService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+            spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
             None
           )
         )
@@ -63,7 +63,7 @@ class HsTaskListHelperRegistration @Inject()(spokeService: SpokeCreationService)
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
     val declarationSpoke = if (declarationEnabled(userAnswers)) {
-      spokeService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad())
+      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad())
     } else {
       Nil
     }

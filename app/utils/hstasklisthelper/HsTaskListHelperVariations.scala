@@ -22,11 +22,11 @@ import models._
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperVariations @Inject() (allSpokes: SpokeCreationService) extends HsTaskListHelper(allSpokes) {
+class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationService) extends HsTaskListHelper(spokeCreationService) {
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      allSpokes.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, userAnswers.get(SchemeNameId).getOrElse(""), None),
+      spokeCreationService.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, userAnswers.get(SchemeNameId).getOrElse(""), None),
       Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
   }
@@ -38,7 +38,7 @@ class HsTaskListHelperVariations @Inject() (allSpokes: SpokeCreationService) ext
         SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionEstablishers_no_establishers"))
       )
     } else {
-      allSpokes.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
+      spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
         case Nil =>
           None
         case establisherHeaderSpokes =>
@@ -54,7 +54,7 @@ class HsTaskListHelperVariations @Inject() (allSpokes: SpokeCreationService) ext
         SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
       )
     } else {
-      allSpokes.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
+      spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
         case Nil =>
           None
         case trusteeHeaderSpokes =>
@@ -75,7 +75,7 @@ class HsTaskListHelperVariations @Inject() (allSpokes: SpokeCreationService) ext
       }
 
       val spoke = if (userAnswers.isUserAnswerUpdated) {
-        allSpokes.getDeclarationSpoke(call)
+        spokeCreationService.getDeclarationSpoke(call)
       } else {
         Nil
       }
