@@ -67,14 +67,12 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
     if (viewOnly) {
       None
     } else {
-
-      val call = if (userAnswers.areVariationChangesCompleted) {
-        controllers.routes.VariationDeclarationController.onPageLoad(srn)
-      } else {
-        controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
-      }
-
       val spoke = if (userAnswers.isUserAnswerUpdated) {
+        val call = if (userAnswers.areVariationChangesCompleted) {
+          controllers.routes.VariationDeclarationController.onPageLoad(srn)
+        } else {
+          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
+        }
         spokeCreationService.getDeclarationSpoke(call)
       } else {
         Nil
