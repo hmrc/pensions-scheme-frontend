@@ -23,6 +23,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import models.Index.indexToInt
 import models._
 import models.register.Entity
+import play.api.mvc.Call
 import utils.hstasklisthelper.spokes._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.Message
@@ -142,8 +143,8 @@ class SpokeCreationService extends Enumerable.Implicits {
         )
       case (false, false) if srn.isDefined =>
         Seq(EntitySpoke(
-            TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-              controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
         )
       case (false, false) =>
         Seq(EntitySpoke(
@@ -180,23 +181,13 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getVariationDeclarationSpoke(answers: UserAnswers, srn: Option[String]): Seq[EntitySpoke] = {
-    if (answers.isUserAnswerUpdated) {
-      Seq(EntitySpoke(TaskListLink(
-        Message("messages__schemeTaskList__declaration_link"),
-        if (answers.areVariationChangesCompleted)
-          controllers.routes.VariationDeclarationController.onPageLoad(srn).url
-        else
-          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
-      ), None))
-    } else {
-      Nil
-    }
-  }
-
-  def getRegistrationDeclarationSpoke: Seq[EntitySpoke] = {
-    Seq(EntitySpoke(TaskListLink(
-      Message("messages__schemeTaskList__declaration_link"),
-      controllers.register.routes.DeclarationController.onPageLoad().url)))
+  def getDeclarationSpoke(call: Call): Seq[EntitySpoke] = {
+    Seq(
+      EntitySpoke(
+        TaskListLink(
+          Message("messages__schemeTaskList__declaration_link"),
+          call.url)
+      )
+    )
   }
 }

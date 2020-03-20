@@ -62,7 +62,11 @@ class HsTaskListHelperRegistration @Inject()(spokeService: SpokeCreationService)
     }
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
-    val declarationSpoke = if (declarationEnabled(userAnswers)) spokeService.getRegistrationDeclarationSpoke else Nil
+    val declarationSpoke = if (declarationEnabled(userAnswers)) {
+      spokeService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad())
+    } else {
+      Nil
+    }
     Some(
       SchemeDetailsTaskListEntitySection(None,
         declarationSpoke,

@@ -67,8 +67,20 @@ class HsTaskListHelperVariations @Inject() (allSpokes: SpokeCreationService) ext
     if (viewOnly) {
       None
     } else {
+
+      val call = if (userAnswers.areVariationChangesCompleted) {
+        controllers.routes.VariationDeclarationController.onPageLoad(srn)
+      } else {
+        controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
+      }
+
+      val spoke = if (userAnswers.isUserAnswerUpdated) {
+        allSpokes.getDeclarationSpoke(call)
+      } else {
+        Nil
+      }
       Some(SchemeDetailsTaskListEntitySection(None,
-        allSpokes.getVariationDeclarationSpoke(userAnswers, srn),
+        spoke,
         Some("messages__schemeTaskList__sectionDeclaration_header"),
         "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2")

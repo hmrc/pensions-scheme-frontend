@@ -160,7 +160,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
 
   "declaration section" must {
 
-    "be present when NOT view only" in {
+    "be present with spoke when NOT view only and establisher or trustee changed" in {
       val declarationSectionWithLink =
       SchemeDetailsTaskListEntitySection(None,
         testDeclarationEntitySpoke,
@@ -169,7 +169,21 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
 
       val userAnswers = answersDataAllComplete()
-      when(mockAllSpokes.getVariationDeclarationSpoke(any(), any())).thenReturn(testDeclarationEntitySpoke)
+          .set(EstablishersOrTrusteesChangedId)(true).asOpt.get
+      when(mockAllSpokes.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
+
+      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe declarationSectionWithLink
+    }
+
+    "be present with no spoke when NOT view only and nothing changed" in {
+      val declarationSectionWithLink =
+        SchemeDetailsTaskListEntitySection(None,
+          Nil,
+          Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
+
+      val userAnswers = answersDataAllComplete()
 
       helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe declarationSectionWithLink
     }
@@ -198,7 +212,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
       when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
       when(mockAllSpokes.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockAllSpokes.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-      when(mockAllSpokes.getVariationDeclarationSpoke(any(), any())).thenReturn(testDeclarationEntitySpoke)
+      when(mockAllSpokes.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
       val result = helper.taskList(userAnswers, Some(false), srn)
 

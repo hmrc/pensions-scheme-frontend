@@ -158,7 +158,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
           "messages__schemeTaskList__sectionDeclaration_incomplete"
         )
       val userAnswers = answersDataAllComplete()
-      when(mockAllSpokes.getRegistrationDeclarationSpoke).thenReturn(testDeclarationEntitySpoke)
+      when(mockAllSpokes.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
       helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
     }
