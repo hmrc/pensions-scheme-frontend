@@ -651,10 +651,10 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, srn).url), None)
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(UpdateMode, 0, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -666,10 +666,10 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn).url), None)
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(UpdateMode, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -699,10 +699,10 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       val expectedSpoke =
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), None)
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -714,10 +714,10 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       val expectedSpoke =
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), None)
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -757,11 +757,11 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, srn).url),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
           None
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -772,11 +772,11 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, srn).url),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
           None
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
