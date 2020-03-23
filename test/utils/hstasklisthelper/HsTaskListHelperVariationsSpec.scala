@@ -34,8 +34,8 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
 
   import HsTaskListHelperVariationsSpec._
 
-  private val mockAllSpokes = mock[AllSpokes]
-  private val helper = new HsTaskListHelperVariations(mockAllSpokes)
+  private val mockSpokeCreationService = mock[SpokeCreationService]
+  private val helper = new HsTaskListHelperVariations(mockSpokeCreationService)
 
   "h1" must {
     "have the name of the scheme" in {
@@ -48,7 +48,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
   "beforeYouStartSection " must {
     "return the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
 
       val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
       helper.beforeYouStartSection(userAnswers, srn) mustBe expectedBeforeYouStartSection
@@ -60,7 +60,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
       val userAnswers = userAnswersWithSchemeName
 
       val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
       helper.aboutSection(userAnswers, UpdateMode, srn) mustBe expectedAboutSection
     }
@@ -75,35 +75,23 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
       helper.addEstablisherHeader(userAnswers, UpdateMode, srn, viewOnly = true).value mustBe expectedAddEstablisherHeader
     }
 
-    "have a link to establishers kind page when no establishers are added and viewOnly is false" in {
+    "have a link to establishers kind page when no establishers are added and viewOnly is false and there are spokes" in {
       val userAnswers = userAnswersWithSchemeName
-      val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(None, Seq(
-        EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-          controllers.register.establishers.routes.EstablisherKindController
-            .onPageLoad(UpdateMode, userAnswers.allEstablishers(UpdateMode).size, srn).url), None)), None)
+      val expectedAddEstablisherHeader =  SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       helper.addEstablisherHeader(userAnswers, UpdateMode, srn, viewOnly = false).value mustBe expectedAddEstablisherHeader
     }
 
-    "have a link to add establishers page when establishers are added and viewOnly is false" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
+    "return None when no establishers are added and viewOnly is false and there are no spokes" in {
+      val userAnswers = userAnswersWithSchemeName
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(Seq.empty)
 
-      val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(None, Seq(
-        EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(UpdateMode, srn).url, None), None)), None)
-
-      helper.addEstablisherHeader(userAnswers, UpdateMode, srn, viewOnly = false).value mustBe expectedAddEstablisherHeader
-    }
-
-    "have no header section when establishers are added and viewOnly is true" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
-
-      helper.addEstablisherHeader(userAnswers, UpdateMode, srn, viewOnly = true) mustBe None
+      helper.addEstablisherHeader(userAnswers, UpdateMode, srn, viewOnly = false) mustBe None
     }
   }
 
   "addTrusteeHeader " must {
-
     "have no link when no trustees are added and viewOnly is true" in {
       val userAnswers = userAnswersWithSchemeName
       val expectedAddTrusteeHeader = SchemeDetailsTaskListEntitySection(None, Nil, None,
@@ -112,30 +100,20 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
       helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = true).value mustBe expectedAddTrusteeHeader
     }
 
-    "have a link to trustee kind page when no trustees are added and viewOnly is false" in {
+    "have a link to trustees kind page when no trustees are added and viewOnly is false and there are spokes" in {
       val userAnswers = userAnswersWithSchemeName
-      val expectedAddTrusteeHeader = SchemeDetailsTaskListEntitySection(None, Seq(
-        EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
-          controllers.register.trustees.routes.TrusteeKindController
-            .onPageLoad(UpdateMode, userAnswers.allTrustees.size, srn).url), None)), None)
+      val expectedAddTrusteeHeader =  SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
       helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = false).value mustBe expectedAddTrusteeHeader
     }
 
-    "have a link to add trustees page when trustees are added and viewOnly is false" in {
-      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
+    "return None when no trustees are added and viewOnly is false and there are no spokes" in {
+      val userAnswers = userAnswersWithSchemeName
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Seq.empty)
 
-      val expectedAddTrusteeHeader = SchemeDetailsTaskListEntitySection(None, Seq(
-        EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url, None), None)), None)
-
-      helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = false).value mustBe expectedAddTrusteeHeader
-    }
-
-    "have empty header section when establishers are added and viewOnly is true" in {
-      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
-
-      helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = true).value mustBe SchemeDetailsTaskListEntitySection(None, Nil, None)
+      helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = false) mustBe
+        Some(SchemeDetailsTaskListEntitySection(None, Nil,None))
     }
   }
 
@@ -148,9 +126,9 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
         establisherPartnershipEntity(index = 4, isDeleted = true).
         establisherPartnershipEntity(index = 5)
 
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.establishersSection(userAnswers, UpdateMode, srn)
 
@@ -169,9 +147,9 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
         trusteePartnershipEntity(index = 4).
         trusteePartnershipEntity(index = 5, isDeleted = true)
 
-      when(mockAllSpokes.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.trusteesSection(userAnswers, UpdateMode, srn)
 
@@ -183,43 +161,44 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
 
   "declaration section" must {
 
-    "not be there when viewOnly is true" in {
-      val userAnswers = userAnswersWithSchemeName
-
-      helper.declarationSection(userAnswers, srn, viewOnly = true) mustBe None
-    }
-
-    "have link to still need details page when user answers is updated but not completed and viewOnly is false" in {
-      val userAnswers = userAnswersWithSchemeName.set(InsuranceDetailsChangedId)(true).asOpt.value
-
-      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__declaration_link"),
-          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
-        ), None)),
+    "be present with spoke when NOT view only and establisher or trustee changed" in {
+      val declarationSectionWithLink =
+      SchemeDetailsTaskListEntitySection(None,
+        testDeclarationEntitySpoke,
         Some("messages__schemeTaskList__sectionDeclaration_header"),
         "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
+
+      val userAnswers = answersDataAllComplete()
+          .set(EstablishersOrTrusteesChangedId)(true).asOpt.get
+      when(mockSpokeCreationService.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
+
+      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe declarationSectionWithLink
     }
 
-    "have link to variation declaration page when user answers is updated, completed and viewOnly is false" in {
-      val userAnswers = answersDataAllComplete().set(InsuranceDetailsChangedId)(true).asOpt.value
+    "be present with no spoke when NOT view only and nothing changed" in {
+      val declarationSectionWithLink =
+        SchemeDetailsTaskListEntitySection(None,
+          Nil,
+          Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
 
-      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__declaration_link"),
-          controllers.routes.VariationDeclarationController.onPageLoad(srn).url
-        ), None)),
-        Some("messages__schemeTaskList__sectionDeclaration_header"),
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
-    }
-
-    "not have link when user answers is not updated and viewOnly is false" in {
       val userAnswers = answersDataAllComplete()
 
-      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe SchemeDetailsTaskListEntitySection(None,
-        Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
+      helper.declarationSection(userAnswers, srn, viewOnly = false).value mustBe declarationSectionWithLink
+    }
+
+    "not be present when view only" in {
+      val declarationSectionWithLink =
+        SchemeDetailsTaskListEntitySection(None,
+          Seq.empty,
+          Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
+      val userAnswers = answersDataAllComplete(isCompleteBeforeStart = false)
+
+      helper.declarationSection(userAnswers, srn, viewOnly = true) mustBe None
     }
   }
 
@@ -229,9 +208,12 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
         .set(HaveAnyTrusteesId)(false).asOpt.value
         .set(InsuranceDetailsChangedId)(true).asOpt.value
 
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+      when(mockSpokeCreationService.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
       val result = helper.taskList(userAnswers, Some(false), srn)
 
@@ -240,18 +222,12 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
         beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
         about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
         workingKnowledge = None,
-        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(
-          Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(UpdateMode, srn).url))), None)),
+        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)),
         establishers = Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))),
-        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(
-          Message("messages__schemeTaskList__sectionTrustees_add_link"), controllers.register.trustees.routes.TrusteeKindController
-              .onPageLoad(UpdateMode, userAnswers.allTrustees.size, srn).url), None)), None)),
+        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)),
         trustees = Nil,
         declaration = Some(SchemeDetailsTaskListEntitySection(None,
-          Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__declaration_link"),
-            controllers.register.routes.StillNeedDetailsController.onPageLoad(srn).url
-          ), None)),
+          testDeclarationEntitySpoke,
           Some("messages__schemeTaskList__sectionDeclaration_header"),
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
           "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))
@@ -280,6 +256,13 @@ object HsTaskListHelperVariationsSpec extends SpecBase with MustMatchers with Op
   private val testIndividualEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test individual link"),
     controllers.routes.SessionExpiredController.onPageLoad().url), None))
   private val testPartnershipEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+
+  private val testEstablishersEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test establisher link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testTrusteeEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test trustee link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testDeclarationEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test declaration link"),
     controllers.routes.SessionExpiredController.onPageLoad().url), None))
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,

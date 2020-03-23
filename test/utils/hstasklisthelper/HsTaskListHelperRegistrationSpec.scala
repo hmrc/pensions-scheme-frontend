@@ -18,11 +18,9 @@ package utils.hstasklisthelper
 
 import helpers.DataCompletionHelper
 import identifiers._
-import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.person.PersonName
-import models.register.SchemeType
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.{MustMatchers, WordSpec}
@@ -34,8 +32,8 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
 
   import HsTaskListHelperRegistrationSpec._
 
-  private val mockAllSpokes = mock[AllSpokes]
-  private val helper = new HsTaskListHelperRegistration(mockAllSpokes)
+  private val mockSpokeCreationService = mock[SpokeCreationService]
+  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService)
 
   "h1" must {
     "display appropriate heading" in {
@@ -49,7 +47,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
   "beforeYouStartSection " must {
     "return correct the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
 
       helper.beforeYouStartSection(userAnswers) mustBe expectedBeforeYouStartSection
@@ -60,14 +58,13 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
     "return the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
       val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
       helper.aboutSection(userAnswers, NormalMode, None) mustBe expectedAboutSection
     }
   }
 
   "workingKnowledgeSection " must {
-
     "be empty when do you have working knowledge is true " in {
       val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(true).asOpt.value
 
@@ -78,7 +75,7 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
       val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(false).asOpt.value
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(wkAddLinkText, wkWynPage), None))
       val expectedWkSection = SchemeDetailsTaskListEntitySection(None, expectedSpoke, None)
-      when(mockAllSpokes.getWorkingKnowledgeSpoke(any(), any(), any(), any(), any())).thenReturn(expectedSpoke)
+      when(mockSpokeCreationService.getWorkingKnowledgeSpoke(any(), any(), any(), any(), any())).thenReturn(expectedSpoke)
 
       helper.workingKnowledgeSection(userAnswers).value mustBe expectedWkSection
     }
@@ -88,18 +85,8 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
     "have a link to establishers kind page when no establishers are added " in {
       val userAnswers = userAnswersWithSchemeName
       val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-          controllers.register.establishers.routes.EstablisherKindController
-            .onPageLoad(NormalMode, userAnswers.allEstablishers(NormalMode).size, None).url))), None)
-
-      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
-    }
-
-    "have a link to add establishers page when establishers are added" in {
-      val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
-      val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(
-        None, Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_change_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url))), None)
+        testEstablishersEntitySpoke, None)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
     }
@@ -112,48 +99,10 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
         .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
       val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url))), None)
+        testTrusteeEntitySpoke, None)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
       helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
-    }
-
-    "have change link to go to add trustees page when trustees is mandatory(have any trustees is true) and there are one or more trustees " in {
-      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
-        .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
-      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url))), None)
-
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
-    }
-
-    "have add link to go to trustee kind page when when trustees are not mandatory(have any trustees question not asked)" +
-      " and there are no trustees " in {
-      val userAnswers = userAnswersWithSchemeName
-      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url))), None)
-
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
-    }
-
-    "have add link to go to trustee kind page when trustees is mandatory(have any trustees is true) and there are no trustees " in {
-      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(value = true).asOpt.value
-        .set(SchemeTypeId)(SchemeType.BodyCorporate).asOpt.value
-
-      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
-        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url))), None)
-
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
-    }
-
-    "not be displayed when do you have any trustees is false " in {
-      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(false).asOpt.value
-
-      helper.addTrusteeHeader(userAnswers, NormalMode, None) mustBe None
     }
   }
 
@@ -166,9 +115,9 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         establisherPartnershipEntity(index = 4, isDeleted = true).
         establisherPartnershipEntity(index = 5)
 
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.establishersSection(userAnswers, NormalMode, None)
 
@@ -187,9 +136,9 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         trusteePartnershipEntity(index = 4).
         trusteePartnershipEntity(index = 5, isDeleted = true)
 
-      when(mockAllSpokes.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockAllSpokes.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
-      when(mockAllSpokes.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
       val result = helper.trusteesSection(userAnswers, NormalMode, None)
 
@@ -201,30 +150,29 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
 
   "declaration section" must {
 
-    "have a link when declaration is enabled with trustees completed" in {
+    "be present when declaration is enabled with trustees completed" in {
+      val declarationSectionWithLink =
+        SchemeDetailsTaskListEntitySection(None,
+          testDeclarationEntitySpoke,
+          Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete"
+        )
       val userAnswers = answersDataAllComplete()
+      when(mockSpokeCreationService.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
       helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
     }
 
-    "have link when all the seqEstablishers are completed without trustees and do you have trustees is false " in {
-      val userAnswers = setCompleteBeforeYouStart(isComplete = true,
-        setCompleteMembers(isComplete = true,
-          setCompleteBank(isComplete = true,
-            setCompleteBenefits(isComplete = true,
-              setCompleteEstIndividual(index = 0, setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName)))))).
-        haveAnyTrustees(haveTrustees = false)
+    "not be present when declaration is not enabled with trustees completed" in {
+      val declarationSectionWithLink =
+        SchemeDetailsTaskListEntitySection(None,
+          Seq.empty,
+          Some("messages__schemeTaskList__sectionDeclaration_header"),
+          "messages__schemeTaskList__sectionDeclaration_incomplete"
+        )
+      val userAnswers = answersDataAllComplete(isCompleteBeforeStart = false)
 
       helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
-    }
-
-    "not have link when about bank details section not completed" in {
-      val userAnswers = answersDataAllComplete(isCompleteAboutBank = false)
-
-      helper.declarationSection(userAnswers).value mustBe SchemeDetailsTaskListEntitySection(None, Nil,
-        Some("messages__schemeTaskList__sectionDeclaration_header"),
-        "messages__schemeTaskList__sectionDeclaration_incomplete"
-      )
     }
   }
 
@@ -234,9 +182,11 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         .set(HaveAnyTrusteesId)(false).asOpt.value
         .set(DeclarationDutiesId)(value = true).asOpt.value
 
-      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
       val result = helper.taskList(userAnswers, None, None)
 
@@ -245,14 +195,13 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
         about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
         workingKnowledge = None,
-        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(
-          Message("messages__schemeTaskList__sectionEstablishers_change_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url))), None)
+        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
         ),
         establishers = Seq(
           SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
         ),
-        addTrusteeHeader = None,
+        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+        ),
         trustees = Nil,
         declaration = Some(
           SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
@@ -286,13 +235,13 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
     controllers.routes.SessionExpiredController.onPageLoad().url), None))
   private val testPartnershipEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
     controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testEstablishersEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test establisher link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testTrusteeEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test trustee link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testDeclarationEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test declaration link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
 
-  private val declarationSectionWithLink = SchemeDetailsTaskListEntitySection(None,
-    Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__declaration_link"),
-      controllers.register.routes.DeclarationController.onPageLoad().url))),
-    Some("messages__schemeTaskList__sectionDeclaration_header"),
-    "messages__schemeTaskList__sectionDeclaration_incomplete"
-  )
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,

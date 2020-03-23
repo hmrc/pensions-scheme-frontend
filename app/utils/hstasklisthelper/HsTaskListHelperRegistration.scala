@@ -19,17 +19,17 @@ package utils.hstasklisthelper
 import com.google.inject.Inject
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.{EntitySpoke, Mode, NormalMode, TaskListLink}
+import models.{Mode, NormalMode}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTaskListHelper(allSpokes) {
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+      spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
       Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
@@ -37,58 +37,14 @@ class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTas
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
                                           mode: Mode,
                                           srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
-    if (userAnswers.allEstablishersAfterDelete(mode).isEmpty) {
-      Some(
-        SchemeDetailsTaskListEntitySection(None,
-          Seq(EntitySpoke(
-            TaskListLink(
-              Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-              controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers(mode).size, srn).url
-            ), None)), None
-        )
-      )
-    } else {
-      Some(
-        SchemeDetailsTaskListEntitySection(None,
-          Seq(EntitySpoke(
-            TaskListLink(
-              Message("messages__schemeTaskList__sectionEstablishers_change_link"),
-              controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
-            None
-          )),
-          None
-        )
-      )
-    }
+    Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly = false), None))
   }
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
-    (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
-      case (None | Some(true), false) =>
-        Some(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(
-              TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
-                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-              None
-            )),
-            None
-          )
-        )
-      case (None | Some(true), true) =>
-        Some(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(
-              TaskListLink(
-                Message("messages__schemeTaskList__sectionTrustees_add_link"),
-                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url),
-              None
-            )),
-            None
-          )
-        )
-      case _ =>
-        None
+    spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
+      case Nil => None
+      case trusteeHeaderSpokes => Some(
+        SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
     }
   }
 
@@ -97,7 +53,7 @@ class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTas
       case Some(false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None,
-            allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+            spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
             None
           )
         )
@@ -106,16 +62,14 @@ class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTas
     }
 
   private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
-    def declarationLink: Seq[EntitySpoke] =
-      if (declarationEnabled(userAnswers))
-        Seq(EntitySpoke(TaskListLink(
-          Message("messages__schemeTaskList__declaration_link"),
-          controllers.register.routes.DeclarationController.onPageLoad().url)))
-      else Nil
-
+    val declarationSpoke = if (declarationEnabled(userAnswers)) {
+      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad())
+    } else {
+      Nil
+    }
     Some(
       SchemeDetailsTaskListEntitySection(None,
-        declarationLink,
+        declarationSpoke,
         Some("messages__schemeTaskList__sectionDeclaration_header"),
         "messages__schemeTaskList__sectionDeclaration_incomplete"
       ))

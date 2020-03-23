@@ -17,15 +17,18 @@
 package utils.hstasklisthelper
 
 
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
 import models.Index.indexToInt
 import models._
 import models.register.Entity
+import play.api.mvc.Call
 import utils.hstasklisthelper.spokes._
 import utils.{Enumerable, UserAnswers}
+import viewmodels.Message
 
-class AllSpokes extends Enumerable.Implicits {
+class SpokeCreationService extends Enumerable.Implicits {
 
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,
@@ -126,6 +129,65 @@ class AllSpokes extends Enumerable.Implicits {
       createSpoke(answers, TrusteePartnershipDetails, mode, srn, name, index, Some(isTrusteeNew)),
       createSpoke(answers, TrusteePartnershipAddress, mode, srn, name, index, Some(isTrusteeNew)),
       createSpoke(answers, TrusteePartnershipContactDetails, mode, srn, name, index, Some(isTrusteeNew))
+    )
+  }
+
+  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+    (answers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
+      case (_, true) =>
+        Nil
+      case (true, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.allEstablishers(mode).size, srn).url), None)
+        )
+      case (false, false) if srn.isDefined =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+        )
+      case (false, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
+          None
+        ))
+    }
+  }
+
+  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+    (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
+      case (None | Some(true), false, false) if srn.isDefined =>
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
+        )
+      case (None | Some(true), false, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
+          None
+        ))
+      case (None | Some(true), true, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size, srn).url),
+          None
+        ))
+      case _ =>
+        Nil
+    }
+  }
+
+  def getDeclarationSpoke(call: Call): Seq[EntitySpoke] = {
+    Seq(
+      EntitySpoke(
+        TaskListLink(
+          Message("messages__schemeTaskList__declaration_link"),
+          call.url)
+      )
     )
   }
 }
