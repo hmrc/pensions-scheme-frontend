@@ -58,13 +58,14 @@ class DeclarationController @Inject()(
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                        val controllerComponents: MessagesControllerComponents,
+                                       hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        val view: declaration
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
                                         with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      if(HsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
+      if(hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
         showPage(Ok.apply)
       } else {
         Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))

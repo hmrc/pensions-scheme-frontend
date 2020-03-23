@@ -75,6 +75,19 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       ))
   }
 
+  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+    Seq(
+      Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
+      userAnswers.isMembersCompleted,
+      userAnswers.isBankDetailsCompleted,
+      userAnswers.isBenefitsAndInsuranceCompleted,
+      userAnswers.isWorkingKnowledgeCompleted,
+      Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
+      Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
+      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
+    ).forall(_.contains(true))
+  }
+
   override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList =
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
@@ -98,17 +111,4 @@ object HsTaskListHelperRegistration {
   private def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean =
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
       userAnswers.allEstablishersAfterDelete(mode).forall(_.isCompleted)
-
-  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-    Seq(
-      Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
-      userAnswers.isMembersCompleted,
-      userAnswers.isBankDetailsCompleted,
-      userAnswers.isBenefitsAndInsuranceCompleted,
-      userAnswers.isWorkingKnowledgeCompleted,
-      Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
-      Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
-      Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true))
-  }
 }

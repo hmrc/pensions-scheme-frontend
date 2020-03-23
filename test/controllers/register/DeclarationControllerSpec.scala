@@ -27,6 +27,7 @@ import models.NormalMode
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
@@ -36,18 +37,25 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures{
+class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   import DeclarationControllerSpec._
+
+  override protected def beforeEach(): Unit = {
+    reset(mockHsTaskListHelperRegistration)
+    when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
+  }
 
   "Declaration Controller" must {
 
     "redirect to task list page when user answers are not complete" in {
+      when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(false)
       val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -151,6 +159,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val psaId = PsaId("A0000000")
 
+  private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
+
   private val view = injector.instanceOf[declaration]
 
   private def uaWithBasicData: UserAnswers = setCompleteBeforeYouStart(isComplete = true,
@@ -176,6 +186,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       applicationCrypto,
       fakePensionAdminstratorConnector,
       stubMessagesControllerComponents(),
+      mockHsTaskListHelperRegistration,
       view
     )
 
