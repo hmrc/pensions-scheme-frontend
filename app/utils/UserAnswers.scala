@@ -369,7 +369,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   def hasCompanies(mode: Mode): Boolean = {
     allEstablishersAfterDelete(mode).exists {
       _.id match {
-        case EstablisherCompanyDetailsId(_) | PartnershipDetailsId(_) => true
+        case EstablisherCompanyDetailsId(_) => true
         case _ => false
       }
     }

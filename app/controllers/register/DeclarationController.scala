@@ -39,6 +39,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
+import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
@@ -57,13 +58,18 @@ class DeclarationController @Inject()(
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                        val controllerComponents: MessagesControllerComponents,
+                                       hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        val view: declaration
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
                                         with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      showPage(Ok.apply)
+      if(hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
+        showPage(Ok.apply)
+      } else {
+        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
+      }
   }
 
   def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
@@ -78,12 +84,12 @@ class DeclarationController @Inject()(
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]) = {
-    val isCompany = request.userAnswers.hasCompanies(NormalMode)
+  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
-    val readyForRender = if (isCompany) {
+    val readyForRender = if (isEstCompany) {
       dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
     } else {
       Future.successful(())
@@ -93,7 +99,7 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            view(isCompany, isDormant = isDeclarationDormant,
+            view(isEstCompany, isDormant = isDeclarationDormant,
               request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName, href)
           )
         )

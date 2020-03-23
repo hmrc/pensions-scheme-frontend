@@ -20,16 +20,14 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.SchemeTypeId
+import helpers.DataCompletionHelper
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.DeclarationDormantId
-import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.register.establishers.individual.EstablisherNameId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.person.PersonName
+import models.NormalMode
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import models.{CompanyDetails, PartnershipDetails}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
@@ -39,21 +37,35 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
+class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   import DeclarationControllerSpec._
 
+  override protected def beforeEach(): Unit = {
+    reset(mockHsTaskListHelperRegistration)
+    when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
+  }
+
   "Declaration Controller" must {
+
+    "redirect to task list page when user answers are not complete" in {
+      when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(false)
+      val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
+    }
 
     "return OK and don't save the DeclarationDormant " when {
 
       "the establisher is an individual" in {
-        val result = controller(individual).onPageLoad()(fakeRequest)
+        val result = controller(individualEst).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
@@ -64,44 +76,26 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     "return OK, the correct view and save the DeclarationDormant" when {
 
       "the establisher is a dormant company" in {
-        val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
+        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
       }
 
-      "the establisher is non dormant company and partnership estabslihsre" in {
-        val result = controller(nonDormantCompanyAndPartnership).onPageLoad()(fakeRequest)
+      "the establisher is non dormant company" in {
+        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
-
-      "dormant company establisher and non dormant partnership" in {
-        val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
-      }
     }
 
     "return OK and the correct view " when {
-      "master trust" in {
+      "master trust and all the answers is complete" in {
 
-        val data = new FakeDataRetrievalAction(Some(UserAnswers()
-          .set(identifiers.DeclarationDutiesId)(false)
-          .asOpt
-          .value
-          .set(SchemeTypeId)(SchemeType.MasterTrust)
-          .asOpt
-          .value
-          .json
-        ))
-
-        val result = controller(data).onPageLoad()(fakeRequest)
+        val result = controller(dataWithMasterTrust).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
@@ -109,7 +103,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     }
 
     "redirect to the next page on clicking agree and continue" in {
-      val result = controller(nonDormantCompanyAndPartnership).onClickAgree()(fakeRequest)
+      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -157,7 +151,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
 }
 
-object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
+object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new DeclarationFormProvider()
@@ -165,7 +159,16 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val psaId = PsaId("A0000000")
 
+  private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
+
   private val view = injector.instanceOf[declaration]
+
+  private def uaWithBasicData: UserAnswers = setCompleteBeforeYouStart(isComplete = true,
+    setCompleteMembers(isComplete = true,
+      setCompleteBank(isComplete = true,
+        setCompleteBenefits(isComplete = true,
+          setCompleteEstIndividual(0, UserAnswers())))))
+    .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector
@@ -183,6 +186,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       applicationCrypto,
       fakePensionAdminstratorConnector,
       stubMessagesControllerComponents(),
+      mockHsTaskListHelperRegistration,
       view
     )
 
@@ -193,90 +197,39 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       isDormant,
       showMasterTrustDeclaration,
       hasWorkingKnowledge,
-      None,
+      Some("Test Scheme"),
       href
     )(fakeRequest, messages).toString
 
-  private val individual =
-    UserAnswers()
-      .individualEstablisher()
+  private def individualEst: DataRetrievalAction = {
+    setCompleteWorkingKnowledge(isComplete = true, uaWithBasicData)
       .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value
-      .asDataRetrievalAction()
+      .dataRetrievalAction
+  }
+
+  private def dataWithMasterTrust: DataRetrievalAction = {
+    setCompleteWorkingKnowledge(isComplete = true, uaWithBasicData)
+      .set(identifiers.DeclarationDutiesId)(false).asOpt
+      .value.schemeType(SchemeType.MasterTrust).set(HaveAnyTrusteesId)(false).asOpt.value
+      .dataRetrievalAction
+  }
 
   private val nonDormantCompany =
-    UserAnswers()
-      .companyEstablisher(0)
-      .dormant(false)
-      .asDataRetrievalAction()
+    setCompleteWorkingKnowledge(
+      isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
+      .set(identifiers.DeclarationDutiesId)(false).asOpt
+      .value.establisherCompanyDormant(1, DeclarationDormant.No).dataRetrievalAction
 
-  private val nonDormantCompanyAndPartnership =
-    UserAnswers()
-      .companyEstablisher(0)
-      .set(identifiers.DeclarationDutiesId)(false)
-      .asOpt
-      .value
-      .dormantCompany(false, 0)
-      .partnershipEstablisher(1)
-      .asDataRetrievalAction()
-
-  private val dormantCompanyAndNonDormantPartnership =
-    UserAnswers()
-      .companyEstablisher(0)
-      .set(identifiers.DeclarationDutiesId)(false)
-      .asOpt
-      .value
-      .dormantCompany(false, 0)
-      .companyEstablisher(1)
-      .dormantCompany(true, 1)
-      .partnershipEstablisher(2)
-      .asDataRetrievalAction()
-
-  private val dormantPartnershipAndNonDormantCompany =
-    UserAnswers()
-      .companyEstablisher(0)
-      .set(identifiers.DeclarationDutiesId)(false)
-      .asOpt
-      .value
-      .dormantCompany(false, 0)
-      .companyEstablisher(1)
-      .dormantCompany(false, 1)
-      .partnershipEstablisher(2)
-      .partnershipEstablisher(3)
-      .asDataRetrievalAction()
-
-  private implicit class UserAnswersOps(answers: UserAnswers) {
-
-    def dormant(dormant: Boolean): UserAnswers = {
-      val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
-      answers.set(DeclarationDormantId)(declarationDormant).asOpt.value
-    }
-
-    def companyEstablisher(index: Int): UserAnswers = {
-      answers.set(CompanyDetailsId(index))(CompanyDetails("test-company-name")).asOpt.value
-    }
-
-    def partnershipEstablisher(index: Int): UserAnswers = {
-      answers.set(PartnershipDetailsId(index))(PartnershipDetails("test-company-name")).asOpt.value
-    }
-
-    def individualEstablisher(): UserAnswers = {
-      answers.set(EstablisherNameId(0))(PersonName("test-first-name", "test-last-name")).asOpt.value
-    }
-
-    def dormantCompany(dormant: Boolean, index: Int): UserAnswers = {
-      val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
-      answers.set(IsCompanyDormantId(index))(declarationDormant).asOpt.value
-    }
-
-    def asDataRetrievalAction(): DataRetrievalAction = {
-      new FakeDataRetrievalAction(Some(answers.json))
-    }
+  private val dormantCompany: DataRetrievalAction = {
+    setCompleteWorkingKnowledge(
+    isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
+    .set(identifiers.DeclarationDutiesId)(false).asOpt
+    .value.establisherCompanyDormant(1, DeclarationDormant.Yes).dataRetrievalAction
   }
 
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
-
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 
