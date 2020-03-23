@@ -112,7 +112,8 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
       val userAnswers = userAnswersWithSchemeName
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Seq.empty)
 
-      helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = false) mustBe None
+      helper.addTrusteeHeader(userAnswers, UpdateMode, srn, viewOnly = false) mustBe
+        Some(SchemeDetailsTaskListEntitySection(None, Nil,None))
     }
   }
 

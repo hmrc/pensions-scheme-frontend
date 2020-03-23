@@ -26,7 +26,10 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      spokeCreationService.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, userAnswers.get(SchemeNameId).getOrElse(""), None),
+      spokeCreationService.getBeforeYouStartSpoke(
+        userAnswers, UpdateMode, srn,
+        userAnswers.get(SchemeNameId).getOrElse(""), None
+      ),
       Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
   }
@@ -54,12 +57,8 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
         SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
       )
     } else {
-      spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
-        case Nil =>
-          None
-        case trusteeHeaderSpokes =>
-          Some(SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
-      }
+      val trusteeHeaderSpokes = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly)
+      Some(SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
     }
   }
 
