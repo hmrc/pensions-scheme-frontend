@@ -16,4 +16,9 @@
 
 package models
 
-case class EntitySpoke(link: TaskListLink, isCompleted: Option[Boolean] = None)
+import viewmodels.Message
+
+case class TaskListLink(text: Message, target: String, visuallyHiddenText: Option[String] = None)
+
+
+

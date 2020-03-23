@@ -16,370 +16,283 @@
 
 package utils.hstasklisthelper
 
-import base.{JsonFileReader, SpecBase}
-import controllers.register.establishers.company.{routes => establisherCompanyRoutes}
-import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
-import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
-import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
-import identifiers.register.establishers.{IsEstablisherNewId, company => establisherCompanyPath}
 import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.register.trustees.{IsTrusteeNewId, company => trusteesCompany}
 import models._
 import models.person.PersonName
 import models.register.SchemeType
-import org.scalatest.{MustMatchers, OptionValues}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatestplus.mockito.MockitoSugar
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListHeader, SchemeDetailsTaskListSection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 
-class HsTaskListHelperRegistrationSpec extends SpecBase
-  with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader with Enumerable.Implicits {
+class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with MockitoSugar with DataCompletionHelper {
 
   import HsTaskListHelperRegistrationSpec._
+
+  private val mockAllSpokes = mock[AllSpokes]
+  private val helper = new HsTaskListHelperRegistration(mockAllSpokes)
 
   "h1" must {
     "display appropriate heading" in {
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h1 mustBe name
-    }
-  }
 
-  "h2" must {
-    "display appropriate text" in {
-      val userAnswers = userAnswersWithSchemeName
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h2 mustBe messages("messages__scheme_details__title")
-    }
-  }
-
-  "h3" must {
-    "display Before You Start" in {
-      val userAnswers = userAnswersWithSchemeName
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.h3 mustBe Some(messages("messages__schemeTaskList__before_you_start_header"))
-    }
-  }
-
-  "about header" must {
-    "display About Scheme name" in {
-      val schemeName = "test scheme"
-      val userAnswers = userAnswersWithSchemeName.set(SchemeNameId)(schemeName).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.aboutHeader mustBe messages("messages__schemeTaskList__about_scheme_header", schemeName)
-    }
-  }
-
-  "page title" must {
-    "display Pension scheme details" in {
-      val userAnswers = userAnswersWithSchemeName
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.taskList.pageTitle mustBe messages("messages__schemeTaskList__title")
+      helper.taskList(userAnswers, None, None).h1 mustBe name
     }
   }
 
   "beforeYouStartSection " must {
-    "return the before you start section correctly linking to scheme name page when not completed " in {
+    "return correct the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.beforeYouStartSection(userAnswers) mustBe SchemeDetailsTaskListSection(
-        isCompleted = Some(false),
-        link = Link(
-          messages("messages__schemeTaskList__before_you_start_link_text", schemeName),
-          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
-        ),
-        header = None
-      )
-    }
+      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
 
-    "return the before you start section correctly linking to cya page when completed " in {
-      val userAnswers = setCompleteBeforeYouStart(isComplete = true, UserAnswers()).schemeName(schemeName)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.beforeYouStartSection(userAnswers) mustBe SchemeDetailsTaskListSection(
-        isCompleted = Some(true),
-        link = Link(
-          messages("messages__schemeTaskList__before_you_start_link_text", schemeName),
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
-        ),
-        header = None
-      )
+      helper.beforeYouStartSection(userAnswers) mustBe expectedBeforeYouStartSection
     }
   }
 
   "aboutSection " must {
-    "return the the Seq of members, bank details and benefits section with " +
-      "links of the first pages of individual sub sections when not completed " in {
-      val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).
-        ukBankAccount(ukBankAccount = true).occupationalPensionScheme(isOccupational = true)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.aboutSection(userAnswers) mustBe
-        Seq(
-          SchemeDetailsTaskListSection(Some(false), Link(aboutMembersLinkText,
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
-          SchemeDetailsTaskListSection(Some(false), Link(aboutBankDetailsLinkText,
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
-        )
-    }
+    "return the correct entity section " in {
+      val userAnswers = userAnswersWithSchemeName
+      val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
+      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
-    "return the the Seq of members, bank details and benefits section with " +
-      "links of the cya pages of individual sub sections when completed " in {
-      val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).futureMembers(Members.One).
-        ukBankAccount(ukBankAccount = false).occupationalPensionScheme(isOccupational = true).
-        investmentRegulated(isInvestmentRegulated = true).typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(isInsured = false)
-
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.aboutSection(userAnswers) mustBe
-        Seq(
-          SchemeDetailsTaskListSection(Some(true), Link(aboutMembersLinkText,
-            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link(aboutBenefitsAndInsuranceLinkText,
-            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), None),
-          SchemeDetailsTaskListSection(Some(true), Link(aboutBankDetailsLinkText,
-            controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url), None)
-        )
+      helper.aboutSection(userAnswers, NormalMode, None) mustBe expectedAboutSection
     }
   }
 
   "workingKnowledgeSection " must {
-    "not display when do you have working knowledge is true " in {
+
+    "be empty when do you have working knowledge is true " in {
       val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
+
       helper.workingKnowledgeSection(userAnswers) mustBe None
     }
 
-    "display and link should go to what you will need page when do you have working knowledge is false and section not completed " in {
-      val userAnswers = setCompleteWorkingKnowledge(isComplete = false, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.workingKnowledgeSection(userAnswers).value mustBe
-        SchemeDetailsTaskListSection(Some(false), Link(workingKnowledgeLinkText,
-          controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None)
-    }
+    "have correct entity section when do you have working knowledge is false " in {
+      val userAnswers = userAnswersWithSchemeName.set(DeclarationDutiesId)(false).asOpt.value
+      val expectedSpoke = Seq(EntitySpoke(TaskListLink(wkAddLinkText, wkWynPage), None))
+      val expectedWkSection = SchemeDetailsTaskListEntitySection(None, expectedSpoke, None)
+      when(mockAllSpokes.getWorkingKnowledgeSpoke(any(), any(), any(), any(), any())).thenReturn(expectedSpoke)
 
-    "display and link should go to cya page when do you have working knowledge is false and section is completed " in {
-      val userAnswers = setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName).declarationDuties(haveWorkingKnowledge = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.workingKnowledgeSection(userAnswers).value mustBe
-        SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
-          controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
+      helper.workingKnowledgeSection(userAnswers).value mustBe expectedWkSection
     }
   }
 
   "addEstablisherHeader " must {
-    "return the link to establisher kind page when no establishers are added " in {
+    "have a link to establishers kind page when no establishers are added " in {
       val userAnswers = userAnswersWithSchemeName
-      val helper = new HsTaskListHelperRegistration(userAnswers) // createTaskListHelper(userAnswers)
-      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addEstablisherLinkText,
+      val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(None,
+        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
           controllers.register.establishers.routes.EstablisherKindController
-            .onPageLoad(NormalMode, userAnswers.allEstablishers(NormalMode).size, None).url)), None)
+            .onPageLoad(NormalMode, userAnswers.allEstablishers(NormalMode).size, None).url))), None)
+
+      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
     }
 
-    "return the link to add establisher page when establishers are added" in {
+    "have a link to add establishers page when establishers are added" in {
       val userAnswers = userAnswersWithSchemeName.set(EstablisherNameId(0))(PersonName("firstName", "lastName")).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeEstablisherLinkText,
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url)), None)
+      val expectedAddEstablisherHeader = SchemeDetailsTaskListEntitySection(
+        None, Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url))), None)
+
+      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
     }
   }
 
   "addTrusteeHeader " must {
-    "display correct link data when 2 trustees exist " in {
+    "have change link to go to add trustees page when trustees are not mandatory(have any trustees queation not asked)" +
+      "but there are one or more trustees " in {
       val userAnswers = userAnswersWithSchemeName
         .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
         .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers) //createTaskListHelper(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addDeleteTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
+      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
+        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url))), None)
+
+      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
     }
 
-    "display correct link data when trustee is optional and no trustee exists " in {
+    "have change link to go to add trustees page when trustees is mandatory(have any trustees is true) and there are one or more trustees " in {
       val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
+        .set(TrusteeNameId(0))(PersonName("firstName", "lastName")).asOpt.value
+        .set(TrusteeNameId(1))(PersonName("firstName", "lastName")).asOpt.value
+      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
+        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url))), None)
+
+      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
+    }
+
+    "have add link to go to trustee kind page when when trustees are not mandatory(have any trustees question not asked)" +
+      " and there are no trustees " in {
+      val userAnswers = userAnswersWithSchemeName
+      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
+        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url))), None)
+
+      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
+    }
+
+    "have add link to go to trustee kind page when trustees is mandatory(have any trustees is true) and there are no trustees " in {
+      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(value = true).asOpt.value
         .set(SchemeTypeId)(SchemeType.BodyCorporate).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None, None)
+
+      val expectedAddTrusteesHeader = SchemeDetailsTaskListEntitySection(None,
+        Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url))), None)
+
+      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
     }
 
-    "display correct link data when trustee is mandatory and no trustees exists " in {
-      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None,
-          None)
-    }
-
-    s"display and link should go to trustee kind page when do you have any trustees is true and no trustees are added" in {
-      val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(true).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(addTrusteesLinkText,
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size, None).url)), None)
-    }
-
-    "display and link should go to add trustees page when do you have any trustees is not present" +
-      s"and trustees are added and completed" in {
-      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName")).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
-    }
-
-    "display and link should go to add trustees page and status is not completed when do you have any trustees is not present" +
-      s"and trustees are added and not completed" in {
-      val userAnswers = userAnswersWithSchemeName.set(TrusteeNameId(0))(person.PersonName("firstName", "lastName"))
-        .asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe
-        SchemeDetailsTaskListHeader(None, Some(Link(changeTrusteesLinkText,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)), None)
-    }
-
-    "not display when do you have any trustees is false " in {
+    "not be displayed when do you have any trustees is false " in {
       val userAnswers = userAnswersWithSchemeName.set(HaveAnyTrusteesId)(false).asOpt.value
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.addTrusteeHeader(userAnswers, NormalMode, Some("srn")) mustBe None
+
+      helper.addTrusteeHeader(userAnswers, NormalMode, None) mustBe None
     }
   }
 
-  "establishers" must {
-    "return the seq of establishers sub sections" in {
-      val userAnswers = establisherCompany()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.establishersSection(userAnswers, NormalMode, None) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
-                establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, None, 0).url), Some(false)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
-                establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, None, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
-                establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, None, 0).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_directors", "test company"),
-                controllers.register.establishers.company.director.routes.WhatYouWillNeedDirectorController.onPageLoad(NormalMode, None, 0).url), None)
-            ), Some("test company"))
-        )
+  "establishersSection" must {
+    "return the seq of establishers without the deleted ones" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0).
+        establisherCompanyEntity(index = 1, isDeleted = true).
+        establisherIndividualEntity(index = 2).
+        establisherIndividualEntity(index = 3, isDeleted = true).
+        establisherPartnershipEntity(index = 4, isDeleted = true).
+        establisherPartnershipEntity(index = 5)
+
+      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockAllSpokes.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockAllSpokes.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+
+      val result = helper.establishersSection(userAnswers, NormalMode, None)
+
+      result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
+        SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 2 last 2")),
+        SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")))
     }
   }
 
-  "trustees" must {
-    "return the seq of trustees sub sections when all spokes are uninitiated" in {
-      val userAnswers = trusteeCompany(false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.trusteesSection(userAnswers, NormalMode, None) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_details", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_address", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(NormalMode, 0, None).url), None),
-              EntitySpoke(Link(messages("messages__schemeTaskList__add_contact", "test company"),
-                trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), None)
-            ), Some("test company"))
-        )
-    }
+  "trusteesSection" must {
+    "return the seq of trustees without the deleted ones" in {
+      val userAnswers = userAnswersWithSchemeName.trusteeCompanyEntity(index = 0, isDeleted = true).
+        trusteeCompanyEntity(index = 1).
+        trusteeIndividualEntity(index = 2, isDeleted = true).
+        trusteeIndividualEntity(index = 3).
+        trusteePartnershipEntity(index = 4).
+        trusteePartnershipEntity(index = 5, isDeleted = true)
 
-    "return the seq of trustees sub sections when all spokes are completed" in {
-      val userAnswers = allAnswers
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.trusteesSection(userAnswers, NormalMode, None) mustBe
-        Seq(
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(NormalMode, 0, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test company"),
-                trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(NormalMode, 0, None).url), Some(true))
-            ), Some("test company")),
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "firstName lastName"),
-              trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "firstName lastName"),
-                trusteeIndividualRoutes.CheckYourAnswersIndividualAddressController.onPageLoad(NormalMode, 1, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "firstName lastName"),
-                trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(NormalMode, 1, None).url), Some(true))
-            ), Some("firstName lastName")),
-          SchemeDetailsTaskListEntitySection(None,
-            Seq(EntitySpoke(Link(messages("messages__schemeTaskList__change_details", "test partnership"),
-              trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_address", "test partnership"),
-                trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(NormalMode, 2, None).url), Some(true)),
-              EntitySpoke(Link(messages("messages__schemeTaskList__change_contact", "test partnership"),
-                trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(NormalMode, 2, None).url), Some(true))
-            ), Some("test partnership"))
-        )
+      when(mockAllSpokes.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockAllSpokes.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+      when(mockAllSpokes.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+
+      val result = helper.trusteesSection(userAnswers, NormalMode, None)
+
+      result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
+        SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 3 last 3")),
+        SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 4")))
     }
   }
 
-  "declaration" must {
-    "have a declaration section" in {
+  "declaration section" must {
+
+    "have a link when declaration is enabled with trustees completed" in {
       val userAnswers = answersDataAllComplete()
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      helper.declarationSection(userAnswers).isDefined mustBe true
+
+      helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
     }
 
-
-    "have link when all the sections are completed without trustees and do you have trustees is false " in {
+    "have link when all the seqEstablishers are completed without trustees and do you have trustees is false " in {
       val userAnswers = setCompleteBeforeYouStart(isComplete = true,
         setCompleteMembers(isComplete = true,
           setCompleteBank(isComplete = true,
             setCompleteBenefits(isComplete = true,
-              setCompleteWorkingKnowledge(isComplete = true,
-                allAnswers.set(InsuranceDetailsChangedId)(value = true).asOpt.value
-              )
-            )
-          )))
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      mustHaveDeclarationLinkEnabled(helper, userAnswers)
+              setCompleteEstIndividual(index = 0, setCompleteWorkingKnowledge(isComplete = true, userAnswersWithSchemeName)))))).
+        haveAnyTrustees(haveTrustees = false)
+
+      helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
     }
 
     "not have link when about bank details section not completed" in {
       val userAnswers = answersDataAllComplete(isCompleteAboutBank = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      mustNotHaveDeclarationLink(helper, userAnswers)
-    }
 
-    "not have link when working knowledge section not completed" in {
-      val userAnswers = answersDataAllComplete(isCompleteWk = false)
-      val helper = new HsTaskListHelperRegistration(userAnswers)
-      mustNotHaveDeclarationLink(helper, userAnswers)
+      helper.declarationSection(userAnswers).value mustBe SchemeDetailsTaskListEntitySection(None, Nil,
+        Some("messages__schemeTaskList__sectionDeclaration_header"),
+        "messages__schemeTaskList__sectionDeclaration_incomplete"
+      )
+    }
+  }
+
+  "task list" must {
+    "return the task list with all the sections" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+
+      when(mockAllSpokes.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockAllSpokes.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockAllSpokes.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+
+      val result = helper.taskList(userAnswers, None, None)
+
+      result mustBe SchemeDetailsTaskList(
+        schemeName, None,
+        beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+        about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+        workingKnowledge = None,
+        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url))), None)
+        ),
+        establishers = Seq(
+          SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
+        ),
+        addTrusteeHeader = None,
+        trustees = Nil,
+        declaration = Some(
+          SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+            "messages__schemeTaskList__sectionDeclaration_incomplete")
+        )
+      )
     }
   }
 }
 
-object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
+object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {
 
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
-  private val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  private val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
-  private val aboutMembersLinkText: String = messages("messages__schemeTaskList__about_members_link_text", schemeName)
-  private val aboutBenefitsAndInsuranceLinkText: String = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
-  private val aboutBankDetailsLinkText: String = messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
-  private val workingKnowledgeLinkText: String = messages("messages__schemeTaskList__working_knowledge_link_text", schemeName)
-  private val changeEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private val changeTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private val addDeleteTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
+  private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
+  private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
+  private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
+  private val wkAddLinkText = Message("messages__schemeTaskList__add_details_wk")
+  private val wkWynPage = controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url
 
-  private def allAnswers: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+  private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
+    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
 
+  private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
+  private val testCompanyEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test company link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testIndividualEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test individual link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+  private val testPartnershipEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
+    controllers.routes.SessionExpiredController.onPageLoad().url), None))
 
+  private val declarationSectionWithLink = SchemeDetailsTaskListEntitySection(None,
+    Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__declaration_link"),
+      controllers.register.routes.DeclarationController.onPageLoad().url))),
+    Some("messages__schemeTaskList__sectionDeclaration_header"),
+    "messages__schemeTaskList__sectionDeclaration_incomplete"
+  )
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,
@@ -395,26 +308,8 @@ object HsTaskListHelperRegistrationSpec extends SpecBase with MustMatchers with 
       setCompleteMembers(isCompleteAboutMembers,
         setCompleteBank(isCompleteAboutBank,
           setCompleteBenefits(isCompleteAboutBenefits,
-            setCompleteWorkingKnowledge(isCompleteWk,
-              setTrusteeCompletionStatusJsResult(isComplete = isCompleteTrustees, 0, userAnswersWithSchemeName).asOpt.value)))))
-  }
-
-  private def establisherCompany(isCompleteEstablisher: Boolean = true): UserAnswers = {
-    userAnswersWithSchemeName.set(establisherCompanyPath.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsEstablisherNewId(0))(true).flatMap(
-        _.set(establisherCompanyPath.HasCompanyPAYEId(0))(false)
-      )).asOpt.value
-  }
-
-  private def trusteeCompany(isCompleteTrustee: Boolean = true): UserAnswers =
-    userAnswersWithSchemeName.set(trusteesCompany.CompanyDetailsId(0))(CompanyDetails("test company")).flatMap(
-      _.set(IsTrusteeNewId(0))(true)).asOpt.value
-
-  private def mustNotHaveDeclarationLink(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers): Unit =
-    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe None)
-
-  private def mustHaveDeclarationLinkEnabled(helper: HsTaskListHelperRegistration, userAnswers: UserAnswers, url: Option[String] = None): Unit = {
-    helper.declarationSection(userAnswers).foreach(_.declarationLink mustBe
-      Some(Link(declarationLinkText, url.getOrElse(controllers.register.routes.DeclarationController.onPageLoad().url))))
+            setCompleteEstIndividual(0,
+              setCompleteTrusteeIndividual(0,
+                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName)))))))
   }
 }

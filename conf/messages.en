@@ -1645,8 +1645,6 @@ messages__schemeTaskList__about_bank_details_link_text_add = Add bank details fo
 messages__schemeTaskList__before_you_start_header = Before you start
 messages__schemeTaskList__about_scheme_header = About {0}
 messages__schemeTaskList__working_knowledge_header = Working knowledge of pensions and pensions tax legislation
-messages__schemeTaskList__working_knowledge_link_text = Change details for {0}
-messages__schemeTaskList__working_knowledge_link_text_add = Add details for {0}
 messages__schemeTaskList__persons_details__link_text = {0}’s details
 
 messages__any_more_changes__title = Do you want to make any more changes?

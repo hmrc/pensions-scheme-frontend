@@ -16,176 +16,128 @@
 
 package utils.hstasklisthelper
 
+import com.google.inject.Inject
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.{Link, Mode, NormalMode}
-import play.api.i18n.Messages
+import models.{EntitySpoke, Mode, NormalMode, TaskListLink}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration(answers: UserAnswers)(implicit messages: Messages) extends HsTaskListHelper(answers) {
+class HsTaskListHelperRegistration @Inject()(allSpokes: AllSpokes) extends HsTaskListHelper(allSpokes) {
+
   import HsTaskListHelperRegistration._
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
-    SchemeDetailsTaskListSection(
-      isCompleted = Some(answers.isBeforeYouStartCompleted(NormalMode)),
-      link = Link(
-        messages("messages__schemeTaskList__before_you_start_link_text", schemeName),
-        if (answers.isBeforeYouStartCompleted(NormalMode)) {
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url
-        } else {
-          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url
-        }
-      ),
-      header = None
-    )
-  }
-
-  private[utils] def aboutSection(userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
-    val membersLink = userAnswers.isMembersCompleted match {
-      case Some(true) =>
-        Link(aboutMembersLinkText(schemeName), controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url)
-      case Some(false) => Link(aboutMembersLinkText(schemeName), controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-      case None        => Link(aboutMembersAddLinkText(schemeName), controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url)
-    }
-
-    val benefitsAndInsuranceLink = userAnswers.isBenefitsAndInsuranceCompleted match {
-      case Some(true) =>
-        Link(aboutBenefitsAndInsuranceLinkText(schemeName),
-             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url)
-      case Some(false) =>
-        Link(aboutBenefitsAndInsuranceLinkText(schemeName), controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
-      case None =>
-        Link(aboutBenefitsAndInsuranceAddLinkText(schemeName),
-             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url)
-    }
-
-    val bankDetailsLink = userAnswers.isBankDetailsCompleted match {
-      case Some(true) =>
-        Link(aboutBankDetailsLinkText(schemeName), controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url)
-      case Some(false) =>
-        Link(aboutBankDetailsLinkText(schemeName), controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
-      case None => Link(aboutBankDetailsAddLinkText(schemeName), controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url)
-    }
-
-    Seq(
-      SchemeDetailsTaskListSection(userAnswers.isMembersCompleted, membersLink, None),
-      SchemeDetailsTaskListSection(userAnswers.isBenefitsAndInsuranceCompleted, benefitsAndInsuranceLink, None),
-      SchemeDetailsTaskListSection(userAnswers.isBankDetailsCompleted, bankDetailsLink, None)
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
+    SchemeDetailsTaskListEntitySection(None,
+      allSpokes.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+      Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
 
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
                                           mode: Mode,
-                                          srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+                                          srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     if (userAnswers.allEstablishersAfterDelete(mode).isEmpty) {
       Some(
-        SchemeDetailsTaskListHeader(
-          None,
-          Some(Link(
-            addEstablisherLinkText,
-            controllers.register.establishers.routes.EstablisherKindController
-              .onPageLoad(mode, userAnswers.allEstablishers(mode).size, srn)
-              .url
-          )),
-          None
-        ))
+        SchemeDetailsTaskListEntitySection(None,
+          Seq(EntitySpoke(
+            TaskListLink(
+              Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+              controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, userAnswers.allEstablishers(mode).size, srn).url
+            ), None)), None
+        )
+      )
     } else {
       Some(
-        SchemeDetailsTaskListHeader(
-          None,
-          Some(
-            Link(changeEstablisherLinkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url)),
-          None))
+        SchemeDetailsTaskListEntitySection(None,
+          Seq(EntitySpoke(
+            TaskListLink(
+              Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+              controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
+            None
+          )),
+          None
+        )
+      )
     }
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListHeader] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.allTrusteesAfterDelete.isEmpty) match {
       case (None | Some(true), false) =>
         Some(
-          SchemeDetailsTaskListHeader(
-            None,
-            Some(Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url)),
-            None))
-
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(EntitySpoke(
+              TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+                controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
+              None
+            )),
+            None
+          )
+        )
       case (None | Some(true), true) =>
         Some(
-          SchemeDetailsTaskListHeader(
-            None,
-            Some(Link(addTrusteesLinkText,
-                      controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url)),
+          SchemeDetailsTaskListEntitySection(None,
+            Seq(EntitySpoke(
+              TaskListLink(
+                Message("messages__schemeTaskList__sectionTrustees_add_link"),
+                controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, userAnswers.allTrustees.size, srn).url),
+              None
+            )),
             None
-          ))
-
+          )
+        )
       case _ =>
         None
     }
   }
 
-  private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] =
+  private[utils] def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] =
     userAnswers.get(DeclarationDutiesId) match {
       case Some(false) =>
-        val wkLink = userAnswers.isAdviserCompleted match {
-          case Some(true)  => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
-          case Some(false) => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
-          case None        => Link(workingKnowledgeAddLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url)
-        }
-        Some(SchemeDetailsTaskListSection(userAnswers.isWorkingKnowledgeCompleted, wkLink, None))
+        Some(
+          SchemeDetailsTaskListEntitySection(None,
+            allSpokes.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId).getOrElse(""), None),
+            None
+          )
+        )
       case _ =>
         None
     }
 
-  private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListDeclarationSection] = {
-    def declarationLink(userAnswers: UserAnswers): Option[Link] =
+  private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
+    def declarationLink: Seq[EntitySpoke] =
       if (declarationEnabled(userAnswers))
-        Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url))
-      else None
+        Seq(EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__declaration_link"),
+          controllers.register.routes.DeclarationController.onPageLoad().url)))
+      else Nil
+
     Some(
-      SchemeDetailsTaskListDeclarationSection(
-        header = "messages__schemeTaskList__sectionDeclaration_header",
-        declarationLink = declarationLink(userAnswers),
-        incompleteDeclarationText = "messages__schemeTaskList__sectionDeclaration_incomplete"
+      SchemeDetailsTaskListEntitySection(None,
+        declarationLink,
+        Some("messages__schemeTaskList__sectionDeclaration_header"),
+        "messages__schemeTaskList__sectionDeclaration_incomplete"
       ))
   }
 
-  override def taskList: SchemeDetailsTaskList =
+  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList =
     SchemeDetailsTaskList(
-      beforeYouStartSection(answers),
-      messages("messages__schemeTaskList__about_scheme_header", schemeName),
-      aboutSection(answers),
-      workingKnowledgeSection(answers),
-      addEstablisherHeader(answers, NormalMode, None),
-      establishersSection(answers, NormalMode, None),
-      addTrusteeHeader(answers, NormalMode, None),
-      trusteesSection(answers, NormalMode, None),
-      declarationSection(answers),
       answers.get(SchemeNameId).getOrElse(""),
-      messages("messages__scheme_details__title"),
-      Some(messages("messages__schemeTaskList__before_you_start_header")),
-      messages("messages__schemeTaskList__title"),
-      None
+      None,
+      beforeYouStartSection(answers),
+      aboutSection(answers, NormalMode, srn),
+      workingKnowledgeSection(answers),
+      addEstablisherHeader(answers, NormalMode, srn),
+      establishersSection(answers, NormalMode, srn),
+      addTrusteeHeader(answers, NormalMode, srn),
+      trusteesSection(answers, NormalMode, srn),
+      declarationSection(answers)
     )
 }
 
 object HsTaskListHelperRegistration {
-  private def aboutMembersLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_members_link_text", schemeName)
-  private def aboutMembersAddLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_members_link_text_add", schemeName)
-  private def aboutBenefitsAndInsuranceLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName)
-  private def aboutBenefitsAndInsuranceAddLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName)
-  private def aboutBankDetailsLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_bank_details_link_text", schemeName)
-  private def aboutBankDetailsAddLinkText(schemeName: String)(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__about_bank_details_link_text_add", schemeName)
-  private def changeEstablisherLinkText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionEstablishers_change_link")
-  private def changeTrusteesLinkText(implicit messages: Messages): String =
-    messages("messages__schemeTaskList__sectionTrustees_change_link")
-  private def workingKnowledgeAddLinkText(implicit messages: Messages): String = messages("messages__schemeTaskList__add_details_wk")
+
   private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean =
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
 
@@ -193,7 +145,7 @@ object HsTaskListHelperRegistration {
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
       userAnswers.allEstablishersAfterDelete(mode).forall(_.isCompleted)
 
-  private def declarationEnabled(userAnswers: UserAnswers): Boolean =
+  private def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
@@ -204,4 +156,5 @@ object HsTaskListHelperRegistration {
       Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
+  }
 }
