@@ -16,14 +16,15 @@
 
 package helpers
 
+import java.time.LocalDate
+
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
-import models.register.SchemeType
-import java.time.LocalDate
-
 import models.person.PersonName
+import models.register.SchemeType
 import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
@@ -138,7 +139,7 @@ trait DataCompletionHelper extends OptionValues {
     }
   }
 
-  protected def setCompleteEstIndividual(ua: UserAnswers, index: Int): UserAnswers = {
+  protected def setCompleteEstIndividual(index: Int, ua: UserAnswers): UserAnswers = {
     ua.establisherKind(index, EstablisherKind.Indivdual)
       .establishersIndividualName(index, PersonName("first", "last")).establishersIndividualDOB(index, LocalDate.now().minusYears(20))
       .establishersIndividualNino(index, ReferenceValue("AB100100A")).establishersIndividualUtr(index, ReferenceValue("1111111111")).
@@ -146,7 +147,15 @@ trait DataCompletionHelper extends OptionValues {
       .establishersIndividualEmail(index, "s@s.com").establishersIndividualPhone(index, "123")
   }
 
-  protected def setCompleteEstCompany(ua: UserAnswers, index: Int): UserAnswers = {
+  protected def setCompleteTrusteeIndividual(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.trusteeKind(index, TrusteeKind.Individual)
+      .trusteeName(index, PersonName("first", "last")).trusteeIndividualDOB(index, LocalDate.now().minusYears(20))
+      .trusteeIndividualNino(index, ReferenceValue("AB100100A")).trusteeIndividualUtr(index, ReferenceValue("1111111111")).
+      trusteesAddress(index, address).trusteesIndividualAddressYears(index, AddressYears.OverAYear)
+      .trusteeEmail(index, "s@s.com").trusteePhone(index, "123")
+  }
+
+  protected def setCompleteEstCompany(index: Int, ua: UserAnswers): UserAnswers = {
     ua.establisherKind(index, EstablisherKind.Company)
       .establisherCompanyDetails(index, CompanyDetails("test company"))
       .establisherCompanyNoCrnReason(index, "no Crn")
@@ -165,7 +174,59 @@ trait DataCompletionHelper extends OptionValues {
       .establishersCompanyDirectorAddressYears(index, 0, AddressYears.OverAYear)
       .establishersCompanyDirectorEmail(index, 0, "s@s.com")
       .establishersCompanyDirectorPhone(index, 0, "123")
+  }
 
+
+  protected def setCompleteTrusteeCompany(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.trusteeKind(index, TrusteeKind.Company)
+      .trusteesCompanyDetails(index, CompanyDetails("test company"))
+      .trusteesCompanyHasCRN(index, true)
+      .trusteesCompanyEnterCRN(index, ReferenceValue("test-crn"))
+      .trusteesCompanyHasUTR(index, true)
+      .trusteesCompanyEnterUTR(index, ReferenceValue("test-utr"))
+      .trusteesCompanyHasVAT(index, true)
+      .trusteesCompanyEnterVAT(index, ReferenceValue("test-vat"))
+      .trusteesCompanyHasPAYE(index, true)
+      .trusteesCompanyPAYE(index, ReferenceValue("test-paye"))
+      .trusteesCompanyAddress(index, address)
+      .trusteesCompanyAddressYears(index, AddressYears.OverAYear)
+      .trusteeCompanyEmail(index, "s@s.com")
+      .trusteeCompanyPhone(index, "123")
+  }
+
+  protected def setCompleteTrusteePartnership(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.trusteeKind(index, TrusteeKind.Partnership)
+      .trusteePartnershipDetails(index, PartnershipDetails("test partnership"))
+      .trusteesPartnershipHasUTR(index, true)
+      .trusteesPartnershipEnterUTR(index, ReferenceValue("test-utr"))
+      .trusteesPartnershipHasVAT(index, true)
+      .trusteesPartnershipEnterVAT(index, ReferenceValue("test-vat"))
+      .trusteesPartnershipHasPAYE(index, true)
+      .trusteesPartnershipPAYE(index, ReferenceValue("test-paye"))
+      .trusteePartnershipAddress(index, address)
+      .trusteePartnershipAddressYears(index, AddressYears.OverAYear)
+      .trusteePartnershipEmail(index, "s@s.com")
+      .trusteePartnershipPhone(index, "123")
+  }
+
+  protected def setCompleteEstPartnership(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Partnership)
+      .establisherPartnershipDetails(index, PartnershipDetails("test partnership"))
+      .establisherPartnershipNoUtrReason(index, "no utr")
+      .establisherPartnershipHasVat(index, false)
+      .establisherPartnershiphasPaye(index, false)
+      .establisherPartnershipAddress(index, address)
+      .establisherPartnershipAddressYears(index, AddressYears.OverAYear)
+      .establishersPartnershipEmail(index, "s@s.com")
+      .establishersPartnershipPhone(index, "123")
+      .establishersPartnershipPartnerName(index, 0, PersonName("dir", "One"))
+      .establishersPartnershipPartnerDOB(index, 0, LocalDate.now().minusYears(30))
+      .establishersPartnershipPartnerNino(index, 0, ReferenceValue("AB100100A"))
+      .establishersPartnershipPartnerUtr(index, 0, ReferenceValue("123"))
+      .establishersPartnershipPartnerAddress(index, 0, address)
+      .establishersPartnershipPartnerAddressYears(index, 0, AddressYears.OverAYear)
+      .establishersPartnershipPartnerEmail(index, 0, "s@s.com")
+      .establishersPartnershipPartnerPhone(index, 0, "123")
   }
 
   protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
@@ -174,6 +235,40 @@ trait DataCompletionHelper extends OptionValues {
         adviserPhone("123").advisersAddress(Address("a", "b", None, None, None, "GB"))
     } else {
       ua.adviserName(name = "test adviser")
+    }
+  }
+
+  implicit class UserAnswerOps(answers: UserAnswers) {
+    def establisherCompanyEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.establisherCompanyDetails(index, CompanyDetails(s"test company $index", isDeleted)).
+        isEstablisherNew(index, flag = true).
+        establisherKind(index, EstablisherKind.Company)
+    }
+
+    def establisherIndividualEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.establishersIndividualName(index, PersonName(s"first $index", s"last $index", isDeleted)).
+        isEstablisherNew(index, flag = true).isEstablisherNew(index, flag = true)
+    }
+
+    def establisherPartnershipEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.establisherPartnershipDetails(index, PartnershipDetails(s"test partnership $index", isDeleted)).
+        isEstablisherNew(index, flag = true).isEstablisherNew(index, flag = true)
+    }
+
+    def trusteeCompanyEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.trusteesCompanyDetails(index, CompanyDetails(s"test company $index", isDeleted)).
+        isTrusteeNew(index, flag = true).
+        trusteeKind(index, TrusteeKind.Company)
+    }
+
+    def trusteeIndividualEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.trusteeName(index, PersonName(s"first $index", s"last $index", isDeleted)).
+        isTrusteeNew(index, flag = true).trusteeKind(index, TrusteeKind.Individual)
+    }
+
+    def trusteePartnershipEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.trusteePartnershipDetails(index, PartnershipDetails(s"test partnership $index", isDeleted)).
+        isTrusteeNew(index, flag = true).trusteeKind(index, TrusteeKind.Partnership)
     }
   }
 }

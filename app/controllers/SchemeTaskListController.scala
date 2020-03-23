@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import handlers.ErrorHandler
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
+import identifiers.{IsPsaSuspendedId, SchemeSrnId}
 import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import models.{Mode, VarianceLock}
@@ -43,13 +43,14 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          schemeDetailsConnector: SchemeDetailsConnector,
-                                         errorHandler: ErrorHandler,
                                          lockConnector: PensionSchemeVarianceLockConnector,
                                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                          updateConnector: UpdateSchemeCacheConnector,
                                          minimalPsaConnector: MinimalPsaConnector,
                                          val controllerComponents: MessagesControllerComponents,
-                                         val view: schemeDetailsTaskList
+                                         val view: schemeDetailsTaskList,
+                                         hsTaskListHelperRegistration: HsTaskListHelperRegistration,
+                                         hsTaskListHelperVariations: HsTaskListHelperVariations
                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
@@ -57,7 +58,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
 
         case (None, Some(userAnswers)) =>
-          Future.successful(Ok(view(new HsTaskListHelperRegistration(userAnswers).taskList)))
+          Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
         case (Some(srnValue), optionUserAnswers) =>
           onPageLoadVariations(srnValue, optionUserAnswers)
         case _ =>
@@ -66,8 +67,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def onPageLoadVariations(srn: String,
-                                            ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
-                                                                     hc: HeaderCarrier): Future[Result] = {
+                                   ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
+                                                            hc: HeaderCarrier): Future[Result] = {
     lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
       case Some(VarianceLock) =>
         ua match {
@@ -98,14 +99,10 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
-      val taskList: SchemeDetailsTaskList = new HsTaskListHelperVariations(updatedUserAnswers,
-        viewOnly || !userAnswers.get(SchemeStatusId).contains("Open"), Some(srn)).taskList
+      val taskList: SchemeDetailsTaskList = hsTaskListHelperVariations.taskList(updatedUserAnswers, Some(viewOnly), Some(srn))
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
         Future.successful(Ok(view(taskList)))
       }
     }
-
-  case class TaskListDetails(userAnswers: UserAnswers, taskList: SchemeDetailsTaskList)
-
 }

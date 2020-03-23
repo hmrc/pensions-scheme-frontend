@@ -21,14 +21,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.DeclarationDormantId
-import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.register.establishers.individual.EstablisherNameId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.{HaveAnyTrusteesId, SchemeTypeId}
-import models.person.PersonName
+import models.NormalMode
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import models.{CompanyDetails, NormalMode, PartnershipDetails}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
@@ -161,7 +157,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     setCompleteMembers(isComplete = true,
       setCompleteBank(isComplete = true,
         setCompleteBenefits(isComplete = true,
-          setCompleteEstIndividual(UserAnswers(), 0)))))
+          setCompleteEstIndividual(0, UserAnswers())))))
     .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
@@ -210,13 +206,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val nonDormantCompany =
     setCompleteWorkingKnowledge(
-      isComplete = true, setCompleteEstCompany(uaWithBasicData, 1))
+      isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
       .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value.establisherCompanyDormant(1, DeclarationDormant.No).dataRetrievalAction
 
   private val dormantCompany: DataRetrievalAction = {
     setCompleteWorkingKnowledge(
-    isComplete = true, setCompleteEstCompany(uaWithBasicData, 1))
+    isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
     .set(identifiers.DeclarationDutiesId)(false).asOpt
     .value.establisherCompanyDormant(1, DeclarationDormant.Yes).dataRetrievalAction
   }

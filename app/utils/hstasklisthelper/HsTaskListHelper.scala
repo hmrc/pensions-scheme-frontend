@@ -16,59 +16,60 @@
 
 package utils.hstasklisthelper
 
+import com.google.inject.Inject
 import identifiers._
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.establishers.{company => establisherCompany}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models._
-import play.api.i18n.Messages
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-abstract class HsTaskListHelper(answers: UserAnswers
-                               )(implicit val messages: Messages) extends Enumerable.Implicits with HsTaskListHelperUtils with AllSpokes {
+abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationService) extends Enumerable.Implicits {
 
-  protected def schemeName: String = answers.get(SchemeNameId).getOrElse("")
-
-  protected val addEstablisherLinkText: String = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  protected val addTrusteesLinkText: String = messages("messages__schemeTaskList__sectionTrustees_add_link")
-  protected def workingKnowledgeLinkText: String = messages("messages__schemeTaskList__change_details", schemeName)
-  protected val declarationLinkText: String = messages("messages__schemeTaskList__declaration_link")
+  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
+    val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
+    SchemeDetailsTaskListEntitySection(
+      None,
+      spokeCreationService.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
+      Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
+    )
+  }
 
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
-    val sections = userAnswers.allEstablishers(mode)
-    val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
-      if (section.isDeleted) None else {
-        section.id match {
-          case establisherCompany.CompanyDetailsId(_) =>
+    val seqEstablishers = userAnswers.allEstablishers(mode)
+    val nonDeletedEstablishers = for ((establisher, _) <- seqEstablishers.zipWithIndex) yield {
+      if (establisher.isDeleted) None else {
+        establisher.id match {
+          case EstablisherCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherCompanySpokes(userAnswers, mode, srn, section.name, section.index),
-              Some(section.name))
+              spokeCreationService.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
 
           case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
-              Some(section.name))
+              spokeCreationService.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
 
           case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getEstablisherPartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
-              Some(section.name))
+              spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              Some(establisher.name))
             )
           case _ =>
-            throw new RuntimeException("Unknown section id:" + section.id)
+            throw new RuntimeException("Unknown section id:" + establisher.id)
         }
       }
     }
-    notDeletedElements.flatten
+    nonDeletedEstablishers.flatten
   }
 
   protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
@@ -79,21 +80,21 @@ abstract class HsTaskListHelper(answers: UserAnswers
           case TrusteeCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, section.index),
+              spokeCreationService.getTrusteeCompanySpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteeNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, section.index),
+              spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
           case TrusteePartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, section.index),
+              spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
               Some(section.name))
             )
 
@@ -105,5 +106,5 @@ abstract class HsTaskListHelper(answers: UserAnswers
     notDeletedElements.flatten
   }
 
-  def taskList: SchemeDetailsTaskList
+  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList
 }
