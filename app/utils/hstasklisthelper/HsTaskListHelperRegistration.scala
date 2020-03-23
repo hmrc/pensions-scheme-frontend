@@ -43,7 +43,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
-      case trusteeHeaderSpokes =>  Some(
+      case trusteeHeaderSpokes => Some(
         SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
     }
   }
