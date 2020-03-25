@@ -175,7 +175,7 @@ class PostcodeLookupControllerSpec extends SpecBase with MustMatchers with Mocki
 
             status(result) mustEqual BAD_REQUEST
             contentAsString(result) mustEqual view(
-              formProvider().withError("value", "foo"), viewmodel, None)(request, messages).toString
+              formProvider().withError("postcode", "foo"), viewmodel, None)(request, messages).toString
         }
       }
       "the postcode is invalid" in {
@@ -241,7 +241,7 @@ class PostcodeLookupControllerSpec extends SpecBase with MustMatchers with Mocki
 
               status(result) mustEqual OK
 
-              val expectedResult = view(formProvider().withError("value", expectedErrorMessage), viewmodel, None)(request, messages).toString
+              val expectedResult = view(formProvider().withError("postcode", expectedErrorMessage), viewmodel, None)(request, messages).toString
               contentAsString(result) mustEqual expectedResult
           }
         }

@@ -109,7 +109,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
     "return OK when no results found for the input post code to match generic controller" in {
       val notFoundPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", notFoundPostCode))
-      val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results", Seq(notFoundPostCode)))
+      val boundForm = form.withError(FormError("postcode", "messages__error__postcode_no_results", Seq(notFoundPostCode)))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
       (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Nil))
@@ -123,7 +123,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
     "return Bad request when post code lookup fails" in {
       val failedPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", failedPostCode))
-      val boundForm = form.withError(FormError("value", "messages__error__postcode_failed"))
+      val boundForm = form.withError(FormError("postcode", "messages__error__postcode_failed"))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR)))
