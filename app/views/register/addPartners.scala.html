@@ -57,6 +57,9 @@
             @components.entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
+
+                <p class="panel panel-border-wide">@messages("messages__atLeast_two_partners")</p>
+
                 @if(partners.size < appConfig.maxPartners) {
                     @components.input_yes_no(
                         field = form("value"),
