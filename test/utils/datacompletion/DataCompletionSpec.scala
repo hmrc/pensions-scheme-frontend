@@ -379,7 +379,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
     }
 
     "return true when all the answers are completed for UpdateMode" in {
-      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.SingleTrust).establishedCountry("GB")
+      val answers = UserAnswers().schemeName("name").schemeType(SchemeType.GroupLifeDeath).establishedCountry("GB")
       answers.isBeforeYouStartCompleted(UpdateMode) mustBe true
     }
 

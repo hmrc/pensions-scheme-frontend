@@ -35,13 +35,17 @@ class SpokeCreationService extends Enumerable.Implicits {
                   mode: Mode, srn: Option[String], name: String, index: Option[Index], isNew: Option[Boolean]): EntitySpoke = {
 
     val isChangeLink = spoke.completeFlag(answers, index, mode)
-    val isComplete: Option[Boolean] = if (mode == NormalMode) isChangeLink else None
+    val isComplete: Option[Boolean] = (mode, isChangeLink) match {
+      case (NormalMode, _) => isChangeLink
+      case (UpdateMode, Some(false) | None) => Some(false)
+      case _ => None
+    }
 
     (isChangeLink, isNew) match {
-      case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index))
+      case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
       case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
       case (Some(false), _) => EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
-      case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index))
+      case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
     }
   }
 
@@ -68,10 +72,16 @@ class SpokeCreationService extends Enumerable.Implicits {
                                  spoke: Spoke,
                                  mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
 
-    val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
-
+    val isComplete: Option[Boolean] = {
+      (mode, entityList.isEmpty) match {
+        case (NormalMode, false) => Some(entityList.forall(_.isCompleted))
+        case (UpdateMode, false) if entityList.exists(!_.isCompleted) => Some(false)
+        case (UpdateMode, true) => Some(false)
+        case _ => None
+      }
+    }
     if (entityList.isEmpty)
-      EntitySpoke(spoke.addLink(name)(mode, srn, index), None)
+      EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
     else
       EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
   }
