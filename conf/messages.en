@@ -1813,3 +1813,5 @@ messages__future_members__error_required = Select how many scheme members you ex
 messages__type_of_benefits__error_required = Select how {0} provides benefits
 messages__establisher__type__error_required = Select what kind of establisher you are adding
 messages__trusteeKind__error_required = Select what kind of trustee you are adding
+
+variations.incomplete.alert.text = You must complete any section marked as "In progress" before you can continue

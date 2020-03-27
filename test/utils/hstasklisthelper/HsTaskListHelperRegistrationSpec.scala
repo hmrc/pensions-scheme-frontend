@@ -206,7 +206,8 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
         declaration = Some(
           SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete")
-        )
+        ),
+        None
       )
     }
   }
