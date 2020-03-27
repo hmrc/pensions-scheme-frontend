@@ -53,7 +53,8 @@
 
         @components.input_date(
             field = form("date"),
-            label = "",
+            label = messages("messages__DOB__heading", fullName),
+            legendClass = "visually-hidden",
             hint = Some(messages("messages__common__dob__hint"))
         )
         </div>
