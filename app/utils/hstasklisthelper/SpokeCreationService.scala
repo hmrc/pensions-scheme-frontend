@@ -68,7 +68,13 @@ class SpokeCreationService extends Enumerable.Implicits {
                                  spoke: Spoke,
                                  mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
 
-    val isComplete: Option[Boolean] = if (mode == NormalMode && entityList.nonEmpty) Some(entityList.forall(_.isCompleted)) else None
+    val isComplete: Option[Boolean] =
+      if(mode == NormalMode && spoke == EstablisherPartnershipPartner && entityList.size == 1)
+        Some(false)
+      else if (mode == NormalMode && entityList.nonEmpty)
+        Some(entityList.forall(_.isCompleted))
+      else
+        None
 
     if (entityList.isEmpty)
       EntitySpoke(spoke.addLink(name)(mode, srn, index), None)

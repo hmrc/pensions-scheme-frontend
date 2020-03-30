@@ -126,7 +126,7 @@ trait DataCompletionEstablishers extends DataCompletion {
 
   def isEstablisherPartnershipAndPartnersComplete(index: Int): Boolean = {
     val allPartners = allPartnersAfterDelete(index)
-    val allPartnersCompleted = allPartners.nonEmpty & allPartners.forall(_.isCompleted)
+    val allPartnersCompleted = allPartners.size > 1 & allPartners.forall(_.isCompleted)
     val isPartnershipComplete = isEstablisherPartnershipComplete(index)
     allPartnersCompleted & isPartnershipComplete
   }
