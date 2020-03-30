@@ -36,38 +36,40 @@
 }
 
 <div class="form-group">
-    <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
-
-        <li class="cya-question">
-            <div class="cya-question">
+    <table id="items" class="govuk-check-your-answers form-group cya-questions-long">
+<thead>
+        <tr class="cya-question">
+            <td class="cya-question">
                 <h2 id="person-header" class="bold std-text">@messages(entityNameHeader)</h2>
-            </div>
+            </td>
 
-            <div class="cya-question">
+            <td class="cya-question">
                 <h2 id="kind-header" class="bold std-text">@messages("site.type")</h2>
-            </div>
-            <div></div>
-        </li>
-
+            </td>
+            <td></td>
+        </tr>
+</thead>
+        <tbody>
             @for(entity <- entities) {
-            <li>
-                <div class="cya-question">
+            <tr>
+                <td class="cya-question">
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
-                </div>
+                </td>
 
-                <div class="cya-question">
+                <td class="cya-question">
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
-                </div>
+                </td>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <div>
+                        <td>
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
                                 <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
                             </a>
-                        </div>
+                        </td>
                     }
-            </li>
+            </tr>
         }
-    </ul>
+        </tbody>
+    </table>
 </div>

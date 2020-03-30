@@ -29,17 +29,17 @@ trait EntityListBehaviours {
     "behave like a list of items" must {
       "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
-        doc.select("ul#items").size() mustBe 0
+        doc.select("table#items").size() mustBe 0
       }
 
       "show the list when there are one or more items" in {
         val doc = asDocument(nonEmptyView())
-        doc.select("ul#items").size() mustBe 1
+        doc.select("table#items").size() mustBe 1
       }
 
       "display the correct number of items in the list" in {
         val doc = asDocument(nonEmptyView())
-        doc.select("#items > li").size() mustBe noOfListItems
+        doc.select("#items > tbody > tr").size() mustBe noOfListItems
       }
 
       "display the correct details for each person" in {
