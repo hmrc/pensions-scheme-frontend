@@ -36,32 +36,28 @@
 }
 
 <div class="form-group">
-    <table id="items" class="govuk-table">
-<thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header">
-                <h2 id="person-header" class="bold std-text">@messages(entityNameHeader)</h2>
-            </th>
+    <table id="items">
+    <thead>
+        <tr>
+            <th>@messages(entityNameHeader)</th>
 
-            <th class="govuk-table__header">
-                <h2 id="kind-header" class="bold std-text">@messages("site.type")</h2>
-            </th>
-            <th class="govuk-table__header"></th>
+            <th>@messages("site.type")</th>
+            <th><span class="visually-hidden">@messages("site.remove")</span></th>
         </tr>
-</thead>
-        <tbody class="govuk-table__body">
+    </thead>
+        <tbody>
             @for(entity <- entities) {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
+            <tr>
+                <th scope="row">
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
-                </td>
+                </th>
 
-                <td class="govuk-table__cell">
+                <th scope="row">
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
-                </td>
+                </th>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <td class="govuk-table__cell">
+                        <td class="numeric">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
                                 <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
