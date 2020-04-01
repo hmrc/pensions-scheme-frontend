@@ -18,11 +18,8 @@ package utils.hstasklisthelper
 
 import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
-import identifiers.register.establishers.individual.EstablisherNameId
-import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{SchemeNameId, _}
 import models._
-import models.person.PersonName
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -190,12 +187,6 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
     }
 
     "not be present when view only" in {
-      val declarationSectionWithLink =
-        SchemeDetailsTaskListEntitySection(None,
-          Seq.empty,
-          Some("messages__schemeTaskList__sectionDeclaration_header"),
-          "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
-          "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
       val userAnswers = answersDataAllComplete(isCompleteBeforeStart = false)
 
       helper.declarationSection(userAnswers, srn, viewOnly = true) mustBe None
@@ -230,7 +221,8 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
           testDeclarationEntitySpoke,
           Some("messages__schemeTaskList__sectionDeclaration_header"),
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
-          "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))
+          "messages__schemeTaskList__sectionDeclaration_incomplete_v2")),
+        Some(false)
       )
     }
   }

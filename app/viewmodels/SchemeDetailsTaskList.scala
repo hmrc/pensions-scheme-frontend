@@ -27,7 +27,8 @@ case class SchemeDetailsTaskList(h1: String,
                                  establishers: Seq[SchemeDetailsTaskListEntitySection],
                                  addTrusteeHeader: Option[SchemeDetailsTaskListEntitySection],
                                  trustees: Seq[SchemeDetailsTaskListEntitySection],
-                                 declaration: Option[SchemeDetailsTaskListEntitySection]
+                                 declaration: Option[SchemeDetailsTaskListEntitySection],
+                                 isAllSectionsComplete: Option[Boolean]
                                 ) {
 }
 

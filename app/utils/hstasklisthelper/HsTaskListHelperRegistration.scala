@@ -99,7 +99,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       establishersSection(answers, NormalMode, srn),
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
-      declarationSection(answers)
+      declarationSection(answers),
+      None
     )
 }
 

@@ -231,6 +231,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     establishers = Nil,
     addTrusteeHeader = None,
     trustees = Nil,
-    declaration = None
+    declaration = None,
+    isAllSectionsComplete = None
   )
 }
