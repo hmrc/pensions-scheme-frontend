@@ -219,7 +219,7 @@ trait DataCompletionHelper extends OptionValues {
       .establisherPartnershipAddressYears(index, AddressYears.OverAYear)
       .establishersPartnershipEmail(index, "s@s.com")
       .establishersPartnershipPhone(index, "123")
-      .establishersPartnershipPartnerName(index, 0, PersonName("dir", "One"))
+      .establishersPartnershipPartnerName(index, 0, PersonName("Partner", "One"))
       .establishersPartnershipPartnerDOB(index, 0, LocalDate.now().minusYears(30))
       .establishersPartnershipPartnerNino(index, 0, ReferenceValue("AB100100A"))
       .establishersPartnershipPartnerUtr(index, 0, ReferenceValue("123"))
@@ -227,6 +227,14 @@ trait DataCompletionHelper extends OptionValues {
       .establishersPartnershipPartnerAddressYears(index, 0, AddressYears.OverAYear)
       .establishersPartnershipPartnerEmail(index, 0, "s@s.com")
       .establishersPartnershipPartnerPhone(index, 0, "123")
+      .establishersPartnershipPartnerName(index, 1, PersonName("Partner", "Two"))
+      .establishersPartnershipPartnerDOB(index, 1, LocalDate.now().minusYears(30))
+      .establishersPartnershipPartnerNino(index, 1, ReferenceValue("AB100100A"))
+      .establishersPartnershipPartnerUtr(index, 1, ReferenceValue("123"))
+      .establishersPartnershipPartnerAddress(index, 1, address)
+      .establishersPartnershipPartnerAddressYears(index, 1, AddressYears.OverAYear)
+      .establishersPartnershipPartnerEmail(index, 1, "s@s.com")
+      .establishersPartnershipPartnerPhone(index, 1, "123")
   }
 
   protected def setCompleteWorkingKnowledge(isComplete: Boolean, ua: UserAnswers): UserAnswers = {

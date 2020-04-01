@@ -1576,6 +1576,7 @@ messages__whatYouWillNeed__item7 = contact email address
 messages__whatYouWillNeed__item8 = contact phone number
 messages__partnersFor = {0}’s partners
 messages__whatYouWillNeedPartners__p1 = For every partner, you will need to tell us the partner’s:
+messages__atLeast_two_partners = You will need to tell us details for at least two partners.
 
 messages__whatYouWillNeedTrusteeCompany__title = Company details
 messages__whatYouWillNeedTrusteeCompany__h1 = Company details for {0}

@@ -244,6 +244,38 @@
             "emailAddress": "e@e.e",
             "phoneNumber": "1234567"
           }
+        },
+        {
+          "isNewPartner": true,
+          "partnerDetails": {
+            "firstName": "Partner",
+            "lastName": "Two",
+            "isDeleted": false
+          },
+          "dateOfBirth": "2001-01-01",
+          "hasNino": true,
+          "partnerNino": {
+            "value": "AB123456C",
+            "isEditable": false
+          },
+          "hasUtr": true,
+          "utr": {
+            "value": "1234567890",
+            "isEditable": false
+          },
+          "partnerAddressId": {
+            "addressLine1": "10 Other Place",
+            "addressLine2": "Some District",
+            "addressLine3": "Anytown",
+            "addressLine4": "Somerset",
+            "postcode": "ZZ1 1ZZ",
+            "country": "GB"
+          },
+          "partnerAddressYears": "over_a_year",
+          "partnerContactDetails": {
+            "emailAddress": "e@e.e",
+            "phoneNumber": "1234567"
+          }
         }
       ]
     }

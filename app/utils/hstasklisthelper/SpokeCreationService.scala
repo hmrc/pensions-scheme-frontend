@@ -74,12 +74,18 @@ class SpokeCreationService extends Enumerable.Implicits {
 
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
-        case (NormalMode, false) => Some(entityList.forall(_.isCompleted))
-        case (UpdateMode, false) if entityList.exists(!_.isCompleted) => Some(false)
-        case (UpdateMode, true) => Some(false)
+        case (NormalMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
+          Some(false)
+        case (NormalMode, false) =>
+          Some(entityList.forall(_.isCompleted))
+        case (UpdateMode, false) if entityList.exists(!_.isCompleted) =>
+          Some(false)
+        case (UpdateMode, true) =>
+          Some(false)
         case _ => None
       }
     }
+
     if (entityList.isEmpty)
       EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
     else
