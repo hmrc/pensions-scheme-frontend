@@ -48,18 +48,18 @@
         <tbody>
             @for(entity <- entities) {
             <tr class="member-details" role="row">
-                <td class="govuk-table__cell" role="cell" scope="row">
+                <td class="govuk-table__cell" role="cell">
                     <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
                 </td>
 
-                <td class="govuk-table__cell" role="cell" scope="row">
+                <td class="govuk-table__cell" role="cell">
                     <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
                 </td>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <td class="govuk-table__cell" role="cell" class="numeric">
+                        <td class="govuk-table__cell" role="cell">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
                                 <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>

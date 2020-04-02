@@ -33,12 +33,12 @@
         <tbody>
         @for(entity <- entities) {
         <tr class="member-details" role="row">
-            <td class="govuk-table__cell" role="cell" scope="row">
+            <td class="govuk-table__cell" role="cell">
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </td>
             @if(!viewOnly){
                 @entity.editLink(mode, srn).map{ editLink=>
-                    <td class="govuk-table__cell" role="cell" class="numeric">
+                    <td class="govuk-table__cell" role="cell">
                         <a id="person-@{entity.index}-edit" href="@editLink">
                             <span>@messages("site.change")</span>
                             <span class="visually-hidden">@{entity.name}</span>
@@ -46,7 +46,7 @@
                     </td>
                 }
                 @entity.deleteLink(mode, srn).map{ deleteLink=>
-                    <td class="govuk-table__cell" role="cell" class="numeric">
+                    <td class="govuk-table__cell" role="cell">
                         <a id="person-@{entity.index}-delete" href="@deleteLink">
                             <span aria-hidden="true">@messages("site.remove")</span>
                             <span class="visually-hidden">@{messages("site.remove")} @{entity.name}</span>
@@ -56,7 +56,7 @@
 
             } else {
                 @entity.editLink(mode, srn).map{ editLink=>
-                    <td class="govuk-table__cell" role="cell" class="numeric">
+                    <td class="govuk-table__cell" role="cell">
                         <a id="person-@{entity.index}-view" href="@editLink">
                             <span>@messages("site.view")</span>
                             <span class="visually-hidden">@{entity.name}</span>
