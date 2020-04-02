@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, TaskListLink, UpdateMode}
 import utils.UserAnswers
 import viewmodels.Message
 
@@ -66,7 +66,8 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
     dynamicLinkText(name, srn, registrationChangeLinkText, variationsViewLinkText),
-    controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url
+    if(mode == UpdateMode) controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn).url else
+      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url
   )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = answers.isBenefitsAndInsuranceCompleted

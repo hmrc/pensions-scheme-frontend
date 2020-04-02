@@ -59,6 +59,11 @@
     title = pageTitle
     ) {
         @components.back_link()
+        @taskSections.isAllSectionsComplete.map { isComplete =>
+            @if(!isComplete) {
+                @components.incomplete_alert()
+            }
+        }
         @components.heading(taskSections.h1)
 
     <div class="task-list">

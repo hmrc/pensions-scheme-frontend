@@ -196,7 +196,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           Seq(EntitySpoke(TaskListLink(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url))),
           None
-        )), Seq.empty, None)
+        )), Seq.empty, None, None)
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {
@@ -305,7 +305,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
             Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_add_link"),
               controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0, None).url))),
             None,
-            Message(text.getOrElse("")))), Seq.empty, None
+            Message(text.getOrElse("")))), Seq.empty, None, None
         )
 
       val view = createView(journeyTaskListNoTrustees())
@@ -427,7 +427,8 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct link and no text for the Declaration section where there is a declaration section and a link" in {
       val completed = schemeDetailsTaskListData().copy(declaration =
-        Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(text = "text", target = "target"))), Some("messages__schemeTaskList__sectionDeclaration_header"))))
+        Some(SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(text = "text", target = "target"))),
+          Some("messages__schemeTaskList__sectionDeclaration_header"))))
       val doc = asDocument(createView(completed)())
 
       assertNotRenderedById(doc, id = "section-declaration-text")
@@ -436,6 +437,20 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         linkText = "text",
         linkId = "section-declaration-link"
       )
+    }
+  }
+
+  "SchemeTaskListView incomplete alert for variation" must {
+    "be displayed when variation changes are not complete" in {
+      val taskList = schemeDetailsTaskListData().copy(isAllSectionsComplete = Some(false))
+      val doc = asDocument(createView(taskList)())
+      assertRenderedById(doc, id = "alert-heading")
+    }
+
+    "not displayed when variation changes are complete" in {
+      val taskList = schemeDetailsTaskListData().copy(isAllSectionsComplete = Some(true))
+      val doc = asDocument(createView(taskList)())
+      assertNotRenderedById(doc, id = "alert-heading")
     }
   }
 
@@ -466,7 +481,7 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
                                        ): SchemeDetailsTaskList = SchemeDetailsTaskList("h1", srn,
     beforeYouStartSection(), aboutSection, Some(wkSection()),
     Some(addEstablisherHeader()), establishers, Some(addTrusteesHeader()),
-    trustees, None)
+    trustees, None, None)
 
   private def beforeYouStartSection(isCompleted: Option[Boolean] = Some(false)): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None, Seq(

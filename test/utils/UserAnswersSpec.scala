@@ -229,19 +229,20 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
     "return a map of partner names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
       val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-        .set(PartnerNameId(2, 1))(PersonName("Partner", "One", isDeleted = true))
-        .flatMap(_.set(PartnerNameId(2, 2))(PersonName("Partner", "One")))
+        .set(PartnerNameId(2, 2))(PersonName("Partner", "One", isDeleted = true))
+        .flatMap(_.set(PartnerNameId(2, 3))(PersonName("Partner", "One")))
         .flatMap(_.set(IsNewPartnerId(2, 0))(true))
         .get
 
       val partnerEntities = Seq(
-        PartnerEntity(PartnerNameId(2, 0), "Partner One", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        PartnerEntity(PartnerNameId(2, 1), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+        PartnerEntity(PartnerNameId(2, 0), "Partner One", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
+        PartnerEntity(PartnerNameId(2, 1), "Partner Two", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
+        PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 3),
+        PartnerEntity(PartnerNameId(2, 3), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 3))
 
       val result = userAnswers.allPartners(2)
 
-      result.size mustEqual 3
+      result.size mustEqual 4
       result mustBe partnerEntities
     }
   }

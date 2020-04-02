@@ -32,22 +32,18 @@
 
 <div id="@{field.id}-form" class="form-group @groupClass @if(field.hasErrors){form-field--error}">
     @if(headingIsLegend){
-
-    <h1>
-        <label class="form-label" for="@{field.id}">
-                <span class="bold heading-xlarge">@label</span>
-        </label>
-    </h1>
-
+        <h1>
+            <label class="form-label" for="@{field.id}">
+                    <span class="bold heading-xlarge">@label</span>
+            </label>
+        </h1>
     } else {
-
-    <label class="form-label" for="@{field.id}">
-        <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
-    </label>
-
+        <label class="form-label" for="@{field.id}">
+            <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
+        </label>
     }
     @hint.map{hintText=>
-    <span id= "hint-@{field.id}" class="form-hint">@hintText</span>
+        <span id= "hint-@{field.id}" class="form-hint">@hintText</span>
     }
     @field.errors.map { error =>
 

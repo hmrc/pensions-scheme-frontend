@@ -92,10 +92,14 @@ trait DataCompletion {
     }
 
   def isBeforeYouStartCompleted(mode: Mode): Boolean = {
-    val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
-    val haveAnyTrusteeComplete = if (isSingleOrMaster && get(HaveAnyTrusteesId).isEmpty) true else get(HaveAnyTrusteesId).nonEmpty
-    val declarationDutiesComplete = if (mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
 
+    val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
+    val haveAnyTrusteeComplete = if (mode == UpdateMode) {
+      true
+    } else {
+      if (isSingleOrMaster && get(HaveAnyTrusteesId).isEmpty) true else get(HaveAnyTrusteesId).nonEmpty
+    }
+    val declarationDutiesComplete = if (mode == UpdateMode) true else get(DeclarationDutiesId).nonEmpty
     !List(get(SchemeNameId), get(SchemeTypeId), get(EstablishedCountryId)).contains(None) &&
       haveAnyTrusteeComplete && declarationDutiesComplete
   }
