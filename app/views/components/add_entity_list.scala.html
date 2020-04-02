@@ -36,30 +36,32 @@
 }
 
 <div class="form-group">
-    <table id="items">
-    <thead>
-        <tr>
-            <th>@messages(entityNameHeader)</th>
+    <table id="items" class="hmrc-responsive-table">
+    <thead role="rowgroup">
+        <tr role="row">
+            <th class="govuk-table__header" scope="col" role="columnheader">@messages(entityNameHeader)</th>
 
-            <th>@messages("site.type")</th>
-            <th><span class="visually-hidden">@messages("site.remove")</span></th>
+            <th class="govuk-table__header" scope="col" role="columnheader">@messages("site.type")</th>
+            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
         </tr>
     </thead>
         <tbody>
             @for(entity <- entities) {
-            <tr>
-                <th scope="row">
+            <tr class="member-details" role="row">
+                <td class="govuk-table__cell" role="cell" scope="row">
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
-                </th>
+                </td>
 
-                <th scope="row">
+                <td class="govuk-table__cell" role="cell" scope="row">
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
-                </th>
+                </td>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <td class="numeric">
+                        <td class="govuk-table__cell" role="cell" class="numeric">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
-                                <span>@messages("site.remove")</span>
+                                @messages("site.remove")
                                 <span class="visually-hidden">@{entity.name}</span>
                             </a>
                         </td>
