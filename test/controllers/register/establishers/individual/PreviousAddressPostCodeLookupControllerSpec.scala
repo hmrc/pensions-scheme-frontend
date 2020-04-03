@@ -109,7 +109,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     "redirect a Bad Request when no results found for the input post code" in {
       val notFoundPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", notFoundPostCode))
-      val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results", Seq(notFoundPostCode)))
+      val boundForm = form.withError(FormError("postcode", "messages__error__postcode_no_results", Seq(notFoundPostCode)))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
       (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Nil))
