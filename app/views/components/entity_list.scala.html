@@ -40,7 +40,7 @@
                 @entity.editLink(mode, srn).map{ editLink=>
                     <td class="govuk-table__cell" role="cell" class="numeric">
                         <a id="person-@{entity.index}-edit" href="@editLink">
-                            @messages("site.change")
+                            <span>@messages("site.change")</span>
                             <span class="visually-hidden">@{entity.name}</span>
                         </a>
                     </td>
@@ -48,8 +48,8 @@
                 @entity.deleteLink(mode, srn).map{ deleteLink=>
                     <td class="govuk-table__cell" role="cell" class="numeric">
                         <a id="person-@{entity.index}-delete" href="@deleteLink">
-                            @messages("site.remove")
-                            <span class="visually-hidden">@{entity.name}</span>
+                            <span aria-hidden="true">@messages("site.remove")</span>
+                            <span class="visually-hidden">@{messages("site.remove")} @{entity.name}</span>
                         </a>
                     </td>
                 }
@@ -58,7 +58,7 @@
                 @entity.editLink(mode, srn).map{ editLink=>
                     <td class="govuk-table__cell" role="cell" class="numeric">
                         <a id="person-@{entity.index}-view" href="@editLink">
-                            @messages("site.view")
+                            <span>@messages("site.view")</span>
                             <span class="visually-hidden">@{entity.name}</span>
                         </a>
                     </td>

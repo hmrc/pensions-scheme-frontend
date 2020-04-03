@@ -61,7 +61,7 @@
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
                         <td class="govuk-table__cell" role="cell" class="numeric">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
-                                @messages("site.remove")
+                                <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
                             </a>
                         </td>
