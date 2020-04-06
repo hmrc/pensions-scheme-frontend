@@ -96,7 +96,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
       expectedHintKey = None
     )
 
-    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig, noOfListItems = 3)
+    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig, noOfListItems = 2)
 
     behave like addEntityList(createView(trusteesAllTypes), trusteesAllTypes, "Trustee",
       Seq("Partnership", "Company", "Individual"))

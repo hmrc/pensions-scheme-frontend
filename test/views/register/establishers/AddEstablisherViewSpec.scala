@@ -92,7 +92,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
     }
 
-    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig, noOfListItems = 4)
+    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig, noOfListItems = 3)
 
     behave like entityListWithMultipleRecords(createView(), createView(establishers), establishers, frontendAppConfig)
 

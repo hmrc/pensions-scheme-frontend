@@ -36,38 +36,38 @@
 }
 
 <div class="form-group">
-    <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
+    <table id="items" class="hmrc-responsive-table">
+    <thead role="rowgroup">
+        <tr role="row">
+            <th id="person-header" class="govuk-table__header" scope="col" role="columnheader">@messages(entityNameHeader)</th>
 
-        <li class="cya-question">
-            <div class="cya-question">
-                <h2 id="person-header" class="bold std-text">@messages(entityNameHeader)</h2>
-            </div>
-
-            <div class="cya-question">
-                <h2 id="kind-header" class="bold std-text">@messages("site.type")</h2>
-            </div>
-            <div></div>
-        </li>
-
+            <th id="kind-header" class="govuk-table__header" scope="col" role="columnheader">@messages("site.type")</th>
+            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+        </tr>
+    </thead>
+        <tbody>
             @for(entity <- entities) {
-            <li>
-                <div class="cya-question">
+            <tr class="member-details" role="row">
+                <td class="govuk-table__cell" role="cell">
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
-                </div>
+                </td>
 
-                <div class="cya-question">
+                <td class="govuk-table__cell" role="cell">
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
-                </div>
+                </td>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <div>
+                        <td class="govuk-table__cell" role="cell">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
                                 <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
                             </a>
-                        </div>
+                        </td>
                     }
-            </li>
+            </tr>
         }
-    </ul>
+        </tbody>
+    </table>
 </div>

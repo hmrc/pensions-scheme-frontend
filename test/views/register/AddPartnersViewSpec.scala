@@ -154,13 +154,14 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       val editLink = doc.select(s"a[id=person-0-edit]")
       val deleteLink = doc.select(s"a[id=person-0-delete]")
       val incompleteLozenge = doc.select(s"span[class=rejected]")
-      val visibleText = doc.select(s"#person-0-view span[aria-hidden=true]").first.text
       val hiddenText = doc.select(s"#person-0-view span[class=visually-hidden]").first.text
+      val visibleText = doc.select(s"#person-0-view span").first.text
       deleteLink.size() mustBe 0
       editLink.size() mustBe 0
       incompleteLozenge.size() mustBe 0
+
       visibleText mustBe messages("site.view")
-      hiddenText mustBe s"${messages("site.view")} John Doe"
+      hiddenText mustBe "John Doe"
     }
 
     "show edit links but not show view links when viewOnly is false" in {
