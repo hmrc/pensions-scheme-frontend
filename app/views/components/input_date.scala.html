@@ -17,7 +17,9 @@
 @(
 field: Field,
 label: String,
-legendClass: String = "",
+headingIsLegend: Boolean,
+legendClass: Option[String] = None,
+labelClass: Option[String] = None,
 secondaryLabel: Option[String] = None,
 hint: Option[String] = None
 )(implicit messages: Messages)
@@ -40,10 +42,14 @@ hint: Option[String] = None
 
 <div class="form-group @if(Seq(field, field("day"), field("month"), field("year")).flatMap(_.errors).nonEmpty){form-field--error}">
 <fieldset id="@field.id" role="group" aria-describedby="@ariaDescribedBy">
-    <legend>
-        <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
-            @label
-        </span>
+
+    <legend @if(legendClass.nonEmpty){class="@legendClass"}>
+        @if(headingIsLegend){
+        <h1 class="heading-xlarge">@label</h1>
+        } else {
+        <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
+        }
+
     </legend>
 
     @hint.map{hintText=>

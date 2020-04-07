@@ -47,13 +47,11 @@
 
         @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            headingKey = messages("messages__DOB__heading", fullName)
-        )
 
         @components.input_date(
             field = form("date"),
-            label = "",
+            label = messages("messages__DOB__heading", fullName),
+            headingIsLegend = true,
             hint = Some(messages("messages__common__dob__hint"))
         )
         </div>
