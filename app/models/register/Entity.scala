@@ -42,7 +42,7 @@ sealed trait Entity[ID] {
   def editLink(mode: Mode, srn: Option[String]): Option[String]
 
   def deleteLink(mode: Mode, srn: Option[String]): Option[String]
-
+ 
   def index: Int
 }
 
