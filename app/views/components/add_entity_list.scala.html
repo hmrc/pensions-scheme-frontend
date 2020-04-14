@@ -42,7 +42,9 @@
             <th id="person-header" class="govuk-table__header" scope="col" role="columnheader">@messages(entityNameHeader)</th>
 
             <th id="kind-header" class="govuk-table__header" scope="col" role="columnheader">@messages("site.type")</th>
-            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
+                <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            }
         </tr>
     </thead>
         <tbody>

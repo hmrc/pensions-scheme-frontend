@@ -49,6 +49,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
+
         Future.successful(Ok(view(formProvider(establishers), mode,
           establishers, existingSchemeName, srn)))
     }

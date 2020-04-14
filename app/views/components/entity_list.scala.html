@@ -20,14 +20,26 @@
 @import models.register.{Entity, Establisher}
 @(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
+@hasChangeLink = @{
+    entities.exists(_.editLink(mode, srn).isDefined)
+}
+
+@hasDeleteLink = @{
+    !viewOnly && entities.exists(_.deleteLink(mode, srn).isDefined)
+}
+
 <div class="form-group">
     <table id="items" class="hmrc-responsive-table">
         <thead role="rowgroup">
         <tr role="row">
             <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("messages__visuallyhidden__directorName")</span></th>
 
-            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.change")</span></th>
-            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            @if(hasChangeLink){
+                <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.change")</span></th>
+            }
+            @if(hasDeleteLink){
+                <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            }
         </tr>
         </thead>
         <tbody>
