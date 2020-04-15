@@ -36,30 +36,32 @@
 }
 
 <div class="form-group">
-    <table id="items" class="hmrc-responsive-table">
+    <table id="items" class="hmrc-responsive-table" role="grid">
     <thead role="rowgroup">
         <tr role="row">
-            <th id="person-header" class="govuk-table__header" scope="col" role="columnheader">@messages(entityNameHeader)</th>
+            <th id="person-header" class="govuk-table__header" scope="col">@messages(entityNameHeader)</th>
 
-            <th id="kind-header" class="govuk-table__header" scope="col" role="columnheader">@messages("site.type")</th>
-            <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            <th id="kind-header" class="govuk-table__header" scope="col">@messages("site.type")</th>
+            @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
+                <th class="govuk-table__header" scope="col"><span class="visually-hidden">@messages("site.remove")</span></th>
+            }
         </tr>
     </thead>
         <tbody>
             @for(entity <- entities) {
             <tr class="member-details" role="row">
-                <td class="govuk-table__cell" role="cell">
+                <td class="govuk-table__cell" role="gridcell">
                     <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
                     <p id="person-@{entity.index}" class="std-text">@entity.name</p>
                 </td>
 
-                <td class="govuk-table__cell" role="cell">
+                <td class="govuk-table__cell" role="gridcell">
                     <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
                     <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
                 </td>
 
                     @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <td class="govuk-table__cell" role="cell">
+                        <td class="govuk-table__cell" role="gridcell">
                             <a id="person-@{entity.index}-delete" href="@deleteLink">
                                 <span>@messages("site.remove")</span>
                                 <span class="visually-hidden">@{entity.name}</span>
