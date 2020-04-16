@@ -1,18 +1,18 @@
 @*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import play.api.mvc.AnyContent
 @import config.FrontendAppConfig
@@ -27,48 +27,48 @@
 @(entities: Seq[Entity[_]], mode: Mode, srn: Option[String], entityNameHeader: String)(implicit messages: Messages)
 
 @getKind(entity: Entity[_]) = @{
-    entity.id match {
-        case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__common__entityKind_company")
-        case EstablisherNameId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
-        case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__common__entityKind_partnership")
-        case _ => ""
-    }
+entity.id match {
+case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__common__entityKind_company")
+case EstablisherNameId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
+case PartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__common__entityKind_partnership")
+case _ => ""
+}
 }
 
 <div class="form-group">
-    <table id="items" class="hmrc-responsive-table">
-    <thead role="rowgroup">
+    <table id="items" class="hmrc-responsive-table" role="grid">
+        <thead role="rowgroup">
         <tr role="row">
-            <th id="person-header" class="govuk-table__header" scope="col" role="columnheader">@messages(entityNameHeader)</th>
+            <th id="person-header" class="govuk-table__header" scope="col">@messages(entityNameHeader)</th>
 
-            <th id="kind-header" class="govuk-table__header" scope="col" role="columnheader">@messages("site.type")</th>
+            <th id="kind-header" class="govuk-table__header" scope="col">@messages("site.type")</th>
             @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
-                <th class="govuk-table__header" scope="col" role="columnheader"><span class="visually-hidden">@messages("site.remove")</span></th>
+            <th class="govuk-table__header" scope="col"><span class="visually-hidden">@messages("site.remove")</span></th>
             }
         </tr>
-    </thead>
+        </thead>
         <tbody>
-            @for(entity <- entities) {
-            <tr class="member-details" role="row">
-                <td class="govuk-table__cell" role="cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
-                    <p id="person-@{entity.index}" class="std-text">@entity.name</p>
-                </td>
+        @for(entity <- entities) {
+        <tr class="member-details" role="row">
+            <td class="govuk-table__cell" role="gridcell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages(entityNameHeader)</span>
+                <p id="person-@{entity.index}" class="std-text">@entity.name</p>
+            </td>
 
-                <td class="govuk-table__cell" role="cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
-                    <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
-                </td>
+            <td class="govuk-table__cell" role="gridcell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("site.type")</span>
+                <p id="kind-@{entity.index}" class="std-text">@getKind(entity)</p>
+            </td>
 
-                    @entity.deleteLink(mode, srn).map{ deleteLink=>
-                        <td class="govuk-table__cell" role="cell">
-                            <a id="person-@{entity.index}-delete" href="@deleteLink">
-                                <span>@messages("site.remove")</span>
-                                <span class="visually-hidden">@{entity.name}</span>
-                            </a>
-                        </td>
-                    }
-            </tr>
+            @entity.deleteLink(mode, srn).map{ deleteLink=>
+            <td class="govuk-table__cell" role="gridcell">
+                <a id="person-@{entity.index}-delete" href="@deleteLink">
+                    <span>@messages("site.remove")</span>
+                    <span class="visually-hidden">@{entity.name}</span>
+                </a>
+            </td>
+            }
+        </tr>
         }
         </tbody>
     </table>
