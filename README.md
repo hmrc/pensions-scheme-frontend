@@ -12,14 +12,30 @@ This service has a corresponding back-end service, namely pensions-scheme.
 |-----------------------|-----------------------------------------------|
 |Pensions-scheme        |https://github.com/hmrc/pensions-scheme        |
 |Pension-administrator  |https://github.com/hmrc/pension-administrator  |
+|address-lookup         |https://github.com/hmrc/address-lookup         |
+|email                  |https://github.com/hmrc/email                  |
+|auth                   |https://github.com/hmrc/auth                   |
 
-### Endpoints used
+### Endpoints used   
 
 |Service        |HTTP Method |Route                                  |Purpose |
 |---------------|--- |----------------|----------------------------------|
 |Tai            |GET |/tai/${nino}/tax-account/${year} /expenses/flat-rate-expenses| Returns details of a users tax account specifically that of IABD 57 |
 |Tai            |POST|/tai/${nino}/tax-account/${year} /expenses/flat-rate-expenses| Updates a users tax account specifically that of IABD 57  |
 |Citizen Details|GET |/citizen-details/${nino}/etag|retrieves the users etag which is added to their update request to NPS to ensure optimistic locking|
+
+|Service | HTTP Method | Route | Purpose
+|--------------|-------|------------------|------------------|
+|Pensions-scheme | POST | /pensions-scheme/scheme | |
+|Pensions-scheme | POST | /pensions-scheme/update-scheme | 
+|Pensions-scheme  |GET | /pensions-scheme/is-psa-associated  | | 
+|Pension-administrator  |GET  |/pension-administrator/get-email  | | 
+|Pension-administrator  |GET |/pension-administrator/get-name | | 
+|Pension-administrator  |GET |/pension-administrator/get-minimal-psa  | | 
+|address-lookup  |GET |/v2/uk/addresses  | | 
+|email           |POST |/hmrc/email  | | 
+
+
 
 ## Running the service
 
