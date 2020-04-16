@@ -18,40 +18,36 @@ This service has a corresponding back-end service, namely pensions-scheme.
 
 ### Endpoints used   
 
-|Service        |HTTP Method |Route                                  |Purpose |
-|---------------|--- |----------------|----------------------------------|
-|Tai            |GET |/tai/${nino}/tax-account/${year} /expenses/flat-rate-expenses| Returns details of a users tax account specifically that of IABD 57 |
-|Tai            |POST|/tai/${nino}/tax-account/${year} /expenses/flat-rate-expenses| Updates a users tax account specifically that of IABD 57  |
-|Citizen Details|GET |/citizen-details/${nino}/etag|retrieves the users etag which is added to their update request to NPS to ensure optimistic locking|
-
 |Service | HTTP Method | Route | Purpose
-|--------------|-------|------------------|------------------|
-|Pensions-scheme | POST | /pensions-scheme/scheme | |
-|Pensions-scheme | POST | /pensions-scheme/update-scheme | 
-|Pensions-scheme  |GET | /pensions-scheme/is-psa-associated  | | 
-|Pension-administrator  |GET  |/pension-administrator/get-email  | | 
-|Pension-administrator  |GET |/pension-administrator/get-name | | 
-|Pension-administrator  |GET |/pension-administrator/get-minimal-psa  | | 
-|address-lookup  |GET |/v2/uk/addresses  | | 
-|email           |POST |/hmrc/email  | | 
-
-
+|-----------------------|-------|-------------------------------------------|------------------|
+|Pensions-scheme        | GET  | /pensions-scheme/scheme                    | Returns details of scheme |
+|Pensions-scheme        | POST  | /pensions-scheme/update-scheme            | Update scheme details |
+|Pensions-scheme        | GET   | /pensions-scheme/is-psa-associated        | Check for associated schemes for a PSA | 
+|Pension-administrator  | GET   | /pension-administrator/get-email          | Returns email address for a PSA | 
+|Pension-administrator  | GET   | /pension-administrator/get-name           | Returns name of a PSA | 
+|Pension-administrator  | GET   | /pension-administrator/get-minimal-psa    | Returns minimal PSA details from DES | 
+|address-lookup         | GET   | /v2/uk/addresses                          | Returns a list of addresses that match a given postcode | 
+|email                  | POST  | /hmrc/email                               | Sends an email to an email address | 
 
 ## Running the service
 
-Service Manager: PSUBS_ALL
+Service Manager: PODS_ALL
 
-Port: 9335
+Port: 8200
 
-Link: http://localhost:9335/professional-subscriptions
+Link: http://localhost:8200/register-pension-scheme
 
-NINOs: `LL111111A` & `AB216913B` (local and Staging environments only)
+Enrolment key: HMRC-PODS-ORG
+
+Identifier name: PsaID
+
+Example PSA ID: A2100005
 
 ## Tests and prototype
 
-[View the prototype here](https://employee-expenses.herokuapp.com/)
+[View the prototype here](https://pods-prototype.herokuapp.com/page-list/page-list-scheme)
 
 |Repositories     |Link                                                                   |
 |-----------------|-----------------------------------------------------------------------|
-|Journey tests    |https://github.com/hmrc/professional-subscriptions-journey-tests       |
-|Prototype        |https://github.com/hmrc/employee-expenses-prototype                    |
+|Journey tests    |https://github.com/hmrc/pods-journey-tests       |
+|Prototype        |https://pods-prototype.herokuapp.com/page-list/page-list-scheme                    |
