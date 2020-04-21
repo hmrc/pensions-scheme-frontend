@@ -31,35 +31,12 @@ import scala.util.Failure
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
-
-  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PsaSchemeDetails]
   def getSchemeDetailsVariations(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
-
 }
 
 @Singleton
 class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
   SchemeDetailsConnector with HttpResponseHelper {
-
-  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PsaSchemeDetails] = {
-
-    val url = config.schemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType, "idNumber" -> idNumber, "PSAId" -> psaId)
-
-    http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
-      response.status match {
-        case OK =>
-          val json = Json.parse(response.body)
-          json.validate[PsaSchemeDetails] match {
-            case JsSuccess(value, _) => value
-            case JsError(errors) => throw new JsResultException(errors)
-          }
-        case _ => handleErrorResponse("GET", url)(response)
-      }
-    } andThen {
-      case Failure(t: Throwable) => Logger.warn("Unable to get scheme details", t)
-    }
-  }
 
   def getSchemeDetailsVariations(psaId: String,
                                  schemeIdType: String,
