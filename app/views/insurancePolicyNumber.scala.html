@@ -37,14 +37,11 @@
 
         @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            headingKey=companyName.fold(messages("messages__insurance_policy_number__title"))(name=>messages("messages__insurance_policy_number__h1", name))
-        )
-
         @components.input_text(
             field = form("policyNumber"),
-            label = messages("messages__benefits_insurance__policy"),
-            labelClass = Some("visually-hidden")
+            label = companyName.fold(messages("messages__insurance_policy_number__title"))(name=>messages("messages__insurance_policy_number__h1", name)),
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
         </div>
         @components.submit_button()
