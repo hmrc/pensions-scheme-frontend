@@ -23,12 +23,18 @@
  labelClass: Option[String] = None
 )(implicit messages: Messages)
 
+@ariaDescribedBy = @{
+val hintId = if (hint.nonEmpty) Seq(s"${value}-radio-hint") else Seq.empty
+(hintId).mkString(" ")
+}
+
 <div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-    <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
+    <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(hint.nonEmpty){aria-describedby="@ariaDescribedBy"}
+       @if(field.value.contains(value)){ checked="checked" }>
     <label  for="@field.id-@value" @if(labelClass.nonEmpty) { class=@labelClass } >
         @messages(label)
-        @if(hint.nonEmpty) {
-        <span class="form-hint">@hint.map { hintText => @messages(hintText)}</span>
-        }
     </label>
+    @if(hint.nonEmpty) {
+    <span id="@value-radio-hint" class="form-hint">@hint.map { hintText => @messages(hintText)}</span>
+    }
 </div>
