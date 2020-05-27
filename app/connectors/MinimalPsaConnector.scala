@@ -18,8 +18,10 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
+import connectors.MinimalPsaConnector.MinimalPSA
 import play.api.Logger
 import play.api.http.Status._
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.HttpResponseHelper
@@ -31,6 +33,9 @@ import scala.util.Failure
 trait MinimalPsaConnector {
 
   def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean]
+
+  def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
+
 }
 
 class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with HttpResponseHelper {
@@ -49,4 +54,43 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
     }
   }
 
+  def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
+    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+
+    http.GET[MinimalPSA](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly)
+  }
+}
+
+object MinimalPsaConnector {
+  case class MinimalPSA(
+                         email: String,
+                         organisationName: Option[String],
+                         individualDetails: Option[IndividualDetails]
+                       ) {
+
+    def name: String = {
+      individualDetails
+        .map(_.fullName)
+        .orElse(organisationName)
+        .getOrElse("Pension Scheme Administrator")
+    }
+  }
+
+  object MinimalPSA {
+    implicit val format: Format[MinimalPSA] = Json.format[MinimalPSA]
+  }
+
+  case class IndividualDetails(
+                                firstName: String,
+                                middleName: Option[String],
+                                lastName: String
+                              ) {
+    def fullName: String = middleName match {
+      case Some(middle) => s"$firstName $middle $lastName"
+      case _            => s"$firstName $lastName"
+    }
+  }
+  object IndividualDetails {
+    implicit val format: Format[IndividualDetails] = Json.format[IndividualDetails]
+  }
 }
