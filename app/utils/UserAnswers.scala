@@ -203,42 +203,35 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
-          val seqReads = establishers.zipWithIndex.map { case (jsValue, index) =>
-            val establisherKind = (jsValue \ "establisherKind").validate[String].asOpt
-            establisherKind match {
-              case Some("individual") => readsIndividual(index)
-              case Some("company") => readsCompany(index)
-              case Some("partnership") => readsPartnership(index)
+          val jsResults = establishers.zipWithIndex.map { case (jsValue, index) =>
+            val establisherKind = (jsValue \ EstablisherKindId.toString).validate[String].asOpt
+            val readsForEstablisherKind = establisherKind match {
+              case Some(EstablisherKind.Indivdual.toString) => readsIndividual(index)
+              case Some(EstablisherKind.Company.toString) => readsCompany(index)
+              case Some(EstablisherKind.Partnership.toString) => readsPartnership(index)
               case _ => readsSkeleton(index)
             }
+            readsForEstablisherKind.reads(jsValue)
           }
 
-          readEntitiesTemp(
-            establishers,
-            seqReads
-          )
+          asJsResultSeq(jsResults)
         case _ => JsSuccess(Nil)
       }
     }
   }
 
-  def readEntitiesTemp[T](entities: Seq[JsValue], reads: Seq[Reads[T]]): JsResult[Seq[T]] = {
-    @tailrec
-    def recur(result: JsResult[Seq[T]], entities: Seq[(JsValue, Int)]): JsResult[Seq[T]] = {
-      result match {
-        case JsSuccess(results, _) =>
-          entities match {
-            case Seq(h, t@_*) => reads(h._2).reads(h._1) match {
-              case JsSuccess(item, _) => recur(JsSuccess(results :+ item), t)
-              case error@JsError(_) => error
-            }
-            case _ => result
-          }
-        case error: JsError => error
-      }
-    }
+  private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
+    val allErrors = jsResults.collect {
+      case JsError(errors) => errors
+    }.flatten
 
-    recur(JsSuccess(Nil), entities.zipWithIndex)
+    if (allErrors.nonEmpty) {
+      JsError(allErrors)
+    } else {
+      JsSuccess(jsResults.collect {
+        case JsSuccess(establisher, _) => establisher
+      })
+    }
   }
 
   def allEstablishers(mode: Mode): Seq[Establisher[_]] = {
@@ -251,11 +244,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] = {
-    val ff = allEstablishers(mode)
-    println( "\n>>>" + ff)
-    ff.filterNot(_.isDeleted)
-  }
+  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] =
+    allEstablishers(mode).filterNot(_.isDeleted)
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] =
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
