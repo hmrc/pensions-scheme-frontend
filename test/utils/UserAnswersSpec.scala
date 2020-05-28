@@ -42,40 +42,40 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
   import UserAnswersSpec._
 
-  ".allEstablishers" must {
-    "return a sequence of establishers names, edit links and delete links" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-
-      val allEstablisherEntities: Seq[Establisher[_]] = Seq(
-        establisherEntity("Test Company", 0, Company, isComplete = true),
-        establisherEntity("Test Individual", 1, Indivdual, isComplete = true),
-        establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
-      )
-
-      userAnswers.allEstablishers(mode) mustEqual allEstablisherEntities
-    }
-
-    "return en empty sequence if there are no establishers" in {
-      val json = Json.obj(
-        EstablishersId.toString -> Json.arr(
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(mode) mustEqual Seq.empty
-    }
-
-    "return en empty sequence if the json is invalid" in {
-      val json = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            "invalid" -> "invalid"
-          )
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allEstablishers(mode) mustEqual Seq.empty
-    }
-  }
+//  ".allEstablishers" must {
+//    "return a sequence of establishers names, edit links and delete links" in {
+//      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+//
+//      val allEstablisherEntities: Seq[Establisher[_]] = Seq(
+//        establisherEntity("Test Company", 0, Company, isComplete = true),
+//        establisherEntity("Test Individual", 1, Indivdual, isComplete = true),
+//        establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
+//      )
+//
+//      userAnswers.allEstablishers(mode) mustEqual allEstablisherEntities
+//    }
+//
+//    "return en empty sequence if there are no establishers" in {
+//      val json = Json.obj(
+//        EstablishersId.toString -> Json.arr(
+//        )
+//      )
+//      val userAnswers = UserAnswers(json)
+//      userAnswers.allEstablishers(mode) mustEqual Seq.empty
+//    }
+//
+//    "return en empty sequence if the json is invalid" in {
+//      val json = Json.obj(
+//        EstablishersId.toString -> Json.arr(
+//          Json.obj(
+//            "invalid" -> "invalid"
+//          )
+//        )
+//      )
+//      val userAnswers = UserAnswers(json)
+//      userAnswers.allEstablishers(mode) mustEqual Seq.empty
+//    }
+//  }
 
   ".allEstablishersAfterDelete" must {
     "return a map of establishers names, edit links and delete links when one of the establishers is deleted" in {
@@ -107,6 +107,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
       )
 
       val userAnswers = UserAnswers(json)
+      println( "\n>>>>>>>>>>>>>>>>" + userAnswers)
       val allEstablisherEntities: Seq[Establisher[_]] =
         Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3),
           establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
@@ -115,319 +116,319 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     }
   }
 
-  ".allTrustees" must {
-    "return a map of trustee names, edit links, delete links and isComplete flag" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
-        trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
-        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
-        trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
-      )
-
-      val result = userAnswers.allTrustees
-
-      result mustEqual allTrusteesEntities
-    }
-
-    "return en empty sequence if there are no trustees " in {
-      val json = Json.obj(
-        TrusteesId.toString -> Json.arr(
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
-    }
-
-
-    "return en empty sequence if the json is invalid " in {
-      val json = Json.obj(
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            "invalid" -> "invalid"
-          )
-        )
-      )
-      val userAnswers = UserAnswers(json)
-      userAnswers.allTrustees mustEqual Seq.empty
-    }
-  }
-
-  ".allTrusteesAfterDelete" must {
-    "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
-      val json = Json.obj(
-        "schemeType"-> Json.obj("name"-> "single"),
-        TrusteesId.toString -> Json.arr(
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeNameId.toString -> PersonName("First", "Last", isDeleted = true),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company"),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
-            TrusteeNameId.toString -> PersonName("FName", "LName", isDeleted = true),
-            IsTrusteeNewId.toString -> true
-          ),
-          Json.obj(
-            TrusteeKindId.toString -> TrusteeKind.Company.toString,
-            IsTrusteeNewId.toString -> true
-          )
-        )
-      )
-
-      val userAnswers = UserAnswers(json)
-
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
-
-      val result = userAnswers.allTrusteesAfterDelete
-
-      result mustEqual allTrusteesEntities
-    }
-  }
-
-  ".allDirectors" must {
-
-    "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-        .set(DirectorNameId(0, 1))(PersonName("First", "Last", isDeleted = true)).asOpt.value
-        .set(DirectorNameId(0, 2))(PersonName("First", "Last")).asOpt.value
-
-      val directorEntities = Seq(
-        DirectorEntity(DirectorNameId(0, 0), "Director One", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
-        DirectorEntity(DirectorNameId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
-        DirectorEntity(DirectorNameId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
-
-      val result = userAnswers.allDirectors(0)
-
-      result.size mustEqual 3
-      result mustBe directorEntities
-    }
-  }
-
-  ".allDirectorsAfterDelete" must {
-
-    "return a map of director names, edit links and delete links after one of the directors is deleted" in {
-      val userAnswers = UserAnswers()
-        .set(DirectorNameId(0, 0))(PersonName("First", "Last", isDeleted = true))
-        .flatMap(_.set(DirectorNameId(0, 1))(PersonName("First1", "Last1"))).get
-
-      val directorEntities = Seq(
-        DirectorEntity(DirectorNameId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
-      val result = userAnswers.allDirectorsAfterDelete(0)
-
-      result.size mustEqual 1
-      result mustBe directorEntities
-    }
-  }
-
-  ".allPartners" must {
-
-    "return a map of partner names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
-      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
-        .set(PartnerNameId(2, 2))(PersonName("Partner", "One", isDeleted = true))
-        .flatMap(_.set(PartnerNameId(2, 3))(PersonName("Partner", "One")))
-        .flatMap(_.set(IsNewPartnerId(2, 0))(true))
-        .get
-
-      val partnerEntities = Seq(
-        PartnerEntity(PartnerNameId(2, 0), "Partner One", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
-        PartnerEntity(PartnerNameId(2, 1), "Partner Two", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
-        PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 3),
-        PartnerEntity(PartnerNameId(2, 3), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 3))
-
-      val result = userAnswers.allPartners(2)
-
-      result.size mustEqual 4
-      result mustBe partnerEntities
-    }
-  }
-
-  ".establishersCount" must {
-
-    "return the count of all establishers irrespective of whether they are deleted or not" in {
-      val json = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company")
-          ),
-          Json.obj(
-            EstablisherNameId.toString ->
-              PersonName("my", "name", isDeleted = true)
-          ),
-          Json.obj(
-            EstablisherNameId.toString ->
-              PersonName("my", "name")
-          )
-        )
-      )
-      val userAnswers = UserAnswers(json)
-
-      val result = userAnswers.establishersCount
-      result mustEqual 3
-    }
-  }
-
-  ".trusteesCount" must {
-
-    "return the count of all trustees irrespective of whether they are deleted or not" in {
-      val userAnswers = UserAnswers()
-        .set(TrusteeNameId(0))(PersonName("First", "Last", isDeleted = true))
-        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company"))).get
-
-      val result = userAnswers.trusteesCount
-      result mustEqual 2
-    }
-  }
-
-  ".getAllRecursive" must {
-
-    "get all matching recursive results" in {
-      val userAnswers = UserAnswers(establishers)
-      val values = userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "name").value
-      values must contain("foo")
-      values must contain("bar")
-    }
-
-    "return an empty list when there is a relevant structure with no entries" in {
-      val userAnswers = UserAnswers(establishers)
-      userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "address").value mustBe empty
-    }
-
-    "return `None` when the data at the path doesn't conform to the type we want" in {
-      val userAnswers = UserAnswers(establishers)
-      val values = userAnswers.getAllRecursive[Int](JsPath \ "establishers" \\ "name")
-      values mustNot be(defined)
-    }
-  }
-
-  ".getAll" must {
-
-    "return a list of all matching data" in {
-      val userAnswers = UserAnswers(establishers)
-      val values = userAnswers.getAll[JsValue](JsPath \ "establishers").value
-      values must contain(Json.obj("name" -> "foo"))
-    }
-
-    "return an empty list when there is a relevant structure with no entries" in {
-      val userAnswers = UserAnswers(Json.obj(
-        "establishers" -> Json.arr()
-      ))
-      val values = userAnswers.getAll[JsValue](JsPath \ "establishers").value
-      values mustBe empty
-    }
-
-    "return `None` when no data exists at the relevant path" in {
-      val userAnswers = UserAnswers(establishers)
-      userAnswers.getAll[JsValue](JsPath \ "trustees") mustNot be(defined)
-    }
-
-    "return `None` when the data at the path doesn't conform to the type we want" in {
-      val userAnswers = UserAnswers(establishers)
-      userAnswers.getAll[String](JsPath \ "establishers") mustNot be(defined)
-    }
-  }
-
-  ".get" must {
-
-    "get a matching result" in {
-      val userAnswers = UserAnswers(establishers)
-      val values = userAnswers.get[String](JsPath \ "establishers" \ 0 \ "name").value
-      values mustBe "foo"
-    }
-
-    "return empty when no matches" in {
-      val userAnswers = UserAnswers(establishers)
-      userAnswers.get[String](JsPath \ "establishers" \ 8) mustNot be(defined)
-    }
-  }
-
-  ".hasCompanies" must {
-    "return true if an establisher is a company" in {
-      val answers =
-        UserAnswers()
-          .set(EstablisherNameId(0))(person)
-          .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
-          .asOpt
-          .value
-
-      answers.hasCompanies(mode) mustBe true
-    }
-
-    "return false if no establishers are companies" in {
-      val answers =
-        UserAnswers()
-          .set(EstablisherNameId(0))(person)
-          .flatMap(_.set(TrusteeNameId(0))(person))
-          .asOpt
-          .value
-
-      answers.hasCompanies(mode) mustBe false
-    }
-
-    "return false if there are no establishers or trustees" in {
-      val answers =
-        UserAnswers()
-
-      answers.hasCompanies(mode) mustBe false
-    }
-  }
-
-  "areVariationChangesCompleted" when {
-    "checking insurance company" must {
-       "return false if scheme have insurance and details are missing" in {
-         val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
-       }
-
-       "return false if scheme have insurance is not defined" in {
-         val insuranceCompanyDetails = UserAnswers()
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
-       }
-
-       "return true if scheme does not have insurance" in {
-         val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
-       }
-
-       "return true if scheme have insurance and all the details are present" in {
-         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
-       }
-     }
-
-    "checking trustees" must {
-      "return true if trustees are not defined" in {
-        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
-      }
-
-      "return false if trustees are not completed" in {
-        trustee.areVariationChangesCompleted mustBe false
-      }
-
-      "return true if trustees are completed" in {
-        val trusteeCompleted = trustee.trusteesCompanyPhone(0, "12345")
-            .trusteesCompanyEmail(0, "z@z.z")
-        trusteeCompleted.areVariationChangesCompleted mustBe true
-      }
-    }
-
-    "checking establishers" must {
-      val userAnswersInprogress = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
-      val userAnswersCompleted = UserAnswers(readJsonFromFile("/payload.json"))
-      "return false if establishers are not completed" in {
-        userAnswersInprogress.areVariationChangesCompleted mustBe false
-      }
-
-      "return true if establishers are completed " in {
-        userAnswersCompleted.areVariationChangesCompleted mustBe true
-      }
-    }
-  }
+//  ".allTrustees" must {
+//    "return a map of trustee names, edit links, delete links and isComplete flag" in {
+//      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+//
+//      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
+//        trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
+//        trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
+//        trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
+//      )
+//
+//      val result = userAnswers.allTrustees
+//
+//      result mustEqual allTrusteesEntities
+//    }
+//
+//    "return en empty sequence if there are no trustees " in {
+//      val json = Json.obj(
+//        TrusteesId.toString -> Json.arr(
+//        )
+//      )
+//      val userAnswers = UserAnswers(json)
+//      userAnswers.allTrustees mustEqual Seq.empty
+//    }
+//
+//
+//    "return en empty sequence if the json is invalid " in {
+//      val json = Json.obj(
+//        TrusteesId.toString -> Json.arr(
+//          Json.obj(
+//            "invalid" -> "invalid"
+//          )
+//        )
+//      )
+//      val userAnswers = UserAnswers(json)
+//      userAnswers.allTrustees mustEqual Seq.empty
+//    }
+//  }
+//
+//  ".allTrusteesAfterDelete" must {
+//    "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
+//      val json = Json.obj(
+//        "schemeType"-> Json.obj("name"-> "single"),
+//        TrusteesId.toString -> Json.arr(
+//          Json.obj(
+//            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+//            TrusteeNameId.toString -> PersonName("First", "Last", isDeleted = true),
+//            IsTrusteeNewId.toString -> true
+//          ),
+//          Json.obj(
+//            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+//            identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("My Company"),
+//            IsTrusteeNewId.toString -> true
+//          ),
+//          Json.obj(
+//            TrusteeKindId.toString -> TrusteeKind.Individual.toString,
+//            TrusteeNameId.toString -> PersonName("FName", "LName", isDeleted = true),
+//            IsTrusteeNewId.toString -> true
+//          ),
+//          Json.obj(
+//            TrusteeKindId.toString -> TrusteeKind.Company.toString,
+//            IsTrusteeNewId.toString -> true
+//          )
+//        )
+//      )
+//
+//      val userAnswers = UserAnswers(json)
+//
+//      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
+//
+//      val result = userAnswers.allTrusteesAfterDelete
+//
+//      result mustEqual allTrusteesEntities
+//    }
+//  }
+//
+//  ".allDirectors" must {
+//
+//    "return a map of director names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
+//      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+//        .set(DirectorNameId(0, 1))(PersonName("First", "Last", isDeleted = true)).asOpt.value
+//        .set(DirectorNameId(0, 2))(PersonName("First", "Last")).asOpt.value
+//
+//      val directorEntities = Seq(
+//        DirectorEntity(DirectorNameId(0, 0), "Director One", isDeleted = false, isCompleted = true, isNewEntity = true, 2),
+//        DirectorEntity(DirectorNameId(0, 1), "First Last", isDeleted = true, isCompleted = false, isNewEntity = false, 2),
+//        DirectorEntity(DirectorNameId(0, 2), "First Last", isDeleted = false, isCompleted = false, isNewEntity = false, 2))
+//
+//      val result = userAnswers.allDirectors(0)
+//
+//      result.size mustEqual 3
+//      result mustBe directorEntities
+//    }
+//  }
+//
+//  ".allDirectorsAfterDelete" must {
+//
+//    "return a map of director names, edit links and delete links after one of the directors is deleted" in {
+//      val userAnswers = UserAnswers()
+//        .set(DirectorNameId(0, 0))(PersonName("First", "Last", isDeleted = true))
+//        .flatMap(_.set(DirectorNameId(0, 1))(PersonName("First1", "Last1"))).get
+//
+//      val directorEntities = Seq(
+//        DirectorEntity(DirectorNameId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false, isNewEntity = false, 1))
+//      val result = userAnswers.allDirectorsAfterDelete(0)
+//
+//      result.size mustEqual 1
+//      result mustBe directorEntities
+//    }
+//  }
+//
+//  ".allPartners" must {
+//
+//    "return a map of partner names, edit links, delete links and isComplete flag including deleted items where names are all the same" in {
+//      val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+//        .set(PartnerNameId(2, 2))(PersonName("Partner", "One", isDeleted = true))
+//        .flatMap(_.set(PartnerNameId(2, 3))(PersonName("Partner", "One")))
+//        .flatMap(_.set(IsNewPartnerId(2, 0))(true))
+//        .get
+//
+//      val partnerEntities = Seq(
+//        PartnerEntity(PartnerNameId(2, 0), "Partner One", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
+//        PartnerEntity(PartnerNameId(2, 1), "Partner Two", isDeleted = false, isCompleted = true, isNewEntity = true, 3),
+//        PartnerEntity(PartnerNameId(2, 2), "Partner One", isDeleted = true, isCompleted = false, isNewEntity = false, 3),
+//        PartnerEntity(PartnerNameId(2, 3), "Partner One", isDeleted = false, isCompleted = false, isNewEntity = false, 3))
+//
+//      val result = userAnswers.allPartners(2)
+//
+//      result.size mustEqual 4
+//      result mustBe partnerEntities
+//    }
+//  }
+//
+//  ".establishersCount" must {
+//
+//    "return the count of all establishers irrespective of whether they are deleted or not" in {
+//      val json = Json.obj(
+//        EstablishersId.toString -> Json.arr(
+//          Json.obj(
+//            EstablisherCompanyDetailsId.toString ->
+//              CompanyDetails("my company")
+//          ),
+//          Json.obj(
+//            EstablisherNameId.toString ->
+//              PersonName("my", "name", isDeleted = true)
+//          ),
+//          Json.obj(
+//            EstablisherNameId.toString ->
+//              PersonName("my", "name")
+//          )
+//        )
+//      )
+//      val userAnswers = UserAnswers(json)
+//
+//      val result = userAnswers.establishersCount
+//      result mustEqual 3
+//    }
+//  }
+//
+//  ".trusteesCount" must {
+//
+//    "return the count of all trustees irrespective of whether they are deleted or not" in {
+//      val userAnswers = UserAnswers()
+//        .set(TrusteeNameId(0))(PersonName("First", "Last", isDeleted = true))
+//        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company"))).get
+//
+//      val result = userAnswers.trusteesCount
+//      result mustEqual 2
+//    }
+//  }
+//
+//  ".getAllRecursive" must {
+//
+//    "get all matching recursive results" in {
+//      val userAnswers = UserAnswers(establishers)
+//      val values = userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "name").value
+//      values must contain("foo")
+//      values must contain("bar")
+//    }
+//
+//    "return an empty list when there is a relevant structure with no entries" in {
+//      val userAnswers = UserAnswers(establishers)
+//      userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "address").value mustBe empty
+//    }
+//
+//    "return `None` when the data at the path doesn't conform to the type we want" in {
+//      val userAnswers = UserAnswers(establishers)
+//      val values = userAnswers.getAllRecursive[Int](JsPath \ "establishers" \\ "name")
+//      values mustNot be(defined)
+//    }
+//  }
+//
+//  ".getAll" must {
+//
+//    "return a list of all matching data" in {
+//      val userAnswers = UserAnswers(establishers)
+//      val values = userAnswers.getAll[JsValue](JsPath \ "establishers").value
+//      values must contain(Json.obj("name" -> "foo"))
+//    }
+//
+//    "return an empty list when there is a relevant structure with no entries" in {
+//      val userAnswers = UserAnswers(Json.obj(
+//        "establishers" -> Json.arr()
+//      ))
+//      val values = userAnswers.getAll[JsValue](JsPath \ "establishers").value
+//      values mustBe empty
+//    }
+//
+//    "return `None` when no data exists at the relevant path" in {
+//      val userAnswers = UserAnswers(establishers)
+//      userAnswers.getAll[JsValue](JsPath \ "trustees") mustNot be(defined)
+//    }
+//
+//    "return `None` when the data at the path doesn't conform to the type we want" in {
+//      val userAnswers = UserAnswers(establishers)
+//      userAnswers.getAll[String](JsPath \ "establishers") mustNot be(defined)
+//    }
+//  }
+//
+//  ".get" must {
+//
+//    "get a matching result" in {
+//      val userAnswers = UserAnswers(establishers)
+//      val values = userAnswers.get[String](JsPath \ "establishers" \ 0 \ "name").value
+//      values mustBe "foo"
+//    }
+//
+//    "return empty when no matches" in {
+//      val userAnswers = UserAnswers(establishers)
+//      userAnswers.get[String](JsPath \ "establishers" \ 8) mustNot be(defined)
+//    }
+//  }
+//
+//  ".hasCompanies" must {
+//    "return true if an establisher is a company" in {
+//      val answers =
+//        UserAnswers()
+//          .set(EstablisherNameId(0))(person)
+//          .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
+//          .asOpt
+//          .value
+//
+//      answers.hasCompanies(mode) mustBe true
+//    }
+//
+//    "return false if no establishers are companies" in {
+//      val answers =
+//        UserAnswers()
+//          .set(EstablisherNameId(0))(person)
+//          .flatMap(_.set(TrusteeNameId(0))(person))
+//          .asOpt
+//          .value
+//
+//      answers.hasCompanies(mode) mustBe false
+//    }
+//
+//    "return false if there are no establishers or trustees" in {
+//      val answers =
+//        UserAnswers()
+//
+//      answers.hasCompanies(mode) mustBe false
+//    }
+//  }
+//
+//  "areVariationChangesCompleted" when {
+//    "checking insurance company" must {
+//       "return false if scheme have insurance and details are missing" in {
+//         val insuranceCompanyDetails = UserAnswers().investmentRegulated(true)
+//         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+//       }
+//
+//       "return false if scheme have insurance is not defined" in {
+//         val insuranceCompanyDetails = UserAnswers()
+//         insuranceCompanyDetails.areVariationChangesCompleted mustBe false
+//       }
+//
+//       "return true if scheme does not have insurance" in {
+//         val insuranceCompanyDetails = UserAnswers().benefitsSecuredByInsurance(false)
+//         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+//       }
+//
+//       "return true if scheme have insurance and all the details are present" in {
+//         insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+//       }
+//     }
+//
+//    "checking trustees" must {
+//      "return true if trustees are not defined" in {
+//        insuranceCompanyDetails.areVariationChangesCompleted mustBe true
+//      }
+//
+//      "return false if trustees are not completed" in {
+//        trustee.areVariationChangesCompleted mustBe false
+//      }
+//
+//      "return true if trustees are completed" in {
+//        val trusteeCompleted = trustee.trusteesCompanyPhone(0, "12345")
+//            .trusteesCompanyEmail(0, "z@z.z")
+//        trusteeCompleted.areVariationChangesCompleted mustBe true
+//      }
+//    }
+//
+//    "checking establishers" must {
+//      val userAnswersInprogress = UserAnswers(readJsonFromFile("/payloadInProgress.json"))
+//      val userAnswersCompleted = UserAnswers(readJsonFromFile("/payload.json"))
+//      "return false if establishers are not completed" in {
+//        userAnswersInprogress.areVariationChangesCompleted mustBe false
+//      }
+//
+//      "return true if establishers are completed " in {
+//        userAnswersCompleted.areVariationChangesCompleted mustBe true
+//      }
+//    }
+//  }
 
 }
 

@@ -41,37 +41,7 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
 
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
-    println( "\nUA:" + userAnswers)
-    /*
-    {
-   "establishers":[
-      {
-         "companyDetails":{
-            "companyName":"test company 0",
-            "isDeleted":false
-         },
-         "establisherKind":"company",
-         "isEstablisherNew":true
-      },
-      {
-         "companyDetails":{
-            "companyName":"test company 1",
-            "isDeleted":true
-         },
-         "establisherKind":"partnership",
-         "isEstablisherNew":true,
-         "partnershipDetails":{
-            "name":"test partnership 1",
-            "isDeleted":false
-         }
-      }
-   ],
-   "haveAnyTrustees":false,
-   "schemeName":"scheme",
-   "declarationDuties":true
-}
-     */
-    println( "\n>>>" + seqEstablishers)
+
     val nonDeletedEstablishers = for ((establisher, _) <- seqEstablishers.zipWithIndex) yield {
       if (establisher.isDeleted) None else {
         establisher.id match {

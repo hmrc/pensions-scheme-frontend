@@ -252,7 +252,9 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
   }
 
   def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] = {
-    allEstablishers(mode).filterNot(_.isDeleted)
+    val ff = allEstablishers(mode)
+    println( "\n>>>" + ff)
+    ff.filterNot(_.isDeleted)
   }
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] =
