@@ -75,7 +75,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
     JsLens.fromPath(path)
-      .set(jsValue, json).map(UserAnswers(_))
+      .set(jsValue, json).map(UserAnswers)
   }
 
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
@@ -219,20 +219,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
       }
     }
   }
-
-//  private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
-//    val allErrors = jsResults.collect {
-//      case JsError(errors) => errors
-//    }.flatten
-//
-//    if (allErrors.nonEmpty) {
-//      JsError(allErrors)
-//    } else {
-//      JsSuccess(jsResults.collect {
-//        case JsSuccess(establisher, _) => establisher
-//      })
-//    }
-//  }
 
   private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
     val allErrors = jsResults.collect {
