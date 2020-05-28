@@ -127,6 +127,11 @@ $task-list-indent: 35px;
 background: #00703c;
 }
 
+.multiple-choice .form-hint{
+clear: both;
+padding-left: 12px;
+}
+
 /*
 ====================================
 Fix to render radio buttons visible in IE8
