@@ -203,16 +203,42 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
-          readEntities(
+          val seqReads = establishers.zipWithIndex.map { case (jsValue, index) =>
+            val establisherKind = (jsValue \ "establisherKind").validate[String].asOpt
+            establisherKind match {
+              case Some("individual") => readsIndividual(index)
+              case Some("company") => readsCompany(index)
+              case Some("partnership") => readsPartnership(index)
+              case _ => readsSkeleton(index)
+            }
+          }
+
+          readEntitiesTemp(
             establishers,
-            index => readsIndividual(index)
-              orElse readsCompany(index)
-              orElse readsPartnership(index)
-              orElse readsSkeleton(index)
+            seqReads
           )
         case _ => JsSuccess(Nil)
       }
     }
+  }
+
+  def readEntitiesTemp[T](entities: Seq[JsValue], reads: Seq[Reads[T]]): JsResult[Seq[T]] = {
+    @tailrec
+    def recur(result: JsResult[Seq[T]], entities: Seq[(JsValue, Int)]): JsResult[Seq[T]] = {
+      result match {
+        case JsSuccess(results, _) =>
+          entities match {
+            case Seq(h, t@_*) => reads(h._2).reads(h._1) match {
+              case JsSuccess(item, _) => recur(JsSuccess(results :+ item), t)
+              case error@JsError(_) => error
+            }
+            case _ => result
+          }
+        case error: JsError => error
+      }
+    }
+
+    recur(JsSuccess(Nil), entities.zipWithIndex)
   }
 
   def allEstablishers(mode: Mode): Seq[Establisher[_]] = {
