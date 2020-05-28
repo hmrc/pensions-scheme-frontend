@@ -220,18 +220,32 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
+//  private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
+//    val allErrors = jsResults.collect {
+//      case JsError(errors) => errors
+//    }.flatten
+//
+//    if (allErrors.nonEmpty) {
+//      JsError(allErrors)
+//    } else {
+//      JsSuccess(jsResults.collect {
+//        case JsSuccess(establisher, _) => establisher
+//      })
+//    }
+//  }
+
   private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
     val allErrors = jsResults.collect {
       case JsError(errors) => errors
     }.flatten
 
-    if (allErrors.nonEmpty) {
-      JsError(allErrors)
-    } else {
-      JsSuccess(jsResults.collect {
-        case JsSuccess(establisher, _) => establisher
-      })
+    if (allErrors.nonEmpty) { // If any of establishers JSON is invalid then log warning but return the valid ones
+      Logger.warn("Errors in establisher JSON: " + allErrors)
     }
+
+    JsSuccess(jsResults.collect {
+      case JsSuccess(establisher, _) => establisher
+    })
   }
 
   def allEstablishers(mode: Mode): Seq[Establisher[_]] = {
