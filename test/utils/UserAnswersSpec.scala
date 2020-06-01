@@ -494,6 +494,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress)
 
   private val trustee = insuranceCompanyDetails
+    .trusteeKind(0, TrusteeKind.Company)
     .trusteesCompanyDetails(0, company)
     .set(HasCompanyCRNId(0))(true).asOpt.value
     .trusteesCompanyEnterCRN(0, ReferenceValue(newCrn))
