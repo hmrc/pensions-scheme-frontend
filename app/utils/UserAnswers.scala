@@ -31,6 +31,7 @@ import models.address.Address
 import models.person.PersonName
 import models.register._
 import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, Mode, PartnershipDetails, UpdateMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -220,20 +221,6 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  private def asJsResultSeq(jsResults: Seq[JsResult[Establisher[_]]]): JsResult[Seq[Establisher[_]]] = {
-    val allErrors = jsResults.collect {
-      case JsError(errors) => errors
-    }.flatten
-
-    if (allErrors.nonEmpty) { // If any of establishers JSON is invalid then log warning but return the valid ones
-      Logger.warn("Errors in establisher JSON: " + allErrors)
-    }
-
-    JsSuccess(jsResults.collect {
-      case JsSuccess(establisher, _) => establisher
-    })
-  }
-
   def allEstablishers(mode: Mode): Seq[Establisher[_]] = {
     json.validate[Seq[Establisher[_]]](readEstablishers(mode)) match {
       case JsSuccess(establishers, _) =>
@@ -339,20 +326,39 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
+
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
-          readEntities(
-            trustees,
-            index =>
-              readsIndividual(index)
-                orElse readsCompany(index)
-                orElse readsPartnership(index)
-                orElse readsSkeleton(index)
-          )
+          val jsResults = trustees.zipWithIndex.map { case (jsValue, index) =>
+            val trusteeKind = (jsValue \ TrusteeKindId.toString).validate[String].asOpt
+            val readsForTrusteeKind = trusteeKind match {
+              case Some(TrusteeKind.Individual.toString) => readsIndividual(index)
+              case Some(TrusteeKind.Company.toString) => readsCompany(index)
+              case Some(TrusteeKind.Partnership.toString) => readsPartnership(index)
+              case _ => readsSkeleton(index)
+            }
+            readsForTrusteeKind.reads(jsValue)
+          }
+
+          asJsResultSeq(jsResults)
         case _ => JsSuccess(Nil)
       }
     }
+  }
+
+  private def asJsResultSeq[A](jsResults: Seq[JsResult[A]]): JsResult[Seq[A]] = {
+    val allErrors = jsResults.collect {
+      case JsError(errors) => errors
+    }.flatten
+
+    if (allErrors.nonEmpty) { // If any of JSON is invalid then log warning but return the valid ones
+      Logger.warn("Errors in JSON: " + allErrors)
+    }
+
+    JsSuccess(jsResults.collect {
+      case JsSuccess(i, _) => i
+    })
   }
 
   def allTrustees: Seq[Trustee[_]] = {
