@@ -31,6 +31,7 @@ import models.address.Address
 import models.person.PersonName
 import models.register._
 import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, Mode, PartnershipDetails, UpdateMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -75,7 +76,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
     JsLens.fromPath(path)
-      .set(jsValue, json).map(UserAnswers(_))
+      .set(jsValue, json).map(UserAnswers)
   }
 
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
@@ -203,13 +204,18 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
-          readEntities(
-            establishers,
-            index => readsIndividual(index)
-              orElse readsCompany(index)
-              orElse readsPartnership(index)
-              orElse readsSkeleton(index)
-          )
+          val jsResults = establishers.zipWithIndex.map { case (jsValue, index) =>
+            val establisherKind = (jsValue \ EstablisherKindId.toString).validate[String].asOpt
+            val readsForEstablisherKind = establisherKind match {
+              case Some(EstablisherKind.Indivdual.toString) => readsIndividual(index)
+              case Some(EstablisherKind.Company.toString) => readsCompany(index)
+              case Some(EstablisherKind.Partnership.toString) => readsPartnership(index)
+              case _ => readsSkeleton(index)
+            }
+            readsForEstablisherKind.reads(jsValue)
+          }
+
+          asJsResultSeq(jsResults)
         case _ => JsSuccess(Nil)
       }
     }
@@ -225,9 +231,8 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
     }
   }
 
-  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] = {
+  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] =
     allEstablishers(mode).filterNot(_.isDeleted)
-  }
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] =
     getAllRecursive[PersonName](DirectorNameId.collectionPath(establisherIndex)).map {
@@ -321,20 +326,39 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
+
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
-          readEntities(
-            trustees,
-            index =>
-              readsIndividual(index)
-                orElse readsCompany(index)
-                orElse readsPartnership(index)
-                orElse readsSkeleton(index)
-          )
+          val jsResults = trustees.zipWithIndex.map { case (jsValue, index) =>
+            val trusteeKind = (jsValue \ TrusteeKindId.toString).validate[String].asOpt
+            val readsForTrusteeKind = trusteeKind match {
+              case Some(TrusteeKind.Individual.toString) => readsIndividual(index)
+              case Some(TrusteeKind.Company.toString) => readsCompany(index)
+              case Some(TrusteeKind.Partnership.toString) => readsPartnership(index)
+              case _ => readsSkeleton(index)
+            }
+            readsForTrusteeKind.reads(jsValue)
+          }
+
+          asJsResultSeq(jsResults)
         case _ => JsSuccess(Nil)
       }
     }
+  }
+
+  private def asJsResultSeq[A](jsResults: Seq[JsResult[A]]): JsResult[Seq[A]] = {
+    val allErrors = jsResults.collect {
+      case JsError(errors) => errors
+    }.flatten
+
+    if (allErrors.nonEmpty) { // If any of JSON is invalid then log warning but return the valid ones
+      Logger.warn("Errors in JSON: " + allErrors)
+    }
+
+    JsSuccess(jsResults.collect {
+      case JsSuccess(i, _) => i
+    })
   }
 
   def allTrustees: Seq[Trustee[_]] = {

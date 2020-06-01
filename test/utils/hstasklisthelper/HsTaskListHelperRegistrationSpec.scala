@@ -21,6 +21,7 @@ import identifiers._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.person.PersonName
+import models.register.establishers.EstablisherKind
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.{MustMatchers, WordSpec}
@@ -208,6 +209,33 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None
+      )
+    }
+
+    "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+        .establisherCompanyEntity(index = 1, isDeleted = true)
+        .establisherPartnershipEntity(index = 1)
+        .establisherKind(1, EstablisherKind.Partnership)
+
+      val testPartnershipEntitySpoke2 = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
+        controllers.routes.SessionExpiredController.onPageLoad().url), None))
+
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+      val result = helper.taskList(userAnswers, None, None)
+
+
+      result.establishers mustBe Seq(
+        SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
+        SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke2, Some("test partnership 1"))
       )
     }
   }

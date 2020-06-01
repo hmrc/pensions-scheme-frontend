@@ -41,6 +41,7 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
 
   protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
+
     val nonDeletedEstablishers = for ((establisher, _) <- seqEstablishers.zipWithIndex) yield {
       if (establisher.isDeleted) None else {
         establisher.id match {
