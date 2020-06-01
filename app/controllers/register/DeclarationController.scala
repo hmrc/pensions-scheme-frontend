@@ -56,7 +56,7 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        crypto: ApplicationCrypto,
-                                       minimalPsaConnector: MinimalPsaConnector,
+                                       pensionAdministratorConnector: PensionAdministratorConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        val view: declaration
@@ -130,9 +130,8 @@ class DeclarationController @Inject()(
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     Logger.debug("Fetch email from API")
 
-    minimalPsaConnector.getMinimalPsaDetails(request.psaId.id) flatMap { minimalPsa =>
-      emailConnector.sendEmail(minimalPsa.email, appConfig.emailTemplateId,
-        Map("srn" -> formatSrnForEmail(srn), "psaName" -> minimalPsa.name), psaId)
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
     } recoverWith {
       case _: Throwable => Future.successful(EmailNotSent)
     }
