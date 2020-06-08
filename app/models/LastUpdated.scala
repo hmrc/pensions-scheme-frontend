@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.Json
 
-case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None, id: Option[String] = None)
+case class LastUpdated(timestamp: Long)
 
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
+object LastUpdated {
+  implicit val format = Json.format[LastUpdated]
 }

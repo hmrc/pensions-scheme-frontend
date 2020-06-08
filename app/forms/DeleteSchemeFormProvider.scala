@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None, id: Option[String] = None)
+class DeleteSchemeFormProvider @Inject() extends Mappings {
 
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__deleteScheme__error__required")
+    )
 }

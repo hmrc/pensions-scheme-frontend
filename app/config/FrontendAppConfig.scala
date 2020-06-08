@@ -94,6 +94,15 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val updateSchemeDetailsUrl: String = s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration
     .underlying.getString("urls.updateSchemeDetails")}"
 
+  lazy val registerUrl: String = runModeConfiguration.underlying.getString("urls.partials.registerScheme")
+  lazy val continueUrl = s"${loadConfig("urls.partials.continueSchemeRegistration")}"
+  lazy val viewUrl: String = runModeConfiguration.underlying.getString("urls.partials.viewSchemeDetails")
+  lazy val deleteSubscriptionUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteSubscription")
+  lazy val deleteVariationsUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteVariations")
+  lazy val cannotStartRegUrl: String = runModeConfiguration.underlying.getString("urls.partials.cannotStartReg")
+  lazy val canBeRegisteredUrl: String = runModeConfiguration.underlying.getString("urls.partials.canBeRegistered")
+
+
   //FEATURES
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getOptional[Boolean]("features.welsh-translation").getOrElse(true)
 }
