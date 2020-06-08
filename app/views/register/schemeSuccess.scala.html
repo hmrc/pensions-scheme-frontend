@@ -44,7 +44,9 @@
 
     </div>
 
-    <p>@messages("messages__complete__email", email)</p>
+    <p>@messages("messages__complete__email")
+        <span class="bold">@email</span>.
+    </p>
 
     <div id="hintText" class="panel panel-border-wide">
         <p class="bold">@messages("messages__complete__copy_1")</p>

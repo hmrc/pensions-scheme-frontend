@@ -16,6 +16,7 @@
 
 package controllers.register
 
+import connectors.MinimalPsaConnector.MinimalPSA
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -114,15 +115,15 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         reset(mockEmailConnector)
 
-        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
-            eqTo("email@test.com"),
+            eqTo("test@test.com"),
             eqTo("pods_scheme_register"),
-            eqTo(Map("srn" -> "S12345 67890")),
+            eqTo(Map("srn" -> "S12345 67890", "psaName" -> "psa name")),
             eqTo(psaId)
           )(any(), any())
 
@@ -184,7 +185,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       applicationCrypto,
-      fakePensionAdminstratorConnector,
+      fakeMinimalPsaConnector,
       stubMessagesControllerComponents(),
       mockHsTaskListHelperRegistration,
       view
@@ -255,10 +256,10 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     }
   }
 
-  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
-    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+  private val fakeMinimalPsaConnector = new MinimalPsaConnector {
+    override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = Future.successful(true)
 
-    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
+    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPsaConnector.MinimalPSA] =
+      Future.successful(MinimalPSA("test@test.com", Some("psa name"), None))
   }
-
 }
