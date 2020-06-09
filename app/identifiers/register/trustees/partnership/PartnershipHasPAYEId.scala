@@ -43,8 +43,8 @@ object PartnershipHasPAYEId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasPAYEId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))
-    (_.name)
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index))
+      .fold(messages("messages__theTrustee"))(_.name)
 
     def label(index: Int) = Some(messages("messages__hasPAYE", trusteeName(index)))
 

@@ -40,10 +40,10 @@ case class EstablisherHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
 object EstablisherHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasNINOId] = {
+  implicit def cya(implicit ua: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasNINOId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))
-    (_.fullName)
+    def establisherName(index: Int) =
+      ua.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
 
     def label(index: Int): Option[String] = Some(messages("messages__hasNINO", establisherName(index)))
 

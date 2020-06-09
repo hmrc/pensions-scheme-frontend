@@ -32,9 +32,8 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[CompanyPreviousAddressId] = {
-
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
     new CheckYourAnswersCompany[CompanyPreviousAddressId] {
 
       private def label(index: Int, ua: UserAnswers): String =
@@ -47,8 +46,11 @@ object CompanyPreviousAddressId {
         AddressCYA(label(id.index, ua), hiddenLabel(id.index, ua))().row(id)(changeUrl, ua)
 
       override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.index, ua), hiddenLabel(id.index, ua), ua.get(IsEstablisherNewId(id.index)), ua
-          .get(CompanyConfirmPreviousAddressId(id.index)))()
+        PreviousAddressCYA(
+          label(id.index, ua),
+          hiddenLabel(id.index, ua),
+          ua.get(IsEstablisherNewId(id.index)),
+          ua.get(CompanyConfirmPreviousAddressId(id.index)))()
           .updateRow(id)(changeUrl, ua)
     }
   }

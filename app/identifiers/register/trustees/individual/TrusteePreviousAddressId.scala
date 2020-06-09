@@ -32,15 +32,15 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[TrusteePreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[TrusteePreviousAddressId] = {
 
     def getLabel(index: Int, ua: UserAnswers): (String, String) = {
       val name =
         ua.get(TrusteeNameId(index)).map(_.fullName)
-
       (messages("messages__trusteePreviousAddress", name.getOrElse(messages("messages__theTrustee"))),
-        messages("messages__visuallyhidden__dynamic_previousAddress", name.getOrElse(messages("messages__theTrustee"))))
+        messages("messages__visuallyhidden__dynamic_previousAddress",
+          name.getOrElse(messages("messages__theTrustee"))))
     }
 
     new CheckYourAnswers[TrusteePreviousAddressId] {
@@ -49,7 +49,8 @@ object TrusteePreviousAddressId {
         AddressCYA(label, changeAddress)().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String,
+                                                           ua: UserAnswers): Seq[AnswerRow] = {
         val (label, changeAddress) = getLabel(id.index, ua)
         PreviousAddressCYA(label,
           changeAddress,

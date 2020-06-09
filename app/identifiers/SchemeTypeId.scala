@@ -33,7 +33,8 @@ object SchemeTypeId extends TypedIdentifier[SchemeType] {
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     SchemeTypeCYA[self.type](
       label = Some(messages("schemeType.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__schemeType", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__schemeType", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 
   override def toString: String = "schemeType"

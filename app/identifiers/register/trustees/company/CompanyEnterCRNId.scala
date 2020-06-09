@@ -50,15 +50,16 @@ object CompanyEnterCRNId {
 
     new CheckYourAnswers[CompanyEnterCRNId] {
       override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)
-            (changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+            .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().updateRow(id)(changeUrl,
-              userAnswers)
+            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

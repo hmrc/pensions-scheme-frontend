@@ -23,8 +23,9 @@ import play.api.libs.json.JsPath
 
 case class DirectorAddressPostcodeLookupId(establisherIndex: Int, directorIndex: Int) extends
   TypedIdentifier[Seq[TolerantAddress]] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
-    DirectorAddressPostcodeLookupId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorAddressPostcodeLookupId.toString
 
 }
 

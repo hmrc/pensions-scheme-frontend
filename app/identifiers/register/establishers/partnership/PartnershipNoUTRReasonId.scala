@@ -36,17 +36,17 @@ object PartnershipNoUTRReasonId {
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipNoUTRReasonId] = {
 
     new CheckYourAnswers[PartnershipNoUTRReasonId] {
-      override def row(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages
-        ("messages__thePartnership"))(_.name)
+      override def row(id: PartnershipNoUTRReasonId)(changeUrl: String,
+                                                     userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index))
+          .fold(messages("messages__thePartnership"))(_.name)
         val label = Some(messages("messages__whyNoUTR", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", partnershipName))
 
         StringCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
       }
 
-      override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers)
-      : Seq[AnswerRow] =
+      override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
@@ -54,13 +54,3 @@ object PartnershipNoUTRReasonId {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-

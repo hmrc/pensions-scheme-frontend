@@ -27,12 +27,13 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "insurancePolicyNumber"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
-  : CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
     val label = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
-      Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse
-      ("")))
+      Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId)
+        .getOrElse("")))
     } else {
       Some(messages("messages__insurance_policy_number__title"))
     }

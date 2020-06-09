@@ -42,11 +42,12 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override def toString: String = "partnershipAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[PartnershipAddressYearsId] =
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswers[PartnershipAddressYearsId] {
       override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val establisherName =
+          ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
         val label = messages("messages__partnershipAddressYears__heading", establisherName)
         val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", establisherName)
 

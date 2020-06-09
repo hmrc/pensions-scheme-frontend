@@ -29,7 +29,7 @@ object AdviserPhoneId extends TypedIdentifier[String] {
   : CheckYourAnswers[self.type] =
     StringCYA[self.type](
       label = Some(messages("adviserPhone.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__adviserPhone", userAnswers.get(AdviserNameId).getOrElse
-      ("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__adviserPhone", userAnswers.get(AdviserNameId)
+        .getOrElse("")))
     )()
 }

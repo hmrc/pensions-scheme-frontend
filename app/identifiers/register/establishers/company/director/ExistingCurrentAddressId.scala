@@ -22,8 +22,9 @@ import models.address.Address
 import play.api.libs.json.JsPath
 
 case class ExistingCurrentAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
-    ExistingCurrentAddressId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+    .path \ "director" \ directorIndex \ ExistingCurrentAddressId.toString
 }
 
 object ExistingCurrentAddressId {

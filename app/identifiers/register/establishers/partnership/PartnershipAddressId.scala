@@ -32,12 +32,13 @@ case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
 object PartnershipAddressId {
   override def toString: String = "partnershipAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[PartnershipAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[PartnershipAddressId] =
 
     new CheckYourAnswers[PartnershipAddressId] {
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
+        val establisherName =
+          ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
         val label = messages("messages__address__cya", establisherName)
         val changeAddress = messages("messages__visuallyhidden__dynamic_address", establisherName)
 
@@ -47,7 +48,7 @@ object PartnershipAddressId {
         )().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
-      (changeUrl, ua)
+      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
 }

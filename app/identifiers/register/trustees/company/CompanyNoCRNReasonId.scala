@@ -45,7 +45,8 @@ object CompanyNoCRNReasonId {
     def label(index: Int) =
       Some(messages("messages__whyNoCRN", companyName(index)))
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
+    def hiddenLabel(index: Int) =
+      Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
 
     new CheckYourAnswers[CompanyNoCRNReasonId] {
       override def row(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

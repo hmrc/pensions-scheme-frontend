@@ -22,8 +22,8 @@ import models._
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper
-(spokeCreationService) {
+class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
+  spokeCreationService) {
 
   override def taskList(answers: UserAnswers, viewOnlyOpt: Option[Boolean],
                         srn: Option[String]): SchemeDetailsTaskList = {

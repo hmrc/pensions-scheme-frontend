@@ -38,8 +38,8 @@ object PartnershipPhoneId {
       CheckYourAnswers[PartnershipPhoneId] {
 
     override def row(id: PartnershipPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages
-      ("messages__thePartnership"))(_.name)
+      val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index))
+        .fold(messages("messages__thePartnership"))(_.name)
       val label = messages("messages__enterPhoneNumber", trusteeName)
       val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName))
 
@@ -49,7 +49,7 @@ object PartnershipPhoneId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: PartnershipPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row
-    (id)(changeUrl, userAnswers)
+    override def updateRow(id: PartnershipPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 }

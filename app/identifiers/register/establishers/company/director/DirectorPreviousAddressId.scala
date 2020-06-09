@@ -26,15 +26,15 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
-    DirectorPreviousAddressId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
 }
 
 object DirectorPreviousAddressId {
   override def toString: String = "previousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[DirectorPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[DirectorPreviousAddressId] = {
 
     new CheckYourAnswersDirectors[DirectorPreviousAddressId] {
 

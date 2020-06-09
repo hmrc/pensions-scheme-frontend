@@ -23,8 +23,8 @@ import models.{Mode, NormalMode}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper
-(spokeCreationService) {
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
+  spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 

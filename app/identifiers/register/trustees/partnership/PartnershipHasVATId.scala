@@ -43,8 +43,8 @@ object PartnershipHasVATId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))
-    (_.name)
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index))
+      .fold(messages("messages__theTrustee"))(_.name)
 
     def label(index: Int) = Some(messages("messages__hasVAT", trusteeName(index)))
 

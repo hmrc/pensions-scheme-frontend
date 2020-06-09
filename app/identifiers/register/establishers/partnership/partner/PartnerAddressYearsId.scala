@@ -27,8 +27,8 @@ import viewmodels.AnswerRow
 
 case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[AddressYears] {
 
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \
-    PartnerAddressYearsId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressYearsId.toString
 
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
@@ -56,19 +56,19 @@ object PartnerAddressYearsId {
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 
       override def row(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id.establisherIndex, id
-          .partnerIndex, userAnswers))()
+        AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
           .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
           case Some(true) =>
-            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id
-              .establisherIndex, id.partnerIndex, userAnswers))()
+            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
+              hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
               .row(id)(changeUrl, userAnswers)
           case _ =>
-            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers), hiddenLabel(id
-              .establisherIndex, id.partnerIndex, userAnswers))()
+            AddressYearsCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
+              hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
               .updateRow(id)(changeUrl, userAnswers)
         }
     }

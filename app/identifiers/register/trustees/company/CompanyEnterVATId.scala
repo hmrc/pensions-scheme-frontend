@@ -44,20 +44,20 @@ object CompanyEnterVATId {
 
       private val labelVat = "messages__common__cya__vat"
 
-      def hiddenLabelVat(index: Int, userAnswers: UserAnswers) = messages
-      ("messages__visuallyhidden__dynamic_vat_number", companyName(index, userAnswers))
+      def hiddenLabelVat(index: Int, userAnswers: UserAnswers) =
+        messages("messages__visuallyhidden__dynamic_vat_number", companyName(index, userAnswers))
 
       override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))().row(id)(changeUrl,
-          userAnswers)
+        ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))()
             .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))().updateRow(id)
-            (changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](labelVat, hiddenLabelVat(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

@@ -42,10 +42,11 @@ object CompanyAddressId {
         dynamicMessage(establisherIndex, ua, "messages__visuallyhidden__dynamic_address")
 
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        AddressCYA(label(id.index, ua), hiddenLabel(id.index, ua))().row(id)(changeUrl, ua)
+        AddressCYA(label(id.index, ua), hiddenLabel(id.index, ua))()
+          .row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
-      (changeUrl, ua)
+      override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
 }

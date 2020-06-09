@@ -30,14 +30,21 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
 
   override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(_) => userAnswers.removeAllOf(List(InsurancePolicyNumberId,
-        InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
+      case Some(_) => userAnswers.removeAllOf(
+        List(
+          InsurancePolicyNumberId,
+          InsurerEnterPostCodeId,
+          InsurerSelectAddressId,
+          InsurerConfirmAddressId
+        )
+      )
       case _ => super.cleanup(value, userAnswers)
     }
   }
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
-  : CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {
 

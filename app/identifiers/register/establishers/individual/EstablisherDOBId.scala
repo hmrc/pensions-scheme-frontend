@@ -37,13 +37,15 @@ object EstablisherDOBId {
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherDOBId] = {
     new CheckYourAnswers[EstablisherDOBId] {
 
-      def establisherName(index: Int): String = answers.get(EstablisherNameId(index)).fold(messages
-      ("messages__thePerson"))(_.fullName)
+      def establisherName(index: Int): String =
+        answers.get(EstablisherNameId(index))
+          .fold(messages("messages__thePerson"))(_.fullName)
 
-      def label(index: Int): String = messages("messages__DOB__heading", establisherName(index))
+      def label(index: Int): String =
+        messages("messages__DOB__heading", establisherName(index))
 
-      def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_date_of_birth", establisherName
-      (index)))
+      def hiddenLabel(index: Int) =
+        Some(messages("messages__visuallyhidden__dynamic_date_of_birth", establisherName(index)))
 
       override def row(id: EstablisherDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).fold(Nil: Seq[AnswerRow]) {

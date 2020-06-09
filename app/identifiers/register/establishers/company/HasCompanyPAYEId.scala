@@ -52,8 +52,9 @@ object HasCompanyPAYEId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasPaye")
 
       override def row(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl,
-          userAnswers)
+        BooleanCYA(Some(label(id.index, userAnswers)),
+          Some(hiddenLabel(id.index, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {

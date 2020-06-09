@@ -26,8 +26,9 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorAddressId
-    .toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorAddressId.toString
 }
 
 object DirectorAddressId {
@@ -43,13 +44,13 @@ object DirectorAddressId {
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_address")
 
       override def row(id: DirectorAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        AddressCYA(label(id.establisherIndex, id.directorIndex, ua), hiddenLabel(id.establisherIndex, id
-          .directorIndex, ua))()
+        AddressCYA(label(id.establisherIndex, id.directorIndex, ua),
+          hiddenLabel(id.establisherIndex, id.directorIndex, ua))()
           .row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: DirectorAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
-      (changeUrl, ua)
+      override def updateRow(id: DirectorAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
   }
 }

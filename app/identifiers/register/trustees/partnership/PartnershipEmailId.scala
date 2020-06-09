@@ -38,8 +38,8 @@ object PartnershipEmailId {
       CheckYourAnswers[PartnershipEmailId] {
 
     override def row(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages
-      ("messages__thePartnership"))(_.name)
+      val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index))
+        .fold(messages("messages__thePartnership"))(_.name)
       val label = messages("messages__enterEmail", trusteeName)
       val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
 
@@ -49,7 +49,7 @@ object PartnershipEmailId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row
-    (id)(changeUrl, userAnswers)
+    override def updateRow(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 }

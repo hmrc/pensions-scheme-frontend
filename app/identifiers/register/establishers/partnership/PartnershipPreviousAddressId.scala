@@ -33,16 +33,16 @@ case class PartnershipPreviousAddressId(index: Int) extends TypedIdentifier[Addr
 object PartnershipPreviousAddressId {
   override def toString: String = "partnershipPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[PartnershipPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[PartnershipPreviousAddressId] = {
 
-    def establisherName(index: Index, ua: UserAnswers) = ua.get(PartnershipDetailsId(index)).fold(messages
-    ("messages__theEstablisher"))(_.name)
+    def establisherName(index: Index, ua: UserAnswers) =
+      ua.get(PartnershipDetailsId(index)).fold(messages("messages__theEstablisher"))(_.name)
 
     def label(index: Int, ua: UserAnswers) = messages("messages__previousAddress__cya", establisherName(index, ua))
 
-    def changeAddress(index: Int, ua: UserAnswers) = messages("messages__visuallyhidden__dynamic_previousAddress",
-      establisherName(index, ua))
+    def changeAddress(index: Int, ua: UserAnswers) =
+      messages("messages__visuallyhidden__dynamic_previousAddress", establisherName(index, ua))
 
     new CheckYourAnswers[PartnershipPreviousAddressId] {
       override def row(id: PartnershipPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =

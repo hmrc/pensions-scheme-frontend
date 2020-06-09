@@ -32,10 +32,10 @@ case class PartnershipPreviousAddressId(index: Int) extends TypedIdentifier[Addr
 object PartnershipPreviousAddressId {
   override def toString: String = "partnershipPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[PartnershipPreviousAddressId] = {
-    def trusteeName(index: Int, ua: UserAnswers): String = ua.get(PartnershipDetailsId(index)).fold(messages
-    ("messages__theTrustee"))(_.name)
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[PartnershipPreviousAddressId] = {
+    def trusteeName(index: Int, ua: UserAnswers): String = ua.get(PartnershipDetailsId(index))
+      .fold(messages("messages__theTrustee"))(_.name)
 
     def label(index: Int, ua: UserAnswers) = messages("messages__previousAddressFor", trusteeName(index, ua))
 

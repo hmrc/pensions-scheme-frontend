@@ -27,8 +27,9 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
   self =>
   override def toString: String = "benefits"
 
-  implicit def cya(implicit messages: Messages, userAnswers: UserAnswers, rds: Reads[TypeOfBenefits])
-  : CheckYourAnswers[self.type] = {
+  implicit def cya(implicit messages: Messages,
+                   userAnswers: UserAnswers,
+                   rds: Reads[TypeOfBenefits]): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
       val label = messages("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
       val hiddenLabel = Some(messages("messages__visuallyhidden__type_of_benefits_change", userAnswers.get

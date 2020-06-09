@@ -26,24 +26,26 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class EstablisherEmailId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "contactDetails" \ EstablisherEmailId.toString
+  override def path: JsPath =
+    EstablishersId(index).path \ "contactDetails" \ EstablisherEmailId.toString
 }
 
 object EstablisherEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherEmailId]
-  = new
-      CheckYourAnswers[EstablisherEmailId] {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherEmailId] =
+    new CheckYourAnswers[EstablisherEmailId] {
 
     override def row(id: EstablisherEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages
-      ("messages__theIndividual"))(_.fullName)
+      val establisherName: String =
+        userAnswers.get(EstablisherNameId(id.index))
+        .fold(messages("messages__theIndividual"))(_.fullName)
 
       val label: String = messages("messages__enterEmail", establisherName)
 
-      val hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address",
-        establisherName))
+      val hiddenLabel: Option[String] =
+        Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName))
 
       StringCYA(
         Some(label),
@@ -51,7 +53,7 @@ object EstablisherEmailId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: EstablisherEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row
-    (id)(changeUrl, userAnswers)
+    override def updateRow(id: EstablisherEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 }

@@ -32,8 +32,8 @@ case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDor
 object IsCompanyDormantId {
   override def toString: String = "isCompanyDormant"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages)
-  : CheckYourAnswersCompany[IsCompanyDormantId] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswersCompany[IsCompanyDormantId] = {
     new CheckYourAnswersCompany[IsCompanyDormantId] {
 
       override def row(id: IsCompanyDormantId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
@@ -47,7 +47,8 @@ object IsCompanyDormantId {
           .row(id)(changeUrl, userAnswers)
       }
 
-      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
+      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        Nil
     }
   }
 }

@@ -48,8 +48,8 @@ object CompanyEnterUTRId {
 
     val label: String = "messages__utr__checkyouranswerslabel"
 
-    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName
-    (index))
+    def hiddenLabel(index: Int) =
+      messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName(index))
 
     new CheckYourAnswers[CompanyEnterUTRId] {
       override def row(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -60,7 +60,8 @@ object CompanyEnterUTRId {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterUTRId](label, hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterUTRId](label, hiddenLabel(id.index))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

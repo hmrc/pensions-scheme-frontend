@@ -32,8 +32,9 @@ case class CompanyNoUTRReasonId(index: Int) extends TypedIdentifier[String] {
 object CompanyNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
-  : CheckYourAnswers[CompanyNoUTRReasonId] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyNoUTRReasonId] = {
 
     new CheckYourAnswersCompany[CompanyNoUTRReasonId] {
       private def label(index: Int, ua: UserAnswers): String =
@@ -43,13 +44,14 @@ object CompanyNoUTRReasonId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noUtrReason")
 
       override def row(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl,
-          userAnswers)
+        StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))
-            ().row(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))()
+              .row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

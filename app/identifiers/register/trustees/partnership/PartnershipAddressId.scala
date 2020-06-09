@@ -47,7 +47,7 @@ object PartnershipAddressId {
         )().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
-      (changeUrl, ua)
+      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
 }

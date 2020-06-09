@@ -23,8 +23,8 @@ import play.api.libs.json.JsPath
 
 case class PartnerAddressPostcodeLookupId(establisherIndex: Int, partnerIndex: Int) extends
   TypedIdentifier[Seq[TolerantAddress]] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \
-    PartnerAddressPostcodeLookupId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressPostcodeLookupId.toString
 
 }
 

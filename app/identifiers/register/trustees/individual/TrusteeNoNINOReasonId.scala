@@ -38,8 +38,8 @@ object TrusteeNoNINOReasonId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeNoNINOReasonId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_
-      .fullName)
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index))
+      .fold(messages("messages__theTrustee"))(_.fullName)
 
     def label(index: Int) = Some(messages("messages__whyNoNINO", trusteeName(index)))
 

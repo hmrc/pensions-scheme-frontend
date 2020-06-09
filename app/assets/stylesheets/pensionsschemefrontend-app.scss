@@ -79,12 +79,12 @@ $task-list-indent: 35px;
 }
 
 .govuk-error-message {
-  font-weight: 700;
-  line-height: 1.25;
-  display: block;
-  margin-bottom: 15px;
-  clear: both;
-  color: #d4351c;
+    font-weight: 700;
+    line-height: 1.25;
+    display: block;
+    margin-bottom: 15px;
+    clear: both;
+    color: #d4351c;
 }
 
 .task-list-item {
@@ -123,13 +123,13 @@ $task-list-indent: 35px;
   float: right;
 }
 
-.govuk-box-highlight {
-  background: #00703c;
+.govuk-box-highlight{
+background: #00703c;
 }
 
-.multiple-choice .form-hint {
-  clear: both;
-  padding-left: 12px;
+.multiple-choice .form-hint{
+clear: both;
+padding-left: 12px;
 }
 
 /*
@@ -137,11 +137,8 @@ $task-list-indent: 35px;
 Fix to render radio buttons visible in IE8
 ====================================
 */
-@media \0screen\,screen \9
-{
-  .multiple-choice input {
-    filter: none
-  }
+@media \0screen\,screen\9 {
+.multiple-choice input {filter: none}
 }
 
 /*
@@ -149,8 +146,4 @@ Fix to render radio buttons visible in IE8
 Fix to remove links urls visible in print/pdfs
 ====================================
 */
-@media print {
-  a[href]::after {
-    content: none !important;
-  }
-}
+@media print { a[href]::after { content: none !important; } }

@@ -35,7 +35,8 @@ case class CompanyEnterCRNId(index: Int) extends TypedIdentifier[ReferenceValue]
 object CompanyEnterCRNId {
   override def toString: String = "companyRegistrationNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
 
     val label: String = "messages__checkYourAnswers__establishers__company__number"
 
@@ -45,8 +46,8 @@ object CompanyEnterCRNId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_crn")
 
       override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))().row(id)
-      (changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {

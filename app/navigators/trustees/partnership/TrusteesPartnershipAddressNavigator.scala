@@ -29,8 +29,8 @@ import utils.UserAnswers
 import controllers.routes.{AnyMoreChangesController, SessionExpiredController}
 import identifiers.register.trustees.IsTrusteeNewId
 
-class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
-  AbstractNavigator {
+class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator {
 
   import TrusteesPartnershipAddressNavigator._
 
@@ -38,20 +38,21 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   //scalastyle:off cyclomatic.complexity
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
-  : PartialFunction[Identifier, Call] = {
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode,
+                                       ua: UserAnswers,
+                                       srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, None)
-    case PartnershipAddressListId(index) if mode == NormalMode => PartnershipAddressYearsController.onPageLoad(mode,
-      index, None)
+    case PartnershipAddressListId(index) if mode == NormalMode =>
+      PartnershipAddressYearsController.onPageLoad(mode, index, None)
     case PartnershipAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
-    case PartnershipAddressId(index) if mode == NormalMode => PartnershipAddressYearsController.onPageLoad(mode,
-      index, None)
+    case PartnershipAddressId(index) if mode == NormalMode =>
+      PartnershipAddressYearsController.onPageLoad(mode, index, None)
     case PartnershipAddressId(index) => cyaAddress(journeyMode(mode), index, None)
     case PartnershipAddressYearsId(index) => trusteeAddressYearsRoutes(mode, ua, index, None)
-    case id@PartnershipHasBeenTradingId(index) => booleanNav(id, ua, previousAddressLookup(mode, index, None),
-      cyaAddress(journeyMode(mode), index, None))
-    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad
-      (mode, index, None)
+    case id@PartnershipHasBeenTradingId(index) =>
+      booleanNav(id, ua, previousAddressLookup(mode, index, None), cyaAddress(journeyMode(mode), index, None))
+    case PartnershipPreviousAddressPostcodeLookupId(index) =>
+      PartnershipPreviousAddressListController.onPageLoad(mode, index, None)
     case PartnershipPreviousAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
     case PartnershipPreviousAddressId(index) => cyaAddress(journeyMode(mode), index, None)
   }
@@ -64,24 +65,25 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier,
-    Call] = {
+  private def updateModeRoutes(mode: VarianceMode,
+                               ua: UserAnswers,
+                               srn: Option[String]): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, srn)
-    case PartnershipAddressListId(index) if mode == UpdateMode => PartnershipAddressYearsController.onPageLoad(mode,
-      index, srn)
+    case PartnershipAddressListId(index) if mode == UpdateMode =>
+      PartnershipAddressYearsController.onPageLoad(mode, index, srn)
     case PartnershipAddressListId(index) => trusteeAddressRoute(ua, mode, index, srn)
-    case PartnershipAddressId(index) if mode == UpdateMode => PartnershipAddressYearsController.onPageLoad(mode,
-      index, srn)
+    case PartnershipAddressId(index) if mode == UpdateMode =>
+      PartnershipAddressYearsController.onPageLoad(mode, index, srn)
     case PartnershipAddressId(index) => trusteeAddressRoute(ua, mode, index, srn)
     case PartnershipAddressYearsId(index) => trusteeAddressYearsRoutes(mode, ua, index, srn)
-    case id@PartnershipHasBeenTradingId(index) => booleanNav(id, ua, previousAddressLookup(mode, index, srn),
-      cyaAddress(journeyMode(mode), index, srn))
-    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad
-      (mode, index, srn)
+    case id@PartnershipHasBeenTradingId(index) =>
+      booleanNav(id, ua, previousAddressLookup(mode, index, srn), cyaAddress(journeyMode(mode), index, srn))
+    case PartnershipPreviousAddressPostcodeLookupId(index) =>
+      PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
     case PartnershipPreviousAddressListId(index) if isNewTrustee(index, ua) => cyaAddress(journeyMode(mode), index, srn)
     case PartnershipPreviousAddressListId(_) => moreChanges(srn)
-    case id@PartnershipConfirmPreviousAddressId(index) => booleanNav(id, ua, moreChanges(srn), previousAddressLookup
-    (mode, index, srn))
+    case id@PartnershipConfirmPreviousAddressId(index) =>
+      booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
     case PartnershipPreviousAddressId(index) if isNewTrustee(index, ua) => cyaAddress(journeyMode(mode), index, srn)
     case PartnershipPreviousAddressId(_) => moreChanges(srn)
   }
@@ -101,8 +103,8 @@ object TrusteesPartnershipAddressNavigator {
 
   private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[String]): Call =
     ua.get(PartnershipAddressYearsId(index)) match {
-      case Some(AddressYears.OverAYear) => CheckYourAnswersPartnershipAddressController.onPageLoad(journeyMode(mode),
-        index, srn)
+      case Some(AddressYears.OverAYear) =>
+        CheckYourAnswersPartnershipAddressController.onPageLoad(journeyMode(mode), index, srn)
       case Some(AddressYears.UnderAYear) => hasBeenTrading(mode, index, srn)
       case _ => SessionExpiredController.onPageLoad()
     }

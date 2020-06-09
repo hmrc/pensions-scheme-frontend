@@ -27,8 +27,9 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
   self =>
   override def toString: String = "insurerAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers, messages: Messages)
-  : CheckYourAnswers[self.type] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswers[self.type] = {
 
     val insuranceCompanyName = userAnswers.get(InsuranceCompanyNameId).getOrElse("")
     val label = messages("messages__addressFor", insuranceCompanyName)

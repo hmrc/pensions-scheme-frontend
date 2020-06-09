@@ -38,8 +38,8 @@ object TrusteeNoUTRReasonId {
                    countryOptions: CountryOptions
                   ): CheckYourAnswers[TrusteeNoUTRReasonId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_
-      .fullName)
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index))
+      .fold(messages("messages__theTrustee"))(_.fullName)
 
     def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
 

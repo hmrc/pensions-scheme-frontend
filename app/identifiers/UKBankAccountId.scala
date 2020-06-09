@@ -30,8 +30,8 @@ case object UKBankAccountId extends TypedIdentifier[Boolean] {
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(messages("uKBankAccount.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankAccount", userAnswers.get(SchemeNameId).getOrElse
-      ("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankAccount", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {

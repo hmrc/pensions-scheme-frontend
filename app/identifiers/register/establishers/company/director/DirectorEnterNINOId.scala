@@ -26,8 +26,9 @@ import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, Refe
 import viewmodels.AnswerRow
 
 case class DirectorEnterNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
-    DirectorEnterNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorEnterNINOId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(DirectorNoNINOReasonId(this.establisherIndex, this.directorIndex))

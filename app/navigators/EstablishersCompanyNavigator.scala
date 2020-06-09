@@ -314,13 +314,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
 
   private def addressRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    if (answers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
-      cyaAddressDetails(index, journeyMode(mode), srn)
-    }
-    else if (!answers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
-      NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-    } else {
-      NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
+    (mode, answers.get(IsEstablisherNewId(index))) match {
+      case (CheckMode, Some(true)) => cyaAddressDetails(index, journeyMode(mode), srn)
+      case (CheckUpdateMode, Some(false)) => NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+      case (CheckUpdateMode, None) => NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+      case _ => NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
     }
   }
 

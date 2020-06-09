@@ -32,8 +32,8 @@ case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue
 object CompanyEnterPAYEId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId]
-  = {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
     new CheckYourAnswersCompany[CompanyEnterPAYEId] {
 
       private def hiddenLabel(index: Int, ua: UserAnswers): String =
@@ -42,17 +42,17 @@ object CompanyEnterPAYEId {
       private val payeLabel = "messages__common__cya__paye"
 
       override def row(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl,
-          userAnswers)
+        ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl,
-              userAnswers)
+            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))().updateRow(id)
-            (changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterPAYEId](payeLabel, hiddenLabel(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

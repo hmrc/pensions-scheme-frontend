@@ -28,7 +28,8 @@ import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerNameId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
 
   override def cleanup(value: Option[PersonName], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.allPartnersAfterDelete(this.establisherIndex).lengthCompare(10) match {

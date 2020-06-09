@@ -28,8 +28,9 @@ import utils.{DateHelper, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId
-    .toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorDOBId.toString
 }
 
 object DirectorDOBId {

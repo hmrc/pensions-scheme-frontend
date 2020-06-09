@@ -51,9 +51,11 @@ object HasCompanyUTRId {
         case _ => messages("messages__theCompany")
       }
 
-    def label(index: Int) = Some(messages("messages__hasUTR", companyName(index)))
+    def label(index: Int) =
+      Some(messages("messages__hasUTR", companyName(index)))
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", companyName(index)))
+    def hiddenLabel(index: Int) =
+      Some(messages("messages__visuallyhidden__dynamic_hasUtr", companyName(index)))
 
     new CheckYourAnswers[HasCompanyUTRId] {
       override def row(id: HasCompanyUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
