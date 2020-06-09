@@ -81,7 +81,7 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
           addresses = addresses,
           srn = srn,
           heading = Message("messages__dynamic_whatIsAddress", name.fullName),
-          title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual")),
           entityName = name.fullName
         )
     }.left.map(_ =>

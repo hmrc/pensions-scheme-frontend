@@ -80,7 +80,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
           manualInputCall = routes.PartnershipAddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
           srn = srn,
-          title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
+          title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership")),
           heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name),
           entityName = partnershipDetails.name
         )

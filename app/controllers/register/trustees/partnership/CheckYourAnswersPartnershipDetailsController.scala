@@ -71,7 +71,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership"))
 
         val vm = CYAViewModel(
           answerSections = companyDetails,

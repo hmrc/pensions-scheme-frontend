@@ -54,7 +54,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
-      title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__enterNINO", Message("messages__theIndividual")),
       heading = Message("messages__enterNINO", personDetails.fullName),
       hint = Message("messages__common__nino_hint"),
       srn = srn

@@ -55,7 +55,7 @@ class DirectorNoNINOReasonController @Inject()(
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__whyNoNINO", Message("messages__theDirector").resolve),
+      title = Message("messages__whyNoNINO", Message("messages__theDirector")),
       heading = Message("messages__whyNoNINO", name),
       srn = srn
     )

@@ -61,7 +61,7 @@ class DirectorDOBController @Inject()(
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, directorIndex, srn),
       srn = srn,
-      token = token.resolve
+      token = token
     )
   }
 

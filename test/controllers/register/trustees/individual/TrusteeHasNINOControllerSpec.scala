@@ -129,7 +129,7 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar
   private val postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
+    title = Message("messages__hasNINO", Message("messages__theIndividual")),
     heading = Message("messages__hasNINO", "Test Name"),
     hint = None
   )

@@ -76,7 +76,7 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
           postCall = routes.PreviousAddressListController.onSubmit(mode, index, srn),
           manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
-          title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual").resolve),
+          title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual")),
           heading = Message("messages__dynamic_whatWasPreviousAddress", name.fullName),
           srn = srn,
           entityName = name.fullName

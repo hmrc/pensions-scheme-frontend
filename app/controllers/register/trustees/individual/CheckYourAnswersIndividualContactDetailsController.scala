@@ -61,7 +61,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson"))
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),

@@ -53,7 +53,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__whyNoUTR", Message("messages__theDirector").resolve),
+      title = Message("messages__whyNoUTR", Message("messages__theDirector")),
       heading = Message("messages__whyNoUTR", directorName),
       srn = srn
     )

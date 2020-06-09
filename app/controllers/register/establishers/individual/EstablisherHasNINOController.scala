@@ -51,7 +51,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(mode, index, srn),
-      title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__hasNINO", Message("messages__theIndividual")),
       heading = Message("messages__hasNINO", companyName),
       hint = None,
       srn = srn

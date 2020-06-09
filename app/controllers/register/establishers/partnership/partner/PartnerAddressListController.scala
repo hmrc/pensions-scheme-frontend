@@ -79,7 +79,7 @@ class PartnerAddressListController @Inject()(override val appConfig: FrontendApp
           manualInputCall = routes.PartnerAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),
           addresses = addresses,
           srn = srn,
-          title = Message("messages__dynamic_whatIsAddress", Message("messages__thePartner").resolve),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__thePartner")),
           heading = Message("messages__dynamic_whatIsAddress", partnerDetails.fullName),
           entityName = partnerDetails.fullName
         )

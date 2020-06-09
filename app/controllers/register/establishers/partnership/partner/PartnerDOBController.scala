@@ -59,7 +59,7 @@ class PartnerDOBController @Inject()(
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, partnerIndex, srn),
       srn = srn,
-      token = token.resolve
+      token = token
     )
   }
 

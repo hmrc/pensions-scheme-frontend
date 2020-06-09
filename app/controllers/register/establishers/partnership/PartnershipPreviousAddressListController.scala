@@ -79,7 +79,7 @@ class PartnershipPreviousAddressListController @Inject()(val appConfig: Frontend
           postCall = routes.PartnershipPreviousAddressListController.onSubmit(mode, index, srn),
           manualInputCall = routes.PartnershipPreviousAddressController.onPageLoad(mode, index, srn),
           addresses = addresses,
-          title = Message("messages__common__selectPreviousAddress__h1", Message("messages__thePartnership").resolve),
+          title = Message("messages__common__selectPreviousAddress__h1", Message("messages__thePartnership")),
           heading = Message("messages__common__selectPreviousAddress__h1", partnershipDetails.name),
           srn = srn,
           entityName = partnershipDetails.name

@@ -54,7 +54,7 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
                        (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
+      title = Message("messages__enterVAT", Message("messages__theCompany")),
       heading = Message("messages__enterVAT", companyName),
       hint = Message("messages__enterVAT__hint", companyName),
       subHeading = None,

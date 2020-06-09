@@ -54,7 +54,7 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
                        (implicit request: DataRequest[AnyContent]): UTRViewModel = {
     UTRViewModel(
       postCall = routes.EstablisherEnterUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
+      title = Message("messages__enterUTR", Message("messages__theIndividual")),
       heading = Message("messages__enterUTR", companyName),
       hint = Message("messages_utr__hint"),
       srn = srn

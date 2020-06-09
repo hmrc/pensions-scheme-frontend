@@ -75,7 +75,7 @@ class TrusteeAddressYearsController @Inject()(
   private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee").resolve),
+    title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee")),
     heading = Message("messages__trusteeAddressYears__heading", trusteeName),
     legend = Message("messages__trusteeAddressYears__title", trusteeName),
     subHeading = Some(Message(trusteeName)),

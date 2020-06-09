@@ -55,7 +55,7 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
           details =>
             CommonFormWithHintViewModel(
               controllers.register.establishers.partnership.routes.PartnershipEmailController.onSubmit(mode, index, srn),
-              Message("messages__enterEmail", Message("messages__thePartnership").resolve),
+              Message("messages__enterEmail", Message("messages__thePartnership")),
               Message("messages__enterEmail", details.name),
               Some(Message("messages__contact_details__hint", details.name)),
               srn = srn

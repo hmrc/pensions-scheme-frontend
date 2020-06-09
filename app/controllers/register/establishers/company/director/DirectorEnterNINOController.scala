@@ -55,7 +55,7 @@ class DirectorEnterNINOController @Inject()(
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-      title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
+      title = Message("messages__enterNINO", Message("messages__theDirector")),
       heading = Message("messages__enterNINO", name),
       hint = hint,
       srn = srn

@@ -51,7 +51,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                        )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
+      title = Message("messages__hasUTR", Message("messages__theIndividual")),
       heading = Message("messages__hasUTR", trusteeName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn

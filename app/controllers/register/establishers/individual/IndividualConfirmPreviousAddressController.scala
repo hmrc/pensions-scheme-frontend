@@ -58,7 +58,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),
-              title = Message(heading, Message("messages__theIndividual").resolve),
+              title = Message(heading, Message("messages__theIndividual")),
               heading = Message(heading, details.fullName),
               hint = None,
               address = address,

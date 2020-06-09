@@ -76,7 +76,7 @@ class PartnershipPostcodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
-              title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership").resolve),
+              title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership")),
               heading = Message("messages__partnershipPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn

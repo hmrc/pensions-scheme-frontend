@@ -65,7 +65,7 @@ class AddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(heading, Message("messages__theIndividual").resolve),
+      title = Message(heading, Message("messages__theIndividual")),
       heading = Message(heading, name),
       srn = srn
     )

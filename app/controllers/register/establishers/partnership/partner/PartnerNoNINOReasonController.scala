@@ -54,7 +54,7 @@ class PartnerNoNINOReasonController @Inject()(
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.PartnerNoNINOReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__whyNoNINO", Message("messages__thePartner").resolve),
+      title = Message("messages__whyNoNINO", Message("messages__thePartner")),
       heading = Message("messages__whyNoNINO", name),
       srn = srn
     )

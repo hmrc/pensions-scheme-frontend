@@ -53,7 +53,7 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.PartnerNoUTRReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__whyNoUTR", Message("messages__thePartner").resolve),
+      title = Message("messages__whyNoUTR", Message("messages__thePartner")),
       heading = Message("messages__whyNoUTR", partnerName),
       srn = srn
     )
