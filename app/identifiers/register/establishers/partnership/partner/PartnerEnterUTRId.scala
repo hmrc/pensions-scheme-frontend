@@ -26,7 +26,8 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterUTRId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterUTRId
+    .toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnerNoUTRReasonId(establisherIndex, partnerIndex))
@@ -40,11 +41,12 @@ object PartnerEnterUTRId {
 
     new CheckYourAnswersPartners[PartnerEnterUTRId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterUTR")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua,
+          "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
 
       override def row(id: PartnerEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),

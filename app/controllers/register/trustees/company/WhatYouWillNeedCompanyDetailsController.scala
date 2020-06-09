@@ -38,22 +38,23 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
                                                         requireData: DataRequiredAction,
                                                         val controllerComponents: MessagesControllerComponents,
                                                         val view: whatYouWillNeedCompanyDetails
-                                                    ) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                       ) extends FrontendBaseController with I18nSupport with
+  Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
-        case CompanyDetails(companyName, _) =>
-          Future.successful(Ok(
-            view(
-              schemeName = existingSchemeName,
-              href = HasCompanyCRNController.onSubmit(mode, index, srn),
-              srn = srn,
-              companyName = companyName
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          case CompanyDetails(companyName, _) =>
+            Future.successful(Ok(
+              view(
+                schemeName = existingSchemeName,
+                href = HasCompanyCRNController.onSubmit(mode, index, srn),
+                srn = srn,
+                companyName = companyName
               )
             )
-          )
+            )
         }
-  }
+    }
 }

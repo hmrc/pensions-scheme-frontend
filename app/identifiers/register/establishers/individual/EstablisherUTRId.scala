@@ -39,9 +39,13 @@ object EstablisherUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherUTRId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))
+    (_.fullName)
+
     def label(index: Int): String = messages("messages__enterUTR", establisherName(index))
-    def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", establisherName(index))
+
+    def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference",
+      establisherName(index))
 
     new CheckYourAnswers[EstablisherUTRId] {
       override def row(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -52,7 +56,8 @@ object EstablisherUTRId {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl,
+              userAnswers)
         }
       }
     }

@@ -30,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends AddressLookupConnector {
 
-  override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
+  override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Seq[TolerantAddress]] = {
     val schemeHc = hc.withExtraHeaders("X-Hmrc-Origin" -> "PODS")
 
     val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postcode=$postCode"
@@ -40,7 +41,8 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     http.GET[HttpResponse](addressLookupUrl)(implicitly, schemeHc, implicitly) flatMap {
       case response if response.status equals OK => Future.successful {
         response.json.as[Seq[TolerantAddress]]
-          .filterNot(a=>a.addressLine1.isEmpty && a.addressLine2.isEmpty && a.addressLine3.isEmpty && a.addressLine4.isEmpty)
+          .filterNot(a => a.addressLine1.isEmpty && a.addressLine2.isEmpty && a.addressLine3.isEmpty && a
+            .addressLine4.isEmpty)
       }
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body :${response.body}"
@@ -58,5 +60,6 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 
 @ImplementedBy(classOf[AddressLookupConnectorImpl])
 trait AddressLookupConnector {
-  def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]]
+  def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Seq[TolerantAddress]]
 }

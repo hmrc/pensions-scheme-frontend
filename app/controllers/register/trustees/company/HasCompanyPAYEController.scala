@@ -47,19 +47,6 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                           implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = routes.HasCompanyPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
-      heading = Message("messages__hasPAYE", companyName),
-      hint = Some(Message("messages__hasPaye__p1")),
-      srn = srn,
-      formFieldName = Some("hasPaye")
-    )
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__companyPayeRef__error__required", companyName)
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -74,7 +61,22 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = routes.HasCompanyPAYEController.onSubmit(mode, index, srn),
+      title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
+      heading = Message("messages__hasPAYE", companyName),
+      hint = Some(Message("messages__hasPaye__p1")),
+      srn = srn,
+      formFieldName = Some("hasPaye")
+    )
+  ("messages__companyPayeRef__error__required", companyName)
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider
 }

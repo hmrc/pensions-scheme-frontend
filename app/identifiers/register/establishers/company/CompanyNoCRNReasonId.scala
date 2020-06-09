@@ -32,7 +32,8 @@ case class CompanyNoCRNReasonId(index: Int) extends TypedIdentifier[String] {
 object CompanyNoCRNReasonId {
   override def toString: String = "noCrnReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyNoCRNReasonId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
+  : CheckYourAnswers[CompanyNoCRNReasonId] = {
 
     new CheckYourAnswersCompany[CompanyNoCRNReasonId] {
 
@@ -43,12 +44,13 @@ object CompanyNoCRNReasonId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noCrnReason")
 
       override def row(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
+        StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl,
+          userAnswers)
 
       override def updateRow(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

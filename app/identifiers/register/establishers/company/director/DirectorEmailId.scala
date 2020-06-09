@@ -26,7 +26,8 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
 case class DirectorEmailId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorEmailId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
+    "directorContactDetails" \ DirectorEmailId.toString
 }
 
 
@@ -39,10 +40,10 @@ object DirectorEmailId {
 
     new CheckYourAnswersDirectors[DirectorEmailId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__email_address")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_email")
 
       override def row(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

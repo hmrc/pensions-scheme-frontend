@@ -51,10 +51,12 @@ case object EstablisherCompanyAddress extends AddressSpoke {
 
 case object EstablisherCompanyContactDetails extends ContactDetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
+    establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse
+    (Index(0)))
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
+    establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse
+    (Index(0)))
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isEstablisherCompanyContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -62,27 +64,31 @@ case object EstablisherCompanyContactDetails extends ContactDetailsSpoke {
 
 case object EstablisherCompanyDirectors extends Spoke {
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__add_directors", name),
-    establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index.getOrElse(Index(0))).url
-  )
-
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText( name, srn,
-      registrationLinkText = "messages__schemeTaskList__change_directors",
-      variationsLinkText = "messages__schemeTaskList__view_directors"),
-    establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index.getOrElse(Index(0))).url
+    establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index.getOrElse(Index(0)
+    )).url
   )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     changeLink(name)(mode, srn, index)
+
+  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn,
+      registrationLinkText = "messages__schemeTaskList__change_directors",
+      variationsLinkText = "messages__schemeTaskList__view_directors"),
+    establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index.getOrElse(Index(0))).url
+  )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = None
 }
 
 case object EstablisherIndividualDetails extends DetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index.getOrElse(Index(0))
+      , srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
     establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
@@ -93,7 +99,8 @@ case object EstablisherIndividualDetails extends DetailsSpoke {
 
 case object EstablisherIndividualAddress extends AddressSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index.getOrElse(Index(0))
+      , srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
     establisherIndividualRoutes.CheckYourAnswersAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
@@ -104,10 +111,12 @@ case object EstablisherIndividualAddress extends AddressSpoke {
 
 case object EstablisherIndividualContactDetails extends ContactDetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index.getOrElse
+    (Index(0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isEstablisherIndividualContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -115,10 +124,12 @@ case object EstablisherIndividualContactDetails extends ContactDetailsSpoke {
 
 case object EstablisherPartnershipDetails extends DetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
+    establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index.getOrElse
+    (Index(0)))
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index
+    (0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isEstablisherPartnershipDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -126,10 +137,12 @@ case object EstablisherPartnershipDetails extends DetailsSpoke {
 
 case object EstablisherPartnershipAddress extends AddressSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index
+    (0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index
+    (0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isEstablisherPartnershipAddressComplete(indexToInt(index.getOrElse(Index(0))))
@@ -137,10 +150,12 @@ case object EstablisherPartnershipAddress extends AddressSpoke {
 
 case object EstablisherPartnershipContactDetails extends ContactDetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
+    (Index(0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
+    (Index(0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isEstablisherPartnershipContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -148,20 +163,23 @@ case object EstablisherPartnershipContactDetails extends ContactDetailsSpoke {
 
 case object EstablisherPartnershipPartner extends Spoke {
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__add_partners", name),
-    establisherPartnershipPartnerRoutes.WhatYouWillNeedPartnerController.onPageLoad(mode, index.getOrElse(Index(0)), srn).url
-  )
-
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
-    dynamicLinkText( name, srn,
-      registrationLinkText = "messages__schemeTaskList__change_partners",
-      variationsLinkText = "messages__schemeTaskList__view_partners"),
-    establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, indexToInt(index.getOrElse(Index(0))), srn).url
+    establisherPartnershipPartnerRoutes.WhatYouWillNeedPartnerController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn).url
   )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     changeLink(name)(mode, srn, index)
+
+  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
+    dynamicLinkText(name, srn,
+      registrationLinkText = "messages__schemeTaskList__change_partners",
+      variationsLinkText = "messages__schemeTaskList__view_partners"),
+    establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, indexToInt(index.getOrElse(Index(0))), srn).url
+  )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = None
 }

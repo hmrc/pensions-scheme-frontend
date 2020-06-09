@@ -41,28 +41,14 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val userAnswersService: UserAnswersService,
                                        allowAccess: AllowAccessActionProvider,
                                        requireData: DataRequiredAction,
-                                        val navigator: Navigator,
+                                       val navigator: Navigator,
                                        formProvider: PhoneFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: phoneNumber
-                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with
+  I18nSupport {
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              routes.CompanyPhoneController.onSubmit(mode, index, srn),
-              Message("messages__trustee_phone__title"),
-              Message("messages__enterPhoneNumber", details.companyName),
-              Some(Message("messages__contact_details__hint", details.companyName)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -79,6 +65,21 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
         viewModel(mode, srn, index).retrieve.right.map {
           vm =>
             post(CompanyPhoneId(index), mode, form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.CompanyPhoneController.onSubmit(mode, index, srn),
+              Message("messages__trustee_phone__title"),
+              Message("messages__enterPhoneNumber", details.companyName),
+              Some(Message("messages__contact_details__hint", details.companyName)),
+              srn = srn
+            )
         }
     }
 }

@@ -29,6 +29,7 @@ case object OccupationalPensionSchemeId extends TypedIdentifier[Boolean] {
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(messages("messages__occupational_pension_scheme__h1", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__occupationalPensionScheme", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__occupationalPensionScheme", userAnswers.get
+      (SchemeNameId).getOrElse("")))
     )()
 }

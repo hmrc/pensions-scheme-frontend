@@ -24,7 +24,7 @@ import viewmodels.Message
 
 class HasBeenTradingFormProvider @Inject() extends Mappings {
 
-  def apply(errorKey : String, companyName : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(errorKey: String, companyName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
       "value" -> boolean(Message(errorKey, companyName).resolve)
     )

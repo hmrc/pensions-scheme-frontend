@@ -28,30 +28,20 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualContactDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+class TrusteesIndividualContactDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
+  AbstractNavigator {
 
   import TrusteesIndividualContactDetailsNavigator._
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeEmailId(index) if mode == NormalMode        => phonePage(mode, index, srn)
-    case TrusteeEmailId(index)                              => cyaIndividualContactDetailsPage(mode, index, srn)
-    case TrusteePhoneId(index)                              => cyaIndividualContactDetailsPage(mode, index, srn)
-  }
-
-  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeEmailId(index)        => phonePage(mode, index, srn)
-    case TrusteePhoneId(index)        => cyaIndividualContactDetailsPage(mode, index, srn)
-  }
-
-  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeEmailId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualContactDetailsPage(mode, index, srn)
-    case TrusteeEmailId(_)                                                                => anyMoreChangesPage(srn)
-    case TrusteePhoneId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false)          => cyaIndividualContactDetailsPage(mode, index, srn)
-    case TrusteePhoneId(_)                                                                => anyMoreChangesPage(srn)
-  }
-
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id )
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case TrusteeEmailId(index) if mode == NormalMode => phonePage(mode, index, srn)
+    case TrusteeEmailId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
+    case TrusteePhoneId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
+  }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
@@ -59,8 +49,24 @@ class TrusteesIndividualContactDetailsNavigator @Inject()(val dataCacheConnector
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
+  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case TrusteeEmailId(index) => phonePage(mode, index, srn)
+    case TrusteePhoneId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
+  }
+
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
+
+  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case TrusteeEmailId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false) => cyaIndividualContactDetailsPage
+      (mode, index, srn)
+    case TrusteeEmailId(_) => anyMoreChangesPage(srn)
+    case TrusteePhoneId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false) => cyaIndividualContactDetailsPage
+      (mode, index, srn)
+    case TrusteePhoneId(_) => anyMoreChangesPage(srn)
+  }
 }
 
 object TrusteesIndividualContactDetailsNavigator {

@@ -47,18 +47,19 @@ class OtherDirectorsController @Inject()(
                                           formProvider: OtherDirectorsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: otherDirectors
-                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
-
-  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
 
   def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
-          case None => Ok(view(form, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
-          case Some(value) => Ok(view(form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))
+          case None => Ok(view(form, mode, establisherIndex, existingSchemeName, postCall(mode, srn,
+            establisherIndex), srn))
+          case Some(value) => Ok(view(form.fill(value), mode, establisherIndex, existingSchemeName, postCall(mode,
+            srn, establisherIndex), srn))
         }
         Future.successful(redirectResult)
 
@@ -66,14 +67,17 @@ class OtherDirectorsController @Inject()(
 
   def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(
-            view(formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex), srn))),
-        value =>
-          userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
-            Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
-      )
-  }
+      implicit request =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(
+              view(formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex),
+                srn))),
+          value =>
+            userAnswersService.save(mode, srn, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
+              Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap), srn)))
+        )
+    }
+
+  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
 }

@@ -47,7 +47,8 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               allowChangeHelper: AllowChangeHelper,
                                                               val controllerComponents: MessagesControllerComponents,
                                                               val view: checkYourAnswers
-                                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                            )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -55,18 +56,26 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
       implicit request =>
         val partnershipDetails = Seq(AnswerSection(
           None,
-          PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterUTRId(index).row(routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterPAYEId(index).row(routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            PartnershipEnterUTRId(index).row(routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode) ++
+            PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipEnterPAYEId(index).row(routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode),
+              index, srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
+        ("messages__thePartnership").resolve)
 
         val vm = CYAViewModel(
           answerSections = partnershipDetails,
@@ -75,7 +84,8 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
           returnOverview = false,
           hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
           h1 = headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )

@@ -60,35 +60,25 @@ class DeclarationController @Inject()(
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        val view: declaration
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                        with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      if(hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
+      if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
         showPage(Ok.apply)
       } else {
         Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
       }
   }
 
-  def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
-    implicit request =>
-      for {
-        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-        cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-        _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-      } yield {
-        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-      }
-  }
-
-  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent])
+  : Future[Result] = {
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 
-    val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
+    val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant
+      .values(1)
     val readyForRender = if (isEstCompany) {
       dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
     } else {
@@ -100,7 +90,8 @@ class DeclarationController @Inject()(
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
             view(isEstCompany, isDormant = isDeclarationDormant,
-              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName, href)
+              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName,
+              href)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -125,6 +116,18 @@ class DeclarationController @Inject()(
       case Some(Yes) => true
       case _ => false
     }
+  }
+
+  def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+    implicit request =>
+      for {
+        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+        cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+        _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+      } yield {
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+      }
   }
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {

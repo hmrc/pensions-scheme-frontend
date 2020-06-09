@@ -32,13 +32,14 @@ case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
 object CompanyEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers)
+  : CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswersCompany[CompanyEmailId] {
 
-    private def label(index : Int, ua : UserAnswers) : String =
+    private def label(index: Int, ua: UserAnswers): String =
       dynamicMessage(index, ua, "messages__enterEmail")
 
-    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+    private def hiddenLabel(index: Int, ua: UserAnswers): String =
       dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address")
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
@@ -46,7 +47,8 @@ object CompanyEmailId {
         .row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)
+    (changeUrl, userAnswers)
   }
 }
 

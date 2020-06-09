@@ -22,6 +22,6 @@ case class AlreadyDeletedViewModel(
                                     title: Message,
                                     deletedEntity: String,
                                     returnCall: Call,
-                                    srn : Option[String] = None,
+                                    srn: Option[String] = None,
                                     schemeName: Option[String] = None
                                   )

@@ -31,8 +31,11 @@ object SchemeVariance {
 sealed trait Lock
 
 case object VarianceLock extends WithName("SuccessfulVarianceLock") with Lock
+
 case object PsaLock extends WithName("PsaHasLockedAnotherScheme") with Lock
+
 case object SchemeLock extends WithName("AnotherPsaHasLockedScheme") with Lock
+
 case object BothLock extends WithName("PsaAndSchemeHasAlreadyLocked") with Lock
 
 
@@ -42,7 +45,7 @@ object Lock extends Enumerable.Implicits {
 
   implicit object LockFormat extends Format[Lock] {
 
-    implicit def reads(json: JsValue) : JsResult[Lock] =
+    implicit def reads(json: JsValue): JsResult[Lock] =
       json match {
         case JsString("SuccessfulVarianceLock") => JsSuccess(VarianceLock)
         case JsString("PsaHasLockedAnotherScheme") => JsSuccess(PsaLock)

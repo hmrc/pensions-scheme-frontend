@@ -27,11 +27,13 @@ import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
 
 case class DirectorNameId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNameId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNameId
+    .toString
 }
 
 object DirectorNameId {
-  def collectionPath(establisherIndex: Int): JsPath = EstablishersId(establisherIndex).path \ "director" \\ DirectorNameId.toString
+  def collectionPath(establisherIndex: Int): JsPath = EstablishersId(establisherIndex).path \ "director" \\
+    DirectorNameId.toString
 
   override def toString: String = "directorDetails"
 
@@ -45,10 +47,12 @@ object DirectorNameId {
               "messages__directorName__cya",
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__directorName", personDetails.fullName).resolve)))
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__directorName",
+                personDetails.fullName).resolve)))
             )
           )
-        }}
+        }
+        }
 
       override def updateRow(id: DirectorNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {

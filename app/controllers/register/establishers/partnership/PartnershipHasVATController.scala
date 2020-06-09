@@ -46,19 +46,8 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             formProvider: HasReferenceNumberFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: hasReferenceNumber
-                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
-      title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
-      heading = Message("messages__hasVAT", partnershipName),
-      hint = None,
-      srn = srn
-    )
+                                           )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -77,4 +66,17 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
             post(PartnershipHasVATId(index), mode: Mode, form(details.name), viewModel(mode, index, srn, details.name))
         }
     }
+  ("messages__vat__formError", partnershipName)
+
+  def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] = formProvider
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
+      title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
+      heading = Message("messages__hasVAT", partnershipName),
+      hint = None,
+      srn = srn
+    )
 }

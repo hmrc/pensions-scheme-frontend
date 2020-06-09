@@ -32,7 +32,8 @@ case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.I
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(messages("haveAnyTrustees.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {

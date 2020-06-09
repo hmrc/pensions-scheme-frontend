@@ -42,9 +42,11 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(
                                                                    getData: DataRetrievalAction,
                                                                    allowAccess: AllowAccessActionProvider,
                                                                    requireData: DataRequiredAction,
-                                                                   val controllerComponents: MessagesControllerComponents,
+                                                                   val
+                                                                   controllerComponents: MessagesControllerComponents,
                                                                    val view: whatYouWillNeedContactDetails
-                                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                                 )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

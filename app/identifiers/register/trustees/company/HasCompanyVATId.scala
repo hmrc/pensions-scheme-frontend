@@ -37,6 +37,7 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
     }
   }
 }
+
 object HasCompanyVATId {
   override def toString: String = "hasVat"
 
@@ -45,7 +46,7 @@ object HasCompanyVATId {
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     def label(index: Int) = Some(messages("messages__hasVAT", companyName(index)))

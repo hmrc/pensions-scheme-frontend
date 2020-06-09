@@ -36,30 +36,19 @@ import views.html.reason
 import scala.concurrent.ExecutionContext
 
 class DirectorNoNINOReasonController @Inject()(
-                                           override val appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           override val userAnswersService: UserAnswersService,
-                                           @EstablishersCompanyDirector override val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                           formProvider: ReasonFormProvider,
-                                           val controllerComponents: MessagesControllerComponents,
-                                           val view: reason
-                                         )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
-
-  private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_ninoRequired", name)
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
-    ReasonViewModel(
-      postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__whyNoNINO", Message("messages__theDirector").resolve),
-      heading = Message("messages__whyNoNINO", name),
-      srn = srn
-    )
-  }
+                                                override val appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                override val userAnswersService: UserAnswersService,
+                                                @EstablishersCompanyDirector override val navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
+                                                requireData: DataRequiredAction,
+                                                formProvider: ReasonFormProvider,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: reason
+                                              )(implicit val ec: ExecutionContext) extends ReasonController with
+  Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -78,5 +67,18 @@ class DirectorNoNINOReasonController @Inject()(
             viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }
     }
+  ("messages__reason__error_ninoRequired", name)
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
+      title = Message("messages__whyNoNINO", Message("messages__theDirector").resolve),
+      heading = Message("messages__whyNoNINO", name),
+      srn = srn
+    )
+  }
 
 }

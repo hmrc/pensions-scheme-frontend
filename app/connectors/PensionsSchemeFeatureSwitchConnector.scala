@@ -33,7 +33,8 @@ trait FeatureSwitchConnector {
   def get(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]]
 }
 
-class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appConfig: FrontendAppConfig) extends FeatureSwitchConnector {
+class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appConfig: FrontendAppConfig) extends
+  FeatureSwitchConnector {
 
   override def toggleOn(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
 

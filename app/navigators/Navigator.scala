@@ -32,7 +32,22 @@ import scala.util.Failure
 
 trait Navigator {
 
+  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+    nextPageOptional(id, mode, userAnswers, srn)
+      .getOrElse(defaultPage(id, mode))
+  }
+
+  private def defaultPage(id: Identifier, mode: Mode): Call = {
+    Logger.warn(s"No navigation defined for id $id in mode $mode")
+    controllers.routes.IndexController.onPageLoad()
+  }
+
+  def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+                      (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
+
   case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
+
   case class NavigateTo(page: Call, save: Boolean)
 
   object NavigateTo {
@@ -42,22 +57,35 @@ trait Navigator {
     def dontSave(page: Call): Option[NavigateTo] = Some(NavigateTo(page, false))
   }
 
-  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-              (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
-    nextPageOptional(id, mode, userAnswers, srn)
-      .getOrElse(defaultPage(id, mode))
-  }
-
-  def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-                      (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
-
-  private def defaultPage(id: Identifier, mode: Mode): Call = {
-    Logger.warn(s"No navigation defined for id $id in mode $mode")
-    controllers.routes.IndexController.onPageLoad()
-  }
 }
 
 abstract class AbstractNavigator extends Navigator {
+
+  override final def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+                                     (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier)
+  : Option[Call] = {
+
+    val navigateTo = {
+      mode match {
+        case NormalMode => routeMap(NavigateFrom(id, userAnswers))
+        case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
+        case UpdateMode => updateRouteMap(NavigateFrom(id, userAnswers), srn)
+        case CheckUpdateMode => checkUpdateRouteMap(NavigateFrom(id, userAnswers), srn)
+      }
+    }
+
+    navigateTo.map(to => saveAndContinue(to, ex.externalId))
+  }
+
+  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)(implicit ec: ExecutionContext,
+                                                                                hc: HeaderCarrier): Call = {
+    if (navigation.save) {
+      dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
+        case Failure(t: Throwable) => Logger.warn("Error saving user's current page", t)
+      }
+    }
+    navigation.page
+  }
 
   protected def navigateOrSessionExpired[A](answers: UserAnswers,
                                             id: => TypedIdentifier[A],
@@ -74,30 +102,6 @@ abstract class AbstractNavigator extends Navigator {
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String] = None): Option[NavigateTo]
 
-  override final def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-                                     (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
-
-    val navigateTo = {
-      mode match {
-        case NormalMode => routeMap(NavigateFrom(id, userAnswers))
-        case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
-        case UpdateMode => updateRouteMap(NavigateFrom(id, userAnswers), srn)
-        case CheckUpdateMode => checkUpdateRouteMap(NavigateFrom(id, userAnswers), srn)
-      }
-    }
-
-    navigateTo.map(to => saveAndContinue(to, ex.externalId))
-  }
-
-  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
-    if (navigation.save) {
-      dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
-        case Failure(t: Throwable) => Logger.warn("Error saving user's current page", t)
-      }
-    }
-    navigation.page
-  }
-
   // TODO: Should we remove this? It is essentially abstracting over the match, does this provide enough value?
   protected def booleanNav(id: TypedIdentifier[Boolean],
                            answers: UserAnswers,
@@ -113,7 +117,8 @@ abstract class AbstractNavigator extends Navigator {
 
   protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  protected def navigateTo(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier): Option[NavigateTo] =
+  protected def navigateTo(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier)
+  : Option[NavigateTo] =
     if (routeMapping.isDefinedAt(identifier))
       NavigateTo.dontSave(routeMapping(identifier))
     else

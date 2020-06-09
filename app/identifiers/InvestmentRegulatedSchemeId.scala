@@ -29,6 +29,7 @@ case object InvestmentRegulatedSchemeId extends TypedIdentifier[Boolean] {
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(messages("messages__investment_regulated_scheme__h1", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__investmentRegulated", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__investmentRegulated", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 }

@@ -44,18 +44,19 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   implicit val countryOptions: CountryOptions,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: checkYourAnswers
-                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                 )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       val seqAnswerSection = {
-          val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
-          val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-          val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
-          val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-          Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
+        val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
+        val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
+        val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
+        val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+        Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }
       val vm = CYAViewModel(
         answerSections = seqAnswerSection,

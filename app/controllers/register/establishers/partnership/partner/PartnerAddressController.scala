@@ -22,7 +22,8 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.partnership.partner.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId,
+  PartnerAddressPostcodeLookupId, PartnerNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -53,13 +54,13 @@ class PartnerAddressController @Inject()(
                                           val auditService: AuditService,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: manualAddress
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = PartnerAddressController.onSubmit _
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnerAddress__lede"
-
-  protected val form: Form[Address] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

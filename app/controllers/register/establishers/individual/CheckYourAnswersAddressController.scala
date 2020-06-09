@@ -61,13 +61,16 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
         val answerSections = Seq(AnswerSection(
           None,
           AddressId(index).row(routes.AddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            AddressYearsId(index).row(routes.AddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PreviousAddressId(index).row(routes.PreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            AddressYearsId(index).row(routes.AddressYearsController.onPageLoad(checkMode(mode), index, srn).url,
+              mode) ++
+            PreviousAddressId(index).row(routes.PreviousAddressController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message
+        ("messages__thePerson").resolve)
 
         val vm = CYAViewModel(
           answerSections = answerSections,
@@ -76,9 +79,10 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
-          h1 =  headingAddressDetails(mode, personName(EstablisherNameId(index)), isNew)
+          h1 = headingAddressDetails(mode, personName(EstablisherNameId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

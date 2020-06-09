@@ -54,12 +54,13 @@ object HasCompanyCRNId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasCrn")
 
       override def row(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl, userAnswers)
+        BooleanCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))().row(id)(changeUrl,
+          userAnswers)
 
       override def updateRow(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

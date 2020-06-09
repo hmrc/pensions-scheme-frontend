@@ -23,7 +23,8 @@ import utils.UserAnswers
 
 case class PartnerConfirmPreviousAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
 
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerConfirmPreviousAddressId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \
+    PartnerConfirmPreviousAddressId.toString
 
   override def toString: String = "partnerConfirmPreviousAddress"
 

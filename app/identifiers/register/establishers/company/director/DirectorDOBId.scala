@@ -28,7 +28,8 @@ import utils.{DateHelper, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId
+    .toString
 }
 
 object DirectorDOBId {
@@ -37,10 +38,10 @@ object DirectorDOBId {
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorDOBId] = {
     new CheckYourAnswersDirectors[DirectorDOBId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__dob")
 
-      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: DirectorDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

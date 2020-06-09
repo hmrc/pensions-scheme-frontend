@@ -45,9 +45,19 @@ class CompanyNoUTRReasonController @Inject()(override val appConfig: FrontendApp
                                              formProvider: ReasonFormProvider,
                                              val view: reason,
                                              val controllerComponents: MessagesControllerComponents
-                                            )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with
+  I18nSupport {
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyNoUTRReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
@@ -58,15 +68,7 @@ class CompanyNoUTRReasonController @Inject()(override val appConfig: FrontendApp
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
-          val companyName = details.companyName
-          get(CompanyNoUTRReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
-        }
-    }
+  ("messages__reason__error_utrRequired", companyName)
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

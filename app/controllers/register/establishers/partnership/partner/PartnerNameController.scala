@@ -49,16 +49,8 @@ class PartnerNameController @Inject()(
                                        formProvider: PersonNameFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: personName
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
-
-  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
-
-  def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = CommonFormWithHintViewModel(
-    postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-    title = Message("messages__partnerName__title"),
-    heading = Message("messages__partnerName__heading"),
-    srn = srn
-  )
+                                     )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -67,15 +59,27 @@ class PartnerNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, partnerIndex, srn),
+          existingSchemeName)))
     }
+
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
+
+  def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) =
+    CommonFormWithHintViewModel(
+    postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+    title = Message("messages__partnerName__title"),
+    heading = Message("messages__partnerName__heading"),
+    srn = srn
+  )
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn), existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn),
+              existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewPartnerId(establisherIndex, partnerIndex))(true).flatMap(
@@ -83,7 +87,8 @@ class PartnerNameController @Inject()(
 
             userAnswersService.upsert(mode, srn, answers.json).map {
               cacheMap =>
-                Redirect(navigator.nextPage(PartnerNameId(establisherIndex, partnerIndex), mode, UserAnswers(cacheMap), srn))
+                Redirect(navigator.nextPage(PartnerNameId(establisherIndex, partnerIndex), mode, UserAnswers
+                (cacheMap), srn))
             }
           }
         )

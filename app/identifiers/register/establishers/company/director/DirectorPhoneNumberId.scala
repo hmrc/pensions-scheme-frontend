@@ -26,7 +26,8 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
 case class DirectorPhoneNumberId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorPhoneNumberId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
+    "directorContactDetails" \ DirectorPhoneNumberId.toString
 }
 
 
@@ -39,10 +40,10 @@ object DirectorPhoneNumberId {
 
     new CheckYourAnswersDirectors[DirectorPhoneNumberId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__phone")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_phone")
 
       override def row(id: DirectorPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -36,14 +36,6 @@ trait EmailAddressController extends FrontendBaseController with Retrievals with
 
   protected implicit def executionContext: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def view: emailAddress
-
-  protected def navigator: Navigator
-
   def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -68,4 +60,12 @@ trait EmailAddressController extends FrontendBaseController with Retrievals with
       }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def view: emailAddress
+
+  protected def navigator: Navigator
 }

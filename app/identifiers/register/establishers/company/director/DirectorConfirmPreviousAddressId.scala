@@ -21,9 +21,11 @@ import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class DirectorConfirmPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
+case class DirectorConfirmPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends
+  TypedIdentifier[Boolean] {
 
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorConfirmPreviousAddressId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \
+    DirectorConfirmPreviousAddressId.toString
 
   override def toString: String = "directorConfirmPreviousAddress"
 

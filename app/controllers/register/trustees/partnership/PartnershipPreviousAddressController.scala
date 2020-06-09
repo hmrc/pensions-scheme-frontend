@@ -52,13 +52,23 @@ class PartnershipPreviousAddressController @Inject()(
                                                       val auditService: AuditService,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       val view: manualAddress
-                                                    )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                                    )(implicit val ec: ExecutionContext) extends
+  ManualAddressController with I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
-  protected val form: Form[Address] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), viewmodel(index, mode,
+              srn, details.name))
+        }
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String
                        )(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
@@ -71,16 +81,8 @@ class PartnershipPreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            get(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), viewmodel(index, mode, srn, details.name))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         details =>

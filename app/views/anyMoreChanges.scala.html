@@ -1,19 +1,18 @@
 @*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
@@ -22,16 +21,16 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        main_template: main_template,
+        formHelper: FormWithCSRF
 )
 
 @(form: Form[_],
-    schemeName:Option[String],
-    dateToComplete: String,
-    postCall: Call,
-    srn: Option[String],
-    mode: Mode = UpdateMode
+        schemeName: Option[String],
+        dateToComplete: String,
+        postCall: Call,
+        srn: Option[String],
+        mode: Mode = UpdateMode
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -42,20 +41,20 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            headingKey=messages("messages__any_more_changes__title")
-        )
+        <div class="form-group @if(form.hasErrors) {form-group--error}">
+            @components.heading(
+                headingKey = messages("messages__any_more_changes__title")
+            )
 
-        <p>@messages("messages__any_more_changes__p1")</p>
-        <p>@messages("messages__any_more_changes__p2")</p>
-        <p>@messages("messages__any_more_changes__p3_date", dateToComplete)</p>
+            <p>@messages("messages__any_more_changes__p1")</p>
+            <p>@messages("messages__any_more_changes__p2")</p>
+            <p>@messages("messages__any_more_changes__p3_date", dateToComplete)</p>
 
-        @components.input_yes_no(
-            field = form("value"),
-            label = messages("messages__any_more_changes__title"),
-            labelClass = Some("visually-hidden")
-        )
+            @components.input_yes_no(
+                field = form("value"),
+                label = messages("messages__any_more_changes__title"),
+                labelClass = Some("visually-hidden")
+            )
         </div>
         @components.submit_button("site.save_and_continue")
 

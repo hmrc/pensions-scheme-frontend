@@ -34,9 +34,10 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                          crypto: ApplicationCrypto,
                                          userAnswersCacheConnector: UserAnswersCacheConnector,
                                          pensionAdministratorConnector: PensionAdministratorConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: beforeYouStart
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: beforeYouStart
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>

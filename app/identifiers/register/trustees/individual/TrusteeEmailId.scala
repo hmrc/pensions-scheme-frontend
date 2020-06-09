@@ -32,15 +32,18 @@ case class TrusteeEmailId(index: Int) extends TypedIdentifier[String] {
 object TrusteeEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteeEmailId] = new
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers)
+  : CheckYourAnswers[TrusteeEmailId] = new
       CheckYourAnswers[TrusteeEmailId] {
 
     override def row(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
+      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages
+      ("messages__theIndividual"))(_.fullName)
 
       def label(index: Int): String = messages("messages__enterEmail", trusteeName(index))
 
-      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName(index)))
+      def hiddenLabel(index: Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address",
+        trusteeName(index)))
 
       StringCYA(
         Some(label(id.index)),
@@ -48,6 +51,7 @@ object TrusteeEmailId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)
+    (changeUrl, userAnswers)
   }
 }

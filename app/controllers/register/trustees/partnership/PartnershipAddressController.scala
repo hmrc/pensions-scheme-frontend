@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId,
+  PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -52,24 +53,14 @@ class PartnershipAddressController @Inject()(
                                               val auditService: AuditService,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: manualAddress
-                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__trusteePartnershipAddress__lede"
-
-  protected val form: Form[Address] = formProvider()
-
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String
-                       )(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode, Index(index), srn),
-      countryOptions.options,
-      title = Message(title,Message("messages__thePartnership")),
-      heading = Message(heading, name),
-      srn = srn
-    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -80,7 +71,18 @@ class PartnershipAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String
+                       )(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(title, Message("messages__thePartnership")),
+      heading = Message(heading, name),
+      srn = srn
+    )
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {
         details =>

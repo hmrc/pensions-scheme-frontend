@@ -27,18 +27,21 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "insurancePolicyNumber"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
+  : CheckYourAnswers[self.type] = {
 
-      val label = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
-        Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
-      } else {
-        Some(messages("messages__insurance_policy_number__title"))
-      }
-      val hiddenLabel = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
-        Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
-      } else {
-        Some(messages("messages__visuallyhidden__insurance_policy_number_add"))
-      }
+    val label = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
+      Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse
+      ("")))
+    } else {
+      Some(messages("messages__insurance_policy_number__title"))
+    }
+    val hiddenLabel = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
+      Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId)
+        .getOrElse("")))
+    } else {
+      Some(messages("messages__visuallyhidden__insurance_policy_number_add"))
+    }
 
     new CheckYourAnswers[self.type] {
 
@@ -49,7 +52,7 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _=> userAnswers.get(BenefitsSecuredByInsuranceId) match{
+          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(
               label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
               Seq("site.not_entered"),

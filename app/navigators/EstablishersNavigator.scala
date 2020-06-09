@@ -27,6 +27,11 @@ import utils.{Enumerable, UserAnswers}
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       config: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from,
+    UpdateMode, srn)
+
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers, mode, srn)
@@ -41,33 +46,38 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case _ => None
     }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from, UpdateMode, srn)
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+  private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers, mode: Mode, srn: Option[String])
+  : Option[NavigateTo] = {
     value match {
       case Some(false) =>
         NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
-        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
+        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
+          answers.establishersCount, srn))
       case None =>
-        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.establishersCount, srn))
+        NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
+          answers.establishersCount, srn))
     }
   }
 
-  private def establisherKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+  private def establisherKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String])
+  : Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>
-        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, index))
+        NavigateTo.dontSave(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad
+        (mode, srn, index))
       case Some(EstablisherKind.Indivdual) =>
-        NavigateTo.dontSave(controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad
+        (mode, index, srn))
       case Some(EstablisherKind.Partnership) =>
-        NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.establishers.partnership.routes.PartnershipDetailsController
+          .onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }

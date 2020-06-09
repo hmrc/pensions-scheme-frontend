@@ -47,6 +47,26 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
                                              val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController {
 
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            get(TrusteeNoUTRReasonId(index), viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName
+              .fullName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            post(TrusteeNoUTRReasonId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form
+            (trusteeName.fullName))
+        }
+    }
+
   private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_utrRequired", trusteeName)
 
@@ -58,22 +78,4 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          trusteeName =>
-            get(TrusteeNoUTRReasonId(index), viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName.fullName))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          trusteeName =>
-            post(TrusteeNoUTRReasonId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName.fullName))
-        }
-    }
 }

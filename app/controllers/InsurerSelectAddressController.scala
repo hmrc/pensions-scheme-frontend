@@ -46,31 +46,34 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                val auditService: AuditService,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressList
-                                              )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                              )(implicit val ec: ExecutionContext) extends AddressListController with
+  Retrievals {
 
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).right.map(get)
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewModel(mode, srn).right.map {
-        vm =>
-          post(
-            viewModel = vm,
-            navigatorId = InsurerSelectAddressId,
-            dataId = InsurerConfirmAddressId,
-            mode = mode,
-            context = s"Insurer Address: ${vm.entityName}",
-            postCodeLookupIdForCleanup = InsurerEnterPostCodeId
-          )
-      }
-  }
+      implicit request =>
+        viewModel(mode, srn).right.map {
+          vm =>
+            post(
+              viewModel = vm,
+              navigatorId = InsurerSelectAddressId,
+              dataId = InsurerConfirmAddressId,
+              mode = mode,
+              context = s"Insurer Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = InsurerEnterPostCodeId
+            )
+        }
+    }
 
-  private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+  private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent])
+  : Either[Future[Result],
     AddressListViewModel] = {
     (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.right.map {
       case addresses ~ name =>

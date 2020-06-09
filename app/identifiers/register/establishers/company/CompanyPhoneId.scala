@@ -32,21 +32,24 @@ case class CompanyPhoneId(index: Int) extends TypedIdentifier[String] {
 object CompanyPhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyPhoneId] = new
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers)
+  : CheckYourAnswers[CompanyPhoneId] = new
       CheckYourAnswersCompany[CompanyPhoneId] {
 
-    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+    private def hiddenLabel(index: Int, ua: UserAnswers): String =
       dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_phone_number")
 
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val companyName = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
-      val label       = "messages__enterPhoneNumber"
+      val companyName = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_
+        .companyName)
+      val label = "messages__enterPhoneNumber"
 
       StringCYA(Some(messages(label, companyName)), Some(hiddenLabel(id.index, userAnswers)))()
         .row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)
+    (changeUrl, userAnswers)
   }
 }
 

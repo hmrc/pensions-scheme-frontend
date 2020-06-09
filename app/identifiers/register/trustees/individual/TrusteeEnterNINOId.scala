@@ -37,16 +37,20 @@ object TrusteeEnterNINOId {
 
   override lazy val toString: String = "trusteeNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[TrusteeEnterNINOId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
+  : CheckYourAnswers[TrusteeEnterNINOId] = {
 
     new CheckYourAnswers[TrusteeEnterNINOId] {
 
       private val name = (index: Int) =>
-          userAnswers.get(TrusteeNameId(index)).map(_.fullName)
+        userAnswers.get(TrusteeNameId(index)).map(_.fullName)
 
       def trusteeName(index: Int): String = name(index).getOrElse(messages("messages__theTrustee"))
+
       def label(index: Int): String = messages("messages__enterNINO", trusteeName(index))
-      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_national_insurance_number", trusteeName(index))
+
+      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_national_insurance_number",
+        trusteeName(index))
 
       override def row(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
@@ -54,9 +58,11 @@ object TrusteeEnterNINOId {
       override def updateRow(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl,
+              userAnswers)
           case _ =>
-            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl,
+              userAnswers)
         }
       }
     }

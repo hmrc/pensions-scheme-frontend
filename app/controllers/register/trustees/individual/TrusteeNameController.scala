@@ -47,18 +47,10 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: PersonNameFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: personName
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                        with Retrievals with I18nSupport with Enumerable.Implicits {
-
-  private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] = formProvider("messages__error__trustees")
-
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
-    TrusteeNameController.onSubmit(mode, index, srn),
-    Message("messages__trusteeName__title"),
-    Message("messages__trusteeName__heading")
-  )
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: personName
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -67,7 +59,17 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] = formProvider
+
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+    TrusteeNameController.onSubmit(mode, index, srn),
+    Message("messages__trusteeName__title"),
+    Message("messages__trusteeName__heading")
+  )
+  ("messages__error__trustees")
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
@@ -75,7 +77,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
         value =>
           userAnswersService.save(mode, srn, TrusteeNameId(index), value).map { cacheMap =>
             Redirect(navigator.nextPage(TrusteeNameId(index), mode, UserAnswers(cacheMap), srn))
-        }
+          }
       )
   }
 }

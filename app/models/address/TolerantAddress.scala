@@ -30,6 +30,8 @@ case class TolerantAddress(addressLine1: Option[String],
                            postcode: Option[String],
                            country: Option[String]) {
 
+  def print: String = lines.mkString(", ")
+
   def lines: Seq[String] =
     Seq(
       this.addressLine1,
@@ -39,8 +41,6 @@ case class TolerantAddress(addressLine1: Option[String],
       this.country,
       this.postcode
     ).flatten(s => s)
-
-  def print: String = lines.mkString(", ")
 
   def toAddress: Address =
     Address(
@@ -59,7 +59,7 @@ case class TolerantAddress(addressLine1: Option[String],
       address.addressLine4 == addressLine4 &&
       address.country == country.getOrElse("") &&
       address.postcode == postcode
-  }
+}
 
 object TolerantAddress {
   val postCodeLookupAddressReads: Reads[TolerantAddress] = (
@@ -87,14 +87,25 @@ object TolerantAddress {
         case numberOfLines if numberOfLines >= 4 => (Some(lines.head), Some(lines(1)), Some(lines(2)), Some(lines(3)))
       }
     }
-    TolerantAddress(addressLines._1, addressLines._2, addressLines._3, addressLines._4, Some(postCode), Some(countryCode))
+    TolerantAddress(addressLines._1, addressLines._2, addressLines._3, addressLines._4, Some(postCode), Some
+    (countryCode))
   })
+  val postCodeLookupReads: Reads[Seq[TolerantAddress]] = Reads {
+    json =>
+      json.validate[Seq[JsValue]].flatMap(addresses => {
+        addresses.foldLeft[JsResult[List[TolerantAddress]]](JsSuccess(List.empty)) {
+          (addresses, currentAddress) => {
+            for {
+              sequenceOfAddressess <- addresses
+              address <- currentAddress.validate[TolerantAddress](postCodeLookupAddressReads)
+            } yield sequenceOfAddressess :+ address
+          }
+        }
+      })
+  }
 
-
-  private def checkIfElementAlreadyExistsInLines(addressLines: List[String], elementToCheck: String) =
-    addressLines.mkString("").toLowerCase().contains(elementToCheck.trim().toLowerCase())
-
-  private def getTownOrCounty(town: Option[String], county: Option[String], addressLines: List[String]): (Option[String], Option[String]) = {
+  private def getTownOrCounty(town: Option[String], county: Option[String], addressLines: List[String]):
+  (Option[String], Option[String]) = {
     (town, county) match {
       case (Some(formattedTown), None) =>
         (if (checkIfElementAlreadyExistsInLines(addressLines, formattedTown)) None else Some(formattedTown), None)
@@ -113,19 +124,8 @@ object TolerantAddress {
     }
   }
 
-  val postCodeLookupReads: Reads[Seq[TolerantAddress]] = Reads {
-    json =>
-      json.validate[Seq[JsValue]].flatMap(addresses => {
-        addresses.foldLeft[JsResult[List[TolerantAddress]]](JsSuccess(List.empty)) {
-          (addresses, currentAddress) => {
-            for {
-              sequenceOfAddressess <- addresses
-              address <- currentAddress.validate[TolerantAddress](postCodeLookupAddressReads)
-            } yield sequenceOfAddressess :+ address
-          }
-        }
-      })
-  }
+  private def checkIfElementAlreadyExistsInLines(addressLines: List[String], elementToCheck: String) =
+    addressLines.mkString("").toLowerCase().contains(elementToCheck.trim().toLowerCase())
 
   implicit lazy val formatsTolerantAddress: Format[TolerantAddress] = (
     (JsPath \ "addressLine1").formatNullable[String] and

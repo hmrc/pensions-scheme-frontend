@@ -25,9 +25,11 @@ case object AdviserAddressId extends TypedIdentifier[Address] {
   self =>
   override def toString: String = "adviserAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, userAnswers: UserAnswers)
+  : CheckYourAnswers[self.type] =
     AddressCYA(label = messages("adviserAddress.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse("")),
-      changeAddress = messages("messages__visuallyhidden__adviser__address", userAnswers.get(AdviserNameId).getOrElse("")))()
+      changeAddress = messages("messages__visuallyhidden__adviser__address", userAnswers.get(AdviserNameId).getOrElse
+      ("")))()
 }
 
 

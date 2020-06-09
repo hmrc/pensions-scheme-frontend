@@ -21,11 +21,6 @@ import utils.{Enumerable, InputOption, WithName}
 sealed trait DeclarationDormant
 
 object DeclarationDormant extends Enumerable.Implicits {
-
-  case object No extends WithName("no") with DeclarationDormant
-
-  case object Yes extends WithName("yes") with DeclarationDormant
-
   val values: Seq[DeclarationDormant] = Seq(
     Yes, No
   )
@@ -34,6 +29,10 @@ object DeclarationDormant extends Enumerable.Implicits {
     value =>
       InputOption(value.toString, s"messages__is_dormant__${value.toString}")
   }
+
+  case object No extends WithName("no") with DeclarationDormant
+
+  case object Yes extends WithName("yes") with DeclarationDormant
 
   implicit val enumerable: Enumerable[DeclarationDormant] =
     Enumerable(values.map(v => v.toString -> v): _*)

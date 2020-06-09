@@ -39,21 +39,22 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
+  private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
+    if (userAnswers.isBeforeYouStartCompleted(NormalMode))
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
+    else
+      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
+
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case _ => None
     }
 
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = (from.id, srn) match {
-    case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(validSrn))
+    case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes
+      .SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None
   }
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
-    if (userAnswers.isBeforeYouStartCompleted(NormalMode))
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
-    else
-      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 }

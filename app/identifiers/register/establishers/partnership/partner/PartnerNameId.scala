@@ -54,10 +54,12 @@ object PartnerNameId {
               "messages__partnerName__cya",
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name", personDetails.fullName).resolve)))
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name",
+                personDetails.fullName).resolve)))
             )
           )
-        }}
+        }
+        }
 
       override def updateRow(id: PartnerNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {

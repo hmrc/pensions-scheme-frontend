@@ -48,7 +48,7 @@ object HasCompanyCRNId {
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     def label(index: Int) =
@@ -63,7 +63,7 @@ object HasCompanyCRNId {
       override def updateRow(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

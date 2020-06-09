@@ -30,41 +30,37 @@ import viewmodels.Message
 
 class SpokeCreationService extends Enumerable.Implicits {
 
-  def createSpoke(answers: UserAnswers,
-                  spoke: Spoke,
-                  mode: Mode, srn: Option[String], name: String, index: Option[Index], isNew: Option[Boolean]): EntitySpoke = {
-
-    val isChangeLink = spoke.completeFlag(answers, index, mode)
-    val isComplete: Option[Boolean] = (mode, isChangeLink) match {
-      case (NormalMode, _) => isChangeLink
-      case (UpdateMode, Some(false) | None) => Some(false)
-      case _ => None
-    }
-
-    (isChangeLink, isNew) match {
-      case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
-      case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
-      case (Some(false), _) => EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
-      case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
-    }
-  }
-
-  def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                             index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, BeforeYouStartSpoke, mode, srn, name, index, None)
     )
   }
 
-  def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index])
+  : Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
       createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, index, None)
     ) ++ (if (srn.isEmpty) Seq(createSpoke(answers, AboutBankDetailsSpoke, mode, srn, name, index, None)) else Nil)
   }
 
-  def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                               index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, WorkingKnowledgeSpoke, mode, srn, name, index, None)
+    )
+  }
+
+  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                                  index: Option[Index]): Seq[EntitySpoke] = {
+    val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
+    Seq(
+      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, Some(isEstablisherNew)),
+      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, Some(isEstablisherNew)),
+      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(indexToInt(index.getOrElse(Index(0)))),
+        EstablisherCompanyDirectors, mode, srn, name, index)
     )
   }
 
@@ -92,17 +88,8 @@ class SpokeCreationService extends Enumerable.Implicits {
       EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
   }
 
-  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
-    val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
-    Seq(
-      createSpoke(answers, EstablisherCompanyDetails, mode, srn, name, index, Some(isEstablisherNew)),
-      createSpoke(answers, EstablisherCompanyAddress, mode, srn, name, index, Some(isEstablisherNew)),
-      createSpoke(answers, EstablisherCompanyContactDetails, mode, srn, name, index, Some(isEstablisherNew)),
-      createDirectorPartnerSpoke(answers.allDirectorsAfterDelete(indexToInt(index.getOrElse(Index(0)))), EstablisherCompanyDirectors, mode, srn, name, index)
-    )
-  }
-
-  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                                     index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
       createSpoke(answers, EstablisherIndividualDetails, mode, srn, name, index, Some(isEstablisherNew)),
@@ -111,17 +98,20 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                                      index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
       createSpoke(answers, EstablisherPartnershipDetails, mode, srn, name, index, Some(isEstablisherNew)),
       createSpoke(answers, EstablisherPartnershipAddress, mode, srn, name, index, Some(isEstablisherNew)),
       createSpoke(answers, EstablisherPartnershipContactDetails, mode, srn, name, index, Some(isEstablisherNew)),
-      createDirectorPartnerSpoke(answers.allPartnersAfterDelete(indexToInt(index.getOrElse(Index(0)))), EstablisherPartnershipPartner, mode, srn, name, index)
+      createDirectorPartnerSpoke(answers.allPartnersAfterDelete(indexToInt(index.getOrElse(Index(0)))),
+        EstablisherPartnershipPartner, mode, srn, name, index)
     )
   }
 
-  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                              index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
       createSpoke(answers, TrusteeCompanyDetails, mode, srn, name, index, Some(isTrusteeNew)),
@@ -130,7 +120,8 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                                 index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
       createSpoke(answers, TrusteeIndividualDetails, mode, srn, name, index, Some(isTrusteeNew)),
@@ -139,7 +130,8 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index]): Seq[EntitySpoke] = {
+  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+                                  index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
       createSpoke(answers, TrusteePartnershipDetails, mode, srn, name, index, Some(isTrusteeNew)),
@@ -148,14 +140,36 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+  def createSpoke(answers: UserAnswers,
+                  spoke: Spoke,
+                  mode: Mode, srn: Option[String], name: String, index: Option[Index], isNew: Option[Boolean])
+  : EntitySpoke = {
+
+    val isChangeLink = spoke.completeFlag(answers, index, mode)
+    val isComplete: Option[Boolean] = (mode, isChangeLink) match {
+      case (NormalMode, _) => isChangeLink
+      case (UpdateMode, Some(false) | None) => Some(false)
+      case _ => None
+    }
+
+    (isChangeLink, isNew) match {
+      case (_, Some(false)) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
+      case (Some(true), _) => EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
+      case (Some(false), _) => EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
+      case _ => EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
+    }
+  }
+
+  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  : Seq[EntitySpoke] = {
     (answers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (_, true) =>
         Nil
       case (true, false) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers.allEstablishers(mode).size, srn).url), None)
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
+              .allEstablishers(mode).size, srn).url), None)
         )
       case (false, false) if srn.isDefined =>
         Seq(EntitySpoke(
@@ -172,7 +186,8 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  : Seq[EntitySpoke] = {
     (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (None | Some(true), false, false) if srn.isDefined =>
         Seq(
@@ -189,7 +204,8 @@ class SpokeCreationService extends Enumerable.Implicits {
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size, srn).url),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size,
+              srn).url),
           None
         ))
       case _ =>

@@ -37,6 +37,9 @@ class NameMatchingFactory @Inject()(
   def nameMatching(schemeName: String)
                   (implicit request: OptionalDataRequest[AnyContent],
                    ec: ExecutionContext,
-                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = pensionAdministratorConnector.getPSAName map { NameMatching(schemeName, _) }
+                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = pensionAdministratorConnector
+    .getPSAName map {
+    NameMatching(schemeName, _)
+  }
 
 }

@@ -46,7 +46,8 @@ class PartnershipDetailsController @Inject()(
                                               formProvider: PartnershipDetailsFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: partnershipDetails
-                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -54,15 +55,18 @@ class PartnershipDetailsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit
+        (mode, index, srn)
         Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+          val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit
+          (mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>

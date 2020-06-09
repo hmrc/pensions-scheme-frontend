@@ -32,10 +32,12 @@ case class AddressId(index: Int) extends TypedIdentifier[Address] {
 object AddressId {
   override def toString: String = "address"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[AddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers)
+  : CheckYourAnswers[AddressId] =
     new CheckYourAnswers[AddressId] {
       override def row(id: AddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(EstablisherNameId(id.index)).map(_.fullName).getOrElse(messages("messages__theEstablisher"))
+        val establisherName = ua.get(EstablisherNameId(id.index)).map(_.fullName).getOrElse(messages
+        ("messages__theEstablisher"))
 
         val label = messages("messages__addressFor", establisherName)
 

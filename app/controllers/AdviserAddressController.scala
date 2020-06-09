@@ -52,29 +52,19 @@ class AdviserAddressController @Inject()(
                                           val auditService: AuditService,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: manualAddress
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
-
-  private[controllers] val postCall = AdviserAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__confirmAdviserAddress__title"
-  private[controllers] def heading(adviserName: String): Message = Message("messages__common__confirmAddress__h1", adviserName)
-  private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
-  private[controllers] val hint = None
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-
+  private[controllers] val postCall = AdviserAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__confirmAdviserAddress__title"
+  private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
+  private[controllers] val hint = None
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.right.map { adviserName =>
         get(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName))
-      }
-  }
-
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
-    implicit request =>
-      AdviserNameId.retrieve.right.map { adviserName =>
-        post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName), mode, "Adviser Address", AdviserAddressPostCodeLookupId)
       }
   }
 
@@ -85,4 +75,15 @@ class AdviserAddressController @Inject()(
       title = title,
       heading = heading(adviserName)
     )
+
+  private[controllers] def heading(adviserName: String): Message = Message("messages__common__confirmAddress__h1",
+    adviserName)
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+    implicit request =>
+      AdviserNameId.retrieve.right.map { adviserName =>
+        post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName), mode, "Adviser Address",
+          AdviserAddressPostCodeLookupId)
+      }
+  }
 }

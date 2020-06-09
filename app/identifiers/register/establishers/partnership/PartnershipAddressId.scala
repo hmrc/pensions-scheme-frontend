@@ -32,7 +32,8 @@ case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
 object PartnershipAddressId {
   override def toString: String = "partnershipAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
+  : CheckYourAnswers[PartnershipAddressId] =
 
     new CheckYourAnswers[PartnershipAddressId] {
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
@@ -45,6 +46,8 @@ object PartnershipAddressId {
           changeAddress = changeAddress
         )().row(id)(changeUrl, ua)
       }
-      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+
+      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
+      (changeUrl, ua)
     }
 }

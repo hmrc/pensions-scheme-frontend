@@ -50,7 +50,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                   implicit val countryOptions: CountryOptions,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: checkYourAnswers
-                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                 )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -58,18 +59,26 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
         implicit val userAnswers: UserAnswers = request.userAnswers
         val establisherIndividualDetails = Seq(AnswerSection(
           None,
-          EstablisherDOBId(index).row(routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherHasNINOId(index).row(routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherEnterNINOId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          EstablisherDOBId(index).row(routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url,
+            mode) ++
+            EstablisherHasNINOId(index).row(routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            EstablisherEnterNINOId(index).row(routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            EstablisherNoNINOReasonId(index).row(routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            EstablisherHasUTRId(index).row(routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode) ++
+            EstablisherNoUTRReasonId(index).row(routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            EstablisherUTRId(index).row(routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
+        ("messages__thePerson").resolve)
 
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,
@@ -78,7 +87,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
           h1 = headingDetails(mode, personName(EstablisherNameId(index)), isNew)
         )

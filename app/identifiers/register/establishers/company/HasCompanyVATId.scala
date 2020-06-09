@@ -58,7 +58,7 @@ object HasCompanyVATId {
       override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

@@ -30,9 +30,9 @@ case class TrusteeHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(true)  => userAnswers.remove(TrusteeNoNINOReasonId(index))
+      case Some(true) => userAnswers.remove(TrusteeNoNINOReasonId(index))
       case Some(false) => userAnswers.remove(TrusteeEnterNINOId(index))
-      case _           => super.cleanup(value, userAnswers)
+      case _ => super.cleanup(value, userAnswers)
     }
   }
 }
@@ -42,8 +42,11 @@ object TrusteeHasNINOId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasNINOId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_
+      .fullName)
+
     def label(index: Int): Option[String] = Some(messages("messages__hasNINO", trusteeName(index)))
+
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeHasNINOId] {
@@ -53,7 +56,7 @@ object TrusteeHasNINOId {
       override def updateRow(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

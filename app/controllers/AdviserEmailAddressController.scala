@@ -45,7 +45,8 @@ class AdviserEmailAddressController @Inject()(
                                                dataCacheConnector: UserAnswersCacheConnector,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: adviserEmailAddress
-                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                             )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
 
   val form: Form[String] = formProvider()

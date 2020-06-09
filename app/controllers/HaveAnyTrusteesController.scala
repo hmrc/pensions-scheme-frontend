@@ -43,9 +43,10 @@ class HaveAnyTrusteesController @Inject()(
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            formProvider: HaveAnyTrusteesFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: haveAnyTrustees
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: haveAnyTrustees
+                                         )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

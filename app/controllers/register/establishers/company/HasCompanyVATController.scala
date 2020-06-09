@@ -45,18 +45,8 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                         formProvider: HasReferenceNumberFormProvider,
                                         val view: hasReferenceNumber,
                                         val controllerComponents: MessagesControllerComponents
-                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
-      title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
-      heading = Message("messages__hasVAT", companyName),
-      srn = srn
-    )
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasCompanyVat__error__required", companyName)
+                                       )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -67,12 +57,25 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
+      title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
+      heading = Message("messages__hasVAT", companyName),
+      srn = srn
+    )
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
   def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyVATId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasCompanyVATId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
+  ("messages__hasCompanyVat__error__required", companyName)
 }

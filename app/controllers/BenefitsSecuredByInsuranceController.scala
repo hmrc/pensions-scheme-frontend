@@ -43,11 +43,10 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                      allowAccess: AllowAccessActionProvider,
                                                      requireData: DataRequiredAction,
                                                      formProvider: BenefitsSecuredByInsuranceFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: benefitsSecuredByInsurance
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     val view: benefitsSecuredByInsurance
+                                                    )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   val postCall: (Mode, Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
@@ -63,7 +62,10 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
+
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
         form(schemeName).bindFromRequest().fold(

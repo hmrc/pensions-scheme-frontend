@@ -20,20 +20,29 @@ import play.api.mvc.{JavascriptLiteral, PathBindable}
 import utils.WithName
 
 sealed trait Mode
+
 sealed trait SubscriptionMode extends Mode
+
 sealed trait VarianceMode extends Mode
 
 case object NormalMode extends WithName("") with SubscriptionMode
+
 case object CheckMode extends WithName("change") with SubscriptionMode
 
 case object UpdateMode extends WithName("changing") with VarianceMode
+
 case object CheckUpdateMode extends WithName("update") with VarianceMode
 
 object Mode {
 
-  case class UnknownModeException() extends Exception
+  def checkMode(mode: Mode): Mode = mode match {
+    case NormalMode => CheckMode
+    case UpdateMode => CheckUpdateMode
+    case _ => throw UnknownModeException()
+  }
 
-  implicit def modePathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Mode] = new PathBindable[Mode] {
+  implicit def modePathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Mode] = new
+      PathBindable[Mode] {
 
     val modes = Seq(NormalMode, CheckMode, UpdateMode, CheckUpdateMode)
 
@@ -61,15 +70,12 @@ object Mode {
     }
   }
 
-  def checkMode(mode: Mode): Mode = mode match  {
-    case NormalMode => CheckMode
-    case UpdateMode => CheckUpdateMode
-    case _ => throw UnknownModeException()
-  }
-
-  def journeyMode(mode: Mode): Mode = mode match  {
+  def journeyMode(mode: Mode): Mode = mode match {
     case CheckMode => NormalMode
     case CheckUpdateMode => UpdateMode
     case _ => mode
   }
+
+  case class UnknownModeException() extends Exception
+
 }

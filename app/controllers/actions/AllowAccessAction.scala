@@ -34,20 +34,15 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class AllowAccessAction(srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  errorHandler: FrontendErrorHandler
-                                )(implicit val executionContext: ExecutionContext) extends ActionFilter[OptionalDataRequest] {
-
-  private def checkForAssociation[A](request: OptionalDataRequest[A],
-                                     extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] =
-    pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, implicitly, request).flatMap {
-      case true => Future.successful(None)
-      case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
-    }
+                                )(implicit val executionContext: ExecutionContext) extends
+  ActionFilter[OptionalDataRequest] {
 
   protected def filter[A](request: OptionalDataRequest[A],
                           destinationForNoUserAnswersAndSRN: => Option[Result],
-                          checkForSuspended:Boolean
+                          checkForSuspended: Boolean
                          ): Future[Option[Result]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request
+      .session))
 
     val optionUA = request.userAnswers
     val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
@@ -63,18 +58,27 @@ abstract class AllowAccessAction(srn: Option[String],
       case _ => Future.successful(None)
     }
   }
+
+  private def checkForAssociation[A](request: OptionalDataRequest[A],
+                                     extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] =
+    pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, implicitly, request).flatMap {
+      case true => Future.successful(None)
+      case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+    }
 }
 
 class AllowAccessActionMain(
                              srn: Option[String],
                              pensionsSchemeConnector: PensionsSchemeConnector,
                              errorHandler: FrontendErrorHandler
-                           )(implicit executionContext: ExecutionContext) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+                           )(implicit executionContext: ExecutionContext) extends AllowAccessAction(srn,
+  pensionsSchemeConnector, errorHandler) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad
+      (UpdateMode, srn))),
       checkForSuspended = true
     )
   }
@@ -84,7 +88,8 @@ class AllowAccessActionTaskList(
                                  srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  errorHandler: FrontendErrorHandler
-                               )(implicit ec: ExecutionContext) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+                               )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
+  pensionsSchemeConnector, errorHandler) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -99,12 +104,14 @@ class AllowAccessActionNoSuspendedCheck(
                                          srn: Option[String],
                                          pensionsSchemeConnector: PensionsSchemeConnector,
                                          errorHandler: FrontendErrorHandler
-                                       )(implicit ec: ExecutionContext) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+                                       )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
+  pensionsSchemeConnector, errorHandler) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.SchemeTaskListController.onPageLoad
+      (UpdateMode, srn))),
       checkForSuspended = false
     )
   }
@@ -123,7 +130,8 @@ class AllowAccessActionProviderMainImpl @Inject()(
 class AllowAccessActionProviderTaskListImpl @Inject()(
                                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                                        errorHandler: ErrorHandlerWithReturnLinkToManage
-                                                     )(implicit ec: ExecutionContext) extends AllowAccessActionProvider {
+                                                     )(implicit ec: ExecutionContext) extends
+  AllowAccessActionProvider {
 
   def apply(srn: Option[String]): AllowAccessAction = {
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, errorHandler)
@@ -133,7 +141,8 @@ class AllowAccessActionProviderTaskListImpl @Inject()(
 class AllowAccessActionProviderNoSuspendedCheckImpl @Inject()(
                                                                pensionsSchemeConnector: PensionsSchemeConnector,
                                                                errorHandler: ErrorHandlerWithReturnLinkToManage
-                                                             )(implicit ec: ExecutionContext) extends AllowAccessActionProvider {
+                                                             )(implicit ec: ExecutionContext) extends
+  AllowAccessActionProvider {
 
   def apply(srn: Option[String]): AllowAccessAction = {
     new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, errorHandler)

@@ -46,6 +46,7 @@ object CompanyAddressId {
         )().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+      override def updateRow(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)
+      (changeUrl, ua)
     }
 }

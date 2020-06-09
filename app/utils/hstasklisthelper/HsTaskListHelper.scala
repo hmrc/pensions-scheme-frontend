@@ -30,7 +30,10 @@ import viewmodels._
 
 abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationService) extends Enumerable.Implicits {
 
-  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
+  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList
+
+  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : SchemeDetailsTaskListEntitySection = {
     val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskListEntitySection(
       None,
@@ -39,7 +42,8 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
     )
   }
 
-  protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
+  protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : Seq[SchemeDetailsTaskListEntitySection] = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
 
     val nonDeletedEstablishers = for ((establisher, _) <- seqEstablishers.zipWithIndex) yield {
@@ -48,21 +52,24 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
           case EstablisherCompanyDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              spokeCreationService.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some
+              (establisher.index)),
               Some(establisher.name))
             )
 
           case EstablisherNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              spokeCreationService.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some
+              (establisher.index)),
               Some(establisher.name))
             )
 
           case EstablisherPartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some(establisher.index)),
+              spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some
+              (establisher.index)),
               Some(establisher.name))
             )
           case _ =>
@@ -73,7 +80,8 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
     nonDeletedEstablishers.flatten
   }
 
-  protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Seq[SchemeDetailsTaskListEntitySection] = {
+  protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : Seq[SchemeDetailsTaskListEntitySection] = {
     val sections = userAnswers.allTrustees
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {
       if (section.isDeleted) None else {
@@ -88,14 +96,16 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
           case TrusteeNameId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, section.name, Some(section
+                .index)),
               Some(section.name))
             )
 
           case TrusteePartnershipDetailsId(_) =>
             Some(SchemeDetailsTaskListEntitySection(
               None,
-              spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section.index)),
+              spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, section.name, Some(section
+                .index)),
               Some(section.name))
             )
 
@@ -106,6 +116,4 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
     }
     notDeletedElements.flatten
   }
-
-  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList
 }

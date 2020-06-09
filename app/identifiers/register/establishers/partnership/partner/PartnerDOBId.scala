@@ -37,10 +37,10 @@ object PartnerDOBId {
   implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerDOBId] = {
     new CheckYourAnswersPartners[PartnerDOBId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__DOB__heading")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

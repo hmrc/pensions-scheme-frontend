@@ -37,7 +37,8 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
                                                         requireData: DataRequiredAction,
                                                         val view: whatYouWillNeedCompanyAddress,
                                                         val controllerComponents: MessagesControllerComponents
-                                                       ) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                       ) extends FrontendBaseController with I18nSupport with
+  Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

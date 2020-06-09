@@ -39,7 +39,7 @@ object CompanyNoCRNReasonId {
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(details) => details.companyName
-        case _             => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     def label(index: Int) =

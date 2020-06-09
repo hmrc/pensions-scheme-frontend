@@ -46,11 +46,28 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
                                                             val countryOptions: CountryOptions,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             val view: confirmPreviousAddress
-                                                      )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with I18nSupport with Retrievals {
+                                                           )(implicit val ec: ExecutionContext) extends
+  ConfirmPreviousAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.PartnershipConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      viewmodel(srn, index).retrieve.right.map { vm =>
+        get(PartnershipConfirmPreviousAddressId(index), vm)
+      }
+  }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      viewmodel(srn, index).retrieve.right.map { vm =>
+        post(PartnershipConfirmPreviousAddressId(index), PartnershipPreviousAddressId(index), vm, mode)
+      }
+  }
 
   private def viewmodel(srn: Option[String], index: Int) =
     Retrieval(
@@ -68,19 +85,5 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
             )
         }
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(srn, index).retrieve.right.map { vm =>
-        get(PartnershipConfirmPreviousAddressId(index), vm)
-      }
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(srn, index).retrieve.right.map { vm =>
-        post(PartnershipConfirmPreviousAddressId(index), PartnershipPreviousAddressId(index), vm, mode)
-      }
-  }
 }
 

@@ -46,7 +46,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              allowChangeHelper: AllowChangeHelper,
                                                              val controllerComponents: MessagesControllerComponents,
                                                              val view: checkYourAnswers
-                                                            )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                            )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -54,15 +55,20 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
       implicit request =>
         val answerSections = Seq(AnswerSection(
           None,
-          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipHasBeenTradingId(index).row(routes.PartnershipHasBeenTradingController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            PartnershipHasBeenTradingId(index).row(routes.PartnershipHasBeenTradingController.onPageLoad(checkMode
+            (mode), index, srn).url, mode) ++
+            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(checkMode
+            (mode), index, srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, request.userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePartnership").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message
+        ("messages__thePartnership").resolve)
 
         val vm = CYAViewModel(
           answerSections = answerSections,
@@ -73,7 +79,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          h1 = headingAddressDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

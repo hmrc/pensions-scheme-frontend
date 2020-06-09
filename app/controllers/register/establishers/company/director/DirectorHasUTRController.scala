@@ -45,21 +45,8 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
                                          formProvider: HasReferenceNumberFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: hasReferenceNumber
-                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], personName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__hasUTR", Message("messages__theDirector").resolve),
-      heading = Message("messages__hasUTR", personName),
-      hint = Some(Message("messages__hasUtr__p1")),
-      srn = srn
-    )
-
-
-  private def form(personName: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider("messages__hasUtr__error__required", personName)
+                                        )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -70,6 +57,21 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
               viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
+                        personName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode,
+        establisherIndex, directorIndex, srn),
+      title = Message("messages__hasUTR", Message("messages__theDirector").resolve),
+      heading = Message("messages__hasUTR", personName),
+      hint = Some(Message("messages__hasUtr__p1")),
+      srn = srn
+    )
+
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasUtr__error__required", personName)
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

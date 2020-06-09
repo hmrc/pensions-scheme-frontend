@@ -1,41 +1,40 @@
 @*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 
 @this(
-    main_template: main_template
+        main_template: main_template
 )
 
-@(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn: Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-title = messages("messages__cannot_Make_Changes__title")) {
+    title = messages("messages__cannot_Make_Changes__title")) {
 
-@components.back_link()
+    @components.back_link()
 
-@components.heading(
-headingKey=messages("messages__cannot_Make_Changes__heading")
-)
+    @components.heading(
+        headingKey = messages("messages__cannot_Make_Changes__heading")
+    )
 
-@schemeName.map{sn =>
- <p>@messages("messages__cannot_Make_Changes__p1", sn)</p>
-}
-<p>@messages("messages__cannot_Make_Changes__p2")</p>
+    @schemeName.map { sn =>
+        <p>@messages("messages__cannot_Make_Changes__p1", sn)</p>
+    }
+    <p>@messages("messages__cannot_Make_Changes__p2")</p>
 
-@components.return_link(messageKey="messages__schemeTaskList__returnlink",srn=srn ,schemename=schemeName)
+    @components.return_link(messageKey = "messages__schemeTaskList__returnlink", srn = srn, schemename = schemeName)
 }

@@ -43,40 +43,41 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          userAnswersService: UserAnswersService,
                                                          val controllerComponents: MessagesControllerComponents,
                                                          val view: checkYourAnswers
-                                                        )(implicit val ec: ExecutionContext) extends FrontendBaseController
+                                                        )(implicit val ec: ExecutionContext) extends
+  FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
+      implicit request =>
 
-      implicit val userAnswers: UserAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
 
-      val beforeYouStart = AnswerSection(
-        None,
-        SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url, mode) ++
-        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
-        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
-        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
-        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
-      )
+        val beforeYouStart = AnswerSection(
+          None,
+          SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url, mode) ++
+            SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
+            HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
+            EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
+            DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
+        )
 
-      val heading = (titleOrHeading: Message) =>
-        if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
+        val heading = (titleOrHeading: Message) =>
+          if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
-      val vm = CYAViewModel(
-        answerSections = Seq(beforeYouStart),
-        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-        schemeName = existingSchemeName,
-        returnOverview = !userAnswers.isBeforeYouStartCompleted(mode),
-        hideEditLinks = request.viewOnly,
-        srn = srn,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-        title = heading(Message("messages__informationFor_title")),
-        h1 =  heading(Message("messages__informationFor_heading",
-          existingSchemeName.getOrElse(Message("messages__theScheme").resolve)))
-      )
+        val vm = CYAViewModel(
+          answerSections = Seq(beforeYouStart),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = !userAnswers.isBeforeYouStartCompleted(mode),
+          hideEditLinks = request.viewOnly,
+          srn = srn,
+          hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+          title = heading(Message("messages__informationFor_title")),
+          h1 = heading(Message("messages__informationFor_heading",
+            existingSchemeName.getOrElse(Message("messages__theScheme").resolve)))
+        )
 
-      Future.successful(Ok(view(vm)))
-  }
+        Future.successful(Ok(view(vm)))
+    }
 }

@@ -36,8 +36,11 @@ object PartnershipNoUTRReasonId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipNoUTRReasonId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))
+    (_.name)
+
     def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
+
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipNoUTRReasonId] {
@@ -45,7 +48,8 @@ object PartnershipNoUTRReasonId {
         StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
-      override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers)
+      : Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]

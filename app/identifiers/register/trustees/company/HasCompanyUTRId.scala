@@ -48,7 +48,7 @@ object HasCompanyUTRId {
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     def label(index: Int) = Some(messages("messages__hasUTR", companyName(index)))

@@ -44,21 +44,25 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
                                          formProvider: AnyMoreChangesFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: anyMoreChanges
-                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+    allowAccess(srn) andThen requireData).async {
     implicit request =>
       Future.successful(Ok(view(form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
   }
 
-  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
+  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+    requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))),
+          Future.successful(BadRequest(view(formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall
+          (srn), srn))),
         value => {
           val ua = request.userAnswers.set(AnyMoreChangesId)(value).asOpt.getOrElse(request.userAnswers)
           Future.successful(Redirect(navigator.nextPage(AnyMoreChangesId, UpdateMode, ua, srn)))

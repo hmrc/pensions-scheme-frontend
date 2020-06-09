@@ -26,7 +26,8 @@ import utils.{CountryOptions, UserAnswers}
 
 object SchemeTypeId extends TypedIdentifier[SchemeType] {
   self =>
-  override def toString: String = "schemeType"
+
+  private val singleOrMasterTrustTypes = Seq(SingleTrust, MasterTrust)
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
@@ -35,7 +36,7 @@ object SchemeTypeId extends TypedIdentifier[SchemeType] {
       hiddenLabel = Some(messages("messages__visuallyhidden__schemeType", userAnswers.get(SchemeNameId).getOrElse("")))
     )()
 
-  private val singleOrMasterTrustTypes = Seq(SingleTrust, MasterTrust)
+  override def toString: String = "schemeType"
 
   override def cleanup(value: Option[SchemeType], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {

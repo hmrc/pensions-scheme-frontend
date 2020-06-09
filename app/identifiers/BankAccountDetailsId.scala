@@ -29,6 +29,7 @@ case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BankDetailsCYA[self.type](
       label = Some(messages("uKBankDetails.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId).getOrElse
+      ("")))
     )()
 }

@@ -45,16 +45,26 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
                                                         val countryOptions: CountryOptions,
                                                         val controllerComponents: MessagesControllerComponents,
                                                         val view: confirmPreviousAddress
-                                                )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
+                                                       )(implicit val ec: ExecutionContext) extends
+  ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.PartnerConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map { vm =>
+          get(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), vm)
+        }
+    }
+
   private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: Option[String]) =
     Retrieval(
       implicit request =>
-        (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex)).retrieve.right.map {
+        (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex))
+          .retrieve.right.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(establisherIndex, partnerIndex, srn),
@@ -65,25 +75,17 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
               name = details.fullName,
               srn = srn
             )
-      }
+        }
     )
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map { vm =>
-        get(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), vm)
-      }
-  }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map { vm =>
-        post(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressId(establisherIndex, partnerIndex), vm, mode)
-      }
-  }
-
+      implicit request =>
+        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map { vm =>
+          post(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressId
+          (establisherIndex, partnerIndex), vm, mode)
+        }
+    }
 
 
 }

@@ -1,19 +1,18 @@
 @*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import config.FrontendAppConfig
 @import controllers.register.establishers.company.routes
 @import uk.gov.hmrc.play.views.html._
@@ -24,19 +23,19 @@
 
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+        main_template: main_template,
+        appConfig: FrontendAppConfig,
+        formHelper: FormWithCSRF
 )
 
 @(
-    form: Form[_],
-    directors: Seq[DirectorEntity],
-    schemeName: Option[String],
-    postCall: Call,
-    viewOnly: Boolean,
-    mode: Mode,
-    srn: Option[String]
+        form: Form[_],
+        directors: Seq[DirectorEntity],
+        schemeName: Option[String],
+        postCall: Call,
+        viewOnly: Boolean,
+        mode: Mode,
+        srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -49,7 +48,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__addCompanyDirectors__heading")
+            headingKey = messages("messages__addCompanyDirectors__heading")
         )
 
         @if(directors.isEmpty) {
@@ -59,7 +58,7 @@
 
             @components.entity_list(directors, viewOnly, mode, srn)
 
-            @if(!viewOnly){
+            @if(!viewOnly) {
                 @if(directors.size < appConfig.maxDirectors) {
                     @components.input_yes_no(
                         field = form("value"),

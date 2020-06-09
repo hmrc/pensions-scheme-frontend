@@ -35,19 +35,39 @@ import views.html.paye
 import scala.concurrent.ExecutionContext
 
 class CompanyEnterPAYEController @Inject()(
-                                                 val appConfig: FrontendAppConfig,
-                                                 override val messagesApi: MessagesApi,
-                                                 override val userAnswersService: UserAnswersService,
-                                                  val navigator: Navigator,
-                                                 authenticate: AuthAction,
-                                                 getData: DataRetrievalAction,
-                                                 allowAccess: AllowAccessActionProvider,
-                                                 requireData: DataRequiredAction,
-                                                 formProvider: PayeFormProvider,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 val view: paye
-                                               )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
-  protected def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
+                                            val appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            override val userAnswersService: UserAnswersService,
+                                            val navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
+                                            requireData: DataRequiredAction,
+                                            formProvider: PayeFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: paye
+                                          )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyEnterPAYEId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          post(CompanyEnterPAYEId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details
+            .companyName))
+      }
+  }
+
+  protected def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
+    formProvider(companyName)
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
     PayeViewModel(
@@ -58,21 +78,4 @@ class CompanyEnterPAYEController @Inject()(
       srn = srn,
       entityName = Some(companyName)
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(CompanyEnterPAYEId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
-        details =>
-          post(CompanyEnterPAYEId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details.companyName))
-      }
-  }
 }

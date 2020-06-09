@@ -45,32 +45,35 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                              val auditService: AuditService,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: addressList
-                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with
+  Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       viewModel(mode).right.map(get)
   }
 
+  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+    AddressListViewModel] = {
+    (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.right.map {
+      case addresses ~ name =>
+        AddressListViewModel(
+          postCall = routes.AdviserAddressListController.onSubmit(mode),
+          manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
+          addresses = addresses,
+          heading = Message("messages__dynamic_whatIsAddress", name),
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
+          entityName = name
+        )
+    }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
+  }
+
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
       viewModel(mode).right.map {
         vm =>
-          post(vm, AdviserAddressListId, AdviserAddressId, mode,s"Adviser Address: ${vm.entityName}", AdviserAddressPostCodeLookupId)
+          post(vm, AdviserAddressListId, AdviserAddressId, mode, s"Adviser Address: ${vm.entityName}",
+            AdviserAddressPostCodeLookupId)
       }
-  }
-
-  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.right.map {
-      case addresses ~ name =>
-      AddressListViewModel(
-        postCall = routes.AdviserAddressListController.onSubmit(mode),
-        manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
-        addresses = addresses,
-        heading = Message("messages__dynamic_whatIsAddress", name),
-        title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
-        entityName = name
-      )
-    }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }
 }

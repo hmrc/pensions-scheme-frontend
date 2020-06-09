@@ -34,44 +34,36 @@ import views.html.nino
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeEnterNINOController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           val userAnswersService: UserAnswersService,
-                                           val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           allowAccess: AllowAccessActionProvider,
-                                           requireData: DataRequiredAction,
-                                           val formProvider: NINOFormProvider,
-                                           val controllerComponents: MessagesControllerComponents,
-                                           val view: nino
-                                 )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+                                            val appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            val userAnswersService: UserAnswersService,
+                                            val navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
+                                            requireData: DataRequiredAction,
+                                            val formProvider: NINOFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: nino
+                                          )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit _
-
-  private def viewmodel(fullName: String, index: Index,  mode: Mode, srn: Option[String]
-                       )(implicit request: DataRequest[AnyContent]): NinoViewModel =
-    NinoViewModel(
-      postCall(mode, Index(index), srn),
-      title = Message("messages__enterNINO", Message("messages__theIndividual")),
-      heading = Message("messages__enterNINO", fullName),
-      hint = Message("messages__common__nino_hint"),
-      srn = srn
-    )
+  private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController
+    .onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val fullNameOption: Either[Future[Result], String] =
-        TrusteeNameId(index).retrieve.right.map(_.fullName)
+      implicit request =>
+        val fullNameOption: Either[Future[Result], String] =
+          TrusteeNameId(index).retrieve.right.map(_.fullName)
 
-      fullNameOption.right.map {
-        fullName =>
-          get(TrusteeEnterNINOId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
-      }
-  }
+        fullNameOption.right.map {
+          fullName =>
+            get(TrusteeEnterNINOId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
+        }
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       val fullNameOption: Either[Future[Result], String] =
         TrusteeNameId(index).retrieve.right.map(_.fullName)
@@ -81,5 +73,15 @@ class TrusteeEnterNINOController @Inject()(
           post(TrusteeEnterNINOId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }
   }
+
+  private def viewmodel(fullName: String, index: Index, mode: Mode, srn: Option[String]
+                       )(implicit request: DataRequest[AnyContent]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(index), srn),
+      title = Message("messages__enterNINO", Message("messages__theIndividual")),
+      heading = Message("messages__enterNINO", fullName),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
 
 }

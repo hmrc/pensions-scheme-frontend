@@ -36,16 +36,21 @@ object EstablisherNoNINOReasonId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoNINOReasonId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
+    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))
+    (_.fullName)
+
     def label(index: Int) = Some(messages("messages__whyNoNINO", establisherName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", establisherName(index)))
+
+    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", establisherName
+    (index)))
 
     new CheckYourAnswers[EstablisherNoNINOReasonId] {
       override def row(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
-      override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers)
+      : Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]

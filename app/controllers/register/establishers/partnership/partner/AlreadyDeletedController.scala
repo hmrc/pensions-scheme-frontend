@@ -39,7 +39,8 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: alreadyDeleted
-                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -51,7 +52,8 @@ class AlreadyDeletedController @Inject()(
 
     }
 
-  private def vm(mode: Mode, establisherIndex: Index, partnerName: String, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(mode: Mode, establisherIndex: Index, partnerName: String, srn: Option[String]) =
+    AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__partner_title"),
     partnerName,
     controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, establisherIndex, srn)

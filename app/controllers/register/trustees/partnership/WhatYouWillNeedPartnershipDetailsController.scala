@@ -30,15 +30,16 @@ import views.html.register.whatYouWillNeedPartnershipDetails
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedPartnershipDetailsController @Inject()(
-                                      val appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      allowAccess: AllowAccessActionProvider,
-                                      requireData: DataRequiredAction,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: whatYouWillNeedPartnershipDetails
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                                             val appConfig: FrontendAppConfig,
+                                                             override val messagesApi: MessagesApi,
+                                                             authenticate: AuthAction,
+                                                             getData: DataRetrievalAction,
+                                                             allowAccess: AllowAccessActionProvider,
+                                                             requireData: DataRequiredAction,
+                                                             val controllerComponents: MessagesControllerComponents,
+                                                             val view: whatYouWillNeedPartnershipDetails
+                                                           )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

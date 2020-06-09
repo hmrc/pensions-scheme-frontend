@@ -42,19 +42,20 @@ class AlreadyDeletedController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: alreadyDeleted
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: alreadyDeleted
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      establisherName(index, establisherKind) match {
-        case Right(establisherName) =>
-          Future.successful(Ok(view(vm(establisherName, mode, srn))))
-        case Left(result) => result
-      }
-  }
+      implicit request =>
+        establisherName(index, establisherKind) match {
+          case Right(establisherName) =>
+            Future.successful(Ok(view(vm(establisherName, mode, srn))))
+          case Left(result) => result
+        }
+    }
 
   private def vm(establisherName: String, mode: Mode, srn: Option[String]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
@@ -62,7 +63,9 @@ class AlreadyDeletedController @Inject()(
     returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
   )
 
-  private def establisherName(index: Index, establisherKind: EstablisherKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
+  private def establisherName(index: Index, establisherKind: EstablisherKind)(implicit
+                                                                              dataRequest: DataRequest[AnyContent])
+  : Either[Future[Result], String] = {
     establisherKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
       case Indivdual => EstablisherNameId(index).retrieve.right.map(_.fullName)

@@ -53,6 +53,38 @@ class DirectorNameController @Inject()(
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        val preparedForm = request.userAnswers.get[PersonName](DirectorNameId(establisherIndex, directorIndex)) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn),
+          existingSchemeName)))
+    }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn),
+              existingSchemeName)))
+          ,
+          value => {
+            val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
+              _.set(DirectorNameId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
+
+            userAnswersService.upsert(mode, srn, answers.json).map {
+              cacheMap =>
+                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers
+                (cacheMap), srn))
+            }
+          }
+        )
+    }
+
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
 
   def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
@@ -62,33 +94,4 @@ class DirectorNameController @Inject()(
     heading = Message("messages__directorName__heading"),
     srn = srn
   )
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        val preparedForm = request.userAnswers.get[PersonName](DirectorNameId(establisherIndex, directorIndex)) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
-    }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
-          ,
-          value => {
-            val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
-              _.set(DirectorNameId(establisherIndex, directorIndex))(value)).asOpt.getOrElse(request.userAnswers)
-
-            userAnswersService.upsert(mode, srn, answers.json).map {
-              cacheMap =>
-                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
-            }
-          }
-        )
-    }
 }

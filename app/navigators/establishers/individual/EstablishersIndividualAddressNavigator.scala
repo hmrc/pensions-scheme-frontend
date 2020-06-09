@@ -29,36 +29,10 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
+class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
+  AbstractNavigator {
 
-  import  EstablishersIndividualAddressNavigator._
-
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PostCodeLookupId(index)                => AddressListController.onPageLoad(mode, index, None)
-    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressListId(index)                       => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressId(index)                       => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressYearsId(index)                  => establisherAddressYearsRoutes(mode, ua, index, None)
-    case PreviousPostCodeLookupId(index)        => PreviousAddressListController.onPageLoad(mode, index, None)
-    case PreviousAddressListId(index)           => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case PreviousAddressId(index)               => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-  }
-
-  //scalastyle:off cyclomatic.complexity
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PostCodeLookupId(index)                      => AddressListController.onPageLoad(mode, index, srn)
-    case AddressListId(index) if mode == UpdateMode   => AddressYearsController.onPageLoad(mode, index, srn)
-    case AddressListId(index)                         => establisherAddressRoute(ua, mode, index, srn)
-    case AddressId(index) if mode == UpdateMode       => AddressYearsController.onPageLoad(mode, index, srn)
-    case AddressId(index)                             => establisherAddressRoute(ua, mode, index, srn)
-    case AddressYearsId(index)                        => establisherAddressYearsRoutes(mode, ua, index, srn)
-    case PreviousPostCodeLookupId(index)              => PreviousAddressListController.onPageLoad(mode, index, srn)
-    case PreviousAddressListId(index)                 => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
-    case id@IndividualConfirmPreviousAddressId(index) => booleanNav(id, ua, moreChanges(srn), previousAddressLookup(mode, index, srn))
-    case PreviousAddressId(index)                     => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
-  }
-  //scalastyle:on cyclomatic.complexity
+  import EstablishersIndividualAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
@@ -66,23 +40,52 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
+  //scalastyle:on cyclomatic.complexity
+
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, None)
+    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
+    case AddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
+    case AddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case AddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, None)
+    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, None)
+    case PreviousAddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+  }
+
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
+
+  //scalastyle:off cyclomatic.complexity
+  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier,
+    Call] = {
+    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, srn)
+    case AddressListId(index) if mode == UpdateMode => AddressYearsController.onPageLoad(mode, index, srn)
+    case AddressListId(index) => establisherAddressRoute(ua, mode, index, srn)
+    case AddressId(index) if mode == UpdateMode => AddressYearsController.onPageLoad(mode, index, srn)
+    case AddressId(index) => establisherAddressRoute(ua, mode, index, srn)
+    case AddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, srn)
+    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, srn)
+    case PreviousAddressListId(index) => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
+    case id@IndividualConfirmPreviousAddressId(index) => booleanNav(id, ua, moreChanges(srn), previousAddressLookup
+    (mode, index, srn))
+    case PreviousAddressId(index) => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
+  }
 }
 
 object EstablishersIndividualAddressNavigator {
-  private def moreChanges(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
-  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =
-    PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)
-
   private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
     ua.get(IsEstablisherNewId(index)) match {
       case Some(true) => CheckYourAnswersAddressController.onPageLoad(mode, index, srn)
       case _ => moreChanges(srn)
     }
+
+  private def moreChanges(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
   private def establisherAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call = {
     ua.get(IsEstablisherNewId(index)) match {
@@ -97,6 +100,9 @@ object EstablishersIndividualAddressNavigator {
       case Some(AddressYears.UnderAYear) => previousAddressLookup(mode, index, srn)
       case _ => SessionExpiredController.onPageLoad()
     }
+
+  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =
+    PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)
 }
 
 

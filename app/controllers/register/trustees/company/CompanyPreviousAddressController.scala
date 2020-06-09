@@ -23,7 +23,8 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId,
+  CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -54,14 +55,36 @@ class CompanyPreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: manualAddress
-                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController
+  with I18nSupport with Retrievals {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
-  protected val form: Form[Address] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), viewmodel(index, mode, srn,
+              details.companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Trustee Company Previous Address: ${details.companyName}"
+          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index),
+            viewmodel(index, mode, srn, details.companyName), mode, context,
+            CompanyPreviousAddressPostcodeLookupId(index))
+      }
+  }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
@@ -72,24 +95,4 @@ class CompanyPreviousAddressController @Inject()(
       heading = Message(heading, name),
       srn = srn
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), viewmodel(index, mode, srn, details.companyName))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
-        details =>
-          val context = s"Trustee Company Previous Address: ${details.companyName}"
-          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index),
-            viewmodel(index, mode, srn, details.companyName), mode, context,
-            CompanyPreviousAddressPostcodeLookupId(index))
-      }
-  }
 }

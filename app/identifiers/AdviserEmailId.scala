@@ -28,7 +28,8 @@ object AdviserEmailId extends TypedIdentifier[String] {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     StringCYA[self.type](
-      label = Some(messages("adviserEmail.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse(""))) ,
-      hiddenLabel = Some(messages("messages__visuallyhidden__adviserEmail", userAnswers.get(AdviserNameId).getOrElse("")))
+      label = Some(messages("adviserEmail.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__adviserEmail", userAnswers.get(AdviserNameId).getOrElse
+      ("")))
     )()
 }

@@ -46,19 +46,8 @@ class PartnerNoNINOReasonController @Inject()(
                                                formProvider: ReasonFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: reason
-                                             )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
-
-  private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_ninoRequired", name)
-
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
-    ReasonViewModel(
-      postCall = routes.PartnerNoNINOReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__whyNoNINO", Message("messages__thePartner").resolve),
-      heading = Message("messages__whyNoNINO", name),
-      srn = srn
-    )
-  }
+                                             )(implicit val ec: ExecutionContext) extends ReasonController with
+  Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -77,5 +66,18 @@ class PartnerNoNINOReasonController @Inject()(
             viewModel(mode, establisherIndex, partnerIndex, srn, name.fullName), form(name.fullName))
         }
     }
+  ("messages__reason__error_ninoRequired", name)
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.PartnerNoNINOReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+      title = Message("messages__whyNoNINO", Message("messages__thePartner").resolve),
+      heading = Message("messages__whyNoNINO", name),
+      srn = srn
+    )
+  }
 
 }

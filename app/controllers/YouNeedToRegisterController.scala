@@ -33,7 +33,8 @@ class YouNeedToRegisterController @Inject()(appConfig: FrontendAppConfig,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: youNeedToRegister
-                                           )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                           )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action {
     implicit request =>

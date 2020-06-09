@@ -51,7 +51,12 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
 
   val form: Form[LocalDate] = formProvider()
 
-  private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")
+        ), mode)
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String
                        )(implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
@@ -62,17 +67,13 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
-    }
-
+  private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
+        post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message
+        ("messages__theIndividual")), mode)
     }
 
 }

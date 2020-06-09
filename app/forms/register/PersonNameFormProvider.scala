@@ -30,18 +30,18 @@ class PersonNameFormProvider @Inject() extends Mappings with Transforms {
       mapping(
         "firstName" ->
           text(errorKey = messages("messages__error__first_name", messages(token))).verifying(
-              firstError(
-                maxLength(PersonNameFormProvider.firstNameLength, errorKey = "messages__error__first_name_length"),
-                name(errorKey = "messages__error__first_name_invalid")
-              )
-            ),
+            firstError(
+              maxLength(PersonNameFormProvider.firstNameLength, errorKey = "messages__error__first_name_length"),
+              name(errorKey = "messages__error__first_name_invalid")
+            )
+          ),
         "lastName" ->
           text(errorKey = messages("messages__error__last_name", messages(token))).verifying(
-              firstError(
-                maxLength(PersonNameFormProvider.lastNameLength, errorKey = "messages__error__last_name_length"),
-                name(errorKey = "messages__error__last_name_invalid")
-              )
+            firstError(
+              maxLength(PersonNameFormProvider.lastNameLength, errorKey = "messages__error__last_name_length"),
+              name(errorKey = "messages__error__last_name_invalid")
             )
+          )
 
       )(PersonName.applyDelete)(PersonName.unapplyDelete)
     )

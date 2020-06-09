@@ -31,7 +31,9 @@ import scala.util.Failure
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
-  def getSchemeDetailsVariations(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
+  def getSchemeDetailsVariations(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier,
+                                                                                        ec: ExecutionContext)
+  : Future[UserAnswers]
 }
 
 @Singleton
@@ -40,7 +42,8 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 
   def getSchemeDetailsVariations(psaId: String,
                                  schemeIdType: String,
-                                 idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
+                                 idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[UserAnswers] = {
 
     val url = config.schemeDetailsUrl
     val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType, "idNumber" -> idNumber, "PSAId" -> psaId)

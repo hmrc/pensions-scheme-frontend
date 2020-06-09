@@ -32,7 +32,8 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[TrusteePreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
+  : CheckYourAnswers[TrusteePreviousAddressId] = {
 
     def getLabel(index: Int, ua: UserAnswers): (String, String) = {
       val name =

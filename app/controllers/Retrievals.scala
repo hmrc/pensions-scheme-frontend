@@ -40,6 +40,15 @@ trait Retrievals {
     }
   }
 
+  private[controllers] def retrieve[A](id: TypedIdentifier[A])
+                                      (f: A => Future[Result])
+                                      (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
+    request.userAnswers.get(id).map(f).getOrElse {
+      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
+
+  }
+
   private[controllers] def retrievePartnershipName(index: Int)
                                                   (f: String => Future[Result])
                                                   (implicit request: DataRequest[AnyContent]): Future[Result] = {
@@ -56,24 +65,13 @@ trait Retrievals {
     }
   }
 
-  private[controllers] def retrieve[A](id: TypedIdentifier[A])
-                                      (f: A => Future[Result])
-                                      (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
-    request.userAnswers.get(id).map(f).getOrElse {
-      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-
-  }
-
-  private[controllers] def existingSchemeName[A <:WrappedRequest[AnyContent]](implicit request:A): Option[String] =
+  private[controllers] def existingSchemeName[A <: WrappedRequest[AnyContent]](implicit request: A): Option[String] =
     request match {
       case optionalDataRequest: OptionalDataRequest[_] => optionalDataRequest.userAnswers.flatMap(_.get(SchemeNameId))
       case dataRequest: DataRequest[_] =>
         dataRequest.userAnswers.get(SchemeNameId)
       case _ => None
     }
-
-  case class ~[A, B](a: A, b: B)
 
   trait Retrieval[A] {
     self =>
@@ -91,18 +89,20 @@ trait Retrievals {
       }
   }
 
-  object Retrieval {
+  case class ~[A, B](a: A, b: B)
 
-    def apply[A](f: DataRequest[AnyContent] => Either[Future[Result], A]): Retrieval[A] =
-      new Retrieval[A] {
-        override def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A] =
-          f(request)
-      }
+  object Retrieval {
 
     def static[A](a: A): Retrieval[A] =
       Retrieval {
         implicit request =>
           Right(a)
+      }
+
+    def apply[A](f: DataRequest[AnyContent] => Either[Future[Result], A]): Retrieval[A] =
+      new Retrieval[A] {
+        override def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A] =
+          f(request)
       }
   }
 
