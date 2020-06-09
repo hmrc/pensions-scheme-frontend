@@ -64,15 +64,16 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
   def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
-    reset(fakeCacheConnector)
+    reset(fakeCacheConnector, fakeMinPsaConnector)
+    when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
+      "schemeName" -> schemeName))))
+    when(fakeMinPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
     super.beforeEach()
   }
 
   "DeleteScheme Controller" must {
 
     "return OK and the correct view for a GET" in {
-      when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
-        "schemeName" -> schemeName))))
       val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
@@ -80,8 +81,6 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
     }
 
     "remove all is called to delete user answers when user answers Yes" in {
-      when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
-        "schemeName" -> schemeName))))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       when(fakeCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       when(fakeLockConnector.releaseLock(any(), any())(any(), any())).thenReturn(Future.successful((): Unit))
@@ -95,8 +94,6 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
     }
 
     "redirect to the overview page when user answers No" in {
-      when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
-        "schemeName" -> schemeName))))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
       val result = controller().onSubmit(srn)(postRequest)
@@ -106,8 +103,6 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
-        "schemeName" -> schemeName))))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 

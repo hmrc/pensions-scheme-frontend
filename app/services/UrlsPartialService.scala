@@ -42,21 +42,24 @@ class UrlsPartialService @Inject()(
                                   pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
                                   updateConnector: UpdateSchemeCacheConnector,
                                   minimalPsaConnector: MinimalPsaConnector
-                                  )(implicit ec: ExecutionContext) {
+                                  ) {
 
-  def schemeLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Seq[OverviewLink]] =
+  def schemeLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
     for {
       subscription <- subscriptionLinks
       variations <- variationsLinks
-    } yield subscription ++ variations
+    } yield {
+      subscription ++ variations
+    }
 
-  private def subscriptionLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Seq[OverviewLink]] =
-   request.userAnswers match {
+  private def subscriptionLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+
+    request.userAnswers match {
 
       case None => Future.successful(Seq(
-          OverviewLink("register-new-scheme", appConfig.canBeRegisteredUrl,
+        OverviewLink("register-new-scheme", appConfig.canBeRegisteredUrl,
           Message("messages__schemeOverview__scheme_subscription"))
-        ))
+      ))
 
       case Some(ua) =>
         ua.get(SchemeNameId) match {
@@ -72,7 +75,7 @@ class UrlsPartialService @Inject()(
         }
     }
 
-  private def variationsLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Seq[OverviewLink]] =
+  private def variationsLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
     pensionSchemeVarianceLockConnector.getLockByPsa(request.psaId.id).flatMap {
       case Some(schemeVariance) =>
         updateConnector.fetch(schemeVariance.srn).flatMap {
@@ -86,21 +89,19 @@ class UrlsPartialService @Inject()(
           }
           case None => Future.successful(Seq.empty[OverviewLink])
         }
-      case None =>
-        Future.successful(Seq.empty[OverviewLink])
+      case None => Future.successful(Seq.empty[OverviewLink])
     }
 
-  def checkIfSchemeCanBeRegistered(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
+  def checkIfSchemeCanBeRegistered(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
       isPsaSuspended <- minimalPsaConnector.isPsaSuspended(request.psaId.id)
       result <- retrieveResult(request.userAnswers, isPsaSuspended)
-    } yield {
-      result
-    }
+    } yield result
+
 
   //LINK WITH PSA SUSPENSION HELPER METHODS
   private def retrieveResult(schemeDetailsCache: Option[UserAnswers], isPsaSuspended: Boolean
-                            )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
+                            )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     schemeDetailsCache match {
       case None => Future.successful(redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended))
       case Some(ua) => ua.get(SchemeNameId) match {
@@ -110,18 +111,20 @@ class UrlsPartialService @Inject()(
     }
 
   private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, isPsaSuspended: Boolean
-                                                   )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
+                                                   )(implicit request: OptionalDataRequest[AnyContent],
+                                                     hc: HeaderCarrier,
+                                                     ec: ExecutionContext): Future[Result] =
 
     ua.get(SubmissionReferenceNumberId).fold {
       Logger.warn("Page load failed since both scheme name and srn number were not found in scheme registration mongo collection")
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }{ _ => dataCacheConnector.removeAll(request.externalId).map { _ =>
         Logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
-        redirectBasedOnPsaSuspension(appConfig.registerSchemeUrl, isPsaSuspended)
+        redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended)
       }}
 
   private def redirectBasedOnPsaSuspension(redirectUrl: String, isPsaSuspended: Boolean): Result =
-      if (isPsaSuspended)  Redirect(appConfig.cannotStartRegUrl) else Redirect(redirectUrl)
+    if (isPsaSuspended) Redirect(appConfig.cannotStartRegUrl) else Redirect(redirectUrl)
 
   //DATE FORMATIING HELPER METHODS
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
@@ -142,12 +145,12 @@ class UrlsPartialService @Inject()(
     ).getOrElse(currentTimestamp)
   }
 
-  private def lastUpdatedAndDeleteDate(externalId: String)(implicit hc: HeaderCarrier): Future[LastUpdated] =
+  private def lastUpdatedAndDeleteDate(externalId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LastUpdated] =
     dataCacheConnector.lastUpdated(externalId).map { dateOpt =>
       parseDateElseCurrent(dateOpt)
     }
 
-  private def variationsDeleteDate(srn: String)(implicit hc: HeaderCarrier): Future[String] =
+  private def variationsDeleteDate(srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     updateConnector.lastUpdated(srn).map { dateOpt =>
       s"${createFormattedDate(parseDateElseCurrent(dateOpt), appConfig.daysDataSaved)}"
     }
