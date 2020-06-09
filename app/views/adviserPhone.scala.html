@@ -36,14 +36,13 @@
 
         @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(messages("messages__adviser__phone__heading", adviserName))
-
-        @components.paragraph_text(messages("messages__adviser__phone__p1", adviserName))
 
         @components.input_text(
             field = form("phone"),
-            label = messages("messages__adviser__phone__title"),
-            labelClass=Some("visually-hidden")
+            label = messages("messages__adviser__phone__heading", adviserName),
+            labelClass=Some("visually-hidden"),
+            paragraphText = Some(messages("messages__adviser__phone__p1", adviserName)),
+            headingIsLegend = true
         )
         </div>
         @components.submit_button()

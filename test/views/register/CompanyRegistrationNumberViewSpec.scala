@@ -64,7 +64,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
     "display an input text box" in {
       val expectedValue = "12345678"
       val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber" -> expectedValue))))
-      doc must haveLabelAndValue("companyRegistrationNumber", s"${messages("messages__common__crn")}", expectedValue)
+      doc must haveLabelAndValue("companyRegistrationNumber", messages(viewModel().heading).toString, expectedValue)
     }
 
   }
