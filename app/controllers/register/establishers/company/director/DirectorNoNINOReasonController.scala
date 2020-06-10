@@ -67,9 +67,10 @@ class DirectorNoNINOReasonController @Inject()(
             viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }
     }
-  ("messages__reason__error_ninoRequired", name)
 
-  private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__reason__error_ninoRequired", name)
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String)
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {

@@ -65,8 +65,8 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get
-  (SchemeTypeId).contains(MasterTrust)
+  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request
+    .userAnswers.get(SchemeTypeId).contains(MasterTrust)
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>

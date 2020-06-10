@@ -76,7 +76,8 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       srn = srn,
       formFieldName = Some("hasPaye")
     )
-  ("messages__companyPayeRef__error__required", companyName)
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__companyPayeRef__error__required", companyName)
 }

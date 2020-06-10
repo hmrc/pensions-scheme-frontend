@@ -64,8 +64,8 @@ class PartnershipDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit
-          (mode, index, srn)
+          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController
+            .onSubmit(mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>

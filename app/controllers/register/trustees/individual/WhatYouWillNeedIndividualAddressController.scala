@@ -48,8 +48,8 @@ class WhatYouWillNeedIndividualAddressController @Inject()(
         TrusteeNameId(index).retrieve.right.map {
           name =>
             val trusteeName = name.fullName
-            val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit
-            (mode, index, srn)
+            val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController
+              .onSubmit(mode, index, srn)
             Future.successful(Ok(view(existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))
         }
     }

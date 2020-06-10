@@ -59,14 +59,15 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
     }
 
-  private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] = formProvider
+  private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] =
+    formProvider("messages__error__trustees")
 
   private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
     TrusteeNameController.onSubmit(mode, index, srn),
     Message("messages__trusteeName__title"),
     Message("messages__trusteeName__heading")
   )
-  ("messages__error__trustees")
+
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
   (mode, srn) andThen requireData).async {

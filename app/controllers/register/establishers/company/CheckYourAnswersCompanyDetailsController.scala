@@ -53,8 +53,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           val controllerComponents: MessagesControllerComponents,
                                                           val view: checkYourAnswers
                                                         )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController
-  with Retrievals with I18nSupport with Enumerable.Implicits {
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -64,34 +63,24 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
 
         val companyDetails = Seq(AnswerSection(
           None,
-          HasCompanyCRNId(index).row(routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, index).url,
-            mode) ++
+          HasCompanyCRNId(index).row(routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyEnterCRNId(index)
               .row(routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            CompanyNoCRNReasonId(index).row(routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn,
-              index).url, mode) ++
-            HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url,
-              mode) ++
-            CompanyEnterUTRId(index).row(routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index)
-              .url, mode) ++
-            CompanyNoUTRReasonId(index).row(routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), srn,
-              index).url, mode) ++
-            HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, index).url,
-              mode) ++
-            CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn)
-              .url, mode) ++
-            HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, index).url,
-              mode) ++
-            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn)
-              .url, mode) ++
-            IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index)
-              .url, mode)
+            CompanyNoCRNReasonId(index).row(routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            HasCompanyUTRId(index).row(routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterUTRId(index).row(routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyNoUTRReasonId(index).row(routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
+            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
+            IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val titleCompanyDetails: Message = if (isNew) Message("checkYourAnswers.hs.title") else Message
-        ("messages__detailsFor", Message("messages__theCompany").resolve)
+        val titleCompanyDetails: Message = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__detailsFor", Message("messages__theCompany").resolve)
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
@@ -100,8 +89,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
-            mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titleCompanyDetails,
           h1 = headingDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )

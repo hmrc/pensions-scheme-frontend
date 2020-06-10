@@ -67,9 +67,10 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
             viewModel(mode, index, srn, name.fullName), form(name.fullName))
         }
     }
-  ("messages__reason__error_ninoRequired", name)
 
-  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] =
+    formProvider ("messages__reason__error_ninoRequired", name)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {

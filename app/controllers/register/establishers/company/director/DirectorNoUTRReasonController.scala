@@ -66,9 +66,10 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
             directorIndex, srn, directorName), form(directorName))
         }
     }
-  ("messages__reason__error_utrRequired", directorName)
 
-  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) = formProvider
+
+  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__reason__error_utrRequired", directorName)
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
                         directorName: String)

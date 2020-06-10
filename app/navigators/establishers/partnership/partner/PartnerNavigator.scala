@@ -138,25 +138,24 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       partnerIndex, srn)
     case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex) => paAddressListPage(mode, estIndex,
       partnerIndex, srn)
-    case PartnerPreviousAddressListId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage
-      (mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressListId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerPreviousAddressListId(_, _) => anyMoreChangesPage(srn)
-    case PartnerPreviousAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage
-      (mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerPreviousAddressId(_, _) => anyMoreChangesPage(srn)
-    case PartnerEmailId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
-      estIndex, partnerIndex, srn)
+    case PartnerEmailId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerEmailId(_, _) => anyMoreChangesPage(srn)
-    case PartnerPhoneId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
-      estIndex, partnerIndex, srn)
+    case PartnerPhoneId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerPhoneId(_, _) => anyMoreChangesPage(srn)
   }
 }
 
 object PartnerNavigator {
 
-  def taskListPage(mode: Mode, srn: Option[String]): Call = controllers.routes.SchemeTaskListController.onPageLoad
-  (mode, srn)
+  def taskListPage(mode: Mode, srn: Option[String]): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private def isNewPartner(estIndex: Int, partnerIndex: Int, ua: UserAnswers): Boolean =
     ua.get(IsNewPartnerId(estIndex, partnerIndex)).getOrElse(false)

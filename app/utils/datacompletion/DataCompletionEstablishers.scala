@@ -144,8 +144,7 @@ trait DataCompletionEstablishers extends DataCompletion {
       isPartnerDetailsComplete(estIndex, parIndex),
       isAddressComplete(PartnerAddressId(estIndex, parIndex), PartnerPreviousAddressId(estIndex, parIndex),
         PartnerAddressYearsId(estIndex, parIndex), None),
-      isContactDetailsComplete(PartnerEmailId(estIndex, parIndex), PartnerPhoneId(estIndex, parIndex)))).getOrElse
-  (false)
+      isContactDetailsComplete(PartnerEmailId(estIndex, parIndex), PartnerPhoneId(estIndex, parIndex)))).getOrElse(false)
 
   def isPartnerDetailsComplete(estIndex: Int, parIndex: Int): Option[Boolean] =
     isComplete(Seq(

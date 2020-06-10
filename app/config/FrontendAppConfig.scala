@@ -94,8 +94,8 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   (s"Missing configuration key: $key"))
 
   private def baseUrl(serviceName: String) = {
-    val protocol = runModeConfiguration.getOptional[String](s"microservice.services.$serviceName.protocol").getOrElse
-    ("http")
+    val protocol = runModeConfiguration.getOptional[String](s"microservice.services.$serviceName.protocol")
+      .getOrElse("http")
     val host = runModeConfiguration.get[String](s"microservice.services.$serviceName.host")
     val port = runModeConfiguration.get[String](s"microservice.services.$serviceName.port")
     s"$protocol://$host:$port"

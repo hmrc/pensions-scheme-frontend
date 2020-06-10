@@ -97,14 +97,14 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
 }
 
 object EstablishersIndividualDetailsNavigator {
-  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterNINOController.onPageLoad
-  (mode, index, srn)
+  private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterNINOController
+    .onPageLoad(mode, index, srn)
 
   private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoNINOReasonController
     .onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterUTRController.onPageLoad
-  (mode, index, srn)
+  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterUTRController
+    .onPageLoad(mode, index, srn)
 
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoUTRReasonController
     .onPageLoad(mode, index, srn)

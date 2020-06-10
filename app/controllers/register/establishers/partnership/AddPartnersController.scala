@@ -93,7 +93,7 @@ class AddPartnersController @Inject()(
       }
   }
 
-  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit
-  (mode, index, srn)
+  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
+    routes.AddPartnersController.onSubmit(mode, index, srn)
 
 }

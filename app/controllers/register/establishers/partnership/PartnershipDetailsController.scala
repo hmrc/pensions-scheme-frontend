@@ -55,8 +55,8 @@ class PartnershipDetailsController @Inject()(
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit
-        (mode, index, srn)
+        val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController
+          .onSubmit(mode, index, srn)
         Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
@@ -65,8 +65,8 @@ class PartnershipDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onSubmit
-          (mode, index, srn)
+          val submitUrl = controllers.register.establishers.partnership.routes.PartnershipDetailsController
+            .onSubmit(mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>

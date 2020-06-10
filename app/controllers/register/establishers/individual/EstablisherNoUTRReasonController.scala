@@ -44,8 +44,19 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
                                                  formProvider: ReasonFormProvider,
                                                  val view: reason,
                                                  val controllerComponents: MessagesControllerComponents)
-                                                (implicit val ec: ExecutionContext) extends ReasonController with
-  I18nSupport {
+                                                (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),
+      heading = Message("messages__whyNoUTR", companyName),
+      srn = srn
+    )
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -64,17 +75,4 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
           post(EstablisherNoUTRReasonId(index), mode, viewModel(mode, index, srn, name), form(name))
         }
     }
-  ("messages__reason__error_utrRequired", companyName)
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
-    ReasonViewModel(
-      postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),
-      heading = Message("messages__whyNoUTR", companyName),
-      srn = srn
-    )
-  }
 }

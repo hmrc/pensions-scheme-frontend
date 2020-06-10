@@ -66,8 +66,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor",
-          Message("messages__theCompany").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),

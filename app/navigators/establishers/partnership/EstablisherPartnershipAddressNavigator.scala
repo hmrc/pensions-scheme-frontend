@@ -55,8 +55,7 @@ class EstablisherPartnershipAddressNavigator @Inject()(val dataCacheConnector: U
     case PartnershipAddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, None)
     case id@PartnershipHasBeenTradingId(index) => booleanNav(id, ua, previousAddressLookup(mode, index, None),
       cyaAddress(journeyMode(mode), index, None))
-    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad
-      (mode, index, None)
+    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad(mode, index, None)
     case PartnershipPreviousAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
     case PartnershipPreviousAddressId(index) => cyaAddress(journeyMode(mode), index, None)
   }
@@ -76,8 +75,8 @@ class EstablisherPartnershipAddressNavigator @Inject()(val dataCacheConnector: U
     case PartnershipAddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, srn)
     case id@PartnershipHasBeenTradingId(index) => booleanNav(id, ua, previousAddressLookup(mode, index, srn),
       cyaAddress(journeyMode(mode), index, srn))
-    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController.onPageLoad
-      (mode, index, srn)
+    case PartnershipPreviousAddressPostcodeLookupId(index) => PartnershipPreviousAddressListController
+      .onPageLoad(mode, index, srn)
     case PartnershipPreviousAddressListId(index) if isNewEstablisher(index, ua) => cyaAddress(journeyMode(mode),
       index, srn)
     case PartnershipPreviousAddressListId(_) => moreChanges(srn)
