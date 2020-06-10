@@ -71,8 +71,8 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val companyName = request.userAnswers.get(InsuranceCompanyNameId)
-          Future.successful(BadRequest(view(formWithErrors, mode, companyName, existingSchemeName, postCall(mode,
-            srn), srn)))
+          Future.successful(BadRequest(view(formWithErrors,
+            mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
         },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>

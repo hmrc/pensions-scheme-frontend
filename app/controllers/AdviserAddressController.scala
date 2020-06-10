@@ -76,8 +76,8 @@ class AdviserAddressController @Inject()(
       heading = heading(adviserName)
     )
 
-  private[controllers] def heading(adviserName: String): Message = Message("messages__common__confirmAddress__h1",
-    adviserName)
+  private[controllers] def heading(adviserName: String): Message =
+    Message("messages__common__confirmAddress__h1", adviserName)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>

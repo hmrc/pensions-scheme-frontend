@@ -83,13 +83,13 @@ class DataRetrievalImpl(
         val ua = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request
-              .psaId, viewOnly = status != "Open")
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
+              request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId)
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request
-              .psaId, viewOnly = true)
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
+              request.psaId, viewOnly = true)
         }
       case None =>
         OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
@@ -101,8 +101,8 @@ class DataRetrievalImpl(
   : Future[OptionalDataRequest[A]] =
     f.map {
       case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request
-        .psaId, viewOnly)
+      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)),
+        request.psaId, viewOnly)
     }
 }
 

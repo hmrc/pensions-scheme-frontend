@@ -73,8 +73,8 @@ trait AddressListController extends FrontendBaseController with Retrievals with 
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
-            val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress, request
-              .userAnswers.get(dataId), Some(address), context)
+            val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress,
+              request.userAnswers.get(dataId), Some(address), context)
             val answers = userAnswersService
               .setExistingAddress(mode, dataId, UserAnswers(userAnswersJson))
               .set(dataId)(address.toAddress).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)

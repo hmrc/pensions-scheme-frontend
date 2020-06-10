@@ -109,8 +109,8 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     } recoverWith {
       case ex: BadRequestException if ex.message.contains("INVALID_SRN") => Future.successful(false)
       case ex: NotFoundException => Future.successful(false)
-      case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new
-          InvalidPayloadException)
+      case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" =>
+        Future.failed(new InvalidPayloadException)
     } andThen logExceptions("Unable to check for scheme association with PSA")
   }
 }
