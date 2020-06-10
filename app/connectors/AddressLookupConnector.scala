@@ -41,8 +41,8 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     http.GET[HttpResponse](addressLookupUrl)(implicitly, schemeHc, implicitly) flatMap {
       case response if response.status equals OK => Future.successful {
         response.json.as[Seq[TolerantAddress]]
-          .filterNot(a => a.addressLine1.isEmpty && a.addressLine2.isEmpty && a.addressLine3.isEmpty && a
-            .addressLine4.isEmpty)
+          .filterNot(a => a.addressLine1.isEmpty && a.addressLine2.isEmpty && a.addressLine3.isEmpty &&
+            a.addressLine4.isEmpty)
       }
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body :${response.body}"
