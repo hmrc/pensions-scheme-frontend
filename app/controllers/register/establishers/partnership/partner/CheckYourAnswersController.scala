@@ -24,6 +24,7 @@ import identifiers.register.establishers.partnership.partner._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,72 +52,67 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            val view: checkYourAnswers
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
-  //scalastyle:off method.length
+
+  private def seqAnswerSection(mode: Mode,
+                               establisherIndex: Index,
+                               partnerIndex: Index,
+                               srn: Option[String])(implicit
+                                                    request: DataRequest[AnyContent]) =
+    Seq(AnswerSection(
+      None,
+      Seq(
+        PartnerNameId(establisherIndex, partnerIndex)
+          .row(routes.PartnerNameController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url,
+            mode),
+        PartnerDOBId(establisherIndex, partnerIndex)
+          .row(routes.PartnerDOBController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url,
+            mode),
+        PartnerHasNINOId(establisherIndex, partnerIndex)
+          .row(routes.PartnerHasNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerEnterNINOId(establisherIndex, partnerIndex)
+          .row(routes.PartnerEnterNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerNoNINOReasonId(establisherIndex, partnerIndex)
+          .row(routes.PartnerNoNINOReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
+            srn).url, mode),
+        PartnerHasUTRId(establisherIndex, partnerIndex)
+          .row(routes.PartnerHasUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerEnterUTRId(establisherIndex, partnerIndex)
+          .row(routes.PartnerEnterUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerNoUTRReasonId(establisherIndex, partnerIndex)
+          .row(routes.PartnerNoUTRReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
+            srn).url, mode),
+        PartnerAddressId(establisherIndex, partnerIndex)
+          .row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerAddressYearsId(establisherIndex, partnerIndex)
+          .row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
+            srn).url, mode),
+        PartnerPreviousAddressId(establisherIndex, partnerIndex)
+          .row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex,
+            partnerIndex, srn).url, mode),
+        PartnerEmailId(establisherIndex, partnerIndex)
+          .row(routes.PartnerEmailController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode),
+        PartnerPhoneId(establisherIndex, partnerIndex)
+          .row(routes.PartnerPhoneController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
+            .url, mode)
+      ).flatten
+    )
+    )
+
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
-        lazy val displayNewNino = !request.userAnswers.get(IsNewPartnerId(establisherIndex, partnerIndex)).getOrElse(false)
-        val answers = Seq(AnswerSection(
-          None,
-          Seq(
-            PartnerNameId(establisherIndex, partnerIndex)
-              .row(routes.PartnerNameController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url,
-                mode),
-
-            PartnerDOBId(establisherIndex, partnerIndex)
-              .row(routes.PartnerDOBController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn).url,
-                mode),
-
-            PartnerHasNINOId(establisherIndex, partnerIndex)
-              .row(routes.PartnerHasNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerEnterNINOId(establisherIndex, partnerIndex)
-              .row(routes.PartnerEnterNINOController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerNoNINOReasonId(establisherIndex, partnerIndex)
-              .row(routes.PartnerNoNINOReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
-                srn).url, mode),
-
-            PartnerHasUTRId(establisherIndex, partnerIndex)
-              .row(routes.PartnerHasUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerEnterUTRId(establisherIndex, partnerIndex)
-              .row(routes.PartnerEnterUTRController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerNoUTRReasonId(establisherIndex, partnerIndex)
-              .row(routes.PartnerNoUTRReasonController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
-                srn).url, mode),
-
-            PartnerAddressId(establisherIndex, partnerIndex)
-              .row(routes.PartnerAddressController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerAddressYearsId(establisherIndex, partnerIndex)
-              .row(routes.PartnerAddressYearsController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex,
-                srn).url, mode),
-
-            PartnerPreviousAddressId(establisherIndex, partnerIndex)
-              .row(routes.PartnerPreviousAddressController.onPageLoad(checkMode(mode), establisherIndex,
-                partnerIndex, srn).url, mode),
-
-            PartnerEmailId(establisherIndex, partnerIndex)
-              .row(routes.PartnerEmailController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode),
-
-            PartnerPhoneId(establisherIndex, partnerIndex)
-              .row(routes.PartnerPhoneController.onPageLoad(checkMode(mode), establisherIndex, partnerIndex, srn)
-                .url, mode)
-          ).flatten
-        ))
+        val answers = seqAnswerSection(mode, establisherIndex, partnerIndex, srn)
 
         val isNew = isNewItem(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
-        ("messages__thePartner").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__detailsFor", Message("messages__thePartner").resolve)
 
         val vm = CYAViewModel(
           answerSections = answers,
