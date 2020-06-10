@@ -32,73 +32,37 @@ import utils.UserAnswers
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                              appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  def previousAddressEditRoutes(index: Int,
-                                mode: Mode,
-                                srn: Option[String],
-                                userAnswers: UserAnswers): Option[NavigateTo] = {
-    exitMiniJourney(index, mode, srn, userAnswers, cyaAddressDetails)
+  private def exitMiniJourney(index: Int,
+                              mode: Mode,
+                              srn: Option[String],
+                              answers: UserAnswers,
+                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo] ): Option[NavigateTo] = {
+    if (mode == CheckMode || mode == NormalMode)
+      cyaPage(index, journeyMode(mode), srn)
+    else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
+      cyaPage(index, journeyMode(mode), srn)
+    else
+      anyMoreChanges(srn)
   }
 
-  protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    from.id match {
-      case CompanyDetailsId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case HasCompanyCRNId(index) => confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
-      case HasCompanyVATId(index) => confirmHasCompanyVat(index, mode, srn)(from.userAnswers)
-      case HasCompanyPAYEId(index) => confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
-      case CompanyEnterVATId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyEnterPAYEId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyNoCRNReasonId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case HasCompanyUTRId(index) => confirmHasCompanyUtr(index, mode, srn)(from.userAnswers)
-      case CompanyEnterCRNId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyEnterUTRId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case CompanyNoUTRReasonId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
 
-      case CompanyPostCodeLookupId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
+  private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
 
-      case CompanyAddressListId(index) =>
-        addressRoutes(index, from.userAnswers, mode, srn)
-      case CompanyAddressId(index) =>
-        addressRoutes(index, from.userAnswers, mode, srn)
-      case CompanyAddressYearsId(index) =>
+  private def cyaContactDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
 
-        editAddressYearsRoutes(index, from.userAnswers, mode, srn)
+  private def cyaAddressDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
 
-      case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
-
-      case CompanyPreviousAddressPostcodeLookupId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
-
-      case CompanyPreviousAddressListId(index) =>
-        previousAddressEditRoutes(index, mode, srn, from.userAnswers)
-      case CompanyPreviousAddressId(index) => previousAddressEditRoutes(index, mode, srn, from.userAnswers)
-      case CompanyPhoneId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
-      case CompanyEmailId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
-      case IsCompanyDormantId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
-      case OtherDirectorsId(index) =>
-        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(journeyMode(mode), srn))
-      case HasBeenTradingCompanyId(index) => confirmHasBeenTrading(index, mode, srn)(from.userAnswers)
-      case _ => None
-    }
-
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case IsCompanyDormantId(index) =>
-      NavigateTo.dontSave(
-        establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController
-        .onPageLoad(NormalMode, None, index)
-      )
-    case _ => routes(from, NormalMode, None)
-  }
-
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    routes(from, UpdateMode, srn)
+  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
+    NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
-        NavigateTo.dontSave(controllers.register.establishers.routes
-          .AddEstablisherController
-          .onPageLoad(mode, srn)
+        NavigateTo.dontSave(
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
         )
       case HasCompanyCRNId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
@@ -135,9 +99,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressId(index) =>
         previousAddressRoutes(index, mode, srn)
       case CompanyPhoneId(index) =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .CheckYourAnswersCompanyContactDetailsController
-          .onPageLoad(mode, srn, index))
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
       case HasBeenTradingCompanyId(index) =>
         confirmHasBeenTrading(index, mode, srn)(from.userAnswers)
       case CompanyEmailId(index) =>
@@ -156,197 +118,92 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     }
 
   def previousAddressRoutes(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
+      NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
   }
 
-  private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String])
-  : Option[NavigateTo] = {
+  def previousAddressEditRoutes(index: Int, mode: Mode, srn: Option[String], userAnswers: UserAnswers): Option[NavigateTo] = {
+      exitMiniJourney(index, mode, srn, userAnswers, cyaAddressDetails)
+  }
+
+
+  protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
+    from.id match {
+      case CompanyDetailsId(index) =>             exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case HasCompanyCRNId(index) =>           confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
+      case HasCompanyVATId(index) =>              confirmHasCompanyVat(index, mode, srn)(from.userAnswers)
+      case HasCompanyPAYEId(index) =>             confirmHasCompanyPAYE(index, mode, srn)(from.userAnswers)
+      case CompanyEnterVATId(index) =>            exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyEnterPAYEId(index) =>      exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyNoCRNReasonId(index) =>            exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case HasCompanyUTRId(index)  =>             confirmHasCompanyUtr(index, mode, srn)(from.userAnswers)
+      case CompanyEnterCRNId(index) =>  exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyEnterUTRId(index) =>                 exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case CompanyNoUTRReasonId(index) =>               exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+
+      case CompanyPostCodeLookupId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressListController.onPageLoad(mode, srn, index))
+
+      case CompanyAddressListId(index) =>
+        addressRoutes(index, from.userAnswers, mode, srn)
+      case CompanyAddressId(index) =>
+        addressRoutes(index, from.userAnswers, mode, srn)
+      case CompanyAddressYearsId(index) =>
+
+        editAddressYearsRoutes(index, from.userAnswers, mode, srn)
+
+      case CompanyConfirmPreviousAddressId(index) => confirmPreviousAddressRoutes(index, mode, srn)(from.userAnswers)
+
+      case CompanyPreviousAddressPostcodeLookupId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressListController.onPageLoad(mode, srn, index))
+
+      case CompanyPreviousAddressListId(index) =>
+        previousAddressEditRoutes(index, mode, srn, from.userAnswers)
+      case CompanyPreviousAddressId(index) => previousAddressEditRoutes(index, mode, srn, from.userAnswers)
+      case CompanyPhoneId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
+      case CompanyEmailId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
+      case IsCompanyDormantId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
+      case OtherDirectorsId(index) =>
+        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(journeyMode(mode), srn))
+      case HasBeenTradingCompanyId(index) => confirmHasBeenTrading(index, mode, srn)(from.userAnswers)
+      case _ => None
+    }
+
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case IsCompanyDormantId(index) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, None, index))
+    case _ => routes(from, NormalMode, None)
+  }
+
+  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    routes(from, UpdateMode, srn)
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
+
+  private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
         NavigateTo.dontSave(establisherCompanyRoutes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index))
       case Some(AddressYears.OverAYear) =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .CheckYourAnswersCompanyAddressController
-          .onPageLoad(mode, srn, index))
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
-
-  private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
-    NavigateTo.dontSave(
-      if (answers.allDirectorsAfterDelete(index).isEmpty) {
-        controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-      } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
-        answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
-          if (addCompanyDirectors) {
-            controllers.register.establishers.company.director.routes.DirectorNameController
-              .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-          } else {
-            if (mode == CheckMode || mode == NormalMode) {
-              SchemeTaskListController.onPageLoad(mode, srn)
-            } else {
-              AnyMoreChangesController.onPageLoad(srn)
-            }
-          }
-        }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
-      } else {
-        establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
-      }
-    )
-  }
-
-  private def listOrAnyMoreChange(index: Int,
-                                  mode: Mode,
-                                  srn: Option[String]
-                                 )(answers: UserAnswers): Option[NavigateTo] = {
-    mode match {
-      case CheckMode | NormalMode =>
-        NavigateTo.dontSave(establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index))
-      case _ => answers.get(IsEstablisherNewId(index)) match {
-        case Some(true) =>
-          NavigateTo.dontSave(establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index))
-        case _ =>
-          anyMoreChanges(srn)
-      }
-    }
-  }
-
-  private def confirmHasCompanyNumber(index: Int,
-                                      mode: Mode,
-                                      srn: Option[String]
-                                     )(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(HasCompanyCRNId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterCRNController.onPageLoad(mode, srn, index))
-      case Some(false) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoCRNReasonController.onPageLoad(mode, srn, index))
-      case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def confirmHasCompanyUtr(index: Int,
-                                   mode: Mode,
-                                   srn: Option[String]
-                                  )(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(HasCompanyUTRId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterUTRController.onPageLoad(mode, srn, index))
-      case Some(false) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoUTRReasonController.onPageLoad(mode, srn, index))
-      case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def confirmHasCompanyVat(index: Int,
-                                   mode: Mode,
-                                   srn: Option[String]
-                                  )(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(HasCompanyVATId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterVATController.onPageLoad(mode, index, srn))
-      case Some(false) if Seq(NormalMode, UpdateMode).contains(mode) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
-      case Some(false) =>
-        cyaCompanyDetails(index, journeyMode(mode), srn)
-      case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def confirmHasCompanyPAYE(index: Int,
-                                    mode: Mode,
-                                    srn: Option[String]
-                                   )(answers: UserAnswers): Option[NavigateTo] = {
-    (answers.get(HasCompanyPAYEId(index)), mode) match {
-      case (Some(true), _) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterPAYEController.onPageLoad(mode, index, srn))
-      case (Some(false), NormalMode) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
-      case (Some(false), UpdateMode) =>
-        cyaCompanyDetails(index, mode, srn)
-      case (Some(false), CheckMode | CheckUpdateMode) =>
-        exitMiniJourney(index, mode, srn, answers, cyaCompanyDetails)
-      case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def cyaCompanyDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
-
-  private def exitMiniJourney(index: Int,
-                              mode: Mode,
-                              srn: Option[String],
-                              answers: UserAnswers,
-                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo]): Option[NavigateTo] = {
-    if (mode == CheckMode || mode == NormalMode)
-      cyaPage(index, journeyMode(mode), srn)
-    else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
-      cyaPage(index, journeyMode(mode), srn)
-    else
-      anyMoreChanges(srn)
-  }
-
-  private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
-
-  private def confirmHasBeenTrading(index: Int,
-                                    mode: Mode,
-                                    srn: Option[String]
-                                   )(answers: UserAnswers): Option[NavigateTo] = {
-    answers.get(HasBeenTradingCompanyId(index)) match {
-      case Some(true) =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
-      case Some(false) =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), srn, index))
-      case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def payeRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
-    (mode, answers.get(IsEstablisherNewId(index))) match {
-      case (NormalMode, _) =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .IsCompanyDormantController.onPageLoad(mode, srn, index))
-      case _ =>
-        NavigateTo.dontSave(establisherCompanyRoutes
-          .CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
-    }
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
-
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
-    editRoutes(from, CheckUpdateMode, srn)
-
-  private def cyaContactDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(establisherCompanyRoutes
-      .CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index))
-
-  private def cyaAddressDetails(index: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
-    NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
 
   private def addressRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    (mode, answers.get(IsEstablisherNewId(index))) match {
-      case (CheckMode, Some(true)) => cyaAddressDetails(index, journeyMode(mode), srn)
-      case (CheckUpdateMode, Some(false)) => NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case (CheckUpdateMode, None) => NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-      case _ => NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
+    if (answers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
+      cyaAddressDetails(index, journeyMode(mode), srn)
+    }
+    else if (!answers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
+      NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+    } else {
+      NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
     }
   }
 
-  private def editAddressYearsRoutes(index: Int,
-                                     answers: UserAnswers,
-                                     mode: Mode,
-                                     srn: Option[String]
-                                    ): Option[NavigateTo] = {
+  private def editAddressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
     (
       answers.get(CompanyAddressYearsId(index)),
       answers.get(IsEstablisherNewId(index)).getOrElse(false)
@@ -362,18 +219,121 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     }
   }
 
-  private def confirmPreviousAddressRoutes(index: Int,
-                                           mode: Mode,
-                                           srn: Option[String]
-                                          )(answers: UserAnswers): Option[NavigateTo] = {
+  private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
+    NavigateTo.dontSave(
+        if (answers.allDirectorsAfterDelete(index).isEmpty) {
+          controllers.register.establishers.company.director.routes.DirectorNameController
+            .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+        } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
+          answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
+            if (addCompanyDirectors) {
+              controllers.register.establishers.company.director.routes.DirectorNameController
+                .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+            } else {
+              if (mode == CheckMode || mode == NormalMode) {
+                SchemeTaskListController.onPageLoad(mode, srn)
+              } else {
+                AnyMoreChangesController.onPageLoad(srn)
+              }
+            }
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
+        } else {
+          establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
+        }
+    )
+  }
+
+  private def listOrAnyMoreChange(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    mode match {
+      case CheckMode | NormalMode =>
+        NavigateTo.dontSave(establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index))
+      case _ => answers.get(IsEstablisherNewId(index)) match {
+        case Some(true) =>
+          NavigateTo.dontSave(establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index))
+        case _ =>
+          anyMoreChanges(srn)
+      }
+    }
+  }
+
+  private def confirmPreviousAddressRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(CompanyConfirmPreviousAddressId(index)) match {
       case Some(false) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode,
-          srn, index))
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
       case Some(true) =>
         anyMoreChanges(srn)
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyNumber(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyCRNId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterCRNController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoCRNReasonController.onPageLoad(mode, srn, index))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyUtr(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyUTRId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterUTRController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoUTRReasonController.onPageLoad(mode, srn, index))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyVat(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasCompanyVATId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterVATController.onPageLoad(mode, index, srn))
+      case Some(false) if Seq(NormalMode, UpdateMode).contains(mode)=>
+        NavigateTo.dontSave(establisherCompanyRoutes.HasCompanyPAYEController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        cyaCompanyDetails(index, journeyMode(mode), srn)
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    (answers.get(HasCompanyPAYEId(index)), mode) match {
+      case (Some(true), _) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterPAYEController.onPageLoad(mode, index, srn))
+      case (Some(false), NormalMode) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
+      case (Some(false), UpdateMode) =>
+        cyaCompanyDetails(index, mode, srn)
+      case (Some(false), CheckMode | CheckUpdateMode) =>
+        exitMiniJourney(index, mode, srn, answers, cyaCompanyDetails)
+      case _ =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def confirmHasBeenTrading(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(HasBeenTradingCompanyId(index)) match {
+      case Some(true) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index))
+      case Some(false) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), srn, index))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def payeRoutes(index: Int, mode: Mode, srn: Option[String])(answers: UserAnswers): Option[NavigateTo] = {
+    (mode, answers.get(IsEstablisherNewId(index))) match {
+      case (NormalMode, _) =>
+        NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
+      case _ =>
+        NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
     }
   }
 }

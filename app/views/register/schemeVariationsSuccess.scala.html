@@ -23,26 +23,23 @@
 @import models.UpdateMode
 
 @this(
-        main_template: main_template
+    main_template: main_template
 )
 
-@(schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@printThisPageLink = {
-    <a id="print-this-page-link" onclick="window.print();
-    return false;" href="#">@messages("site.printThisPage")</a>
-}
+@printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
 @main_template(
     title = messages("messages__variations_complete__title")) {
 
     <div class="govuk-box-highlight">
-    @components.heading(messages("messages__variations_complete__heading"), "heading-xlarge")
+        @components.heading(messages("messages__variations_complete__heading"), "heading-xlarge")
     </div>
     <div class="print-page">
         <p>@printThisPageLink</p>
         <p>@{
-            components.return_link(messageKey = "messages__schemeTaskList__returnlink", schemename = schemeName, srn = srn)
-        }</p>
+                components.return_link(messageKey = "messages__schemeTaskList__returnlink", schemename = schemeName, srn = srn)
+            }</p>
     </div>
 }

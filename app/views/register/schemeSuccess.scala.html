@@ -22,19 +22,15 @@
 @import viewmodels.Message
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
 )
 
-@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
 
-@yourSchemesLink = {
-    <a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>
-}
-@pensionsRegulatorLink = {
-    <a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>
-}
+@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
+@pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
 @main_template(
     title = messages("messages__complete__title")) {
@@ -48,9 +44,7 @@
 
     </div>
 
-    <p>@messages("messages__complete__email")
-        <span class="bold">@email</span>.
-    </p>
+    <p>@messages("messages__complete__email", email)</p>
 
     <div id="hintText" class="panel panel-border-wide">
         <p class="bold">@messages("messages__complete__copy_1")</p>
@@ -70,8 +64,7 @@
     }
 
     <p>
-        <a id="print-this-page-link" onclick="window.print();
-        return false;" href="#">@messages("site.printThisPage")</a>
+        <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
     </p>
 
 
