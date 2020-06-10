@@ -181,7 +181,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         case "individual" => (__ \ 'trusteeDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
+      }).map(_.count(deleted => !deleted.value))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }
@@ -300,7 +300,7 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
         case "individual" => (__ \ 'establisherDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
         case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-      }).map(x => x.count(deleted => deleted == JsBoolean(false)))))) match {
+      }).map(_.count(deleted => !deleted.value))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
     }

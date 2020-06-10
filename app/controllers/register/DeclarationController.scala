@@ -141,6 +141,7 @@ class DeclarationController @Inject()(
     }
   }
 
+  //scalastyle:off magic.number
   private def formatSrnForEmail(srn: String): String = {
     //noinspection ScalaStyle
     val (start, end) = srn.splitAt(6)

@@ -75,7 +75,7 @@ class CheckYourAnswersAddressController @Inject()(val appConfig: FrontendAppConf
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,

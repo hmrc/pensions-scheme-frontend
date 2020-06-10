@@ -59,5 +59,10 @@ object CheckYourAnswersControllerHelper {
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
 
   def isNewItem(mode: Mode, ua: UserAnswers, id: TypedIdentifier[Boolean]): Boolean =
-    mode == NormalMode || mode == CheckMode || ua.get(id).getOrElse(false)
+    (mode, ua.get(id)) match {
+      case (NormalMode, _) => true
+      case (CheckMode, _) => true
+      case (_, Some(true)) => true
+      case _ => false
+    }
 }

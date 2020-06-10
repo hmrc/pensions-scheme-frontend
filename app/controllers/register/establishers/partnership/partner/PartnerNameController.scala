@@ -65,7 +65,7 @@ class PartnerNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
 
-  def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) =
     CommonFormWithHintViewModel(
     postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partnerName__title"),

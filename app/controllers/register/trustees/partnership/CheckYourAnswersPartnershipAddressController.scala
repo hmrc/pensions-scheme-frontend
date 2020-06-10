@@ -75,7 +75,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsTrusteeNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,

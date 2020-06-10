@@ -87,7 +87,7 @@ class DirectorNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
 
-  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
     postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorName__title"),

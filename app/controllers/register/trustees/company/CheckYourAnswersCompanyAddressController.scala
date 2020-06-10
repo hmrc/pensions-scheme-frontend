@@ -77,7 +77,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,

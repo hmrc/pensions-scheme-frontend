@@ -51,6 +51,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
 
+  //scalastyle:off method.length
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
