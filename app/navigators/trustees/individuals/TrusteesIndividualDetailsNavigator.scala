@@ -29,6 +29,7 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
+//scalastyle:off cyclomatic.complexity
 class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
   extends AbstractNavigator {
 

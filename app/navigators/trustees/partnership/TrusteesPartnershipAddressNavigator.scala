@@ -29,6 +29,7 @@ import utils.UserAnswers
 import controllers.routes.{AnyMoreChangesController, SessionExpiredController}
 import identifiers.register.trustees.IsTrusteeNewId
 
+//scalastyle:off cyclomatic.complexity
 class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
   extends AbstractNavigator {
 
@@ -37,7 +38,6 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
-  //scalastyle:off cyclomatic.complexity
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: Option[String]): PartialFunction[Identifier, Call] = {
@@ -56,8 +56,6 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
     case PartnershipPreviousAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
     case PartnershipPreviousAddressId(index) => cyaAddress(journeyMode(mode), index, None)
   }
-
-  //scalastyle:on cyclomatic.complexity
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)

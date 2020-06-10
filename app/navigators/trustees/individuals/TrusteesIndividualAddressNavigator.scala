@@ -30,6 +30,7 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
+//scalastyle:off cyclomatic.complexity
 class TrusteesIndividualAddressNavigator @Inject()(
                                                     val dataCacheConnector: UserAnswersCacheConnector
                                                   ) extends AbstractNavigator {
@@ -41,8 +42,6 @@ class TrusteesIndividualAddressNavigator @Inject()(
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
-
-  //scalastyle:on cyclomatic.complexity
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
@@ -73,7 +72,6 @@ class TrusteesIndividualAddressNavigator @Inject()(
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  //scalastyle:off cyclomatic.complexity
   private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier,
     Call] = {
     case IndividualPostCodeLookupId(index) =>

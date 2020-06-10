@@ -112,15 +112,19 @@ object TolerantAddress {
       case (None, Some(formattedCounty)) =>
         (if (checkIfElementAlreadyExistsInLines(addressLines, formattedCounty)) None else Some(formattedCounty), None)
       case (Some(formattedTown), Some(formattedCounty)) =>
-        val townAlreadyExists = checkIfElementAlreadyExistsInLines(addressLines, formattedTown)
-        val countyAlreadyExists = checkIfElementAlreadyExistsInLines(addressLines, formattedCounty)
-        (townAlreadyExists, countyAlreadyExists) match {
-          case (true, false) => (Some(formattedCounty), None)
-          case (false, true) => (Some(formattedTown), None)
-          case (true, true) => (None, None)
-          case _ => (Some(formattedTown), Some(formattedCounty))
-        }
+        formatTownAndCounty(formattedTown, formattedCounty, addressLines)
       case _ => (None, None)
+    }
+  }
+
+  private def formatTownAndCounty(formattedTown:String, formattedCounty: String, addressLines: List[String]) = {
+    val townAlreadyExists = checkIfElementAlreadyExistsInLines(addressLines, formattedTown)
+    val countyAlreadyExists = checkIfElementAlreadyExistsInLines(addressLines, formattedCounty)
+    (townAlreadyExists, countyAlreadyExists) match {
+      case (true, false) => (Some(formattedCounty), None)
+      case (false, true) => (Some(formattedTown), None)
+      case (true, true) => (None, None)
+      case _ => (Some(formattedTown), Some(formattedCounty))
     }
   }
 

@@ -136,6 +136,7 @@ trait UserAnswersService {
     }
   }
 
+  //scalastyle:off cyclomatic.complexity
   def getIsNewId[T](id: TypedIdentifier[T]): Option[TypedIdentifier[Boolean]] = id match {
     case TrusteeCompanyAddressYearsId(index) => Some(IsTrusteeNewId(index))
     case TrusteePartnershipAddressYearsId(index) => Some(IsTrusteeNewId(index))

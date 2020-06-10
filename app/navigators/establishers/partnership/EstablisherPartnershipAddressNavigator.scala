@@ -29,6 +29,7 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
+//scalastyle:off cyclomatic.complexity
 class EstablisherPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
   AbstractNavigator {
 
@@ -40,9 +41,6 @@ class EstablisherPartnershipAddressNavigator @Inject()(val dataCacheConnector: U
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  //scalastyle:on cyclomatic.complexity
-
-  //scalastyle:off cyclomatic.complexity
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
   : PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, None)

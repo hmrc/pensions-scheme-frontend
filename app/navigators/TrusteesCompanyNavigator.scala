@@ -29,6 +29,7 @@ import utils.UserAnswers
 import controllers.register.trustees.routes.AddTrusteeController
 import controllers.routes.AnyMoreChangesController
 
+//scalastyle:off cyclomatic.complexity
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   import TrusteesCompanyNavigator._
