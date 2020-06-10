@@ -54,7 +54,7 @@ object Lock extends Enumerable.Implicits {
         case _ => JsError("cannot parse it")
       }
 
-    implicit def writes(lock: Lock) = JsString(lock.toString)
+    implicit def writes(lock: Lock): JsString = JsString(lock.toString)
 
   }
 
