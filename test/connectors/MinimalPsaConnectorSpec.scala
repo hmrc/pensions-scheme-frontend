@@ -17,11 +17,12 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.MinimalPSA
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsResultException, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
 import utils.WireMockHelper
 
 class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -91,6 +92,39 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     }
 
   }
+
+  "getMinimalPsaDetails" should "return successfully when the backend has returned OK" in {
+
+    server.stubFor(
+      get(urlEqualTo(minimalPsaDetailsUrl))
+        .willReturn(
+          ok(validResponse)
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[MinimalPsaConnectorImpl]
+
+    connector.getMinimalPsaDetails(psaId) map {
+      _ shouldBe MinimalPSA(email, isPsaSuspended = true, Some("test ltd"), None)
+    }
+  }
+
+  it should "return BadRequestException when the backend has returned anything other than ok" in {
+    server.stubFor(
+      get(urlEqualTo(minimalPsaDetailsUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[MinimalPsaConnectorImpl]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getMinimalPsaDetails(psaId)
+    }
+  }
 }
 
 object MinimalPsaConnectorSpec extends OptionValues {
@@ -100,11 +134,14 @@ object MinimalPsaConnectorSpec extends OptionValues {
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   private val psaId = "test-psa-id"
+  private val email = "test@test.com"
 
   private val validResponse =
     Json.stringify(
       Json.obj(
-        "isPsaSuspended" -> true
+        "email" -> email,
+        "isPsaSuspended" -> true,
+        "organisationName" -> "test ltd"
       )
     )
 
