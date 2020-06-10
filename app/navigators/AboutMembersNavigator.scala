@@ -24,8 +24,8 @@ import models.{CheckMode, Members, Mode, NormalMode}
 import utils.{Enumerable, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                      appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable
-.Implicits {
+                                      appConfig: FrontendAppConfig
+                                     ) extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

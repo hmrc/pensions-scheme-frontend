@@ -29,8 +29,8 @@ import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig)
-  extends AbstractNavigator with Enumerable.Implicits {
+class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                  appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
 
@@ -89,16 +89,19 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def trusteeKindRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String])
-  : Option[NavigateTo] = {
+  private def trusteeKindRoutes(index: Int,
+                                answers: UserAnswers,
+                                mode: Mode,
+                                srn: Option[String]
+                               ): Option[NavigateTo] = {
     answers.get(TrusteeKindId(index)) match {
       case Some(TrusteeKind.Company) =>
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
         NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Partnership) =>
-        NavigateTo.dontSave(controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad
-        (mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.partnership.routes
+          .PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
@@ -106,8 +109,8 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = routes(from,
-    UpdateMode, srn)
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+    routes(from, UpdateMode, srn)
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }

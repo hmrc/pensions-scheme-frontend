@@ -44,8 +44,11 @@ trait DataCompletionTrustees {
     )
 
   def isTrusteeCompanyAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some
-    (HasBeenTradingCompanyId(index)))
+    isAddressComplete(
+      CompanyAddressId(index),
+      CompanyPreviousAddressId(index),
+      CompanyAddressYearsId(index),
+      Some(HasBeenTradingCompanyId(index)))
 
   def isTrusteeCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
@@ -72,10 +75,13 @@ trait DataCompletionTrustees {
   }
 
   def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
+    isAddressComplete(TrusteeAddressId(index),
+      TrusteePreviousAddressId(index),
+      TrusteeAddressYearsId(index),
+      None)
 
-  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete
-  (TrusteeEmailId(index), TrusteePhoneId(index))
+  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
 
   def isTrusteePartnershipComplete(index: Int): Boolean =
     isComplete(Seq(

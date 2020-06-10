@@ -26,14 +26,15 @@ import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import utils.UserAnswers
 
 class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                   appConfig: FrontendAppConfig) extends AbstractNavigator {
+                                                   appConfig: FrontendAppConfig
+                                                  ) extends AbstractNavigator {
 
 
   //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
-      case InvestmentRegulatedSchemeId => NavigateTo.dontSave(OccupationalPensionSchemeController.onPageLoad
-      (NormalMode))
+      case InvestmentRegulatedSchemeId =>
+        NavigateTo.dontSave(OccupationalPensionSchemeController.onPageLoad(NormalMode))
       case OccupationalPensionSchemeId => NavigateTo.dontSave(TypeOfBenefitsController.onPageLoad(NormalMode))
       case TypeOfBenefitsId => NavigateTo.dontSave(BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None))
       case BenefitsSecuredByInsuranceId => benefitsSecuredRoutes(from.userAnswers, NormalMode)
@@ -66,8 +67,9 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case _ => None
     }
 
-  private def benefitsSecuredEditRoutes(userAnswers: UserAnswers, mode: Mode, srn: Option[String] = None)
-  : Option[NavigateTo] = {
+  private def benefitsSecuredEditRoutes(userAnswers: UserAnswers,
+                                        mode: Mode,
+                                        srn: Option[String] = None): Option[NavigateTo] = {
     userAnswers.get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, srn))
       case Some(false) => if (mode == CheckMode) {
@@ -95,8 +97,8 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckUpdateMode, srn)
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(UpdateMode, srn))
       case InsurancePolicyNumberId => anyMoreChanges(srn)
-      case InsurerEnterPostCodeId => NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(CheckUpdateMode,
-        srn))
+      case InsurerEnterPostCodeId =>
+        NavigateTo.dontSave(InsurerSelectAddressController.onPageLoad(CheckUpdateMode, srn))
       case InsurerSelectAddressId => anyMoreChanges(srn)
       case InsurerConfirmAddressId => anyMoreChanges(srn)
       case _ => None

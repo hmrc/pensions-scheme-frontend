@@ -43,7 +43,10 @@ trait Navigator {
     controllers.routes.IndexController.onPageLoad()
   }
 
-  def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+  def nextPageOptional(id: Identifier,
+                       mode: Mode,
+                       userAnswers: UserAnswers,
+                       srn: Option[String] = None)
                       (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
 
   case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
@@ -61,9 +64,13 @@ trait Navigator {
 
 abstract class AbstractNavigator extends Navigator {
 
-  override final def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
-                                     (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier)
-  : Option[Call] = {
+  override final def nextPageOptional(id: Identifier,
+                                      mode: Mode,
+                                      userAnswers: UserAnswers,
+                                      srn: Option[String] = None)
+                                     (implicit ex: IdentifiedRequest,
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier): Option[Call] = {
 
     val navigateTo = {
       mode match {
@@ -77,8 +84,9 @@ abstract class AbstractNavigator extends Navigator {
     navigateTo.map(to => saveAndContinue(to, ex.externalId))
   }
 
-  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)(implicit ec: ExecutionContext,
-                                                                                hc: HeaderCarrier): Call = {
+  private[this] def saveAndContinue(navigation: NavigateTo,
+                                    externalID: String)(implicit ec: ExecutionContext,
+                                                        hc: HeaderCarrier): Call = {
     if (navigation.save) {
       dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
         case Failure(t: Throwable) => Logger.warn("Error saving user's current page", t)
@@ -117,8 +125,8 @@ abstract class AbstractNavigator extends Navigator {
 
   protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  protected def navigateTo(routeMapping: PartialFunction[Identifier, Call], identifier: Identifier)
-  : Option[NavigateTo] =
+  protected def navigateTo(routeMapping: PartialFunction[Identifier, Call],
+                           identifier: Identifier): Option[NavigateTo] =
     if (routeMapping.isDefinedAt(identifier))
       NavigateTo.dontSave(routeMapping(identifier))
     else

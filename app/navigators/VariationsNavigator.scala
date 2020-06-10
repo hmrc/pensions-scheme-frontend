@@ -24,7 +24,8 @@ import models.UpdateMode
 import utils.Enumerable
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                    config: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
+                                    config: FrontendAppConfig
+                                   ) extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 

@@ -45,8 +45,8 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         formProvider: EmailFormProvider,
                                         val view: emailAddress,
                                         val controllerComponents: MessagesControllerComponents
-                                       )(implicit val executionContext: ExecutionContext) extends
-  EmailAddressController with I18nSupport {
+                                       )(implicit val executionContext: ExecutionContext
+            ) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 
@@ -59,8 +59,10 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
-  : Retrieval[CommonFormWithHintViewModel] =
+  private def viewModel(mode: Mode,
+                        establisherIndex: Index,
+                        directorIndex: Index,
+                        srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
