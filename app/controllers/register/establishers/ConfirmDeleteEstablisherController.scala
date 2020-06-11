@@ -84,12 +84,12 @@ class ConfirmDeleteEstablisherController @Inject()(
   private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers)
   : Option[DeletableEstablisher] = {
     establisherKind match {
-      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details => DeletableEstablisher(details
-        .fullName, details.isDeleted))
-      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details
-        .companyName, details.isDeleted))
-      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details
-        .name, details.isDeleted))
+      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details =>
+        DeletableEstablisher(details.fullName, details.isDeleted))
+      case Company => userAnswers.get(CompanyDetailsId(index)).map(details =>
+        DeletableEstablisher(details.companyName, details.isDeleted))
+      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details =>
+        DeletableEstablisher(details.name, details.isDeleted))
     }
   }
 
@@ -140,14 +140,14 @@ class ConfirmDeleteEstablisherController @Inject()(
         val deletionResult = if (value) {
           establisherKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
-              company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex), company.copy
-              (isDeleted = true)))
+              company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex),
+                company.copy (isDeleted = true)))
             case Indivdual => establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
-              individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex), individual.copy
-              (isDeleted = true)))
+              individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex),
+                individual.copy (isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
-              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex), partnership
-                .copy(isDeleted = true)))
+              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex),
+                partnership.copy(isDeleted = true)))
           }
         } else {
           Future.successful(dataRequest.userAnswers.json)

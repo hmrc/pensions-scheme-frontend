@@ -77,8 +77,8 @@ class DeclarationController @Inject()(
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 
-    val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant
-      .values(1)
+    val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head
+    else DeclarationDormant.values(1)
     val readyForRender = if (isEstCompany) {
       dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
     } else {
