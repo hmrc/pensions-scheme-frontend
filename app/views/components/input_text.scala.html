@@ -25,60 +25,41 @@
 )(implicit messages: Messages)
 
 @ariaDescribedBy = @{
-    val errorId = if(field.hasErrors) Seq(s"error-notification-${field.id}-input") else Seq.empty
-    val hintId = if(hint.nonEmpty) Seq(s"hint-${field.id}") else Seq.empty
+    val errorId = if (field.hasErrors) Seq(s"error-notification-${field.id}-input") else Seq.empty
+    val hintId = if (hint.nonEmpty) Seq(s"hint-${field.id}") else Seq.empty
     (hintId ++ errorId).mkString(" ")
 }
 
-<div id="@{
-    field.id
-}-form" class="form-group @groupClass @if(field.hasErrors) {form-field--error}">
-    @if(headingIsLegend) {
+<div id="@{field.id}-form" class="form-group @groupClass @if(field.hasErrors){form-field--error}">
+    @if(headingIsLegend){
         <h1>
-            <label class="form-label" for="@{
-                field.id
-            }">
-                <span class="bold heading-xlarge">@label</span>
+            <label class="form-label" for="@{field.id}">
+                    <span class="bold heading-xlarge">@label</span>
             </label>
         </h1>
     } else {
-        <label class="form-label" for="@{
-            field.id
-        }">
-            <span class="bold @if(labelClass.nonEmpty) {@labelClass}">@label</span>
+        <label class="form-label" for="@{field.id}">
+            <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
         </label>
     }
-    @hint.map { hintText =>
-        <span id= "hint-@{
-            field.id
-        }" class="form-hint">@hintText</span>
+    @hint.map{hintText=>
+        <span id= "hint-@{field.id}" class="form-hint">@hintText</span>
     }
     @field.errors.map { error =>
 
-        <span class="error-notification" id="error-notification-@{
-            field.id
-        }-input">
-            <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)
-        </span>
+    <span class="error-notification" id="error-notification-@{field.id}-input">
+            <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args:_*)
+            </span>
     }
     <div class="form-control-wrapper">
 
         <input
         class="form-control @inputClass"
         type="text"
-        id="@{
-            field.id
-        }"
-        name="@{
-            field.name
-        }"
-        value="@{
-            field.value
-        }"
-            @if(field.hasErrors || hint.nonEmpty) {
-                aria-describedby="@{
-                    ariaDescribedBy
-                }"}
+        id="@{field.id}"
+        name="@{field.name}"
+        value="@{field.value}"
+        @if(field.hasErrors || hint.nonEmpty){aria-describedby="@{ariaDescribedBy}"}
         />
     </div>
 </div>

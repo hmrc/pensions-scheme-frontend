@@ -25,32 +25,26 @@
         selectClasses: Set[String] = Set.empty,
         headingIsLegend: Boolean = false)(implicit messages: Messages)
 
-<div id="@{
-    field.id
-}-form" class="form-group @formGroupClasses.mkString(" ") @if(field.hasErrors) {form-field--error}">
+<div id="@{field.id}-form" class="form-group @formGroupClasses.mkString(" ") @if(field.hasErrors) {form-field--error}">
 
-    @if(headingIsLegend) {
-        <h1>
-            <label class="form-label" for="@{
-                field.id
-            }">
-                <span class="bold heading-xlarge">@label</span>
-            </label>
-        </h1>
-    } else {
-        <label class="form-label" for="@{
-            field.id
-        }">
-            <span class="bold @if(labelClasses.nonEmpty) {@labelClasses}">@label</span>
+    @if(headingIsLegend){
+    <h1>
+        <label class="form-label" for="@{field.id}">
+            <span class="bold heading-xlarge">@label</span>
         </label>
+    </h1>
+    } else {
+    <label class="form-label" for="@{field.id}">
+        <span class="bold @if(labelClasses.nonEmpty){@labelClasses}">@label</span>
+    </label>
     }
     @hint.map { hintText =>
-        <span class="form-hint">@messages(hintText)</span>
+    <span class="form-hint">@messages(hintText)</span>
     }
 
     @field.errors.headOption.map { error =>
-        <span class="error-message">
-            <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
+    <span class="error-message">
+                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
     }
 
     <div class="form-control-wrapper">
@@ -61,11 +55,8 @@
                 <option value="">@messages(ph)</option>
             }
             @options.map { valueOption =>
-                <option id="value-@{
-                    valueOption.value
-                }" value="@valueOption.value"
-            @if(field.value.contains(valueOption.value)) {selected}>@messages(valueOption.label) </option>
-            }
+                <option id="value-@{valueOption.value}" value="@valueOption.value"
+            @if(field.value.contains(valueOption.value)) {selected}>@messages(valueOption.label)</option>}
         </select>
     </div>
 </div>
