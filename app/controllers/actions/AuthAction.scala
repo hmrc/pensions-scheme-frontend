@@ -37,8 +37,8 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
   AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request
-      .session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
@@ -65,8 +65,8 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
   }
 
   private def getPsaId(enrolments: Enrolments) =
-    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value).getOrElse(throw new
-        PsaIdNotFound)
+    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value)
+      .getOrElse(throw new PsaIdNotFound)
 
 }
 

@@ -40,8 +40,8 @@ class DataRetrievalImpl(
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request
-      .session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers,
+      Some(request.session))
     mode match {
       case NormalMode | CheckMode =>
         getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
@@ -68,8 +68,8 @@ class DataRetrievalImpl(
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
           case Some(foundSrn) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly
-              = true)
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId,
+              viewOnly = true)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
         }
