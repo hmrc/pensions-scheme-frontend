@@ -18,12 +18,11 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyNoCRNReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ CompanyNoCRNReasonId.toString
@@ -32,14 +31,14 @@ case class CompanyNoCRNReasonId(index: Int) extends TypedIdentifier[String] {
 object CompanyNoCRNReasonId {
   override def toString: String = "noCrnReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyNoCRNReasonId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[CompanyNoCRNReasonId] = {
 
     new CheckYourAnswersCompany[CompanyNoCRNReasonId] {
 
-      private def label(index: Int, ua: UserAnswers): String =
+      private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__whyNoCRN")
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noCrnReason")
 
       override def row(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

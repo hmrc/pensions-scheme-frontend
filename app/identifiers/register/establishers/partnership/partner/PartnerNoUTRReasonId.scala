@@ -18,12 +18,11 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
@@ -31,15 +30,14 @@ case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extend
 
 object PartnerNoUTRReasonId {
   override def toString: String = "noUtrReason"
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnerNoUTRReasonId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerNoUTRReasonId] = {
 
     new CheckYourAnswersPartners[PartnerNoUTRReasonId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__whyNoUTR")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")
 
       override def row(id: PartnerNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -18,12 +18,11 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipHasVATId.toString
@@ -41,15 +40,16 @@ case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
+  implicit def cya: CheckYourAnswers[PartnershipHasVATId] = {
 
-    new CheckYourAnswers[PartnershipHasVATId] {
+    new CheckYourAnswersPartnership[PartnershipHasVATId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasVAT"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasVat"))
+      }
       override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__hasVAT", partnershipName))
-        val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasVat", partnershipName))
-
-        BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
       }
 
       override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

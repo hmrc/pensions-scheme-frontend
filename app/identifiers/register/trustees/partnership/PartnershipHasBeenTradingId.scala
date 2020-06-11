@@ -18,12 +18,11 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteePartnership}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasBeenTradingId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipHasBeenTradingId.toString
@@ -44,14 +43,15 @@ case class PartnershipHasBeenTradingId(index: Int) extends TypedIdentifier[Boole
 object PartnershipHasBeenTradingId {
   override def toString: String = "hasBeenTrading"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasBeenTradingId] =
-    new CheckYourAnswers[PartnershipHasBeenTradingId] {
+  implicit def cya: CheckYourAnswers[PartnershipHasBeenTradingId] =
+    new CheckYourAnswersTrusteePartnership[PartnershipHasBeenTradingId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasBeenTrading__h1"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic__hasBeenTrading"))
+      }
 
       override def row(id: PartnershipHasBeenTradingId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
-        val label = messages("messages__hasBeenTrading__h1", trusteeName)
-        val hiddenLabel = messages("messages__visuallyhidden__dynamic__hasBeenTrading", trusteeName)
-
+        val (label, hiddenLabel) = getLabel(id.index, ua)
         BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, ua)
       }
 

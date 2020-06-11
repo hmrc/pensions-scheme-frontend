@@ -22,8 +22,8 @@ import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersPartnership}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipAddressYearsId.toString
@@ -43,15 +43,17 @@ object PartnershipAddressYearsId {
   override def toString: String = "partnershipAddressYears"
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressYearsId] =
-    new CheckYourAnswers[PartnershipAddressYearsId] {
-      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
-        val label = messages("messages__partnershipAddressYears__heading", establisherName)
-        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", establisherName)
+    new CheckYourAnswersPartnership[PartnershipAddressYearsId] {
+      private def label(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__partnershipAddressYears__heading")
 
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_addressYears")
+
+      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         AddressYearsCYA(
-          label = label,
-          changeAddressYears = changeAddressYears
+          label = label(id.index, ua),
+          changeAddressYears = hiddenLabel(id.index, ua)
         )().row(id)(changeUrl, ua)
       }
 

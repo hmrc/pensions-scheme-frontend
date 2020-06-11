@@ -19,11 +19,10 @@ package identifiers.register.establishers.partnership.partner
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterUTRId.toString
@@ -35,15 +34,14 @@ case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends T
 object PartnerEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnerEnterUTRId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerEnterUTRId] = {
 
     new CheckYourAnswersPartners[PartnerEnterUTRId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterUTR")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
 
       override def row(id: PartnerEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

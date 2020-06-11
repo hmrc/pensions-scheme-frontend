@@ -19,11 +19,10 @@ package identifiers.register.establishers.individual
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersIndividual}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class AddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ AddressId.toString
@@ -32,18 +31,18 @@ case class AddressId(index: Int) extends TypedIdentifier[Address] {
 object AddressId {
   override def toString: String = "address"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, ua: UserAnswers): CheckYourAnswers[AddressId] =
-    new CheckYourAnswers[AddressId] {
+  implicit def cya(implicit countryOptions: CountryOptions, ua: UserAnswers): CheckYourAnswers[AddressId] =
+    new CheckYourAnswersIndividual[AddressId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__addressFor"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_address"))
+      }
+
       override def row(id: AddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(EstablisherNameId(id.index)).map(_.fullName).getOrElse(messages("messages__theEstablisher"))
-
-        val label = messages("messages__addressFor", establisherName)
-
-        val changeAddress = messages("messages__visuallyhidden__dynamic_address", establisherName)
-
+        val (label, hiddenLabel) = getLabel(id.index, ua)
         AddressCYA(
           label,
-          changeAddress
+          hiddenLabel
         )().row(id)(changeUrl, ua)
       }
 

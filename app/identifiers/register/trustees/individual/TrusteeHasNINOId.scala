@@ -18,21 +18,20 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeHasNINOId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(true)  => userAnswers.remove(TrusteeNoNINOReasonId(index))
+      case Some(true) => userAnswers.remove(TrusteeNoNINOReasonId(index))
       case Some(false) => userAnswers.remove(TrusteeEnterNINOId(index))
-      case _           => super.cleanup(value, userAnswers)
+      case _ => super.cleanup(value, userAnswers)
     }
   }
 }
@@ -40,21 +39,26 @@ case class TrusteeHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
 object TrusteeHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasNINOId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[TrusteeHasNINOId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int): Option[String] = Some(messages("messages__hasNINO", trusteeName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", trusteeName(index)))
+    new CheckYourAnswersTrusteeIndividual[TrusteeHasNINOId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasNINO"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasNino"))
+      }
 
-    new CheckYourAnswers[TrusteeHasNINOId] {
-      override def row(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
-      override def updateRow(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: TrusteeHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case Some(true) => BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+          case _ => Seq.empty[AnswerRow]
         }
+      }
     }
   }
 }

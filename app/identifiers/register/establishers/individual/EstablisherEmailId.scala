@@ -18,12 +18,11 @@ package identifiers.register.establishers.individual
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherEmailId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ "contactDetails" \ EstablisherEmailId.toString
@@ -32,19 +31,18 @@ case class EstablisherEmailId(index: Int) extends TypedIdentifier[String] {
 object EstablisherEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherEmailId] = new
-      CheckYourAnswers[EstablisherEmailId] {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[EstablisherEmailId] = new
+      CheckYourAnswersIndividual[EstablisherEmailId] {
+    def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+      (dynamicMessage(index, ua, "messages__enterEmail"),
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address"))
+    }
 
     override def row(id: EstablisherEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val establisherName: String = userAnswers.get(EstablisherNameId(id.index)).fold(messages("messages__theIndividual"))(_.fullName)
-
-      val label: String = messages("messages__enterEmail", establisherName)
-
-      val hiddenLabel: Option[String] = Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName))
-
+      val (label, hiddenLabel) = getLabel(id.index, userAnswers)
       StringCYA(
         Some(label),
-        hiddenLabel
+        Some(hiddenLabel)
       )().row(id)(changeUrl, userAnswers)
     }
 

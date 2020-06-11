@@ -18,12 +18,11 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerNoNINOReasonId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNoNINOReasonId.toString
@@ -33,15 +32,14 @@ case class PartnerNoNINOReasonId(establisherIndex: Int, partnerIndex: Int) exten
 object PartnerNoNINOReasonId {
   override def toString: String = "noNinoReason"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnerNoNINOReasonId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerNoNINOReasonId] = {
 
     new CheckYourAnswersPartners[PartnerNoNINOReasonId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__whyNoNINO")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noNinoReason")
 
       override def row(id: PartnerNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

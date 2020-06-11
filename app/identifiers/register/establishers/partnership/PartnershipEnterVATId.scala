@@ -19,11 +19,10 @@ package identifiers.register.establishers.partnership
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipEnterVATId.toString
@@ -32,14 +31,11 @@ case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterVATId {
   override def toString: String = "partnershipVat"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
-    new CheckYourAnswers[PartnershipEnterVATId] {
-
-      def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__enterVAT", partnershipName),
-          messages("messages__visuallyhidden__dynamic_vat_number", partnershipName))
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
+    new CheckYourAnswersPartnership[PartnershipEnterVATId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterVAT"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_vat_number"))
       }
 
       override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

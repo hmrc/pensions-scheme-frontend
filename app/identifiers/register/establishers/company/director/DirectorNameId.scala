@@ -20,8 +20,7 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Link
 import models.person.PersonName
-import play.api.i18n.Messages
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
@@ -35,17 +34,17 @@ object DirectorNameId {
 
   override def toString: String = "directorDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorNameId] = {
+  implicit def cya: CheckYourAnswers[DirectorNameId] = {
     new CheckYourAnswers[DirectorNameId] {
 
       override def row(id: DirectorNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails => {
           Seq(
             AnswerRow(
-              "messages__directorName__cya",
+              Message("messages__directorName__cya"),
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__directorName", personDetails.fullName).resolve)))
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__directorName", personDetails.fullName))))
             )
           )
         }}
@@ -57,7 +56,7 @@ object DirectorNameId {
             userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { personDetails =>
               Seq(
                 AnswerRow(
-                  "messages__directorName__cya",
+                  Message("messages__directorName__cya"),
                   Seq(personDetails.fullName),
                   answerIsMessageKey = false,
                   None

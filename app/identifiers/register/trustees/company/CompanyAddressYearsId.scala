@@ -19,11 +19,10 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersTrusteeCompany}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = TrusteesId(index).path \ CompanyAddressYearsId.toString
@@ -46,18 +45,18 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressYearsId] =
-    new CheckYourAnswers[CompanyAddressYearsId] {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyAddressYearsId] =
+    new CheckYourAnswersTrusteeCompany[CompanyAddressYearsId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__trusteeAddressYears__heading"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_addressYears"))
+      }
       override def row(id: CompanyAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
-
-        val label = messages("messages__trusteeAddressYears__heading", trusteeName)
-
-        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
+        val (label, hiddenLabel) = getLabel(id.index, ua)
 
         AddressYearsCYA(
           label = label,
-          changeAddressYears = changeAddressYears
+          changeAddressYears = hiddenLabel
         )().row(id)(changeUrl, ua)
       }
 

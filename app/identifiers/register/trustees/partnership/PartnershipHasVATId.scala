@@ -18,12 +18,11 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteePartnership}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipHasVATId.toString
@@ -41,21 +40,26 @@ case class PartnershipHasVATId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasVATId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[PartnershipHasVATId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-    def label(index: Int) = Some(messages("messages__hasVAT", trusteeName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasVat", trusteeName(index)))
+    new CheckYourAnswersTrusteePartnership[PartnershipHasVATId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasVAT"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasVat"))
+      }
 
-    new CheckYourAnswers[PartnershipHasVATId] {
-      override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
-      override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipHasVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
+      }
     }
   }
 }

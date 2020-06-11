@@ -20,11 +20,10 @@ import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteePartnership, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipEnterUTRId.toString
@@ -37,23 +36,26 @@ object PartnershipEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-    def label(index: Int) = messages("messages__enterUTR", trusteeName(index))
-    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", trusteeName(index))
+    new CheckYourAnswersTrusteePartnership[PartnershipEnterUTRId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference"))
+      }
 
-    new CheckYourAnswers[PartnershipEnterUTRId] {
-      override def row(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[PartnershipEnterUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

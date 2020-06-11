@@ -22,9 +22,9 @@ import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeUTRId.toString
@@ -40,20 +40,24 @@ object TrusteeUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[TrusteeUTRId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
-    def label(index: Int): String = messages("messages__enterUTR", trusteeName(index))
-    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", trusteeName(index))
+    new CheckYourAnswersTrusteeIndividual[TrusteeUTRId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference"))
+      }
 
-    new CheckYourAnswers[TrusteeUTRId] {
-      override def row(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[TrusteeUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: TrusteeUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[TrusteeUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

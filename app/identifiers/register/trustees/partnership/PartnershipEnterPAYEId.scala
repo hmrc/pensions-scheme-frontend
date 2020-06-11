@@ -19,11 +19,10 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteePartnership, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipEnterPAYEId.toString
@@ -32,23 +31,27 @@ case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceV
 object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
-    new CheckYourAnswers[PartnershipEnterPAYEId] {
+  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+    new CheckYourAnswersTrusteePartnership[PartnershipEnterPAYEId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterPAYE"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_paye_reference"))
+      }
 
-      def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
-      def label(index: Int) = messages("messages__enterPAYE", trusteeName(index))
-      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_paye_reference", trusteeName(index))
+      override def row(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[PartnershipEnterPAYEId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
-      override def row(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }

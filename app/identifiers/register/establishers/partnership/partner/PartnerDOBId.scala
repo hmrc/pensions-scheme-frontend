@@ -21,11 +21,10 @@ import java.time.LocalDate
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Link
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{DateHelper, UserAnswers}
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
-import viewmodels.AnswerRow
+import utils.{DateHelper, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
@@ -34,13 +33,13 @@ case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedI
 object PartnerDOBId {
   override def toString: String = "dateOfBirth"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerDOBId] = {
+  implicit def cya: CheckYourAnswers[PartnerDOBId] = {
     new CheckYourAnswersPartners[PartnerDOBId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__DOB__heading")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

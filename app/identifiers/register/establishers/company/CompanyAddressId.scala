@@ -19,11 +19,10 @@ package identifiers.register.establishers.company
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersCompany}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ CompanyAddressId.toString
@@ -32,13 +31,13 @@ case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
 object CompanyAddressId {
   override def toString: String = "companyAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyAddressId] =
     new CheckYourAnswersCompany[CompanyAddressId] {
 
-      private def label(establisherIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, ua, "messages__address__cya")
 
-      private def hiddenLabel(establisherIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, ua, "messages__visuallyhidden__dynamic_address")
 
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {

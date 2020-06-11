@@ -20,11 +20,10 @@ import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeEnterNINOId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeEnterNINOId.toString
@@ -37,26 +36,26 @@ object TrusteeEnterNINOId {
 
   override lazy val toString: String = "trusteeNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[TrusteeEnterNINOId] = {
+  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[TrusteeEnterNINOId] = {
 
-    new CheckYourAnswers[TrusteeEnterNINOId] {
+    new CheckYourAnswersTrusteeIndividual[TrusteeEnterNINOId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterNINO"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_national_insurance_number"))
+      }
 
-      private val name = (index: Int) =>
-          userAnswers.get(TrusteeNameId(index)).map(_.fullName)
-
-      def trusteeName(index: Int): String = name(index).getOrElse(messages("messages__theTrustee"))
-      def label(index: Int): String = messages("messages__enterNINO", trusteeName(index))
-      def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_national_insurance_number", trusteeName(index))
-
-      override def row(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[TrusteeEnterNINOId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: TrusteeEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeEnterNINOId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[TrusteeEnterNINOId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[TrusteeEnterNINOId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

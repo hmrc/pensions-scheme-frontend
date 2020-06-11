@@ -34,7 +34,7 @@ object PartnershipDetailsId {
 
   override lazy val toString: String = "partnershipDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
+  implicit def cya: CheckYourAnswers[PartnershipDetailsId] = {
 
     new CheckYourAnswers[PartnershipDetailsId] {
 

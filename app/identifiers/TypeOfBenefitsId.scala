@@ -19,9 +19,9 @@ package identifiers
 import models.{Link, TypeOfBenefits}
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import utils.{CountryOptions, Enumerable, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.AnswerRow
+import utils.{Enumerable, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumerable.Implicits {
   self =>
@@ -30,7 +30,7 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
   implicit def cya(implicit messages: Messages,userAnswers: UserAnswers,rds: Reads[TypeOfBenefits]): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
     val label = messages("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
-    val hiddenLabel = Some(messages("messages__visuallyhidden__type_of_benefits_change", userAnswers.get(SchemeNameId).getOrElse("")))
+    val hiddenLabel = Some(Message("messages__visuallyhidden__type_of_benefits_change", userAnswers.get(SchemeNameId).getOrElse("")))
       private def typeOfBenefitsCYARow(id: self.type , userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
         userAnswers.get(id).map {
           typeOfBenefits =>

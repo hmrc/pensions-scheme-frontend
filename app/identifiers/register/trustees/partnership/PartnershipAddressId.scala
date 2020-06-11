@@ -19,11 +19,10 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersTrusteePartnership}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipAddressId.toString
@@ -32,17 +31,18 @@ case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
 object PartnershipAddressId {
   override def toString: String = "partnershipAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipAddressId] =
 
-    new CheckYourAnswers[PartnershipAddressId] {
+    new CheckYourAnswersTrusteePartnership[PartnershipAddressId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__addressFor"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_address"))
+      }
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
-        val label = messages("messages__addressFor", trusteeName)
-        val changeAddress = messages("messages__visuallyhidden__dynamic_address", trusteeName)
-
+        val (label, hiddenLabel) = getLabel(id.index, ua)
         AddressCYA(
           label = label,
-          changeAddress = changeAddress
+          changeAddress = hiddenLabel
         )().row(id)(changeUrl, ua)
       }
       override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)

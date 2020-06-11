@@ -19,11 +19,10 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPartnership}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
@@ -32,17 +31,19 @@ case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
 object PartnershipAddressId {
   override def toString: String = "partnershipAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipAddressId] =
 
-    new CheckYourAnswers[PartnershipAddressId] {
+    new CheckYourAnswersPartnership[PartnershipAddressId] {
+      private def label(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__address__cya")
+
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_address")
+
       override def row(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val establisherName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theEstablisher"))(_.name)
-        val label = messages("messages__address__cya", establisherName)
-        val changeAddress = messages("messages__visuallyhidden__dynamic_address", establisherName)
-
         AddressCYA(
-          label = label,
-          changeAddress = changeAddress
+          label = label(id.index, ua),
+          changeAddress = hiddenLabel(id.index, ua)
         )().row(id)(changeUrl, ua)
       }
       override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)

@@ -19,11 +19,10 @@ package identifiers.register.establishers.individual
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherUTRId.toString
@@ -36,23 +35,26 @@ object EstablisherUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherUTRId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int): String = messages("messages__enterUTR", establisherName(index))
-    def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", establisherName(index))
+    new CheckYourAnswersIndividual[EstablisherUTRId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference"))
+      }
 
-    new CheckYourAnswers[EstablisherUTRId] {
-      override def row(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[EstablisherUTRId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: EstablisherUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[EstablisherUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherUTRId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

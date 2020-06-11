@@ -21,9 +21,9 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipHasPAYEId.toString
@@ -43,13 +43,14 @@ object PartnershipHasPAYEId {
 
   implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasPAYEId] = {
 
-    new CheckYourAnswers[PartnershipHasPAYEId] {
+    new CheckYourAnswersPartnership[PartnershipHasPAYEId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasPAYE"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasPaye"))
+      }
       override def row(id: PartnershipHasPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__hasPAYE", partnershipName))
-        val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName))
-
-        BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
       }
 
       override def updateRow(id: PartnershipHasPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -18,12 +18,11 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ "companyContactDetails" \ CompanyEmailId.toString
@@ -32,17 +31,17 @@ case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
 object CompanyEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
+  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswersCompany[CompanyEmailId] {
 
-    private def label(index : Int, ua : UserAnswers) : String =
+    private def label(index : Int, ua : UserAnswers) : Message =
       dynamicMessage(index, ua, "messages__enterEmail")
 
-    private def hiddenLabel(index:  Int, ua: UserAnswers) : String =
+    private def hiddenLabel(index:  Int, ua: UserAnswers) : Message =
       dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address")
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      StringCYA(Some(label(id.index, userAnswers)), Some(messages(hiddenLabel(id.index, userAnswers))))()
+      StringCYA(Some(label(id.index, userAnswers)), Some(hiddenLabel(id.index, userAnswers)))()
         .row(id)(changeUrl, userAnswers)
     }
 

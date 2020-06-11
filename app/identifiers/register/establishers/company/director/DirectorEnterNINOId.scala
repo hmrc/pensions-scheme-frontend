@@ -19,11 +19,10 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, ReferenceValueCYA}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorEnterNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorEnterNINOId.toString
@@ -36,14 +35,14 @@ object DirectorEnterNINOId {
 
   override lazy val toString: String = "directorNino"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorEnterNINOId] = {
+  implicit def cya: CheckYourAnswers[DirectorEnterNINOId] = {
 
     new CheckYourAnswersDirectors[DirectorEnterNINOId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__nino")
 
-      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_nino")
 
       override def row(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -19,11 +19,10 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterCRNId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ CompanyEnterCRNId.toString
@@ -35,29 +34,26 @@ case class CompanyEnterCRNId(index: Int) extends TypedIdentifier[ReferenceValue]
 object CompanyEnterCRNId {
   override def toString: String = "companyRegistrationNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterCRNId] = {
 
-    def companyName(index: Int, userAnswers: UserAnswers) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
+    new CheckYourAnswersTrusteeCompany[CompanyEnterCRNId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__checkYourAnswers__trustees__company__number"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_crn"))
+      }
+      override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
       }
 
-    val label: String = "messages__checkYourAnswers__trustees__company__number"
-
-    def changeCrn(index: Int, userAnswers: UserAnswers) =
-      messages("messages__visuallyhidden__dynamic_crn", companyName(index, userAnswers))
-
-    new CheckYourAnswers[CompanyEnterCRNId] {
-      override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, label)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }

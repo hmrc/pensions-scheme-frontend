@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPartners}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressId.toString
@@ -32,13 +32,13 @@ case class PartnerAddressId(establisherIndex: Int, partnerIndex: Int) extends Ty
 object PartnerAddressId {
   override def toString: String = "partnerAddressId"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnerAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerAddressId] = {
 
     new CheckYourAnswersPartners[PartnerAddressId] {
-      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__address__cya")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_address")
 
       override def row(id: PartnerAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {

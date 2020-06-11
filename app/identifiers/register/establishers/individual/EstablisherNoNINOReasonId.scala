@@ -18,12 +18,11 @@ package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherNoNINOReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherNoNINOReasonId.toString
@@ -33,16 +32,17 @@ object EstablisherNoNINOReasonId {
   override def toString: String = "noNinoReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoNINOReasonId] = {
+    new CheckYourAnswersIndividual[EstablisherNoNINOReasonId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__whyNoNINO"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noNinoReason"))
+      }
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__whyNoNINO", establisherName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noNinoReason", establisherName(index)))
-
-    new CheckYourAnswers[EstablisherNoNINOReasonId] {
-      override def row(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
 
       override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

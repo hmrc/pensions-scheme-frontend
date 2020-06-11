@@ -18,12 +18,16 @@ package utils.checkyouranswers
 
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
+import identifiers.register.establishers.individual.EstablisherNameId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.{EstablishedCountryId, TypedIdentifier}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models._
 import models.address.Address
 import models.register._
-import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
@@ -37,30 +41,68 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
 }
 
 trait CheckYourAnswersDirectors[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
-  private def directorName(establisherIndex:Int, directorIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
-    ua.get(DirectorNameId(establisherIndex, directorIndex)).fold(messages("messages__theDirector"))(_.fullName)
+  private def directorName(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): Message =
+    ua.get(DirectorNameId(establisherIndex, directorIndex)).fold(Message("messages__theDirector"))(_.fullName)
 
-  protected def dynamicMessage(establisherIndex: Int, directorIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
-    messages(messageKey, directorName(establisherIndex, directorIndex, ua))
+  protected def dynamicMessage(establisherIndex: Int, directorIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, directorName(establisherIndex, directorIndex, ua))
 
+}
+
+trait CheckYourAnswersIndividual[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def establisherName(establisherIndex: Int, ua: UserAnswers): Message =
+    ua.get(EstablisherNameId(establisherIndex)).fold(Message("messages__theIndividual"))(_.fullName)
+
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, establisherName(establisherIndex, ua))
 }
 
 trait CheckYourAnswersPartners[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
-  private def partnerName(establisherIndex:Int, partnerIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
-    ua.get(PartnerNameId(establisherIndex, partnerIndex)).fold(messages("messages__thePartner"))(_.fullName)
+  private def partnerName(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Message =
+    ua.get(PartnerNameId(establisherIndex, partnerIndex)).fold(Message("messages__thePartner"))(_.fullName)
 
-  protected def dynamicMessage(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
-    messages(messageKey, partnerName(establisherIndex, partnerIndex, ua))
-
+  protected def dynamicMessage(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, partnerName(establisherIndex, partnerIndex, ua))
 }
 
 trait CheckYourAnswersCompany[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
-  private def companyName(establisherIndex:Int, ua:UserAnswers)(implicit messages:Messages):String =
-    ua.get(CompanyDetailsId(establisherIndex)).fold(messages("messages__theCompany"))(_.companyName)
+  private def companyName(establisherIndex: Int, ua: UserAnswers): Message =
+    ua.get(CompanyDetailsId(establisherIndex)).fold(Message("messages__theCompany"))(_.companyName)
 
-  protected def dynamicMessage(establisherIndex: Int, ua:UserAnswers, messageKey:String)(implicit messages:Messages) =
-    messages(messageKey, companyName(establisherIndex, ua))
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, companyName(establisherIndex, ua))
+}
 
+trait CheckYourAnswersPartnership[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def partnershipName(establisherIndex: Int, ua: UserAnswers): Message =
+    ua.get(PartnershipDetailsId(establisherIndex)).fold(Message("messages__thePartnership"))(_.name)
+
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, partnershipName(establisherIndex, ua))
+}
+
+trait CheckYourAnswersTrusteeCompany[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def companyName(trusteeIndex: Int, ua: UserAnswers): Message =
+    ua.get(TrusteeCompanyDetailsId(trusteeIndex)).fold(Message("messages__theCompany"))(_.companyName)
+
+  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, companyName(trusteeIndex, ua))
+}
+
+trait CheckYourAnswersTrusteeIndividual[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def trusteeName(trusteeIndex: Int, ua: UserAnswers): Message =
+    ua.get(TrusteeNameId(trusteeIndex)).fold(Message("messages__theTrustee"))(_.fullName)
+
+  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, trusteeName(trusteeIndex, ua))
+}
+
+trait CheckYourAnswersTrusteePartnership[I <: TypedIdentifier.PathDependent] extends CheckYourAnswers[I] {
+  private def partnershipName(establisherIndex: Int, ua: UserAnswers): Message =
+    ua.get(TrusteePartnershipDetailsId(establisherIndex)).fold(Message("messages__thePartnership"))(_.name)
+
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+    Message(messageKey, partnershipName(establisherIndex, ua))
 }
 
 object CheckYourAnswers {
@@ -72,10 +114,10 @@ object CheckYourAnswers {
   implicit def dormant[I <: TypedIdentifier[DeclarationDormant]](implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = IsDormantCYA()()
 
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
-  (implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = CompanyDetailsCYA()()
+  (implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
   implicit def reference[I <: TypedIdentifier[ReferenceValue]]
-  (implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = ReferenceValueCYA()()
+  (implicit rds: Reads[ReferenceValue]): CheckYourAnswers[I] = ReferenceValueCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
 
@@ -83,7 +125,7 @@ object CheckYourAnswers {
 
   implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
 
-  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None,
+  case class StringCYA[I <: TypedIdentifier[String]](label: Option[Message] = None, hiddenLabel: Option[Message] = None,
                                                      displayAddLink: Boolean = false) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -92,7 +134,7 @@ object CheckYourAnswers {
           userAnswers.get(id).map {
             string =>
               Seq(AnswerRow(
-                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
                 changeUrl
@@ -102,14 +144,14 @@ object CheckYourAnswers {
 
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
           stringCYARow(id, Some(Link("site.change", changeUrl,
-            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
+            Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString})"))(customHiddenLabel => customHiddenLabel)))), userAnswers)
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = stringCYARow(id, None, userAnswers)
       }
     }
   }
 
-  case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+  case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[Message] = None, hiddenLabel: Option[Message] = None) {
 
     def apply()(implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -117,7 +159,7 @@ object CheckYourAnswers {
           userAnswers.get(id).map {
             flag =>
               Seq(AnswerRow(
-                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
                 Seq(if (flag) "site.yes" else "site.no"),
                 answerIsMessageKey = true,
                 changeUrl
@@ -127,7 +169,7 @@ object CheckYourAnswers {
 
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id,
           Some(Link("site.change", changeUrl,
-            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))),
+            Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString}"))(customHiddenLabel => customHiddenLabel)))),
           userAnswers)
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = booleanCYARow(id, None, userAnswers)
@@ -135,7 +177,7 @@ object CheckYourAnswers {
     }
   }
 
-  case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+  case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[Message] = None, hiddenLabel: Option[Message] = None) {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -143,7 +185,7 @@ object CheckYourAnswers {
           userAnswers.get(id).map {
             schemeType =>
               Seq(AnswerRow(
-                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
                 Seq(s"messages__scheme_type_${schemeType.toString}"),
                 answerIsMessageKey = true,
                 changeUrl
@@ -153,7 +195,7 @@ object CheckYourAnswers {
 
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
           schemeTypeCYARow(id, Some(Link("site.change", changeUrl,
-            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))), userAnswers)
+            Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString}"))(customHiddenLabel => customHiddenLabel)))), userAnswers)
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = schemeTypeCYARow(id, None, userAnswers)
       }
@@ -162,22 +204,22 @@ object CheckYourAnswers {
 
   case class PartnershipDetailsCYA[I <: TypedIdentifier[PartnershipDetails]]() {
 
-    def apply()(implicit rds: Reads[PartnershipDetails], messages: Messages): CheckYourAnswers[I] = {
+    def apply()(implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
-          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
-            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve)))))
+          Seq(AnswerRow(Message("messages__common__cya__name"), Seq(partnershipDetails.name), answerIsMessageKey = false,
+            Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name))))))
         } getOrElse Seq.empty[AnswerRow]
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
-          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false, None))
+          Seq(AnswerRow(Message("messages__common__cya__name"), Seq(partnershipDetails.name), answerIsMessageKey = false, None))
         } getOrElse Seq.empty[AnswerRow]
       }
     }
   }
 
-  case class MembersCYA[I <: TypedIdentifier[Members]](label: Option[String] = None,
-                                                       hiddenLabel: Option[String] = None) {
+  case class MembersCYA[I <: TypedIdentifier[Members]](label: Option[Message] = None,
+                                                       hiddenLabel: Option[Message] = None) {
 
     def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -185,7 +227,7 @@ object CheckYourAnswers {
         private def memberCYARow(id: I, userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
           userAnswers.get(id).map { members =>
             Seq(AnswerRow(
-              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
               Seq(s"messages__members__$members"),
               answerIsMessageKey = true,
               changeUrl
@@ -195,15 +237,15 @@ object CheckYourAnswers {
 
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers,
           Some(Link("site.change", changeUrl,
-            Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)))))
+            Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString}"))(customHiddenLabel => customHiddenLabel)))))
 
         override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = memberCYARow(id, userAnswers, None)
       }
     }
   }
 
-  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails],
-                                                                            messages: Messages): CheckYourAnswers[I] = PartnershipDetailsCYA()()
+  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] =
+    PartnershipDetailsCYA()()
 
   private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
     id match {
@@ -213,13 +255,13 @@ object CheckYourAnswers {
     }
   }
 
-  def addLink(label: String, changeUrl: String, hiddenLabel: Option[String]): Seq[AnswerRow] = Seq(AnswerRow(label,
+  def addLink(label: String, changeUrl: String, hiddenLabel: Option[Message]): Seq[AnswerRow] = Seq(AnswerRow(label,
     Seq("site.not_entered"),
     answerIsMessageKey = true,
     Some(Link("site.add", changeUrl, hiddenLabel))))
 }
 
-case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[Message] = None, hiddenLabel: Option[Message] = None) {
 
   def apply()(implicit rds: Reads[BankAccountDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -227,13 +269,13 @@ case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Optio
         userAnswers.get(id).map {
           bankDetails =>
             Seq(AnswerRow(
-              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
               Seq(
                 s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
                 bankDetails.accountNumber),
               answerIsMessageKey = false,
               Some(Link("site.change", changeUrl,
-                Some(hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel))))
+                Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString}"))(customHiddenLabel => customHiddenLabel))))
             ))
         }.getOrElse(Seq.empty[AnswerRow])
 
@@ -242,8 +284,8 @@ case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Optio
   }
 }
 
-case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title",
-                                                               changeAddressYears: String = "messages__visuallyhidden__common__address_years") {
+case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: Message = "messages__establisher_address_years__title",
+                                                               changeAddressYears: Message = "messages__visuallyhidden__common__address_years") {
 
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -265,8 +307,8 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
 }
 
 case class AddressCYA[I <: TypedIdentifier[Address]](
-                                                      label: String = "messages__common__cya__address",
-                                                      changeAddress: String = "messages__visuallyhidden__common__address"
+                                                      label: Message = "messages__common__cya__address",
+                                                      changeAddress: Message = "messages__visuallyhidden__common__address"
                                                     ) {
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -291,8 +333,8 @@ case class AddressCYA[I <: TypedIdentifier[Address]](
 
 }
 
-case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
-                                                             changeAddress: String,
+case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: Message,
+                                                             changeAddress: Message,
                                                              isNew: Option[Boolean],
                                                              isThisPreviousAddress: Option[Boolean]
                                                             ) {
@@ -325,8 +367,8 @@ case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: String,
 }
 
 case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
-                                                                   label: String = "messages__company__cya__dormant",
-                                                                   changeIsDormant: String = "messages__visuallyhidden__establisher__dormant"
+                                                                   label: Message = "messages__company__cya__dormant",
+                                                                   changeIsDormant: Message = "messages__visuallyhidden__establisher__dormant"
                                                                  ) {
 
   def apply()(implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = {
@@ -360,10 +402,10 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
 }
 
 case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
-                                                                    nameLabel: String = "messages__common__cya__name",
+                                                                    nameLabel: Message = "messages__common__cya__name",
                                                                     hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 
-  def apply()(implicit rds: Reads[CompanyDetails], messages: Messages): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -383,10 +425,10 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 }
 
 case class ReferenceValueCYA[I <: TypedIdentifier[ReferenceValue]](
-                                                                    nameLabel: String = "messages__common__cya__name",
-                                                                    hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
+                                                                    nameLabel: Message = "messages__common__cya__name",
+                                                                    hiddenNameLabel: Message = "messages__visuallyhidden__common__name") {
 
-  def apply()(implicit rds: Reads[ReferenceValue], messages: Messages): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[ReferenceValue]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

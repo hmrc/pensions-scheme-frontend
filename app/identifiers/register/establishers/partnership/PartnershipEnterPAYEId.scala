@@ -21,9 +21,9 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipEnterPAYEId.toString
@@ -32,13 +32,12 @@ case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceV
 object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
-    new CheckYourAnswers[PartnershipEnterPAYEId] {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+    new CheckYourAnswersPartnership[PartnershipEnterPAYEId] {
 
-      def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__enterPAYE", partnershipName),
-          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterPAYE"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_paye_reference"))
       }
 
       override def row(id: PartnershipEnterPAYEId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
