@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
@@ -36,9 +36,9 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__enterNINO", name),
+    AnswerRow(Message("messages__enterNINO", name),
       List("nino"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", name)))))
+      Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", name)))))
   )
 
   "Cleanup" when {

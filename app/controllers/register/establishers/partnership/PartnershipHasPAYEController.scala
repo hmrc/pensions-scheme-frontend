@@ -44,7 +44,17 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
                                              formProvider: HasPAYEFormProvider,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: hasReferenceNumber
-                                            )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                            )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipHasPAYEId(index), form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -59,15 +69,6 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
 
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__partnershipHasPaye__error__required", partnershipName)
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            get(PartnershipHasPAYEId(index), form(details.name), viewModel(mode, index, srn, details.name))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

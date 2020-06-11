@@ -40,6 +40,8 @@ trait PostcodeLookupController extends FrontendBaseController with Retrievals wi
 
   protected implicit def ec: ExecutionContext
 
+  private val invalidPostcode: Message = "messages__error__postcode_failed"
+
   protected def appConfig: FrontendAppConfig
 
   protected def userAnswersService: UserAnswersService
@@ -51,8 +53,6 @@ trait PostcodeLookupController extends FrontendBaseController with Retrievals wi
   protected def form: Form[String]
 
   protected def view: postcodeLookup
-
-  private val invalidPostcode: Message = "messages__error__postcode_failed"
 
   protected def get(viewmodel: PostcodeLookupViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     Future.successful(Ok(view(form, viewmodel, existingSchemeName)))
@@ -103,6 +103,6 @@ trait PostcodeLookupController extends FrontendBaseController with Retrievals wi
   }
 
   protected def formWithError(message: Message)(implicit request: DataRequest[AnyContent]): Form[String] = {
-    form.withError("postcode", message.resolve)
+    form.withError("postcode", message)
   }
 }

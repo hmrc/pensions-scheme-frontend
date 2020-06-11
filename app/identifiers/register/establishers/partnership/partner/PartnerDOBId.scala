@@ -27,7 +27,8 @@ import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
 }
 
 object PartnerDOBId {
@@ -53,8 +54,7 @@ object PartnerDOBId {
               Some(Link("site.change", changeUrl, Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))))
             )
           )
-        }
-        }
+        }}
       }
 
       override def updateRow(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -28,15 +28,18 @@ class AddressFormProvider @Inject()(countryOptions: CountryOptions) extends Addr
   def apply(): Form[Address] = Form(
     mapping(
       "addressLine1" ->
-        addressLineMapping("messages__error__address_line_1_required", "messages__error__address_line_1_length", "messages__error__address_line_1_invalid"),
+        addressLineMapping("messages__error__address_line_1_required", "messages__error__address_line_1_length",
+          "messages__error__address_line_1_invalid"),
       "addressLine2" ->
-        addressLineMapping("messages__error__address_line_2_required", "messages__error__address_line_2_length", "messages__error__address_line_2_invalid"),
+        addressLineMapping("messages__error__address_line_2_required", "messages__error__address_line_2_length",
+          "messages__error__address_line_2_invalid"),
       "addressLine3" ->
         optionalAddressLineMapping("messages__error__address_line_3_length", "messages__error__address_line_3_invalid"),
       "addressLine4" ->
         optionalAddressLineMapping("messages__error__address_line_4_length", "messages__error__address_line_4_invalid"),
       "postCode" ->
-        postCodeWithCountryMapping("messages__error__postcode", "messages__error__postcode_invalid", "messages__error__postcode_nonUK_length"),
+        postCodeWithCountryMapping("messages__error__postcode", "messages__error__postcode_invalid",
+          "messages__error__postcode_nonUK_length"),
       "country" ->
         countryMapping(countryOptions, "messages__error_country_required", "messages__error_country_invalid")
     )(Address.apply)(Address.unapply)

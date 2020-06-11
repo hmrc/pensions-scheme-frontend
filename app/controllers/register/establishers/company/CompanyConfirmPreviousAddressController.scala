@@ -21,7 +21,8 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId, CompanyPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId,
+  CompanyPreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
@@ -47,11 +48,20 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
                                                         val countryOptions: CountryOptions,
                                                         val view: confirmPreviousAddress,
                                                         val controllerComponents: MessagesControllerComponents
-                                                      )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController with Retrievals with I18nSupport {
+                                                       )(implicit val ec: ExecutionContext) extends
+  ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(mode, index, srn).retrieve.right.map { vm =>
+          get(CompanyConfirmPreviousAddressId(index), vm)
+        }
+    }
 
   private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
     Retrieval(
@@ -67,25 +77,16 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
               name = details.companyName,
               srn = srn
             )
-      }
+        }
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        get(CompanyConfirmPreviousAddressId(index), vm)
-      }
-  }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, index, srn).retrieve.right.map { vm =>
-        post(CompanyConfirmPreviousAddressId(index), CompanyPreviousAddressId(index), vm, mode)
-      }
-  }
-
+      implicit request =>
+        viewmodel(mode, index, srn).retrieve.right.map { vm =>
+          post(CompanyConfirmPreviousAddressId(index), CompanyPreviousAddressId(index), vm, mode)
+        }
+    }
 
 
 }

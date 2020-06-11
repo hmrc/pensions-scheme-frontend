@@ -118,7 +118,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, answerRowsAddLinks(UpdateMode, srn), srn,
-          title = Message("messages__detailsFor", Message("messages__thePartner").resolve),
+          title = Message("messages__detailsFor", Message("messages__thePartner")),
           h1 = Message("messages__detailsFor", personName.fullName))
       }
     }

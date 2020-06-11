@@ -45,7 +45,8 @@ object IsCompanyDormantId {
           .row(id)(changeUrl, userAnswers)
       }
 
-      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
+      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        Nil
     }
   }
 }

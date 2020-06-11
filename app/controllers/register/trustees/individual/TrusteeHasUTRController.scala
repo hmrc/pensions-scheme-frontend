@@ -45,7 +45,18 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                         formProvider: HasReferenceNumberFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: hasReferenceNumber
-                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                       )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          name =>
+            val trusteeName = name.fullName
+            get(TrusteeHasUTRId(index), form(trusteeName), viewModel(mode, index, srn, trusteeName))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String
                        )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -59,16 +70,6 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
 
   private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__hasUtr__error__required", trusteeName)
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          name =>
-            val trusteeName = name.fullName
-            get(TrusteeHasUTRId(index), form(trusteeName), viewModel(mode, index, srn, trusteeName))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

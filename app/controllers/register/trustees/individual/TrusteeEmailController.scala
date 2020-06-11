@@ -33,35 +33,21 @@ import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
 
-class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        override val userAnswersService: UserAnswersService,
-                                        allowAccess: AllowAccessActionProvider,
-                                        requireData: DataRequiredAction,
-                                        val navigator: Navigator,
-                                        formProvider: EmailFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        val view: emailAddress
-                                       )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+class TrusteeEmailController @Inject()(val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       override val userAnswersService: UserAnswersService,
+                                       allowAccess: AllowAccessActionProvider,
+                                       requireData: DataRequiredAction,
+                                       val navigator: Navigator,
+                                       formProvider: EmailFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       val view: emailAddress
+                                      )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              routes.TrusteeEmailController.onSubmit(mode, index, srn),
-              Message("messages__enterEmail", Message("messages__theIndividual")),
-              Message("messages__enterEmail", details.fullName),
-              Some(Message("messages__contact_details__hint", details.fullName)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -78,6 +64,21 @@ class TrusteeEmailController  @Inject()(val appConfig: FrontendAppConfig,
         viewModel(mode, index, srn).retrieve.right.map {
           vm =>
             post(TrusteeEmailId(index), mode, form, vm, None)
+        }
+    }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.TrusteeEmailController.onSubmit(mode, index, srn),
+              Message("messages__enterEmail", Message("messages__theIndividual")),
+              Message("messages__enterEmail", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
+              srn = srn
+            )
         }
     }
 

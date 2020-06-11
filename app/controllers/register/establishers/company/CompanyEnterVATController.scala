@@ -48,20 +48,6 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
                                           val controllerComponents: MessagesControllerComponents
                                          )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
-    EnterVATViewModel(
-      postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__theCompany")),
-      heading = Message("messages__enterVAT", companyName),
-      hint = Message("messages__enterVAT__hint", companyName),
-      subHeading = None,
-      srn = srn
-    )
-  }
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -79,4 +65,19 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
           post(CompanyEnterVATId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
+    formProvider(companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
+    EnterVATViewModel(
+      postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
+      title = Message("messages__enterVAT", Message("messages__theCompany")),
+      heading = Message("messages__enterVAT", companyName),
+      hint = Message("messages__enterVAT__hint", companyName),
+      subHeading = None,
+      srn = srn
+    )
+  }
 }

@@ -34,17 +34,26 @@ import views.html.utr
 import scala.concurrent.ExecutionContext
 
 class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
-                                     override val messagesApi: MessagesApi,
-                                     override val userAnswersService: UserAnswersService,
-                                      override val navigator: Navigator,
-                                     authenticate: AuthAction,
-                                     getData: DataRetrievalAction,
-                                     allowAccess: AllowAccessActionProvider,
-                                     requireData: DataRequiredAction,
-                                     formProvider: UTRFormProvider,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     val view: utr
-                                    )(implicit val ec: ExecutionContext) extends UTRController {
+                                          override val messagesApi: MessagesApi,
+                                          override val userAnswersService: UserAnswersService,
+                                          override val navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          allowAccess: AllowAccessActionProvider,
+                                          requireData: DataRequiredAction,
+                                          formProvider: UTRFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          val view: utr
+                                         )(implicit val ec: ExecutionContext) extends UTRController {
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyEnterUTRId(index), viewModel(mode, index, srn, companyName), form)
+        }
+    }
 
   private def form: Form[ReferenceValue] = formProvider()
 
@@ -57,15 +66,6 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
-          val companyName = details.companyName
-          get(CompanyEnterUTRId(index), viewModel(mode, index, srn, companyName), form)
-        }
-    }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

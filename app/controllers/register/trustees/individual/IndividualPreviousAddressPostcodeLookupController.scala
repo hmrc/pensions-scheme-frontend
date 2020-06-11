@@ -45,10 +45,22 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
                                                                   requireData: DataRequiredAction,
                                                                   formProvider: PostCodeLookupFormProvider,
                                                                   val addressLookupConnector: AddressLookupConnector,
-                                                                  val controllerComponents: MessagesControllerComponents,
+                                                                  val
+                                                                  controllerComponents: MessagesControllerComponents,
                                                                   val view: postcodeLookup
-                                                                 )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
+                                                                 )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController with I18nSupport {
   override protected val form: Form[String] = formProvider()
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+  }
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -58,7 +70,8 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
             PostcodeLookupViewModel(
               routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
               routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn),
-              title = Message("messages__trustee_individual_previous_address__heading", Message("messages__theIndividual")),
+              title = Message("messages__trustee_individual_previous_address__heading", Message
+              ("messages__theIndividual")),
               heading = Message("messages__trustee_individual_previous_address__heading", name),
               subHeading = Some(name),
               srn = srn
@@ -66,18 +79,8 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
         }
     }
 
-  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
-    implicit request =>
-        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-  }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.right.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)

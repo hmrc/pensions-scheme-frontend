@@ -53,7 +53,8 @@ class PartnerPreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: manualAddress
-                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController
+  with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit _
@@ -69,6 +70,16 @@ class PartnerPreviousAddressController @Inject()(
               viewmodel(mode, establisherIndex, partnerIndex, srn, partner.fullName))
         }
     }
+
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, establisherIndex, partnerIndex, srn),
+      countryOptions.options,
+      title = Message(heading, Message("messages__thePartner")),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -86,15 +97,5 @@ class PartnerPreviousAddressController @Inject()(
             )
         }
     }
-
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode, establisherIndex, partnerIndex, srn),
-      countryOptions.options,
-      title = Message(heading, Message("messages__thePartner")),
-      heading = Message(heading, name),
-      srn = srn
-    )
 
 }

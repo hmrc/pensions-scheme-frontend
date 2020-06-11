@@ -36,30 +36,19 @@ import views.html.reason
 import scala.concurrent.ExecutionContext
 
 class CompanyNoUTRReasonController @Inject()(
-                                          override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val userAnswersService: UserAnswersService,
-                                           override val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: ReasonFormProvider,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          val view: reason
-                                        )(implicit val ec: ExecutionContext) extends ReasonController
-                                          with Retrievals with I18nSupport with Enumerable.Implicits {
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
-    formProvider("messages__reason__error_utrRequired", companyName)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel =
-    ReasonViewModel(
-      postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoUTR", Message("messages__theCompany")),
-      heading = Message("messages__whyNoUTR", companyName),
-      srn = srn
-    )
+                                              override val appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              override val userAnswersService: UserAnswersService,
+                                              override val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: ReasonFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: reason
+                                            )(implicit val ec: ExecutionContext) extends ReasonController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -78,4 +67,15 @@ class CompanyNoUTRReasonController @Inject()(
           post(CompanyNoUTRReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
+    formProvider("messages__reason__error_utrRequired", companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel =
+    ReasonViewModel(
+      postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__whyNoUTR", Message("messages__theCompany")),
+      heading = Message("messages__whyNoUTR", companyName),
+      srn = srn
+    )
 }

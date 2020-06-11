@@ -40,21 +40,19 @@ object CompanyEnterVATId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_vat_number")
 
       override def row(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterVATId](label, hiddenLabel(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }
   }
 }
-
-
-
-
-

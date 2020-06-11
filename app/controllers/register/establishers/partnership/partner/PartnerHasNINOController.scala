@@ -45,9 +45,21 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
                                          formProvider: HasReferenceNumberFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: hasReferenceNumber
-                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String)
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            get(PartnerHasNINOId(establisherIndex, partnerIndex), form(details.fullName),
+              viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))
+        }
+    }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+                        personName: String)
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -59,16 +71,6 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
 
   private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider(Message("messages__genericHasNino__error__required", personName), personName)
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
-          details =>
-            get(PartnerHasNINOId(establisherIndex, partnerIndex), form(details.fullName),
-              viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))
-        }
-    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

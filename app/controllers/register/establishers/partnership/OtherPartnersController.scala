@@ -46,7 +46,8 @@ class OtherPartnersController @Inject()(
                                          formProvider: OtherPartnersFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: otherPartners
-                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                       )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -55,7 +56,8 @@ class OtherPartnersController @Inject()(
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>
           val preparedForm = request.userAnswers.get(OtherPartnersId(establisherIndex)).fold(form)(form.fill)
-          val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
+          val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController
+            .onSubmit(mode,  establisherIndex, srn)
           Future.successful(Ok(view(preparedForm, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
         }
 
@@ -67,8 +69,10 @@ class OtherPartnersController @Inject()(
         retrievePartnershipName(establisherIndex) { _ =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
-              val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(mode, establisherIndex, srn)
-              Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName, submitUrl, srn)))
+              val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController
+                .onSubmit(mode, establisherIndex, srn)
+              Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName,
+                submitUrl, srn)))
             },
             value =>
               userAnswersService.save(mode, srn, OtherPartnersId(establisherIndex), value).map(cacheMap =>

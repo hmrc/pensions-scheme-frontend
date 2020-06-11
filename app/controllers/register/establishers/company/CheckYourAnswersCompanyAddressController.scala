@@ -67,14 +67,15 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
 
         val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__theCompany"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__addressFor", Message("messages__theCompany"))
 
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = title,

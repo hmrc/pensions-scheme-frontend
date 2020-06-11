@@ -47,13 +47,35 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
                                               val auditService: AuditService,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: addressList
-                                             )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressListController with
+  Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).right.map(get)
     }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    (DirectorNameId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex,
+      directorIndex)).retrieve.right.map {
+      case name ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
+          manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
+          addresses = addresses,
+          srn = srn,
+          title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
+          heading = Message("messages__dynamic_whatIsAddress", name.fullName),
+          entityName = name.fullName
+        )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex,
+        directorIndex, srn)))
+    )
+
+  }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -70,23 +92,4 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
             )
         }
     }
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (DirectorNameId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)).retrieve.right.map {
-      case name ~ addresses =>
-        AddressListViewModel(
-          postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
-          manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
-          addresses = addresses,
-          srn = srn,
-          title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
-          heading = Message("messages__dynamic_whatIsAddress", name.fullName),
-          entityName = name.fullName
-        )
-    }.left.map(_ =>
-        Future.successful(Redirect(routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
-    )
-
-  }
 }

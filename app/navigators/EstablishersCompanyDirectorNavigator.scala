@@ -27,6 +27,7 @@ import models._
 import utils.UserAnswers
 
 @Singleton
+//scalastyle:off cyclomatic.complexity
 class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[String]): Option[NavigateTo] =
@@ -90,7 +91,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case _ => commonRoutes(from, mode, srn)
     }
 
-  //scalastyle:off cyclomatic.complexity
   protected def editRoutes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case DirectorHasNINOId(establisherIndex, directorIndex) =>

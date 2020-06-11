@@ -45,9 +45,28 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        formProvider: EmailFormProvider,
                                        val view: emailAddress,
                                        val controllerComponents: MessagesControllerComponents
-                                      )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                      )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(CompanyEmailId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            post(CompanyEmailId(index), mode, form, vm, None)
+        }
+    }
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
@@ -63,22 +82,4 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
             )
         }
     }
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
-          vm =>
-            get(CompanyEmailId(index), form, vm)
-        }
-    }
-
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      viewModel(mode, srn, index).retrieve.right.map {
-        vm =>
-          post(CompanyEmailId(index), mode, form, vm, None)
-      }
-  }
 }

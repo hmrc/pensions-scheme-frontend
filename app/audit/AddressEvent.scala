@@ -19,7 +19,8 @@ package audit
 import models.address.{Address, TolerantAddress}
 import play.api.libs.json.Json
 
-case class AddressEvent(externalId: String, action: AddressAction.Value, context: String, address: Address) extends AuditEvent {
+case class AddressEvent(externalId: String, action: AddressAction.Value, context: String, address: Address) extends
+  AuditEvent {
 
   override def auditType: String = "AddressEvent"
 

@@ -22,20 +22,23 @@ case class NameMatching(name1: String, name2: String) {
     "CORP", "CO.", "CO", "INC.", "INC", "UNLIMITED", "LIMITED", "LLP", "LP", "ULTD", "UNLTD", "LTD",
     "PARTNERSHIP", "PLC", "THE")
 
-  def convertToUpper: NameMatching = NameMatching(name1.toUpperCase, name2.toUpperCase)
-
-  def removeSpaces: NameMatching = {
-    NameMatching(
-      name1.filterNot((x: Char) => x.isWhitespace),
-      name2.filterNot((x: Char) => x.isWhitespace)
-    )
+  def isMatch: Boolean = {
+    this.convertToUpper
+      .removeSpaces
+      .removeSpecialWords
+      .lengthCheck
+      .removeSpecialCharacters
+      .removeNonAlphaNumeric
+      .lengthCheck
+      .isEqual
   }
 
   def removeSpecialWords: NameMatching = {
     NameMatching(f(name1), f(name2))
   }
 
-  private def f(word: String) = specialWords.foldLeft[String](word)((z, i) => (z.replace(i, "")).replaceAll("\\s{2,}", " ").trim())
+  private def f(word: String) = specialWords.foldLeft[String](word)((z, i) => (z.replace(i, "")).replaceAll("\\s{2," +
+    "}", " ").trim())
 
   def removeSpecialCharacters: NameMatching = {
     NameMatching(
@@ -59,16 +62,14 @@ case class NameMatching(name1: String, name2: String) {
     }
   }
 
-  def isEqual: Boolean = name1.equals(name2)
+  def convertToUpper: NameMatching = NameMatching(name1.toUpperCase, name2.toUpperCase)
 
-  def isMatch: Boolean = {
-    this.convertToUpper
-      .removeSpaces
-      .removeSpecialWords
-      .lengthCheck
-      .removeSpecialCharacters
-      .removeNonAlphaNumeric
-      .lengthCheck
-      .isEqual
+  def removeSpaces: NameMatching = {
+    NameMatching(
+      name1.filterNot((x: Char) => x.isWhitespace),
+      name2.filterNot((x: Char) => x.isWhitespace)
+    )
   }
+
+  def isEqual: Boolean = name1.equals(name2)
 }

@@ -47,30 +47,32 @@ class TrusteeAddressYearsController @Inject()(
                                                requireData: DataRequiredAction,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressYears
-                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with
+  Retrievals {
 
-  private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]) =
-    new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      trusteeName(index).retrieve.right.map { name =>
-        get(TrusteeAddressYearsId(index), form(name), viewModel(mode, index, name, srn))
-      }
-  }
+      implicit request =>
+        trusteeName(index).retrieve.right.map { name =>
+          get(TrusteeAddressYearsId(index), form(name), viewModel(mode, index, name, srn))
+        }
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.right.map { name =>
         post(TrusteeAddressYearsId(index), mode, form(name), viewModel(mode, index, name, srn))
       }
   }
 
-  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
-    implicit request =>
-        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
-  }
+  private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
 
   private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(

@@ -22,7 +22,8 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
 case class IndividualConfirmPreviousAddressId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ IndividualConfirmPreviousAddressId.toString
+  override def path: JsPath =
+    EstablishersId(index).path \ IndividualConfirmPreviousAddressId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {

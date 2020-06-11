@@ -27,9 +27,10 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
   self =>
   override def toString: String = "benefits"
 
-  implicit def cya(implicit messages: Messages,userAnswers: UserAnswers,rds: Reads[TypeOfBenefits]): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   rds: Reads[TypeOfBenefits]): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
-    val label = messages("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
+    val label = Message("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
     val hiddenLabel = Some(Message("messages__visuallyhidden__type_of_benefits_change", userAnswers.get(SchemeNameId).getOrElse("")))
       private def typeOfBenefitsCYARow(id: self.type , userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
         userAnswers.get(id).map {
@@ -45,10 +46,12 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
         }.getOrElse(Seq.empty[AnswerRow])
       }
 
-      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers,
+      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        typeOfBenefitsCYARow(id, userAnswers,
         Some(Link("site.change", changeUrl, hiddenLabel)))
 
-      override def updateRow(id:self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = typeOfBenefitsCYARow(id, userAnswers, None)
+      override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        typeOfBenefitsCYARow(id, userAnswers, None)
     }
   }
 }

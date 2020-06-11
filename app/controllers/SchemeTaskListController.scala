@@ -51,9 +51,11 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          val view: schemeDetailsTaskList,
                                          hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                          hsTaskListHelperVariations: HsTaskListHelperVariations
-                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
 
@@ -84,7 +86,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  private def getSchemeDetailsAndReturnResult(srn: String, viewOnly: Boolean)(implicit request: OptionalDataRequest[AnyContent],
+  private def getSchemeDetailsAndReturnResult(srn: String, viewOnly: Boolean)(implicit
+                                                                              request: OptionalDataRequest[AnyContent],
                                                                               hc: HeaderCarrier): Future[Result] = {
     schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
       .flatMap { userAnswers =>
@@ -93,13 +96,15 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
-                                           upsertUserAnswers: JsValue => Future[JsValue], viewOnly: Boolean)(implicit request: OptionalDataRequest[AnyContent],
+                                           upsertUserAnswers: JsValue => Future[JsValue], viewOnly: Boolean)(implicit
+                                                                                                             request: OptionalDataRequest[AnyContent],
                                                                                                              hc: HeaderCarrier): Future[Result] =
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
 
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
-      val taskList: SchemeDetailsTaskList = hsTaskListHelperVariations.taskList(updatedUserAnswers, Some(viewOnly), Some(srn))
+      val taskList: SchemeDetailsTaskList = hsTaskListHelperVariations.taskList(updatedUserAnswers, Some(viewOnly),
+        Some(srn))
 
       upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
         Future.successful(Ok(view(taskList)))

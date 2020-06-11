@@ -34,7 +34,10 @@ trait PensionSchemeVarianceLockConnector {
 
   def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock]
 
-  def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
+  def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Option[SchemeVariance]]
+
+  def getLockByPsa(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
 
   def isLockByPsaIdOrSchemeId(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]]
 
@@ -43,7 +46,8 @@ trait PensionSchemeVarianceLockConnector {
 }
 
 @Singleton
-class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends PensionSchemeVarianceLockConnector {
+class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
+  PensionSchemeVarianceLockConnector {
 
   override def lock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock] = {
 
@@ -65,7 +69,8 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     } andThen logExceptions("Unable to get the lock")
   }
 
-  override def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
+  override def getLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Option[SchemeVariance]] = {
 
     implicit val rds: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
       override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
@@ -90,6 +95,33 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
       }
     } andThen logExceptions("Unable to find the lock")
   }
+
+  override def getLockByPsa(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
+
+    implicit val rds: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
+      override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
+    }
+
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId)
+
+    val url = s"${config.updateSchemeDetailsUrl}/get-lock-by-psa"
+
+    http.GET[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+
+      response.status match {
+        case NOT_FOUND =>
+          None
+        case OK =>
+          Json.parse(response.body).validate[SchemeVariance] match {
+            case JsSuccess(value, _) => Some(value)
+            case JsError(errors) => throw JsResultException(errors)
+          }
+        case _ =>
+          throw new HttpException(response.body, response.status)
+      }
+    } andThen logExceptions("Unable to find the lock")
+  }
+
 
   override def isLockByPsaIdOrSchemeId(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]] = {
 
@@ -117,7 +149,12 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     } andThen logExceptions("Unable to find the lock")
   }
 
-  override def releaseLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
+    case Failure(t: Throwable) => Logger.error(msg, t)
+  }
+
+  override def releaseLock(psaId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Unit] = {
 
     implicit val rds: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
       override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
@@ -130,15 +167,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     http.DELETE[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
 
       response.status match {
-        case OK =>{}
+        case OK => {}
         case _ =>
           throw new HttpException(response.body, response.status)
       }
     } andThen logExceptions("Unable to release the lock")
-  }
-
-  private def logExceptions[I](msg : String): PartialFunction[Try[I], Unit] = {
-    case Failure(t: Throwable) => Logger.error(msg, t)
   }
 
 }

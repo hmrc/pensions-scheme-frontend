@@ -41,7 +41,8 @@ case object BeforeYouStartSpoke extends Spoke {
       controllers.routes.SchemeNameController.onPageLoad(mode).url
     )
 
-  override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = Some(answers.isBeforeYouStartCompleted(mode))
+  override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = Some(answers
+    .isBeforeYouStartCompleted(mode))
 }
 
 

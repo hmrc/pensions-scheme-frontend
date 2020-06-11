@@ -48,25 +48,29 @@ class CompanyAddressYearsController @Inject()(
                                                requireData: DataRequiredAction,
                                                val view: addressYears,
                                                val controllerComponents: MessagesControllerComponents
-                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
-    new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with
+  Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-          get(CompanyAddressYearsId(index), form(companyDetails.companyName), viewModel(mode, srn, index, companyDetails.companyName))
+          get(CompanyAddressYearsId(index), form(companyDetails.companyName), viewModel(mode, srn, index,
+            companyDetails.companyName))
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
-        post(CompanyAddressYearsId(index), mode, form(companyDetails.companyName), viewModel(mode, srn, index, companyDetails.companyName))
+        post(CompanyAddressYearsId(index), mode, form(companyDetails.companyName), viewModel(mode, srn, index,
+          companyDetails.companyName))
       }
   }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index, companyName: String) = AddressYearsViewModel(
     postCall = routes.CompanyAddressYearsController.onSubmit(mode, srn, index),

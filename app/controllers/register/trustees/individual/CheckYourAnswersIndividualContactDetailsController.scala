@@ -40,13 +40,16 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
                                                                    override val messagesApi: MessagesApi,
                                                                    authenticate: AuthAction,
                                                                    getData: DataRetrievalAction,
-                                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                   @NoSuspendedCheck
+                                                                   allowAccess: AllowAccessActionProvider,
                                                                    requireData: DataRequiredAction,
                                                                    implicit val countryOptions: CountryOptions,
                                                                    allowChangeHelper: AllowChangeHelper,
-                                                                   val controllerComponents: MessagesControllerComponents,
+                                                                   val
+                                                                   controllerComponents: MessagesControllerComponents,
                                                                    val view: checkYourAnswers
-                                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                                  )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -61,7 +64,8 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor",
+          Message("messages__thePerson"))
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
@@ -72,7 +76,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingContactDetails(mode, personName(TrusteeNameId(index)), isNew)
+          h1 = headingContactDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

@@ -52,20 +52,15 @@ class TrusteePreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: manualAddress
-                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController
+  with I18nSupport {
 
-  private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
-
+  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
+    implicit request =>
+      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+  }
   protected val form: Form[Address] = formProvider()
-
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode, Index(index), srn),
-      countryOptions.options,
-      title = Message("messages__common__confirmPreviousAddress__h1",Message("messages__theIndividual")),
-      heading = Message("messages__common__confirmPreviousAddress__h1", name),
-      srn = srn
-    )
+  private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -80,7 +75,17 @@ class TrusteePreviousAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message("messages__common__confirmPreviousAddress__h1", Message("messages__theIndividual")),
+      heading = Message("messages__common__confirmPreviousAddress__h1", name),
+      srn = srn
+    )
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.right.map {
         name =>
@@ -93,10 +98,5 @@ class TrusteePreviousAddressController @Inject()(
             postCodeLookupIdForCleanup = IndividualPreviousAddressPostCodeLookupId(index)
           )
       }
-  }
-
-  val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
-    implicit request =>
-        TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
   }
 }

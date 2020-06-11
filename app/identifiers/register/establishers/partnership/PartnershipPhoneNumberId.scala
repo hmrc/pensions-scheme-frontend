@@ -25,7 +25,8 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnershipPhoneNumberId(index: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(index).path \ "partnershipContactDetails" \ PartnershipPhoneNumberId.toString
+  override def path: JsPath = EstablishersId(index).path \ "partnershipContactDetails" \ PartnershipPhoneNumberId
+    .toString
 }
 
 object PartnershipPhoneNumberId {
@@ -47,7 +48,9 @@ object PartnershipPhoneNumberId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: PartnershipPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: PartnershipPhoneNumberId)(changeUrl: String,
+                                                         userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 }
 

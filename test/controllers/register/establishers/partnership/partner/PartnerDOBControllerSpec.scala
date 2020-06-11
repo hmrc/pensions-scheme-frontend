@@ -74,7 +74,7 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
       post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner").resolve),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner")),
       mode = NormalMode,
       requiredData = getMandatoryPartner,
       validData = validData,

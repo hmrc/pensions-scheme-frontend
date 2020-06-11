@@ -44,20 +44,8 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             formProvider: HasUTRFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: hasReferenceNumber
-                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasUTR", Message("messages__thePartnership")),
-      heading = Message("messages__hasUTR", partnershipName),
-      hint = Some(Message("messages__hasUtr__p1")),
-      srn = srn
-    )
-
-  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider("messages__hasUtr__partnership_error_required", partnershipName)
+                                           )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,4 +64,17 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
             post(PartnershipHasUTRId(index), mode, form(details.name), viewModel(mode, index, srn, details.name))
         }
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
+      title = Message("messages__hasUTR", Message("messages__thePartnership")),
+      heading = Message("messages__hasUTR", partnershipName),
+      hint = Some(Message("messages__hasUtr__p1")),
+      srn = srn
+    )
+
+  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasUtr__partnership_error_required", partnershipName)
 }

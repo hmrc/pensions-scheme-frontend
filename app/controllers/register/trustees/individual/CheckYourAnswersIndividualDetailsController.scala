@@ -39,20 +39,21 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersIndividualDetailsController @Inject()(
-                                      val appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
-                                      val userAnswersService: UserAnswersService,
-                                      val navigator: Navigator,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                      allowChangeHelper: AllowChangeHelper,
-                                      requireData: DataRequiredAction,
-                                      implicit val countryOptions: CountryOptions,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: checkYourAnswers
-                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                       with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                             val appConfig: FrontendAppConfig,
+                                                             override val messagesApi: MessagesApi,
+                                                             val userAnswersService: UserAnswersService,
+                                                             val navigator: Navigator,
+                                                             authenticate: AuthAction,
+                                                             getData: DataRetrievalAction,
+                                                             @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                             allowChangeHelper: AllowChangeHelper,
+                                                             requireData: DataRequiredAction,
+                                                             implicit val countryOptions: CountryOptions,
+                                                             val controllerComponents: MessagesControllerComponents,
+                                                             val view: checkYourAnswers
+                                                           )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -61,28 +62,35 @@ class CheckYourAnswersIndividualDetailsController @Inject()(
         val companyDetails = Seq(AnswerSection(
           None,
           TrusteeDOBId(index).row(routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeEnterNINOId(index).row(routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeUTRId(index).row(routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-          TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode)
+            TrusteeHasNINOId(index).row(routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url,
+              mode) ++
+            TrusteeEnterNINOId(index).row(routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode) ++
+            TrusteeNoNINOReasonId(index).row(routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            TrusteeHasUTRId(index).row(routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), index, srn).url,
+              mode) ++
+            TrusteeUTRId(index).row(routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), index, srn).url,
+              mode) ++
+            TrusteeNoUTRReasonId(index).row(routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), index,
+              srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePerson"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
+        ("messages__thePerson"))
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingDetails(mode, personName(TrusteeNameId(index)), isNew)
+          h1 = headingDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

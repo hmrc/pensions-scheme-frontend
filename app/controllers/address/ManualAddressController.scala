@@ -40,6 +40,8 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
 
   protected implicit def ec: ExecutionContext
 
+  protected val form: Form[Address]
+
   protected def appConfig: FrontendAppConfig
 
   protected def userAnswersService: UserAnswersService
@@ -47,8 +49,6 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
   protected def navigator: Navigator
 
   protected def auditService: AuditService
-
-  protected val form: Form[Address]
 
   protected def view: manualAddress
 
@@ -81,7 +81,8 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
         val existingAddress = request.userAnswers.get(id)
         val selectedAddress = request.userAnswers.get(selectedId)
 
-        val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
+        val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress,
+          selectedAddress, context)
 
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
@@ -93,17 +94,18 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
 
             userAnswersService.upsert(mode, viewModel.srn, updatedAddress.json).flatMap {
               cacheMap =>
-                    auditEvent.foreach(auditService.sendEvent(_))
-                   Future.successful(Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn)))
+                auditEvent.foreach(auditService.sendEvent(_))
+                Future.successful(Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn)))
             }
           }
       }
     )
   }
 
-  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String], postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
+  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String],
+                                          postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
-    if(request.userAnswers.get(postCodeLookupId).nonEmpty) {
+    if (request.userAnswers.get(postCodeLookupId).nonEmpty) {
       userAnswersService.remove(mode, srn, postCodeLookupId)
     } else {
       Future(request.userAnswers.json)

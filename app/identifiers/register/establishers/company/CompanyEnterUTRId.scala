@@ -50,8 +50,11 @@ object CompanyEnterUTRId {
 
       override def updateRow(id: CompanyEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => ReferenceValueCYA(label, hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            row(id)(changeUrl, userAnswers)
+          case _ =>
+            ReferenceValueCYA(label, hiddenLabel(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

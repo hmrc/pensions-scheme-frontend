@@ -46,7 +46,11 @@ object CompanyPreviousAddressId {
         AddressCYA(label(id.index, ua), hiddenLabel(id.index, ua))().row(id)(changeUrl, ua)
 
       override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.index, ua), hiddenLabel(id.index, ua), ua.get(IsEstablisherNewId(id.index)), ua.get(CompanyConfirmPreviousAddressId(id.index)))()
+        PreviousAddressCYA(
+          label(id.index, ua),
+          hiddenLabel(id.index, ua),
+          ua.get(IsEstablisherNewId(id.index)),
+          ua.get(CompanyConfirmPreviousAddressId(id.index)))()
           .updateRow(id)(changeUrl, ua)
     }
   }

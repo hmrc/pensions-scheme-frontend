@@ -76,7 +76,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex, None),
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
         previousAddresses,
-        title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual").resolve),
+        title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual")),
         heading = Message("messages__dynamic_whatWasPreviousAddress", establisherName),
         entityName = establisherName
       ),

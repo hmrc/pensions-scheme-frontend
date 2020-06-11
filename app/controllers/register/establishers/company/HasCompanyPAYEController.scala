@@ -48,9 +48,24 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call =
-    controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
+  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyPAYEId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 
+  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -66,21 +81,6 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__companyPayeRef__error__required", companyName)
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(HasCompanyPAYEId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
-        }
-    }
-
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            post(HasCompanyPAYEId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
-        }
-    }
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call =
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
 }

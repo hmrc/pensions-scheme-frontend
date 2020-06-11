@@ -22,7 +22,8 @@ import connectors.UserAnswersCacheConnector
 import identifiers._
 import models.{CheckMode, NormalMode}
 
-class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
+class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                          appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

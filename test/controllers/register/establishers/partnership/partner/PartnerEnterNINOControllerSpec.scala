@@ -50,7 +50,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
   private def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(
       postCall = PartnerEnterNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, None),
-      title = Message("messages__enterNINO", Message("messages__thePartner").resolve),
+      title = Message("messages__enterNINO", Message("messages__thePartner")),
       heading = messages("messages__enterNINO", partnerName),
       hint = messages("messages__common__nino_hint"),
       srn = None

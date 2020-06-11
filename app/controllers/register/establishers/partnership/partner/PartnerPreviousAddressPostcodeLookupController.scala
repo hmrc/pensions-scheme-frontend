@@ -39,7 +39,8 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
                                                                 val userAnswersService: UserAnswersService,
-                                                                override val addressLookupConnector: AddressLookupConnector,
+                                                                override val
+                                                                addressLookupConnector: AddressLookupConnector,
                                                                 override val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
@@ -48,7 +49,8 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
                                                                 formProvider: PostCodeLookupFormProvider,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 val view: postcodeLookup
-                                                              )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                              )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 

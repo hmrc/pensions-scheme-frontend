@@ -21,7 +21,7 @@ import play.api.libs.json._
 case class Name(firstName: Option[String], middleName: Option[String], lastName: Option[String])
 
 object Name {
-  implicit val formats : OFormat[Name] = Json.format[Name]
+  implicit val formats: OFormat[Name] = Json.format[Name]
 }
 
 case class PsaDetails(id: String, organisationOrPartnershipName: Option[String], individual: Option[Name])

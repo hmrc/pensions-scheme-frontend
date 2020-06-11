@@ -33,29 +33,22 @@ import views.html.register.companyRegistrationNumber
 import scala.concurrent.ExecutionContext
 
 class CompanyEnterCRNController @Inject()(
-                                                               override val appConfig: FrontendAppConfig,
-                                                               override val messagesApi: MessagesApi,
-                                                               override val userAnswersService: UserAnswersService,
-                                                                override val navigator: Navigator,
-                                                               authenticate: AuthAction,
-                                                               getData: DataRetrievalAction,
-                                                               allowAccess: AllowAccessActionProvider,
-                                                               requireData: DataRequiredAction,
-                                                               val controllerComponents: MessagesControllerComponents,
-                                                               val view: companyRegistrationNumber
-                                                             )(implicit val ec: ExecutionContext) extends CompanyRegistrationNumberBaseController {
+                                           override val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           override val userAnswersService: UserAnswersService,
+                                           override val navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
+                                           requireData: DataRequiredAction,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: companyRegistrationNumber
+                                         )(implicit val ec: ExecutionContext) extends
+  CompanyRegistrationNumberBaseController {
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
   def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CompanyRegistrationNumberViewModel = {
-    CompanyRegistrationNumberViewModel(
-      title = Message("messages__enterCRN", Message("messages__theCompany")),
-      heading = Message("messages__enterCRN", companyName),
-      hint = Message("messages__common__crn_hint", companyName)
-    )
-  }
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -65,6 +58,15 @@ class CompanyEnterCRNController @Inject()(
           get(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
         }
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+  : CompanyRegistrationNumberViewModel = {
+    CompanyRegistrationNumberViewModel(
+      title = Message("messages__enterCRN", Message("messages__theCompany")),
+      heading = Message("messages__enterCRN", companyName),
+      hint = Message("messages__common__crn_hint", companyName)
+    )
+  }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

@@ -46,10 +46,8 @@ class PartnerAddressYearsController @Inject()(
                                                requireData: DataRequiredAction,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressYears
-                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
-
-  private def form(partnerName: String)(implicit request: DataRequest[AnyContent]) =
-    new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with
+  Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -60,7 +58,11 @@ class PartnerAddressYearsController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String, srn: Option[String])
+  private def form(partnerName: String)(implicit request: DataRequest[AnyContent]) =
+    new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String,
+                        srn: Option[String])
                        (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_address_years__title", Message("messages__common__address_years__partner")),

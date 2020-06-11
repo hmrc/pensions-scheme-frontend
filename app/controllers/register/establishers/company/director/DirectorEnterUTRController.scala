@@ -49,25 +49,13 @@ class DirectorEnterUTRController @Inject()(
                                             val view: utr
                                           )(implicit val ec: ExecutionContext) extends UTRController {
 
-  private def form: Form[ReferenceValue] = formProvider()
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String)
-                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
-    UTRViewModel(
-      postCall = controllers.register.establishers.company.director.routes.DirectorEnterUTRController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__enterUTR", Message("messages__theDirector")),
-      heading = Message("messages__enterUTR", directorName),
-      hint = Message("messages_utr__hint"),
-      srn = srn
-    )
-  }
-
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           val directorName = details.fullName
-          get(DirectorEnterUTRId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+          get(DirectorEnterUTRId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex,
+            srn, directorName), form)
         }
     }
 
@@ -76,9 +64,25 @@ class DirectorEnterUTRController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           val directorName = details.fullName
-          post(DirectorEnterUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex, directorIndex, srn, directorName), form)
+          post(DirectorEnterUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex,
+            directorIndex, srn, directorName), form)
         }
     }
+
+  private def form: Form[ReferenceValue] = formProvider()
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
+                        directorName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
+    UTRViewModel(
+      postCall = controllers.register.establishers.company.director.routes.DirectorEnterUTRController.onSubmit(mode,
+        establisherIndex, directorIndex, srn),
+      title = Message("messages__enterUTR", Message("messages__theDirector")),
+      heading = Message("messages__enterUTR", directorName),
+      hint = Message("messages_utr__hint"),
+      srn = srn
+    )
+  }
 
 
 }

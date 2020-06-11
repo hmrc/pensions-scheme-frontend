@@ -47,9 +47,32 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
                                               val view: reason
                                              )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", directorName)
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
+          val directorName = details.fullName
+          get(DirectorNoUTRReasonId(establisherIndex, directorIndex), viewModel(mode, establisherIndex,
+            directorIndex, srn, directorName), form(directorName))
+        }
+    }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], directorName: String)
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
+          val directorName = details.fullName
+          post(DirectorNoUTRReasonId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex,
+            directorIndex, srn, directorName), form(directorName))
+        }
+    }
+
+
+  private def form(directorName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__reason__error_utrRequired", directorName)
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
+                        directorName: String)
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
@@ -58,24 +81,5 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
-          val directorName = details.fullName
-          get(DirectorNoUTRReasonId(establisherIndex, directorIndex), viewModel(mode, establisherIndex, directorIndex, srn, directorName), form(directorName))
-        }
-    }
-
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
-          val directorName = details.fullName
-          post(DirectorNoUTRReasonId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex, directorIndex, srn, directorName), form(directorName))
-        }
-    }
 
 }

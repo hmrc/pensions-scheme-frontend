@@ -40,14 +40,17 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
                                                                     override val messagesApi: MessagesApi,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
-                                                                    @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                    @NoSuspendedCheck
+                                                                    allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
                                                                     implicit val countryOptions: CountryOptions,
                                                                     allowChangeHelper: AllowChangeHelper,
-                                                                     val controllerComponents: MessagesControllerComponents,
-                                                                     val view: checkYourAnswers
-                                                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                                                      with Retrievals with I18nSupport {
+                                                                    val
+                                                                    controllerComponents: MessagesControllerComponents,
+                                                                    val view: checkYourAnswers
+                                                                   )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+  with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -56,13 +59,16 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
         val notNewTrustee = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
         val contactDetailsSection = AnswerSection(
           None,
-          PartnershipEmailId(index).row(routes.PartnershipEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipPhoneId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipEmailId(index).row(routes.PartnershipEmailController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            PartnershipPhoneId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index,
+              srn).url, mode)
         )
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor",
+          Message("messages__thePartnership"))
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetailsSection),
@@ -73,7 +79,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          h1 = headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

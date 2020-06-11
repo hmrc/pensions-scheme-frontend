@@ -18,10 +18,10 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import connectors.MinimalPsaConnector.MinimalPSA
+import models.MinimalPSA
 import play.api.Logger
 import play.api.http.Status._
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.HttpResponseHelper
@@ -36,9 +36,40 @@ trait MinimalPsaConnector {
 
   def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
 
+  def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
 }
 
-class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with HttpResponseHelper {
+class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with
+  HttpResponseHelper {
+
+  override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
+    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+
+    http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
+
+      response.status match {
+        case OK =>
+          Json.parse(response.body).validate[MinimalPSA] match {
+            case JsSuccess(value, _) => value
+            case JsError(errors) => throw JsResultException(errors)
+          }
+
+        case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
+      }
+    } andThen {
+      case Failure(t: Throwable) => Logger.warn("Unable to invite PSA to administer scheme", t)
+    }
+  }
+
+  override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
+    getMinimalPsaDetails(psaId).map { minimalDetails =>
+      (minimalDetails.individualDetails, minimalDetails.organisationName) match {
+        case (Some(individual), None) => Some(individual.fullName)
+        case (None, Some(org)) => Some(s"$org")
+        case _ => None
+      }
+    }
+  }
 
   override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val psaHc = hc.withExtraHeaders("psaId" -> psaId)
@@ -54,43 +85,4 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
     }
   }
 
-  def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
-    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
-
-    http.GET[MinimalPSA](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly)
-  }
-}
-
-object MinimalPsaConnector {
-  case class MinimalPSA(
-                         email: String,
-                         organisationName: Option[String],
-                         individualDetails: Option[IndividualDetails]
-                       ) {
-
-    def name: String = {
-      individualDetails
-        .map(_.fullName)
-        .orElse(organisationName)
-        .getOrElse("Pension Scheme Administrator")
-    }
-  }
-
-  object MinimalPSA {
-    implicit val format: Format[MinimalPSA] = Json.format[MinimalPSA]
-  }
-
-  case class IndividualDetails(
-                                firstName: String,
-                                middleName: Option[String],
-                                lastName: String
-                              ) {
-    def fullName: String = middleName match {
-      case Some(middle) => s"$firstName $middle $lastName"
-      case _            => s"$firstName $lastName"
-    }
-  }
-  object IndividualDetails {
-    implicit val format: Format[IndividualDetails] = Json.format[IndividualDetails]
-  }
 }

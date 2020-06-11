@@ -22,12 +22,13 @@ import models._
 import models.person.PersonName
 import models.requests.DataRequest
 import java.time.LocalDate
+
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, DateHelper, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class TrusteeDOBIdSpec extends SpecBase {
 
@@ -35,8 +36,8 @@ class TrusteeDOBIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   val date = LocalDate.now()
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__DOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))
+    AnswerRow(Message("messages__DOB__heading", "Test Name"),List(DateHelper.formatDate(date)), false, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))
   )
 
   "cya" when {
@@ -70,7 +71,7 @@ class TrusteeDOBIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeDOBId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)),false, None)
+          AnswerRow(Message("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)),false, None)
         ))
       }
     }

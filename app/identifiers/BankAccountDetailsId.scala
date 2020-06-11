@@ -17,18 +17,19 @@
 package identifiers
 
 import models.BankAccountDetails
-import play.api.i18n.Messages
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{BankDetailsCYA, CheckYourAnswers}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.Message
 
 case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
   self =>
   override def toString: String = "uKBankDetails"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+  implicit def cya(implicit countryOptions: CountryOptions,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BankDetailsCYA[self.type](
-      label = Some(messages("uKBankDetails.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId).getOrElse("")))
+      label = Some(Message("uKBankDetails.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(Message("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 }

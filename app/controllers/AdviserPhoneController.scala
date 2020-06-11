@@ -43,9 +43,10 @@ class AdviserPhoneController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AdviserPhoneFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: adviserPhone
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                        val controllerComponents: MessagesControllerComponents,
+                                        val view: adviserPhone
+                                      )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

@@ -75,7 +75,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec {
 
   val viewModel = PayeViewModel(
     routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
+    title = Message("messages__enterPAYE", Message("messages__theCompany")),
     heading = Message("messages__enterPAYE", "test company name"),
     hint = Some(Message("messages__enterPAYE__hint")),
     srn = srn,

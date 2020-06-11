@@ -118,7 +118,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           status(result) mustBe OK
 
           contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
-            title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
+            title = Message("messages__contactDetailsFor", Message("messages__theCompany")),
             h1 = Message("messages__contactDetailsFor", name))
         }
       }

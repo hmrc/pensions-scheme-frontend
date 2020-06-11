@@ -97,6 +97,9 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       .set(TrusteeNameId(0))(PersonName("first", "last", isDeleted = true))
       .asOpt
       .value
+      .set(TrusteeKindId(0))(TrusteeKind.Individual)
+      .asOpt
+      .value
       .addTrustee(true)
       .trustees(0)
 
@@ -148,7 +151,9 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       else {
         (0 until howMany).foldLeft(answers) {
           case (newAnswers, i) =>
-            newAnswers.set(TrusteeNameId(i))(person.PersonName("first", "last")).asOpt.value
+            newAnswers
+              .set(TrusteeNameId(i))(person.PersonName("first", "last")).asOpt.value
+              .set(TrusteeKindId(i))(TrusteeKind.Individual).asOpt.value
         }
       }
     }

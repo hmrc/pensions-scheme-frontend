@@ -25,6 +25,7 @@ import identifiers.register.establishers.company.director._
 import javax.inject.Inject
 import models.Mode.checkMode
 import models._
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -48,61 +49,19 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            allowChangeHelper: AllowChangeHelper,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: checkYourAnswers
-                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
 
-        implicit val userAnswers: UserAnswers = request.userAnswers
+        val directorAnswerSection = anwerSection(companyIndex, directorIndex, mode, srn)
 
-        val directorAnswerSection = AnswerSection(
-          None,
-          Seq(
-            DirectorNameId(companyIndex, directorIndex)
-              .row(routes.DirectorNameController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        val isNew = isNewItem(mode, request.userAnswers, IsNewDirectorId(companyIndex, directorIndex))
 
-            DirectorDOBId(companyIndex, directorIndex)
-              .row(routes.DirectorDOBController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorHasNINOId(companyIndex, directorIndex)
-              .row(routes.DirectorHasNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorEnterNINOId(companyIndex, directorIndex)
-              .row(routes.DirectorEnterNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorNoNINOReasonId(companyIndex, directorIndex)
-              .row(routes.DirectorNoNINOReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorHasUTRId(companyIndex, directorIndex)
-              .row(routes.DirectorHasUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorEnterUTRId(companyIndex, directorIndex)
-              .row(routes.DirectorEnterUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorNoUTRReasonId(companyIndex, directorIndex)
-              .row(routes.DirectorNoUTRReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorAddressId(companyIndex, directorIndex)
-              .row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorAddressYearsId(companyIndex, directorIndex)
-              .row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorPreviousAddressId(companyIndex, directorIndex)
-              .row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorEmailId(companyIndex, directorIndex)
-              .row(routes.DirectorEmailController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
-
-            DirectorPhoneNumberId(companyIndex, directorIndex)
-              .row(routes.DirectorPhoneNumberController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode)
-          ).flatten
-        )
-
-        val isNew = isNewItem(mode, userAnswers, IsNewDirectorId(companyIndex, directorIndex))
-
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theDirector"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__detailsFor", Message("messages__theDirector"))
 
         val vm = CYAViewModel(
           answerSections = Seq(directorAnswerSection),
@@ -111,11 +70,47 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           returnOverview = false,
           hideEditLinks = request.viewOnly,
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId(companyIndex, directorIndex), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsNewDirectorId
+          (companyIndex, directorIndex), mode),
           title = title,
           h1 = headingDetails(mode, personName(DirectorNameId(companyIndex, directorIndex)), isNew)
         )
 
         Future.successful(Ok(view(vm)))
     }
+
+  private def anwerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])(implicit request:DataRequest[AnyContent]) = {
+    implicit val userAnswers: UserAnswers = request.userAnswers
+    AnswerSection(None,
+      Seq(
+        DirectorNameId(companyIndex, directorIndex)
+          .row(routes.DirectorNameController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorDOBId(companyIndex, directorIndex)
+          .row(routes.DirectorDOBController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorHasNINOId(companyIndex, directorIndex)
+          .row(routes.DirectorHasNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorEnterNINOId(companyIndex, directorIndex)
+          .row(routes.DirectorEnterNINOController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorNoNINOReasonId(companyIndex, directorIndex)
+          .row(routes.DirectorNoNINOReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorHasUTRId(companyIndex, directorIndex)
+          .row(routes.DirectorHasUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorEnterUTRId(companyIndex, directorIndex)
+          .row(routes.DirectorEnterUTRController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorNoUTRReasonId(companyIndex, directorIndex)
+          .row(routes.DirectorNoUTRReasonController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorAddressId(companyIndex, directorIndex)
+          .row(routes.DirectorAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorAddressYearsId(companyIndex, directorIndex)
+          .row(routes.DirectorAddressYearsController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorPreviousAddressId(companyIndex, directorIndex)
+          .row(routes.DirectorPreviousAddressController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorEmailId(companyIndex, directorIndex)
+          .row(routes.DirectorEmailController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn).url, mode),
+        DirectorPhoneNumberId(companyIndex, directorIndex)
+          .row(routes.DirectorPhoneNumberController.onPageLoad(checkMode(mode), companyIndex, directorIndex, srn)
+            .url, mode)
+      ).flatten
+    )
+  }
 }

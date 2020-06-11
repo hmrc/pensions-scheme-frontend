@@ -44,39 +44,40 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                implicit val countryOptions: CountryOptions,
                                                                val controllerComponents: MessagesControllerComponents,
                                                                val view: checkYourAnswers
-                                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                              )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
-      val benefitsAndInsuranceSection = AnswerSection(
-        None,
-        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+      implicit request =>
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        val benefitsAndInsuranceSection = AnswerSection(
+          None,
+          InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
           OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
           TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url, mode) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
-      )
+        )
 
-      val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
-        Message("messages__benefitsAndInsuranceDetailsFor", name)
+        val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+          Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-      val vm = CYAViewModel(
-        answerSections = Seq(benefitsAndInsuranceSection),
-        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-        schemeName = existingSchemeName,
-        returnOverview = false,
-        hideEditLinks = request.viewOnly,
-        srn = srn,
-        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-        title = heading(Message("messages__theScheme")),
-        h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
-      )
+        val vm = CYAViewModel(
+          answerSections = Seq(benefitsAndInsuranceSection),
+          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          schemeName = existingSchemeName,
+          returnOverview = false,
+          hideEditLinks = request.viewOnly,
+          srn = srn,
+          hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+          title = heading(Message("messages__theScheme")),
+          h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
+        )
 
-      Future.successful(Ok(view(vm)))
-  }
+        Future.successful(Ok(view(vm)))
+    }
 }

@@ -84,7 +84,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         manualInputCall = routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
         addresses = addresses,
         heading = Message("messages__dynamic_whatIsAddress", establisherName),
-        title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual").resolve),
+        title = Message("messages__dynamic_whatIsAddress", Message("messages__theIndividual")),
         entityName = establisherName
       ),
       None

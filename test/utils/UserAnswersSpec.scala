@@ -78,7 +78,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
   }
 
   ".allEstablishersAfterDelete" must {
-    "return a map of establishers names, edit links and delete links when one of the establishers is deleted" in {
+    "return a map of establishers names, edit links and delete links when two of the establishers is deleted" in {
       val json = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -100,6 +100,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
             EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
           ),
           Json.obj(
+            EstablisherCompanyDetailsId.toString ->
+              CompanyDetails("my company 4", isDeleted = true),
             EstablisherKindId.toString -> EstablisherKind.Company.toString,
             IsEstablisherNewId.toString -> true
           )
@@ -108,8 +110,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
 
       val userAnswers = UserAnswers(json)
       val allEstablisherEntities: Seq[Establisher[_]] =
-        Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 3),
-          establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 3))
+        Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 2),
+          establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 2))
 
       userAnswers.allEstablishersAfterDelete(mode) mustEqual allEstablisherEntities
     }
@@ -351,7 +353,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with 
     "return true if an establisher is a company" in {
       val answers =
         UserAnswers()
-          .set(EstablisherNameId(0))(person)
+          .set(EstablisherNameId(0))(person).asOpt.value
+          .set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
+          .set(EstablisherKindId(1))(EstablisherKind.Company)
           .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
           .asOpt
           .value
@@ -490,6 +494,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress)
 
   private val trustee = insuranceCompanyDetails
+    .trusteeKind(0, TrusteeKind.Company)
     .trusteesCompanyDetails(0, company)
     .set(HasCompanyCRNId(0))(true).asOpt.value
     .trusteesCompanyEnterCRN(0, ReferenceValue(newCrn))

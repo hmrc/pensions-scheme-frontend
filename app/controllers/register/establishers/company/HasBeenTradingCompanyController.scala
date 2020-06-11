@@ -45,26 +45,16 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                 formProvider: HasBeenTradingFormProvider,
                                                 val view: hasReferenceNumber,
                                                 val controllerComponents: MessagesControllerComponents,
-                                                implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(mode, srn, index),
-      title = Message("messages__hasBeenTradingCompany__title"),
-      heading = Message("messages__hasBeenTrading__h1", companyName),
-      hint = None,
-      srn = srn
-    )
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider("messages__hasBeenTradingCompany__error__required", companyName)
+                                                implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
 
@@ -73,7 +63,22 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+  : CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(mode, srn,
+        index),
+      title = Message("messages__hasBeenTradingCompany__title"),
+      heading = Message("messages__hasBeenTrading__h1", companyName),
+      hint = None,
+      srn = srn
+    )
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasBeenTradingCompany__error__required", companyName)
 }

@@ -30,84 +30,42 @@ import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
 
+//scalastyle:off cyclomatic.complexity
 class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                  appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   import PartnerNavigator._
 
-  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case AddPartnersId(estIndex)                                          => addPartnerRoutes(mode, ua, estIndex, srn)
-    case PartnerNameId(estIndex, partnerIndex)                            =>           dobPage(mode, estIndex, partnerIndex, srn)
-    case PartnerDOBId(estIndex, partnerIndex)                             =>           hasNinoPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasNINOId(estIndex, partnerIndex)                      =>
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id)
+
+  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case AddPartnersId(estIndex) => addPartnerRoutes(mode, ua, estIndex, srn)
+    case PartnerNameId(estIndex, partnerIndex) => dobPage(mode, estIndex, partnerIndex, srn)
+    case PartnerDOBId(estIndex, partnerIndex) => hasNinoPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasNINOId(estIndex, partnerIndex) =>
       booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterNINOId(estIndex, partnerIndex)                         =>           hasUtrPage(mode, estIndex, partnerIndex, srn)
-    case PartnerNoNINOReasonId(estIndex, partnerIndex)                    =>           hasUtrPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasUTRId(estIndex, partnerIndex)                       =>
+    case PartnerEnterNINOId(estIndex, partnerIndex) => hasUtrPage(mode, estIndex, partnerIndex, srn)
+    case PartnerNoNINOReasonId(estIndex, partnerIndex) => hasUtrPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasUTRId(estIndex, partnerIndex) =>
       booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterUTRId(estIndex, partnerIndex)                        =>          postcodeLookupPage(mode, estIndex, partnerIndex, srn)
-    case PartnerNoUTRReasonId(estIndex, partnerIndex)                     =>          postcodeLookupPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressPostcodeLookupId(estIndex, partnerIndex)           => addressListPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressListId(estIndex, partnerIndex)                     => addressYearsPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressId(estIndex, partnerIndex)                         => addressYearsPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerAddressYearsId(estIndex, partnerIndex)                 => partnerAddressYearsRoutes(mode, ua, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   =>
+    case PartnerEnterUTRId(estIndex, partnerIndex) => postcodeLookupPage(mode, estIndex, partnerIndex, srn)
+    case PartnerNoUTRReasonId(estIndex, partnerIndex) => postcodeLookupPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressPostcodeLookupId(estIndex, partnerIndex) => addressListPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressListId(estIndex, partnerIndex) => addressYearsPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressId(estIndex, partnerIndex) => addressYearsPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerAddressYearsId(estIndex, partnerIndex) => partnerAddressYearsRoutes(mode, ua, estIndex,
+      partnerIndex, srn)
+    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex) =>
       paAddressListPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressListId(estIndex, partnerIndex)             => emailPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressId(estIndex, partnerIndex)                 => emailPage(mode, estIndex, partnerIndex, srn)
-    case PartnerEmailId(estIndex, partnerIndex)                           => phonePage(mode, estIndex, partnerIndex, srn)
-    case PartnerPhoneId(estIndex, partnerIndex)                           => cyaPage(mode, estIndex, partnerIndex, srn)
-    case ConfirmDeletePartnerId(estIndex)                                 => addPartnerPage(mode, estIndex, srn)
-    case OtherPartnersId(_) if mode == NormalMode                         => taskListPage(mode, srn)
-    case OtherPartnersId(_)                                               => anyMoreChangesPage(srn)
-  }
-
-  private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnerNameId(estIndex, partnerIndex)                            => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerDOBId(estIndex, partnerIndex)                             => cyaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasNINOId(estIndex, partnerIndex)                      => booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterNINOId(estIndex, partnerIndex)                         => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerNoNINOReasonId(estIndex, partnerIndex)                    => cyaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasUTRId(estIndex, partnerIndex)                       =>
-      booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterUTRId(estIndex, partnerIndex)                        => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerNoUTRReasonId(estIndex, partnerIndex)                     => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressId(estIndex, partnerIndex)                         => cyaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerAddressYearsId(estIndex, partnerIndex)                 => partnerAddressYearsEditRoutes(mode, ua, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   => paAddressListPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressListId(estIndex, partnerIndex)             => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressId(estIndex, partnerIndex)                 => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerEmailId(estIndex, partnerIndex)                           => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPhoneId(estIndex, partnerIndex)                           => cyaPage(mode, estIndex, partnerIndex, srn)
-  }
-
-  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnerNameId(estIndex, partnerIndex)                                                  => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerDOBId(estIndex, partnerIndex)                                                   => cyaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasNINOId(estIndex, partnerIndex)                                            =>
-      booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterNINOId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)   => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerEnterNINOId(_, _)                                               => anyMoreChangesPage(srn)
-    case PartnerNoNINOReasonId(estIndex, partnerIndex)                                          => cyaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerHasUTRId(estIndex, partnerIndex)                                             =>
-      booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
-    case PartnerEnterUTRId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)  => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerEnterUTRId(_, _)                                              => anyMoreChangesPage(srn)
-    case PartnerNoUTRReasonId(estIndex, partnerIndex)                                           => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)   => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerAddressId(estIndex, partnerIndex)                                               => isThisPaPage(mode, estIndex, partnerIndex, srn)
-    case id@PartnerConfirmPreviousAddressId(estIndex, partnerIndex)                             =>
-      booleanNav(id, ua, anyMoreChangesPage(srn), paPostcodeLookupPage(mode, estIndex, partnerIndex, srn))
-    case id@PartnerAddressYearsId(estIndex, partnerIndex)                                       => partnerAddressYearsRoutes(mode, ua, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex)   => paAddressListPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressListId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)                => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressListId(_, _)                                       => anyMoreChangesPage(srn)
-    case PartnerPreviousAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)                => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPreviousAddressId(_, _)                                       => anyMoreChangesPage(srn)
-    case PartnerEmailId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)                          => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerEmailId(_, _)                                                 => anyMoreChangesPage(srn)
-    case PartnerPhoneId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua)                          => cyaPage(mode, estIndex, partnerIndex, srn)
-    case PartnerPhoneId(_, _)                                                 => anyMoreChangesPage(srn)
+    case PartnerPreviousAddressListId(estIndex, partnerIndex) => emailPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressId(estIndex, partnerIndex) => emailPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEmailId(estIndex, partnerIndex) => phonePage(mode, estIndex, partnerIndex, srn)
+    case PartnerPhoneId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case ConfirmDeletePartnerId(estIndex) => addPartnerPage(mode, estIndex, srn)
+    case OtherPartnersId(_) if mode == NormalMode => taskListPage(mode, srn)
+    case OtherPartnersId(_) => anyMoreChangesPage(srn)
   }
 
   private def addPartnerRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, srn: Option[String]): Call = {
@@ -124,17 +82,76 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     }
   }
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id)
-
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
+
+  private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case PartnerNameId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerDOBId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasNINOId(estIndex, partnerIndex) => booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex,
+      srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
+    case PartnerEnterNINOId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerNoNINOReasonId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasUTRId(estIndex, partnerIndex) =>
+      booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
+    case PartnerEnterUTRId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerNoUTRReasonId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerAddressYearsId(estIndex, partnerIndex) => partnerAddressYearsEditRoutes(mode, ua, estIndex,
+      partnerIndex, srn)
+    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex) => paAddressListPage(mode, estIndex,
+      partnerIndex, srn)
+    case PartnerPreviousAddressListId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEmailId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPhoneId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+  }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
+
+  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String])
+  : PartialFunction[Identifier, Call] = {
+    case PartnerNameId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerDOBId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasNINOId(estIndex, partnerIndex) =>
+      booleanNav(id, ua, ninoPage(mode, estIndex, partnerIndex, srn), whyNoNinoPage(mode, estIndex, partnerIndex, srn))
+    case PartnerEnterNINOId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
+      estIndex, partnerIndex, srn)
+    case PartnerEnterNINOId(_, _) => anyMoreChangesPage(srn)
+    case PartnerNoNINOReasonId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerHasUTRId(estIndex, partnerIndex) =>
+      booleanNav(id, ua, utrPage(mode, estIndex, partnerIndex, srn), whyNoUtrPage(mode, estIndex, partnerIndex, srn))
+    case PartnerEnterUTRId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
+      estIndex, partnerIndex, srn)
+    case PartnerEnterUTRId(_, _) => anyMoreChangesPage(srn)
+    case PartnerNoUTRReasonId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
+      estIndex, partnerIndex, srn)
+    case PartnerAddressId(estIndex, partnerIndex) => isThisPaPage(mode, estIndex, partnerIndex, srn)
+    case id@PartnerConfirmPreviousAddressId(estIndex, partnerIndex) =>
+      booleanNav(id, ua, anyMoreChangesPage(srn), paPostcodeLookupPage(mode, estIndex, partnerIndex, srn))
+    case id@PartnerAddressYearsId(estIndex, partnerIndex) => partnerAddressYearsRoutes(mode, ua, estIndex,
+      partnerIndex, srn)
+    case PartnerPreviousAddressPostcodeLookupId(estIndex, partnerIndex) => paAddressListPage(mode, estIndex,
+      partnerIndex, srn)
+    case PartnerPreviousAddressListId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressListId(_, _) => anyMoreChangesPage(srn)
+    case PartnerPreviousAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPreviousAddressId(_, _) => anyMoreChangesPage(srn)
+    case PartnerEmailId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerEmailId(_, _) => anyMoreChangesPage(srn)
+    case PartnerPhoneId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) =>
+      cyaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerPhoneId(_, _) => anyMoreChangesPage(srn)
+  }
 }
 
 object PartnerNavigator {
@@ -171,9 +188,6 @@ object PartnerNavigator {
   private def whyNoUtrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerNoUTRReasonController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def cyaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    CheckYourAnswersController.onPageLoad(journeyMode(mode), estIndex, partnerIndex, srn)
-
   private def postcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerAddressPostcodeLookupController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
@@ -182,9 +196,6 @@ object PartnerNavigator {
 
   private def addressPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerAddressController.onPageLoad(mode, estIndex, partnerIndex, srn)
-
-  private def paPostcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def paAddressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, estIndex, partnerIndex, srn)
@@ -195,25 +206,33 @@ object PartnerNavigator {
   private def addressYearsPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerAddressYearsController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def emailPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    PartnerEmailController.onPageLoad(mode, estIndex, partnerIndex, srn)
-
   private def phonePage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerPhoneController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def partnerAddressYearsRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def partnerAddressYearsRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int,
+                                        srn: Option[String]): Call =
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => emailPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
       case _ => SessionExpiredController.onPageLoad()
     }
 
-  private def partnerAddressYearsEditRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def paPostcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+    PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, estIndex, partnerIndex, srn)
+
+  private def emailPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+    PartnerEmailController.onPageLoad(mode, estIndex, partnerIndex, srn)
+
+  private def partnerAddressYearsEditRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int,
+                                            srn: Option[String]): Call =
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => cyaPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
       case _ => SessionExpiredController.onPageLoad()
     }
+
+  private def cyaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+    CheckYourAnswersController.onPageLoad(journeyMode(mode), estIndex, partnerIndex, srn)
 
 
 }

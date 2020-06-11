@@ -46,28 +46,23 @@ class AddressYearsController @Inject()(
                                         requireData: DataRequiredAction,
                                         val view: addressYears,
                                         val controllerComponents: MessagesControllerComponents
-                                      )(implicit val ec: ExecutionContext) extends GenericAddressYearController with Retrievals {
+                                      )(implicit val ec: ExecutionContext) extends GenericAddressYearController with
+  Retrievals {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map { establisherName =>
+          get(AddressYearsId(index), form(establisherName.fullName), viewModel(mode, index, establisherName.fullName,
+            srn))
+        }
+    }
 
   private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__establisher_address_years__formError", establisherName))
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      EstablisherNameId(index).retrieve.right.map { establisherName =>
-        get(AddressYearsId(index), form(establisherName.fullName), viewModel(mode, index, establisherName.fullName, srn))
-      }
-  }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      EstablisherNameId(index).retrieve.right.map { establisherName =>
-        post(AddressYearsId(index), mode, form(establisherName.fullName), viewModel(mode, index, establisherName.fullName, srn))
-      }
-  }
-
   private def viewModel(mode: Mode, index: Index, establisherName: String, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent])= AddressYearsViewModel(
+                       (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = routes.AddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__establisher_address_years__title", Message("messages__theIndividual")),
     heading = Message("messages__establisher_address_years__title", establisherName),
@@ -75,5 +70,14 @@ class AddressYearsController @Inject()(
     subHeading = Some(Message(establisherName)),
     srn = srn
   )
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      EstablisherNameId(index).retrieve.right.map { establisherName =>
+        post(AddressYearsId(index), mode, form(establisherName.fullName), viewModel(mode, index, establisherName
+          .fullName, srn))
+      }
+  }
 }
 

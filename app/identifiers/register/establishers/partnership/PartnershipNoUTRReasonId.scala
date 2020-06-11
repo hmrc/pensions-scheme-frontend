@@ -51,13 +51,3 @@ object PartnershipNoUTRReasonId {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-

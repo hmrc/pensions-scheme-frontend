@@ -21,21 +21,19 @@ import utils.{Enumerable, InputOption, WithName}
 sealed trait TypeOfBenefits
 
 object TypeOfBenefits {
+  val values: Seq[TypeOfBenefits] = Seq(
+    MoneyPurchase, Defined, MoneyPurchaseDefinedMix
+  )
+  val options: Seq[InputOption] = values.map {
+    value =>
+      InputOption(value.toString, s"messages__type_of_benefits__${value.toString}")
+  }
 
   case object MoneyPurchase extends WithName("opt1") with TypeOfBenefits
 
   case object Defined extends WithName("opt2") with TypeOfBenefits
 
   case object MoneyPurchaseDefinedMix extends WithName("opt3") with TypeOfBenefits
-
-  val values: Seq[TypeOfBenefits] = Seq(
-    MoneyPurchase, Defined, MoneyPurchaseDefinedMix
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__type_of_benefits__${value.toString}")
-  }
 
   implicit val enumerable: Enumerable[TypeOfBenefits] =
     Enumerable(values.map(v => v.toString -> v): _*)

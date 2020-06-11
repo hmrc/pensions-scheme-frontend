@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class TrusteeHasUTRIdSpec extends SpecBase {
 
@@ -35,10 +35,10 @@ class TrusteeHasUTRIdSpec extends SpecBase {
   val name = PersonName("test", "name")
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = messages("messages__hasUTR", name.fullName),
+      label = Message("messages__hasUTR", name.fullName),
       answer = List("site.yes"),
       answerIsMessageKey = true,
-      changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_hasUtr", name.fullName))))
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasUtr", name.fullName))))
     )
   )
 

@@ -35,38 +35,26 @@ import views.html.utr
 import scala.concurrent.ExecutionContext
 
 class PartnerEnterUTRController @Inject()(
-                                      override val appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
-                                      override val userAnswersService: UserAnswersService,
-                                      override val navigator: Navigator,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      allowAccess: AllowAccessActionProvider,
-                                      requireData: DataRequiredAction,
-                                      formProvider: UTRFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: utr
-                                    )(implicit val ec: ExecutionContext) extends UTRController {
-
-  private def form: Form[ReferenceValue] = formProvider()
-
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], partnerName: String)
-                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
-    UTRViewModel(
-      postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__enterUTR", Message("messages__thePartner")),
-      heading = Message("messages__enterUTR", partnerName),
-      hint = Message("messages_utr__hint"),
-      srn = srn
-    )
-  }
+                                           override val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           override val userAnswersService: UserAnswersService,
+                                           override val navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
+                                           requireData: DataRequiredAction,
+                                           formProvider: UTRFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: utr
+                                         )(implicit val ec: ExecutionContext) extends UTRController {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
           val partnerName = details.fullName
-          get(PartnerEnterUTRId(establisherIndex, partnerIndex), viewModel(mode, establisherIndex, partnerIndex, srn, partnerName), form)
+          get(PartnerEnterUTRId(establisherIndex, partnerIndex), viewModel(mode, establisherIndex, partnerIndex, srn,
+            partnerName), form)
         }
     }
 
@@ -75,9 +63,25 @@ class PartnerEnterUTRController @Inject()(
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
           val partnerName = details.fullName
-          post(PartnerEnterUTRId(establisherIndex, partnerIndex), mode, viewModel(mode, establisherIndex, partnerIndex, srn, partnerName), form)
+          post(PartnerEnterUTRId(establisherIndex, partnerIndex), mode, viewModel(mode, establisherIndex,
+            partnerIndex, srn, partnerName), form)
         }
     }
+
+  private def form: Form[ReferenceValue] = formProvider()
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+                        partnerName: String)
+                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
+    UTRViewModel(
+      postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit
+      (mode, establisherIndex, partnerIndex, srn),
+      title = Message("messages__enterUTR", Message("messages__thePartner")),
+      heading = Message("messages__enterUTR", partnerName),
+      hint = Message("messages_utr__hint"),
+      srn = srn
+    )
+  }
 
 
 }

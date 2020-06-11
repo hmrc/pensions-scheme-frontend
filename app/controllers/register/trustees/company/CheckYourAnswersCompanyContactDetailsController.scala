@@ -41,21 +41,23 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 override val messagesApi: MessagesApi,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
-                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                @NoSuspendedCheck
+                                                                allowAccess: AllowAccessActionProvider,
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
                                                                 userAnswersService: UserAnswersService,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 val view: checkYourAnswers
-                                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                                                  with I18nSupport
-                                                                  with Retrievals {
+                                                               )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+  with I18nSupport
+  with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
-      val notNewEstablisher                 = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
+      val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
       val contactDetails = AnswerSection(
         None,
         CompanyEmailId(index).row(routes.CompanyEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
@@ -64,7 +66,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
 
       val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany"))
+      val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message
+      ("messages__theCompany"))
 
       val vm = CYAViewModel(
         answerSections = Seq(contactDetails),

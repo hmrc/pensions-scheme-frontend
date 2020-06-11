@@ -46,6 +46,8 @@ object PartnershipAddressId {
           changeAddress = hiddenLabel(id.index, ua)
         )().row(id)(changeUrl, ua)
       }
-      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+
+      override def updateRow(id: PartnershipAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
 }

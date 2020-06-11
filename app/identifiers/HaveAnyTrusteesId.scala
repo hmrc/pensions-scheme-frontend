@@ -18,29 +18,28 @@ package identifiers
 
 import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId, TrusteesId}
 import models.register.trustees.TrusteeKind
-import play.api.i18n.Messages
 import play.api.libs.json.{JsResult, JsSuccess}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.Message
 
 case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.Implicits {
   self =>
   override def toString: String = "haveAnyTrustees"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+  implicit def cya(implicit countryOptions: CountryOptions,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
-      label = Some(messages("haveAnyTrustees.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId).getOrElse("")))
+      label = Some(Message("haveAnyTrustees.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(Message("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
-        removeAllTrustees(userAnswers).flatMap(
-          _.remove(MoreThanTenTrusteesId)
-        )
+        removeAllTrustees(userAnswers).flatMap(_.remove(MoreThanTenTrusteesId))
       case _ =>
         super.cleanup(value, userAnswers)
     }
@@ -49,10 +48,8 @@ case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.I
   private def removeAllTrustees(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.getAllRecursive[TrusteeKind](TrusteeKindId.collectionPath) match {
       case Some(allTrustees) if allTrustees.nonEmpty =>
-        userAnswers.remove(TrusteesId(0)).flatMap(
-          removeAllTrustees)
-      case _ =>
-        JsSuccess(userAnswers)
+        userAnswers.remove(TrusteesId(0)).flatMap(removeAllTrustees)
+      case _ => JsSuccess(userAnswers)
     }
   }
 }

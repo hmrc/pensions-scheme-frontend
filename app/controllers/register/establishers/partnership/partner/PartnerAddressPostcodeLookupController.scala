@@ -48,7 +48,8 @@ class PartnerAddressPostcodeLookupController @Inject()(
                                                         formProvider: PostCodeLookupFormProvider,
                                                         val controllerComponents: MessagesControllerComponents,
                                                         val view: postcodeLookup
-                                                      )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                      )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 
@@ -58,7 +59,8 @@ class PartnerAddressPostcodeLookupController @Inject()(
         viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.right map get
     }
 
-  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
+  : Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {

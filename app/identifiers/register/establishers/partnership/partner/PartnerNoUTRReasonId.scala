@@ -25,7 +25,9 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
 }
 
 object PartnerNoUTRReasonId {

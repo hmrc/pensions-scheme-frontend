@@ -36,14 +36,6 @@ trait UTRController extends FrontendBaseController with Retrievals with I18nSupp
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: utr
-
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: UTRViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm =
@@ -66,4 +58,12 @@ trait UTRController extends FrontendBaseController with Retrievals with I18nSupp
       }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: utr
 }

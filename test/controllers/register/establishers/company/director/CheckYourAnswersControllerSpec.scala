@@ -153,7 +153,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
           answerSectionDirector(UpdateMode, Some("srn")),
           href(UpdateMode, Some("srn"), 0),
           Some("srn"),
-          title = Message("messages__detailsFor", Message("messages__theDirector").resolve),
+          title = Message("messages__detailsFor", Message("messages__theDirector")),
           h1 = Message("messages__detailsFor", "First Last")
         )
       }

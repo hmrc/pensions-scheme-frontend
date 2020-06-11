@@ -39,21 +39,23 @@ class AlreadyDeletedController @Inject()(
                                           requireData: DataRequiredAction,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: alreadyDeleted
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(srn = srn) andThen requireData).async {
-    implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
+      implicit request =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           Future.successful(Ok(view(vm(establisherIndex, details.fullName, srn))))
-      }
+        }
 
-  }
+    }
 
   private def vm(establisherIndex: Index, directorName: String, srn: Option[String]) = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__director_title"),
     directorName,
-    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn, establisherIndex)
+    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn,
+      establisherIndex)
   )
 
 }

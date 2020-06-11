@@ -73,7 +73,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
       post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector").resolve),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector")),
       mode = NormalMode,
       requiredData = getMandatoryEstablisherCompanyDirectorWithDirectorName,
       validData = validData,

@@ -45,25 +45,11 @@ class TrusteePhoneController @Inject()(
                                         formProvider: PhoneFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: phoneNumber
-                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with
+  I18nSupport {
 
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              routes.TrusteePhoneController.onSubmit(mode, index, srn),
-              Message("messages__enterPhoneNumber", Message("messages__theIndividual")),
-              Message("messages__enterPhoneNumber", details.fullName),
-              Some(Message("messages__contact_details__hint", details.fullName)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -80,6 +66,21 @@ class TrusteePhoneController @Inject()(
         viewModel(mode, srn, index).retrieve.right.map {
           vm =>
             post(TrusteePhoneId(index), mode, form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.TrusteePhoneController.onSubmit(mode, index, srn),
+              Message("messages__enterPhoneNumber", Message("messages__theIndividual")),
+              Message("messages__enterPhoneNumber", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
+              srn = srn
+            )
         }
     }
 

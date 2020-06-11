@@ -25,7 +25,8 @@ import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, Refer
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerEnterNINOId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterNINOId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnerNoNINOReasonId(establisherIndex, partnerIndex))

@@ -48,7 +48,7 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _=> userAnswers.get(BenefitsSecuredByInsuranceId) match{
+          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(
               label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
               Seq("site.not_entered"),

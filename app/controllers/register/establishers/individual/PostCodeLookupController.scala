@@ -50,9 +50,23 @@ class PostCodeLookupController @Inject()(
                                           val controllerComponents: MessagesControllerComponents
                                         )(implicit val ec: ExecutionContext) extends GenericPostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__establisher_individual_address__title"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            post(PostCodeLookupId(index), vm, mode)
+        }
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -67,21 +81,6 @@ class PostCodeLookupController @Inject()(
               subHeading = Some(details.fullName),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            post(PostCodeLookupId(index), vm, mode)
         }
     }
 }

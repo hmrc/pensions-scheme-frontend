@@ -23,8 +23,9 @@ import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
 import models.person.PersonName
+import models.register.establishers.EstablisherKind
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import play.api.data.Form
@@ -189,7 +190,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       EstablishersId.toString -> Json.arr(
         Json.obj(
           EstablisherNameId.toString -> personDetails,
-          IsEstablisherNewId.toString -> true
+          IsEstablisherNewId.toString -> true,
+          EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
         )
       )
     )
@@ -201,15 +203,18 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       EstablishersId.toString -> Json.arr(
         Json.obj(
           EstablisherNameId.toString -> personDetails,
-          IsEstablisherNewId.toString -> true
+          IsEstablisherNewId.toString -> true,
+          EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
         ),
         Json.obj(
           CompanyDetailsId.toString -> companyDetails,
-          IsEstablisherNewId.toString -> true
+          IsEstablisherNewId.toString -> true,
+          EstablisherKindId.toString -> EstablisherKind.Company.toString
         ),
         Json.obj(
           EstablisherNameId.toString -> deletedEstablisher,
-          IsEstablisherNewId.toString -> true
+          IsEstablisherNewId.toString -> true,
+          EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
         )
       )
     )

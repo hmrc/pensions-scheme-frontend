@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyEnterPAYEIdSpec extends SpecBase {
 
@@ -33,8 +33,9 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__paye",List("paye"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_paye", companyName)))))
+    AnswerRow(Message("messages__common__cya__paye"),
+      List("paye"),false,Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_paye", companyName)))))
   )
 
   "cya" when {
@@ -71,7 +72,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye",List("paye"),false,None)
+          AnswerRow(Message("messages__common__cya__paye"), List("paye"),false,None)
         ))
       }
 
@@ -93,8 +94,8 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__paye", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye", companyName)))))))
+          AnswerRow(Message("messages__common__cya__paye"), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_paye", companyName)))))))
       }
     }
   }

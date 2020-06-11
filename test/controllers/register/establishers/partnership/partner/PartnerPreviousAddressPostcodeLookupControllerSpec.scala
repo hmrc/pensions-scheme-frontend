@@ -55,7 +55,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
-    Message("messages__partnerPreviousAddressPostcodeLookup__heading", Message("messages__thePartner").resolve),
+    Message("messages__partnerPreviousAddressPostcodeLookup__heading", Message("messages__thePartner")),
     Message("messages__partnerPreviousAddressPostcodeLookup__heading", partner.fullName),
     Some(partner.fullName)
   )

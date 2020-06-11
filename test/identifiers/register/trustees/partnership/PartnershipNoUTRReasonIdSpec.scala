@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipNoUTRReasonIdSpec extends SpecBase {
 
@@ -34,8 +34,8 @@ class PartnershipNoUTRReasonIdSpec extends SpecBase {
   val reason = "some lame reason"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__whyNoUTR", name), List(reason), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_noUtrReason", name)))))
+    AnswerRow(Message("messages__whyNoUTR", name), List(reason), false, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_noUtrReason", name)))))
   )
 
   "cya" when {

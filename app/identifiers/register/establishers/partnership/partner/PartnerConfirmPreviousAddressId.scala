@@ -23,15 +23,15 @@ import utils.UserAnswers
 
 case class PartnerConfirmPreviousAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
 
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerConfirmPreviousAddressId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerConfirmPreviousAddressId.toString
 
   override def toString: String = "partnerConfirmPreviousAddress"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
-        userAnswers
-          .remove(PartnerPreviousAddressId(establisherIndex, partnerIndex))
+        userAnswers.remove(PartnerPreviousAddressId(establisherIndex, partnerIndex))
       case _ => super.cleanup(value, userAnswers)
     }
   }

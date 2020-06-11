@@ -47,6 +47,14 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
                                               val view: utr
                                              )(implicit val ec: ExecutionContext) extends UTRController {
 
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          get(PartnershipEnterUTRId(index), viewModel(mode, index, srn, details.name), form)
+        }
+    }
+
   private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
@@ -59,14 +67,6 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
-          get(PartnershipEnterUTRId(index), viewModel(mode, index, srn, details.name), form)
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

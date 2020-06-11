@@ -25,7 +25,9 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerPreviousAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerPreviousAddressId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "partner" \ partnerIndex \ PartnerPreviousAddressId.toString
 }
 
 object PartnerPreviousAddressId {
@@ -42,13 +44,16 @@ object PartnerPreviousAddressId {
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
 
       override def row(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label(id.establisherIndex, id.partnerIndex,userAnswers),
-          hiddenLabel(id.establisherIndex, id.partnerIndex,userAnswers))()
+        AddressCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers))()
           .row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.establisherIndex, id.partnerIndex,userAnswers),
-          hiddenLabel(id.establisherIndex, id.partnerIndex,userAnswers),
+      override def updateRow(id: PartnerPreviousAddressId)(
+        changeUrl: String,
+        userAnswers: UserAnswers
+      ): Seq[AnswerRow] =
+        PreviousAddressCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.partnerIndex, userAnswers),
           userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)),
           userAnswers.get(PartnerConfirmPreviousAddressId(id.establisherIndex, id.partnerIndex))
         )().updateRow(id)(changeUrl, userAnswers)

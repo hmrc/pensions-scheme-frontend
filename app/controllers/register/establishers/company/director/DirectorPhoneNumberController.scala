@@ -46,12 +46,23 @@ class DirectorPhoneNumberController @Inject()(
                                                formProvider: PhoneFormProvider,
                                                val view: phoneNumber,
                                                val controllerComponents: MessagesControllerComponents
-                                             )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+                                             )(implicit val ec: ExecutionContext) extends PhoneNumberController with
+  I18nSupport {
 
 
   protected val form: Form[String] = formProvider()
 
-  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, directorIndex: Index): Retrieval[CommonFormWithHintViewModel] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
+          vm =>
+            get(DirectorPhoneNumberId(establisherIndex, directorIndex), form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, directorIndex: Index)
+  : Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
@@ -63,15 +74,6 @@ class DirectorPhoneNumberController @Inject()(
               Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
-          vm =>
-            get(DirectorPhoneNumberId(establisherIndex, directorIndex), form, vm)
         }
     }
 

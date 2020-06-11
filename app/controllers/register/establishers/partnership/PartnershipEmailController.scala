@@ -44,24 +44,10 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
                                            formProvider: EmailFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: emailAddress
-                                          )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                          )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              controllers.register.establishers.partnership.routes.PartnershipEmailController.onSubmit(mode, index, srn),
-              Message("messages__enterEmail", Message("messages__thePartnership")),
-              Message("messages__enterEmail", details.name),
-              Some(Message("messages__contact_details__hint", details.name)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,6 +55,22 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
         viewModel(mode, srn, index).retrieve.right.map {
           vm =>
             get(PartnershipEmailId(index), form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              controllers.register.establishers.partnership.routes.PartnershipEmailController.onSubmit(mode, index,
+                srn),
+              Message("messages__enterEmail", Message("messages__thePartnership")),
+              Message("messages__enterEmail", details.name),
+              Some(Message("messages__contact_details__hint", details.name)),
+              srn = srn
+            )
         }
     }
 

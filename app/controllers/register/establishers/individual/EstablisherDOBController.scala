@@ -51,7 +51,19 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
 
   val form: Form[LocalDate] = formProvider()
 
-  private def postCall: (Mode, Index, Option[String]) => Call = routes.EstablisherDOBController.onSubmit
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
+        ("messages__theIndividual")), mode)
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
+        ("messages__theIndividual")), mode)
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String)
                        (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
@@ -62,15 +74,5 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")), mode)
-    }
+  private def postCall: (Mode, Index, Option[String]) => Call = routes.EstablisherDOBController.onSubmit
 }

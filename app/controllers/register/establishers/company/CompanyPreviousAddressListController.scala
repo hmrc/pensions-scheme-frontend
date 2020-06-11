@@ -48,13 +48,31 @@ class CompanyPreviousAddressListController @Inject()(
                                                       val auditService: AuditService,
                                                       val view: addressList,
                                                       val controllerComponents: MessagesControllerComponents
-                                                    )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                    )(implicit val ec: ExecutionContext) extends
+  AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
+    (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right.map {
+      case companyDetails ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
+          manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
+          addresses = addresses,
+          title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
+          heading = Message("messages__common__selectPreviousAddress__h1", companyDetails.companyName),
+          srn = srn,
+          entityName = companyDetails.companyName
+        )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index)))
+    )
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -71,21 +89,4 @@ class CompanyPreviousAddressListController @Inject()(
             )
         }
     }
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right.map {
-      case companyDetails ~ addresses =>
-        AddressListViewModel(
-          postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, srn, index),
-          manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, index),
-          addresses = addresses,
-          title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
-          heading = Message("messages__common__selectPreviousAddress__h1", companyDetails.companyName),
-          srn = srn,
-          entityName = companyDetails.companyName
-        )
-      }.left.map(_ =>
-        Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, index)))
-    )
 }

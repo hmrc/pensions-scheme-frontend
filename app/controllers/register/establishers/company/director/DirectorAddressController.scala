@@ -53,21 +53,26 @@ class DirectorAddressController @Inject()(
                                            val auditService: AuditService,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: manualAddress
-                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = DirectorAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__directorAddressPostcodeLookup__lede"
-
-  protected val form: Form[Address] = formProvider()
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
-            get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex),
+            get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex,
+              directorIndex),
               viewmodel(establisherIndex, directorIndex, mode, srn, name))
         }
     }
@@ -97,10 +102,5 @@ class DirectorAddressController @Inject()(
       heading = Message(heading, name),
       srn = srn
     )
-
-  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
-    implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
 
 }

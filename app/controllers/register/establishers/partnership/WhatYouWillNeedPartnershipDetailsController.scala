@@ -37,12 +37,14 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
                                                             requireData: DataRequiredAction,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             val view: whatYouWillNeedPartnershipDetails
-                                                           ) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                           ) extends FrontendBaseController with I18nSupport with
+  Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode, index, srn)
+      val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode,
+        index, srn)
       PartnershipDetailsId(index).retrieve.right.map { details =>
         Future.successful(Ok(view(existingSchemeName, href, details.name, srn)))
       }

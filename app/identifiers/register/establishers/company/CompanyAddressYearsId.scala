@@ -55,12 +55,16 @@ object CompanyAddressYearsId {
         dynamicMessage(establisherIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+        AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => row(id)(changeUrl, userAnswers)
-          case _ => AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            row(id)(changeUrl, userAnswers)
+          case _ =>
+            AddressYearsCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))()
+            .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

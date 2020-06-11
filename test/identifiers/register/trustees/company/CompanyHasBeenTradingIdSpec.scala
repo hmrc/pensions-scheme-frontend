@@ -70,7 +70,7 @@ class CompanyHasBeenTradingIdSpec extends SpecBase {
         "return answers rows with change links" in {
           HasBeenTradingCompanyId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
-              Message("messages__hasBeenTrading__h1", companyDetails.companyName),
+              Message(Message("messages__hasBeenTrading__h1", companyDetails.companyName)),
               Seq("site.no"),
               answerIsMessageKey = true,
               Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", companyDetails.companyName))))

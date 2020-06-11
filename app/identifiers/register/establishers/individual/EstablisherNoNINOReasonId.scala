@@ -45,7 +45,9 @@ object EstablisherNoNINOReasonId {
       }
 
 
-      override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: EstablisherNoNINOReasonId)(changeUrl: String,
+                                                            userAnswers: UserAnswers
+                                                           ): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]

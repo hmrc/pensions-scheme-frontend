@@ -46,9 +46,20 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
                                                val view: nino,
                                                val controllerComponents: MessagesControllerComponents
                                               )
-                                              (implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+                                              (implicit val ec: ExecutionContext) extends NinoController with
+  I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.individual.routes
+    .EstablisherEnterNINOController.onSubmit _
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map {
+          details =>
+            get(EstablisherEnterNINOId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
+        }
+    }
 
   private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
@@ -60,20 +71,13 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
-          details =>
-            get(EstablisherEnterNINOId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.right.map {
         details =>
-          post(EstablisherEnterNINOId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode, srn))
+          post(EstablisherEnterNINOId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode,
+            srn))
       }
   }
 

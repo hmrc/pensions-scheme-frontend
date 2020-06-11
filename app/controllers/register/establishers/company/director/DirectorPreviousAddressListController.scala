@@ -47,7 +47,8 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
                                                       val auditService: AuditService,
                                                       val view: addressList,
                                                       val controllerComponents: MessagesControllerComponents
-                                                     )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                     )(implicit val ec: ExecutionContext) extends
+  AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -73,11 +74,13 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (DirectorNameId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex)).retrieve.right.map {
+    (DirectorNameId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex,
+      directorIndex)).retrieve.right.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex, srn),
-          manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
+          manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex,
+            directorIndex, srn),
           addresses = addresses,
           title = Message("messages__select_the_previous_address__heading", Message("messages__theDirector")),
           heading = Message("messages__select_the_previous_address__heading", name.fullName),
@@ -85,6 +88,7 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
           entityName = name.fullName
         )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex, srn)))
+      Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode,
+        establisherIndex, directorIndex, srn)))
     )
 }

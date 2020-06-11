@@ -44,7 +44,8 @@ object TrusteePreviousAddressId {
         AddressCYA(label, changeAddress)().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+      override def updateRow(id: TrusteePreviousAddressId)(changeUrl: String,
+                                                           ua: UserAnswers): Seq[AnswerRow] = {
         val (label, changeAddress) = getLabel(id.index, ua)
         PreviousAddressCYA(label,
           changeAddress,

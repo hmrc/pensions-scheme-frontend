@@ -35,18 +35,36 @@ import views.html.enterVATView
 import scala.concurrent.ExecutionContext
 
 class CompanyEnterVATController @Inject()(
-                                                override val appConfig: FrontendAppConfig,
-                                                override val messagesApi: MessagesApi,
-                                                override val userAnswersService: UserAnswersService,
-                                                override val navigator: Navigator,
-                                                authenticate: AuthAction,
-                                                getData: DataRetrievalAction,
-                                                allowAccess: AllowAccessActionProvider,
-                                                requireData: DataRequiredAction,
-                                                formProvider: EnterVATFormProvider,
-                                                val controllerComponents: MessagesControllerComponents,
-                                                val view: enterVATView
-                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
+                                           override val appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           override val userAnswersService: UserAnswersService,
+                                           override val navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           allowAccess: AllowAccessActionProvider,
+                                           requireData: DataRequiredAction,
+                                           formProvider: EnterVATFormProvider,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           val view: enterVATView
+                                         )(implicit val ec: ExecutionContext) extends EnterVATController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyEnterVATId(index), viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      CompanyDetailsId(index).retrieve.right.map { details =>
+        val companyName = details.companyName
+        post(CompanyEnterVATId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
+      }
+  }
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(companyName)
@@ -60,22 +78,5 @@ class CompanyEnterVATController @Inject()(
       subHeading = None,
       srn = srn
     )
-  }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
-          val companyName = details.companyName
-          get(CompanyEnterVATId(index), viewModel(mode, index, srn, companyName), form(companyName))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { details =>
-        val companyName = details.companyName
-        post(CompanyEnterVATId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
-      }
   }
 }

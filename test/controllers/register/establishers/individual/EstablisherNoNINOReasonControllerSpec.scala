@@ -48,7 +48,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
   private val postCall = controllers.register.establishers.individual.routes.EstablisherNoNINOReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = messages("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+    title = messages("messages__whyNoNINO", Message("messages__theIndividual")),
     heading = Message("messages__whyNoNINO", name),
     srn = None
   )

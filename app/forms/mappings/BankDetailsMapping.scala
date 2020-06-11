@@ -22,7 +22,8 @@ import play.api.data.{FormError, Forms, Mapping}
 
 trait BankDetailsMapping extends Mappings {
 
-  protected def sortCodeMappingHS(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[SortCode] = {
+  protected def sortCodeMappingHS(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String)
+  : Mapping[SortCode] = {
 
     val formatter: Formatter[SortCode] = new Formatter[SortCode] {
 
@@ -62,6 +63,7 @@ trait BankDetailsMapping extends Mappings {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
         def strip(value: String): String = value.replaceAll("\\s", "")
+
         baseFormatter.bind(key, data)
           .right.map(strip)
           .right.flatMap {

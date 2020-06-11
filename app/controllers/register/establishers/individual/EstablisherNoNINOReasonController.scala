@@ -44,20 +44,8 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
                                                   formProvider: ReasonFormProvider,
                                                   val view: reason,
                                                   val controllerComponents: MessagesControllerComponents)
-                                                 (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
-
-  private def form(name: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider("messages__reason__error_ninoRequired", name)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
-    ReasonViewModel(
-      postCall = routes.EstablisherNoNINOReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoNINO", Message("messages__theIndividual")),
-      heading = Message("messages__whyNoNINO", name),
-      srn = srn
-    )
-  }
+                                                 (implicit val ec: ExecutionContext) extends ReasonController with
+  I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,4 +64,17 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
           post(EstablisherNoNINOReasonId(index), mode, viewModel(mode, index, srn, name), form(name))
         }
     }
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__reason__error_ninoRequired", name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.EstablisherNoNINOReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__whyNoNINO", Message("messages__theIndividual")),
+      heading = Message("messages__whyNoNINO", name),
+      srn = srn
+    )
+  }
 }

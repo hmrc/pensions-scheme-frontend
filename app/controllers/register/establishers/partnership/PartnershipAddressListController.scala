@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId,
+  PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -46,7 +47,8 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                  val controllerComponents: MessagesControllerComponents,
                                                  val view: addressList,
                                                  val auditService: AuditService
-                                                )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                )(implicit val ec: ExecutionContext) extends AddressListController
+  with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -59,15 +61,15 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
       implicit request =>
         viewModel(mode, index, srn).right.map {
           vm =>
-              post(
-                viewModel = vm,
-                navigatorId = PartnershipAddressListId(index),
-                dataId = PartnershipAddressId(index),
-                mode = mode,
-                context = s"Partnership Address: ${vm.entityName}",
-                postCodeLookupIdForCleanup = PartnershipPostcodeLookupId(index)
-              )
-          }
+            post(
+              viewModel = vm,
+              navigatorId = PartnershipAddressListId(index),
+              dataId = PartnershipAddressId(index),
+              mode = mode,
+              context = s"Partnership Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = PartnershipPostcodeLookupId(index)
+            )
+        }
     }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String])
@@ -84,7 +86,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
           heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name),
           entityName = partnershipDetails.name
         )
-      }.left.map(_ =>
-        Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)))
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)))
     )
 }

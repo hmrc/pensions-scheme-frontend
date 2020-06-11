@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId,
+  PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -52,7 +53,8 @@ class PartnershipAddressController @Inject()(
                                               val auditService: AuditService,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: manualAddress
-                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
@@ -69,16 +71,6 @@ class PartnershipAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
-        details =>
-          val context = s"Partnership Address: ${details.name}"
-          post(PartnershipAddressId(index), PartnershipAddressListId(index),
-            viewmodel(index, mode, srn, details.name), mode, context, PartnershipPostcodeLookupId(index))
-      }
-  }
-
   private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
@@ -88,5 +80,16 @@ class PartnershipAddressController @Inject()(
       heading = Message(heading, name),
       srn = srn
     )
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      PartnershipDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Partnership Address: ${details.name}"
+          post(PartnershipAddressId(index), PartnershipAddressListId(index),
+            viewmodel(index, mode, srn, details.name), mode, context, PartnershipPostcodeLookupId(index))
+      }
+  }
 
 }

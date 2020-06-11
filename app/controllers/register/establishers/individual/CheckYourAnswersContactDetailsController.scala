@@ -46,7 +46,8 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
                                                          allowChangeHelper: AllowChangeHelper,
                                                          val controllerComponents: MessagesControllerComponents,
                                                          val view: checkYourAnswers
-                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -54,13 +55,16 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
         val notNewEstablisher = !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
         val contactDetails = AnswerSection(
           None,
-          EstablisherEmailId(index).row(routes.EstablisherEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            EstablisherPhoneId(index).row(routes.EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          EstablisherEmailId(index).row(routes.EstablisherEmailController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            EstablisherPhoneId(index).row(routes.EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode)
         )
 
         val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePerson"))
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__contactDetailsFor", Message("messages__thePerson"))
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
@@ -69,7 +73,8 @@ class CheckYourAnswersContactDetailsController @Inject()(val appConfig: Frontend
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
           h1 = headingContactDetails(mode, personName(EstablisherNameId(index)), isNew)
         )

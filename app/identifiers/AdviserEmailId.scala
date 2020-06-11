@@ -16,19 +16,20 @@
 
 package identifiers
 
-import play.api.i18n.Messages
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
+import viewmodels.Message
 
 object AdviserEmailId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "adviserEmail"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+  implicit def cya(implicit countryOptions: CountryOptions,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     StringCYA[self.type](
-      label = Some(messages("adviserEmail.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse(""))) ,
-      hiddenLabel = Some(messages("messages__visuallyhidden__adviserEmail", userAnswers.get(AdviserNameId).getOrElse("")))
+      label = Some(Message("adviserEmail.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse(""))),
+      hiddenLabel = Some(Message("messages__visuallyhidden__adviserEmail", userAnswers.get(AdviserNameId)
+        .getOrElse("")))
     )()
 }

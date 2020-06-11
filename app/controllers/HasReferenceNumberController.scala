@@ -34,15 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait HasReferenceNumberController extends FrontendBaseController with Retrievals with I18nSupport {
 
-  protected implicit def executionContext : ExecutionContext
-
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: hasReferenceNumber
+  protected implicit def executionContext: ExecutionContext
 
   def get(id: TypedIdentifier[Boolean], form: Form[Boolean], viewmodel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
@@ -57,9 +49,18 @@ trait HasReferenceNumberController extends FrontendBaseController with Retrieval
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       value => {
-        userAnswersService.save(mode, viewmodel.srn, id, value).map{cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
+        userAnswersService.save(mode, viewmodel.srn, id, value).map { cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))
+        }
       }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: hasReferenceNumber
 }

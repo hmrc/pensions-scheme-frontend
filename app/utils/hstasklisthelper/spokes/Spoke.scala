@@ -23,9 +23,6 @@ import viewmodels.Message
 
 trait Spoke {
 
-  protected def dynamicLinkText(name: String, srn: Option[String], registrationLinkText: => String, variationsLinkText: => String): Message =
-    Message(if (srn.isDefined) variationsLinkText else registrationLinkText, name)
-
   def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink
 
   def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink
@@ -33,6 +30,10 @@ trait Spoke {
   def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink
 
   def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean]
+
+  protected def dynamicLinkText(name: String, srn: Option[String], registrationLinkText: => String,
+                                variationsLinkText: => String): Message =
+    Message(if (srn.isDefined) variationsLinkText else registrationLinkText, name)
 }
 
 trait DetailsSpoke extends Spoke {
@@ -40,7 +41,8 @@ trait DetailsSpoke extends Spoke {
 
   def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__add_details", name),
     addLinkUrl(mode, srn, index).url
   )
@@ -52,7 +54,8 @@ trait DetailsSpoke extends Spoke {
       changeLinkUrl(mode, srn, index).url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index])
+  : TaskListLink = TaskListLink(
     dynamicLinkText(name, srn, "messages__schemeTaskList__change_details",
       "messages__schemeTaskList__view_details"),
     addLinkUrl(mode, srn, index).url
@@ -64,18 +67,21 @@ trait AddressSpoke extends Spoke {
 
   def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__add_address", name),
     addLinkUrl(mode, srn, index).url
   )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     dynamicLinkText(name, srn, "messages__schemeTaskList__change_address",
       "messages__schemeTaskList__view_address"),
     changeLinkUrl(mode, srn, index).url
   )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index])
+  : TaskListLink = TaskListLink(
     dynamicLinkText(name, srn, "messages__schemeTaskList__change_address",
       "messages__schemeTaskList__view_address"),
     addLinkUrl(mode, srn, index).url
@@ -87,18 +93,21 @@ trait ContactDetailsSpoke extends Spoke {
 
   def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     Message("messages__schemeTaskList__add_contact", name),
     addLinkUrl(mode, srn, index).url
   )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+    TaskListLink(
     dynamicLinkText(name, srn, "messages__schemeTaskList__change_contact",
       "messages__schemeTaskList__view_contact"),
     changeLinkUrl(mode, srn, index).url
   )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink = TaskListLink(
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index])
+  : TaskListLink = TaskListLink(
     dynamicLinkText(name, srn, "messages__schemeTaskList__change_contact",
       "messages__schemeTaskList__view_contact"),
     addLinkUrl(mode, srn, index).url

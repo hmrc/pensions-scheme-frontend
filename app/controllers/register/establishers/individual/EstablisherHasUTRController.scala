@@ -45,20 +45,7 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             val view: hasReferenceNumber,
                                             val controllerComponents: MessagesControllerComponents)
                                            (implicit val executionContext: ExecutionContext)
-    extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasUTR", Message("messages__theIndividual")),
-      heading = Message("messages__hasUTR", companyName),
-      hint = Some(Message("messages__hasUtr__p1")),
-      srn = srn
-    )
-
-  private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider("messages__hasUTR__error__required", establisherName)
+  extends HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
@@ -73,4 +60,18 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
         post(EstablisherHasUTRId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode,
+        index, srn),
+      title = Message("messages__hasUTR", Message("messages__theIndividual")),
+      heading = Message("messages__hasUTR", companyName),
+      hint = Some(Message("messages__hasUtr__p1")),
+      srn = srn
+    )
+
+  private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider("messages__hasUTR__error__required", establisherName)
 }

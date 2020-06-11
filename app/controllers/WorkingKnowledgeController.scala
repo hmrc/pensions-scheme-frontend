@@ -43,14 +43,12 @@ class WorkingKnowledgeController @Inject()(
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
-                                           val controllerComponents: MessagesControllerComponents,
-                                           val view: workingKnowledge
-                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals with Enumerable.Implicits {
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: workingKnowledge
+                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
-
-  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
-    existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>
@@ -61,6 +59,9 @@ class WorkingKnowledgeController @Inject()(
 
       Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
   }
+
+  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
+    existingSchemeName.getOrElse("")
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>

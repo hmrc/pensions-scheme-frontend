@@ -44,7 +44,8 @@ object CompanyEnterCRNId {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_crn")
 
       override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel(id.index, userAnswers: UserAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {

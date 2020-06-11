@@ -34,30 +34,21 @@ import views.html.nino
 import scala.concurrent.ExecutionContext
 
 class PartnerEnterNINOController @Inject()(
-                                          val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          val userAnswersService: UserAnswersService,
-                                          val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          val formProvider: NINOFormProvider,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          val view: nino
-                                        )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+                                            val appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            val userAnswersService: UserAnswersService,
+                                            val navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            allowAccess: AllowAccessActionProvider,
+                                            requireData: DataRequiredAction,
+                                            val formProvider: NINOFormProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: nino
+                                          )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterNINOController.onSubmit _
-
-  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
-    NinoViewModel(
-      postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
-      title = Message("messages__enterNINO", Message("messages__thePartner")),
-      heading = Message("messages__enterNINO", name),
-      hint = Message("messages__common__nino_hint"),
-      srn = srn
-    )
+  private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes
+    .PartnerEnterNINOController.onSubmit _
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -72,18 +63,28 @@ class PartnerEnterNINOController @Inject()(
         }
     }
 
+  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
+      title = Message("messages__enterNINO", Message("messages__thePartner")),
+      heading = Message("messages__enterNINO", name),
+      hint = Message("messages__common__nino_hint"),
+      srn = srn
+    )
+
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
-        name =>
-          post(
-            PartnerEnterNINOId(establisherIndex, partnerIndex),
-            mode,
-            formProvider(name.fullName),
-            viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
-          )
-      }
-  }
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          name =>
+            post(
+              PartnerEnterNINOId(establisherIndex, partnerIndex),
+              mode,
+              formProvider(name.fullName),
+              viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
+            )
+        }
+    }
 
 }

@@ -33,9 +33,11 @@ import scala.util.{Failure, Try}
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
+  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[SchemeSubmissionResponse]
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier,
+                                                                             ec: ExecutionContext): Future[Unit]
 
   def checkForAssociation(psaId: String, srn: String)(implicit
                                                       headerCarrier: HeaderCarrier,
@@ -44,9 +46,11 @@ trait PensionsSchemeConnector {
 }
 
 @Singleton
-class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends PensionsSchemeConnector {
+class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
+  PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[SchemeSubmissionResponse] = {
     val url = config.registerSchemeUrl
 
     http.POST(url, answers.json, Seq("psaId" -> psaId)).map { response =>
@@ -62,7 +66,16 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
 
   }
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {
+    case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
+  }
+
+  private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
+    case Failure(t: Throwable) => Logger.error(msg, t)
+  }
+
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier,
+                                                                             ec: ExecutionContext): Future[Unit] = {
 
     val url = config.updateSchemeDetailsUrl
 
@@ -79,7 +92,8 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
                                                       headerCarrier: HeaderCarrier,
                                                       ec: ExecutionContext,
                                                       request: RequestHeader): Future[Boolean] = {
-    val headers: Seq[(String, String)] = Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+    val headers: Seq[(String, String)] = Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type",
+      "application/json"))
 
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
@@ -95,16 +109,9 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     } recoverWith {
       case ex: BadRequestException if ex.message.contains("INVALID_SRN") => Future.successful(false)
       case ex: NotFoundException => Future.successful(false)
-      case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
+      case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" =>
+        Future.failed(new InvalidPayloadException)
     } andThen logExceptions("Unable to check for scheme association with PSA")
-  }
-
-  private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {
-    case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
-  }
-
-  private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
-    case Failure(t: Throwable) => Logger.error(msg, t)
   }
 }
 

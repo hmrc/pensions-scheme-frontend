@@ -49,15 +49,7 @@ class ConfirmDeletePartnerController @Inject()(
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: confirmDeletePartner
                                               )(implicit val executionContext: ExecutionContext
-) extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
-
-  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]
-                   )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] =
-    request.userAnswers.get(PartnerNameId(establisherIndex, partnerIndex)).map { partner =>
-      userAnswersService.save(mode, srn, PartnerNameId(establisherIndex, partnerIndex), partner.copy(isDeleted = true))
-    }
+                                              ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -65,7 +57,8 @@ class ConfirmDeletePartnerController @Inject()(
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           partner =>
             if (partner.isDeleted) {
-              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex, partnerIndex, srn)))
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex,
+                partnerIndex, srn)))
             } else {
               Future.successful(
                 Ok(
@@ -96,16 +89,26 @@ class ConfirmDeletePartnerController @Inject()(
                 ))),
               value => {
                 val deletionResult = if (value) {
-                  deletePartner(establisherIndex, partnerIndex, mode, srn).getOrElse(Future.successful(request.userAnswers.json))
+                  deletePartner(establisherIndex, partnerIndex, mode, srn).getOrElse(Future.successful(request
+                    .userAnswers.json))
                 } else {
                   Future.successful(request.userAnswers.json)
                 }
                 deletionResult.flatMap {
                   jsValue =>
-                    Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode, UserAnswers(jsValue), srn)))
+                    Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), mode,
+                      UserAnswers(jsValue), srn)))
                 }
               }
             )
         }
+    }
+
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
+
+  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]
+                   )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] =
+    request.userAnswers.get(PartnerNameId(establisherIndex, partnerIndex)).map { partner =>
+      userAnswersService.save(mode, srn, PartnerNameId(establisherIndex, partnerIndex), partner.copy(isDeleted = true))
     }
 }

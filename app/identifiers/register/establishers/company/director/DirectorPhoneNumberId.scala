@@ -26,7 +26,9 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.{AnswerRow, Message}
 
 case class DirectorPhoneNumberId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorPhoneNumberId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorPhoneNumberId.toString
 }
 
 

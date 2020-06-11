@@ -26,14 +26,16 @@ import viewmodels.AnswerRow
 import scala.language.implicitConversions
 
 trait Ops[A] {
-  def row(changeUrl: String, mode: Mode = NormalMode)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
+  def row(changeUrl: String, mode: Mode = NormalMode)(implicit request: DataRequest[AnyContent], reads: Reads[A])
+  : Seq[AnswerRow]
 }
 
 object Ops {
   implicit def toOps[I <: TypedIdentifier.PathDependent](id: I)(implicit ev: CheckYourAnswers[I]): Ops[id.Data] =
     new Ops[id.Data] {
-      override def row(changeUrl: String, mode: Mode)(implicit request: DataRequest[AnyContent], reads: Reads[id.Data]): Seq[AnswerRow] =
-        if(mode == UpdateMode || mode == CheckUpdateMode) {
+      override def row(changeUrl: String, mode: Mode)(implicit request: DataRequest[AnyContent], reads: Reads[id
+      .Data]): Seq[AnswerRow] =
+        if (mode == UpdateMode || mode == CheckUpdateMode) {
           ev.updateRow(id)(changeUrl, request.userAnswers)
         } else {
           ev.row(id)(changeUrl, request.userAnswers)

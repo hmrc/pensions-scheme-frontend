@@ -256,11 +256,13 @@ trait DataCompletionHelper extends OptionValues {
     def establisherIndividualEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
       answers.establishersIndividualName(index, PersonName(s"first $index", s"last $index", isDeleted)).
         isEstablisherNew(index, flag = true).isEstablisherNew(index, flag = true)
+        .establisherKind(index, EstablisherKind.Indivdual)
     }
 
     def establisherPartnershipEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
       answers.establisherPartnershipDetails(index, PartnershipDetails(s"test partnership $index", isDeleted)).
         isEstablisherNew(index, flag = true).isEstablisherNew(index, flag = true)
+        .establisherKind(index, EstablisherKind.Partnership)
     }
 
     def trusteeCompanyEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {

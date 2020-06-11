@@ -41,7 +41,7 @@ class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
   private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
+    title = Message("messages__hasUTR", Message("messages__theIndividual")),
     heading = Message("messages__hasUTR", name),
     hint = Some(Message("messages__hasUtr__p1"))
   )

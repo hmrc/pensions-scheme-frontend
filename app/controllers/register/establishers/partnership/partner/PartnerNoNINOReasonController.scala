@@ -46,7 +46,8 @@ class PartnerNoNINOReasonController @Inject()(
                                                formProvider: ReasonFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: reason
-                                             )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                             )(implicit val ec: ExecutionContext) extends
+  ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_ninoRequired", name)
 

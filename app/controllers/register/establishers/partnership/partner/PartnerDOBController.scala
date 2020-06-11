@@ -52,17 +52,6 @@ class PartnerDOBController @Inject()(
 
   val form: Form[LocalDate] = formProvider()
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
-
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: Message)
-                       (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
-    DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
-      srn = srn,
-      token = token
-    )
-  }
-
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -84,4 +73,15 @@ class PartnerDOBController @Inject()(
           mode
         )
     }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: Message)
+                       (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
+      srn = srn,
+      token = token
+    )
+  }
+
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
 }

@@ -39,17 +39,18 @@ import scala.concurrent.{ExecutionContext, Future}
 trait DateOfBirthController extends FrontendBaseController with Retrievals with I18nSupport {
   protected implicit def ec: ExecutionContext
 
+  protected val form: Form[LocalDate]
+
   protected def appConfig: FrontendAppConfig
 
   protected def userAnswersService: UserAnswersService
 
   protected def navigator: Navigator
 
-  protected val form: Form[LocalDate]
-
   protected def view: DOB
 
-  protected def get(dobId: TypedIdentifier[LocalDate], personNameId: TypedIdentifier[PersonName], viewModel: DateOfBirthViewModel, mode: Mode)
+  protected def get(dobId: TypedIdentifier[LocalDate], personNameId: TypedIdentifier[PersonName],
+                    viewModel: DateOfBirthViewModel, mode: Mode)
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm = request.userAnswers.get(dobId) match {
@@ -65,7 +66,8 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals with 
     }
   }
 
-  protected def post[I <: TypedIdentifier[LocalDate]](dobId: I, personNameId: TypedIdentifier[PersonName], viewModel: DateOfBirthViewModel, mode: Mode)
+  protected def post[I <: TypedIdentifier[LocalDate]](dobId: I, personNameId: TypedIdentifier[PersonName],
+                                                      viewModel: DateOfBirthViewModel, mode: Mode)
                                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     form.bindFromRequest().fold(

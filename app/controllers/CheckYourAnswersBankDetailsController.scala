@@ -39,7 +39,8 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       implicit val countryOptions: CountryOptions,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       val view: checkYourAnswers
-                                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                                     )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>

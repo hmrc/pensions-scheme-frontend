@@ -47,20 +47,9 @@ class PartnershipNoUTRReasonController @Inject()(
                                                   formProvider: ReasonFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: reason
-                                                )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
-                                                                                     with I18nSupport with Enumerable.Implicits {
-
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
-    formProvider("messages__reason__error_utrRequired", companyName)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): ReasonViewModel =
-    ReasonViewModel(
-      postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoUTR", Message("messages__thePartnership")),
-      heading = Message("messages__whyNoUTR", partnershipName),
-      srn = srn
-    )
+                                                )(implicit val ec: ExecutionContext) extends ReasonController with
+  Retrievals
+  with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,7 +65,20 @@ class PartnershipNoUTRReasonController @Inject()(
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map { details =>
           val partnershipName = details.name
-          post(PartnershipNoUTRReasonId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
+          post(PartnershipNoUTRReasonId(index), mode, viewModel(mode, index, srn, partnershipName), form
+          (partnershipName))
         }
     }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
+    formProvider("messages__reason__error_utrRequired", companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): ReasonViewModel =
+    ReasonViewModel(
+      postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
+      title = Message("messages__whyNoUTR", Message("messages__thePartnership")),
+      heading = Message("messages__whyNoUTR", partnershipName),
+      srn = srn
+    )
 }
