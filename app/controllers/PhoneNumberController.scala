@@ -36,14 +36,6 @@ trait PhoneNumberController extends FrontendBaseController with Retrievals with 
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: phoneNumber
-
   def get(id: TypedIdentifier[String], form: Form[String], viewModel: CommonFormWithHintViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).map(form.fill).getOrElse(form)
@@ -57,8 +49,17 @@ trait PhoneNumberController extends FrontendBaseController with Retrievals with 
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       value =>
-        userAnswersService.save(mode, viewModel.srn, id, value).map{cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))}
+        userAnswersService.save(mode, viewModel.srn, id, value).map { cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewModel.srn))
+        }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: phoneNumber
 }

@@ -48,6 +48,14 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
                                              )
                                              (implicit val ec: ExecutionContext) extends UTRController {
 
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map { details =>
+          get(EstablisherUTRId(index), viewModel(mode, index, srn, details.fullName), form)
+        }
+    }
+
   private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
@@ -60,14 +68,6 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        EstablisherNameId(index).retrieve.right.map { details =>
-          get(EstablisherUTRId(index), viewModel(mode, index, srn, details.fullName), form)
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

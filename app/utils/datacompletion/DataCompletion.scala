@@ -33,19 +33,9 @@ trait DataCompletion {
 
   self: UserAnswers =>
 
-  //GENERIC METHODS
-  def isComplete(list: Seq[Option[Boolean]]): Option[Boolean] =
-    if(list.flatten.isEmpty) None
-    else
-      Some(list.foldLeft(true)({
-        case (acc , Some(true)) => acc
-        case (_, Some(false)) => false
-        case (_, None) => false
-      }))
-
   def isListComplete(list: Seq[Boolean]): Boolean =
     list.nonEmpty & list.foldLeft(true)({
-      case (acc , true) => acc
+      case (acc, true) => acc
       case (_, false) => false
     })
 
@@ -74,23 +64,6 @@ trait DataCompletion {
       case _ => Some(false)
     }
 
-  def isAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
-                              yesValueId: TypedIdentifier[A],
-                              noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =
-    (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
-      case (None, None, _) => None
-      case (_, Some(_), _) => Some(true)
-      case (_, _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
-      case (Some(false), _, None) => Some(true)
-      case _ => Some(false)
-    }
-
-  def isAnswerComplete[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[Boolean] =
-    get(id) match {
-      case None => None
-      case Some(_) => Some(true)
-    }
-
   def isBeforeYouStartCompleted(mode: Mode): Boolean = {
 
     val isSingleOrMaster = schemeType.fold(false)(scheme => Seq("single", "master").exists(_.equals(scheme)))
@@ -110,11 +83,23 @@ trait DataCompletion {
 
   def isBankDetailsCompleted: Option[Boolean] = isAnswerComplete(UKBankAccountId, BankAccountDetailsId, None)
 
+  def isAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
+                          yesValueId: TypedIdentifier[A],
+                          noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =
+    (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
+      case (None, None, _) => None
+      case (_, Some(_), _) => Some(true)
+      case (_, _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
+      case (Some(false), _, None) => Some(true)
+      case _ => Some(false)
+    }
+
   def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
 
     val isBenefitsSecuredByContractCompleted = get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => isComplete(Seq(
-        isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete(InsurerConfirmAddressId)))
+        isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete
+        (InsurerConfirmAddressId)))
       case Some(false) => Some(true)
       case _ => None
     }
@@ -126,6 +111,11 @@ trait DataCompletion {
       isBenefitsSecuredByContractCompleted))
   }
 
+  def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {
+    case Some(false) => isAdviserCompleted
+    case _ => get(DeclarationDutiesId)
+  }
+
   def isAdviserCompleted: Option[Boolean] = isComplete(Seq(
     isAnswerComplete(AdviserNameId),
     isAnswerComplete(AdviserEmailId),
@@ -133,8 +123,19 @@ trait DataCompletion {
     isAnswerComplete(AdviserAddressId)
   ))
 
-  def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {
-    case Some(false) => isAdviserCompleted
-    case _ => get(DeclarationDutiesId)
-  }
+  //GENERIC METHODS
+  def isComplete(list: Seq[Option[Boolean]]): Option[Boolean] =
+    if (list.flatten.isEmpty) None
+    else
+      Some(list.foldLeft(true)({
+        case (acc, Some(true)) => acc
+        case (_, Some(false)) => false
+        case (_, None) => false
+      }))
+
+  def isAnswerComplete[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[Boolean] =
+    get(id) match {
+      case None => None
+      case Some(_) => Some(true)
+    }
 }

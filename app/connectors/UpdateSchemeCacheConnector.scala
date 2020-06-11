@@ -27,7 +27,9 @@ class UpdateSchemeCacheConnector @Inject()(
                                             override val http: WSClient
                                           ) extends CacheConnector {
 
-  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
+  override protected def url(id: String) =
+    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id"
 
-  override protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id/lastUpdated"
+  override protected def lastUpdatedUrl(id: String) =
+    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/update-scheme/$id/lastUpdated"
 }

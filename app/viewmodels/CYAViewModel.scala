@@ -23,9 +23,9 @@ case class CYAViewModel(
                          href: Call,
                          schemeName: Option[String],
                          returnOverview: Boolean,
-                         hideEditLinks:Boolean,
+                         hideEditLinks: Boolean,
                          srn: Option[String],
-                         hideSaveAndContinueButton:Boolean,
-                         title:Message,
-                         h1:Message
+                         hideSaveAndContinueButton: Boolean,
+                         title: Message,
+                         h1: Message
                        )

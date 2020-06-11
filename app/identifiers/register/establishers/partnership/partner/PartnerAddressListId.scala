@@ -22,7 +22,8 @@ import models.address.TolerantAddress
 import play.api.libs.json.JsPath
 
 case class PartnerAddressListId(establisherId: Int, partnerId: Int) extends TypedIdentifier[TolerantAddress] {
-  override def path: JsPath = EstablishersId(establisherId).path \ "partner" \ partnerId \ PartnerAddressListId.toString
+  override def path: JsPath =
+    EstablishersId(establisherId).path \ "partner" \ partnerId \ PartnerAddressListId.toString
 }
 
 object PartnerAddressListId {

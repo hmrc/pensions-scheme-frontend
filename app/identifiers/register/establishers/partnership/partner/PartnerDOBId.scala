@@ -28,7 +28,8 @@ import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import viewmodels.AnswerRow
 
 case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[LocalDate] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDOBId.toString
 }
 
 object PartnerDOBId {
@@ -37,10 +38,10 @@ object PartnerDOBId {
   implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerDOBId] = {
     new CheckYourAnswersPartners[PartnerDOBId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__DOB__heading")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_date_of_birth")
 
       override def row(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
@@ -54,8 +55,7 @@ object PartnerDOBId {
               Some(Link("site.change", changeUrl, Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers))))
             )
           )
-        }
-        }
+        }}
       }
 
       override def updateRow(id: PartnerDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

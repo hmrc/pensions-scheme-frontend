@@ -32,22 +32,30 @@ case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceV
 object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
     new CheckYourAnswers[PartnershipEnterPAYEId] {
 
-      def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+      def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index))
+        .fold(messages("messages__theTrustee"))(_.name)
+
       def label(index: Int) = messages("messages__enterPAYE", trusteeName(index))
+
       def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_paye_reference", trusteeName(index))
 
       override def row(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl,
+          userAnswers)
 
       override def updateRow(id: PartnershipEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterPAYEId](label(id.index), hiddenLabel(id.index))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

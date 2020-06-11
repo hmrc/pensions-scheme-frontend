@@ -52,11 +52,9 @@ object HasBeenTradingCompanyId {
         dynamicMessage(index, ua, "messages__hasBeenTrading__h1")
       }
 
-        private def hiddenLabel(index: Int, ua: UserAnswers): String = {
+      private def hiddenLabel(index: Int, ua: UserAnswers): String = {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic__hasBeenTrading")
       }
-
-
 
 
       override def row(id: HasBeenTradingCompanyId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
@@ -66,9 +64,9 @@ object HasBeenTradingCompanyId {
       override def updateRow(id: HasBeenTradingCompanyId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
         ua.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, ua)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }
-  }
+}
 

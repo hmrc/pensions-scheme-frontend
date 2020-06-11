@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class HasBeenTradingCompanyController @Inject()(override val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
                                                 override val userAnswersService: UserAnswersService,
-                                                 override val navigator: Navigator,
+                                                override val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 allowAccess: AllowAccessActionProvider,
                                                 getData: DataRetrievalAction,
@@ -44,12 +44,24 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                 formProvider: HasBeenTradingFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: hasReferenceNumber)(
-                                                implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                                 implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index, srn),
+      postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index,
+        srn),
       title = Message("messages__trustee_company_trading-time__title"),
       heading = Message("messages__hasBeenTrading__h1", companyName),
       hint = None,
@@ -59,21 +71,13 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__tradingAtLeastOneYear__error", companyName)
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
-        }
-    }
-
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
 }

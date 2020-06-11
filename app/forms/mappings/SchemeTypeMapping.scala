@@ -28,7 +28,8 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
                                   invalidTypeKey: String = "messages__error__scheme_type_invalid",
                                   requiredOtherKey: String = "messages__error__scheme_type_information",
                                   lengthOtherKey: String = "messages__error__scheme_type_other_length",
-                                  invalidOtherKey: String = "messages__error__scheme_type_other_invalid"): Mapping[SchemeType] = {
+                                  invalidOtherKey: String = "messages__error__scheme_type_other_invalid")
+  : Mapping[SchemeType] = {
     val schemeTypeDetailsMaxLength = 160
     val other = "other"
 

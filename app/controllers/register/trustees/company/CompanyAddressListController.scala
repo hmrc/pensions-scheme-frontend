@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId,
+  CompanyPostcodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -46,28 +47,13 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
                                              val auditService: AuditService,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: addressList
-                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with
+  Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, index, srn).right.map {
-          vm =>
-              post(
-                viewModel = vm,
-                navigatorId = CompanyAddressListId(index),
-                dataId = CompanyAddressId(index),
-                mode = mode,
-                context = s"Trustee Company Address: ${vm.entityName}",
-                postCodeLookupIdForCleanup = CompanyPostcodeLookupId(index)
-              )
-          }
     }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String])
@@ -87,4 +73,20 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
       Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index, srn)))
     )
   }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map {
+          vm =>
+            post(
+              viewModel = vm,
+              navigatorId = CompanyAddressListId(index),
+              dataId = CompanyAddressId(index),
+              mode = mode,
+              context = s"Trustee Company Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = CompanyPostcodeLookupId(index)
+            )
+        }
+    }
 }

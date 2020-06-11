@@ -34,19 +34,38 @@ import views.html.paye
 
 import scala.concurrent.ExecutionContext
 
-class PartnershipEnterPAYEController  @Inject()(
-                                                      val appConfig: FrontendAppConfig,
-                                                      override val messagesApi: MessagesApi,
-                                                      override val userAnswersService: UserAnswersService,
-                                                      val navigator: Navigator,
-                                                      authenticate: AuthAction,
-                                                      getData: DataRetrievalAction,
-                                                      allowAccess: AllowAccessActionProvider,
-                                                      requireData: DataRequiredAction,
-                                                      formProvider: PayeFormProvider,
-                                                      val controllerComponents: MessagesControllerComponents,
-                                                      val view: paye
-                                                    )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
+class PartnershipEnterPAYEController @Inject()(
+                                                val appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                override val userAnswersService: UserAnswersService,
+                                                val navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
+                                                requireData: DataRequiredAction,
+                                                formProvider: PayeFormProvider,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: paye
+                                              )(implicit val ec: ExecutionContext) extends PayeController with
+  I18nSupport {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipEnterPAYEId(index), form(details.name), viewmodel(mode, index, srn, details.name))
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      PartnershipDetailsId(index).retrieve.right.map {
+        details =>
+          post(PartnershipEnterPAYEId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
+      }
+  }
 
   protected def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(partnershipName)
@@ -61,21 +80,4 @@ class PartnershipEnterPAYEController  @Inject()(
       srn = srn,
       entityName = Some(partnershipName)
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            get(PartnershipEnterPAYEId(index), form(details.name), viewmodel(mode, index, srn, details.name))
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
-        details =>
-          post(PartnershipEnterPAYEId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
-      }
-  }
 }

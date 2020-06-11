@@ -26,7 +26,8 @@ import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
 case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerHasNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerHasNINOId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
@@ -44,20 +45,22 @@ object PartnerHasNINOId {
 
     new CheckYourAnswersPartners[PartnerHasNINOId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__hasNINO")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_hasNino")
 
       override def row(id: PartnerHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         BooleanCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
-          Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers)))().row(id)(changeUrl, userAnswers)
+          Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers)))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnerHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {
           case Some(true) => BooleanCYA(Some(label(id.establisherIndex, id.partnerIndex, userAnswers)),
-            Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers)))().row(id)(changeUrl, userAnswers)
+            Some(hiddenText(id.establisherIndex, id.partnerIndex, userAnswers)))()
+            .row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
     }

@@ -24,7 +24,7 @@ import viewmodels.Message
 
 class HasPAYEFormProvider @Inject() extends Mappings {
 
-  def apply(errorKey : String, name : String)(implicit messages: Messages): Form[Boolean] =
+  def apply(errorKey: String, name: String)(implicit messages: Messages): Form[Boolean] =
     Form(
       "hasPaye" -> boolean(Message(errorKey, name).resolve)
     )

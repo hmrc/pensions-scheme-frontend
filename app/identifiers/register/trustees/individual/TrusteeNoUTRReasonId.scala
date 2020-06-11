@@ -38,8 +38,11 @@ object TrusteeNoUTRReasonId {
                    countryOptions: CountryOptions
                   ): CheckYourAnswers[TrusteeNoUTRReasonId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index))
+      .fold(messages("messages__theTrustee"))(_.fullName)
+
     def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
+
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeNoUTRReasonId] {
@@ -49,7 +52,7 @@ object TrusteeNoUTRReasonId {
       override def updateRow(id: TrusteeNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

@@ -24,17 +24,12 @@ import identifiers.{BankAccountDetailsId, UKBankAccountId}
 import models.NormalMode
 import utils.UserAnswers
 
-class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends AbstractNavigator {
-
-  private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
+class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                          appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
-
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def navRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
@@ -51,4 +46,11 @@ class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case None => NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
+
+  private def checkYourAnswers: Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }

@@ -32,13 +32,15 @@ case class PartnershipEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceV
 object PartnershipEnterPAYEId {
   override def toString: String = "partnershipPaye"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterPAYEId] = {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions)
+  : CheckYourAnswers[PartnershipEnterPAYEId] = {
     new CheckYourAnswers[PartnershipEnterPAYEId] {
 
       def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__enterPAYE", partnershipName),
-          messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
+        val partnershipName =
+          ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
+            (messages("messages__enterPAYE", partnershipName),
+              messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       }
 
       override def row(id: PartnershipEnterPAYEId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {

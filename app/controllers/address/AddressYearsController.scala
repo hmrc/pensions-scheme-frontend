@@ -64,10 +64,11 @@ trait AddressYearsController extends FrontendBaseController with Retrievals with
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       addressYears =>
-        userAnswersService.save[AddressYears, TypedIdentifier[AddressYears]](mode, viewmodel.srn, id, addressYears).map {
+        userAnswersService.save[AddressYears, TypedIdentifier[AddressYears]](mode, viewmodel.srn, id, addressYears)
+          .map {
           json =>
-                Redirect(navigator.nextPage(id, mode, UserAnswers(json), viewmodel.srn))
-            }
+            Redirect(navigator.nextPage(id, mode, UserAnswers(json), viewmodel.srn))
+        }
     )
   }
 }

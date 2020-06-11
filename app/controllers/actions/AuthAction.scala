@@ -33,10 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config: FrontendAppConfig,
                                val parser: BodyParsers.Default)
-                              (implicit val executionContext: ExecutionContext) extends AuthAction with AuthorisedFunctions {
+                              (implicit val executionContext: ExecutionContext) extends AuthAction with
+  AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter
+      .fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
@@ -44,7 +46,8 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
       case _ =>
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
     } recover {
-      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config.managePensionsSchemeOverviewUrl.url)))
+      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
+        .managePensionsSchemeOverviewUrl.url)))
 
       case _: InsufficientEnrolments =>
         Redirect(routes.UnauthorisedController.onPageLoad())
@@ -62,11 +65,13 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
   }
 
   private def getPsaId(enrolments: Enrolments) =
-    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value).getOrElse(throw new PsaIdNotFound)
+    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value)
+      .getOrElse(throw new PsaIdNotFound)
 
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request, AuthenticatedRequest]
+trait AuthAction extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request,
+  AuthenticatedRequest]
 
 case class PsaIdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationException(msg)

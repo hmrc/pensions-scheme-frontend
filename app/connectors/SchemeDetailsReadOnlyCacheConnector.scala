@@ -23,11 +23,12 @@ import play.api.libs.ws.WSClient
 
 @Singleton
 class SchemeDetailsReadOnlyCacheConnector @Inject()(
-                                               override val config: FrontendAppConfig,
-                                               override val http: WSClient
-                                             ) extends CacheConnector {
+                                                     override val config: FrontendAppConfig,
+                                                     override val http: WSClient
+                                                   ) extends CacheConnector {
 
-  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-details/$id"
+  override protected def url(id: String) = s"${config
+    .pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-details/$id"
 
   override protected def lastUpdatedUrl(id: String) = ???
 }

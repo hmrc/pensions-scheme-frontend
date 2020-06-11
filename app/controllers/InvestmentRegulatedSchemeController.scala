@@ -42,12 +42,10 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     formProvider: InvestmentRegulatedSchemeFormProvider,
-                                                     val controllerComponents: MessagesControllerComponents,
-                                                     val view: investmentRegulatedScheme
-                                                    )(implicit val executionContext: ExecutionContext
-) extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
+                                                    val controllerComponents: MessagesControllerComponents,
+                                                    val view: investmentRegulatedScheme
+                                                   )(implicit val executionContext: ExecutionContext
+                                                   ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -59,6 +57,8 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
         Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
       }
   }
+
+  private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>

@@ -17,7 +17,8 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector,
+  UpdateSchemeCacheConnector}
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
@@ -45,12 +46,14 @@ class VariationDeclarationController @Inject()(
                                                 lockConnector: PensionSchemeVarianceLockConnector,
                                                 updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 val view: variationDeclaration
-                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                                  with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: variationDeclaration
+                                              )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+    allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = VariationDeclarationController.onClickAgree(srn)
       srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))) { actualSrn =>
@@ -61,7 +64,8 @@ class VariationDeclarationController @Inject()(
       }
   }
 
-  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen requireData).async {
+  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+    requireData).async {
     implicit request =>
       srn.flatMap { srnId =>
         request.userAnswers.get(PstrId).map {

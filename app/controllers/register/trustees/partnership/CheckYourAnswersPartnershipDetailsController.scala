@@ -39,19 +39,20 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersPartnershipDetailsController @Inject()(
-                                      appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
-                                      requireData: DataRequiredAction,
-                                      implicit val countryOptions: CountryOptions,
-                                      navigator: Navigator,
-                                      userAnswersService: UserAnswersService,
-                                      allowChangeHelper: AllowChangeHelper,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: checkYourAnswers
-                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                              appConfig: FrontendAppConfig,
+                                                              override val messagesApi: MessagesApi,
+                                                              authenticate: AuthAction,
+                                                              getData: DataRetrievalAction,
+                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                              requireData: DataRequiredAction,
+                                                              implicit val countryOptions: CountryOptions,
+                                                              navigator: Navigator,
+                                                              userAnswersService: UserAnswersService,
+                                                              allowChangeHelper: AllowChangeHelper,
+                                                              val controllerComponents: MessagesControllerComponents,
+                                                              val view: checkYourAnswers
+                                                            )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
@@ -60,29 +61,37 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         implicit val userAnswers: UserAnswers = request.userAnswers
         val companyDetails = Seq(AnswerSection(
           None,
-          PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterUTRId(index).row(routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipEnterPAYEId(index).row(routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipHasUTRId(index).row(routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            PartnershipEnterUTRId(index).row(routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipNoUTRReasonId(index).row(routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode),
+              index, srn).url, mode) ++
+            PartnershipHasVATId(index).row(routes.PartnershipHasVATController.onPageLoad(checkMode(mode), index, srn)
+              .url, mode) ++
+            PartnershipEnterVATId(index).row(routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipHasPAYEId(index).row(routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            PartnershipEnterPAYEId(index).row(routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode),
+              index, srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__thePartnership").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
+        ("messages__thePartnership").resolve)
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          h1 = headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

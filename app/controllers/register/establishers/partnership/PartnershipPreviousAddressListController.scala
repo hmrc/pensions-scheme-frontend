@@ -46,7 +46,8 @@ class PartnershipPreviousAddressListController @Inject()(val appConfig: Frontend
                                                          val auditService: AuditService,
                                                          val controllerComponents: MessagesControllerComponents,
                                                          val view: addressList
-                                                        )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                        )(implicit val ec: ExecutionContext) extends
+  AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -85,7 +86,8 @@ class PartnershipPreviousAddressListController @Inject()(val appConfig: Frontend
           entityName = partnershipDetails.name
         )
     }.left.map(_ =>
-      Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)))
+      Future.successful(Redirect(routes.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index,
+        srn)))
     )
   }
 }

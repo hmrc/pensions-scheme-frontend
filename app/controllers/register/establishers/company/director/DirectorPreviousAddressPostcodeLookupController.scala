@@ -40,8 +40,10 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
                                                                  override val appConfig: FrontendAppConfig,
                                                                  override val messagesApi: MessagesApi,
                                                                  val userAnswersService: UserAnswersService,
-                                                                 override val addressLookupConnector: AddressLookupConnector,
-                                                                 @EstablishersCompanyDirector override val navigator: Navigator,
+                                                                 override val
+                                                                 addressLookupConnector: AddressLookupConnector,
+                                                                 @EstablishersCompanyDirector override val
+                                                                 navigator: Navigator,
                                                                  authenticate: AuthAction,
                                                                  getData: DataRetrievalAction,
                                                                  allowAccess: AllowAccessActionProvider,
@@ -49,9 +51,14 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
                                                                  formProvider: PostCodeLookupFormProvider,
                                                                  val view: postcodeLookup,
                                                                  val controllerComponents: MessagesControllerComponents
-                                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                               )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
+  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -73,17 +80,12 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
-    implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
-
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
-        vm =>
-          post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
-      )
-  }
+      implicit request =>
+        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map(
+          vm =>
+            post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
+        )
+    }
 }

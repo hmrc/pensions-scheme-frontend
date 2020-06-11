@@ -52,8 +52,8 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           allowChangeHelper: AllowChangeHelper,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           val view: checkYourAnswers
-                                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-  with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
@@ -79,14 +79,15 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val titleCompanyDetails: Message = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message("messages__theCompany").resolve)
+        val titleCompanyDetails: Message = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__detailsFor", Message("messages__theCompany").resolve)
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
           href = SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
           title = titleCompanyDetails,

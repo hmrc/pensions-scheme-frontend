@@ -28,8 +28,10 @@ import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerNameId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[PersonName] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNameId.toString
 
+  //scalastyle:off magic.number
   override def cleanup(value: Option[PersonName], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.allPartnersAfterDelete(this.establisherIndex).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(OtherPartnersId(this.establisherIndex))
@@ -54,10 +56,12 @@ object PartnerNameId {
               "messages__partnerName__cya",
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name", personDetails.fullName).resolve)))
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name",
+                personDetails.fullName).resolve)))
             )
           )
-        }}
+        }
+        }
 
       override def updateRow(id: PartnerNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewPartnerId(id.establisherIndex, id.partnerIndex)) match {

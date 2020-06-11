@@ -45,7 +45,8 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
                                      nameMatchingFactory: NameMatchingFactory,
                                      val controllerComponents: MessagesControllerComponents,
                                      val view: schemeType
-                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

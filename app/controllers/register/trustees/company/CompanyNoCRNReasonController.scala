@@ -35,17 +35,27 @@ import views.html.reason
 import scala.concurrent.ExecutionContext
 
 class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val userAnswersService: UserAnswersService,
-                                          val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: NoCompanyNumberFormProvider,
+                                             override val messagesApi: MessagesApi,
+                                             override val userAnswersService: UserAnswersService,
+                                             val navigator: Navigator,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             allowAccess: AllowAccessActionProvider,
+                                             requireData: DataRequiredAction,
+                                             formProvider: NoCompanyNumberFormProvider,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: reason
-                                         )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with
+  I18nSupport {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map { details =>
+          val companyName = details.companyName
+          get(CompanyNoCRNReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
+        }
+    }
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider(name)
 
@@ -57,15 +67,6 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
-          val companyName = details.companyName
-          get(CompanyNoCRNReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

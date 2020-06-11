@@ -45,11 +45,24 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         formProvider: EmailFormProvider,
                                         val view: emailAddress,
                                         val controllerComponents: MessagesControllerComponents
-                                       )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                       )(implicit val executionContext: ExecutionContext
+            ) extends EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
+          vm =>
+            get(DirectorEmailId(establisherIndex, directorIndex), form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode,
+                        establisherIndex: Index,
+                        directorIndex: Index,
+                        srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
@@ -61,15 +74,6 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
               Some(Message("messages__contact_details__hint", details.fullName)),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
-          vm =>
-            get(DirectorEmailId(establisherIndex, directorIndex), form, vm)
         }
     }
 

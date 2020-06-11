@@ -45,9 +45,19 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                            formProvider: PhoneFormProvider,
                                            val view: phoneNumber,
                                            val controllerComponents: MessagesControllerComponents
-                                          )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends PhoneNumberController with
+  I18nSupport {
 
   protected val form: Form[String] = formProvider()
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(EstablisherPhoneId(index), form, vm)
+        }
+    }
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
@@ -61,15 +71,6 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
               Some(Message("messages__contact_details__hint", name.fullName)),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
-          vm =>
-            get(EstablisherPhoneId(index), form, vm)
         }
     }
 

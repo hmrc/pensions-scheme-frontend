@@ -25,11 +25,8 @@ import models.register.SchemeType
 import models.{CheckMode, NormalMode}
 import utils.UserAnswers
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
-
-  private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
-
+class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                        frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))
@@ -39,19 +36,6 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case DeclarationDutiesId => checkYourAnswers
     case _ => None
   }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case SchemeNameId => checkYourAnswers
-    case SchemeTypeId => schemeTypeEditRoutes(from.userAnswers)
-    case HaveAnyTrusteesId => checkYourAnswers
-    case EstablishedCountryId => checkYourAnswers
-    case DeclarationDutiesId => checkYourAnswers
-    case _ => None
-  }
-
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 
   private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
@@ -64,6 +48,15 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     }
   }
 
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case SchemeNameId => checkYourAnswers
+    case SchemeTypeId => schemeTypeEditRoutes(from.userAnswers)
+    case HaveAnyTrusteesId => checkYourAnswers
+    case EstablishedCountryId => checkYourAnswers
+    case DeclarationDutiesId => checkYourAnswers
+    case _ => None
+  }
+
   private def schemeTypeEditRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
       case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
@@ -74,4 +67,11 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
+
+  private def checkYourAnswers: Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
+
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }

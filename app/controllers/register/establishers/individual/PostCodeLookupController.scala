@@ -50,25 +50,8 @@ class PostCodeLookupController @Inject()(
                                           val controllerComponents: MessagesControllerComponents
                                         )(implicit val ec: ExecutionContext) extends GenericPostcodeLookupController {
 
-  private val title: Message = "messages__establisher_individual_address__title"
-
   protected val form: Form[String] = formProvider()
-
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
-    Retrieval {
-      implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
-          details =>
-            PostcodeLookupViewModel(
-              routes.PostCodeLookupController.onSubmit(mode, index, srn),
-              routes.AddressController.onPageLoad(mode, index, srn),
-              title = Message("messages__establisher_individual_address__heading", Message("messages__theIndividual").resolve),
-              heading = Message("messages__establisher_individual_address__heading", details.fullName),
-              subHeading = Some(details.fullName),
-              srn = srn
-            )
-        }
-    }
+  private val title: Message = "messages__establisher_individual_address__title"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -82,6 +65,23 @@ class PostCodeLookupController @Inject()(
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>
             post(PostCodeLookupId(index), vm, mode)
+        }
+    }
+
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherNameId(index).retrieve.right.map {
+          details =>
+            PostcodeLookupViewModel(
+              routes.PostCodeLookupController.onSubmit(mode, index, srn),
+              routes.AddressController.onPageLoad(mode, index, srn),
+              title = Message("messages__establisher_individual_address__heading", Message("messages__theIndividual")
+                .resolve),
+              heading = Message("messages__establisher_individual_address__heading", details.fullName),
+              subHeading = Some(details.fullName),
+              srn = srn
+            )
         }
     }
 }

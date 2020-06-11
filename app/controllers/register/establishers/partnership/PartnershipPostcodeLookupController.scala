@@ -48,7 +48,8 @@ class PartnershipPostcodeLookupController @Inject()(
                                                      formProvider: PostCodeLookupFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      val view: postcodeLookup
-                                                   )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                   )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
   private val hint: Message = "messages__partnershipPostcodeLookup__hint"
@@ -59,15 +60,6 @@ class PartnershipPostcodeLookupController @Inject()(
         viewmodel(index, mode, srn).retrieve.right map get
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            post(PartnershipPostcodeLookupId(index), vm, mode)
-        }
-    }
-
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
@@ -76,11 +68,21 @@ class PartnershipPostcodeLookupController @Inject()(
             PostcodeLookupViewModel(
               routes.PartnershipPostcodeLookupController.onSubmit(mode, index, srn),
               routes.PartnershipAddressController.onPageLoad(mode, index, srn),
-              title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership").resolve),
+              title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership")
+                .resolve),
               heading = Message("messages__partnershipPostcodeLookup__heading", details.name),
               subHeading = Some(details.name),
               srn = srn
             )
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            post(PartnershipPostcodeLookupId(index), vm, mode)
         }
     }
 }

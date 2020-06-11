@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext
 class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                                override val navigator: Navigator,
+                                               override val navigator: Navigator,
                                                val userAnswersService: UserAnswersService,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
@@ -46,7 +46,26 @@ class CompanyAddressYearsController @Inject()(
                                                formProvider: AddressYearsFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressYears
-                                             )(implicit val ec: ExecutionContext) extends controllers.address.AddressYearsController {
+                                             )(implicit val ec: ExecutionContext) extends controllers.address
+.AddressYearsController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            get(CompanyAddressYearsId(index), form, vm)
+        }
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map {
+          vm =>
+            post(CompanyAddressYearsId(index), mode, form, vm)
+        }
+    }
 
   private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
     Retrieval(
@@ -69,22 +88,4 @@ class CompanyAddressYearsController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]): Form[AddressYears] =
     formProvider(Message("messages__common_error__current_address_years"))
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            get(CompanyAddressYearsId(index), form, vm)
-        }
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
-          vm =>
-            post(CompanyAddressYearsId(index), mode, form, vm)
-        }
-    }
 }

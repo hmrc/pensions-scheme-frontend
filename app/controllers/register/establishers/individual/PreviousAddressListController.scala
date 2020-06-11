@@ -46,26 +46,13 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
                                               val auditService: AuditService,
                                               val view: addressList,
                                               val controllerComponents: MessagesControllerComponents
-                                             )(implicit val ec: ExecutionContext) extends GenericAddressListController with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends
+  GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, index, srn).right.map(
-          vm => post(
-            viewModel = vm,
-            navigatorId = PreviousAddressListId(index),
-            dataId = PreviousAddressId(index),
-            mode = mode,
-            context = s"Establisher Individual Previous Address: ${vm.entityName}",
-            postCodeLookupIdForCleanup = PreviousPostCodeLookupId(index))
-        )
     }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String])
@@ -85,4 +72,18 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
       Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)))
     )
   }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).right.map(
+          vm => post(
+            viewModel = vm,
+            navigatorId = PreviousAddressListId(index),
+            dataId = PreviousAddressId(index),
+            mode = mode,
+            context = s"Establisher Individual Previous Address: ${vm.entityName}",
+            postCodeLookupIdForCleanup = PreviousPostCodeLookupId(index))
+        )
+    }
 }

@@ -49,8 +49,13 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          formProvider: PostCodeLookupFormProvider,
                                                          val view: postcodeLookup,
                                                          val controllerComponents: MessagesControllerComponents
-                                                       )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                       )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
+  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
+    implicit request =>
+      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+  }
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -68,13 +73,15 @@ class DirectorAddressPostcodeLookupController @Inject()(
         )
     }
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])
+  : Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
             PostcodeLookupViewModel(
-              postCall = routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex, srn),
+              postCall = routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex,
+                directorIndex, srn),
               manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex, srn),
               title = Message("messages__directorCompanyAddressPostcodeLookup__title"),
               heading = Message("messages__addressPostcodeLookup__heading", name),
@@ -83,10 +90,5 @@ class DirectorAddressPostcodeLookupController @Inject()(
             )
         }
     )
-
-  val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
-    implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
-  }
 
 }

@@ -45,20 +45,8 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
                                                     formProvider: HasBeenTradingFormProvider,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     val view: hasReferenceNumber)(
-                                                    implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(mode, index, srn),
-      title = Message("messages__partnership_trading_time__title"),
-      heading = Message("messages__hasBeenTrading__h1", partnershipName),
-      hint = None,
-      srn = srn
-    )
-
-  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
-    formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
+                                                     implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -69,12 +57,27 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
         }
     }
 
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(mode,
+        index, srn),
+      title = Message("messages__partnership_trading_time__title"),
+      heading = Message("messages__hasBeenTrading__h1", partnershipName),
+      hint = None,
+      srn = srn
+    )
+
+  private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
+
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
-            post(PartnershipHasBeenTradingId(index), mode, form(details.name), viewModel(mode, index, srn, details.name))
+            post(PartnershipHasBeenTradingId(index), mode, form(details.name), viewModel(mode, index, srn, details
+              .name))
         }
     }
 }

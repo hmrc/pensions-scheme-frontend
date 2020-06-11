@@ -51,7 +51,8 @@ case object TrusteeCompanyContactDetails extends ContactDetailsSpoke {
     trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isTrusteeCompanyContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -81,10 +82,12 @@ case object TrusteeIndividualAddress extends AddressSpoke {
 
 case object TrusteeIndividualContactDetails extends ContactDetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index.getOrElse(Index
+    (0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteeIndividualRoutes.CheckYourAnswersIndividualContactDetailsController.onPageLoad(mode, index.getOrElse(Index
+    (0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isTrusteeIndividualContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -92,10 +95,12 @@ case object TrusteeIndividualContactDetails extends ContactDetailsSpoke {
 
 case object TrusteePartnershipDetails extends DetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isTrusteePartnershipDetailsComplete(indexToInt(index.getOrElse(Index(0))))
@@ -103,10 +108,12 @@ case object TrusteePartnershipDetails extends DetailsSpoke {
 
 case object TrusteePartnershipAddress extends AddressSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index(0)),
+      srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isTrusteePartnershipAddressComplete(indexToInt(index.getOrElse(Index(0))))
@@ -114,10 +121,12 @@ case object TrusteePartnershipAddress extends AddressSpoke {
 
 case object TrusteePartnershipContactDetails extends ContactDetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
+    (Index(0)), srn)
 
   override def changeLinkUrl(mode: Mode, srn: Option[String], index: Option[Index]): Call =
-    trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
+    trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
+    (Index(0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isTrusteePartnershipContactDetailsComplete(indexToInt(index.getOrElse(Index(0))))

@@ -27,9 +27,11 @@ case object FutureMembersId extends TypedIdentifier[Members] {
   self =>
   override def toString: String = "membershipFuture"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, rds: Reads[Members]): CheckYourAnswers[self.type] =
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, rds: Reads[Members]): CheckYourAnswers[self
+    .type] =
     MembersCYA[self.type](
       label = Some(messages("messages__future_members_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__future_members_change", userAnswers.get(SchemeNameId).getOrElse("")))
+      hiddenLabel = Some(messages("messages__visuallyhidden__future_members_change", userAnswers.get(SchemeNameId)
+        .getOrElse("")))
     )()
 }

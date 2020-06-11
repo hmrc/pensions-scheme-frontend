@@ -47,11 +47,10 @@ class CompanyDetailsController @Inject()(
                                           formProvider: CompanyDetailsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: companyDetails
-                                        )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
-
-  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -60,11 +59,13 @@ class CompanyDetailsController @Inject()(
         Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, postCall(mode, srn, index), srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn, index), srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn,
+            index), srn))),
         value =>
           userAnswersService.save(
             mode,
@@ -77,5 +78,7 @@ class CompanyDetailsController @Inject()(
           }
       )
   }
+
+  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
 
 }

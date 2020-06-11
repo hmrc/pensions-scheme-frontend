@@ -37,9 +37,13 @@ object TrusteeDOBId {
   implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeDOBId] = {
     new CheckYourAnswers[TrusteeDOBId] {
 
-      def trusteeName(index: Int): String = answers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+      def trusteeName(index: Int): String = answers.get(TrusteeNameId(index))
+        .fold(messages("messages__theTrustee"))(_.fullName)
+
       def label(index: Int): String = messages("messages__DOB__heading", trusteeName(index))
-      def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_date_of_birth", trusteeName(index)))
+
+      def hiddenLabel(index: Int) =
+        Some(messages("messages__visuallyhidden__dynamic_date_of_birth", trusteeName(index)))
 
       override def row(id: TrusteeDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).fold(Nil: Seq[AnswerRow]) {

@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteeNameId, TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteeNameId,
+  TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -50,7 +51,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
                                                             allowChangeHelper: AllowChangeHelper,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             val view: checkYourAnswers
-                                                           )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                           )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -59,25 +61,29 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
 
         val answerSections = Seq(AnswerSection(
           None,
-          TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(checkMode(mode), index, srn).url,
+            mode) ++
+            TrusteeAddressYearsId(index).row(routes.TrusteeAddressYearsController.onPageLoad(checkMode(mode), index,
+              srn).url, mode) ++
+            TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(checkMode(mode),
+              index, srn).url, mode)
         ))
 
         val isNew = isNewItem(mode, userAnswers, IsTrusteeNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message("messages__thePerson").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__addressFor", Message
+        ("messages__thePerson").resolve)
 
         val vm = CYAViewModel(
           answerSections = answerSections,
           href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
-          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true),
+          hideEditLinks = request.viewOnly || !userAnswers.get(IsTrusteeNewId(index)).forall(identity),
           srn = srn,
           hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
           title = title,
-          h1 =  headingAddressDetails(mode, personName(TrusteeNameId(index)), isNew)
+          h1 = headingAddressDetails(mode, personName(TrusteeNameId(index)), isNew)
         )
 
         Future.successful(Ok(view(vm)))

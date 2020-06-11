@@ -22,21 +22,19 @@ import utils.{Enumerable, InputOption, WithName}
 sealed trait TrusteeKind
 
 object TrusteeKind {
+  val values: Seq[TrusteeKind] = Seq(
+    Company, Individual, Partnership
+  )
+  val options: Seq[InputOption] = values.map {
+    value =>
+      InputOption(value.toString, s"messages__trusteeKind__${value.toString}")
+  }
 
   case object Company extends WithName("company") with TrusteeKind
 
   case object Individual extends WithName("individual") with TrusteeKind
 
   case object Partnership extends WithName("partnership") with TrusteeKind
-
-  val values: Seq[TrusteeKind] = Seq(
-    Company, Individual, Partnership
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__trusteeKind__${value.toString}")
-  }
 
   implicit val enumerable: Enumerable[TrusteeKind] =
     Enumerable(values.map(v => v.toString -> v): _*)

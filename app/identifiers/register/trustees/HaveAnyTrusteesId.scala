@@ -38,8 +38,7 @@ case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.I
   private def removeAllTrustees(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.getAllRecursive[TrusteeKind](TrusteeKindId.collectionPath) match {
       case Some(allTrustees) if allTrustees.nonEmpty =>
-        userAnswers.remove(TrusteesId(0)).flatMap(
-          removeAllTrustees)
+        userAnswers.remove(TrusteesId(0)).flatMap(removeAllTrustees)
       case _ =>
         JsSuccess(userAnswers)
     }

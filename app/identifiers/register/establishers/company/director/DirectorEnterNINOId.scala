@@ -26,7 +26,9 @@ import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, Refe
 import viewmodels.AnswerRow
 
 case class DirectorEnterNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorEnterNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorEnterNINOId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(DirectorNoNINOReasonId(this.establisherIndex, this.directorIndex))
@@ -40,10 +42,10 @@ object DirectorEnterNINOId {
 
     new CheckYourAnswersDirectors[DirectorEnterNINOId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__common__nino")
 
-      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_nino")
 
       override def row(id: DirectorEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

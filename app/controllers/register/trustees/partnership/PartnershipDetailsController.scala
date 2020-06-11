@@ -35,33 +35,37 @@ import views.html.register.trustees.partnership.partnershipDetails
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          userAnswersService: UserAnswersService,
-                                          navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          allowAccess: AllowAccessActionProvider,
-                                          requireData: DataRequiredAction,
-                                          formProvider: PartnershipDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: partnershipDetails
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                              appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              userAnswersService: UserAnswersService,
+                                              navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: PartnershipDetailsFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: partnershipDetails
+                                            )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
-      val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(view(updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
-  }
+      implicit request =>
+        val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode,
+          index, srn)
+        val updatedForm = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
+        Future.successful(Ok(view(updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
+    }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode, index, srn)
+          val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController
+            .onSubmit(mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },
         value =>

@@ -21,7 +21,8 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneNumberId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId,
+  PartnershipPhoneNumberId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -40,13 +41,16 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
                                                                     override val messagesApi: MessagesApi,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
-                                                                    @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                    @NoSuspendedCheck
+                                                                    allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
                                                                     implicit val countryOptions: CountryOptions,
                                                                     allowChangeHelper: AllowChangeHelper,
-                                                                    val controllerComponents: MessagesControllerComponents,
+                                                                    val
+                                                                    controllerComponents: MessagesControllerComponents,
                                                                     val view: checkYourAnswers
-                                                                   )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                                                   )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -54,13 +58,16 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
         val notNewEstablisher = !request.userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)
         val contactDetailsSection = AnswerSection(
           None,
-          PartnershipEmailId(index).row(routes.PartnershipEmailController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
-            PartnershipPhoneNumberId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), index, srn).url, mode)
+          PartnershipEmailId(index).row(routes.PartnershipEmailController.onPageLoad(checkMode(mode), index, srn)
+            .url, mode) ++
+            PartnershipPhoneNumberId(index).row(routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode),
+              index, srn).url, mode)
         )
 
         val isNew = isNewItem(mode, request.userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve)
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetailsSection),
@@ -69,7 +76,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
           h1 = headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
         )

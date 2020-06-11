@@ -29,9 +29,9 @@ object PersonName {
   implicit val reads: Reads[PersonName] =
     (
       (JsPath \ "firstName").read[String] and
-      (JsPath \ "lastName").read[String] and
-      ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
-    )(PersonName.apply _)
+        (JsPath \ "lastName").read[String] and
+        ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
+      ) (PersonName.apply _)
 
   implicit val writes: Writes[PersonName] = Json.writes[PersonName]
 

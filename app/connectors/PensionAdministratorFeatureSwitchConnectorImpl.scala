@@ -23,7 +23,8 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appConfig: FrontendAppConfig) extends FeatureSwitchConnector {
+class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appConfig: FrontendAppConfig)
+  extends FeatureSwitchConnector {
 
   override def toggleOn(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
 

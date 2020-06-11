@@ -23,17 +23,6 @@ import utils.{InputOption, WithName}
 sealed trait SchemeType
 
 object SchemeType {
-
-  case object SingleTrust extends WithName("single") with SchemeType
-
-  case object GroupLifeDeath extends WithName("group") with SchemeType
-
-  case object BodyCorporate extends WithName("corp") with SchemeType
-
-  case object MasterTrust extends WithName("master") with SchemeType
-
-  case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
-
   val other = "other"
   val mappings: Map[String, SchemeType] = Seq(
     SingleTrust,
@@ -74,6 +63,27 @@ object SchemeType {
     )
   }
 
+  def getSchemeType(schemeTypeStr: Option[String], isMasterTrust: Boolean): Option[String] = {
+    if (isMasterTrust) {
+      Some(s"messages__scheme_details__type_${MasterTrust.toString}")
+    } else {
+      schemeTypeStr.flatMap { schemeStr =>
+        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme =>
+          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map { str =>
+          s"messages__scheme_details__type_${str}"
+        }
+      }
+    }
+  }
+
+  case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
+
+  case object SingleTrust extends WithName("single") with SchemeType
+
+  case object GroupLifeDeath extends WithName("group") with SchemeType
+
+  case object BodyCorporate extends WithName("corp") with SchemeType
+
   implicit val reads: Reads[SchemeType] = {
 
     (JsPath \ "name").read[String].flatMap {
@@ -101,16 +111,6 @@ object SchemeType {
     }
   }
 
-  def getSchemeType(schemeTypeStr: Option[String], isMasterTrust: Boolean): Option[String] = {
-    if (isMasterTrust) {
-      Some(s"messages__scheme_details__type_${MasterTrust.toString}")
-    } else {
-      schemeTypeStr.flatMap { schemeStr =>
-        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme =>
-          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map { str =>
-          s"messages__scheme_details__type_${str}"
-        }
-      }
-    }
-  }
+  case object MasterTrust extends WithName("master") with SchemeType
+
 }

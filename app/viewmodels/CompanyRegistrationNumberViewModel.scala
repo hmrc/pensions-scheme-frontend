@@ -17,6 +17,6 @@
 package viewmodels
 
 case class CompanyRegistrationNumberViewModel(
-                         title: Message,
-                         heading: Message,
-                         hint: Message)
+                                               title: Message,
+                                               heading: Message,
+                                               hint: Message)

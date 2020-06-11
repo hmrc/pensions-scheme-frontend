@@ -36,14 +36,6 @@ trait NinoController extends FrontendBaseController with Retrievals with I18nSup
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: nino
-
   def get(id: TypedIdentifier[ReferenceValue], form: Form[ReferenceValue], viewmodel: NinoViewModel)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
@@ -58,8 +50,17 @@ trait NinoController extends FrontendBaseController with Retrievals with I18nSup
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value.copy(isEditable = true)).map{cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))}
+        userAnswersService.save(mode, viewmodel.srn, id, value.copy(isEditable = true)).map { cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))
+        }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: nino
 }

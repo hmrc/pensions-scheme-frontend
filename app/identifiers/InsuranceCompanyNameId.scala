@@ -30,13 +30,21 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
 
   override def cleanup(value: Option[String], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(_) => userAnswers.removeAllOf(List(InsurancePolicyNumberId,
-        InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
+      case Some(_) => userAnswers.removeAllOf(
+        List(
+          InsurancePolicyNumberId,
+          InsurerEnterPostCodeId,
+          InsurerSelectAddressId,
+          InsurerConfirmAddressId
+        )
+      )
       case _ => super.cleanup(value, userAnswers)
     }
   }
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {
 
@@ -47,7 +55,7 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _=> userAnswers.get(BenefitsSecuredByInsuranceId) match{
+          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(
               "insuranceCompanyName.checkYourAnswersLabel",
               Seq("site.not_entered"),

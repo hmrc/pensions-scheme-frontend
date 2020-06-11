@@ -39,7 +39,7 @@ class CompanyPostCodeLookupController @Inject()(
                                                  val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  val userAnswersService: UserAnswersService,
-                                                  override val navigator: Navigator,
+                                                 override val navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  allowAccess: AllowAccessActionProvider,
@@ -48,15 +48,28 @@ class CompanyPostCodeLookupController @Inject()(
                                                  val addressLookupConnector: AddressLookupConnector,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  val view: postcodeLookup
-                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController with I18nSupport {
+                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController
+  with I18nSupport {
 
+  override protected val form: Form[String] = formProvider()
   private[controllers] val manualAddressCall = routes.CompanyAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
-
   private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
 
-  override protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
+
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right.map { vm =>
+          post(CompanyPostcodeLookupId(index), vm, mode)
+        }
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -71,20 +84,6 @@ class CompanyPostCodeLookupController @Inject()(
               subHeading = Some(details.companyName),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
-    }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map { vm =>
-          post(CompanyPostcodeLookupId(index), vm, mode)
         }
     }
 }

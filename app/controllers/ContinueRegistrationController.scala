@@ -32,8 +32,9 @@ class ContinueRegistrationController @Inject()(
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 @Register navigator: Navigator,
-                                                 val controllerComponents: MessagesControllerComponents
-                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController {
+                                                val controllerComponents: MessagesControllerComponents
+                                              )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>

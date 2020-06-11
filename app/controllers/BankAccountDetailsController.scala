@@ -42,9 +42,10 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
                                              formProvider: BankAccountDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: bankAccountDetails
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: bankAccountDetails
+                                            )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

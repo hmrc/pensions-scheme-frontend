@@ -44,20 +44,22 @@ class AddTrusteeController @Inject()(
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: addTrustee
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: addTrustee
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val trustees = request.userAnswers.allTrusteesAfterDelete
-      Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
-  }
+      implicit request =>
+        val trustees = request.userAnswers.allTrusteesAfterDelete
+        Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
+    }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
 
       val trustees = request.userAnswers.allTrusteesAfterDelete

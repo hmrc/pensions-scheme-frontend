@@ -26,7 +26,8 @@ import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import viewmodels.AnswerRow
 
 case class DirectorHasNINOId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorHasNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorHasNINOId.toString
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
@@ -48,10 +49,10 @@ object DirectorHasNINOId {
 
     new CheckYourAnswersDirectors[DirectorHasNINOId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasNINO")
 
-      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenText(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasNino")
 
       override def row(id: DirectorHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

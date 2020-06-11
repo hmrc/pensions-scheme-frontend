@@ -26,7 +26,9 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorNoUTRReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNoUTRReasonId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorNoUTRReasonId.toString
 }
 
 object DirectorNoUTRReasonId {
@@ -38,10 +40,10 @@ object DirectorNoUTRReasonId {
 
     new CheckYourAnswersDirectors[DirectorNoUTRReasonId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__whyNoUTR")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")
 
       override def row(id: DirectorNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

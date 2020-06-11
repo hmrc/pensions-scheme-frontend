@@ -27,7 +27,9 @@ import viewmodels.AnswerRow
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
 
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorAddressYearsId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorAddressYearsId.toString
 
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
@@ -50,23 +52,26 @@ object DirectorAddressYearsId {
     new CheckYourAnswersDirectors[DirectorAddressYearsId] {
 
       private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-          dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
 
 
       private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-          dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 
       override def row(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+        AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
           .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)) match {
           case Some(true) =>
-            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+              hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
               .row(id)(changeUrl, userAnswers)
           case _ =>
-            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers), hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
+            AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+              hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
               .updateRow(id)(changeUrl, userAnswers)
         }
     }

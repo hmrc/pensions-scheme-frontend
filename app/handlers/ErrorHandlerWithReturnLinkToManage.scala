@@ -26,11 +26,12 @@ import views.html.{error_template, error_template_page_not_found}
 
 @Singleton
 class ErrorHandlerWithReturnLinkToManage @Inject()(
-                              appConfig: FrontendAppConfig,
-                              override val messagesApi: MessagesApi,
-                              override val notFoundView: error_template_page_not_found,
-                              override val errorView: error_template
-                            ) extends ErrorHandler(appConfig, messagesApi, notFoundView, errorView) with I18nSupport {
+                                                    appConfig: FrontendAppConfig,
+                                                    override val messagesApi: MessagesApi,
+                                                    override val notFoundView: error_template_page_not_found,
+                                                    override val errorView: error_template
+                                                  ) extends ErrorHandler(appConfig, messagesApi, notFoundView,
+  errorView) with I18nSupport {
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
     val linkContent = messagesApi.apply("messages__complete__returnToManagePensionSchemes")(Lang.defaultLang)

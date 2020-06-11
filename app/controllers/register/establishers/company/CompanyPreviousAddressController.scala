@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId,
+  CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -53,7 +54,8 @@ class CompanyPreviousAddressController @Inject()(
                                                   val auditService: AuditService,
                                                   val view: manualAddress,
                                                   val controllerComponents: MessagesControllerComponents
-                                                )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                                )(implicit val ec: ExecutionContext) extends ManualAddressController
+  with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.CompanyPreviousAddressController.onSubmit _
@@ -66,21 +68,14 @@ class CompanyPreviousAddressController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), viewmodel(index, srn, mode, details.companyName))
+            get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), viewmodel(index, srn, mode,
+              details.companyName))
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
-        details =>
-          val context = s"Establisher Company Previous Address: ${details.companyName}"
-          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index),
-            viewmodel(index, srn, mode, details.companyName), mode, context, CompanyPreviousAddressPostcodeLookupId(index))
-      }
-  }
-
-  private def viewmodel(index: Int, srn: Option[String], mode: Mode, name: String)(implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+  private def viewmodel(index: Int, srn: Option[String], mode: Mode, name: String)(implicit
+                                                                                   request: DataRequest[AnyContent])
+  : ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, srn, Index(index)),
       countryOptions.options,
@@ -88,5 +83,17 @@ class CompanyPreviousAddressController @Inject()(
       heading = Message(heading, name),
       srn = srn
     )
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
+    implicit request =>
+      CompanyDetailsId(index).retrieve.right.map {
+        details =>
+          val context = s"Establisher Company Previous Address: ${details.companyName}"
+          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index),
+            viewmodel(index, srn, mode, details.companyName), mode, context, CompanyPreviousAddressPostcodeLookupId
+            (index))
+      }
+  }
 
 }

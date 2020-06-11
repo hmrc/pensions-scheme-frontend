@@ -32,20 +32,27 @@ case class EstablisherNoUTRReasonId(index: Int) extends TypedIdentifier[String] 
 object EstablisherNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
+  implicit def cya(implicit ua: UserAnswers,
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoUTRReasonId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__whyNoUTR", establisherName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", establisherName(index)))
+    def establisherName(index: Int) =
+      ua.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
+
+    def label(index: Int) =
+      Some(messages("messages__whyNoUTR", establisherName(index)))
+
+    def hiddenLabel(index: Int) =
+      Some(messages("messages__visuallyhidden__dynamic_noUtrReason", establisherName(index)))
 
     new CheckYourAnswers[EstablisherNoUTRReasonId] {
       override def row(id: EstablisherNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
 
 
-      override def updateRow(id: EstablisherNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: EstablisherNoUTRReasonId)(changeUrl: String,
+                                                           userAnswers: UserAnswers
+                                                          ): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
