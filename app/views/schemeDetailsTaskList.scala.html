@@ -25,22 +25,22 @@
 @import uk.gov.hmrc.play.views.html._
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig
+    main_template: main_template,
+    appConfig: FrontendAppConfig
 )
 
 @(taskSections: SchemeDetailsTaskList)(implicit request: Request[_], messages: Messages)
 
-@status(isCompleted: Boolean) = @{
-    if(isCompleted) {
+@status(isCompleted:Boolean)=@{
+    if (isCompleted) {
         "messages__schemeTaskList__completed"
     } else {
         "messages__schemeTaskList__inProgress"
     }
 }
 
-@statusClass(isCompleted: Boolean) = @{
-    if(isCompleted) {
+@statusClass(isCompleted:Boolean)=@{
+    if (isCompleted) {
         "task-status--completed"
     } else {
         "task-status--in-progress"
@@ -48,50 +48,50 @@
 }
 
 @pageTitle = @{
-    if(taskSections.srn.isDefined) {
+    if(taskSections.srn.isDefined){
         messages("messages__scheme_details__title")
-    } else {
+    }else{
         messages("messages__schemeTaskList__title")
     }
 }
 
 @main_template(
     title = pageTitle
-) {
-    @components.back_link()
-    @taskSections.isAllSectionsComplete.map { isComplete =>
-        @if(!isComplete) {
-            @components.incomplete_alert()
+    ) {
+        @components.back_link()
+        @taskSections.isAllSectionsComplete.map { isComplete =>
+            @if(!isComplete) {
+                @components.incomplete_alert()
+            }
         }
-    }
-    @components.heading(taskSections.h1)
+        @components.heading(taskSections.h1)
 
     <div class="task-list">
 
         <section aria-labelledby="section-before-you-start-header">
             <h2 id="section-before-you-start-header" class="heading-large">
-            @messages("messages__scheme_details__title")
+                @messages("messages__scheme_details__title")
             </h2>
 
-            @taskSections.beforeYouStart.header.map { item =>
+            @taskSections.beforeYouStart.header.map{ item=>
                 <h3 id="section-information-h3" class="heading-medium">
                     @messages(item)
                 </h3>
             }
 
-            @taskSections.beforeYouStart.entities.map { spoke =>
+            @taskSections.beforeYouStart.entities.map{ spoke =>
                 <ul class="task-list-items">
                     <li class="task-list-item">
-                        @if(spoke.isCompleted.isEmpty) {
-                            <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target">
+                        @if(spoke.isCompleted.isEmpty){
+                        <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target">
                             @messages(spoke.link.text)
-                            </a>
+                        </a>
                         }
-                        @spoke.isCompleted.map { isCompleted =>
-                            <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target" aria-describedby="section-beforeYouStart-status">
+                        @spoke.isCompleted.map{ isCompleted =>
+                        <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target" aria-describedby="section-beforeYouStart-status">
                             @messages(spoke.link.text)
-                            </a>
-                            <span class="task-status @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                        </a>
+                        <span class="task-status @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                         }
                     </li>
                 </ul>
@@ -100,91 +100,82 @@
         </section>
 
         <section aria-labelledby="section-about-header">
-            @taskSections.about.header.map { item =>
+            @taskSections.about.header.map{ item=>
                 <h3 id="section-about-header" class="heading-medium">
                     @messages(item)
                 </h3>
             }
 
             <ul class="task-list-items">
-            @for((item, i) <- taskSections.about.entities.zipWithIndex) {
+                @for((item, i) <- taskSections.about.entities.zipWithIndex){
                 <li class="task-list-item">
-                    <a id="section-about-link-@i" class="task-name" href="@{
-                        item.link.target
-                    }" @if(item.isCompleted.nonEmpty) {
-                        aria-describedby="section-about-status-@i"}>
-                    @messages(item.link.text)
+                    <a id="section-about-link-@i" class="task-name" href="@{item.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>
+                        @messages(item.link.text)
                     </a>
-                    @item.isCompleted.map { isCompleted =>
-                        <span class="task-status @statusClass(isCompleted)" id="section-about-status-@i"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                    @item.isCompleted.map{ isCompleted =>
+                    <span class="task-status @statusClass(isCompleted)" id="section-about-status-@i"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                     }
                 </li>
-            }
+                }
             </ul>
         </section>
 
         @taskSections.workingKnowledge.map { spoke =>
-            @spoke.entities.map { wk =>
+             @spoke.entities.map { wk =>
                 <section aria-labelledby="section-working-knowledge-header">
                     <h3 id="section-working-knowledge-header" class="heading-medium">
-                        @messages("messages__schemeTaskList__working_knowledge_header")
+                    @messages("messages__schemeTaskList__working_knowledge_header")
                     </h3>
 
                     <ul class="task-list-items">
                         <li class="task-list-item">
-                            <a id="section-working-knowledge-link" class="task-name" href="@wk.link.target" @if(wk.isCompleted.nonEmpty) {
-                                aria-describedby="section-working-knowledge-status"}>
-                            @messages(wk.link.text)
+                            <a id="section-working-knowledge-link" class="task-name" href="@wk.link.target" @if(wk.isCompleted.nonEmpty){aria-describedby="section-working-knowledge-status"}>
+                                @messages(wk.link.text)
                             </a>
 
-                            @wk.isCompleted.map { isCompleted =>
+                            @wk.isCompleted.map{ isCompleted =>
                                 <span class="task-status @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                             }
                         </li>
                     </ul>
                 </section>
-            }
+             }
         }
 
         <section aria-labelledby="section-establishers-header">
             <h2 id="section-establishers-header" class="heading-large">
-            @messages("messages__schemeTaskList__sectionEstablishers_header")
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
             @taskSections.addEstablisherHeader.map { spoke =>
 
                 @spoke.entities.map { entity =>
-                    <a id="section-establishers-link" class="task-name" href="@{
-                        entity.link.target
-                    }" >
-                    @messages(entity.link.text)
+                    <a id="section-establishers-link" class="task-name" href="@{entity.link.target}" >
+                        @messages(entity.link.text)
                     </a>
                 }
 
-                @for((p1Text, i) <- spoke.p1.zipWithIndex) {
+                @for((p1Text, i) <- spoke.p1.zipWithIndex){
                     <p>@messages(p1Text)</p>
                 }
             }
 
-            @for((item, i) <- taskSections.establishers.zipWithIndex) {
-                @item.header.map { hdr =>
+            @for((item, i) <- taskSections.establishers.zipWithIndex){
+                @item.header.map{hdr=>
                     <h3 class="task-list-section">@messages(hdr)</h3>
                 }
                 <ul class="task-list-items">
-                @for((entity, j) <- item.entities.zipWithIndex) {
+                    @for((entity, j) <- item.entities.zipWithIndex){
 
-                    <li class="task-list-item">
-                        <a id="section-establishers-link-@i-@j" class="task-name" href="@{
-                            entity.link.target
-                        }" @if(item.isCompleted.nonEmpty) {
-                            aria-describedby="section-about-status-@i"}>
-                        @messages(entity.link.text)
-                        </a>
-                        @entity.isCompleted.map { isCompleted =>
-                            <span class="task-status @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
-                        }
-                    </li>
+                        <li class="task-list-item">
+                            <a id="section-establishers-link-@i-@j" class="task-name" href="@{entity.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>
+                                @messages(entity.link.text)
+                            </a>
+                            @entity.isCompleted.map{ isCompleted =>
+                                <span class="task-status @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                            }
+                        </li>
 
-                }
+                    }
                 </ul>
             }
         </section>
@@ -195,59 +186,53 @@
                 <h2 id="section-trustees-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
-            @spoke.entities.map { entity =>
-                <a id="section-trustees-link" class="task-name" href="@{
-                    entity.link.target
-                }" @if(entity.isCompleted.nonEmpty) {
-                    aria-describedby="section-trustees-status"}>
-                @messages(entity.link.text)
-                </a>
-            }
+               @spoke.entities.map { entity =>
+                    <a id="section-trustees-link" class="task-name" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty){aria-describedby="section-trustees-status"}>
+                        @messages(entity.link.text)
+                    </a>
+               }
 
-            @for((p1Text, i) <- spoke.p1.zipWithIndex) {
-                <p id="section-trustees-header-additional-text-@i">@messages(p1Text)</p>
+                @for((p1Text, i) <- spoke.p1.zipWithIndex){
+                    <p id="section-trustees-header-additional-text-@i">@messages(p1Text)</p>
+                }
             }
-            }
-            @for((item, i) <- taskSections.trustees.zipWithIndex) {
-                @item.header.map { hdr =>
-                    <h3 class="task-list-section">@messages(hdr)</h3>
+            @for((item, i) <- taskSections.trustees.zipWithIndex){
+                @item.header.map{hdr=>
+                   <h3 class="task-list-section">@messages(hdr)</h3>
                 }
                 <ul class="task-list-items">
-                @for((entity, j) <- item.entities.zipWithIndex) {
-                    <li class="task-list-item">
-                        <a id="section-trustees-link-@i-@j" class="task-name" href="@{
-                            entity.link.target
-                        }" @if(entity.isCompleted.nonEmpty) {
-                            aria-describedby="section-trustees-status-@i-@j"}>
-                        @messages(entity.link.text)
-                        </a>
-                        @entity.isCompleted.map { isCompleted =>
-                            <span class="task-status @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
-                        }
-                    </li>
-                }
+                    @for((entity, j) <- item.entities.zipWithIndex){
+                        <li class="task-list-item">
+                            <a id="section-trustees-link-@i-@j" class="task-name" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty){aria-describedby="section-trustees-status-@i-@j"}>
+                                @messages(entity.link.text)
+                            </a>
+                            @entity.isCompleted.map{ isCompleted =>
+                                <span class="task-status @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="visuallyhidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
+                            }
+                        </li>
+                    }
                 </ul>
             }
         </section>
 
-        @taskSections.declaration.map { declarationSection =>
+        @taskSections.declaration.map{declarationSection =>
             <section aria-labelledby="section-declaration-header">
                 @declarationSection.header.map { hdr =>
                     <h2 id="section-declaration-header" class="heading-large">
                         @messages(hdr)
                     </h2>
                 }
-            <p class="tasklist">
-            @if(declarationSection.entities.nonEmpty) {
-                @declarationSection.entities.map { entity =>
-                    <a id="section-declaration-link" class="task-name" href="@entity.link.target">@messages(entity.link.text)</a>
-                }
-            } else {
-                @for((p1Text, i) <- declarationSection.p1.zipWithIndex) {
-                    <span id="section-declaration-text-@i">@messages(p1Text)</span>
-                }
-            }
-            </p>
+                <p class="tasklist">
+                    @if(declarationSection.entities.nonEmpty){
+                        @declarationSection.entities.map{ entity =>
+                            <a id="section-declaration-link" class="task-name" href="@entity.link.target">@messages(entity.link.text)</a>
+                        }
+                    }else{
+                        @for((p1Text, i) <- declarationSection.p1.zipWithIndex){
+                            <span id="section-declaration-text-@i">@messages(p1Text)</span>
+                        }
+                    }
+                </p>
             </section>
         }
 
@@ -255,12 +240,12 @@
 
     <hr aria-hidden="true">
     <a id="save-and-return" class="task-name"
-    href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
-    @if(taskSections.srn.isDefined) {
-        @messages("messages__complete__returnToSchemeSummary")
-    } else {
-        @messages("messages__complete__saveAndReturnToManagePensionSchemes")
-    }
+       href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
+        @if(taskSections.srn.isDefined){
+            @messages("messages__complete__returnToSchemeSummary")
+        }else{
+            @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+        }
     </a>
 
 }

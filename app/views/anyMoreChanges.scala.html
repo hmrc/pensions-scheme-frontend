@@ -22,16 +22,16 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_],
-        schemeName: Option[String],
-        dateToComplete: String,
-        postCall: Call,
-        srn: Option[String],
-        mode: Mode = UpdateMode
+    schemeName:Option[String],
+    dateToComplete: String,
+    postCall: Call,
+    srn: Option[String],
+    mode: Mode = UpdateMode
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -42,20 +42,20 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @components.heading(
-                headingKey = messages("messages__any_more_changes__title")
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components.heading(
+            headingKey=messages("messages__any_more_changes__title")
+        )
 
-            <p>@messages("messages__any_more_changes__p1")</p>
-            <p>@messages("messages__any_more_changes__p2")</p>
-            <p>@messages("messages__any_more_changes__p3_date", dateToComplete)</p>
+        <p>@messages("messages__any_more_changes__p1")</p>
+        <p>@messages("messages__any_more_changes__p2")</p>
+        <p>@messages("messages__any_more_changes__p3_date", dateToComplete)</p>
 
-            @components.input_yes_no(
-                field = form("value"),
-                label = messages("messages__any_more_changes__title"),
-                labelClass = Some("visually-hidden")
-            )
+        @components.input_yes_no(
+            field = form("value"),
+            label = messages("messages__any_more_changes__title"),
+            labelClass = Some("visually-hidden")
+        )
         </div>
         @components.submit_button("site.save_and_continue")
 

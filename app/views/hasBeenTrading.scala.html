@@ -21,8 +21,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -35,17 +35,17 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @viewmodel.hint.map { hint =>
-                @components.heading(headingKey = viewmodel.heading)
-                <p>@messages(hint)</p>
-            }
-            @components.input_yes_no(
-                field = form("value"),
-                label = viewmodel.heading,
-                labelClass = Some("visually-hidden"),
-                headingIsLegend = viewmodel.hint.isEmpty
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @viewmodel.hint.map{ hint =>
+            @components.heading(headingKey=viewmodel.heading)
+            <p>@messages(hint)</p>
+        }
+        @components.input_yes_no(
+            field = form("value"),
+            label = viewmodel.heading,
+            labelClass = Some("visually-hidden"),
+            headingIsLegend=viewmodel.hint.isEmpty
+        )
         </div>
         @components.submit_button("site.save_and_continue")
 

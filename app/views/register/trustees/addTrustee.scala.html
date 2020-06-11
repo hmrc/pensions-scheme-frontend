@@ -23,9 +23,9 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -40,7 +40,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey = messages("messages__addTrustee__heading")
+            headingKey=messages("messages__addTrustee__heading")
         )
 
         @if(trustees.isEmpty) {

@@ -20,11 +20,11 @@
 @import play.api.mvc.Call
 
 @this(
-        main_template: main_template
+    main_template: main_template
 )
 
 @(
-        schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
+  schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__variationDeclaration__title")) {
@@ -32,23 +32,23 @@
     @components.back_link()
 
     @components.heading(
-        headingKey = messages("messages__variationDeclaration__heading")
+        headingKey= messages("messages__variationDeclaration__heading")
     )
 
     @components.paragraph_text(messages("messages__variationDeclaration__declare"))
 
-    <ol class="list list-bullet">
-        <li>
-        @messages("messages__variationDeclaration__statement1")
-        </li>
+        <ol class="list list-bullet">
+            <li>
+                @messages("messages__variationDeclaration__statement1")
+            </li>
 
-        <li>
-        @messages("messages__variationDeclaration__statement2")
-        </li>
+            <li>
+                @messages("messages__variationDeclaration__statement2")
+            </li>
 
-        <li>
-        @messages("messages__variationDeclaration__statement3")
-        </li>
+            <li>
+                @messages("messages__variationDeclaration__statement3")
+            </li>
 
     </ol>
 

@@ -19,10 +19,10 @@
 @import controllers.register.trustees.company.routes._
 
 @this(
-        main_template: main_template
+    main_template: main_template
 )
 
-@(schemeName: Option[String], href: Call, srn: Option[String], establisherName: String)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], href: Call, srn:Option[String], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__detailsFor", messages("messages__theIndividual")).capitalize

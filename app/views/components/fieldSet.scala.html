@@ -15,46 +15,43 @@
  *@
 
 @(
-        field: Field,
-        legend: String,
-        hint: Option[String] = None,
-        hiddenLegend: Boolean = false,
-        inline: Boolean = false,
-        fieldsetClasses: Set[String] = Set.empty,
-        legendClasses: Set[String] = Set("bold-small")
+ field: Field,
+ legend: String,
+ hint: Option[String] = None,
+ hiddenLegend: Boolean = false,
+ inline: Boolean = false,
+ fieldsetClasses: Set[String] = Set.empty,
+ legendClasses: Set[String] = Set("bold-small")
 )(body: Html)(implicit messages: Messages)
 
 @_fieldsetClasses = @{
-    if(inline) {
-        fieldsetClasses + "inline"
-    } else {
-        fieldsetClasses
-    }
+ if (inline) {
+  fieldsetClasses + "inline"
+ } else {
+  fieldsetClasses
+ }
 }
 
 @_legendClasses = @{
-    if(hiddenLegend) {
-        legendClasses + "visually-hidden"
-    } else {
-        legendClasses
-    }
+ if (hiddenLegend) {
+  legendClasses + "visually-hidden"
+ } else {
+  legendClasses
+ }
 }
 
-<div class="form-group @if(field.hasErrors) { form-group-error }" id="@field.id">
-    <fieldset @if(_fieldsetClasses.nonEmpty) {
-        class="@_fieldsetClasses.mkString(" ")" }>
-        <legend>
-            <span class="@_legendClasses.mkString(" ")">@messages(legend)</span>
-            @field.errors.headOption.map { error =>
-                <span class="error-message" id="error-message-@{
-                    field.id
-                }-input">
-                    <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
-            }
-            @hint.map { hint =>
-                <span class="form-hint">@messages(hint)</span>
-            }
-        </legend>
-        @body
-    </fieldset>
+<div class="form-group @if(field.hasErrors){ form-group-error }" id="@field.id">
+  <fieldset @if(_fieldsetClasses.nonEmpty){ class="@_fieldsetClasses.mkString(" ")" }>
+   <legend>
+     <span class="@_legendClasses.mkString(" ")">@messages(legend)</span>
+     @field.errors.headOption.map { error =>
+      <span class="error-message" id="error-message-@{field.id}-input">
+       <span class="visually-hidden">@messages("site.error")</span> @messages(error.message, error.args: _*)</span>
+     }
+     @hint.map { hint =>
+      <span class="form-hint">@messages(hint)</span>
+     }
+   </legend>
+   @body
+  </fieldset>
 </div>

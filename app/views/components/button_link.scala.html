@@ -24,12 +24,10 @@
 <div class="section">
     <a id="@id" href="@href" role="button" class="button">
         <span aria-hidden="true">
-        @messages(messageKey)
+            @messages(messageKey)
         </span>
         <span class="visually-hidden">
-            @messages(messageKey) @if(extraHiddenText.nonEmpty) @{
-            extraHiddenText.get
-        }
+            @messages(messageKey) @if(extraHiddenText.nonEmpty) @{extraHiddenText.get}
         </span>
     </a>
 </div>

@@ -22,8 +22,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -42,7 +42,7 @@
             legend = messages("messages__current_members__h1", schemeName),
             legendClass = Some("visually-hidden"),
             inputs = Members.options,
-            headingIsLegend = true
+            headingIsLegend=true
         )
 
         @components.submit_button()

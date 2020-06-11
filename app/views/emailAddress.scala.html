@@ -20,8 +20,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -34,20 +34,20 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @components.heading(
-                messages(viewModel.heading).toString
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components.heading(
+            messages(viewModel.heading).toString
+        )
 
-            @viewModel.hint.map { hint =>
-                <p>@messages(hint)</p>
-            }
+        @viewModel.hint.map{hint =>
+            <p>@messages(hint)</p>
+        }
 
-            @components.input_text(
-                field = form("email"),
-                label = messages(viewModel.title),
-                labelClass = Some("visually-hidden")
-            )
+        @components.input_text(
+            field = form("email"),
+            label = messages(viewModel.title),
+            labelClass = Some("visually-hidden")
+        )
         </div>
         @components.submit_button("site.save_and_continue")
 

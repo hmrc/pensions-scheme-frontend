@@ -21,19 +21,19 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
 )
 
 @(
-        form: Form[_],
-        partners: Seq[Partner[_]],
-        postUrl: Call,
-        schemeName: Option[String],
-        viewOnly: Boolean,
-        mode: Mode,
-        srn: Option[String]
+    form: Form[_],
+    partners: Seq[Partner[_]],
+    postUrl: Call,
+    schemeName: Option[String],
+    viewOnly: Boolean,
+    mode: Mode,
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -56,7 +56,7 @@
 
             @components.entity_list(partners, viewOnly, mode, srn)
 
-            @if(!viewOnly) {
+            @if(!viewOnly){
 
                 <p class="panel panel-border-wide">@messages("messages__atLeast_two_partners")</p>
 

@@ -18,12 +18,12 @@
 @import models.Link
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        govuk_wrapper: govuk_wrapper
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    govuk_wrapper: govuk_wrapper
 )
 
-@(returnLink: Link)(implicit request: Request[_], messages: Messages)
+@(returnLink:Link)(implicit request: Request[_], messages: Messages)
 
 @iContentHeader = {
     <h1>@messages("messages__pageNotFound404__heading")</h1>

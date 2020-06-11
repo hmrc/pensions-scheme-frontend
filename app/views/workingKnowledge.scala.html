@@ -21,12 +21,12 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = titleWithErrors(form, messages("messages__workingKnowledge__title"))) {
@@ -37,19 +37,19 @@
 
         @components.error_summary(form.errors)
 
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
+        <div class="form-group @if(form.hasErrors){form-group--error}">
 
-            @components.heading(messages("messages__workingKnowledge__heading"))
+        @components.heading(messages("messages__workingKnowledge__heading"))
 
-            <p id="p1">@Html(messages("messages__workingKnowledge__p1"))</p>
-            <p id="p2">@Html(messages("messages__workingKnowledge__p2"))</p>
-            <p id="p3">@Html(messages("messages__workingKnowledge__p3"))</p>
+        <p id="p1">@Html(messages("messages__workingKnowledge__p1"))</p>
+        <p id="p2">@Html(messages("messages__workingKnowledge__p2"))</p>
+        <p id="p3">@Html(messages("messages__workingKnowledge__p3"))</p>
 
-            @components.input_yes_no(
-                field = form("value"),
-                label = messages("messages__workingKnowledge__heading"),
-                labelClass = Some("visually-hidden")
-            )
+        @components.input_yes_no(
+            field = form("value"),
+            label = messages("messages__workingKnowledge__heading"),
+            labelClass = Some("visually-hidden")
+        )
         </div>
         @components.submit_button("site.save_and_continue")
 

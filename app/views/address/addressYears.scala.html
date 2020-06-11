@@ -19,8 +19,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewmodel: AddressYearsViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -41,8 +41,9 @@
             legendClass = Some("visually-hidden"),
             inputs = viewmodel.inputs,
             fieldsetClass = Some("inline"),
-            headingIsLegend = true
+            headingIsLegend=true
         )
+
 
         @components.submit_button()
 

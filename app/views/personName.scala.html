@@ -22,8 +22,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -38,12 +38,12 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey = messages(viewModel.heading)
+            headingKey=messages(viewModel.heading)
         )
 
         @components.input_text(
-            field = form("firstName"),
-            label = messages("messages__common__firstname")
+           field = form("firstName"),
+           label = messages("messages__common__firstname")
         )
 
         @components.input_text(

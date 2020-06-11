@@ -20,8 +20,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -34,21 +34,21 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @components.heading(
-                messages(viewmodel.heading).toString
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components.heading(
+            messages(viewmodel.heading).toString
+        )
 
-            @viewmodel.entityName.map { name =>
-                <p>@messages("messages__enterPAYE__p1", name)</p>
-            }
+        @viewmodel.entityName.map{name =>
+            <p>@messages("messages__enterPAYE__p1", name)</p>
+        }
 
-            @components.input_text(
-                field = form("paye"),
-                label = messages(viewmodel.title),
-                labelClass = Some("visually-hidden"),
-                hint = viewmodel.hint.map(hint => messages(hint))
-            )
+        @components.input_text(
+            field = form("paye"),
+            label = messages(viewmodel.title),
+            labelClass = Some("visually-hidden"),
+            hint = viewmodel.hint.map(hint => messages(hint))
+        )
         </div>
         @components.submit_button("site.save_and_continue")
 

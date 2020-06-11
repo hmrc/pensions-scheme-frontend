@@ -23,16 +23,16 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(
-        form: Form[_],
-        mode: Mode,
-        establishers: Seq[Establisher[_]],
-        schemeName: Option[String],
-        srn: Option[String]
+    form: Form[_],
+    mode: Mode,
+    establishers: Seq[Establisher[_]],
+    schemeName: Option[String],
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -44,9 +44,9 @@
 
         @if(establishers.isEmpty) {
 
-            @components.heading(
-                headingKey = messages("messages__establishers__add__title")
-            )
+        @components.heading(
+            headingKey=messages("messages__establishers__add__title")
+        )
 
             <p>@messages("messages__establishers__add_hint")</p>
 
@@ -57,8 +57,9 @@
             @components.error_summary(form.errors)
 
             @components.heading(
-                headingKey = messages("messages__establishers__add__title")
+                headingKey=messages("messages__establishers__add__title")
             )
+
 
             @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
 
@@ -68,6 +69,7 @@
                 legendClass = Some("heading-medium"),
                 hint = None
             )
+
 
             @components.submit_button("site.save_and_continue", true)
         }

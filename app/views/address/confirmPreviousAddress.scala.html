@@ -20,15 +20,15 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(
-        form: Form[_],
-        viewModel: ConfirmAddressViewModel,
-        countryOptions: CountryOptions,
-        schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+    form: Form[_],
+    viewModel: ConfirmAddressViewModel,
+    countryOptions: CountryOptions,
+    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = titleWithErrors(form, messages(viewModel.title))) {
 
@@ -38,20 +38,20 @@
 
         @components.error_summary(form.errors)
 
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
+        <div class="form-group @if(form.hasErrors){form-group--error}">
             @components.heading(
                 headingKey = messages(viewModel.heading)
             )
 
-            @viewModel.hint.map { hintText =>
+            @viewModel.hint.map{ hintText =>
                 <p>@messages(hintText)</p>
             }
 
             <div class="tabular-data__data tabular-data__data--3-12">
                 <p>
-                @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
-                    <span id="address-value-@i" class="address-multi-line">@line</span>
-                }
+                    @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
+                        <span id="address-value-@i" class="address-multi-line">@line</span>
+                    }
                 </p>
             </div>
 

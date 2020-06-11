@@ -22,8 +22,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], mode: Mode, schemeName: Option[String], postCall: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -36,14 +36,13 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @schemeName.map { sn =>
-                @components.heading(
-                    headingKey = messages("messages__benefits_secured_by_insurance__h1", sn)
-                )
-            }
-            <p>
-            @messages("messages__benefits_secured_by_insurance__lede") <p>
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @schemeName.map{sn=>
+            @components.heading(
+                headingKey=messages("messages__benefits_secured_by_insurance__h1", sn)
+            )
+        }
+        <p>@messages("messages__benefits_secured_by_insurance__lede")<p>
 
         @components.input_yes_no(
             field = form("value"),

@@ -18,21 +18,21 @@
 @import uk.gov.hmrc.play.views.html._
 
 @this(
-        main_template: main_template
+    main_template: main_template
 )
 
-@(srn: Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__stillNeedDetails__title")) {
 
-    @components.back_link()
+        @components.back_link()
 
-    @components.heading(
-        headingKey = messages("messages__stillNeedDetails__heading")
-    )
-    <p>@messages("messages__stillNeedDetails__p1")</p>
-    <p>@messages("messages__stillNeedDetails__p2")</p>
+        @components.heading(
+            headingKey=messages("messages__stillNeedDetails__heading")
+        )
+            <p>@messages("messages__stillNeedDetails__p1")</p>
+            <p>@messages("messages__stillNeedDetails__p2")</p>
 
-    @components.return_link(messageKey = "messages__schemeTaskList__returnlink", srn = srn, schemename = schemeName)
+        @components.return_link(messageKey="messages__schemeTaskList__returnlink",srn=srn ,schemename=schemeName)
 }

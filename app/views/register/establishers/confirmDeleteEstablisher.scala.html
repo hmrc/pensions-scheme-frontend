@@ -21,11 +21,11 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], establisherName: String, hintText: Option[String], postCall: Call, schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], establisherName: String, hintText: Option[String], postCall: Call, schemeName: Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = titleWithErrors(form, messages("messages__confirmDeleteEstablisher__title"))) {
@@ -35,18 +35,18 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @hintText.map { ht =>
-                @components.heading(messages("messages__confirmDeleteEstablisher__heading", establisherName))
-                <span id="delete-hint" class="form-hint">@ht</span>
-            }
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @hintText.map{ ht =>
+        @components.heading(messages("messages__confirmDeleteEstablisher__heading", establisherName))
+            <span id="delete-hint" class="form-hint">@ht</span>
+        }
 
-            @components.input_yes_no(
-                field = form("value"),
-                label = messages("messages__confirmDeleteEstablisher__heading", establisherName),
-                labelClass = Some("visually-hidden"),
-                headingIsLegend = hintText.isEmpty
-            )
+        @components.input_yes_no(
+        field = form("value"),
+        label = messages("messages__confirmDeleteEstablisher__heading", establisherName),
+        labelClass = Some("visually-hidden"),
+        headingIsLegend = hintText.isEmpty
+        )
         </div>
         @components.submit_button()
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)

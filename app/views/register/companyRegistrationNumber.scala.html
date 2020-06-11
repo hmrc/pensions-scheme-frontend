@@ -24,31 +24,31 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, viewmodel.title)) {
+    @main_template(
+        title = titleWithErrors(form, viewmodel.title)) {
 
-    @formHelper(action = submitUrl, 'autoComplete -> "off") {
+        @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @components.heading(
-                messages(viewmodel.heading).toString
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components.heading(
+            messages(viewmodel.heading).toString
+        )
 
-            <p>@messages(viewmodel.hint)</p>
+        <p>@messages(viewmodel.hint)</p>
 
-            @components.input_text(
-                field = form("companyRegistrationNumber"),
-                label = messages("messages__common__crn"),
-                labelClass = Some("visually-hidden")
+        @components.input_text(
+            field = form("companyRegistrationNumber"),
+            label = messages("messages__common__crn"),
+            labelClass = Some("visually-hidden")
             )
         </div>
         @components.submit_button()

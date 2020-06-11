@@ -15,29 +15,26 @@
  *@
 
 @(
-        field: Field,
-        label: String,
-        value: String,
-        dataTarget: Option[String] = None,
-        hint: Set[String] = Set.empty,
-        labelClass: Option[String] = None
+ field: Field,
+ label: String,
+ value: String,
+ dataTarget: Option[String] = None,
+ hint: Set[String] = Set.empty,
+ labelClass: Option[String] = None
 )(implicit messages: Messages)
 
 @ariaDescribedBy = @{
-    val hintId = if(hint.nonEmpty) Seq(s"${value}-radio-hint") else Seq.empty
-    (hintId).mkString(" ")
+val hintId = if (hint.nonEmpty) Seq(s"${value}-radio-hint") else Seq.empty
+(hintId).mkString(" ")
 }
 
 <div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-    <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(hint.nonEmpty) {
-        aria-describedby="@ariaDescribedBy"
-    }
-        @if(field.value.contains(value)) {
-            checked="checked" }>
-    <label for="@field.id-@value" @if(labelClass.nonEmpty) { class=@labelClass } >
-    @messages(label)
+    <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(hint.nonEmpty){aria-describedby="@ariaDescribedBy"}
+       @if(field.value.contains(value)){ checked="checked" }>
+    <label  for="@field.id-@value" @if(labelClass.nonEmpty) { class=@labelClass } >
+        @messages(label)
     </label>
     @if(hint.nonEmpty) {
-        <span id="@value-radio-hint" class="form-hint">@hint.map { hintText => @messages(hintText) }</span>
+    <span id="@value-radio-hint" class="form-hint">@hint.map { hintText => @messages(hintText)}</span>
     }
 </div>

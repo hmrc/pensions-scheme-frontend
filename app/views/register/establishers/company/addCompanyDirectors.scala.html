@@ -24,19 +24,19 @@
 
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    appConfig: FrontendAppConfig,
+    formHelper: FormWithCSRF
 )
 
 @(
-        form: Form[_],
-        directors: Seq[DirectorEntity],
-        schemeName: Option[String],
-        postCall: Call,
-        viewOnly: Boolean,
-        mode: Mode,
-        srn: Option[String]
+    form: Form[_],
+    directors: Seq[DirectorEntity],
+    schemeName: Option[String],
+    postCall: Call,
+    viewOnly: Boolean,
+    mode: Mode,
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -49,7 +49,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey = messages("messages__addCompanyDirectors__heading")
+            headingKey=messages("messages__addCompanyDirectors__heading")
         )
 
         @if(directors.isEmpty) {
@@ -59,7 +59,7 @@
 
             @components.entity_list(directors, viewOnly, mode, srn)
 
-            @if(!viewOnly) {
+            @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {
                     @components.input_yes_no(
                         field = form("value"),

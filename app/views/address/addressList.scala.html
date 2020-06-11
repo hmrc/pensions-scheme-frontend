@@ -21,8 +21,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -35,32 +35,32 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
-            @components.heading(
-                headingKey = messages(viewModel.heading)
-            )
+        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components.heading(
+            headingKey=messages(viewModel.heading)
+        )
 
-            <p>
-                @viewModel.selectAddress.resolve
-                <a id="manual-address-link" href="@viewModel.manualInputCall">
+        <p>
+            @viewModel.selectAddress.resolve
+            <a id="manual-address-link" href="@viewModel.manualInputCall">
                 @viewModel.selectAddressLink.resolve
-                </a>
-            </p>
+            </a>
+        </p>
 
-            @components.fieldSet(
-                field = form("value"),
-                legend = viewModel.title,
-                hiddenLegend = true
-            ) {
-                @for((address, i) <- viewModel.addresses.zipWithIndex) {
+        @components.fieldSet(
+            field = form("value"),
+            legend = viewModel.title,
+            hiddenLegend = true
+        ) {
+            @for((address, i) <- viewModel.addresses.zipWithIndex) {
 
-                    @components.radio(
-                        field = form("value"),
-                        label = address.print,
-                        value = i.toString
-                    )
-                }
+                @components.radio(
+                    field = form("value"),
+                    label = address.print,
+                    value = i.toString
+                )
             }
+        }
         </div>
         @components.submit_button()
 

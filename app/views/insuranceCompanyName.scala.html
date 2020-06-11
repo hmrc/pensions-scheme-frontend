@@ -22,8 +22,8 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], mode: Mode, schemeName: Option[String], submitCall: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -36,7 +36,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
+        <div class="form-group @if(form.hasErrors){form-group--error}">
 
         @components.input_text(
             field = form("companyName"),

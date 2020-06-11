@@ -24,11 +24,11 @@
 @import viewmodels.CYAViewModel
 
 @this(
-        main_template: main_template,
-        appConfig: FrontendAppConfig
+    main_template: main_template,
+    appConfig: FrontendAppConfig
 )
 
-@(vm: CYAViewModel)(implicit request: Request[_], messages: Messages)
+@(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = vm.title.resolve.capitalize
@@ -36,10 +36,10 @@
     @components.back_link()
 
     @components.heading(
-        headingKey = vm.h1.resolve
+            headingKey =  vm.h1.resolve
     )
 
-    @for((section, i) <- vm.answerSections.zipWithIndex) {
+    @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
                 case a: AnswerSection => components.answer_section(a, i.toString, vm.hideEditLinks)
@@ -52,7 +52,7 @@
         @components.button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    @if(vm.returnOverview) {
+    @if(vm.returnOverview){
         @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
     } else {
         @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, None, vm.srn)

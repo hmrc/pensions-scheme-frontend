@@ -23,11 +23,11 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
-@(form: Form[_], srn: Option[String], index: Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], srn: Option[String], index:Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = titleWithErrors(form, messages("messages__establisher__type__title"))) {

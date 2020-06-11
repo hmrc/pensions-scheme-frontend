@@ -23,8 +23,8 @@
 @import viewmodels.dateOfBirth.DateOfBirthViewModel
 
 @this(
-        main_template: main_template,
-        formHelper: FormWithCSRF
+    main_template: main_template,
+    formHelper: FormWithCSRF
 )
 
 @(
@@ -46,7 +46,7 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors) {form-group--error}">
+        <div class="form-group @if(form.hasErrors){form-group--error}">
 
         @components.input_date(
             field = form("date"),
