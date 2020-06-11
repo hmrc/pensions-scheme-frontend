@@ -16,7 +16,6 @@
 
 package controllers.register
 
-import connectors.MinimalPsaConnector.MinimalPSA
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -24,7 +23,7 @@ import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
 import identifiers.HaveAnyTrusteesId
 import identifiers.register.DeclarationDormantId
-import models.NormalMode
+import models.{MinimalPSA, NormalMode}
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
@@ -259,7 +258,10 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val fakeMinimalPsaConnector = new MinimalPsaConnector {
     override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = Future.successful(true)
 
-    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPsaConnector.MinimalPSA] =
-      Future.successful(MinimalPSA("test@test.com", Some("psa name"), None))
+    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
+      Future.successful(MinimalPSA("test@test.com", isPsaSuspended = true, Some("psa name"), None))
+
+    override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
+      Future.successful(Some("psa name"))
   }
 }

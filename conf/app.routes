@@ -205,3 +205,14 @@ GET         /details-updated/:srn                                    controllers
 
 GET         /you-still-have-changes/:srn                             controllers.register.StillNeedDetailsController.onPageLoad(srn: Option[String])
 GET         /cannot-make-changes/:srn                                controllers.register.CannotMakeChangesController.onPageLoad(srn: Option[String])
+
+GET         /urls-partial                                            controllers.UrlsPartialController.retrieveUrlsPartial
+GET         /can-scheme-be-registered                                controllers.UrlsPartialController.checkIfSchemeCanBeRegistered
+
+GET         /discard                                                controllers.DeleteSchemeController.onPageLoad
+POST        /discard                                                controllers.DeleteSchemeController.onSubmit
+
+GET         /delete-changes/:srn                                    controllers.DeleteSchemeChangesController.onPageLoad(srn: String)
+POST        /delete-changes/:srn                                    controllers.DeleteSchemeChangesController.onSubmit(srn: String)
+
+GET         /cannot-start-registration                              controllers.CannotStartRegistrationController.onPageLoad

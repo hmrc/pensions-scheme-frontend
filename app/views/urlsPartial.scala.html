@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import uk.gov.hmrc.play.views.html._
+@import views.html._
+@import play.api.mvc.AnyContent
+@import config.FrontendAppConfig
+@import services.OverviewLink
 
-import play.api.libs.json.{Json, OFormat}
+@(links: Seq[OverviewLink])(implicit messages: Messages)
 
-case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None, id: Option[String] = None)
-
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
+@for(link <- links) {
+    <li>
+        <a id="@link.id" href="@link.url">@messages(link.linkText)</a>
+    </li>
 }
