@@ -32,13 +32,19 @@ case class TrusteePhoneId(index: Int) extends TypedIdentifier[String] {
 object TrusteePhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteePhoneId] = new
-      CheckYourAnswers[TrusteePhoneId] {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions,
+                   userAnswers: UserAnswers): CheckYourAnswers[TrusteePhoneId] =
+    new CheckYourAnswers[TrusteePhoneId] {
 
     override def row(id: TrusteePhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      def trusteeName(index: Int): String = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
-      def label(index:Int): String = messages("messages__enterPhoneNumber", trusteeName(index))
-      def hiddenLabel(index:Int): Option[String] = Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName(index)))
+      def trusteeName(index: Int): String =
+        userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
+
+      def label(index: Int): String =
+        messages("messages__enterPhoneNumber", trusteeName(index))
+
+      def hiddenLabel(index: Int): Option[String] =
+        Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName(index)))
 
       StringCYA(
         Some(label(id.index)),
@@ -46,6 +52,7 @@ object TrusteePhoneId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: TrusteePhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: TrusteePhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 }

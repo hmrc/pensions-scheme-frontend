@@ -33,22 +33,33 @@ object EstablisherEnterNINOId {
 
   override lazy val toString: String = "establisherNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[EstablisherEnterNINOId] = {
-
+  implicit def cya(implicit ua: UserAnswers,
+                   messages: Messages,
+                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherEnterNINOId] = {
     new CheckYourAnswers[EstablisherEnterNINOId] {
-      def establisherName(index: Int): String = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
+
+      def establisherName(index: Int): String =
+        ua.get(EstablisherNameId(index))
+          .fold(messages("messages__theIndividual"))(_.fullName)
+
       def label(index: Int): String = messages("messages__enterNINO", establisherName(index))
-      def hiddenLabel(index: Int): String = messages("messages__visuallyhidden__dynamic_national_insurance_number", establisherName(index))
 
-      override def row(id: EstablisherEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[EstablisherEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      def hiddenLabel(index: Int): String =
+        messages("messages__visuallyhidden__dynamic_national_insurance_number", establisherName(index))
 
-      override def updateRow(id: EstablisherEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: EstablisherEnterNINOId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        ReferenceValueCYA[EstablisherEnterNINOId](label(id.index),
+          hiddenLabel(id.index))().row(id)(changeUrl, ua)
+
+      override def updateRow(id: EstablisherEnterNINOId)(changeUrl: String,
+                                                         userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
-            ReferenceValueCYA[EstablisherEnterNINOId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherEnterNINOId](label(id.index), hiddenLabel(id.index))()
+              .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[EstablisherEnterNINOId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[EstablisherEnterNINOId](label(id.index), hiddenLabel(id.index))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

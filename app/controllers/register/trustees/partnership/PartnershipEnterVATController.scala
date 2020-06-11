@@ -47,19 +47,6 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
                                               val view: enterVATView
                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
-    EnterVATViewModel(
-      postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__thePartnership")),
-      heading = Message("messages__enterVAT", companyName),
-      hint = Message("messages__enterVAT__hint", companyName),
-      subHeading = None,
-      srn = srn
-    )
-  }
-
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -77,4 +64,18 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
           post(PartnershipEnterVATId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }
     }
+
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
+    formProvider(companyName)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
+    EnterVATViewModel(
+      postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
+      title = Message("messages__enterVAT", Message("messages__thePartnership")),
+      heading = Message("messages__enterVAT", companyName),
+      hint = Message("messages__enterVAT__hint", companyName),
+      subHeading = None,
+      srn = srn
+    )
+  }
 }

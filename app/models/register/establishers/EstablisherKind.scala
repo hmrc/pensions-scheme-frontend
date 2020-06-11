@@ -22,21 +22,19 @@ import utils.{Enumerable, InputOption, WithName}
 sealed trait EstablisherKind
 
 object EstablisherKind {
+  val values: Seq[EstablisherKind] = Seq(
+    Company, Indivdual, Partnership
+  )
+  val options: Seq[InputOption] = values.map {
+    value =>
+      InputOption(value.toString, s"messages__establishers__add__opt__${value.toString}")
+  }
 
   case object Company extends WithName("company") with EstablisherKind
 
   case object Indivdual extends WithName("individual") with EstablisherKind
 
   case object Partnership extends WithName("partnership") with EstablisherKind
-
-  val values: Seq[EstablisherKind] = Seq(
-    Company, Indivdual, Partnership
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__establishers__add__opt__${value.toString}")
-  }
 
   implicit val enumerable: Enumerable[EstablisherKind] =
     Enumerable(values.map(v => v.toString -> v): _*)

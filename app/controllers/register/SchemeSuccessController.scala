@@ -42,33 +42,34 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         pensionAdministratorConnector: PensionAdministratorConnector,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: schemeSuccess
-                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                       )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
         SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
-              cacheConnector.removeAll(request.externalId).flatMap { _ =>
-          Future.successful(
-            Ok(
-              view(
-                LocalDate.now(),
-                submissionReferenceNumber.schemeReferenceNumber,
-                showMasterTrustContent,
-                email
-              )
-            ))
+          cacheConnector.removeAll(request.externalId).flatMap { _ =>
+            Future.successful(
+              Ok(
+                view(
+                  LocalDate.now(),
+                  submissionReferenceNumber.schemeReferenceNumber,
+                  showMasterTrustContent,
+                  email
+                )
+              ))
           }
         }
       }
   }
 
+  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request
+    .userAnswers.get(SchemeTypeId).contains(MasterTrust)
+
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
       Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
-
-
-  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get(SchemeTypeId).contains(MasterTrust)
 }

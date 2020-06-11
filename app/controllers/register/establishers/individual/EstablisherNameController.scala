@@ -49,16 +49,8 @@ class EstablisherNameController @Inject()(
                                            formProvider: PersonNameFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: personName
-                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
-
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
-    postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
-    title = Message("messages__individualName__title"),
-    heading = Message("messages__individualName__heading"),
-    srn = srn
-  )
+                                         )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
@@ -84,4 +76,14 @@ class EstablisherNameController @Inject()(
           }
         )
     }
+
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
+
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) =
+    CommonFormWithHintViewModel(
+    postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
+    title = Message("messages__individualName__title"),
+    heading = Message("messages__individualName__heading"),
+    srn = srn
+  )
 }

@@ -36,8 +36,9 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: schemeVariationsSuccess
-                                                 )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-                                                  with I18nSupport with Retrievals {
+                                                 )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController
+  with I18nSupport with Retrievals {
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate andThen getData(UpdateMode, Some(srn))).async {
     implicit request =>

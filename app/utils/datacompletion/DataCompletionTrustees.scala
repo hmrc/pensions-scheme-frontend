@@ -26,6 +26,12 @@ trait DataCompletionTrustees {
 
   self: UserAnswers =>
 
+  def isTrusteeCompanyComplete(index: Int): Boolean =
+    isComplete(Seq(
+      isTrusteeCompanyDetailsComplete(index),
+      isTrusteeCompanyAddressComplete(index),
+      isTrusteeCompanyContactDetailsComplete(index))).getOrElse(false)
+
   //TRUSTEE COMPANY
   def isTrusteeCompanyDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
@@ -38,61 +44,67 @@ trait DataCompletionTrustees {
     )
 
   def isTrusteeCompanyAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(CompanyAddressId(index), CompanyPreviousAddressId(index), CompanyAddressYearsId(index), Some(HasBeenTradingCompanyId(index)))
+    isAddressComplete(
+      CompanyAddressId(index),
+      CompanyPreviousAddressId(index),
+      CompanyAddressYearsId(index),
+      Some(HasBeenTradingCompanyId(index)))
 
   def isTrusteeCompanyContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(CompanyEmailId(index), CompanyPhoneId(index))
 
-  def isTrusteeCompanyComplete(index: Int): Boolean =
-      isComplete(Seq(
-        isTrusteeCompanyDetailsComplete(index),
-        isTrusteeCompanyAddressComplete(index),
-        isTrusteeCompanyContactDetailsComplete(index))).getOrElse(false)
-
   //TRUSTEE INDIVIDUAL
+
+  def isTrusteeIndividualComplete(index: Int): Boolean =
+    isComplete(
+      Seq(
+        isTrusteeIndividualDetailsComplete(index),
+        isTrusteeIndividualAddressComplete(index),
+        isTrusteeIndividualContactDetailsComplete(index)
+      )
+    ).getOrElse(false)
 
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] = {
     isComplete(Seq(
       isAnswerComplete(TrusteeDOBId(trusteeIndex)),
-      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeEnterNINOId(trusteeIndex), Some(TrusteeNoNINOReasonId(trusteeIndex))),
-      isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId(trusteeIndex)))
+      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeEnterNINOId(trusteeIndex), Some(TrusteeNoNINOReasonId
+      (trusteeIndex))),
+      isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId
+      (trusteeIndex)))
     ))
   }
 
   def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(TrusteeAddressId(index), TrusteePreviousAddressId(index), TrusteeAddressYearsId(index), None)
+    isAddressComplete(TrusteeAddressId(index),
+      TrusteePreviousAddressId(index),
+      TrusteeAddressYearsId(index),
+      None)
 
-  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] = isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
+  def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] =
+    isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
 
-  def isTrusteeIndividualComplete(index: Int): Boolean =
-      isComplete(
-        Seq(
-          isTrusteeIndividualDetailsComplete(index),
-          isTrusteeIndividualAddressComplete(index),
-          isTrusteeIndividualContactDetailsComplete(index)
-        )
-      ).getOrElse(false)
+  def isTrusteePartnershipComplete(index: Int): Boolean =
+    isComplete(Seq(
+      isTrusteePartnershipDetailsComplete(index),
+      isTrusteePartnershipAddressComplete(index),
+      isTrusteePartnershipContactDetailsComplete(index))).getOrElse(false)
 
   //TRUSTEE PARTNERSHIP
   def isTrusteePartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId(index))),
+        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId
+        (index))),
         isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
         isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
       )
     )
 
   def isTrusteePartnershipAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId(index),
+    isAddressComplete(PartnershipAddressId(index), PartnershipPreviousAddressId(index), PartnershipAddressYearsId
+    (index),
       Some(PartnershipHasBeenTradingId(index)))
 
   def isTrusteePartnershipContactDetailsComplete(index: Int): Option[Boolean] =
     isContactDetailsComplete(PartnershipEmailId(index), PartnershipPhoneId(index))
-
-  def isTrusteePartnershipComplete(index: Int): Boolean =
-      isComplete(Seq(
-        isTrusteePartnershipDetailsComplete(index),
-        isTrusteePartnershipAddressComplete(index),
-        isTrusteePartnershipContactDetailsComplete(index))).getOrElse(false)
 }

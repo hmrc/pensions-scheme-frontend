@@ -38,7 +38,8 @@ trait MinimalPsaConnector {
 
 }
 
-class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with HttpResponseHelper {
+class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with
+  HttpResponseHelper {
 
   override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val psaHc = hc.withExtraHeaders("psaId" -> psaId)
@@ -62,6 +63,7 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
 }
 
 object MinimalPsaConnector {
+
   case class MinimalPSA(
                          email: String,
                          organisationName: Option[String],
@@ -76,10 +78,6 @@ object MinimalPsaConnector {
     }
   }
 
-  object MinimalPSA {
-    implicit val format: Format[MinimalPSA] = Json.format[MinimalPSA]
-  }
-
   case class IndividualDetails(
                                 firstName: String,
                                 middleName: Option[String],
@@ -87,10 +85,16 @@ object MinimalPsaConnector {
                               ) {
     def fullName: String = middleName match {
       case Some(middle) => s"$firstName $middle $lastName"
-      case _            => s"$firstName $lastName"
+      case _ => s"$firstName $lastName"
     }
   }
+
+  object MinimalPSA {
+    implicit val format: Format[MinimalPSA] = Json.format[MinimalPSA]
+  }
+
   object IndividualDetails {
     implicit val format: Format[IndividualDetails] = Json.format[IndividualDetails]
   }
+
 }

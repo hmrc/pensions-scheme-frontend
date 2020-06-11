@@ -22,5 +22,5 @@ import play.api.i18n.Messages
 object ViewHelper {
 
   def titleWithErrors(form: Form[_], title: String)(implicit messages: Messages): String =
-    s"${if(form.hasErrors) messages("site.error") else ""} $title"
+    s"${if (form.hasErrors) messages("site.error") else ""} $title"
 }

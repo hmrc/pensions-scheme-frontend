@@ -54,21 +54,10 @@ class AddressController @Inject()(
                                    val controllerComponents: MessagesControllerComponents
                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.AddressController.onSubmit _
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisher_individual_address_lede"
-
-  protected val form: Form[Address] = formProvider()
-
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode, Index(index), srn),
-      countryOptions.options,
-      title = Message(heading, Message("messages__theIndividual").resolve),
-      heading = Message(heading, name),
-      srn = srn
-    )
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -79,7 +68,8 @@ class AddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.right.map {
         details =>
@@ -90,4 +80,14 @@ class AddressController @Inject()(
           )
       }
   }
+
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, Index(index), srn),
+      countryOptions.options,
+      title = Message(heading, Message("messages__theIndividual").resolve),
+      heading = Message(heading, name),
+      srn = srn
+    )
 }

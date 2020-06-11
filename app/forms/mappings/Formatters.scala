@@ -24,19 +24,6 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
-  private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data
-        .get(key)
-        .map(standardiseText)
-        .filter(_.lengthCompare(0) > 0)
-        .toRight(Seq(FormError(key, errorKey)))
-
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value)
-  }
-
   private[mappings] val optionalStringFormatter: Formatter[Option[String]] = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
       Right(
@@ -48,10 +35,6 @@ trait Formatters {
 
     override def unbind(key: String, value: Option[String]): Map[String, String] =
       Map(key -> value.getOrElse(""))
-  }
-
-  private def standardiseText(s: String): String = {
-    s.replaceAll("""\s{1,}""", " ").trim
   }
 
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String): Formatter[Boolean] =
@@ -71,7 +54,25 @@ trait Formatters {
       def unbind(key: String, value: Boolean) = Map(key -> value.toString)
     }
 
-  private[mappings] def intFormatter(requiredKey: String, wholeNumberKey: String, nonNumericKey: String): Formatter[Int] =
+  private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      data
+        .get(key)
+        .map(standardiseText)
+        .filter(_.lengthCompare(0) > 0)
+        .toRight(Seq(FormError(key, errorKey)))
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
+  }
+
+  private def standardiseText(s: String): String = {
+    s.replaceAll("""\s{1,}""", " ").trim
+  }
+
+  private[mappings] def intFormatter(requiredKey: String, wholeNumberKey: String, nonNumericKey: String)
+  : Formatter[Int] =
     new Formatter[Int] {
 
       val decimalRegexp = """^(\d*\.\d*)$"""
@@ -95,7 +96,8 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit ev: Enumerable[A]): Formatter[A] =
+  private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit ev: Enumerable[A])
+  : Formatter[A] =
     new Formatter[A] {
 
       private val baseFormatter = stringFormatter(requiredKey)

@@ -39,15 +39,16 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   val view: whatYouWillNeed
                                                  ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate andThen
+  def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] = (authenticate
+    andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
-        Future.successful(Ok(view(
-          existingSchemeName,
-          srn,
-          DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
-        )))
+      Future.successful(Ok(view(
+        existingSchemeName,
+        srn,
+        DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
+      )))
 
   }
 }

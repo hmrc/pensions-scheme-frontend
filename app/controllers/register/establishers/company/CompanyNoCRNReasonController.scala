@@ -45,19 +45,8 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                              formProvider: NoCompanyNumberFormProvider,
                                              val view: reason,
                                              val controllerComponents: MessagesControllerComponents
-                                            )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
-
-  protected def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider(name)
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
-    ReasonViewModel(
-      postCall = routes.CompanyNoCRNReasonController.onSubmit(mode, srn, index),
-      title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
-      heading = Message("messages__whyNoCRN", companyName),
-      srn = srn
-    )
-  }
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with
+  I18nSupport {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,5 +65,17 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
           post(CompanyNoCRNReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }
     }
+
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider(name)
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+    ReasonViewModel(
+      postCall = routes.CompanyNoCRNReasonController.onSubmit(mode, srn, index),
+      title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
+      heading = Message("messages__whyNoCRN", companyName),
+      srn = srn
+    )
+  }
 
 }

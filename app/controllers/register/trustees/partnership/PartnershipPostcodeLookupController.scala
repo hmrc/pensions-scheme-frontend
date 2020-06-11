@@ -48,12 +48,18 @@ class PartnershipPostcodeLookupController @Inject()(
                                                      formProvider: PostCodeLookupFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      val view: postcodeLookup
-                                                   )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                   )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
+  protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPostcodeLookup__title"
   private val hint: Message = "messages__trusteePartnershipPostcodeLookup__hint"
 
-  protected val form: Form[String] = formProvider()
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -69,12 +75,6 @@ class PartnershipPostcodeLookupController @Inject()(
               srn = srn
             )
         }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

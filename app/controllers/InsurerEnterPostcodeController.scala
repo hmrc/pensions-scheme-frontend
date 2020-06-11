@@ -59,16 +59,6 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def viewModel(mode: Mode, srn: Option[String],name: String)(implicit request: DataRequest[AnyContent]): PostcodeLookupViewModel =
-    PostcodeLookupViewModel(
-      postCall(mode, srn),
-      manualCall(mode, srn),
-      Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
-      Messages("messages__insurer_enter_postcode__h1",name),
-      None,
-      srn = srn
-    )
-
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -77,7 +67,19 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def viewModel(mode: Mode, srn: Option[String], name: String)(implicit request: DataRequest[AnyContent])
+  : PostcodeLookupViewModel =
+    PostcodeLookupViewModel(
+      postCall(mode, srn),
+      manualCall(mode, srn),
+      Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
+      Messages("messages__insurer_enter_postcode__h1", name),
+      None,
+      srn = srn
+    )
+
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { name =>
         post(InsurerEnterPostCodeId, viewModel(mode, srn, name), mode)

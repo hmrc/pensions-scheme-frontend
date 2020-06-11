@@ -38,7 +38,8 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
                                                            requireData: DataRequiredAction,
                                                            val controllerComponents: MessagesControllerComponents,
                                                            val view: whatYouWillNeedAddress
-                                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -46,7 +47,8 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
         EstablisherNameId(index).retrieve.right.map {
           establisherName =>
             val name = establisherName.fullName
-            val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index, srn)
+            val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode,
+              index, srn)
             Future.successful(Ok(view(existingSchemeName, href, srn, name, Message("messages__theIndividual"))))
         }
     }

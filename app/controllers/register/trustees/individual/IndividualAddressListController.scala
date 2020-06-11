@@ -46,13 +46,31 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
                                                 val auditService: AuditService,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: addressList
-                                               )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                               )(implicit val ec: ExecutionContext) extends AddressListController
+  with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
     }
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
+    (TrusteeNameId(index) and IndividualPostCodeLookupId(index)).retrieve.right.map {
+      case name ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
+          manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
+          addresses = addresses,
+          title = Message("messages__trustee__individual__address__heading", Message("messages__theIndividual")),
+          heading = Message("messages__trustee__individual__address__heading", name.fullName),
+          srn = srn,
+          entityName = name.fullName
+        )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn)))
+    )
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
@@ -67,23 +85,6 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
               context = s"Trustee Individual Address: ${vm.entityName}",
               postCodeLookupIdForCleanup = IndividualPostCodeLookupId(index)
             )
-          }
+        }
     }
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (TrusteeNameId(index) and IndividualPostCodeLookupId(index)).retrieve.right.map {
-        case name ~ addresses =>
-          AddressListViewModel(
-            postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),
-            manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index, srn),
-            addresses = addresses,
-            title = Message("messages__trustee__individual__address__heading", Message("messages__theIndividual")),
-            heading = Message("messages__trustee__individual__address__heading", name.fullName),
-            srn = srn,
-            entityName = name.fullName
-          )
-    }.left.map(_ =>
-      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode, index, srn)))
-    )
 }

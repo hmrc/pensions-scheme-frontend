@@ -40,7 +40,7 @@ object CompanyEnterCRNId {
     def companyName(index: Int, userAnswers: UserAnswers) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(companyDetails) => companyDetails.companyName
-        case _                    => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     val label: String = "messages__checkYourAnswers__trustees__company__number"
@@ -50,13 +50,16 @@ object CompanyEnterCRNId {
 
     new CheckYourAnswers[CompanyEnterCRNId] {
       override def row(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+            .row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterCRNId](label, changeCrn(id.index, userAnswers))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
     }
   }

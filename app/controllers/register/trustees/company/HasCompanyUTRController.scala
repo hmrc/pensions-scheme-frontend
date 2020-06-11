@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         override val userAnswersService: UserAnswersService,
-                                         override val navigator: Navigator,
+                                        override val navigator: Navigator,
                                         authenticate: AuthAction,
                                         allowAccess: AllowAccessActionProvider,
                                         getData: DataRetrievalAction,
@@ -44,7 +44,17 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         formProvider: HasUTRFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: hasReferenceNumber
-                                       )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                       )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            get(HasCompanyUTRId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -59,21 +69,13 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__hasCompanyUtr__error__required", companyName)
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
-            get(HasCompanyUTRId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
-        }
-    }
-
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
-            post(HasCompanyUTRId(index), mode, form(details.companyName), viewModel(mode, index, srn, details.companyName))
+            post(HasCompanyUTRId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
+              .companyName))
         }
     }
 }

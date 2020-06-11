@@ -29,11 +29,11 @@ class TestOnlyCacheConnector @Inject()(
                                         config: FrontendAppConfig,
                                         http: WSClient
                                       ) {
-  protected def url(collectionName: String) = s"${config.pensionsSchemeUrl}/test-only/$collectionName"
-
   def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     http.url(url(collectionName))
       .withHttpHeaders(hc.headers: _*)
       .delete().map(_ => Ok)
   }
+
+  protected def url(collectionName: String) = s"${config.pensionsSchemeUrl}/test-only/$collectionName"
 }

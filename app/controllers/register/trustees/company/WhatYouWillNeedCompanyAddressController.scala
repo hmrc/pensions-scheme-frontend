@@ -38,7 +38,8 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
                                                         requireData: DataRequiredAction,
                                                         val controllerComponents: MessagesControllerComponents,
                                                         val view: whatYouWillNeedCompanyAddress
-                                                       ) extends FrontendBaseController with I18nSupport with Retrievals{
+                                                       ) extends FrontendBaseController with I18nSupport with
+  Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -46,7 +47,8 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
       CompanyDetailsId(index).retrieve.right.map {
         case CompanyDetails(companyName, _) =>
           val pageHeader = Message("messages__addressFor", companyName)
-          val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index, srn)
+          val href = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(mode,
+            index, srn)
           Future.successful(Ok(view(existingSchemeName, href, srn, pageHeader)))
       }
   }

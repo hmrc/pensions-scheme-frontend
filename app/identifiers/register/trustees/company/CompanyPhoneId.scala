@@ -32,11 +32,14 @@ case class CompanyPhoneId(index: Int) extends TypedIdentifier[String] {
 object CompanyPhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyPhoneId] = new
-      CheckYourAnswers[CompanyPhoneId] {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions,
+                   userAnswers: UserAnswers): CheckYourAnswers[CompanyPhoneId] =
+    new CheckYourAnswers[CompanyPhoneId] {
 
     override def row(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
+      val trusteeName: String =
+        userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
       val label = messages("messages__enterPhoneNumber", trusteeName)
       val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName))
 
@@ -46,7 +49,8 @@ object CompanyPhoneId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: CompanyPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 
 }

@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId,
+  CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -46,7 +47,8 @@ class CompanyPreviousAddressListController @Inject()(override val appConfig: Fro
                                                      val auditService: AuditService,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      val view: addressList
-                                                    )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                                    )(implicit val ec: ExecutionContext) extends
+  AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -66,7 +68,7 @@ class CompanyPreviousAddressListController @Inject()(override val appConfig: Fro
             context = s"Trustee Company Previous Address: ${vm.entityName}",
             postCodeLookupIdForCleanup = CompanyPreviousAddressPostcodeLookupId(index)
           )
-        }
+      }
     }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String])

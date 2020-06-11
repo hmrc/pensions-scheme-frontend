@@ -54,17 +54,6 @@ class DirectorDOBController @Inject()(
 
   val form: Form[LocalDate] = formProvider()
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: Message)
-                       (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
-    DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, directorIndex, srn),
-      srn = srn,
-      token = token.resolve
-    )
-  }
-
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -75,6 +64,17 @@ class DirectorDOBController @Inject()(
           mode
         )
     }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: Message)
+                       (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
+    DateOfBirthViewModel(
+      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      srn = srn,
+      token = token.resolve
+    )
+  }
+
+  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

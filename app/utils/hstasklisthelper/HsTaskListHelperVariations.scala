@@ -22,9 +22,29 @@ import models._
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationService) extends HsTaskListHelper(spokeCreationService) {
+class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
+  spokeCreationService) {
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String]): SchemeDetailsTaskListEntitySection = {
+  override def taskList(answers: UserAnswers, viewOnlyOpt: Option[Boolean],
+                        srn: Option[String]): SchemeDetailsTaskList = {
+    val viewOnly = viewOnlyOpt.getOrElse(false)
+    SchemeDetailsTaskList(
+      answers.get(SchemeNameId).getOrElse(""),
+      srn,
+      beforeYouStartSection(answers, srn),
+      aboutSection(answers, UpdateMode, srn),
+      None,
+      addEstablisherHeader(answers, UpdateMode, srn, viewOnly),
+      establishersSection(answers, UpdateMode, srn),
+      addTrusteeHeader(answers, UpdateMode, srn, viewOnly),
+      trusteesSection(answers, UpdateMode, srn),
+      declarationSection(answers, srn, viewOnly),
+      Some(answers.areVariationChangesCompleted)
+    )
+  }
+
+  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String])
+  : SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
       spokeCreationService.getBeforeYouStartSpoke(
         userAnswers, UpdateMode, srn,
@@ -35,10 +55,12 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
   }
 
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
-                                          mode: Mode, srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
-    if(userAnswers.allEstablishersAfterDelete(mode).isEmpty && viewOnly) {
+                                          mode: Mode, srn: Option[String], viewOnly: Boolean)
+  : Option[SchemeDetailsTaskListEntitySection] = {
+    if (userAnswers.allEstablishersAfterDelete(mode).isEmpty && viewOnly) {
       Some(
-        SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionEstablishers_no_establishers"))
+        SchemeDetailsTaskListEntitySection(None, Nil, None, Message
+  ("messages__schemeTaskList__sectionEstablishers_no_establishers"))
       )
     } else {
       spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
@@ -51,10 +73,12 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
   }
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode,
-                                      srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
-    if(userAnswers.allTrusteesAfterDelete.isEmpty && viewOnly) {
+                                      srn: Option[String], viewOnly: Boolean)
+  : Option[SchemeDetailsTaskListEntitySection] = {
+    if (userAnswers.allTrusteesAfterDelete.isEmpty && viewOnly) {
       Some(
-        SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
+        SchemeDetailsTaskListEntitySection(None, Nil, None, Message
+  ("messages__schemeTaskList__sectionTrustees_no_trustees"))
       )
     } else {
       val trusteeHeaderSpokes = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly)
@@ -62,7 +86,8 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
     }
   }
 
-  private[utils] def declarationSection(userAnswers: UserAnswers, srn: Option[String], viewOnly: Boolean): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def declarationSection(userAnswers: UserAnswers, srn: Option[String], viewOnly: Boolean)
+  : Option[SchemeDetailsTaskListEntitySection] = {
     if (viewOnly) {
       None
     } else {
@@ -83,24 +108,6 @@ class HsTaskListHelperVariations @Inject() (spokeCreationService: SpokeCreationS
         "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
       )
     }
-  }
-
-  override def taskList(answers: UserAnswers, viewOnlyOpt: Option[Boolean],
-                        srn: Option[String]): SchemeDetailsTaskList = {
-    val viewOnly = viewOnlyOpt.getOrElse(false)
-    SchemeDetailsTaskList(
-      answers.get(SchemeNameId).getOrElse(""),
-      srn,
-      beforeYouStartSection(answers, srn),
-      aboutSection(answers, UpdateMode, srn),
-      None,
-      addEstablisherHeader(answers, UpdateMode, srn, viewOnly),
-      establishersSection(answers, UpdateMode, srn),
-      addTrusteeHeader(answers, UpdateMode, srn, viewOnly),
-      trusteesSection(answers, UpdateMode, srn),
-      declarationSection(answers, srn, viewOnly),
-      Some(answers.areVariationChangesCompleted)
-    )
   }
 }
 

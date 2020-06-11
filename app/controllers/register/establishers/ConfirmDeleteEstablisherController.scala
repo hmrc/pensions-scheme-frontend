@@ -54,9 +54,8 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     formProvider: ConfirmDeleteEstablisherFormProvider,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     val view: confirmDeleteEstablisher
-                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
+                                                  )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -82,25 +81,20 @@ class ConfirmDeleteEstablisherController @Inject()(
         } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
 
-  private def getHintText(establisherKind: EstablisherKind)(implicit request: DataRequest[AnyContent]): Option[String] = {
+  private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers)
+  : Option[DeletableEstablisher] = {
     establisherKind match {
-      case EstablisherKind.Company =>
-        Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
-      case EstablisherKind.Partnership =>
-        Some(Messages(s"messages__confirmDeleteEstablisher__partnershipHint"))
-      case _ => None
+      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details =>
+        DeletableEstablisher(details.fullName, details.isDeleted))
+      case Company => userAnswers.get(CompanyDetailsId(index)).map(details =>
+        DeletableEstablisher(details.companyName, details.isDeleted))
+      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details =>
+        DeletableEstablisher(details.name, details.isDeleted))
     }
   }
 
-  private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers): Option[DeletableEstablisher] = {
-    establisherKind match {
-      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
-      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
-      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
-    }
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String])
+  : Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
 
@@ -130,7 +124,8 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     establisherName: Option[PersonName],
                                     partnershipDetails: Option[PartnershipDetails],
                                     mode: Mode,
-                                    srn: Option[String])(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
+                                    srn: Option[String])(implicit dataRequest: DataRequest[AnyContent])
+  : Future[Result] = {
     form(name).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(view(
@@ -145,11 +140,14 @@ class ConfirmDeleteEstablisherController @Inject()(
         val deletionResult = if (value) {
           establisherKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
-              company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex), company.copy(isDeleted = true)))
+              company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex),
+                company.copy (isDeleted = true)))
             case Indivdual => establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
-              individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex), individual.copy(isDeleted = true)))
+              individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex),
+                individual.copy (isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(
-              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex), partnership.copy(isDeleted = true)))
+              partnership => userAnswersService.save(mode, srn, PartnershipDetailsId(establisherIndex),
+                partnership.copy(isDeleted = true)))
           }
         } else {
           Future.successful(dataRequest.userAnswers.json)
@@ -159,6 +157,19 @@ class ConfirmDeleteEstablisherController @Inject()(
         }
       }
     )
+  }
+
+  private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
+
+  private def getHintText(establisherKind: EstablisherKind)(implicit request: DataRequest[AnyContent])
+  : Option[String] = {
+    establisherKind match {
+      case EstablisherKind.Company =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
+      case EstablisherKind.Partnership =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__partnershipHint"))
+      case _ => None
+    }
   }
 
   private case class DeletableEstablisher(name: String, isDeleted: Boolean)

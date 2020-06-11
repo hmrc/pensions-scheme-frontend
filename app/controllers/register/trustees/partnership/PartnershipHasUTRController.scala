@@ -45,7 +45,17 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                                             formProvider: HasUTRFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: hasReferenceNumber
-                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                           )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipHasUTRId(index), form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String
                        )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -59,15 +69,6 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
 
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__hasUtr__partnership_error_required", partnershipName)
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            get(PartnershipHasUTRId(index), form(details.name), viewModel(mode, index, srn, details.name))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

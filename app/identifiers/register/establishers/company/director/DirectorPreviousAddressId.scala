@@ -26,13 +26,15 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
 }
 
 object DirectorPreviousAddressId {
   override def toString: String = "previousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,messages: Messages): CheckYourAnswers[DirectorPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   messages: Messages): CheckYourAnswers[DirectorPreviousAddressId] = {
 
     new CheckYourAnswersDirectors[DirectorPreviousAddressId] {
 
@@ -43,13 +45,14 @@ object DirectorPreviousAddressId {
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
 
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label(id.establisherIndex, id.directorIndex,userAnswers),
-          hiddenLabel(id.establisherIndex, id.directorIndex,userAnswers))()
+        AddressCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers))()
           .row(id)(changeUrl, userAnswers)
 
-      override def updateRow(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.establisherIndex, id.directorIndex,userAnswers),
-          hiddenLabel(id.establisherIndex, id.directorIndex,userAnswers),
+      override def updateRow(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers)
+      : Seq[AnswerRow] =
+        PreviousAddressCYA(label(id.establisherIndex, id.directorIndex, userAnswers),
+          hiddenLabel(id.establisherIndex, id.directorIndex, userAnswers),
           userAnswers.get(IsNewDirectorId(id.establisherIndex, id.directorIndex)),
           userAnswers.get(DirectorConfirmPreviousAddressId(id.establisherIndex, id.directorIndex))
         )().updateRow(id)(changeUrl, userAnswers)

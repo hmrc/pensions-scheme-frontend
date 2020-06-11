@@ -45,7 +45,17 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                                          formProvider: HasReferenceNumberFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: hasReferenceNumber
-                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                        )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map {
+          trusteeName =>
+            get(TrusteeHasNINOId(index), form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], personName: String
                        )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
@@ -60,21 +70,13 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
   private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__genericHasNino__error__required", personName)
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
-          trusteeName =>
-            get(TrusteeHasNINOId(index), form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
-        }
-    }
-
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.right.map {
           trusteeName =>
-            post(TrusteeHasNINOId(index), mode, form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
+            post(TrusteeHasNINOId(index), mode, form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName
+              .fullName))
         }
     }
 }

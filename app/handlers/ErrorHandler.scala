@@ -40,6 +40,7 @@ class ErrorHandler @Inject()(
     )
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_])
+  : Html =
     errorView(pageTitle, heading, message, appConfig)
 }

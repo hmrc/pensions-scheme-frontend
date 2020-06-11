@@ -37,9 +37,10 @@ object PartnershipEnterVATId {
     new CheckYourAnswers[PartnershipEnterVATId] {
 
       def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-        val partnershipName = ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-        (messages("messages__enterVAT", partnershipName),
-          messages("messages__visuallyhidden__dynamic_vat_number", partnershipName))
+        val partnershipName =
+          ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
+            (messages("messages__enterVAT", partnershipName),
+              messages("messages__visuallyhidden__dynamic_vat_number", partnershipName))
       }
 
       override def row(id: PartnershipEnterVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

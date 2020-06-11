@@ -53,7 +53,8 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           establishers, existingSchemeName, srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
       formProvider(establishers).bindFromRequest().fold(

@@ -39,20 +39,28 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     override val appConfig: FrontendAppConfig,
                                                                     override val messagesApi: MessagesApi,
                                                                     val userAnswersService: UserAnswersService,
-                                                                    override val addressLookupConnector: AddressLookupConnector,
+                                                                    override val
+                                                                    addressLookupConnector: AddressLookupConnector,
                                                                     override val navigator: Navigator,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
                                                                     allowAccess: AllowAccessActionProvider,
                                                                     requireData: DataRequiredAction,
                                                                     formProvider: PostCodeLookupFormProvider,
-                                                                    val controllerComponents: MessagesControllerComponents,
+                                                                    val
+                                                                    controllerComponents: MessagesControllerComponents,
                                                                     val view: postcodeLookup
-                                                                  )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
-
-  private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
+                                                                  )(implicit val ec: ExecutionContext) extends
+  PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
+  private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode, srn).retrieve.right map get
+    }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -68,12 +76,6 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
               srn = srn
             )
         }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =

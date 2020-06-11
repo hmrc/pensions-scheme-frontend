@@ -21,7 +21,8 @@ import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
 case class IsNewPartnerId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ IsNewPartnerId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ IsNewPartnerId.toString
 }
 
 object IsNewPartnerId {

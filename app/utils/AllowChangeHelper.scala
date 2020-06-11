@@ -22,11 +22,12 @@ import models.{CheckUpdateMode, Mode, UpdateMode}
 import play.api.mvc.AnyContent
 
 trait AllowChangeHelper {
-  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean
+  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode: Mode): Boolean
 }
 
 class AllowChangeHelperImpl extends AllowChangeHelper {
-  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = {
+  def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode: Mode)
+  : Boolean = {
     (request.viewOnly, request.userAnswers.get(newId)) match {
       case (true, _) => true
       case (_, Some(true)) => false

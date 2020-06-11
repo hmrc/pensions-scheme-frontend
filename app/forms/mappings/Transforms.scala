@@ -22,6 +22,19 @@ trait Transforms {
     noSpaceWithUpperCaseTransform(value).replaceAll("^[gG][bB]", "")
   }
 
+  protected def noSpaceWithUpperCaseTransform(value: String): String =
+    toUpperCaseAlphaOnly(strip(value))
+
+  protected def toUpperCaseAlphaOnly(value: String): String =
+    value.map {
+      case c if ('a' to 'z').contains(c) => c.toUpper
+      case c => c
+    }
+
+  protected def strip(value: String): String = {
+    value.replaceAll(" ", "")
+  }
+
   protected def noTransform(value: String): String = {
     value
   }
@@ -30,21 +43,8 @@ trait Transforms {
     value.trim
   }
 
-  protected def noSpaceWithUpperCaseTransform(value: String): String =
-    toUpperCaseAlphaOnly(strip(value))
-
-  protected def toUpperCaseAlphaOnly(value: String): String =
-    value.map {
-      case c if ('a' to 'z').contains(c) => c.toUpper
-      case c                                    => c
-    }
-
   protected def payeTransform(value: String): String = {
     noSpaceWithUpperCaseTransform(value).replaceAll("[\\\\/]", "").trim
-  }
-
-  protected def strip(value: String): String = {
-    value.replaceAll(" ", "")
   }
 
   protected def minimiseSpace(value: String): String =

@@ -48,19 +48,21 @@ class MoreThanTenTrusteesController @Inject()(
                                                formProvider: MoreThanTenTrusteesFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: moreThanTenTrustees
-                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                             )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
-      val updatedForm = request.userAnswers.get(MoreThanTenTrusteesId).fold(form)(form.fill)
-      Future.successful(Ok(view(updatedForm, mode, existingSchemeName, submitUrl, srn)))
-  }
+      implicit request =>
+        val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
+        val updatedForm = request.userAnswers.get(MoreThanTenTrusteesId).fold(form)(form.fill)
+        Future.successful(Ok(view(updatedForm, mode, existingSchemeName, submitUrl, srn)))
+    }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {

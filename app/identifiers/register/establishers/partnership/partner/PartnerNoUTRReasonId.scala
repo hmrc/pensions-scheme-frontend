@@ -26,20 +26,23 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case class PartnerNoUTRReasonId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "partner" \ partnerIndex \ PartnerNoUTRReasonId.toString
 }
 
 object PartnerNoUTRReasonId {
   override def toString: String = "noUtrReason"
+
   implicit def cya(implicit messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnerNoUTRReasonId] = {
 
     new CheckYourAnswersPartners[PartnerNoUTRReasonId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__whyNoUTR")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_noUtrReason")
 
       override def row(id: PartnerNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

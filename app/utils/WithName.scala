@@ -16,6 +16,6 @@
 
 package utils
 
-abstract  class WithName(string: String) {
+abstract class WithName(string: String) {
   override val toString: String = string
 }

@@ -47,13 +47,13 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
                                            formProvider: IsDormantFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: isDormant
-                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
 
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, srn, index)
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
@@ -62,19 +62,23 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode,
+    srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, companyName, postCall(mode, srn, index), existingSchemeName))),
+            Future.successful(BadRequest(view(formWithErrors, companyName, postCall(mode, srn, index),
+              existingSchemeName))),
           {
             case Yes =>
-              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
+              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values.head).map {
+                cacheMap =>
                 Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap), srn))
               }
             case No =>
-              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
+              userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values(1))
+                .map(cacheMap =>
                 Redirect(navigator.nextPage(IsCompanyDormantId(index), mode, UserAnswers(cacheMap), srn)))
 
           }
@@ -82,5 +86,8 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
         )
       }
   }
+
+  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController
+    .onSubmit(mode, srn, index)
 
 }

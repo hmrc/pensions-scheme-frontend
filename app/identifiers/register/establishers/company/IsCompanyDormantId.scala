@@ -32,21 +32,23 @@ case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDor
 object IsCompanyDormantId {
   override def toString: String = "isCompanyDormant"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswersCompany[IsCompanyDormantId] = {
+  implicit def cya(implicit userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswersCompany[IsCompanyDormantId] = {
     new CheckYourAnswersCompany[IsCompanyDormantId] {
 
       override def row(id: IsCompanyDormantId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         def label(index: Int, ua: UserAnswers): String =
-        dynamicMessage(id.index, ua, messageKey = "messages__company__cya__dormant")
+          dynamicMessage(id.index, ua, messageKey = "messages__company__cya__dormant")
 
         def hiddenLabel(index: Int, ua: UserAnswers): String =
-        dynamicMessage(id.index, ua, messageKey = "messages__visuallyhidden__dynamic_company__dormant")
+          dynamicMessage(id.index, ua, messageKey = "messages__visuallyhidden__dynamic_company__dormant")
 
         IsDormantCYA(label(id.index, userAnswers), hiddenLabel(id.index, userAnswers))()
           .row(id)(changeUrl, userAnswers)
       }
 
-      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = Nil
+      override def updateRow(id: IsCompanyDormantId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        Nil
     }
   }
 }

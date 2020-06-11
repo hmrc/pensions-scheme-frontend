@@ -58,6 +58,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   private def anyMoreChanges(srn: Option[String]): Option[NavigateTo] =
     NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
 
+  //scalastyle:off method.length
   protected def routes(from: NavigateFrom, mode: Mode, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
@@ -193,13 +194,15 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   }
 
   private def addressRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
-    if (answers.get(IsEstablisherNewId(index)).contains(true) || mode == CheckMode) {
-      cyaAddressDetails(index, journeyMode(mode), srn)
-    }
-    else if (!answers.get(IsEstablisherNewId(index)).contains(true) && mode == CheckUpdateMode) {
-      NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
-    } else {
-      NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
+    (mode, answers.get(IsEstablisherNewId(index))) match {
+      case (CheckMode, _) => cyaAddressDetails(index, journeyMode(mode), srn)
+      case (_, Some(true)) => cyaAddressDetails(index, journeyMode(mode), srn)
+      case (CheckUpdateMode, Some(false)) =>
+        NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+      case (CheckUpdateMode, None) =>
+        NavigateTo.dontSave(CompanyConfirmPreviousAddressController.onPageLoad(index, srn))
+      case _ => NavigateTo.dontSave(establisherCompanyRoutes.CompanyAddressYearsController.onPageLoad(mode, srn, index))
+
     }
   }
 

@@ -29,16 +29,17 @@ import views.html.register.stillNeedDetails
 import scala.concurrent.{ExecutionContext, Future}
 
 class StillNeedDetailsController @Inject()(
-                                               appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               val controllerComponents: MessagesControllerComponents,
-                                               val view: stillNeedDetails
-                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport {
+                                            appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: stillNeedDetails
+                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) ).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn)).async {
     implicit request =>
       Future.successful(Ok(view(srn, existingSchemeName)))
   }

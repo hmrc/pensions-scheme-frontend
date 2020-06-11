@@ -42,12 +42,11 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: CurrentMembersFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: currentMembers
-                                      )(implicit val executionContext: ExecutionContext
-) extends FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
-
-  private def form(schemeName: String)(implicit messages: Messages): Form[Members] = formProvider(schemeName)
+                                         val controllerComponents: MessagesControllerComponents,
+                                         val view: currentMembers
+                                        )(implicit val executionContext: ExecutionContext
+                                        ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits
+  with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
@@ -73,4 +72,6 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
         )
       }
   }
+
+  private def form(schemeName: String)(implicit messages: Messages): Form[Members] = formProvider(schemeName)
 }

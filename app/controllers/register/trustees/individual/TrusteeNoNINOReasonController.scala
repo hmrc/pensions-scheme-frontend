@@ -46,8 +46,9 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
                                               formProvider: ReasonFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: reason
-                                            )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals
-                                            with I18nSupport with Enumerable.Implicits {
+                                             )(implicit val ec: ExecutionContext) extends ReasonController with
+  Retrievals
+  with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -58,7 +59,18 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider("messages__reason__error_ninoRequired", name)
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        TrusteeNameId(index).retrieve.right.map { name =>
+          post(TrusteeNoNINOReasonId(index), mode,
+            viewModel(mode, index, srn, name.fullName), form(name.fullName))
+        }
+    }
+
+
+  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] =
+    formProvider ("messages__reason__error_ninoRequired", name)
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
@@ -69,14 +81,5 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
   }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        TrusteeNameId(index).retrieve.right.map { name =>
-          post(TrusteeNoNINOReasonId(index), mode,
-            viewModel(mode, index, srn, name.fullName), form(name.fullName))
-        }
-    }
 
 }

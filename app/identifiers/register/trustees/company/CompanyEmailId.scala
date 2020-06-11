@@ -32,11 +32,14 @@ case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
 object CompanyEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
-      CheckYourAnswers[CompanyEmailId] {
+  implicit def cya(implicit messages: Messages,
+                   countryOptions: CountryOptions,
+                   userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] =
+    new CheckYourAnswers[CompanyEmailId] {
 
     override def row(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
+      val trusteeName: String =
+        userAnswers.get(CompanyDetailsId(id.index)).fold(messages("messages__theCompany"))(_.companyName)
       val label = messages("messages__enterEmail", trusteeName)
       val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
 
@@ -46,7 +49,8 @@ object CompanyEmailId {
       )().row(id)(changeUrl, userAnswers)
     }
 
-    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+    override def updateRow(id: CompanyEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      row(id)(changeUrl, userAnswers)
   }
 
 }

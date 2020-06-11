@@ -21,13 +21,13 @@ import play.api.libs.json._
 case class SchemeMemberNumbers(current: String, future: String)
 
 object SchemeMemberNumbers {
-  implicit val formats : OFormat[SchemeMemberNumbers] = Json.format[SchemeMemberNumbers]
+  implicit val formats: OFormat[SchemeMemberNumbers] = Json.format[SchemeMemberNumbers]
 }
 
-case class InsuranceCompany(name: Option[String],policyNumber: Option[String], address: Option[CorrespondenceAddress])
+case class InsuranceCompany(name: Option[String], policyNumber: Option[String], address: Option[CorrespondenceAddress])
 
 object InsuranceCompany {
-  implicit val formats : OFormat[InsuranceCompany] = Json.format[InsuranceCompany]
+  implicit val formats: OFormat[InsuranceCompany] = Json.format[InsuranceCompany]
 }
 
 case class SchemeDetails(srn: Option[String],
