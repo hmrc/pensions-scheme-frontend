@@ -38,7 +38,11 @@ object PreviousAddressId {
       val name = ua.get(EstablisherNameId(index)).map(_.fullName)
 
       (messages("messages__previousAddressFor", name.getOrElse(messages("messages__thePerson"))),
-        messages("messages__visuallyhidden__dynamic_previousAddress", name.getOrElse(messages("messages__thePerson"))))
+        messages(
+          "messages__visuallyhidden__dynamic_previousAddress",
+          name.getOrElse(messages("messages__thePerson"))
+        )
+      )
     }
 
     new CheckYourAnswers[PreviousAddressId] {

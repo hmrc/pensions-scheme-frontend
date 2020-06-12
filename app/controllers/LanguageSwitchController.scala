@@ -30,12 +30,6 @@ class LanguageSwitchController @Inject()(
                                           val controllerComponents: MessagesControllerComponents
                                         ) extends FrontendBaseController with I18nSupport {
 
-  private def langToCall(lang: String): (String) => Call = appConfig.routeToSwitchLanguage
-
-  private def fallbackURL: String = routes.IndexController.onPageLoad().url
-
-  private def languageMap: Map[String, Lang] = appConfig.languageMap
-
   def switchToLanguage(language: String): Action[AnyContent] = Action {
     implicit request =>
       val enabled = isWelshEnabled
@@ -48,6 +42,12 @@ class LanguageSwitchController @Inject()(
       Redirect(redirectURL).withLang(Lang.apply(lang.code))
   }
 
+  private def fallbackURL: String = routes.IndexController.onPageLoad().url
+
+  private def languageMap: Map[String, Lang] = appConfig.languageMap
+
   private def isWelshEnabled: Boolean =
     configuration.getOptional[Boolean]("features.welsh-translation").getOrElse(true)
+
+  private def langToCall(lang: String): (String) => Call = appConfig.routeToSwitchLanguage
 }

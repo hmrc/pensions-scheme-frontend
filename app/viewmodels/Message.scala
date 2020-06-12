@@ -35,7 +35,7 @@ object Message {
 
     override def resolve(implicit messages: Messages): String = {
       val transformedArgs = args.map {
-        case r@Resolvable(_,_) => r.resolve
+        case r@Resolvable(_, _) => r.resolve
         case x => x
       }
       messages(key, transformedArgs: _*)

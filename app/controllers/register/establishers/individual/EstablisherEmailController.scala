@@ -45,9 +45,19 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
                                            formProvider: EmailFormProvider,
                                            val view: emailAddress,
                                            val controllerComponents: MessagesControllerComponents
-                                          )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                          )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, index, srn).retrieve.right.map {
+          vm =>
+            get(EstablisherEmailId(index), form, vm)
+        }
+    }
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
@@ -61,15 +71,6 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
               Some(Message("messages__contact_details__hint", name.fullName)),
               srn = srn
             )
-        }
-    }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, index, srn).retrieve.right.map {
-          vm =>
-            get(EstablisherEmailId(index), form, vm)
         }
     }
 

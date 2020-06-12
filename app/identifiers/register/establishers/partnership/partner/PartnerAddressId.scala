@@ -26,7 +26,8 @@ import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPar
 import viewmodels.AnswerRow
 
 case class PartnerAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressId
+    .toString
 }
 
 object PartnerAddressId {
@@ -42,11 +43,13 @@ object PartnerAddressId {
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_address")
 
       override def row(id: PartnerAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        AddressCYA(label(id.establisherIndex, id.partnerIndex, ua), hiddenLabel(id.establisherIndex, id.partnerIndex, ua))()
+        AddressCYA(label(id.establisherIndex, id.partnerIndex, ua), hiddenLabel(id.establisherIndex, id.partnerIndex,
+          ua))()
           .row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: PartnerAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+      override def updateRow(id: PartnerAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
   }
 }

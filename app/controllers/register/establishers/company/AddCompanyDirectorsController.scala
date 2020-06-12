@@ -43,20 +43,21 @@ class AddCompanyDirectorsController @Inject()(
                                                formProvider: AddCompanyDirectorsFormProvider,
                                                val view: addCompanyDirectors,
                                                val controllerComponents: MessagesControllerComponents
-                                             )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                             )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
-
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      Future.successful(Ok(view(form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly, mode, srn)))
+      Future.successful(Ok(view(form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
+        mode, srn)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate andThen getData(mode,
+    srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
 
@@ -86,5 +87,7 @@ class AddCompanyDirectorsController @Inject()(
         )
       }
   }
+
+  private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
 }

@@ -40,7 +40,8 @@ class DataRetrievalImpl(
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers,
+      Some(request.session))
     mode match {
       case NormalMode | CheckMode =>
         getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
@@ -59,41 +60,49 @@ class DataRetrievalImpl(
     }
   }
 
-  private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+  private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
+  : Future[OptionalDataRequest[A]] = {
     viewConnector.fetch(request.externalId).map {
       case None =>
         OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
           case Some(foundSrn) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly = true)
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId,
+              viewOnly = true)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
         }
     }
   }
 
-  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
+  : Future[OptionalDataRequest[A]] = {
     viewConnector.fetch(request.externalId).map {
       case Some(answersJsValue) =>
         val ua = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
-          case (Some(foundSrn), Some(status)) if foundSrn == srn  =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = status != "Open")
+          case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
+              request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId)
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)), request.psaId, viewOnly = true)
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
+              request.psaId, viewOnly = true)
         }
       case None =>
         OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
     }
   }
 
-  private def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+  private def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit
+                                                                                   request: AuthenticatedRequest[A])
+  : Future[OptionalDataRequest[A]] =
     f.map {
       case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, viewOnly)
+      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)),
+        request.psaId, viewOnly)
     }
 }
 

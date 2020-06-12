@@ -33,7 +33,8 @@ class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAp
                                                            getData: DataRetrievalAction,
                                                            val controllerComponents: MessagesControllerComponents,
                                                            val view: whatYouWillNeedBenefitsInsurance
-                                                          )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
     implicit request =>

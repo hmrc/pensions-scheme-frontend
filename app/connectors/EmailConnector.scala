@@ -51,16 +51,11 @@ class EmailConnectorImpl @Inject()(
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
-  def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
-
-    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
-  }
-
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
 
-    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce, callbackUrl(psa))
+    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce,
+      callbackUrl(psa))
 
     val jsonData = Json.toJson(sendEmailReq)
 
@@ -76,6 +71,12 @@ class EmailConnectorImpl @Inject()(
           EmailNotSent
       }
     } recoverWith logExceptions
+  }
+
+  def callbackUrl(psaId: PsaId): String = {
+    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+
+    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {

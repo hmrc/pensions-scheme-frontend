@@ -53,16 +53,6 @@ class DirectorNameController @Inject()(
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
-
-  def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
-               (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
-    postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
-    title = Message("messages__directorName__title"),
-    heading = Message("messages__directorName__heading"),
-    srn = srn
-  )
-
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
@@ -70,7 +60,8 @@ class DirectorNameController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, viewmodel(mode, establisherIndex, directorIndex, srn),
+          existingSchemeName)))
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
@@ -78,7 +69,8 @@ class DirectorNameController @Inject()(
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn), existingSchemeName)))
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn),
+              existingSchemeName)))
           ,
           value => {
             val answers = request.userAnswers.set(IsNewDirectorId(establisherIndex, directorIndex))(true).flatMap(
@@ -86,9 +78,20 @@ class DirectorNameController @Inject()(
 
             userAnswersService.upsert(mode, srn, answers.json).map {
               cacheMap =>
-                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap), srn))
+                Redirect(navigator.nextPage(DirectorNameId(establisherIndex, directorIndex), mode, UserAnswers
+                (cacheMap), srn))
             }
           }
         )
     }
+
+  private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
+
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+               (implicit request: DataRequest[AnyContent]) = CommonFormWithHintViewModel(
+    postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
+    title = Message("messages__directorName__title"),
+    heading = Message("messages__directorName__heading"),
+    srn = srn
+  )
 }

@@ -31,15 +31,16 @@ import views.html.register.whatYouWillNeedAddress
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedIndividualAddressController @Inject()(
-                                       val appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       allowAccess: AllowAccessActionProvider,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val view: whatYouWillNeedAddress
-                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                            val appConfig: FrontendAppConfig,
+                                                            override val messagesApi: MessagesApi,
+                                                            authenticate: AuthAction,
+                                                            getData: DataRetrievalAction,
+                                                            allowAccess: AllowAccessActionProvider,
+                                                            requireData: DataRequiredAction,
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            val view: whatYouWillNeedAddress
+                                                          )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -47,7 +48,9 @@ class WhatYouWillNeedIndividualAddressController @Inject()(
         TrusteeNameId(index).retrieve.right.map {
           name =>
             val trusteeName = name.fullName
-            val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(mode, index, srn)
-            Future.successful(Ok(view(existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))}
+            val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController
+              .onSubmit(mode, index, srn)
+            Future.successful(Ok(view(existingSchemeName, href, srn, trusteeName, Message("messages__theTrustee"))))
+        }
     }
 }

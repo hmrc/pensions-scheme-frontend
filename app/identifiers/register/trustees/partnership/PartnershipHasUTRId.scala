@@ -46,8 +46,11 @@ object PartnershipHasUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[PartnershipHasUTRId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index))
+      .fold(messages("messages__theTrustee"))(_.name)
+
     def label(index: Int) = Some(messages("messages__hasUTR", trusteeName(index)))
+
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", trusteeName(index)))
 
     new CheckYourAnswers[PartnershipHasUTRId] {

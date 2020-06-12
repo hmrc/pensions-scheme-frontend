@@ -44,24 +44,10 @@ class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
                                        formProvider: EmailFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: emailAddress
-                                      )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                      )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              routes.PartnerEmailController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-              Message("messages__enterEmail", Message("messages__thePartner").resolve),
-              Message("messages__enterEmail", details.fullName),
-              Some(Message("messages__contact_details__hint", details.fullName)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -78,6 +64,22 @@ class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
         viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map {
           vm =>
             post(PartnerEmailId(establisherIndex, partnerIndex), mode, form, vm, None)
+        }
+    }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String])
+  : Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.PartnerEmailController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              Message("messages__enterEmail", Message("messages__thePartner").resolve),
+              Message("messages__enterEmail", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
+              srn = srn
+            )
         }
     }
 

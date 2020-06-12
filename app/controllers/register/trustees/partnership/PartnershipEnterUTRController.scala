@@ -35,30 +35,17 @@ import views.html.utr
 import scala.concurrent.ExecutionContext
 
 class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         override val userAnswersService: UserAnswersService,
-                                         override val navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         allowAccess: AllowAccessActionProvider,
-                                         requireData: DataRequiredAction,
-                                         formProvider: UTRFormProvider,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          val view: utr
-                                        )(implicit val ec: ExecutionContext) extends UTRController {
-
-  private def form: Form[ReferenceValue] = formProvider()
-
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): UTRViewModel = {
-    UTRViewModel(
-      postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__enterUTR", Message("messages__thePartnership")),
-      heading = Message("messages__enterUTR", partnershipName),
-      hint = Message("messages_utr__hint"),
-      srn = srn
-    )
-  }
+                                              override val messagesApi: MessagesApi,
+                                              override val userAnswersService: UserAnswersService,
+                                              override val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              allowAccess: AllowAccessActionProvider,
+                                              requireData: DataRequiredAction,
+                                              formProvider: UTRFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              val view: utr
+                                             )(implicit val ec: ExecutionContext) extends UTRController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -75,4 +62,17 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
           post(PartnershipEnterUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
         }
     }
+
+  private def form: Form[ReferenceValue] = formProvider()
+
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
+                       )(implicit request: DataRequest[AnyContent]): UTRViewModel = {
+    UTRViewModel(
+      postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
+      title = Message("messages__enterUTR", Message("messages__thePartnership")),
+      heading = Message("messages__enterUTR", partnershipName),
+      hint = Message("messages_utr__hint"),
+      srn = srn
+    )
+  }
 }

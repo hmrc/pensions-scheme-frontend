@@ -37,7 +37,8 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
                                                            requireData: DataRequiredAction,
                                                            val controllerComponents: MessagesControllerComponents,
                                                            val view: whatYouWillNeedIndividualDetails
-                                                          ) extends FrontendBaseController with I18nSupport with Retrievals{
+                                                          ) extends FrontendBaseController with I18nSupport with
+  Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

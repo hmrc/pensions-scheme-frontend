@@ -17,7 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import connectors.MinimalPsaConnector.MinimalPSA
+import models.MinimalPSA
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -106,7 +106,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     connector.getMinimalPsaDetails(psaId) map {
-      _ shouldBe MinimalPSA(email, Some("test ltd"), None)
+      _ shouldBe MinimalPSA(email, isPsaSuspended = true, Some("test ltd"), None)
     }
   }
 

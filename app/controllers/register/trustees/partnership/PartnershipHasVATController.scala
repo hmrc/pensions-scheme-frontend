@@ -46,7 +46,17 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             formProvider: HasReferenceNumberFormProvider,
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: hasReferenceNumber
-                                           )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
+                                           )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            get(PartnershipHasVATId(index), form(details.name), viewModel(mode, index, srn, details.name))
+        }
+    }
 
   def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__vat__formError", partnershipName)
@@ -60,15 +70,6 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
       hint = None,
       srn = srn
     )
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
-            get(PartnershipHasVATId(index), form(details.name), viewModel(mode, index, srn, details.name))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

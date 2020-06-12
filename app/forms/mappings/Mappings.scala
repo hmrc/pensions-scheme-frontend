@@ -32,11 +32,6 @@ trait Mappings extends Formatters with Constraints {
   protected def optionalText(): FieldMapping[Option[String]] =
     of(optionalStringFormatter)
 
-  protected def int(requiredKey: String = "error.required",
-                    wholeNumberKey: String = "error.wholeNumber",
-                    nonNumericKey: String = "error.nonNumeric"): FieldMapping[Int] =
-    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey))
-
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean"): FieldMapping[Boolean] =
     of(booleanFormatter(requiredKey, invalidKey))
@@ -60,10 +55,18 @@ trait Mappings extends Formatters with Constraints {
     }
 
     tuple(
-      "day" -> int(requiredKey = "error.date.day_blank", wholeNumberKey = "error.date.day_invalid", nonNumericKey = "error.date.day_invalid"),
-      "month" -> int(requiredKey = "error.date.month_blank", wholeNumberKey = "error.date.month_invalid", nonNumericKey = "error.date.month_invalid"),
-      "year" -> int(requiredKey = "error.date.year_blank", wholeNumberKey = "error.date.year_invalid", nonNumericKey = "error.date.year_invalid")
+      "day" -> int(requiredKey = "error.date.day_blank", wholeNumberKey = "error.date.day_invalid", nonNumericKey =
+        "error.date.day_invalid"),
+      "month" -> int(requiredKey = "error.date.month_blank", wholeNumberKey = "error.date.month_invalid",
+        nonNumericKey = "error.date.month_invalid"),
+      "year" -> int(requiredKey = "error.date.year_blank", wholeNumberKey = "error.date.year_invalid", nonNumericKey
+        = "error.date.year_invalid")
     ).verifying(invalidKey, inputs => validDate(inputs))
       .transform(toLocalDate, fromLocalDate)
   }
+
+  protected def int(requiredKey: String = "error.required",
+                    wholeNumberKey: String = "error.wholeNumber",
+                    nonNumericKey: String = "error.nonNumeric"): FieldMapping[Int] =
+    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey))
 }

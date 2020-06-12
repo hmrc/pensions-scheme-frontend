@@ -28,6 +28,7 @@ import viewmodels.AnswerRow
 
 case class TrusteeHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeHasUTRId.toString
+
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) =>
@@ -45,8 +46,11 @@ object TrusteeHasUTRId {
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[TrusteeHasUTRId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theTrustee"))(_.fullName)
+    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index))
+      .fold(messages("messages__theTrustee"))(_.fullName)
+
     def label(index: Int) = Some(messages("messages__hasUTR", trusteeName(index)))
+
     def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", trusteeName(index)))
 
     new CheckYourAnswers[TrusteeHasUTRId] {
@@ -56,7 +60,7 @@ object TrusteeHasUTRId {
       override def updateRow(id: TrusteeHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {
           case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

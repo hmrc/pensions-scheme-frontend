@@ -44,7 +44,8 @@ object PartnershipHasUTRId {
 
     new CheckYourAnswers[PartnershipHasUTRId] {
       override def row(id: PartnershipHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
+        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages
+        ("messages__thePartnership"))(_.name)
         val label = Some(messages("messages__hasUTR", partnershipName))
         val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName))
 

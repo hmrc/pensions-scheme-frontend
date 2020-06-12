@@ -36,14 +36,6 @@ trait EnterVATController extends FrontendBaseController with Retrievals with I18
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: enterVATView
-
   def get(id: TypedIdentifier[ReferenceValue], viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id).fold(form)(form.fill)
@@ -61,4 +53,12 @@ trait EnterVATController extends FrontendBaseController with Retrievals with I18
       }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: enterVATView
 }

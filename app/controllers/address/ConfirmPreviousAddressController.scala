@@ -60,11 +60,6 @@ trait ConfirmPreviousAddressController extends FrontendBaseController with Retri
     Future.successful(Ok(view(preparedForm, viewModel, countryOptions, existingSchemeName)))
   }
 
-  protected def form(name: String)(implicit request: DataRequest[AnyContent]) =
-    formProvider(Message("messages__confirmPreviousAddress__error", name))
-
-  protected def formProvider: ConfirmAddressFormProvider = new ConfirmAddressFormProvider()
-
   protected def post(
                       id: TypedIdentifier[Boolean],
                       contactId: TypedIdentifier[Address],
@@ -94,4 +89,9 @@ trait ConfirmPreviousAddressController extends FrontendBaseController with Retri
       }
     )
   }
+
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]) =
+    formProvider(Message("messages__confirmPreviousAddress__error", name))
+
+  protected def formProvider: ConfirmAddressFormProvider = new ConfirmAddressFormProvider()
 }

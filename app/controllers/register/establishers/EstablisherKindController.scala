@@ -47,7 +47,8 @@ class EstablisherKindController @Inject()(
                                            formProvider: EstablisherKindFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: establisherKind
-                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                         )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
   private val postCall = routes.EstablisherKindController.onSubmit _
@@ -59,11 +60,13 @@ class EstablisherKindController @Inject()(
         Future.successful(Ok(view(formWithData, srn, index, existingSchemeName, postCall(mode, index, srn))))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, srn, index, existingSchemeName, postCall(mode, index, srn)))),
+          Future.successful(BadRequest(view(formWithErrors, srn, index, existingSchemeName, postCall(mode, index,
+            srn)))),
         value =>
 
           request.userAnswers.upsert(IsEstablisherNewId(index))(value = true) {

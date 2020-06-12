@@ -26,7 +26,9 @@ import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.AnswerRow
 
 case class DirectorNoNINOReasonId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorNoNINOReasonId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ DirectorNoNINOReasonId.toString
 
 }
 
@@ -39,10 +41,10 @@ object DirectorNoNINOReasonId {
 
     new CheckYourAnswersDirectors[DirectorNoNINOReasonId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__whyNoNINO")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers):String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_noNinoReason")
 
       override def row(id: DirectorNoNINOReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

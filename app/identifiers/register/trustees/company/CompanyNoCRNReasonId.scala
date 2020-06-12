@@ -39,13 +39,14 @@ object CompanyNoCRNReasonId {
     def companyName(index: Int) =
       userAnswers.get(CompanyDetailsId(index)) match {
         case Some(details) => details.companyName
-        case _             => messages("messages__theCompany")
+        case _ => messages("messages__theCompany")
       }
 
     def label(index: Int) =
       Some(messages("messages__whyNoCRN", companyName(index)))
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
+    def hiddenLabel(index: Int) =
+      Some(messages("messages__visuallyhidden__dynamic_noCrnReason", companyName(index)))
 
     new CheckYourAnswers[CompanyNoCRNReasonId] {
       override def row(id: CompanyNoCRNReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

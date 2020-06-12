@@ -27,6 +27,7 @@ import viewmodels.AnswerRow
 
 case class EstablisherHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherHasUTRId.toString
+
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(true) =>
@@ -42,11 +43,16 @@ case class EstablisherHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 object EstablisherHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasUTRId] = {
+  implicit def cya(implicit ua: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasUTRId] = {
 
-    def establisherName(index: Int) = userAnswers.get(EstablisherNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
-    def label(index: Int) = Some(messages("messages__hasUTR", establisherName(index)))
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasUtr", establisherName(index)))
+    def establisherName(index: Int) =
+      ua.get(EstablisherNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
+
+    def label(index: Int) =
+      Some(messages("messages__hasUTR", establisherName(index)))
+
+    def hiddenLabel(index: Int) =
+      Some(messages("messages__visuallyhidden__dynamic_hasUtr", establisherName(index)))
 
     new CheckYourAnswers[EstablisherHasUTRId] {
       override def row(id: EstablisherHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -55,7 +61,7 @@ object EstablisherHasUTRId {
       override def updateRow(id: EstablisherHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-          case _          => Seq.empty[AnswerRow]
+          case _ => Seq.empty[AnswerRow]
         }
     }
   }

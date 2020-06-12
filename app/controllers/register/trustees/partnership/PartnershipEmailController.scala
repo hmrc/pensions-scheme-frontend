@@ -44,9 +44,19 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
                                            formProvider: EmailFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: emailAddress
-                                          )(implicit val executionContext: ExecutionContext) extends EmailAddressController with I18nSupport {
+                                          )(implicit val executionContext: ExecutionContext) extends
+  EmailAddressController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).retrieve.right.map {
+          vm =>
+            get(PartnershipEmailId(index), form, vm)
+        }
+    }
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
@@ -63,21 +73,12 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.right.map {
           vm =>
-            get(PartnershipEmailId(index), form, vm)
+            post(PartnershipEmailId(index), mode, form, vm, None)
         }
     }
-
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      viewModel(mode, srn, index).retrieve.right.map {
-        vm =>
-          post(PartnershipEmailId(index), mode, form, vm, None)
-      }
-  }
 }

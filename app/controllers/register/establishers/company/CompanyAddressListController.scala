@@ -23,7 +23,8 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId,
+  CompanyPostCodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
@@ -49,7 +50,30 @@ class CompanyAddressListController @Inject()(
                                               val auditService: AuditService,
                                               val view: addressList,
                                               val controllerComponents: MessagesControllerComponents
-                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with
+  Retrievals {
+
+  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).right.map(get)
+    }
+
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        viewModel(mode, srn, index).right.map(
+          vm =>
+            post(
+              viewModel = vm,
+              navigatorId = CompanyAddressListId(index),
+              dataId = CompanyAddressId(index),
+              mode = mode,
+              context = s"Establisher Company Address: ${vm.entityName}",
+              postCodeLookupIdForCleanup = CompanyPostCodeLookupId(index)
+            )
+        )
+    }
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
@@ -67,27 +91,4 @@ class CompanyAddressListController @Inject()(
     }.left.map(_ =>
       Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, srn, index)))
     )
-
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, srn, index).right.map(get)
-    }
-
-
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
-        viewModel(mode, srn, index).right.map(
-          vm =>
-            post(
-              viewModel = vm,
-              navigatorId = CompanyAddressListId(index),
-              dataId = CompanyAddressId(index),
-              mode = mode,
-              context = s"Establisher Company Address: ${vm.entityName}",
-              postCodeLookupIdForCleanup = CompanyPostCodeLookupId(index)
-            )
-        )
-    }
 }

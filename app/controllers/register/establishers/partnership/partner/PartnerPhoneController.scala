@@ -45,25 +45,11 @@ class PartnerPhoneController @Inject()(
                                         formProvider: PhoneFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: phoneNumber
-                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with
+  I18nSupport {
 
 
   protected val form: Form[String] = formProvider()
-
-  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, partnerIndex: Index): Retrieval[CommonFormWithHintViewModel] =
-    Retrieval {
-      implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
-          details =>
-            CommonFormWithHintViewModel(
-              routes.PartnerPhoneController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-              Message("messages__enterPhoneNumber", Message("messages__thePartner").resolve),
-              Message("messages__enterPhoneNumber", details.fullName),
-              Some(Message("messages__contact_details__hint", details.fullName)),
-              srn = srn
-            )
-        }
-    }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -80,6 +66,22 @@ class PartnerPhoneController @Inject()(
         viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.right.map {
           vm =>
             post(PartnerPhoneId(establisherIndex, partnerIndex), mode, form, vm)
+        }
+    }
+
+  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, partnerIndex: Index)
+  : Retrieval[CommonFormWithHintViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+          details =>
+            CommonFormWithHintViewModel(
+              routes.PartnerPhoneController.onSubmit(mode, establisherIndex, partnerIndex, srn),
+              Message("messages__enterPhoneNumber", Message("messages__thePartner").resolve),
+              Message("messages__enterPhoneNumber", details.fullName),
+              Some(Message("messages__contact_details__hint", details.fullName)),
+              srn = srn
+            )
         }
     }
 

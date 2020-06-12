@@ -34,18 +34,27 @@ import views.html.enterVATView
 import scala.concurrent.ExecutionContext
 
 class PartnershipEnterVATController @Inject()(
-                                                    override val appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
-                                                    override val userAnswersService: UserAnswersService,
-                                                    override val navigator: Navigator,
-                                                    authenticate: AuthAction,
-                                                    getData: DataRetrievalAction,
-                                                    allowAccess: AllowAccessActionProvider,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: EnterVATFormProvider,
-                                                    val controllerComponents: MessagesControllerComponents,
-                                                    val view: enterVATView
-                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
+                                               override val appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               override val userAnswersService: UserAnswersService,
+                                               override val navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               allowAccess: AllowAccessActionProvider,
+                                               requireData: DataRequiredAction,
+                                               formProvider: EnterVATFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               val view: enterVATView
+                                             )(implicit val ec: ExecutionContext) extends EnterVATController {
+
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map { details =>
+          val partnershipName = details.name
+          get(PartnershipEnterVATId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
+        }
+    }
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider(companyName)
 
@@ -60,15 +69,6 @@ class PartnershipEnterVATController @Inject()(
       srn = srn
     )
   }
-
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-      implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
-          val partnershipName = details.name
-          get(PartnershipEnterVATId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
-        }
-    }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen requireData).async {

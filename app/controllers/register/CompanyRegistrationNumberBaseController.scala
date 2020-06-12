@@ -38,23 +38,14 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(name)
-
   protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
-
-  protected def navigator: Navigator
-
-  protected def view: companyRegistrationNumber
 
   def postCall: (Mode, Option[String], Index) => Call
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
 
-  def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
+  def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+          companyName: String)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val preparedForm =
@@ -65,7 +56,10 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
     Future.successful(Ok(updatedView))
   }
 
-  def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel, companyName: String)
+  protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(name)
+
+  def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+           companyName: String)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(companyName).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
@@ -79,5 +73,13 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
       }
     )
   }
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: companyRegistrationNumber
 }
 

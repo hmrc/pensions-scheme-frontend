@@ -43,11 +43,11 @@ class CountryOptions(val options: Seq[InputOption]) {
     )
   }
 
+  def getCountryNameFromCode(address: Address): String = getCountryNameFromCode(address.country)
+
   def getCountryNameFromCode(code: String): String =
     options
       .find(_.value == code)
       .map(_.label)
       .getOrElse(code)
-
-  def getCountryNameFromCode(address: Address): String = getCountryNameFromCode(address.country)
 }

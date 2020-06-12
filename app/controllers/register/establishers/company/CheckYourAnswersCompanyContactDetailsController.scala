@@ -42,14 +42,16 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 override val messagesApi: MessagesApi,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
-                                                                @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
+                                                                @NoSuspendedCheck
+                                                                allowAccess: AllowAccessActionProvider,
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
                                                                 userAnswersService: UserAnswersService,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 val view: checkYourAnswers
-                                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                                               )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -64,7 +66,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
 
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
-        val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
+        val title = if (isNew) Message("checkYourAnswers.hs.title") else
+          Message("messages__contactDetailsFor", Message("messages__theCompany").resolve)
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
@@ -73,7 +76,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,
           srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+            mode),
           title = title,
           h1 = headingContactDetails(mode, companyName(CompanyDetailsId(index)), isNew)
         )

@@ -19,9 +19,9 @@ package viewmodels
 import play.api.mvc.Call
 
 case class NinoViewModel(
-                         postCall: Call,
-                         title: String,
-                         heading: String,
-                         hint: String,
-                         srn: Option[String] = None
-                       )
+                          postCall: Call,
+                          title: String,
+                          heading: String,
+                          hint: String,
+                          srn: Option[String] = None
+                        )

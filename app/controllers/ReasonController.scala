@@ -36,14 +36,6 @@ trait ReasonController extends FrontendBaseController with Retrievals with I18nS
 
   protected implicit def ec: ExecutionContext
 
-  protected def appConfig: FrontendAppConfig
-
-  protected def userAnswersService: UserAnswersService
-
-  protected def navigator: Navigator
-
-  protected def view: reason
-
   def get(id: TypedIdentifier[String], viewmodel: ReasonViewModel, form: Form[String])
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id) match {
@@ -63,4 +55,12 @@ trait ReasonController extends FrontendBaseController with Retrievals with I18nS
         userAnswersService.save(mode, viewmodel.srn, id, reason).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
     )
+
+  protected def appConfig: FrontendAppConfig
+
+  protected def userAnswersService: UserAnswersService
+
+  protected def navigator: Navigator
+
+  protected def view: reason
 }

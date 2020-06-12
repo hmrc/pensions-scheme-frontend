@@ -40,20 +40,28 @@ object PartnershipEnterUTRId {
                    messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index)).fold(messages("messages__theTrustee"))(_.name)
+    def trusteeName(index: Int) = userAnswers.get(PartnershipDetailsId(index))
+      .fold(messages("messages__theTrustee"))(_.name)
+
     def label(index: Int) = messages("messages__enterUTR", trusteeName(index))
-    def hiddenLabel(index: Int) = messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", trusteeName(index))
+
+    def hiddenLabel(index: Int) = messages(
+      "messages__visuallyhidden__dynamic_unique_taxpayer_reference",
+      trusteeName(index)
+    )
 
     new CheckYourAnswers[PartnershipEnterUTRId] {
       override def row(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+        ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))()
+          .row(id)(changeUrl, userAnswers)
 
       override def updateRow(id: PartnershipEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(trustees.IsTrusteeNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))().updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[PartnershipEnterUTRId](label(id.index), hiddenLabel(id.index))()
+              .updateRow(id)(changeUrl, userAnswers)
         }
       }
     }

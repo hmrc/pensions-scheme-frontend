@@ -21,6 +21,13 @@ import utils.{Enumerable, InputOption, WithName}
 sealed trait Members
 
 object Members {
+  val values: Seq[Members] = Seq(
+    None, One, TwoToEleven, TwelveToFifty, FiftyOneToTenThousand, MoreThanTenThousand
+  )
+  val options: Seq[InputOption] = values.map {
+    value =>
+      InputOption(value.toString, s"messages__members__${value.toString}")
+  }
 
   case object None extends WithName("opt1") with Members
 
@@ -33,15 +40,6 @@ object Members {
   case object FiftyOneToTenThousand extends WithName("opt5") with Members
 
   case object MoreThanTenThousand extends WithName("opt6") with Members
-
-  val values: Seq[Members] = Seq(
-    None, One, TwoToEleven, TwelveToFifty, FiftyOneToTenThousand, MoreThanTenThousand
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__members__${value.toString}")
-  }
 
   implicit val enumerable: Enumerable[Members] =
     Enumerable(values.map(v => v.toString -> v): _*)

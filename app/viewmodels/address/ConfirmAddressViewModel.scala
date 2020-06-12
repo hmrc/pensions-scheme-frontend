@@ -21,13 +21,13 @@ import play.api.mvc.Call
 import viewmodels.Message
 
 case class ConfirmAddressViewModel(
-                                        postCall: Call,
-                                        title: Message,
-                                        heading: Message,
-                                        hint: Option[Message] = None,
-                                        address: Address,
-                                        name: String,
-                                        srn: Option[String] = None
-                                      ) {
+                                    postCall: Call,
+                                    title: Message,
+                                    heading: Message,
+                                    hint: Option[Message] = None,
+                                    address: Address,
+                                    name: String,
+                                    srn: Option[String] = None
+                                  ) {
 
 }

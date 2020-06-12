@@ -26,7 +26,8 @@ import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, Refer
 import viewmodels.AnswerRow
 
 case class PartnerEnterNINOId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterNINOId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerEnterNINOId.toString
 
   override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
     userAnswers.remove(PartnerNoNINOReasonId(establisherIndex, partnerIndex))
@@ -39,11 +40,12 @@ object PartnerEnterNINOId {
 
     new CheckYourAnswersPartners[PartnerEnterNINOId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__enterNINO")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):String =
-        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_national_insurance_number")
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+        dynamicMessage(establisherIndex, partnerIndex, ua,
+          "messages__visuallyhidden__dynamic_national_insurance_number")
 
       override def row(id: PartnerEnterNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA[PartnerEnterNINOId](label(id.establisherIndex, id.partnerIndex, userAnswers),

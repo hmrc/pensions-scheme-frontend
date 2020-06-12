@@ -27,11 +27,13 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
   self =>
   override def toString: String = "insurerAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,userAnswers: UserAnswers,messages: Messages): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit countryOptions: CountryOptions,
+                   userAnswers: UserAnswers,
+                   messages: Messages): CheckYourAnswers[self.type] = {
 
     val insuranceCompanyName = userAnswers.get(InsuranceCompanyNameId).getOrElse("")
-    val label = messages("messages__addressFor",insuranceCompanyName)
-    val hiddenLabel = messages("messages__visuallyhidden__insurer_confirm_address",insuranceCompanyName)
+    val label = messages("messages__addressFor", insuranceCompanyName)
+    val hiddenLabel = messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompanyName)
 
     new CheckYourAnswers[self.type] {
 
@@ -42,11 +44,11 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {
           case Some(_) => row(id)(changeUrl, userAnswers)
-          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match{
+          case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(label,
               Seq("site.not_entered"),
               answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl,Some(hiddenLabel)))))
+              Some(Link("site.add", changeUrl, Some(hiddenLabel)))))
             case _ => Seq.empty[AnswerRow]
           }
         }

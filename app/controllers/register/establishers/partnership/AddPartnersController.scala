@@ -43,22 +43,23 @@ class AddPartnersController @Inject()(
                                        formProvider: AddPartnersFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: addPartners
-                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                     )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-
-  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call = routes.AddPartnersController.onSubmit(mode, index, srn)
 
   def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(index) { _ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(view(form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly, mode, srn)))
+          Future.successful(Ok(view(form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly,
+            mode, srn)))
         }
     }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode,
+    srn) andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
@@ -91,5 +92,8 @@ class AddPartnersController @Inject()(
         )
       }
   }
+
+  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
+    routes.AddPartnersController.onSubmit(mode, index, srn)
 
 }

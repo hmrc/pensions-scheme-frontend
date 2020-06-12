@@ -46,21 +46,12 @@ class DirectorEnterNINOController @Inject()(
                                              val formProvider: NINOFormProvider,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: nino
-                                           )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
+                                           )(implicit val ec: ExecutionContext) extends NinoController with
+  I18nSupport {
 
-  private[controllers] val postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit _
+  private[controllers] val postCall = controllers.register.establishers.company.director.routes
+    .DirectorEnterNINOController.onSubmit _
   private[controllers] val hint: String = "messages__common__nino_hint"
-
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
-    NinoViewModel(
-      postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
-      title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
-      heading = Message("messages__enterNINO", name),
-      hint = hint,
-      srn = srn
-    )
-
   private val directorName: (Index, Index) => Retrieval[String] = (establisherIndex, directorIndex) => Retrieval {
     implicit request =>
       DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
@@ -85,5 +76,15 @@ class DirectorEnterNINOController @Inject()(
               viewmodel(establisherIndex, directorIndex, mode, srn, name))
         }
     }
+
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): NinoViewModel =
+    NinoViewModel(
+      postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
+      title = Message("messages__enterNINO", Message("messages__theDirector").resolve),
+      heading = Message("messages__enterNINO", name),
+      hint = hint,
+      srn = srn
+    )
 
 }

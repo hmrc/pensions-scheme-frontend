@@ -51,23 +51,6 @@ trait AddressMapping extends Mappings with Transforms {
       )
   }
 
-  private[mappings] def postCodeTransform(value: String): String = {
-    minimiseSpace(value.trim.toUpperCase)
-  }
-
-  private[mappings] def postCodeValidTransform(value: String): String = {
-    if (value.matches(regexPostcode)) {
-      if (value.contains(" ")) {
-        value
-      } else {
-        value.substring(0, value.length - 3) + " " + value.substring(value.length - 3, value.length)
-      }
-    }
-    else {
-      value
-    }
-  }
-
   def postCodeMapping(keyRequired: String, keyLength: String, keyInvalid: String): Mapping[String] = {
     text(keyRequired)
       .transform(postCodeTransform, noTransform)
@@ -83,15 +66,8 @@ trait AddressMapping extends Mappings with Transforms {
       .transform(postCodeValidTransform, noTransform)
   }
 
-  private def postCodeDataTransform(value: Option[String]): Option[String] = {
-    value.map(postCodeTransform).filter(_.nonEmpty)
-  }
-
-  private def countryDataTransform(value: Option[String]): Option[String] = {
-    value.map(s => strip(s).toUpperCase()).filter(_.nonEmpty)
-  }
-
-  def postCodeWithCountryMapping(keyRequired: String, keyInvalid: String, keyNonUKLength: String): Mapping[Option[String]] = {
+  def postCodeWithCountryMapping(keyRequired: String, keyInvalid: String, keyNonUKLength: String)
+  : Mapping[Option[String]] = {
 
     val fieldName = "postCode"
 
@@ -117,6 +93,31 @@ trait AddressMapping extends Mappings with Transforms {
 
     new CustomBindMapping(fieldName, bind, unbind)
 
+  }
+
+  private[mappings] def postCodeValidTransform(value: String): String = {
+    if (value.matches(regexPostcode)) {
+      if (value.contains(" ")) {
+        value
+      } else {
+        value.substring(0, value.length - 3) + " " + value.substring(value.length - 3, value.length)
+      }
+    }
+    else {
+      value
+    }
+  }
+
+  private def postCodeDataTransform(value: Option[String]): Option[String] = {
+    value.map(postCodeTransform).filter(_.nonEmpty)
+  }
+
+  private[mappings] def postCodeTransform(value: String): String = {
+    minimiseSpace(value.trim.toUpperCase)
+  }
+
+  private def countryDataTransform(value: Option[String]): Option[String] = {
+    value.map(s => strip(s).toUpperCase()).filter(_.nonEmpty)
   }
 
   def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String): Mapping[String] = {

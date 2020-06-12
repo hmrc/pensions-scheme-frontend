@@ -29,8 +29,7 @@ case class IndividualConfirmPreviousAddressId(index: Int) extends TypedIdentifie
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) =>
-        userAnswers
-          .remove(TrusteePreviousAddressId(index))
+        userAnswers.remove(TrusteePreviousAddressId(index))
       case _ => super.cleanup(value, userAnswers)
     }
   }

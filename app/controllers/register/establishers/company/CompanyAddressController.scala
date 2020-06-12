@@ -53,24 +53,14 @@ class CompanyAddressController @Inject()(
                                           val auditService: AuditService,
                                           val view: manualAddress,
                                           val controllerComponents: MessagesControllerComponents
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with
+  I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
-
-  protected val form: Form[Address] = formProvider()
-
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode, srn, Index(index)),
-      countryOptions.options,
-      title = Message(title, Message("messages__theEstablisher")),
-      heading = Message(heading, name),
-      srn = srn
-    )
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -81,7 +71,8 @@ class CompanyAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData
+  (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
         details =>
@@ -90,5 +81,15 @@ class CompanyAddressController @Inject()(
             viewmodel(index, mode, srn, details.companyName), mode, context, CompanyPostCodeLookupId(index))
       }
   }
+
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode, srn, Index(index)),
+      countryOptions.options,
+      title = Message(title, Message("messages__theEstablisher")),
+      heading = Message(heading, name),
+      srn = srn
+    )
 
 }

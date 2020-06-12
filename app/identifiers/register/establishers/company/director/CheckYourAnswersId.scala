@@ -21,7 +21,9 @@ import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
 case class CheckYourAnswersId(establisherIndex: Int, directorIndex: Int) extends Identifier {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ CheckYourAnswersId.toString
+  override def path: JsPath =
+    EstablishersId(establisherIndex)
+      .path \ "director" \ directorIndex \ CheckYourAnswersId.toString
 }
 
 object CheckYourAnswersId {

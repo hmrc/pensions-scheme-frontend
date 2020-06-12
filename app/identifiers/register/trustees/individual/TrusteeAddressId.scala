@@ -35,8 +35,8 @@ object TrusteeAddressId {
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[TrusteeAddressId] =
     new CheckYourAnswers[TrusteeAddressId] {
       override def row(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val name = (index: Int) =>
-            ua.get(TrusteeNameId(index)).map(_.fullName)
+
+        val name = (index: Int) => ua.get(TrusteeNameId(index)).map(_.fullName)
 
         val trusteeName = name(id.index).getOrElse(messages("messages__theTrustee"))
 
@@ -50,6 +50,7 @@ object TrusteeAddressId {
         )().row(id)(changeUrl, ua)
       }
 
-      override def updateRow(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, ua)
+      override def updateRow(id: TrusteeAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
+        row(id)(changeUrl, ua)
     }
 }

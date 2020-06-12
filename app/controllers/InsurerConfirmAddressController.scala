@@ -52,13 +52,22 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
                                                 val auditService: AuditService,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: manualAddress
-                                               )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                               )(implicit val ec: ExecutionContext) extends ManualAddressController
+  with I18nSupport {
 
+  protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = routes.InsurerConfirmAddressController.onSubmit _
   private[controllers] val title: Message = "messages__insurer_confirm_address__title"
   private[controllers] val heading: String = "messages__common__confirmAddress__h1"
 
-  protected val form: Form[Address] = formProvider()
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+
+        InsuranceCompanyNameId.retrieve.right.map { companyName =>
+          get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn, companyName))
+        }
+    }
 
   private def viewmodel(mode: Mode, srn: Option[String], companyName: String): ManualAddressViewModel =
     ManualAddressViewModel(
@@ -69,24 +78,16 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
-    implicit request =>
-
-      InsuranceCompanyNameId.retrieve.right.map { companyName =>
-        get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn,companyName))
-      }
-  }
-
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { companyName =>
         post(InsurerConfirmAddressId,
-             InsurerSelectAddressId,
-             viewmodel(mode, srn, companyName),
-             mode,
-             "Insurer Address",
-             InsurerEnterPostCodeId)
+          InsurerSelectAddressId,
+          viewmodel(mode, srn, companyName),
+          mode,
+          "Insurer Address",
+          InsurerEnterPostCodeId)
       }
   }
 }

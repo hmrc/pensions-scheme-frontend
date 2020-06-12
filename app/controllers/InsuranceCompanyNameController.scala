@@ -45,18 +45,21 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                formProvider: InsuranceCompanyNameFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: insuranceCompanyName
-                                              )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                              )(implicit val executionContext: ExecutionContext) extends
+  FrontendBaseController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen allowAccess(srn)) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen allowAccess(srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
       val submitCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(mode, srn)
       Ok(view(preparedForm, mode, existingSchemeName, submitCall, srn))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+    andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

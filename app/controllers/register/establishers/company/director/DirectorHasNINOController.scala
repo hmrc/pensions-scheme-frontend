@@ -46,20 +46,8 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
                                           formProvider: HasReferenceNumberFormProvider,
                                           val view: hasReferenceNumber,
                                           val controllerComponents: MessagesControllerComponents
-                                         )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
-
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], personName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
-    CommonFormWithHintViewModel(
-      postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(mode, establisherIndex, directorIndex, srn),
-      title = Message("messages__hasNINO", Message("messages__theDirector").resolve),
-      heading = Message("messages__hasNINO", personName),
-      hint = None,
-      srn = srn
-    )
-
-  private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
-    formProvider(Message("messages__genericHasNino__error__required", personName), personName)
+                                         )(implicit val executionContext: ExecutionContext) extends
+  HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -80,4 +68,19 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
               viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
         }
     }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
+                        personName: String)
+                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(mode,
+        establisherIndex, directorIndex, srn),
+      title = Message("messages__hasNINO", Message("messages__theDirector").resolve),
+      heading = Message("messages__hasNINO", personName),
+      hint = None,
+      srn = srn
+    )
+
+  private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
+    formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 }

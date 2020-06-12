@@ -49,12 +49,10 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      pensionAdministratorConnector: PensionAdministratorConnector,
                                      val controllerComponents: MessagesControllerComponents,
                                      val view: schemeName
-                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with Retrievals {
 
   private val form = formProvider()
-
-  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
-    existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
     implicit request =>
@@ -88,6 +86,9 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
           }
       )
   }
+
+  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
+    existingSchemeName.getOrElse("")
 
 
 }
