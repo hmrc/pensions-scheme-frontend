@@ -38,13 +38,12 @@ class DeleteSchemeViewSpec extends YesNoViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => deleteSchemeView(form, schemeName, psaName)(fakeRequest, messages)
 
   "DeleteScheme view" must {
-
     behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__deleteScheme__title"),
       Message("messages__deleteScheme__heading", schemeName), expectedGuidanceKeys = "_hint")
 
     behave like pageWithBackLink(createView)
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, controllers.routes.DeleteSchemeController.onSubmit().url)
+    behave like yesNoPageMain(createViewUsingForm, messageKeyPrefix, controllers.routes.DeleteSchemeController.onSubmit().url)
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
