@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
   private val userAnswersWithName: UserAnswers =
@@ -124,10 +124,10 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.fullName),
+            Message("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, NormalMode) must equal(expectedResult)
@@ -144,10 +144,10 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
         val expectedResult = Seq(
           AnswerRow(
-            messages("messages__director__cya__address_years", directorDetails.fullName),
+            Message("messages__director__cya__address_years", directorDetails.fullName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
-            Some(Link("site.change", onwardUrl,Some(messages("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
+            Some(Link("site.change", onwardUrl,Some(Message("messages__visuallyhidden__dynamic_addressYears", directorDetails.fullName))))
           ))
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(expectedResult)

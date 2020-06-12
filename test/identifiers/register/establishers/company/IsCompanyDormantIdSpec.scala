@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
@@ -47,10 +47,11 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
         IsCompanyDormantId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(
           Seq(AnswerRow(
-              label = messages("messages__company__cya__dormant", companyName),
+              label = Message("messages__company__cya__dormant", Message("messages__theCompany")),
               answer = List("site.yes"),
               answerIsMessageKey = true,
-              changeUrl = Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_company__dormant", companyName))))
+              changeUrl = Some(Link("site.change", onwardUrl,
+                Some(Message("messages__visuallyhidden__dynamic_company__dormant", Message("messages__theCompany")))))
             ))
         )
       }

@@ -132,11 +132,11 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
         implicit val userAnswers = request.userAnswers
         AddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            messages("messages__addressYears", name),
+            Message("messages__addressYears", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }

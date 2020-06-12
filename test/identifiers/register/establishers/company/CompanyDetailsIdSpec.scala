@@ -41,8 +41,8 @@ class CompanyDetailsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         CompanyDetailsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow(Message("messages__common__cya__name"),List("test company"),false,
-            Some(Link("site.change",onwardUrl,Some(Message("Change test company’s name")))))
+          AnswerRow(Message("messages__common__cya__name"), List("test company"),false,
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test company")))))
         ))
       }
     }
@@ -56,7 +56,7 @@ class CompanyDetailsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         CompanyDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__name"),List("test company"),false,
-            Some(Link("site.change",onwardUrl,Some(Message("Change test company’s name")))))
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test company")))))
         ))
       }
     }

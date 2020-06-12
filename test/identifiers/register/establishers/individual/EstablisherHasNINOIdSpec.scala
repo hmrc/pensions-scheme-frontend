@@ -36,10 +36,10 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
   private val personDetails = PersonName("first", "last")
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = Message("messages__hasNINO", personDetails.fullName).resolve,
+      label = Message("messages__hasNINO", personDetails.fullName),
       answer = Seq("site.no"),
       answerIsMessageKey = true,
-      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
+      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName))))
     )
   )
 

@@ -35,12 +35,12 @@ class CompanyEnterUTRIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__utr__checkyouranswerslabel"), List(utr), false, Some(Link("site.change",onwardUrl,
+    AnswerRow(Message("messages__utr__checkyouranswerslabel", name), List(utr), false, Some(Link("site.change",onwardUrl,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(Message("messages__utr__checkyouranswerslabel"), List(utr), false, None))
+    AnswerRow(Message("messages__utr__checkyouranswerslabel", name), List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
@@ -81,7 +81,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
       "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(Message("messages__utr__checkyouranswerslabel"),
+          val answerRowWithAddLink = AnswerRow(Message("messages__utr__checkyouranswerslabel", name),
             List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
               Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))

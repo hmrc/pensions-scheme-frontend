@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -114,11 +114,11 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
         implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            messages("messages__partnershipAddressYears__heading", name),
+            Message("messages__partnershipAddressYears__heading", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }
@@ -132,11 +132,11 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
         implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
-            messages("messages__partnershipAddressYears__heading", name),
+            Message("messages__partnershipAddressYears__heading", name),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", name))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", name))))
           )))
       }
     }

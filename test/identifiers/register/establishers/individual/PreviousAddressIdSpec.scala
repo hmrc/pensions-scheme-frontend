@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PreviousAddressIdSpec extends SpecBase {
 
@@ -105,18 +105,18 @@ object PreviousAddressIdSpec extends SpecBase with OptionValues {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      messages("messages__previousAddressFor", establisherName.fullName),
+      Message("messages__previousAddressFor", establisherName.fullName),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
     ))
 
   private val answerRowWithAddLink = Seq(
     AnswerRow(
-      messages("messages__previousAddressFor", establisherName.fullName),
+      Message("messages__previousAddressFor", establisherName.fullName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName.fullName))))
     ))
 
   private val answers: UserAnswers =

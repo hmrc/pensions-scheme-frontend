@@ -33,7 +33,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__common__cya__vat"),
+    AnswerRow(Message("messages__common__cya__vat", companyName),
       List("vat"),false,Some(Link("site.change",onwardUrl,
       Some(Message("messages__visuallyhidden__dynamic_vat_number", companyName)))))
   )
@@ -69,7 +69,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__common__cya__vat"), List("vat"),false, None)
+          AnswerRow(Message("messages__common__cya__vat", companyName), List("vat"),false, None)
         ))
       }
 
@@ -90,7 +90,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__common__cya__vat"), Seq("site.not_entered"), answerIsMessageKey = true,
+          AnswerRow(Message("messages__common__cya__vat", companyName), Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_vat_number", companyName)))))))
       }
     }

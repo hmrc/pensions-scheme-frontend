@@ -36,7 +36,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(Message("messages__checkYourAnswers__establishers__company__number"),
       List("companyRegistrationNumber"), false, Some(Link("site.change", onwardUrl,
-      Some(Message("messages__visuallyhidden__dynamic_crn", companyName)))))
+      Some(Message("messages__visuallyhidden__dynamic_crn", Message("messages__theCompany"))))))
   )
 
   "Cleanup" when {
@@ -100,7 +100,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
           AnswerRow(Message("messages__checkYourAnswers__establishers__company__number"),
             Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl,
-              Some(Message("messages__visuallyhidden__dynamic_crn", companyName)))))))
+              Some(Message("messages__visuallyhidden__dynamic_crn", Message("messages__theCompany"))))))))
       }
     }
   }

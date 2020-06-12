@@ -68,7 +68,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         status(result) mustBe OK
         contentAsString(result) mustBe
           viewAsString(companyDetailsAllValues(UpdateMode, srn)(request), UpdateMode, srn, postUrlUpdateMode,
-            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
 
@@ -79,7 +79,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         status(result) mustBe OK
         contentAsString(result) mustBe
           viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
-            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
 
@@ -90,7 +90,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         status(result) mustBe OK
         contentAsString(result) mustBe
           viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
-            title = Message("messages__detailsFor", Message("messages__theCompany").resolve),
+            title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
     }

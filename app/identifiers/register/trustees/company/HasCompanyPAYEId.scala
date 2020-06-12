@@ -44,8 +44,8 @@ object HasCompanyPAYEId {
 
     new CheckYourAnswersTrusteeCompany[HasCompanyPAYEId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
-        (dynamicMessage(index, ua, "messages__hasCRN"),
-          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasCrn"))
+        (dynamicMessage(index, ua, "messages__hasPAYE"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasPaye"))
       }
 
       override def row(id: HasCompanyPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {

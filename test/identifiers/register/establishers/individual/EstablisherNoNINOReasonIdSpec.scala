@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class EstablisherNoNINOReasonIdSpec extends SpecBase {
 
@@ -34,8 +34,8 @@ class EstablisherNoNINOReasonIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val name = "test name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__whyNoNINO", name),List("reason"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_noNinoReason", name)))))
+    AnswerRow(Message("messages__whyNoNINO", name),List("reason"),false,Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_noNinoReason", name)))))
   )
 
   "cya" when {

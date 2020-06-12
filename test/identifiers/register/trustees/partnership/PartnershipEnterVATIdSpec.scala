@@ -71,7 +71,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__enterVAT", partnershipName),List("vat"),false, None)
+          AnswerRow(Message("messages__enterVAT", partnershipName),List("vat"),false, None)
         ))
       }
 
@@ -88,8 +88,8 @@ class PartnershipEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__enterVAT", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)))))))
+          AnswerRow(Message("messages__enterVAT", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_vat_number", partnershipName)))))))
       }
     }
   }

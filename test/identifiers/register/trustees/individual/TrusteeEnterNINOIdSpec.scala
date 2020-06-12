@@ -83,7 +83,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__enterNINO", name), List("nino"),false, None)
+          AnswerRow(Message("messages__enterNINO", name), List("nino"),false, None)
         ))
       }
 
@@ -102,8 +102,8 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__enterNINO", name), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", name)))))))
+          AnswerRow(Message("messages__enterNINO", name), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", name)))))))
       }
     }
   }

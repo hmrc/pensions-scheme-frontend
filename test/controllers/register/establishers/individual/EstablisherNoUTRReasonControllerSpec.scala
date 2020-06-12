@@ -48,7 +48,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
   private val postCall = controllers.register.establishers.individual.routes.EstablisherNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = messages("messages__whyNoUTR", Message("messages__theIndividual")),
+    title = Message("messages__whyNoUTR", Message("messages__theIndividual")),
     heading = Message("messages__whyNoUTR", name),
     srn = None
   )

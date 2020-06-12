@@ -24,18 +24,18 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class TypeOfBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
   val name = "schemeName"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true,
-      Some(Link("site.change",onwardUrl, Some(messages("messages__visuallyhidden__type_of_benefits_change", name)))))
+    AnswerRow(Message("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true,
+      Some(Link("site.change",onwardUrl, Some(Message("messages__visuallyhidden__type_of_benefits_change", name)))))
   )
   private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(messages("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true)
+    AnswerRow(Message("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true)
   )
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
     _.set(TypeOfBenefitsId)(TypeOfBenefits.Defined)).asOpt.get

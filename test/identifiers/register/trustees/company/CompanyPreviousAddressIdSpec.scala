@@ -35,7 +35,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      Message(Message("messages__trusteePreviousAddress", companyDetails.companyName)),
+      Message("messages__trusteePreviousAddress", companyDetails.companyName),
       addressAnswer(address),
       answerIsMessageKey = false,
       Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyDetails.companyName))))

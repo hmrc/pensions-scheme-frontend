@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipHasVATIdSpec extends SpecBase {
 
@@ -84,8 +84,8 @@ object PartnershipHasVATIdSpec extends SpecBase {
   val name = "test partnership name"
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasVAT", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasVat", name)))))
+    AnswerRow(Message("messages__hasVAT", name), List("site.yes"), answerIsMessageKey = true, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_hasVat", name)))))
   )
 
   private val ua =

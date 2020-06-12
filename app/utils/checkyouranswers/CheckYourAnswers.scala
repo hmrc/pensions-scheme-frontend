@@ -244,14 +244,14 @@ object CheckYourAnswers {
       new CheckYourAnswers[I] {
         override def row(id: I)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
           ua.get(id).map { partnershipDetails =>
-          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false,
+          Seq(AnswerRow(Message("messages__common__cya__name"), Seq(partnershipDetails.name), answerIsMessageKey = false,
             Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__common__name",
               partnershipDetails.name))))))
         } getOrElse Seq.empty[AnswerRow]
 
         override def updateRow(id: I)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
           ua.get(id).map { partnershipDetails =>
-          Seq(AnswerRow("messages__common__cya__name", Seq(partnershipDetails.name), answerIsMessageKey = false, None))
+          Seq(AnswerRow(Message("messages__common__cya__name"), Seq(partnershipDetails.name), answerIsMessageKey = false, None))
         } getOrElse Seq.empty[AnswerRow]
       }
     }
@@ -317,9 +317,9 @@ case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Optio
 }
 
 case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: Message =
-                                                               "messages__establisher_address_years__title",
+                                                               Message("messages__establisher_address_years__title"),
                                                                changeAddressYears: Message =
-                                                               "messages__visuallyhidden__common__address_years") {
+                                                               Message("messages__visuallyhidden__common__address_years")) {
 
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -403,8 +403,8 @@ case class PreviousAddressCYA[I <: TypedIdentifier[Address]](label: Message,
 }
 
 case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
-                                                                   label: Message = "messages__company__cya__dormant",
-                                                                   changeIsDormant: Message = "messages__visuallyhidden__establisher__dormant"
+                                                                   label: Message = Message("messages__company__cya__dormant"),
+                                                                   changeIsDormant: Message = Message("messages__visuallyhidden__establisher__dormant")
                                                                  ) {
 
   def apply()(implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = {
@@ -439,7 +439,7 @@ case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
 }
 
 case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
-                                                                    nameLabel: Message = "messages__common__cya__name",
+                                                                    nameLabel: String = "messages__common__cya__name",
                                                                     hiddenNameLabel: String = "messages__visuallyhidden__common__name") {
 
   def apply()(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
@@ -447,14 +447,14 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map { companyDetails =>
-          Seq(AnswerRow(nameLabel, Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false,
+          Seq(AnswerRow(Message(nameLabel), Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false,
             Some(Link("site.change", changeUrl, Some(Message(hiddenNameLabel, companyDetails.companyName))))
           ))
         }.getOrElse(Seq.empty[AnswerRow])
 
       override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map { companyDetails =>
-          Seq(AnswerRow(nameLabel, Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
+          Seq(AnswerRow(Message(nameLabel), Seq(s"${companyDetails.companyName}"), answerIsMessageKey = false, None))
         }.getOrElse(Seq.empty[AnswerRow])
     }
   }
@@ -462,8 +462,8 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
 }
 
 case class ReferenceValueCYA[I <: TypedIdentifier[ReferenceValue]](
-                                                                    nameLabel: Message = "messages__common__cya__name",
-                                                                    hiddenNameLabel: Message = "messages__visuallyhidden__common__name") {
+                                                                    nameLabel: Message = Message("messages__common__cya__name"),
+                                                                    hiddenNameLabel: Message = Message("messages__visuallyhidden__common__name")) {
 
   def apply()(implicit rds: Reads[ReferenceValue]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {

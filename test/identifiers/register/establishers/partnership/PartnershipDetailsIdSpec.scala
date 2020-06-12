@@ -24,7 +24,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
 
 class PartnershipDetailsIdSpec extends SpecBase {
@@ -41,8 +41,8 @@ class PartnershipDetailsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         PartnershipDetailsId(0).row(onwardUrl, NormalMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name",List("test-partnership-name"),false,
-            Some(Link("site.change",onwardUrl,Some("Change test-partnership-name’s name"))))
+          AnswerRow(Message("messages__common__cya__name"), List("test-partnership-name"),false,
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test-partnership-name")))))
         ))
       }
     }
@@ -55,8 +55,8 @@ class PartnershipDetailsIdSpec extends SpecBase {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         PartnershipDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name",List("test-partnership-name"),false,
-            Some(Link("site.change",onwardUrl,Some("Change test-partnership-name’s name"))))
+          AnswerRow(Message("messages__common__cya__name"), List("test-partnership-name"),false,
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test-partnership-name")))))
         ))
       }
     }
@@ -68,7 +68,7 @@ class PartnershipDetailsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
 
         PartnershipDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__name",List("test-partnership-name"),false,None)
+          AnswerRow(Message("messages__common__cya__name"), List("test-partnership-name"),false,None)
         ))
       }
     }

@@ -34,7 +34,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__checkYourAnswers__trustees__company__number"),
+    AnswerRow(Message("messages__checkYourAnswers__trustees__company__number", name),
       List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
       Some(Message("messages__visuallyhidden__dynamic_crn", name)))))
   )
@@ -81,7 +81,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__checkYourAnswers__trustees__company__number"),
+          AnswerRow(Message("messages__checkYourAnswers__trustees__company__number", name),
             List("companyRegistrationNumber"),false, None)
         ))
       }
@@ -106,7 +106,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__checkYourAnswers__trustees__company__number"),
+          AnswerRow(Message("messages__checkYourAnswers__trustees__company__number", name),
             Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_crn", name)))))))
       }

@@ -49,7 +49,7 @@ object CompanyEnterCRNId {
       override def updateRow(id: CompanyEnterCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, label)().row(id)(changeUrl, userAnswers)
+          case Some(true) => ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
             ReferenceValueCYA[CompanyEnterCRNId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }

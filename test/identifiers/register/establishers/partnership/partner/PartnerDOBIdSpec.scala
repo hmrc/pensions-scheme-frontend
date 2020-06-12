@@ -21,11 +21,12 @@ import models.person.PersonName
 import models.requests.DataRequest
 import models.{Link, NormalMode, UpdateMode}
 import java.time.LocalDate
+
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, DateHelper, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
 
 class PartnerDOBIdSpec extends SpecBase {
@@ -34,8 +35,8 @@ class PartnerDOBIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   val date = LocalDate.now()
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))
+    AnswerRow(Message("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, Some(Link("site.change", onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_date_of_birth", "Test Name")))))
   )
 
   "cya" when {
@@ -66,7 +67,7 @@ class PartnerDOBIdSpec extends SpecBase {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
         PartnerDOBId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, None)
+          AnswerRow(Message("messages__DOB__heading", "Test Name"), List(DateHelper.formatDate(date)), false, None)
         ))
       }
     }

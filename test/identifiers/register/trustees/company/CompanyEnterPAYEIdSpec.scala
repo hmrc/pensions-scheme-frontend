@@ -33,7 +33,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__common__cya__paye"),
+    AnswerRow(Message("messages__common__cya__paye", companyName),
       List("paye"),false,Some(Link("site.change",onwardUrl,
       Some(Message("messages__visuallyhidden__dynamic_paye", companyName)))))
   )
@@ -72,7 +72,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__common__cya__paye"), List("paye"),false,None)
+          AnswerRow(Message("messages__common__cya__paye", companyName), List("paye"),false,None)
         ))
       }
 
@@ -94,7 +94,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
-          AnswerRow(Message("messages__common__cya__paye"), Seq("site.not_entered"), answerIsMessageKey = true,
+          AnswerRow(Message("messages__common__cya__paye", companyName), Seq("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_paye", companyName)))))))
       }
     }

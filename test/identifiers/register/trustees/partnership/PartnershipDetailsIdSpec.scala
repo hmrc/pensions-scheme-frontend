@@ -42,7 +42,7 @@ class PartnershipDetailsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         PartnershipDetailsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__name"),List("test-partnership-name"),false,
-            Some(Link("site.change",onwardUrl,Some(Message("Change test-partnership-name’s name")))))
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test-partnership-name")))))
         ))
       }
     }
@@ -56,7 +56,7 @@ class PartnershipDetailsIdSpec extends SpecBase {
         implicit val userAnswers = request.userAnswers
         PartnershipDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__name"),List("test-partnership-name"),false,
-            Some(Link("site.change",onwardUrl,Some(Message("Change test-partnership-name’s name")))))
+            Some(Link("site.change",onwardUrl,Some(Message("messages__visuallyhidden__common__name", "test-partnership-name")))))
         ))
       }
     }

@@ -25,15 +25,17 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class EstablisherEnterNINOIdSpec extends SpecBase {
 
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__enterNINO", messages("messages__theIndividual")), List("nino"), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", messages("messages__theIndividual"))))))
+    AnswerRow(Message("messages__enterNINO", Message("messages__theIndividual")),
+      List("nino"), false, Some(Link("site.change", onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_national_insurance_number",
+        Message("messages__theIndividual"))))))
   )
 
   "cya" when {
@@ -67,7 +69,8 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__enterNINO", messages("messages__theIndividual")), List("nino"), false, None)
+          AnswerRow(Message("messages__enterNINO", Message("messages__theIndividual")),
+            List("nino"), false, None)
         ))
       }
 
@@ -84,8 +87,11 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__enterNINO", messages("messages__theIndividual")), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_national_insurance_number", messages("messages__theIndividual"))))))))
+          AnswerRow(Message("messages__enterNINO", Message("messages__theIndividual")),
+            Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl,
+              Some(Message("messages__visuallyhidden__dynamic_national_insurance_number",
+                Message("messages__theIndividual"))))))))
       }
     }
   }

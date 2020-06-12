@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class DirectorEnterNINOIdSpec extends SpecBase {
 
@@ -41,10 +41,10 @@ class DirectorEnterNINOIdSpec extends SpecBase {
   private val onwardUrl                       = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      messages("messages__common__nino"),
+      Message("messages__common__nino", name),
       List("nino"),
       false,
-      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name))))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_nino", name))))
     )
   )
 
@@ -98,7 +98,7 @@ class DirectorEnterNINOIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__common__nino"),List("nino"),false, None)
+          AnswerRow(Message("messages__common__nino", name),List("nino"),false, None)
         ))
       }
 
@@ -115,8 +115,8 @@ class DirectorEnterNINOIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow(messages("messages__common__nino"), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_nino", name)))))))
+          AnswerRow(Message("messages__common__nino", name), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_nino", name)))))))
 
       }
     }
