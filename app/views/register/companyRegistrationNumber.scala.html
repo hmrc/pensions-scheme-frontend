@@ -39,16 +39,13 @@
 
         @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            messages(viewmodel.heading).toString
-        )
-
-        <p>@messages(viewmodel.hint)</p>
 
         @components.input_text(
             field = form("companyRegistrationNumber"),
-            label = messages("messages__common__crn"),
-            labelClass = Some("visually-hidden")
+            label = messages(viewmodel.heading).toString,
+            labelClass = Some("visually-hidden"),
+            paragraphText = Some(messages(viewmodel.hint)),
+            headingIsLegend = true
             )
         </div>
         @components.submit_button()

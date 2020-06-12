@@ -38,15 +38,13 @@
 
        @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-       @components.heading(
-            headingKey=messages("messages__companyName__heading")
-        )
-
 
        @components.input_text(
            field = form("companyName"),
-           label = messages("messages__common__company_name"),
-           labelClass = Some("visually-hidden")
+           label = messages("messages__companyName__heading"),
+           labelClass = Some("visually-hidden"),
+            headingIsLegend = true
+
        )
         </div>
        @components.submit_button()

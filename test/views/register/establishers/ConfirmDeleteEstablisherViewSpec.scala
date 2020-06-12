@@ -46,11 +46,11 @@ class ConfirmDeleteEstablisherViewSpec extends YesNoViewBehaviours {
     "have the correct hint text where specified" in {
       val hintText = "test hint"
       val doc = asDocument(createView(hintText = Some(hintText))())
-      assertRenderedByIdWithText(doc,"delete-hint", hintText)
+      assertRenderedByIdWithText(doc,"value-yesno-hint", hintText)
     }
     "have no hint text where not specified" in {
       val doc = asDocument(createView()())
-      assertNotRenderedById(doc,"delete-hint")
+      assertNotRenderedById(doc,"value-yesno-hint")
     }
   }
 }

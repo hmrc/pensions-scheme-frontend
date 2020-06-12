@@ -37,14 +37,12 @@
 
         @components.error_summary(form.errors)
         <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            messages(viewmodel.heading).toString
-        )
 
         @components.input_textarea(
             field = form("reason"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden")
+            label = messages(viewmodel.heading).toString,
+            labelClass = Some("visually-hidden"),
+            headingIsLegend = true
         )
         </div>
         @components.submit_button()

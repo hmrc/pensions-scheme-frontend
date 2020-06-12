@@ -40,7 +40,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         }
       }
     }
-    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+    yesNoPageNoLegend(createView, messageKeyPrefix, expectedFormAction, valueId)
   }
 
   def yesNoPageLegendWithH1(createView: Form[Boolean] => HtmlFormat.Appendable,
@@ -60,8 +60,9 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         }
       }
     }
-    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+    yesNoPageNoLegend(createView, messageKeyPrefix, expectedFormAction, valueId)
   }
+
 
 
   def yesNoPage(createView: Form[Boolean] => HtmlFormat.Appendable,
@@ -84,7 +85,7 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         }
       }
     }
-    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+    yesNoPageNoLegend(createView, messageKeyPrefix, expectedFormAction, valueId)
 
   }
 
@@ -105,11 +106,11 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
         }
       }
     }
-    yesNoPageMain(createView, messageKeyPrefix, expectedFormAction, valueId)
+    yesNoPageNoLegend(createView, messageKeyPrefix, expectedFormAction, valueId)
 
   }
 
-  private def yesNoPageMain(createView: Form[Boolean] => HtmlFormat.Appendable,
+  def yesNoPageNoLegend(createView: Form[Boolean] => HtmlFormat.Appendable,
                 messageKeyPrefix: String,
                 expectedFormAction: String,
                 valueId:String = "value"): Unit = {
