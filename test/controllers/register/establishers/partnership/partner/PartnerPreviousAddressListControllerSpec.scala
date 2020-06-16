@@ -107,6 +107,20 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
       }
     }
 
+    "redirect to the next page on POST of valid data" in {
+      running(_.overrides(modules(dataRetrievalAction) ++
+        Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        ): _*)) { app =>
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
+        val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe onwardRoute.url
+      }
+    }
+
     "redirect to Session Expired controller when no session data exists on a POST request" in {
       running(_.overrides(modules(dontGetAnyData) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
