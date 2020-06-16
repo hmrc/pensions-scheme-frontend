@@ -107,7 +107,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
       }
     }
 
-    "redirect to the next page on POST of valid data" ignore {
+    "redirect to the next page on POST of valid data" in {
       running(_.overrides(modules(dataRetrievalAction) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
