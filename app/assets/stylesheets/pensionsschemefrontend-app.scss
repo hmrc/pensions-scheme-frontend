@@ -151,7 +151,7 @@ Fix to remove links urls visible in print/pdfs
 a[href]::after { content: none !important; }
 
 header nav ul , #global-header .header-proposition a.menu {
- display: none;
+ display: none !important;
 }
 
  }
