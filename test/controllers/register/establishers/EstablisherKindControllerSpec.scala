@@ -78,15 +78,6 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherKind.values.head))
     }
 
-    "redirect to session expired from a GET when the index is invalid" ignore {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-
-      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, None)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", EstablisherKind.options.head.value))
 
