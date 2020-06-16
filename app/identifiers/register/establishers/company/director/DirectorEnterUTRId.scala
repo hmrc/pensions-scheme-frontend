@@ -19,11 +19,10 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorEnterUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath =
@@ -38,17 +37,15 @@ object DirectorEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorEnterUTRId] = {
 
     new CheckYourAnswersDirectors[DirectorEnterUTRId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__utr__checkyouranswerslabel")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex, directorIndex, ua,
-          "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
+        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
 
       override def row(id: DirectorEnterUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         ReferenceValueCYA(label(id.establisherIndex, id.directorIndex, userAnswers),

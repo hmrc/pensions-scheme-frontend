@@ -72,7 +72,7 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoNINOReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__whyNoNINO", Message("messages__theIndividual")),
       heading = Message("messages__whyNoNINO", name),
       srn = srn
     )

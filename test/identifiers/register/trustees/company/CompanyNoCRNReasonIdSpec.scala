@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyNoCRNReasonIdSpec extends SpecBase {
 
@@ -34,8 +34,8 @@ class CompanyNoCRNReasonIdSpec extends SpecBase {
   val reason = "some lame reason"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__whyNoCRN", name), List(reason), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_noCrnReason", name)))))
+    AnswerRow(Message("messages__whyNoCRN", name), List(reason), false, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_noCrnReason", name)))))
   )
 
   "cya" when {

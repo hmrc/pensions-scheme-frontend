@@ -16,10 +16,6 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import viewmodels.Message
 
-case class Link(text: String, target: String, visuallyHiddenText: Option[String] = None, id: Option[String] = None)
-
-object Link {
-  implicit val formats: OFormat[Link] = Json.format[Link]
-}
+case class Link(text: String, target: String, visuallyHiddenText: Option[Message] = None)

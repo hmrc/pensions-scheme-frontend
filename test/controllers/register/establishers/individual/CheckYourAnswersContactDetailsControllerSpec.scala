@@ -112,7 +112,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
-                title = Message("messages__contactDetailsFor", Message("messages__thePerson").resolve),
+                title = Message("messages__contactDetailsFor", Message("messages__thePerson")),
                 h1 = Message("messages__contactDetailsFor", establisherName.fullName))
           }
         }

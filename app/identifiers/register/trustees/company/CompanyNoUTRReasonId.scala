@@ -18,12 +18,11 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeCompany}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyNoUTRReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ CompanyNoUTRReasonId.toString
@@ -33,31 +32,27 @@ object CompanyNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyNoUTRReasonId] = {
 
-    def companyName(index: Int) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
+    new CheckYourAnswersTrusteeCompany[CompanyNoUTRReasonId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__whyNoUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noUtrReason"))
       }
 
-    def label(index: Int) =
-      Some(messages("messages__whyNoUTR", companyName(index)))
-
-    def hiddenLabel(index: Int) =
-      Some(messages("messages__visuallyhidden__dynamic_noUtrReason", companyName(index)))
-
-    new CheckYourAnswers[CompanyNoUTRReasonId] {
-      override def row(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
 
-      override def updateRow(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
+      }
     }
   }
 }

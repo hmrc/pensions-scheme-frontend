@@ -69,7 +69,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
-          title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
+          title = Message("messages__detailsFor", Message("messages__thePerson")),
           h1 = Message("messages__detailsFor", establisherName.fullName))
       }
 

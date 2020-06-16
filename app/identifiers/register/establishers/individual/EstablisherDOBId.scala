@@ -21,11 +21,10 @@ import java.time.LocalDate
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Link
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual}
 import utils.{DateHelper, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherDOBId(index: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherDOBId.toString
@@ -34,34 +33,31 @@ case class EstablisherDOBId(index: Int) extends TypedIdentifier[LocalDate] {
 object EstablisherDOBId {
   override def toString: String = "dateOfBirth"
 
-  implicit def cya(implicit answers: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherDOBId] = {
-    new CheckYourAnswers[EstablisherDOBId] {
+  implicit def cya(implicit answers: UserAnswers): CheckYourAnswers[EstablisherDOBId] = {
+    new CheckYourAnswersIndividual[EstablisherDOBId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__DOB__heading"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_date_of_birth"))
+      }
 
-      def establisherName(index: Int): String =
-        answers.get(EstablisherNameId(index))
-          .fold(messages("messages__thePerson"))(_.fullName)
-
-      def label(index: Int): String =
-        messages("messages__DOB__heading", establisherName(index))
-
-      def hiddenLabel(index: Int) =
-        Some(messages("messages__visuallyhidden__dynamic_date_of_birth", establisherName(index)))
-
-      override def row(id: EstablisherDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def row(id: EstablisherDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(id).fold(Nil: Seq[AnswerRow]) {
           dob => {
             Seq(
               AnswerRow(
-                label(id.index),
+                label,
                 Seq(DateHelper.formatDate(dob)),
                 answerIsMessageKey = false,
-                Some(Link("site.change", changeUrl, hiddenLabel(id.index)))
+                Some(Link("site.change", changeUrl, Some(hiddenLabel)))
               )
             )
           }
         }
+      }
 
-      override def updateRow(id: EstablisherDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: EstablisherDOBId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, _) = getLabel(id.index, userAnswers)
         userAnswers.get(IsEstablisherNewId(id.index)) match {
           case Some(true) =>
             row(id)(changeUrl, userAnswers)
@@ -69,7 +65,7 @@ object EstablisherDOBId {
             userAnswers.get(id).fold(Nil: Seq[AnswerRow]) { dob =>
               Seq(
                 AnswerRow(
-                  label(id.index),
+                  label,
                   Seq(DateHelper.formatDate(dob)),
                   answerIsMessageKey = false,
                   None
@@ -77,6 +73,7 @@ object EstablisherDOBId {
               )
             }
         }
+      }
     }
   }
 }

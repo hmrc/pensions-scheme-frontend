@@ -25,15 +25,15 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class HasCompanyCRNIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasCRN", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasCrn", name)))))
+    AnswerRow(Message("messages__hasCRN", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_hasCrn", name)))))
   )
 
   "cya" when {

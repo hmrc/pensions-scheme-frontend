@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class AdviserEmailIdSpec extends SpecBase with Enumerable.Implicits {
 
@@ -33,11 +33,11 @@ class AdviserEmailIdSpec extends SpecBase with Enumerable.Implicits {
   val email = "test@test.com"
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("adviserEmail.checkYourAnswersLabel", name),Seq(email), false,
-      Some(Link("site.change",onwardUrl, Some(messages("messages__visuallyhidden__adviserEmail", name)))))
+    AnswerRow(Message("adviserEmail.checkYourAnswersLabel", name),Seq(email), false,
+      Some(Link("site.change",onwardUrl, Some(Message("messages__visuallyhidden__adviserEmail", name)))))
   )
   private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(messages("adviserEmail.checkYourAnswersLabel", name),Seq(email), false)
+    AnswerRow(Message("adviserEmail.checkYourAnswersLabel", name),Seq(email), false)
   )
   val answers: UserAnswers = UserAnswers().set(AdviserEmailId)(email).flatMap(
     _.set(AdviserNameId)(name)).asOpt.get

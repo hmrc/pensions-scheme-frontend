@@ -18,12 +18,11 @@ package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual}
+import viewmodels.{AnswerRow, Message}
 
 case class EstablisherHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherHasNINOId.toString
@@ -40,24 +39,26 @@ case class EstablisherHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
 object EstablisherHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit ua: UserAnswers, messages: Messages): CheckYourAnswers[EstablisherHasNINOId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[EstablisherHasNINOId] = {
 
-    def establisherName(index: Int) =
-      ua.get(EstablisherNameId(index)).fold(messages("messages__thePerson"))(_.fullName)
+    new CheckYourAnswersIndividual[EstablisherHasNINOId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasNINO"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasNino"))
+      }
 
-    def label(index: Int): Option[String] = Some(messages("messages__hasNINO", establisherName(index)))
+      override def row(id: EstablisherHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasNino", establisherName(index)))
-
-    new CheckYourAnswers[EstablisherHasNINOId] {
-      override def row(id: EstablisherHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: EstablisherHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: EstablisherHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsEstablisherNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
+      }
     }
   }
 }

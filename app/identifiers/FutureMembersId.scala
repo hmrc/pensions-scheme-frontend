@@ -17,21 +17,21 @@
 package identifiers
 
 import models.Members
-import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.MembersCYA
+import viewmodels.Message
 
 case object FutureMembersId extends TypedIdentifier[Members] {
   self =>
   override def toString: String = "membershipFuture"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, rds: Reads[Members]): CheckYourAnswers[self
+  implicit def cya(implicit userAnswers: UserAnswers, rds: Reads[Members]): CheckYourAnswers[self
     .type] =
     MembersCYA[self.type](
-      label = Some(messages("messages__future_members_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__future_members_change", userAnswers.get(SchemeNameId)
+      label = Some(Message("messages__future_members_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(Message("messages__visuallyhidden__future_members_change", userAnswers.get(SchemeNameId)
         .getOrElse("")))
     )()
 }

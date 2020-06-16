@@ -78,7 +78,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
         val isNew = isNewItem(mode, userAnswers, IsEstablisherNewId(index))
 
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
-          Message("messages__detailsFor", Message("messages__thePerson").resolve)
+          Message("messages__detailsFor", Message("messages__thePerson"))
 
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,

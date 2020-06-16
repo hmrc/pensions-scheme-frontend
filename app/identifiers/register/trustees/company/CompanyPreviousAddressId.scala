@@ -19,11 +19,10 @@ package identifiers.register.trustees.company
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersTrusteeCompany, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ CompanyPreviousAddressId.toString
@@ -32,27 +31,26 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
-    def trusteeName(index: Int, ua: UserAnswers): String =
-      ua.get(CompanyDetailsId(index)).fold(messages("messages__theTrustee"))(_.companyName)
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
+    new CheckYourAnswersTrusteeCompany[CompanyPreviousAddressId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__trusteePreviousAddress"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_previousAddress"))
+      }
 
-    def label(index: Int, ua: UserAnswers) =
-      messages("messages__trusteePreviousAddress", trusteeName(index, ua))
+      override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, ua)
+        AddressCYA(label, hiddenLabel)().row(id)(changeUrl, ua)
+      }
 
-    def changeAddress(index: Int, ua: UserAnswers) =
-      messages("messages__visuallyhidden__dynamic_previousAddress", trusteeName(index, ua))
-
-    new CheckYourAnswers[CompanyPreviousAddressId] {
-      override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
-        AddressCYA(label(id.index, ua), changeAddress(id.index, ua))().row(id)(changeUrl, ua)
-
-      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =
-        PreviousAddressCYA(label(id.index, ua),
-          changeAddress(id.index, ua),
+      override def updateRow(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, ua)
+        PreviousAddressCYA(label,
+          hiddenLabel,
           ua.get(IsTrusteeNewId(id.index)),
           ua.get(CompanyConfirmPreviousAddressId(id.index))
         )().updateRow(id)(changeUrl, ua)
+      }
     }
   }
 }

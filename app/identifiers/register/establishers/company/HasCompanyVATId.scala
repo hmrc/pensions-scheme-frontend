@@ -23,7 +23,7 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasCompanyVATId.toString
@@ -41,14 +41,14 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyVATId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyVATId] = {
 
     new CheckYourAnswersCompany[HasCompanyVATId] {
 
-      private def label(index: Int, ua: UserAnswers): String =
+      private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__hasVAT")
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasVat")
 
       override def row(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -54,7 +54,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
-      title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
+      title = Message("messages__hasVAT", Message("messages__thePartnership")),
       heading = Message("messages__hasVAT", partnershipName),
       hint = None,
       srn = srn

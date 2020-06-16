@@ -35,11 +35,11 @@ class TrusteeNoUTRReasonIdSpec extends SpecBase with OptionValues {
   private val personDetails = PersonName("first", "last")
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      label = messages("messages__whyNoUTR", personDetails.fullName),
+      label = Message("messages__whyNoUTR", personDetails.fullName),
       answer = Seq("blah"),
       answerIsMessageKey = false,
       changeUrl = Some(Link("site.change", onwardUrl,
-        Some(messages("messages__visuallyhidden__dynamic_noUtrReason", personDetails.fullName))))
+        Some(Message("messages__visuallyhidden__dynamic_noUtrReason", personDetails.fullName))))
     )
   )
 

@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyEnterVATIdSpec extends SpecBase {
 
@@ -33,8 +33,9 @@ class CompanyEnterVATIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__common__cya__vat",List("vat"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_vat_number", companyName)))))
+    AnswerRow(Message("messages__common__cya__vat", companyName),
+      List("vat"),false,Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_vat_number", companyName)))))
   )
 
   "cya" when {
@@ -68,7 +69,7 @@ class CompanyEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat",List("vat"),false, None)
+          AnswerRow(Message("messages__common__cya__vat", companyName), List("vat"),false, None)
         ))
       }
 
@@ -89,8 +90,8 @@ class CompanyEnterVATIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__common__cya__vat", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_vat_number", companyName)))))))
+          AnswerRow(Message("messages__common__cya__vat", companyName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_vat_number", companyName)))))))
       }
     }
   }

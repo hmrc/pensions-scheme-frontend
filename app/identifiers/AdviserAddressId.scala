@@ -17,18 +17,18 @@
 package identifiers
 
 import models.address.Address
-import play.api.i18n.Messages
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, UserAnswers}
+import viewmodels.Message
 
 case object AdviserAddressId extends TypedIdentifier[Address] {
   self =>
   override def toString: String = "adviserAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, userAnswers: UserAnswers)
+  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers)
   : CheckYourAnswers[self.type] =
-    AddressCYA(label = messages("adviserAddress.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse("")),
-      changeAddress = messages("messages__visuallyhidden__adviser__address", userAnswers.get(AdviserNameId).getOrElse
+    AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse("")),
+      changeAddress = Message("messages__visuallyhidden__adviser__address", userAnswers.get(AdviserNameId).getOrElse
       ("")))()
 }
 

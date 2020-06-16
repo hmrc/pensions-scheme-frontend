@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyEnterUTRIdSpec extends SpecBase {
 
@@ -38,14 +38,16 @@ class CompanyEnterUTRIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
     AnswerRow(
-      "messages__utr__checkyouranswerslabel",
+      Message("messages__utr__checkyouranswerslabel"),
       List(utr),
       false,
-      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
+      Some(Link("site.change", onwardUrl,
+        Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
     )
   )
 
-  private val answerRowsWithoutChangeLink = Seq(AnswerRow("messages__utr__checkyouranswerslabel", List(utr), false, None))
+  private val answerRowsWithoutChangeLink = Seq(AnswerRow(Message("messages__utr__checkyouranswerslabel"),
+    List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers =
@@ -96,10 +98,10 @@ class CompanyEnterUTRIdSpec extends SpecBase {
 
         "return row with add link if there is no data available" in {
           val answerRowWithAddLink = AnswerRow(
-            "messages__utr__checkyouranswerslabel",
+            Message("messages__utr__checkyouranswerslabel"),
             List("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
           )
           val answers                           = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
           val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))

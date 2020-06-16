@@ -75,7 +75,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
           hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
           title = heading(Message("messages__informationFor_title")),
           h1 = heading(Message("messages__informationFor_heading",
-            existingSchemeName.getOrElse(Message("messages__theScheme").resolve)))
+            existingSchemeName.getOrElse(Message("messages__theScheme"))))
         )
 
         Future.successful(Ok(view(vm)))

@@ -22,8 +22,8 @@ import models.AddressYears
 import play.api.i18n.Messages
 import play.api.libs.json._
 import utils.UserAnswers
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersIndividual}
+import viewmodels.{AnswerRow, Message}
 
 case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
 
@@ -45,19 +45,16 @@ object AddressYearsId {
   override lazy val toString: String = "addressYears"
 
   implicit def cya(implicit messages: Messages, ua: UserAnswers): CheckYourAnswers[AddressYearsId] =
-    new CheckYourAnswers[AddressYearsId] {
+    new CheckYourAnswersIndividual[AddressYearsId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__addressYears"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_addressYears"))
+      }
       override def row(id: AddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val name = (index: Int) => ua.get(EstablisherNameId(index)).map(_.fullName)
-
-        val establisherName = name(id.index).getOrElse(messages("messages__theEstablisher"))
-
-        val label = messages("messages__addressYears", establisherName)
-
-        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", establisherName)
-
+        val (label, hiddenLabel) = getLabel(id.index, ua)
         AddressYearsCYA(
           label,
-          changeAddressYears
+          hiddenLabel
         )().row(id)(changeUrl, ua)
       }
 

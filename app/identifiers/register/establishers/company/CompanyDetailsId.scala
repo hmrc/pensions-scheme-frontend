@@ -19,7 +19,6 @@ package identifiers.register.establishers.company
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.CompanyDetails
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
@@ -32,7 +31,7 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 object CompanyDetailsId {
   override lazy val toString: String = "companyDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyDetailsId] = {
+  implicit def cya: CheckYourAnswers[CompanyDetailsId] = {
     new CheckYourAnswers[CompanyDetailsId] {
 
       override def row(id: CompanyDetailsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

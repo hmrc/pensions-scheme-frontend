@@ -19,7 +19,6 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.PartnershipDetails
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
@@ -34,7 +33,7 @@ object PartnershipDetailsId {
 
   override lazy val toString: String = "partnershipDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipDetailsId] = {
+  implicit def cya: CheckYourAnswers[PartnershipDetailsId] = {
 
     new CheckYourAnswers[PartnershipDetailsId] {
 

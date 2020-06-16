@@ -19,11 +19,10 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = TrusteesId(index).path \ CompanyEnterPAYEId.toString
@@ -32,35 +31,27 @@ case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue
 object CompanyEnterPAYEId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
-    new CheckYourAnswers[CompanyEnterPAYEId] {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
+    new CheckYourAnswersTrusteeCompany[CompanyEnterPAYEId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__common__cya__paye"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_paye"))
+      }
 
-      private def companyName(index: Int, userAnswers: UserAnswers) =
-        userAnswers.get(CompanyDetailsId(index)) match {
-          case Some(companyDetails) => companyDetails.companyName
-          case _ => messages("messages__theCompany")
-        }
+      override def row(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        ReferenceValueCYA[CompanyEnterPAYEId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+      }
 
-      private val labelPaye = "messages__common__cya__paye"
-
-      def hiddenLabelPaye(index: Int, userAnswers: UserAnswers) =
-        messages("messages__visuallyhidden__dynamic_paye", companyName(index, userAnswers))
-
-      override def row(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        ReferenceValueCYA[CompanyEnterPAYEId](labelPaye, hiddenLabelPaye(id.index, userAnswers))()
-          .row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: CompanyEnterPAYEId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => ReferenceValueCYA[CompanyEnterPAYEId](
-                              labelPaye,
-                              hiddenLabelPaye(id.index, userAnswers)
-                            )().row(id)(changeUrl, userAnswers)
+          case Some(true) =>
+            ReferenceValueCYA[CompanyEnterPAYEId](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
           case _ =>
-            ReferenceValueCYA[CompanyEnterPAYEId](labelPaye, hiddenLabelPaye(id.index, userAnswers))()
-              .updateRow(id)(changeUrl, userAnswers)
+            ReferenceValueCYA[CompanyEnterPAYEId](label, hiddenLabel)().updateRow(id)(changeUrl, userAnswers)
         }
+      }
     }
   }
 }

@@ -75,7 +75,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(mode,
         establisherIndex, directorIndex, srn),
-      title = Message("messages__hasNINO", Message("messages__theDirector").resolve),
+      title = Message("messages__hasNINO", Message("messages__theDirector")),
       heading = Message("messages__hasNINO", personName),
       hint = None,
       srn = srn

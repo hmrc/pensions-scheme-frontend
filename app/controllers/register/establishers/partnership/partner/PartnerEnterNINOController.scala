@@ -67,7 +67,7 @@ class PartnerEnterNINOController @Inject()(
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
-      title = Message("messages__enterNINO", Message("messages__thePartner").resolve),
+      title = Message("messages__enterNINO", Message("messages__thePartner")),
       heading = Message("messages__enterNINO", name),
       hint = Message("messages__common__nino_hint"),
       srn = srn

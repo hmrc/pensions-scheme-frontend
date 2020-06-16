@@ -62,7 +62,7 @@ class PartnershipEnterVATController @Inject()(
                        (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
-      title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
+      title = Message("messages__enterVAT", Message("messages__thePartnership")),
       heading = Message("messages__enterVAT", partnershipName),
       hint = Message("messages__enterVAT__hint", partnershipName),
       subHeading = None,

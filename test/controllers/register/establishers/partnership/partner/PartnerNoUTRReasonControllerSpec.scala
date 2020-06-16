@@ -84,7 +84,7 @@ object PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
     controllers.register.establishers.partnership.partner.routes.PartnerNoUTRReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
   private val viewModel = ReasonViewModel(
     postCall,
-    title = Message("messages__whyNoUTR", Message("messages__thePartner").resolve),
+    title = Message("messages__whyNoUTR", Message("messages__thePartner")),
     heading = Message("messages__whyNoUTR", "first last"),
     srn = srn
   )

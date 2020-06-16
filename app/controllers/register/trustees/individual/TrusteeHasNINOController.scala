@@ -61,7 +61,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
                        )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(mode, index, srn),
-      title = Message("messages__hasNINO", Message("messages__theIndividual").resolve),
+      title = Message("messages__hasNINO", Message("messages__theIndividual")),
       heading = Message("messages__hasNINO", personName),
       hint = None,
       srn = srn

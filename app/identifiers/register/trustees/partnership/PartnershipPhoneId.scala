@@ -18,12 +18,11 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteePartnership}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipPhoneId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath =
@@ -33,19 +32,18 @@ case class PartnershipPhoneId(index: Int) extends TypedIdentifier[String] {
 object PartnershipPhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers)
-  : CheckYourAnswers[PartnershipPhoneId] = new
-      CheckYourAnswers[PartnershipPhoneId] {
+  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[PartnershipPhoneId] = new
+      CheckYourAnswersTrusteePartnership[PartnershipPhoneId] {
+    def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+      (dynamicMessage(index, ua, "messages__enterPhoneNumber"),
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_phone_number"))
+    }
 
     override def row(id: PartnershipPhoneId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val trusteeName: String = userAnswers.get(PartnershipDetailsId(id.index))
-        .fold(messages("messages__thePartnership"))(_.name)
-      val label = messages("messages__enterPhoneNumber", trusteeName)
-      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName))
-
+      val (label, hiddenLabel) = getLabel(id.index, userAnswers)
       StringCYA(
         Some(label),
-        hiddenLabel
+        Some(hiddenLabel)
       )().row(id)(changeUrl, userAnswers)
     }
 

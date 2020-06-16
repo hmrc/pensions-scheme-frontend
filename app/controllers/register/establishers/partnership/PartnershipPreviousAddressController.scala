@@ -89,7 +89,7 @@ class PartnershipPreviousAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
-      title = Message(heading, Message("messages__thePartnership").resolve),
+      title = Message(heading, Message("messages__thePartnership")),
       heading = Message(heading, name),
       srn = srn
     )

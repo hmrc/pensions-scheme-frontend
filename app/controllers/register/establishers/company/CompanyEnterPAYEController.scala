@@ -75,7 +75,7 @@ class CompanyEnterPAYEController @Inject()(
                        (implicit request: DataRequest[AnyContent]): PayeViewModel =
     PayeViewModel(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
+      title = Message("messages__enterPAYE", Message("messages__theCompany")),
       heading = Message("messages__enterPAYE", companyName),
       hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,

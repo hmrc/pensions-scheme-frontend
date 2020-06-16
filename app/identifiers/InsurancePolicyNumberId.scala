@@ -17,32 +17,27 @@
 package identifiers
 
 import models.Link
-import play.api.i18n.Messages
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case object InsurancePolicyNumberId extends TypedIdentifier[String] {
   self =>
   override def toString: String = "insurancePolicyNumber"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
-    val label = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
-      Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId)
-        .getOrElse("")))
-    } else {
-      Some(messages("messages__insurance_policy_number__title"))
-    }
-    val hiddenLabel = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
-      Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId)
-        .getOrElse("")))
-    } else {
-      Some(messages("messages__visuallyhidden__insurance_policy_number_add"))
-    }
+      val label: Option[Message] = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
+        Some(Message("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+      } else {
+        Some(Message("messages__insurance_policy_number__title"))
+      }
+      val hiddenLabel = if (userAnswers.get(InsuranceCompanyNameId).isDefined) {
+        Some(Message("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+      } else {
+        Some(Message("messages__visuallyhidden__insurance_policy_number_add"))
+      }
 
     new CheckYourAnswers[self.type] {
 
@@ -55,7 +50,7 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
           case Some(_) => row(id)(changeUrl, userAnswers)
           case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(
-              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
               Seq("site.not_entered"),
               answerIsMessageKey = true,
               Some(Link("site.add", changeUrl, hiddenLabel))))

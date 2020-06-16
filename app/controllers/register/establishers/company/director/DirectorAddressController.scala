@@ -98,8 +98,8 @@ class DirectorAddressController @Inject()(
     ManualAddressViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),
       countryOptions.options,
-      title = Message(title.resolve, Message("messages__theDirector")),
-      heading = Message(heading.resolve, name),
+      title = Message(title, Message("messages__theDirector")),
+      heading = Message(heading, name),
       srn = srn
     )
 

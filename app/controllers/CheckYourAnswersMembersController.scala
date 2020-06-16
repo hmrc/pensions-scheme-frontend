@@ -67,8 +67,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
           hideEditLinks = request.viewOnly,
           srn = srn,
           hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-          title = heading(Message("messages__theScheme").resolve),
-          h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme").resolve))
+          title = heading(Message("messages__theScheme")),
+          h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
         )
 
         Future.successful(Ok(view(vm)))

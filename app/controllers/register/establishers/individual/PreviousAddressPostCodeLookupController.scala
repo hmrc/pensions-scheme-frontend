@@ -79,7 +79,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
               routes.PreviousAddressPostCodeLookupController.onSubmit(mode, index, srn),
               routes.PreviousAddressController.onPageLoad(mode, index, srn),
               title = Message("messages__establisher_individual_previous_address__heading", Message
-              ("messages__theIndividual").resolve),
+              ("messages__theIndividual")),
               heading = Message("messages__establisher_individual_previous_address__heading", details.fullName),
               subHeading = Some(details.fullName),
               srn = srn

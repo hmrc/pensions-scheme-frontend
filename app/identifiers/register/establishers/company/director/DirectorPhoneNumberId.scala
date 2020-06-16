@@ -23,7 +23,7 @@ import play.api.libs.json.JsPath
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorPhoneNumberId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
   override def path: JsPath =
@@ -36,15 +36,14 @@ object DirectorPhoneNumberId {
   override def toString: String = "phoneNumber"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorPhoneNumberId] = {
 
     new CheckYourAnswersDirectors[DirectorPhoneNumberId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__phone")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_phone")
 
       override def row(id: DirectorPhoneNumberId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

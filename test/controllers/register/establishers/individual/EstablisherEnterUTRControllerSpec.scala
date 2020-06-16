@@ -76,7 +76,7 @@ object EstablisherEnterUTRControllerSpec extends EstablisherEnterUTRControllerSp
 
   val viewModel = UTRViewModel(
     routes.EstablisherEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
-    title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
+    title = Message("messages__enterUTR", Message("messages__theIndividual")),
     heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),
     srn = srn

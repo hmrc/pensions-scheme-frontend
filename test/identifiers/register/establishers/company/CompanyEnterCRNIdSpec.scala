@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyEnterCRNIdSpec extends SpecBase {
 
@@ -34,8 +34,9 @@ class CompanyEnterCRNIdSpec extends SpecBase {
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val onwardUrl = "onwardUrl"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false,Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_crn", companyName)))))
+    AnswerRow(Message("messages__checkYourAnswers__establishers__company__number"),
+      List("companyRegistrationNumber"), false, Some(Link("site.change", onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_crn", Message("messages__theCompany"))))))
   )
 
   "Cleanup" when {
@@ -79,7 +80,7 @@ class CompanyEnterCRNIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__establishers__company__number",List("companyRegistrationNumber"),false, None)
+          AnswerRow(Message("messages__checkYourAnswers__establishers__company__number"), List("companyRegistrationNumber"), false, None)
         ))
       }
 
@@ -96,8 +97,10 @@ class CompanyEnterCRNIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterCRNId(0).row(onwardUrl, UpdateMode) must equal(Seq(
-          AnswerRow("messages__checkYourAnswers__establishers__company__number", Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_crn", companyName)))))))
+          AnswerRow(Message("messages__checkYourAnswers__establishers__company__number"),
+            Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl,
+              Some(Message("messages__visuallyhidden__dynamic_crn", Message("messages__theCompany"))))))))
       }
     }
   }

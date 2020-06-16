@@ -18,4 +18,4 @@ package viewmodels
 
 import models.Link
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[Link] = None)
+case class AnswerRow(label: Message, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[Link] = None)

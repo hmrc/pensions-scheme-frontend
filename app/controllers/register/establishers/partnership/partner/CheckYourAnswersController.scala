@@ -112,7 +112,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val isNew = isNewItem(mode, request.userAnswers, IsNewPartnerId(establisherIndex, partnerIndex))
 
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
-          Message("messages__detailsFor", Message("messages__thePartner").resolve)
+          Message("messages__detailsFor", Message("messages__thePartner"))
 
         val vm = CYAViewModel(
           answerSections = answers,

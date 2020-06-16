@@ -21,9 +21,9 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.checkyouranswers.{CheckYourAnswers, ReferenceValueCYA}
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipEnterUTRId.toString
@@ -35,17 +35,13 @@ case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
 
-    def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-      val partnershipName =
-        ua.get(PartnershipDetailsId(index)).fold(messages("messages__thePartnership"))(_.name)
-          (messages("messages__enterUTR", partnershipName),
-            messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName))
-    }
-
-    new CheckYourAnswers[PartnershipEnterUTRId] {
+    new CheckYourAnswersPartnership[PartnershipEnterUTRId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__enterUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference"))
+      }
       override def row(id: PartnershipEnterUTRId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, hiddenLabel) = getLabel(id.index, ua)
         ReferenceValueCYA[PartnershipEnterUTRId](label, hiddenLabel)().row(id)(changeUrl, ua)

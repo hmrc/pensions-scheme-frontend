@@ -57,7 +57,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(companyAddressUpdate, srn, postUrlUpdateMode,
-          title = Message("messages__addressFor", Message("messages__theCompany").resolve),
+          title = Message("messages__addressFor", Message("messages__theCompany")),
           h1 = Message("messages__addressFor", companyName))
       }
 
@@ -68,7 +68,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(companyAddressUpdatePartial, srn, postUrlUpdateMode,
-          title = Message("messages__addressFor", Message("messages__theCompany").resolve),
+          title = Message("messages__addressFor", Message("messages__theCompany")),
           h1 = Message("messages__addressFor", companyName))
       }
     }

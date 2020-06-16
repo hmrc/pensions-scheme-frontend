@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CompanyAddressYearsIdSpec extends SpecBase {
 
@@ -80,11 +80,11 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
-            messages("messages__trusteeAddressYears__heading", companyName),
+            Message("messages__trusteeAddressYears__heading", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }
@@ -102,11 +102,11 @@ class CompanyAddressYearsIdSpec extends SpecBase {
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            messages("messages__trusteeAddressYears__heading", companyName),
+            Message("messages__trusteeAddressYears__heading", companyName),
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }

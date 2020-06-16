@@ -69,7 +69,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
-      title = Message("messages__hasUTR", Message("messages__thePartnership").resolve),
+      title = Message("messages__hasUTR", Message("messages__thePartnership")),
       heading = Message("messages__hasUTR", partnershipName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn

@@ -32,21 +32,21 @@ object CheckYourAnswersControllerHelper {
                                                   messages: Messages, reads: Reads[PersonName]): String =
     request.userAnswers.get(id) match {
       case Some(name) => name.fullName
-      case _ => Message("messages__thePerson").resolve
+      case _ => Message("messages__thePerson")
     }
 
   def companyName(id: TypedIdentifier[CompanyDetails])(implicit request: DataRequest[AnyContent],
                                                        messages: Messages, reads: Reads[PersonName]): String =
     request.userAnswers.get(id) match {
       case Some(name) => name.companyName
-      case _ => Message("messages__theCompany").resolve
+      case _ => Message("messages__theCompany")
     }
 
   def partnershipName(id: TypedIdentifier[PartnershipDetails])(implicit request: DataRequest[AnyContent],
                                                                messages: Messages, reads: Reads[PersonName]): String =
     request.userAnswers.get(id) match {
       case Some(name) => name.name
-      case _ => Message("messages__thePartnership").resolve
+      case _ => Message("messages__thePartnership")
     }
 
   def headingDetails(mode: Mode, name: => String, isNew: Boolean)(implicit messages: Messages): Message =

@@ -35,7 +35,7 @@ case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
     }
   }
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions)
+  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions)
   : CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {

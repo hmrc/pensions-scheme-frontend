@@ -38,7 +38,7 @@ class PartnerHasNINOIdSpec extends SpecBase {
       answer = Seq("site.no"),
       answerIsMessageKey = true,
       changeUrl = Some(Link("site.change", onwardUrl,
-        Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
+        Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName))))
     )
   )
 
@@ -88,7 +88,6 @@ class PartnerHasNINOIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
-
 
         PartnerHasNINOId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }

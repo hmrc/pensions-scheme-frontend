@@ -37,7 +37,8 @@ class DirectorHasNINOIdSpec extends SpecBase {
       label = Message("messages__hasNINO", personDetails.fullName),
       answer = Seq("site.no"),
       answerIsMessageKey = true,
-      changeUrl = Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName).resolve)))
+      changeUrl = Some(Link("site.change", onwardUrl,
+        Some(Message("messages__visuallyhidden__dynamic_hasNino", personDetails.fullName))))
     )
   )
 

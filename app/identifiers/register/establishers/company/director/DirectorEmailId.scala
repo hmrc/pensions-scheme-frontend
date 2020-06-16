@@ -18,17 +18,14 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorEmailId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
-  override def path: JsPath =
-    EstablishersId(establisherIndex)
-      .path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorEmailId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ "directorContactDetails" \ DirectorEmailId.toString
 }
 
 
@@ -36,15 +33,14 @@ object DirectorEmailId {
   override def toString: String = "emailAddress"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[DirectorEmailId] = {
 
     new CheckYourAnswersDirectors[DirectorEmailId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__email_address")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_email")
 
       override def row(id: DirectorEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

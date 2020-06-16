@@ -19,11 +19,10 @@ package identifiers.register.establishers.partnership.partner
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPartners, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerPreviousAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath =
@@ -34,21 +33,15 @@ case class PartnerPreviousAddressId(establisherIndex: Int, partnerIndex: Int) ex
 object PartnerPreviousAddressId {
   override def toString: String = "partnerPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages): CheckYourAnswers[PartnerPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerPreviousAddressId] = {
 
     new CheckYourAnswersPartners[PartnerPreviousAddressId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex,
-          partnerIndex,
-          ua,
-          "messages__previousAddress__cya")
+      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Message =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__previousAddress__cya")
 
-      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex,
-          partnerIndex,ua,
-          "messages__visuallyhidden__dynamic_previousAddress")
+      private def hiddenLabel(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Message =
+        dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
 
       override def row(id: PartnerPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressCYA(label(id.establisherIndex, id.partnerIndex, userAnswers),

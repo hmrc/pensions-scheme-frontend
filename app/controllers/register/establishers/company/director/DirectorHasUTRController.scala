@@ -64,7 +64,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode,
         establisherIndex, directorIndex, srn),
-      title = Message("messages__hasUTR", Message("messages__theDirector").resolve),
+      title = Message("messages__hasUTR", Message("messages__theDirector")),
       heading = Message("messages__hasUTR", personName),
       hint = Some(Message("messages__hasUtr__p1")),
       srn = srn

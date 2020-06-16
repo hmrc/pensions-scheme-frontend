@@ -18,12 +18,11 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipHasUTRId.toString
@@ -40,16 +39,16 @@ case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasUTRId] = {
+  implicit def cya: CheckYourAnswers[PartnershipHasUTRId] = {
 
-    new CheckYourAnswers[PartnershipHasUTRId] {
+    new CheckYourAnswersPartnership[PartnershipHasUTRId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasUtr"))
+      }
       override def row(id: PartnershipHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-        val partnershipName = userAnswers.get(PartnershipDetailsId(id.index)).fold(messages
-        ("messages__thePartnership"))(_.name)
-        val label = Some(messages("messages__hasUTR", partnershipName))
-        val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName))
-
-        BooleanCYA(label, hiddenLabel)().row(id)(changeUrl, userAnswers)
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
       }
 
       override def updateRow(id: PartnershipHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -76,7 +76,7 @@ class PartnerEnterUTRController @Inject()(
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit
       (mode, establisherIndex, partnerIndex, srn),
-      title = Message("messages__enterUTR", Message("messages__thePartner").resolve),
+      title = Message("messages__enterUTR", Message("messages__thePartner")),
       heading = Message("messages__enterUTR", partnerName),
       hint = Message("messages_utr__hint"),
       srn = srn

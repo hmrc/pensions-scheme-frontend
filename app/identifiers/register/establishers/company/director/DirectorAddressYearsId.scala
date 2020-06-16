@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersDirectors}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
 
@@ -47,16 +47,16 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
 object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[DirectorAddressYearsId] = {
+  implicit def cya: CheckYourAnswers[DirectorAddressYearsId] = {
 
     new CheckYourAnswersDirectors[DirectorAddressYearsId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): Message =
+          dynamicMessage(establisherIndex, directorIndex, ua, "messages__director__cya__address_years")
 
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
-        dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): Message =
+          dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 
       override def row(id: DirectorAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressYearsCYA(label(id.establisherIndex, id.directorIndex, userAnswers),

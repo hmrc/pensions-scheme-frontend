@@ -21,7 +21,7 @@ import viewmodels.Message
 
 class HasPAYEFormProviderSpec extends FormSpec with SpecBase {
 
-  val requiredKey = Message("messages__companyPayeRef__error__required", "ABC").resolve
+  val requiredKey = Message("messages__companyPayeRef__error__required", "ABC")
   val invalidKey = "error.boolean"
 
   def formProvider(companyName:String) = new HasPAYEFormProvider()("messages__companyPayeRef__error__required", companyName)

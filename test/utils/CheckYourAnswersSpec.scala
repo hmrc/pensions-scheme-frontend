@@ -64,16 +64,16 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
           implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")), PsaId("A0000000"))
 
-          testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"),
-            false, Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__testId"))))))
+          testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow(Message("testId.checkYourAnswersLabel"), Seq("value"),
+            false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__testId")))))))
         }
       }
 
       "boolean" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
 
-        testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"),
-          true, Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__testId"))))))
+        testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow(Message("testId.checkYourAnswersLabel"), Seq("site.yes"),
+          true, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__testId")))))))
       }
 
       "members" in {
@@ -81,8 +81,8 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
         testIdentifier[Members].row(onwardUrl) must equal(Seq(AnswerRow(
-          "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true,
-          Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__testId"))))))
+          Message("testId.checkYourAnswersLabel"), Seq(s"messages__members__$membershipVal"), true,
+          Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__testId")))))))
       }
 
       "companyDetails" in {
@@ -94,7 +94,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         )), PsaId("A0000000"))
 
         testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
-          "messages__common__cya__name",
+          Message("messages__common__cya__name"),
           Seq(companyDetails.companyName),
           false,
           Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", "Company Name"))))
@@ -126,10 +126,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         testIdentifier[Address].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__address",
+            Message("messages__common__cya__address"),
             addressAnswer(address),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__address")))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__address"))))
           )))
       }
 
@@ -140,10 +140,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__establisher_address_years__title",
+          Message("messages__establisher_address_years__title"),
           Seq(s"messages__common__$addressYears"),
           true,
-          Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__address_years")))
+          Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__address_years"))))
         )))
 
       }
@@ -155,10 +155,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
           testIdentifier[DeclarationDormant].row(onwardUrl) must equal(Seq(
             AnswerRow(
-              "messages__company__cya__dormant",
+              Message("messages__company__cya__dormant"),
               Seq("site.yes"),
               true,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__dormant")))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__establisher__dormant"))))
             )
           ))
         }
@@ -168,10 +168,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
           testIdentifier[DeclarationDormant].row(onwardUrl) must equal(Seq(
             AnswerRow(
-              "messages__company__cya__dormant",
+              Message("messages__company__cya__dormant"),
               Seq("site.no"),
               true,
-              Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__establisher__dormant")))
+              Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__establisher__dormant"))))
             )
           ))
         }
@@ -183,10 +183,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         testIdentifier[PartnershipDetails].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__name",
+            Message("messages__common__cya__name"),
             Seq(s"${partnershipDetails.name}"),
             false,
-            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name).resolve))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name", partnershipDetails.name)))
             ))))
       }
 
@@ -199,10 +199,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         )), PsaId("A0000000"))
 
         testIdentifier[ReferenceValue].row("onwardUrl") must equal(Seq(AnswerRow(
-          "messages__common__cya__name",
+          Message("messages__common__cya__name"),
           Seq(reference.value),
           false,
-          Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__name")))
+          Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name"))))
         )))
       }
     }
@@ -214,7 +214,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
         testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
-          "testId.checkYourAnswersLabel", Seq(s"messages__members__$membershipVal"), true, None)))
+          Message("testId.checkYourAnswersLabel"), Seq(s"messages__members__$membershipVal"), true, None)))
       }
 
       "partnershipDetails without change url" in {
@@ -223,7 +223,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         testIdentifier[PartnershipDetails].row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
-            "messages__common__cya__name",
+            Message("messages__common__cya__name"),
             Seq(s"${partnershipDetails.name}"),
             false,
             None
@@ -251,7 +251,8 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
       "boolean without change url" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
 
-        testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, None)))
+        testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
+          Message("testId.checkYourAnswersLabel"), Seq("site.yes"), true, None)))
       }
 
       "reference" must {
@@ -263,7 +264,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
           )), PsaId("A0000000"))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
-            "messages__common__cya__name",
+            Message("messages__common__cya__name"),
             Seq(reference.value),
             false,
             None
@@ -278,10 +279,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
           )), PsaId("A0000000"))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
-            "messages__common__cya__name",
+            Message("messages__common__cya__name"),
             Seq(reference.value),
             false,
-            Some(Link("site.change", onwardUrl, Some("messages__visuallyhidden__common__name")))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__common__name"))))
           )))
         }
 
@@ -290,10 +291,10 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
             UserAnswers(Json.obj()), PsaId("A0000000"))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
-            "messages__common__cya__name",
+            Message("messages__common__cya__name"),
             Seq("site.not_entered"),
             true,
-            Some(Link("site.add", onwardUrl, Some("messages__visuallyhidden__common__name")))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__common__name"))))
           )))
         }
       }

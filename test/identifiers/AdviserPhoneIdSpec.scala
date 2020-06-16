@@ -23,7 +23,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
 
 class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
@@ -33,11 +33,11 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
   val phone = "0111"
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("adviserPhone.checkYourAnswersLabel", name),Seq(phone), false,
-      Some(Link("site.change",onwardUrl, Some(messages("messages__visuallyhidden__adviserPhone", name)))))
+    AnswerRow(Message("adviserPhone.checkYourAnswersLabel", name),Seq(phone), false,
+      Some(Link("site.change",onwardUrl, Some(Message("messages__visuallyhidden__adviserPhone", name)))))
   )
   private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(messages("adviserPhone.checkYourAnswersLabel", name),Seq(phone), false)
+    AnswerRow(Message("adviserPhone.checkYourAnswersLabel", name),Seq(phone), false)
   )
   val answers: UserAnswers = UserAnswers().set(AdviserPhoneId)(phone).flatMap(
     _.set(AdviserNameId)(name)).asOpt.get

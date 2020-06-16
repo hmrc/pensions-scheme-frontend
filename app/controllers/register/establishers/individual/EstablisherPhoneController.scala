@@ -66,7 +66,7 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
           name =>
             CommonFormWithHintViewModel(
               EstablisherPhoneController.onSubmit(mode, index, srn),
-              Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
+              Message("messages__enterPhoneNumber", Message("messages__theIndividual")),
               Message("messages__enterPhoneNumber", name.fullName),
               Some(Message("messages__contact_details__hint", name.fullName)),
               srn = srn

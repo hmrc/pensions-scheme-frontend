@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersCompany, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId(index).path \ CompanyPreviousAddressId.toString
@@ -32,14 +32,14 @@ case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages): CheckYourAnswers[CompanyPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] = {
+
     new CheckYourAnswersCompany[CompanyPreviousAddressId] {
 
-      private def label(index: Int, ua: UserAnswers): String =
+      private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__previousAddress__cya")
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_previousAddress")
 
       override def row(id: CompanyPreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] =

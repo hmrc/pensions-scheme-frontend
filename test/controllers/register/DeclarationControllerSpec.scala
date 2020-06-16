@@ -23,8 +23,8 @@ import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
 import identifiers.HaveAnyTrusteesId
 import identifiers.register.DeclarationDormantId
-import models.{MinimalPSA, NormalMode}
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
+import models.{MinimalPSA, NormalMode}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

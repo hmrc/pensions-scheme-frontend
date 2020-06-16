@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class InvestmentRegulatedSchemeIdSpec extends SpecBase {
 
@@ -33,11 +33,11 @@ class InvestmentRegulatedSchemeIdSpec extends SpecBase {
   val investmentScheme = "investmentRegulated"
   implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__investment_regulated_scheme__h1", name),Seq("site.yes"), true,
-      Some(Link("site.change",onwardUrl, Some(messages("messages__visuallyhidden__investmentRegulated", name)))))
+    AnswerRow(Message("messages__investment_regulated_scheme__h1", name),Seq("site.yes"), true,
+      Some(Link("site.change",onwardUrl, Some(Message("messages__visuallyhidden__investmentRegulated", name)))))
   )
   private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(messages("messages__investment_regulated_scheme__h1", name),Seq("site.yes"), true)
+    AnswerRow(Message("messages__investment_regulated_scheme__h1", name),Seq("site.yes"), true)
   )
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
     _.set(InvestmentRegulatedSchemeId)(true)).asOpt.get

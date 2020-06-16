@@ -18,22 +18,22 @@ package identifiers
 
 import models.register.SchemeType
 import models.register.SchemeType.{MasterTrust, SingleTrust}
-import play.api.i18n.Messages
 import play.api.libs.json.JsResult
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.SchemeTypeCYA
 import utils.{CountryOptions, UserAnswers}
+import viewmodels.Message
 
 object SchemeTypeId extends TypedIdentifier[SchemeType] {
   self =>
 
   private val singleOrMasterTrustTypes = Seq(SingleTrust, MasterTrust)
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+  implicit def cya(implicit countryOptions: CountryOptions,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     SchemeTypeCYA[self.type](
-      label = Some(messages("schemeType.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__schemeType", userAnswers.get(SchemeNameId)
+      label = Some(Message("schemeType.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(Message("messages__visuallyhidden__schemeType", userAnswers.get(SchemeNameId)
         .getOrElse("")))
     )()
 

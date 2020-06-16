@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipHasPAYEIdSpec extends SpecBase {
   
@@ -93,8 +93,8 @@ object PartnershipHasPAYEIdSpec extends SpecBase {
   val name = "test partnership name"
 
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasPAYE", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasPaye", name)))))
+    AnswerRow(Message("messages__hasPAYE", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_hasPaye", name)))))
   )
 
   private def ua(v:Boolean) = UserAnswers(Json.obj())

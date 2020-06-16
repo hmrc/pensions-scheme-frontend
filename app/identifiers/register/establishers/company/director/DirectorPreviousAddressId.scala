@@ -19,11 +19,10 @@ package identifiers.register.establishers.company.director
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json._
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersDirectors, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
   override def path: JsPath =
@@ -33,15 +32,14 @@ case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) 
 object DirectorPreviousAddressId {
   override def toString: String = "previousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages): CheckYourAnswers[DirectorPreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorPreviousAddressId] = {
 
     new CheckYourAnswersDirectors[DirectorPreviousAddressId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__previousAddressFor")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_previousAddress")
 
       override def row(id: DirectorPreviousAddressId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

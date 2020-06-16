@@ -87,7 +87,7 @@ object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasNINO", Message("messages__theDirector").resolve),
+    title = Message("messages__hasNINO", Message("messages__theDirector")),
     heading = Message("messages__hasNINO", "first last"),
     hint = None
   )

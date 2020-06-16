@@ -25,15 +25,15 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class HasCompanyEnterUTRIdSpec extends SpecBase {
 
   val onwardUrl = "onwardUrl"
   val name = "test company name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__hasUTR", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_hasUtr", name)))))
+    AnswerRow(Message("messages__hasUTR", name), List("site.yes"), true, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_hasUtr", name)))))
   )
 
   "cya" when {

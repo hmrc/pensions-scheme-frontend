@@ -70,7 +70,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                        (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(mode, index, srn),
-      title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
+      title = Message("messages__hasVAT", Message("messages__theCompany")),
       heading = Message("messages__hasVAT", companyName),
       hint = Some(Message("messages__hasCompanyVat__p1", companyName)),
       srn = srn

@@ -16,22 +16,21 @@
 
 package identifiers
 
-import play.api.i18n.Messages
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.Message
 
 case object OccupationalPensionSchemeId extends TypedIdentifier[Boolean] {
   self =>
   override def toString: String = "occupationalPensionScheme"
 
   implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
-      label = Some(messages("messages__occupational_pension_scheme__h1", userAnswers.get(SchemeNameId).getOrElse(""))),
+      label = Some(Message("messages__occupational_pension_scheme__h1", userAnswers.get(SchemeNameId).getOrElse(""))),
       hiddenLabel = Some(
-        messages(
+        Message(
           "messages__visuallyhidden__occupationalPensionScheme",
           userAnswers.get(SchemeNameId).getOrElse("")
         )

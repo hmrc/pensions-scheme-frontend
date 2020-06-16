@@ -42,7 +42,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
 
   private val viewModel = ReasonViewModel(
     postCall = postCall,
-    title = Message("messages__whyNoNINO", Message("messages__thePartner").resolve),
+    title = Message("messages__whyNoNINO", Message("messages__thePartner")),
     heading = Message("messages__whyNoNINO", name),
     srn = srn
   )

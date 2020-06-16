@@ -19,11 +19,10 @@ package identifiers.register.trustees.company
 import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json._
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersTrusteeCompany}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ CompanyAddressId.toString
@@ -32,17 +31,18 @@ case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
 object CompanyAddressId {
   override def toString: String = "companyAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[CompanyAddressId] =
-    new CheckYourAnswers[CompanyAddressId] {
-
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyAddressId] =
+    new CheckYourAnswersTrusteeCompany[CompanyAddressId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__trusteeAddress"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_address"))
+      }
       override def row(id: CompanyAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(CompanyDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.companyName)
-        val label = messages("messages__trusteeAddress", trusteeName)
-        val changeAddress = messages("messages__visuallyhidden__dynamic_address", trusteeName)
+        val (label, hiddenLabel) = getLabel(id.index, ua)
 
         AddressCYA(
           label = label,
-          changeAddress = changeAddress
+          changeAddress = hiddenLabel
         )().row(id)(changeUrl, ua)
       }
 

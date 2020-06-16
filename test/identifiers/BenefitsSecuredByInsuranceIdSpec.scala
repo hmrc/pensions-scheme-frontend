@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
@@ -123,8 +123,8 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with S
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
-          "securedBenefits.checkYourAnswersLabel",List("site.yes"),true,Some(Link("site.change",
-            onwardUrl,Some("messages__visuallyhidden__securedBenefits"))))))
+          Message("securedBenefits.checkYourAnswersLabel"), List("site.yes"),true,Some(Link("site.change",
+            onwardUrl,Some(Message("messages__visuallyhidden__securedBenefits")))))))
       }
     }
   }

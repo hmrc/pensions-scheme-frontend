@@ -19,7 +19,6 @@ package identifiers.register.establishers.company
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.AddressYears
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersCompany}
@@ -45,20 +44,14 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object CompanyAddressYearsId {
   override lazy val toString: String = "companyAddressYears"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[CompanyAddressYearsId] = {
-
-    def companyName(index: Int, userAnswers: UserAnswers) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
-      }
+  implicit def cya: CheckYourAnswers[CompanyAddressYearsId] = {
 
     new CheckYourAnswersCompany[CompanyAddressYearsId] {
 
-      private def label(establisherIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, ua, "messages__company_address_years__h1")
 
-      private def hiddenLabel(establisherIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, ua: UserAnswers): Message =
         dynamicMessage(establisherIndex, ua, "messages__visuallyhidden__dynamic_addressYears")
 
       override def row(id: CompanyAddressYearsId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

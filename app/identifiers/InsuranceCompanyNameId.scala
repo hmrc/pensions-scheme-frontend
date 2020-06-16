@@ -17,12 +17,11 @@
 package identifiers
 
 import models.Link
-import play.api.i18n.Messages
 import play.api.libs.json.JsResult
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case object InsuranceCompanyNameId extends TypedIdentifier[String] {
   self =>
@@ -43,7 +42,6 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
   }
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {
@@ -57,10 +55,10 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
           case Some(_) => row(id)(changeUrl, userAnswers)
           case _ => userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case Some(true) => Seq(AnswerRow(
-              "insuranceCompanyName.checkYourAnswersLabel",
+              Message("insuranceCompanyName.checkYourAnswersLabel"),
               Seq("site.not_entered"),
               answerIsMessageKey = true,
-              Some(Link("site.add", changeUrl, Some(messages("messages__visuallyhidden__insuranceCompanyName"))))))
+              Some(Link("site.add", changeUrl, Some(Message("messages__visuallyhidden__insuranceCompanyName"))))))
             case _ => Seq.empty[AnswerRow]
           }
         }

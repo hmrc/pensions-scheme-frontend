@@ -19,11 +19,10 @@ package identifiers.register.trustees.individual
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, PreviousAddressCYA}
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersTrusteeIndividual, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressId.toString
@@ -32,18 +31,14 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
 object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   messages: Messages): CheckYourAnswers[TrusteePreviousAddressId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] = {
 
-    def getLabel(index: Int, ua: UserAnswers): (String, String) = {
-      val name =
-        ua.get(TrusteeNameId(index)).map(_.fullName)
-      (messages("messages__trusteePreviousAddress", name.getOrElse(messages("messages__theTrustee"))),
-        messages("messages__visuallyhidden__dynamic_previousAddress",
-          name.getOrElse(messages("messages__theTrustee"))))
-    }
+    new CheckYourAnswersTrusteeIndividual[TrusteePreviousAddressId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__trusteePreviousAddress"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_previousAddress"))
+      }
 
-    new CheckYourAnswers[TrusteePreviousAddressId] {
       override def row(id: TrusteePreviousAddressId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         val (label, changeAddress) = getLabel(id.index, ua)
         AddressCYA(label, changeAddress)().row(id)(changeUrl, ua)

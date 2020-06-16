@@ -18,12 +18,11 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
+import viewmodels.{AnswerRow, Message}
 
 case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath =
@@ -44,14 +43,14 @@ case class DirectorHasUTRId(establisherIndex: Int, directorIndex: Int) extends T
 object DirectorHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[DirectorHasUTRId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[DirectorHasUTRId] = {
 
     new CheckYourAnswersDirectors[DirectorHasUTRId] {
 
-      private def label(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__hasUTR")
 
-      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua: UserAnswers): String =
+      private def hiddenLabel(establisherIndex: Int, directorIndex: Int, ua:UserAnswers): Message =
         dynamicMessage(establisherIndex, directorIndex, ua, "messages__visuallyhidden__dynamic_hasUtr")
 
       override def row(id: DirectorHasUTRId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

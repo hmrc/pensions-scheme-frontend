@@ -18,12 +18,11 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class HasCompanyCRNId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasCompanyCRNId.toString
@@ -43,14 +42,14 @@ case class HasCompanyCRNId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyCRNId {
   override def toString: String = "hasCrn"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyCRNId] = {
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyCRNId] = {
 
     new CheckYourAnswersCompany[HasCompanyCRNId] {
 
-      private def label(index: Int, ua: UserAnswers): String =
+      private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__hasCRN")
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String =
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasCrn")
 
       override def row(id: HasCompanyCRNId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

@@ -18,12 +18,11 @@ package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeCompany}
+import viewmodels.{AnswerRow, Message}
 
 case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = TrusteesId(index).path \ HasCompanyVATId.toString
@@ -41,27 +40,25 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages): CheckYourAnswers[HasCompanyVATId] = {
-
-    def companyName(index: Int) =
-      userAnswers.get(CompanyDetailsId(index)) match {
-        case Some(companyDetails) => companyDetails.companyName
-        case _ => messages("messages__theCompany")
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyVATId] = {
+    new CheckYourAnswersTrusteeCompany[HasCompanyVATId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__hasVAT"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_hasVat"))
       }
 
-    def label(index: Int) = Some(messages("messages__hasVAT", companyName(index)))
+      override def row(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_hasVat", companyName(index)))
-
-    new CheckYourAnswers[HasCompanyVATId] {
-      override def row(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
-
-      override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+      override def updateRow(id: HasCompanyVATId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
         userAnswers.get(IsTrusteeNewId(id.index)) match {
-          case Some(true) => BooleanCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+          case Some(true) => BooleanCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
           case _ => Seq.empty[AnswerRow]
         }
+      }
     }
   }
 }

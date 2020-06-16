@@ -17,14 +17,12 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
-import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeNoUTRReasonId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeNoUTRReasonId.toString
@@ -34,20 +32,19 @@ object TrusteeNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions
                   ): CheckYourAnswers[TrusteeNoUTRReasonId] = {
 
-    def trusteeName(index: Int) = userAnswers.get(TrusteeNameId(index))
-      .fold(messages("messages__theTrustee"))(_.fullName)
+    new CheckYourAnswersTrusteeIndividual[TrusteeNoUTRReasonId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__whyNoUTR"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_noUtrReason"))
+      }
 
-    def label(index: Int) = Some(messages("messages__whyNoUTR", trusteeName(index)))
-
-    def hiddenLabel(index: Int) = Some(messages("messages__visuallyhidden__dynamic_noUtrReason", trusteeName(index)))
-
-    new CheckYourAnswers[TrusteeNoUTRReasonId] {
-      override def row(id: TrusteeNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        StringCYA(label(id.index), hiddenLabel(id.index))().row(id)(changeUrl, userAnswers)
+      override def row(id: TrusteeNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+        StringCYA(Some(label), Some(hiddenLabel))().row(id)(changeUrl, userAnswers)
+      }
 
       override def updateRow(id: TrusteeNoUTRReasonId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(IsTrusteeNewId(id.index)) match {

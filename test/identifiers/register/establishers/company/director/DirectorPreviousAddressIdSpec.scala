@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, InputOption, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class DirectorPreviousAddressIdSpec extends SpecBase {
 
@@ -35,17 +35,17 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(
-      messages("messages__previousAddressFor", "first last"),
+      Message("messages__previousAddressFor", "first last"),
       addressAnswer(address),
       answerIsMessageKey = false,
-      Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
+      Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name)))))
   )
 
   private val answerRowWithAddLink = Seq(
-    AnswerRow(messages("messages__previousAddressFor", "first last"),
+    AnswerRow(Message("messages__previousAddressFor", "first last"),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_previousAddress", name)))))
+      Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_previousAddress", name)))))
   )
 
   "cya" when {

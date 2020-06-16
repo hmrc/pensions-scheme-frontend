@@ -52,7 +52,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
                        (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
-      title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),
+      title = Message("messages__whyNoUTR", Message("messages__theIndividual")),
       heading = Message("messages__whyNoUTR", companyName),
       srn = srn
     )

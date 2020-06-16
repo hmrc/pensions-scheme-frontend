@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class TrusteeEnterUTRIdSpec extends SpecBase {
 
@@ -36,12 +36,12 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__enterUTR", name), List(utr), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
+    AnswerRow(Message("messages__enterUTR", name), List(utr), false, Some(Link("site.change", onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__enterUTR", name), List(utr), false, None))
+    AnswerRow(Message("messages__enterUTR", name), List(utr), false, None))
 
 
   "Cleanup" when {
@@ -84,9 +84,9 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
       "for existing trustee" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__enterUTR", name), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(Message("messages__enterUTR", name), List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
+              Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers()

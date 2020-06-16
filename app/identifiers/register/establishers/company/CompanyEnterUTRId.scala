@@ -19,11 +19,10 @@ package identifiers.register.establishers.company
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ CompanyEnterUTRId.toString
@@ -36,14 +35,13 @@ object CompanyEnterUTRId {
   override def toString: String = "utr"
 
   implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
                    countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterUTRId] = {
 
-    val label: String = "messages__utr__checkyouranswerslabel"
+    val label: Message = Message("messages__utr__checkyouranswerslabel")
 
     new CheckYourAnswersCompany[CompanyEnterUTRId] {
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String = {
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message = {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_unique_taxpayer_reference")
       }
 

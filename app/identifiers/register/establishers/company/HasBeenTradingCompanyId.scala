@@ -23,7 +23,7 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ HasBeenTradingCompanyId.toString
@@ -44,18 +44,17 @@ case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] 
 object HasBeenTradingCompanyId {
   override def toString: String = "hasBeenTrading"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[HasBeenTradingCompanyId] = {
+  implicit def cya: CheckYourAnswers[HasBeenTradingCompanyId] = {
 
     new CheckYourAnswersCompany[HasBeenTradingCompanyId] {
 
-      private def label(index: Int, ua: UserAnswers): String = {
+      private def label(index: Int, ua: UserAnswers): Message = {
         dynamicMessage(index, ua, "messages__hasBeenTrading__h1")
       }
 
-      private def hiddenLabel(index: Int, ua: UserAnswers): String = {
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message = {
         dynamicMessage(index, ua, "messages__visuallyhidden__dynamic__hasBeenTrading")
       }
-
 
       override def row(id: HasBeenTradingCompanyId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
         BooleanCYA(Some(label(id.index, ua)), Some(hiddenLabel(id.index, ua)))().row(id)(changeUrl, ua)

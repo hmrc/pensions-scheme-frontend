@@ -89,7 +89,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCh
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
-        InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow("insuranceCompanyName.checkYourAnswersLabel",
+        InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(Message("insuranceCompanyName.checkYourAnswersLabel"),
           List("site.not_entered"),true,Some(Link("site.add",onwardUrl,Some(Message("messages__visuallyhidden__insuranceCompanyName")))))))
       }
     }

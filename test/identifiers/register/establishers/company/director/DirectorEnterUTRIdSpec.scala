@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class DirectorEnterUTRIdSpec extends SpecBase {
 
@@ -35,12 +35,12 @@ class DirectorEnterUTRIdSpec extends SpecBase {
   val utr = "1234567890"
   implicit val countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig)
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__utr__checkyouranswerslabel"), List(utr), false, Some(Link("site.change",onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
+    AnswerRow(Message("messages__utr__checkyouranswerslabel", name), List(utr), false, Some(Link("site.change",onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))))
   )
 
   private val answerRowsWithoutChangeLink = Seq(
-    AnswerRow(messages("messages__utr__checkyouranswerslabel"), List(utr), false, None))
+    AnswerRow(Message("messages__utr__checkyouranswerslabel", name), List(utr), false, None))
 
   "Cleanup" when {
     def answers: UserAnswers = UserAnswers(Json.obj())
@@ -84,9 +84,10 @@ class DirectorEnterUTRIdSpec extends SpecBase {
       "for existing director" must {
 
         "return row with add link if there is no data available" in {
-          val answerRowWithAddLink = AnswerRow(messages("messages__utr__checkyouranswerslabel"), List("site.not_entered"), answerIsMessageKey = true,
+          val answerRowWithAddLink = AnswerRow(Message("messages__utr__checkyouranswerslabel", Message("messages__theDirector")),
+            List("site.not_entered"), answerIsMessageKey = true,
             Some(Link("site.add",onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", "the director")
+              Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", Message("messages__theDirector"))
               ))))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteesCompanyDetails(index = 0, CompanyDetails(name)), PsaId("A0000000"))

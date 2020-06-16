@@ -64,7 +64,7 @@ class PartnerPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       form,
       CommonFormWithHintViewModel(
         routes.PartnerPhoneController.onSubmit(NormalMode, firstIndex, firstIndex, None),
-        Message("messages__enterPhoneNumber", Message("messages__thePartner").resolve),
+        Message("messages__enterPhoneNumber", Message("messages__thePartner")),
         Message("messages__enterPhoneNumber", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
         None

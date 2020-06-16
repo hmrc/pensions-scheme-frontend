@@ -23,7 +23,7 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath =
@@ -41,14 +41,14 @@ case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends Ty
 object PartnerHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerHasNINOId] = {
+  implicit def cya: CheckYourAnswers[PartnerHasNINOId] = {
 
     new CheckYourAnswersPartners[PartnerHasNINOId] {
 
-      private def label(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+      private def label(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__hasNINO")
 
-      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): String =
+      private def hiddenText(establisherIndex: Int, partnerIndex: Int, ua:UserAnswers):Message =
         dynamicMessage(establisherIndex, partnerIndex, ua, "messages__visuallyhidden__dynamic_hasNino")
 
       override def row(id: PartnerHasNINOId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

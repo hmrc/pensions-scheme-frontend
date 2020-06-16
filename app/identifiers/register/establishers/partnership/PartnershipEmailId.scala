@@ -20,10 +20,10 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import viewmodels.AnswerRow
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
+import utils.{CountryOptions, UserAnswers}
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEmailId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = EstablishersId(index).path \ "partnershipContactDetails" \ PartnershipEmailId.toString
@@ -32,25 +32,23 @@ case class PartnershipEmailId(index: Int) extends TypedIdentifier[String] {
 object PartnershipEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[PartnershipEmailId] =
-    new CheckYourAnswers[PartnershipEmailId] {
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEmailId] =
+    new CheckYourAnswersPartnership[PartnershipEmailId] {
+      private def label(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__enterEmail")
 
-    override def row(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-      val establisherName: String =
-        userAnswers.get(PartnershipDetailsId(id.index)).fold(messages("messages__thePartnership"))(_.name)
-      val label = messages("messages__enterEmail", establisherName)
-      val hiddenLabel = Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName))
+      private def hiddenLabel(index: Int, ua: UserAnswers): Message =
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address")
 
-      StringCYA(
-        Some(label),
-        hiddenLabel
-      )().row(id)(changeUrl, userAnswers)
+      override def row(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+        StringCYA(
+          Some(label(id.index, userAnswers)),
+          Some(hiddenLabel(id.index, userAnswers))
+        )().row(id)(changeUrl, userAnswers)
+      }
+
+      override def updateRow(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
     }
-
-    override def updateRow(id: PartnershipEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-      row(id)(changeUrl, userAnswers)
-  }
 }
 
 

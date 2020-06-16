@@ -73,7 +73,7 @@ class PartnershipAddressYearsController @Inject()(
   private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
     postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
-    title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership").resolve),
+    title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership")),
     heading = Message("messages__partnershipAddressYears__heading", partnershipName),
     legend = Message("messages__partnershipAddressYears__heading", partnershipName),
     subHeading = Some(Message(partnershipName)),

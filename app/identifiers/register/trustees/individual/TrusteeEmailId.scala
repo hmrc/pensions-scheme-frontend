@@ -20,10 +20,10 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class TrusteeEmailId(index: Int) extends TypedIdentifier[String] {
   override def path: JsPath = TrusteesId(index).path \ "trusteeContactDetails" \ TrusteeEmailId.toString
@@ -32,26 +32,19 @@ case class TrusteeEmailId(index: Int) extends TypedIdentifier[String] {
 object TrusteeEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages,
-                   countryOptions: CountryOptions,
-                   userAnswers: UserAnswers): CheckYourAnswers[TrusteeEmailId] =
-    new CheckYourAnswers[TrusteeEmailId] {
-
-      override def row(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-
-        def trusteeName(index: Int): String =
-          userAnswers.get(TrusteeNameId(index)).fold(messages("messages__theIndividual"))(_.fullName)
-
-        def label(index: Int): String = messages("messages__enterEmail", trusteeName(index))
-
-        def hiddenLabel(index: Int): Option[String] =
-          Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName(index)))
-
-        StringCYA(
-          Some(label(id.index)),
-          hiddenLabel(id.index)
-        )().row(id)(changeUrl, userAnswers)
-      }
+  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteeEmailId] = new
+      CheckYourAnswersTrusteeIndividual[TrusteeEmailId] {
+    def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+      (dynamicMessage(index, ua, "messages__enterEmail"),
+        dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_email_address"))
+    }
+    override def row(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      val (label, hiddenLabel) = getLabel(id.index, userAnswers)
+      StringCYA(
+        Some(label),
+        Some(hiddenLabel)
+      )().row(id)(changeUrl, userAnswers)
+    }
 
       override def updateRow(id: TrusteeEmailId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         row(id)(changeUrl, userAnswers)

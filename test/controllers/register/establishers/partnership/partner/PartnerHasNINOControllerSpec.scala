@@ -87,7 +87,7 @@ object PartnerHasNINOControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
-    title = Message("messages__hasNINO", Message("messages__thePartner").resolve),
+    title = Message("messages__hasNINO", Message("messages__thePartner")),
     heading = Message("messages__hasNINO", "first last"),
     hint = None
   )

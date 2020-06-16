@@ -126,7 +126,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }
@@ -143,7 +143,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
             Seq(s"messages__common__under_a_year"),
             answerIsMessageKey = true,
             Some(Link("site.change", onwardUrl,
-              Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
+              Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
           )))
       }
     }

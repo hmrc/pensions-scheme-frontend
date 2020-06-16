@@ -65,7 +65,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
             Message("messages__addressFor", insuranceCompany),
             addressAnswer(address),
             answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
           )))
       }
     }
@@ -81,7 +81,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
             Message("messages__addressFor", insuranceCompany),
             addressAnswer(address),
             answerIsMessageKey = false,
-            Some(Link("site.change", onwardUrl, Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
+            Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
           )))
       }
 
@@ -96,7 +96,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
             Message("messages__addressFor", insuranceCompany),
             Seq("site.not_entered"),
             answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__insurer_confirm_address", insuranceCompany))))
           )))
       }
     }

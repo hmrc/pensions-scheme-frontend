@@ -21,7 +21,6 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.OtherPartnersId
 import models.Link
 import models.person.PersonName
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
@@ -46,7 +45,7 @@ object PartnerNameId {
 
   override def toString: String = "partnerDetails"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnerNameId] = {
+  implicit def cya: CheckYourAnswers[PartnerNameId] = {
     new CheckYourAnswers[PartnerNameId] {
 
       override def row(id: PartnerNameId)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -56,8 +55,7 @@ object PartnerNameId {
               "messages__partnerName__cya",
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name",
-                personDetails.fullName).resolve)))
+              Some(Link("site.change", changeUrl, Some(Message("messages__visuallyhidden__dynamic_name", personDetails.fullName))))
             )
           )
         }

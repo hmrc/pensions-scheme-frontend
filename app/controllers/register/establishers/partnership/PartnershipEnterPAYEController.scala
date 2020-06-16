@@ -66,7 +66,7 @@ class PartnershipEnterPAYEController @Inject()(
 
     PayeViewModel(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
-      title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
+      title = Message("messages__enterPAYE", Message("messages__thePartnership")),
       heading = Message("messages__enterPAYE", partnershipName),
       hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,

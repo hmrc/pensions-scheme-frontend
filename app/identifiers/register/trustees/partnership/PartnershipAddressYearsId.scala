@@ -19,11 +19,10 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersTrusteePartnership}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipAddressYearsId.toString
@@ -46,17 +45,18 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override lazy val toString: String = "partnershipAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages)
-  : CheckYourAnswers[PartnershipAddressYearsId] =
-    new CheckYourAnswers[PartnershipAddressYearsId] {
-      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
-        val trusteeName = ua.get(PartnershipDetailsId(id.index)).fold(messages("messages__theTrustee"))(_.name)
-        val label = messages("messages__trusteeAddressYears__heading", trusteeName)
-        val changeAddressYears = messages("messages__visuallyhidden__dynamic_addressYears", trusteeName)
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipAddressYearsId] =
+    new CheckYourAnswersTrusteePartnership[PartnershipAddressYearsId] {
+      def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
+        (dynamicMessage(index, ua, "messages__trusteeAddressYears__heading"),
+          dynamicMessage(index, ua, "messages__visuallyhidden__dynamic_addressYears"))
+      }
 
+      override def row(id: PartnershipAddressYearsId)(changeUrl: String, ua: UserAnswers): Seq[AnswerRow] = {
+        val (label, hiddenLabel) = getLabel(id.index, ua)
         AddressYearsCYA(
           label = label,
-          changeAddressYears = changeAddressYears
+          changeAddressYears = hiddenLabel
         )().row(id)(changeUrl, ua)
       }
 

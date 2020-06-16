@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipEnterPAYEIdSpec extends SpecBase {
 
@@ -33,8 +33,8 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"
   private val partnershipName = "test partnership name"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(messages("messages__enterPAYE", partnershipName), List("paye"), false, Some(Link("site.change", onwardUrl,
-      Some(messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))
+    AnswerRow(Message("messages__enterPAYE", partnershipName), List("paye"), false, Some(Link("site.change", onwardUrl,
+      Some(Message("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))
   )
 
   private val ua = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
@@ -67,7 +67,7 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
 
         PartnershipEnterPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__enterPAYE", partnershipName), List("paye"), false, None)
+          AnswerRow(Message("messages__enterPAYE", partnershipName), List("paye"), false, None)
         ))
       }
 
@@ -82,8 +82,8 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"))
 
         PartnershipEnterPAYEId(0).row(onwardUrl, CheckUpdateMode)(request, implicitly) must equal(Seq(
-          AnswerRow(messages("messages__enterPAYE", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
-            Some(Link("site.add", onwardUrl, Some(messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))))
+          AnswerRow(Message("messages__enterPAYE", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_paye_reference", partnershipName)))))))
       }
     }
   }

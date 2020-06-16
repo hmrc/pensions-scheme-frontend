@@ -69,7 +69,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
-                title = Message("messages__addressFor", Message("messages__thePerson").resolve),
+                title = Message("messages__addressFor", Message("messages__thePerson")),
                 h1 = Message("messages__addressFor", establisherName))
               app.stop()
           }
