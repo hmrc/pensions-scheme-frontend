@@ -49,7 +49,8 @@
 
         @components.input_text(
             field = form("accountNumber"),
-            label = messages("messages__bank_account_details__account_number")
+            label = messages("messages__bank_account_details__account_number"),
+            hint = Some(messages("messages__bank_account_details__account_number_hint"))
         )
 
         @components.submit_button()
