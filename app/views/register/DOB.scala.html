@@ -41,7 +41,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__DOB__title", viewModel.token))) {
 
-    @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
