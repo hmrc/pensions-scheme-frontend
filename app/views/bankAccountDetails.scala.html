@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
 
-    @formHelper(action = BankAccountDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = BankAccountDetailsController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
@@ -44,12 +44,14 @@
             field = form("sortCode"),
             label = messages("messages__bank_account_details__sort_code"),
             inputClass = Some("form-control-1-4"),
+            numericField = true,
             hint = Some(messages("messages__bank_account_details__sort_code_hint"))
         )
 
         @components.input_text(
             field = form("accountNumber"),
-            label = messages("messages__bank_account_details__account_number")
+            label = messages("messages__bank_account_details__account_number"),
+            numericField = true
         )
 
         @components.submit_button()

@@ -31,7 +31,7 @@
 @main_template(
     title = titleWithErrors(form, viewmodel.title)) {
 
-    @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewmodel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
@@ -46,7 +46,8 @@
         @components.input_text(
             field = form("vat"),
             label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("visually-hidden"),
+            numericField = true
         )
         </div>
         @components.submit_button()

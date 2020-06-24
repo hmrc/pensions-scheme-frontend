@@ -29,7 +29,7 @@
 @main_template(
     title = titleWithErrors(form, viewModel.title)) {
 
-    @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
@@ -46,7 +46,8 @@
         @components.input_text(
             field = form("phone"),
             label = messages(viewModel.title),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("visually-hidden"),
+            typeValue = "tel"
         )
         </div>
         @components.submit_button("site.save_and_continue")

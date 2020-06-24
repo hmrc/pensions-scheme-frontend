@@ -29,7 +29,7 @@
 @main_template(
     title = titleWithErrors(form, viewModel.title)) {
 
-    @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
+    @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
@@ -41,7 +41,8 @@
             label = messages(viewModel.heading).toString,
             labelClass = Some("visually-hidden"),
             paragraphText = viewModel.hint,
-            headingIsLegend = true
+            headingIsLegend = true,
+            typeValue = "email"
         )
         </div>
         @components.submit_button("site.save_and_continue")
