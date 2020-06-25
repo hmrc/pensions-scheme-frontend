@@ -1524,6 +1524,7 @@ messages__bank_account_details__bank_name = Bank name
 messages__bank_account_details__account_name = Account name
 messages__bank_account_details__sort_code = Sort code
 messages__bank_account_details__sort_code_hint = For example, 08 32 10
+messages__bank_account_details__account_number_hint = Must be between 6 and 8 digits long
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
 
