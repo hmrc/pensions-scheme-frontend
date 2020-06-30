@@ -19,7 +19,6 @@
 @this(
     appConfig: FrontendAppConfig,
     govuk_wrapper: govuk_wrapper,
-    article: Article,
     sidebar: Sidebar
 )
 
@@ -40,13 +39,20 @@
     }
 }
 
+@contentBody = {
+    <div class="content__body">
+        @mainContent
+    </div>
+}
+
+
 @govuk_wrapper(appConfig = appConfig,
                title = title + " - " + Messages("messages__pension_scheme_registration__title"),
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebarF,
                contentHeader = contentHeader,
-               mainContent = article(mainContent),
+               mainContent = contentBody,
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem
 )
