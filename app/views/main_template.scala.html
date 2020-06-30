@@ -39,12 +39,11 @@
     }
 }
 
-@contentBody = {
+@mainContentBody = {
     <div class="content__body">
         @mainContent
     </div>
 }
-
 
 @govuk_wrapper(appConfig = appConfig,
                title = title + " - " + Messages("messages__pension_scheme_registration__title"),
@@ -52,7 +51,7 @@
                bodyClasses = bodyClasses,
                sidebar = sidebarF,
                contentHeader = contentHeader,
-               mainContent = contentBody,
+               mainContent = mainContentBody,
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem
 )
