@@ -30,7 +30,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
 
-    @formHelper(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
         @components.back_link()
 
@@ -42,7 +42,8 @@
             label = messages("messages__adviser__phone__heading", adviserName),
             labelClass=Some("visually-hidden"),
             paragraphText = Some(messages("messages__adviser__phone__p1", adviserName)),
-            headingIsLegend = true
+            headingIsLegend = true,
+            typeValue = "tel"
         )
         </div>
         @components.submit_button()
