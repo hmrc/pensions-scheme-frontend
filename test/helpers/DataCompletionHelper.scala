@@ -209,7 +209,7 @@ trait DataCompletionHelper extends OptionValues {
       .trusteePartnershipPhone(index, "123")
   }
 
-  protected def setCompleteEstPartnership(index: Int, ua: UserAnswers): UserAnswers = {
+  protected def setCompleteEstPartnershipOnePartner(index: Int, ua: UserAnswers): UserAnswers = {
     ua.establisherKind(index, EstablisherKind.Partnership)
       .establisherPartnershipDetails(index, PartnershipDetails("test partnership"))
       .establisherPartnershipNoUtrReason(index, "no utr")
@@ -227,6 +227,10 @@ trait DataCompletionHelper extends OptionValues {
       .establishersPartnershipPartnerAddressYears(index, 0, AddressYears.OverAYear)
       .establishersPartnershipPartnerEmail(index, 0, "s@s.com")
       .establishersPartnershipPartnerPhone(index, 0, "123")
+  }
+
+  protected def setCompleteEstPartnership(index: Int, ua: UserAnswers): UserAnswers = {
+    setCompleteEstPartnershipOnePartner(index, ua)
       .establishersPartnershipPartnerName(index, 1, PersonName("Partner", "Two"))
       .establishersPartnershipPartnerDOB(index, 1, LocalDate.now().minusYears(30))
       .establishersPartnershipPartnerNino(index, 1, ReferenceValue("AB100100A"))
