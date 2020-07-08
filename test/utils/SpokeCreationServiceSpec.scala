@@ -316,6 +316,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
           val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
           result mustBe expectedSpoke
         }
+
       }
 
       "in variation" must {
@@ -343,6 +344,18 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         "display all the spokes with appropriate links when establisher partnership is completed" in {
           val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
           val expectedSpoke = estPartnershipCompleteSpoke(UpdateMode, srn, linkText = "view", status = None)
+
+          val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
+          result mustBe expectedSpoke
+        }
+
+        "display all the spokes with appropriate links when establisher partnership is completed and only one partner" in {
+          val userAnswers = setCompleteEstPartnershipOnePartner(0, userAnswersWithSchemeName).isEstablisherNew(index = 0, flag = true)
+          val expectedSpoke =
+            estPartnershipCompleteSpokeWithoutPartners(UpdateMode, srn, linkText = "view", status = None) ++ Seq(
+              EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__view_partners", schemeName),
+                establisherPartnershipRoutes.AddPartnersController.onPageLoad(UpdateMode, index = 0, srn).url), Some(false))
+            )
 
           val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, UpdateMode, srn, schemeName, None)
           result mustBe expectedSpoke
@@ -861,16 +874,21 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def estPartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estPartnershipCompleteSpokeWithoutPartners(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_contact", schemeName),
-      establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status),
-    EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_partners", schemeName),
-      establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
+      establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
+
+  private def estPartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = {
+    estPartnershipCompleteSpokeWithoutPartners(mode, srn, linkText, status) ++ Seq(
+      EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_partners", schemeName),
+        establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
+    )
+  }
 
   private def estIndividualAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean] = None) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),

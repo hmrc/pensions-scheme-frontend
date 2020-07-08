@@ -67,10 +67,9 @@ class SpokeCreationService extends Enumerable.Implicits {
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
                                  spoke: Spoke,
                                  mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
-
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
-        case (NormalMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
+        case (NormalMode | UpdateMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
           Some(false)
         case (NormalMode, false) =>
           Some(entityList.forall(_.isCompleted))
