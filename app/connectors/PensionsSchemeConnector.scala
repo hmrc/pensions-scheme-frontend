@@ -26,34 +26,33 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.UserAnswers
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[SchemeSubmissionResponse]
+  def registerScheme(answers: UserAnswers, psaId: String)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier,
-                                                                             ec: ExecutionContext): Future[Unit]
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(psaId: String, srn: String)(implicit
-                                                      headerCarrier: HeaderCarrier,
-                                                      ec: ExecutionContext,
-                                                      request: RequestHeader): Future[Boolean]
+  def checkForAssociation(psaId: String, srn: String)
+                         (implicit headerCarrier: HeaderCarrier,
+                          ec: ExecutionContext, request: RequestHeader): Future[Boolean]
 }
 
 @Singleton
 class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
   PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, psaId: String)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
     val url = config.registerSchemeUrl
 
-    http.POST(url, answers.json, Seq("psaId" -> psaId)).map { response =>
+    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId)).map { response =>
       require(response.status == Status.OK)
 
       val json = Json.parse(response.body)
@@ -63,7 +62,6 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
         case JsError(errors) => throw JsResultException(errors)
       }
     } andThen logExceptions("Unable to register Scheme") recoverWith translateExceptions
-
   }
 
   private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {
@@ -74,12 +72,12 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     case Failure(t: Throwable) => Logger.error(msg, t)
   }
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(implicit hc: HeaderCarrier,
-                                                                             ec: ExecutionContext): Future[Unit] = {
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
     val url = config.updateSchemeDetailsUrl
 
-    http.POST(url, answers.json, Seq(("psaId" -> psaId), ("pstr" -> pstr))).map { response =>
+    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr)).map { response =>
       require(response.status == Status.OK)
     } andThen {
       logExceptions("Unable to update Scheme")
@@ -88,12 +86,11 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     }
   }
 
-  def checkForAssociation(psaId: String, srn: String)(implicit
-                                                      headerCarrier: HeaderCarrier,
-                                                      ec: ExecutionContext,
-                                                      request: RequestHeader): Future[Boolean] = {
-    val headers: Seq[(String, String)] = Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type",
-      "application/json"))
+  def checkForAssociation(psaId: String, srn: String)
+                         (implicit headerCarrier: HeaderCarrier,
+                          ec: ExecutionContext, request: RequestHeader): Future[Boolean] = {
+    val headers: Seq[(String, String)] =
+      Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
 
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
@@ -107,10 +104,12 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
         case JsError(errors) => throw JsResultException(errors)
       }
     } recoverWith {
-      case ex: BadRequestException if ex.message.contains("INVALID_SRN") => Future.successful(false)
-      case ex: NotFoundException => Future.successful(false)
+      case ex: BadRequestException if ex.message.contains("INVALID_SRN") =>
+        Future.successful(false)
       case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" =>
         Future.failed(new InvalidPayloadException)
+      case _: NotFoundException =>
+        Future.successful(false)
     } andThen logExceptions("Unable to check for scheme association with PSA")
   }
 }

@@ -55,7 +55,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
   }
 
-  it should "throw NotFoundException when email cannot be found" in {
+  it should "throw IllegalArgumentException when email cannot be found" in {
 
     server.stubFor(
       get(urlEqualTo("/pension-administrator/get-email"))
@@ -66,7 +66,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
     val connector = injector.instanceOf[PensionAdministratorConnector]
 
-    recoverToSucceededIf[NotFoundException]{
+    recoverToSucceededIf[IllegalArgumentException]{
       connector.getPSAEmail
     }
 
@@ -89,7 +89,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
   }
 
-  it should "throw NotFoundException when name cannot be found" in {
+  it should "throw IllegalArgumentException when name cannot be found" in {
 
     server.stubFor(
       get(urlEqualTo("/pension-administrator/get-name"))
@@ -100,7 +100,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
     val connector = injector.instanceOf[PensionAdministratorConnector]
 
-    recoverToSucceededIf[NotFoundException]{
+    recoverToSucceededIf[IllegalArgumentException]{
       connector.getPSAName
     }
 

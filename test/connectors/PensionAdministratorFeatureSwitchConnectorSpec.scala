@@ -97,7 +97,7 @@ class PensionAdministratorFeatureSwitchConnectorSpec extends AsyncWordSpec with 
       server.stubFor(
         get(urlEqualTo(resetUrl))
           .willReturn(
-            ok()
+            noContent()
           )
       )
       connector.reset(featureSwitch).map(response =>

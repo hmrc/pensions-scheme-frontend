@@ -21,11 +21,12 @@ import config.FrontendAppConfig
 import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainBytes, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,14 +55,19 @@ class EmailConnectorImpl @Inject()(
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
 
-    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce,
-      callbackUrl(psa))
+    val sendEmailReq = SendEmailRequest(
+      to = List(emailAddress),
+      templateId = templateName,
+      parameters = params,
+      force = config.emailSendForce,
+      eventUrl = callbackUrl(psa)
+    )
 
     val jsonData = Json.toJson(sendEmailReq)
 
     Logger.debug(s"Data to email: $jsonData for email address $emailAddress")
 
-    http.POST(postUrl, jsonData).map { response =>
+    http.POST[JsValue, HttpResponse](postUrl, jsonData).map { response =>
       response.status match {
         case ACCEPTED =>
           Logger.info("Email sent successfully.")

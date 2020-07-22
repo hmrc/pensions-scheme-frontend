@@ -23,7 +23,7 @@ import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
 import play.api.libs.json.{JsBoolean, JsResultException, Json}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException, Upstream5xxResponse}
+import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
 
 class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -114,7 +114,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   }
 
-  it should "throw SubmissionUnsuccessful exception for a 400 response" in {
+  it should "throw IllegalArgumentException exception for a 400 response" in {
 
     server.stubFor(
       post(urlEqualTo(registerSchemeUrl))
@@ -128,7 +128,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[InvalidPayloadException] {
+    recoverToSucceededIf[IllegalArgumentException] {
       connector.registerScheme(userAnswers, "test-psa-id")
     }
 
@@ -166,7 +166,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[InvalidPayloadException] {
+    recoverToSucceededIf[IllegalArgumentException] {
       connector.updateSchemeDetails(psaId, pstr, userAnswers)
     }
   }
@@ -212,7 +212,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[Upstream5xxResponse] {
+    recoverToSucceededIf[UpstreamErrorResponse] {
       connector.updateSchemeDetails(psaId, pstr, userAnswers)
     }
   }
@@ -256,7 +256,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[Upstream5xxResponse] {
+    recoverToSucceededIf[UpstreamErrorResponse] {
       connector.checkForAssociation(psaId, pstr)
     }
   }

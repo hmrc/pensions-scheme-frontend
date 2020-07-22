@@ -36,11 +36,10 @@ class ErrorHandler @Inject()(
 
   override def notFoundTemplate(implicit request: Request[_]): Html = {
     val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")(Lang.defaultLang)
-    notFoundView(Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))
-    )
+    notFoundView(Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent)))
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_])
-  : Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
+                                    (implicit rh: Request[_]): Html =
     errorView(pageTitle, heading, message, appConfig)
 }

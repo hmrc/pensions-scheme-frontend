@@ -18,9 +18,9 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 trait FeatureSwitchConnector {
@@ -40,7 +40,7 @@ class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appCo
 
     val url = appConfig.pensionsSchemeUrl + s"/pensions-scheme/test-only/toggle-on/$name"
 
-    http.GET(url).map { _ =>
+    http.GET[HttpResponse](url).map { _ =>
       true
     }.recoverWith {
       case _ =>
@@ -52,7 +52,7 @@ class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appCo
 
     val url = appConfig.pensionsSchemeUrl + s"/pensions-scheme/test-only/toggle-off/$name"
 
-    http.GET(url).map { _ =>
+    http.GET[HttpResponse](url).map { _ =>
       true
     }.recoverWith {
       case _ =>
@@ -63,7 +63,7 @@ class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appCo
   override def reset(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val url = appConfig.pensionsSchemeUrl + s"/pensions-scheme/test-only/reset/$name"
 
-    http.GET(url).map { _ =>
+    http.GET[HttpResponse](url).map { _ =>
       true
     }.recoverWith {
       case _ =>
@@ -74,7 +74,7 @@ class PensionsSchemeFeatureSwitchConnectorImpl @Inject()(http: HttpClient, appCo
   override def get(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
     val url = appConfig.pensionsSchemeUrl + s"/pensions-scheme/test-only/get/$name"
 
-    http.GET(url).map { value =>
+    http.GET[HttpResponse](url).map { value =>
       val currentValue = value.json.as[Boolean]
       Option(currentValue)
     }.recoverWith {
