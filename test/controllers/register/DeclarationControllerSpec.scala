@@ -35,7 +35,7 @@ import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
@@ -183,7 +183,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
-      applicationCrypto,
       fakeMinimalPsaConnector,
       stubMessagesControllerComponents(),
       mockHsTaskListHelperRegistration,
@@ -223,9 +222,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val dormantCompany: DataRetrievalAction = {
     setCompleteWorkingKnowledge(
-    isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
-    .set(identifiers.DeclarationDutiesId)(false).asOpt
-    .value.establisherCompanyDormant(1, DeclarationDormant.Yes).dataRetrievalAction
+      isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
+      .set(identifiers.DeclarationDutiesId)(false).asOpt
+      .value.establisherCompanyDormant(1, DeclarationDormant.Yes).dataRetrievalAction
   }
 
   private val mockEmailConnector = mock[EmailConnector]
@@ -236,15 +235,16 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
     (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
-      Future.successful(validSchemeSubmissionResponse)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
+      Future.successful(Right(validSchemeSubmissionResponse))
     }
 
     override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = ???
 
-    override def checkForAssociation(psaId: String, srn: String)(implicit headerCarrier: HeaderCarrier,
-                                                                 ec: ExecutionContext, request: RequestHeader): Future[Boolean] = ???
+    override def checkForAssociation(psaId: String, srn: String)
+                                    (implicit headerCarrier: HeaderCarrier,
+                                     ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = ???
   }
 
   private val fakeEmailConnector = new EmailConnector {

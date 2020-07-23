@@ -62,7 +62,7 @@ abstract class AllowAccessAction(srn: Option[String],
   private def checkForAssociation[A](request: OptionalDataRequest[A],
                                      extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] =
     pensionsSchemeConnector.checkForAssociation(request.psaId.id, extractedSRN)(hc, implicitly, request).flatMap {
-      case true => Future.successful(None)
+      case Right(true) => Future.successful(None)
       case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
     }
 }

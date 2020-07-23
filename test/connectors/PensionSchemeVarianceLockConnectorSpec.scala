@@ -63,10 +63,10 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
 
     val connector = injector.instanceOf[PensionSchemeVarianceLockConnectorImpl]
 
-    recoverToExceptionIf[UpstreamErrorResponse] {
+    recoverToExceptionIf[HttpException] {
       connector.lock(psaId, srn)
     } map {
-      _.statusCode shouldBe Status.INTERNAL_SERVER_ERROR
+      _.responseCode shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
 

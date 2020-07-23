@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.register.SchemeSubmissionResponse
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.{JsBoolean, JsResultException, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http._
@@ -32,7 +33,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 
-  "registerScheme" should "return the Scheme submission confirmation for a valid request/response" in {
+  "registerScheme" should "return right schemeSubmissionResponse for a valid request/response" in {
 
     server.stubFor(
       post(urlEqualTo(registerSchemeUrl))
@@ -48,13 +49,13 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.registerScheme(userAnswers, "test-psa-id").map(subscription =>
-      subscription shouldBe schemeSubmissionResponse
+    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
+      response shouldBe Right(schemeSubmissionResponse)
     )
 
   }
 
-  it should "throw IllegalArgumentException if the response status is not 200 OK" in {
+  it should "return left CREATED if the response status is not 200 OK" in {
 
     server.stubFor(
       post(urlEqualTo(registerSchemeUrl))
@@ -68,9 +69,9 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[IllegalArgumentException] {
-      connector.registerScheme(userAnswers, "test-psa-id")
-    }
+    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
+      response.left.get.status shouldBe CREATED
+    )
 
   }
 
@@ -114,7 +115,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   }
 
-  it should "throw IllegalArgumentException exception for a 400 response" in {
+  it should "return left BAD_REQUEST response for a 400 response" in {
 
     server.stubFor(
       post(urlEqualTo(registerSchemeUrl))
@@ -128,9 +129,9 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[IllegalArgumentException] {
-      connector.registerScheme(userAnswers, "test-psa-id")
-    }
+    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
+      response.left.get.status shouldBe BAD_REQUEST
+    )
 
   }
 
@@ -154,67 +155,35 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     }
   }
 
-  it should "return BadRequestException where invalid psaid response is received" in {
+
+  it should "return left NOT_FOUND where not found response is received" in {
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
         .willReturn(
-          badRequest
-            .withHeader("Content-Type", "application/json")
-            .withBody(invalidPayloadResponse)
+          aResponse.withStatus(NOT_FOUND)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[IllegalArgumentException] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
-    }
+    connector.updateSchemeDetails(psaId, pstr, userAnswers).map(response =>
+      response.status shouldBe NOT_FOUND
+    )
   }
 
-
-  it should "return BadRequestException where not found response is received" in {
+  it should "return INTERNAL_SERVER_ERROR where 500 response is received" in {
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
         .willReturn(
-          aResponse.withStatus(404)
+          aResponse.withStatus(INTERNAL_SERVER_ERROR)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[NotFoundException] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
-    }
-  }
-
-  it should "return BadRequestException where 400 response is received" in {
-    server.stubFor(
-      post(urlEqualTo(updateSchemeUrl))
-        .willReturn(
-          aResponse.withStatus(400)
-        )
+    connector.updateSchemeDetails(psaId, pstr, userAnswers).map(response =>
+      response.status shouldBe INTERNAL_SERVER_ERROR
     )
-
-    val connector = injector.instanceOf[PensionsSchemeConnector]
-
-    recoverToSucceededIf[BadRequestException] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
-    }
-  }
-
-  it should "return Upstream5xxResponse where 500 response is received" in {
-    server.stubFor(
-      post(urlEqualTo(updateSchemeUrl))
-        .willReturn(
-          aResponse.withStatus(500)
-        )
-    )
-
-    val connector = injector.instanceOf[PensionsSchemeConnector]
-
-    recoverToSucceededIf[UpstreamErrorResponse] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
-    }
   }
 
 
@@ -244,78 +213,60 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     }
   }
 
-  it should "return Upstream5xxResponse where 500 response is received" in {
+  it should "return left INTERNAL_SERVER_ERROR where 500 response is received" in {
     implicit val request = FakeRequest("GET", "/")
 
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
         .willReturn(
-          aResponse.withStatus(500)
+          aResponse.withStatus(INTERNAL_SERVER_ERROR)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[UpstreamErrorResponse] {
-      connector.checkForAssociation(psaId, pstr)
-    }
+    connector.checkForAssociation(psaId, pstr).map(response =>
+      response.left.get.status shouldBe INTERNAL_SERVER_ERROR
+    )
   }
 
-  it should "return BadRequestException where 400 response is received" in {
+  it should "return left BAD_REQUEST where 400 response is received" in {
     implicit val request = FakeRequest("GET", "/")
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
         .willReturn(
-          aResponse.withStatus(400)
+          aResponse.withStatus(BAD_REQUEST)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[BadRequestException] {
-      connector.checkForAssociation(psaId, pstr)
-    }
+    connector.checkForAssociation(psaId, pstr).map(response =>
+      response.left.get.status shouldBe BAD_REQUEST
+    )
   }
 
-  it should "return false where 400 response is received with text INVALID_SRN" in {
+  it should "return left NOT_FOUND where 404 response is received" in {
     implicit val request = FakeRequest("GET", "/")
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
         .willReturn(
-          aResponse.withStatus(400).withBody("INVALID_SRN")
+          aResponse.withStatus(NOT_FOUND)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-      connector.checkForAssociation(psaId, pstr).map { result =>
-        result shouldBe false
-      }
-  }
-
-  it should "return false where 404 response is received" in {
-    implicit val request = FakeRequest("GET", "/")
-    server.stubFor(
-      get(urlEqualTo(checkAssociationUrl))
-        .willReturn(
-          aResponse.withStatus(404)
-        )
+    connector.checkForAssociation(psaId, pstr).map(response =>
+      response.left.get.status shouldBe NOT_FOUND
     )
-
-    val connector = injector.instanceOf[PensionsSchemeConnector]
-
-    connector.checkForAssociation(psaId, pstr).map { result =>
-      result shouldBe false
-    }
   }
-
-
 }
 
 object PensionsSchemeConnectorSpec extends OptionValues {
 
   private val registerSchemeUrl = "/pensions-scheme/register-scheme"
-  
+
   private val updateSchemeUrl = "/pensions-scheme/update-scheme"
   private val checkAssociationUrl = "/pensions-scheme/is-psa-associated"
 

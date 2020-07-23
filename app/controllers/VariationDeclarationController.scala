@@ -17,8 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector,
-  UpdateSchemeCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
@@ -35,7 +34,6 @@ import views.html.variationDeclaration
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationDeclarationController @Inject()(
-                                                appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
                                                 @Register navigator: Navigator,
                                                 authenticate: AuthAction,
@@ -72,7 +70,7 @@ class VariationDeclarationController @Inject()(
           pstr =>
             val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
             for {
-              _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua)
+              _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua).map(_.status == OK)
               _ <- updateSchemeCacheConnector.removeAll(srnId)
               _ <- viewConnector.removeAll(request.externalId)
               _ <- lockConnector.releaseLock(request.psaId.id, srnId)

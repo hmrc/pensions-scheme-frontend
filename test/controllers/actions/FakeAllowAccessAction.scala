@@ -52,7 +52,7 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
         case None =>
           val psc = mock[PensionsSchemeConnector]
           when(psc.checkForAssociation(any(), any())(any(),any(),any()))
-            .thenReturn(Future.successful(true))
+            .thenReturn(Future.successful(Right(true)))
           psc
         case Some(psc) => psc
       },
