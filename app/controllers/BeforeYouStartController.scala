@@ -16,23 +16,18 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
+import connectors.PensionAdministratorConnector
 import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.beforeYouStart
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
+class BeforeYouStartController @Inject()(override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
-                                         crypto: ApplicationCrypto,
-                                         userAnswersCacheConnector: UserAnswersCacheConnector,
                                          pensionAdministratorConnector: PensionAdministratorConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: beforeYouStart

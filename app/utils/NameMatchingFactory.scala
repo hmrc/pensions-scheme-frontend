@@ -16,28 +16,23 @@
 
 package utils
 
-import config.FrontendAppConfig
 import connectors.PensionAdministratorConnector
 import javax.inject.Inject
 import models.PSAName
 import models.requests.OptionalDataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NameMatchingFactory @Inject()(
-                                     pensionAdministratorConnector: PensionAdministratorConnector,
-                                     crypto: ApplicationCrypto,
-                                     config: FrontendAppConfig
-                                   ) {
+class NameMatchingFactory @Inject()(pensionAdministratorConnector: PensionAdministratorConnector) {
 
   def nameMatching(schemeName: String)
                   (implicit request: OptionalDataRequest[AnyContent],
                    ec: ExecutionContext,
-                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = pensionAdministratorConnector
+                   hc: HeaderCarrier,
+                   r: Reads[PSAName]): Future[NameMatching] = pensionAdministratorConnector
     .getPSAName map {
     NameMatching(schemeName, _)
   }

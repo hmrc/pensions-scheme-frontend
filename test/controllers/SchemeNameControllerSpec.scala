@@ -48,7 +48,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
   val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
@@ -57,7 +57,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
   }
 
-  object FakeNameMatchingFactoryWithMatch extends NameMatchingFactory(pensionAdministratorConnector, crypto, config) {
+  object FakeNameMatchingFactoryWithMatch extends NameMatchingFactory(pensionAdministratorConnector) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
@@ -70,13 +70,11 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory:NameMatchingFactory = FakeNameMatchingFactory): SchemeNameController =
     new SchemeNameController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
       formProvider,
       nameMatchingFactory,
       mockPensionAdministratorConnector,

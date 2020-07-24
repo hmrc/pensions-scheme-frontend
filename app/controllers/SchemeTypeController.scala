@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
@@ -28,21 +27,19 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import utils.UserAnswers
 import utils.annotations.BeforeYouStart
-import utils.{NameMatchingFactory, UserAnswers}
 import views.html.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
-                                     override val messagesApi: MessagesApi,
+class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,
                                      dataCacheConnector: UserAnswersCacheConnector,
                                      @BeforeYouStart navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeTypeFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory,
                                      val controllerComponents: MessagesControllerComponents,
                                      val view: schemeType
                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
