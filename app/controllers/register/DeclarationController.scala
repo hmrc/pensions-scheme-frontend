@@ -119,7 +119,6 @@ class DeclarationController @Inject()(
   def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
 
-
       (for {
         cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
         eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
@@ -132,15 +131,6 @@ class DeclarationController @Inject()(
         case Left(_) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
-
-    //      for {
-    //        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-    //        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-    //        cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-    //        _ <- sendEmail(submissionResponse.right.get.schemeReferenceNumber, request.psaId)
-    //      } yield {
-    //        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-    //      }
   }
 
 
