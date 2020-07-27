@@ -40,12 +40,10 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
   private val psaName = "Psa Name"
   private val view = injector.instanceOf[beforeYouStart]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): BeforeYouStartController =
-    new BeforeYouStartController(frontendAppConfig,
+  def controller(): BeforeYouStartController =
+    new BeforeYouStartController(
       messagesApi,
       FakeAuthAction,
-      applicationCrypto,
-      FakeUserAnswersCacheConnector,
       pensionAdministratorConnector,
       stubMessagesControllerComponents(),
       view

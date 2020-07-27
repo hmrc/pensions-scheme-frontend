@@ -51,22 +51,18 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
         SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
           cacheConnector.removeAll(request.externalId).flatMap { _ =>
-            Future.successful(
-              Ok(
-                view(
-                  LocalDate.now(),
-                  submissionReferenceNumber.schemeReferenceNumber,
-                  showMasterTrustContent,
-                  email
-                )
-              ))
+            Future.successful(Ok(
+              view(
+                LocalDate.now(),
+                submissionReferenceNumber.schemeReferenceNumber,
+                request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
+                email
+              )
+            ))
           }
         }
       }
   }
-
-  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean = request
-    .userAnswers.get(SchemeTypeId).contains(MasterTrust)
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>

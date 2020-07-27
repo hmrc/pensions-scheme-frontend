@@ -28,7 +28,6 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -41,11 +40,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  private def nameMatchingFactory = new NameMatchingFactory(pensionAdministratorConnector, crypto, frontendAppConfig)
-
   implicit val hc = HeaderCarrier()
-
-  private val encryptedPsaId = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
   "NameMatchingFactory" must {
     "return an instance of NameMatching when PSA name is retrieved from PSA Id" which {

@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,31 +45,28 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
 
     val url = config.pensionsAdministratorUrl + config.getPSAEmail
 
-    http.GET(url) map { response =>
+    http.GET[HttpResponse](url) map { response =>
       require(response.status == OK)
 
       response.body
 
-    } andThen logExceptions
+    } andThen logExceptions("email")
 
   }
 
-  private def logExceptions(): PartialFunction[Try[String], Unit] = {
-    case Failure(t: Throwable) => Logger.error("Unable to retrieve email for PSA", t)
+  private def logExceptions(token: String): PartialFunction[Try[String], Unit] = {
+    case Failure(t: Throwable) => Logger.error(s"Unable to retrieve $token for PSA", t)
   }
 
   def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
     val url = config.pensionsAdministratorUrl + config.getPSAName
 
-    http.GET(url) map { response =>
+    http.GET[HttpResponse](url) map { response =>
       require(response.status == OK)
 
       response.body
 
-    } andThen logExceptions
-
+    } andThen logExceptions("name")
   }
-
-
 }

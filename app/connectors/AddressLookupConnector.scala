@@ -25,13 +25,13 @@ import play.api.http.Status._
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends AddressLookupConnector {
 
-  override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[Seq[TolerantAddress]] = {
+  override def addressLookupByPostCode(postCode: String)
+                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
     val schemeHc = hc.withExtraHeaders("X-Hmrc-Origin" -> "PODS")
 
     val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postcode=$postCode"
@@ -51,15 +51,14 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[Seq[TolerantAddress]]] = {
-    case (t: Throwable) => {
+    case t: Throwable =>
       Logger.error("Exception in AddressLookup", t)
       Future.failed(t)
-    }
   }
 }
 
 @ImplementedBy(classOf[AddressLookupConnectorImpl])
 trait AddressLookupConnector {
-  def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
-  : Future[Seq[TolerantAddress]]
+  def addressLookupByPostCode(postCode: String)
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]]
 }

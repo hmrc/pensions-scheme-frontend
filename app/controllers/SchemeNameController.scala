@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
@@ -37,13 +36,11 @@ import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
-                                     override val messagesApi: MessagesApi,
+class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
                                      dataCacheConnector: UserAnswersCacheConnector,
                                      @BeforeYouStart navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
-                                     requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
                                      pensionAdministratorConnector: PensionAdministratorConnector,

@@ -17,11 +17,11 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{Lock, PsaLock, SchemeVariance, VarianceLock}
+import models.{PsaLock, SchemeVariance, VarianceLock}
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.http.Status
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, UpstreamErrorResponse}
 import utils.WireMockHelper
 
 class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -63,10 +63,10 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
 
     val connector = injector.instanceOf[PensionSchemeVarianceLockConnectorImpl]
 
-    recoverToExceptionIf[Upstream5xxResponse] {
+    recoverToExceptionIf[HttpException] {
       connector.lock(psaId, srn)
     } map {
-      _.upstreamResponseCode shouldBe Status.INTERNAL_SERVER_ERROR
+      _.responseCode shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
 

@@ -35,7 +35,6 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
@@ -55,7 +54,6 @@ class DeclarationController @Inject()(
                                        requireData: DataRequiredAction,
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
-                                       crypto: ApplicationCrypto,
                                        minimalPsaConnector: MinimalPsaConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
@@ -72,8 +70,9 @@ class DeclarationController @Inject()(
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result)(implicit request: DataRequest[AnyContent])
-  : Future[Result] = {
+  private def showPage(status: HtmlFormat.Appendable => Result)
+                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
+
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
     val href = DeclarationController.onClickAgree()
 
@@ -111,24 +110,29 @@ class DeclarationController @Inject()(
       }
     }
 
-  private def isDormant(dormant: Option[DeclarationDormant]): Boolean = {
+  private def isDormant(dormant: Option[DeclarationDormant]): Boolean =
     dormant match {
       case Some(Yes) => true
       case _ => false
     }
-  }
 
   def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
     implicit request =>
-      for {
+
+      (for {
         cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-        cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-        _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-      } yield {
-        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+      } yield eitherSubmissionResponse).flatMap {
+        case Right(submissionResponse) =>
+          for {
+            cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+            _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+          } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        case Left(_) =>
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
   }
+
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     Logger.debug("Fetch email from API")

@@ -27,6 +27,7 @@ import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeNavigator
 import views.html.variationDeclaration
@@ -51,7 +52,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
   val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
   def controller(dataRetrievalAction: DataRetrievalAction = validData): VariationDeclarationController =
-    new VariationDeclarationController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
+    new VariationDeclarationController(messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector, viewConnector,
       stubMessagesControllerComponents(),
@@ -86,7 +87,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
 
     "redirect to the next page on clicking agree and continue" in {
       when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful((): Unit))
+        .thenReturn(Future.successful(HttpResponse(OK, "")))
       when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
         .thenReturn(Future.successful(Ok))
       when(viewConnector.removeAll(any())(any(), any()))

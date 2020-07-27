@@ -97,7 +97,7 @@ class PensionsSchemeFeatureSwitchConnectorSpec extends AsyncWordSpec with MustMa
       server.stubFor(
         get(urlEqualTo(resetUrl))
           .willReturn(
-            ok()
+            noContent()
           )
       )
       connector.reset(featureSwitch).map(response =>
