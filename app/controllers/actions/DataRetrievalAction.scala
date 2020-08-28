@@ -19,7 +19,7 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
-import identifiers.{SchemeSrnId, SchemeStatusId}
+import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -35,77 +35,125 @@ class DataRetrievalImpl(
                          viewConnector: SchemeDetailsReadOnlyCacheConnector,
                          updateConnector: UpdateSchemeCacheConnector,
                          lockConnector: PensionSchemeVarianceLockConnector,
+                         schemeDetailsConnector: SchemeDetailsConnector,
+                         minimalPsaConnector: MinimalPsaConnector,
                          mode: Mode,
                          srn: Option[String]
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
+  //scalastyle:off cyclomatic.complexity
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers,
       Some(request.session))
     mode match {
       case NormalMode | CheckMode =>
-        getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
-
+        dataConnector.fetch(request.externalId).map(optJsValue =>
+          getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request)
+        )
       case UpdateMode | CheckUpdateMode =>
-        srn.map { extractedSrn =>
-          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
-            case Some(VarianceLock) =>
-              getOptionalRequest(updateConnector.fetch(extractedSrn), viewOnly = false)(request)
-            case Some(_) =>
-              getRequestWithLock(request, extractedSrn)
-            case None =>
-              getRequestWithNoLock(request, extractedSrn)
-          }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
+        srn match  {
+          case Some(extractedSrn) =>
+              lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn) flatMap { optionLock =>
+
+                // If currently being updated (variations) by current user then retrieve from update cache
+              val futureOptionUACurrent = optionLock match {
+                case Some(VarianceLock) =>
+                  updateConnector.fetch(extractedSrn).map {
+                    case None => None
+                    case x@Some(_) => x.map(UserAnswers)
+                  }
+                case _ => Future.successful(None)
+              }
+
+              // Get OptionalDataRequest based on ua and lock status
+              futureOptionUACurrent.flatMap { currentOptionUA =>
+                (optionLock, currentOptionUA) match { case (optionLock, optionCurrentUA) =>
+                    refreshRepository(extractedSrn, optionLock, optionCurrentUA)(request, implicitly).map { refreshedUAData =>
+                      optionLock match {
+                        case Some(VarianceLock) => getOptionalRequest(refreshedUAData, viewOnly = false)(request) // Locked by you
+                        case Some(_) => getRequestWithLock(request, extractedSrn, refreshedUAData) // Locked by someone else
+                        case None => getRequestWithNoLock(request, extractedSrn, refreshedUAData) // Not locked
+                      }
+                    }
+                }
+              }
+            }
+          case _ => throw new RuntimeException("No SRN") // TODO Will this happen??? Check what current code does in this situation
+        }
     }
   }
 
-  private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
+  private def getOptionalRequest[A](f: Option[UserAnswers], viewOnly: Boolean)(implicit
+                                                                                   request: AuthenticatedRequest[A])
+  : OptionalDataRequest[A] =
+    f match {
+      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
+      case ua@Some(_) => OptionalDataRequest(request.request, request.externalId, ua, request.psaId, viewOnly)
+    }
+
+  private def refreshRepository[A](srn: String,
+                                   optionLock: Option[Lock],
+                                   optionUA: Option[UserAnswers])(implicit request: AuthenticatedRequest[A],
+                                                            hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+    val futureOptionJsValue = (optionLock, optionUA) match {
+      case (Some(VarianceLock), Some(ua)) =>
+        addSuspensionFlagAndUpdateRepository(srn, ua, updateConnector.upsert(srn, _)).map(Some(_))
+      case (Some(VarianceLock), None) => Future.successful(None) // TODO??? What do do here?? Is this even possible? What happens in current code?
+      case _ =>
+        schemeDetailsConnector
+            .getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
+            .flatMap(addSuspensionFlagAndUpdateRepository(srn, _, viewConnector.upsert(request.externalId, _)))
+            .map(Some(_))
+    }
+    futureOptionJsValue.map(_.map(UserAnswers))
+  }
+
+  private def addSuspensionFlagAndUpdateRepository[A](srn: String,
+                                              userAnswers: UserAnswers,
+                                              upsertUserAnswers: JsValue => Future[JsValue])(implicit
+                                                                 request: AuthenticatedRequest[A],
+                                                                 hc: HeaderCarrier): Future[JsValue] = {
+    minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
+      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
+        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
+      upsertUserAnswers(updatedUserAnswers.json)
+    }
+  }
+
+  private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String, optionUA: Option[UserAnswers])(implicit hc: HeaderCarrier)
+  : OptionalDataRequest[A] = {
+    optionUA match {
       case None =>
         OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
       case Some(data) =>
-        UserAnswers(data).get(SchemeSrnId) match {
+        data.get(SchemeSrnId) match {
           case Some(foundSrn) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId,
-              viewOnly = true)
+            OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = true)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
         }
     }
   }
 
-  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
+  private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String, optionUA: Option[UserAnswers])(implicit hc: HeaderCarrier)
+  : OptionalDataRequest[A] = {
+    optionUA match {
       // Problem: if no user answers fetched or fetched data has different srn then
       // we can't calculate correctly whether readonly or not - we don't have the scheme status yet
-      case Some(answersJsValue) =>
-        val ua = UserAnswers(answersJsValue)
+      // This should be fixed by changes made on Friday - test!!
+      case Some(ua) =>
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
-              request.psaId, viewOnly = status != "Open")
+            OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
-              request.psaId, viewOnly = true)
+            OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = true)
         }
       case None =>
         OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
     }
   }
-
-  private def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit
-                                                                                   request: AuthenticatedRequest[A])
-  : Future[OptionalDataRequest[A]] =
-    f.map {
-      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)),
-        request.psaId, viewOnly)
-    }
 }
 
 @ImplementedBy(classOf[DataRetrievalImpl])
@@ -114,10 +162,12 @@ trait DataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalData
 class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector,
                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                         updateConnector: UpdateSchemeCacheConnector,
-                                        lockConnector: PensionSchemeVarianceLockConnector
+                                        lockConnector: PensionSchemeVarianceLockConnector,
+                                        schemeDetailsConnector: SchemeDetailsConnector,
+                                        minimalPsaConnector: MinimalPsaConnector
                                        )(implicit ec: ExecutionContext) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String]): DataRetrieval =
-    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn)
+    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, schemeDetailsConnector, minimalPsaConnector, mode, srn)
 }
 
 @ImplementedBy(classOf[DataRetrievalActionImpl])
