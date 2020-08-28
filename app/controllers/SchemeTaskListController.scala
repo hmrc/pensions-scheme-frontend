@@ -58,7 +58,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
-
         case (None, Some(userAnswers)) =>
           Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
         case (Some(srnValue), optionUserAnswers) =>
@@ -82,7 +81,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       case Some(_) =>
         getSchemeDetailsAndReturnResult(srn, viewOnly = true)
       case _ =>
-        getSchemeDetailsAndReturnResult(srn, viewOnly = false)
+        println( "\nVO=" + request.viewOnly)
+        getSchemeDetailsAndReturnResult(srn, viewOnly = request.viewOnly)
     }
   }
 

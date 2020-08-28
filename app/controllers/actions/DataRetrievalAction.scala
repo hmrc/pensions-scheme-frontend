@@ -79,6 +79,8 @@ class DataRetrievalImpl(
   private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
   : Future[OptionalDataRequest[A]] = {
     viewConnector.fetch(request.externalId).map {
+      // Problem: if no user answers fetched or fetched data has different srn then
+      // we can't calculate correctly whether readonly or not - we don't have the scheme status yet
       case Some(answersJsValue) =>
         val ua = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
@@ -86,7 +88,7 @@ class DataRetrievalImpl(
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
               request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId)
+            OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
           case _ =>
             OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
               request.psaId, viewOnly = true)
