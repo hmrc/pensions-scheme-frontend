@@ -47,71 +47,86 @@ class DataRetrievalImpl(
       Some(request.session))
     (mode, refreshData) match {
       case (NormalMode | CheckMode, _) =>
-        dataConnector.fetch(request.externalId).map(optJsValue =>
-          getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request)
-        )
+        dataConnector
+          .fetch(request.externalId)
+          .map(optJsValue => getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request))
       case (UpdateMode | CheckUpdateMode, false) =>
-        srn.map { extractedSrn =>
-          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
-            case Some(VarianceLock) =>
-              updateConnector
-                .fetch(extractedSrn)
-                .map(optJsValue => getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request))
-            case Some(_) =>
-              viewConnector
-                .fetch(request.externalId)
-                .map(optJsValue => getRequestWithLock(request, extractedSrn, optJsValue.map(UserAnswers)))
-            case None =>
-              viewConnector
-                .fetch(request.externalId)
-                .map(optJsValue => getRequestWithNoLock(request, extractedSrn, optJsValue.map(UserAnswers)))
-          }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
+        variationsTransformWithoutDataRefresh(srn)(request, hc)
       case (UpdateMode | CheckUpdateMode, true) =>
          variationsTransformWithDataRefresh(srn)(request, hc)
     }
   }
 
-  //scalastyle:off cyclomatic.complexity
+  private def variationsTransformWithoutDataRefresh[A](srn:Option[String])(implicit
+                                                                        request: AuthenticatedRequest[A],
+                                                                        hc: HeaderCarrier):Future[OptionalDataRequest[A]] =
+    srn match {
+      case Some(extractedSrn) =>
+        lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap( optionLock =>
+          getUserAnswersBasedOnLockStatus(extractedSrn, optionLock)
+            .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
+        )
+      case _ => Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
+    }
+
   private def variationsTransformWithDataRefresh[A](srn:Option[String])(implicit
                                                                     request: AuthenticatedRequest[A],
-                                                                    hc: HeaderCarrier):Future[OptionalDataRequest[A]] = {
+                                                                    hc: HeaderCarrier):Future[OptionalDataRequest[A]] =
     srn match {
       case Some(extractedSrn) =>
         lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn) flatMap { optionLock =>
-
-          // If currently being updated (variations) by current user then retrieve from update cache
-          val futureOptionUACurrent = optionLock match {
-            case Some(VarianceLock) =>
-              updateConnector.fetch(extractedSrn).map {
-                case None => None
-                case x@Some(_) => x.map(UserAnswers)
-              }
-            case _ => Future.successful(None)
-          }
-
-          // Get OptionalDataRequest based on ua and lock status
-          futureOptionUACurrent.flatMap { currentOptionUA =>
+          getUserAnswersIfHasLocked(extractedSrn, optionLock).flatMap { currentOptionUA =>
             (optionLock, currentOptionUA) match {
               case (optionLock, optionCurrentUA) =>
-                refreshRepository(extractedSrn, optionLock, optionCurrentUA)(request, implicitly).map { refreshedUAData =>
-                  optionLock match {
-                    case Some(VarianceLock) => getOptionalRequest(refreshedUAData, viewOnly = false)(request) // Locked by you
-                    case Some(_) => getRequestWithLock(request, extractedSrn, refreshedUAData) // Locked by someone else
-                    case None => getRequestWithNoLock(request, extractedSrn, refreshedUAData) // Not locked
-                  }
-                }
+                refreshRepository(extractedSrn, optionLock, optionCurrentUA)(request, implicitly)
+                  .map( refreshedUAData => getOptionalDataRequest(extractedSrn, optionLock, refreshedUAData))
             }
           }
         }
       case _ => Future.successful(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
     }
+
+  private def getUserAnswersIfHasLocked(srn: String,
+                                        optionLock:Option[Lock])(implicit
+                                                                 hc: HeaderCarrier):Future[Option[UserAnswers]] = {
+    optionLock match {
+      case Some(VarianceLock) =>
+        updateConnector.fetch(srn).map {
+          case None => None
+          case x@Some(_) => x.map(UserAnswers)
+        }
+      case _ => Future.successful(None)
+    }
   }
 
-  private def getOptionalRequest[A](f: Option[UserAnswers], viewOnly: Boolean)(implicit
+  private def getOptionalDataRequest[A](srn: String,
+                                        optionLock: Option[Lock],
+                                        optionUserAnswers: Option[UserAnswers])(implicit
+                                                                                request: AuthenticatedRequest[A],
+                                                                                hc: HeaderCarrier):OptionalDataRequest[A] = {
+    optionLock match {
+      case Some(VarianceLock) => getOptionalRequest(optionUserAnswers, viewOnly = false)(request)
+      case Some(_) => getRequestWithLock(request, srn, optionUserAnswers)
+      case None => getRequestWithNoLock(request, srn, optionUserAnswers)
+    }
+  }
+
+  private def getUserAnswersBasedOnLockStatus[A](srn: String,
+                                                 optionLock: Option[Lock])(implicit
+                                                                           request: AuthenticatedRequest[A],
+                                                                           hc: HeaderCarrier):Future[Option[UserAnswers]] = {
+    val futureRetrievedJson = optionLock match {
+      case Some(VarianceLock) => updateConnector.fetch(srn)
+      case Some(_) => viewConnector.fetch(request.externalId)
+      case None => viewConnector.fetch(request.externalId)
+    }
+    futureRetrievedJson.map(optJsValue => optJsValue.map(UserAnswers))
+  }
+
+  private def getOptionalRequest[A](optionUA: Option[UserAnswers], viewOnly: Boolean)(implicit
                                                                                    request: AuthenticatedRequest[A])
   : OptionalDataRequest[A] =
-    f match {
+    optionUA match {
       case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
       case ua@Some(_) => OptionalDataRequest(request.request, request.externalId, ua, request.psaId, viewOnly)
     }
