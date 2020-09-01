@@ -54,17 +54,17 @@ class DataRetrievalImpl(
         srn.map { extractedSrn =>
           lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
             case Some(VarianceLock) =>
-              updateConnector.fetch(extractedSrn).map { optJsValue =>
-                getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request)
-              }
+              updateConnector
+                .fetch(extractedSrn)
+                .map(optJsValue => getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request))
             case Some(_) =>
-              viewConnector.fetch(request.externalId).map(optJsValue =>
-                getRequestWithLock(request, extractedSrn, optJsValue.map(UserAnswers))
-              )
+              viewConnector
+                .fetch(request.externalId)
+                .map(optJsValue => getRequestWithLock(request, extractedSrn, optJsValue.map(UserAnswers)))
             case None =>
-              viewConnector.fetch(request.externalId).map(optJsValue =>
-                getRequestWithNoLock(request, extractedSrn, optJsValue.map(UserAnswers))
-              )
+              viewConnector
+                .fetch(request.externalId)
+                .map(optJsValue => getRequestWithNoLock(request, extractedSrn, optJsValue.map(UserAnswers)))
           }
         }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
       case (UpdateMode | CheckUpdateMode, true) =>
