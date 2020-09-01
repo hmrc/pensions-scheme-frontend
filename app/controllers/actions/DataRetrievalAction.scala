@@ -42,23 +42,6 @@ class DataRetrievalImpl(
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
-  /*
-        case NormalMode | CheckMode =>
-        getOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
-
-      case UpdateMode | CheckUpdateMode =>
-        srn.map { extractedSrn =>
-          lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
-            case Some(VarianceLock) =>
-              getOptionalRequest(updateConnector.fetch(extractedSrn), viewOnly = false)(request)
-            case Some(_) =>
-              getRequestWithLock(request, extractedSrn)
-            case None =>
-              getRequestWithNoLock(request, extractedSrn)
-          }
-        }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
-   */
-
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers,
       Some(request.session))
@@ -68,29 +51,23 @@ class DataRetrievalImpl(
           getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request)
         )
       case (UpdateMode | CheckUpdateMode, false) =>
-        println( "\nSHJOULD")
         srn.map { extractedSrn =>
           lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap {
             case Some(VarianceLock) =>
-              println("\n1112")
               updateConnector.fetch(extractedSrn).map { optJsValue =>
-                println("\n111333332")
                 getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request)
               }
             case Some(_) =>
-              println("\n444")
               viewConnector.fetch(request.externalId).map(optJsValue =>
                 getRequestWithLock(request, extractedSrn, optJsValue.map(UserAnswers))
               )
             case None =>
-              println("\n555")
               viewConnector.fetch(request.externalId).map(optJsValue =>
                 getRequestWithNoLock(request, extractedSrn, optJsValue.map(UserAnswers))
               )
           }
         }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
       case (UpdateMode | CheckUpdateMode, true) =>
-        println("\nHH")
          variationsTransformWithRefresh(srn)(request, hc)
     }
   }
@@ -131,17 +108,6 @@ class DataRetrievalImpl(
     }
   }
 
-  /*
-    private def getOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)(implicit
-                                                                                   request: AuthenticatedRequest[A])
-  : Future[OptionalDataRequest[A]] =
-    f.map {
-      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)),
-        request.psaId, viewOnly)
-    }
-   */
-
   private def getOptionalRequest[A](f: Option[UserAnswers], viewOnly: Boolean)(implicit
                                                                                    request: AuthenticatedRequest[A])
   : OptionalDataRequest[A] =
@@ -179,24 +145,6 @@ class DataRetrievalImpl(
     }
   }
 
-  /*
-    private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
-      case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
-      case Some(data) =>
-        UserAnswers(data).get(SchemeSrnId) match {
-          case Some(foundSrn) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId,
-              viewOnly = true)
-          case _ =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
-        }
-    }
-  }
-   */
-
   private def getRequestWithLock[A](request: AuthenticatedRequest[A], srn: String, optionUA: Option[UserAnswers])(implicit hc: HeaderCarrier)
   : OptionalDataRequest[A] = {
     optionUA match {
@@ -211,28 +159,6 @@ class DataRetrievalImpl(
         }
     }
   }
-
-  /*
-    private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String)(implicit hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
-    viewConnector.fetch(request.externalId).map {
-      case Some(answersJsValue) =>
-        val ua = UserAnswers(answersJsValue)
-        (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
-          case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
-              request.psaId, viewOnly = status != "Open")
-          case (Some(_), _) =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId)
-          case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(answersJsValue)),
-              request.psaId, viewOnly = true)
-        }
-      case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
-    }
-  }
-   */
 
   private def getRequestWithNoLock[A](request: AuthenticatedRequest[A], srn: String, optionUA: Option[UserAnswers])(implicit hc: HeaderCarrier)
   : OptionalDataRequest[A] = {
