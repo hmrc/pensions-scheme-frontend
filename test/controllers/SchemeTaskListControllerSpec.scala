@@ -17,31 +17,26 @@
 package controllers
 
 import base.JsonFileReader
-import connectors._
 import controllers.actions._
-import handlers.ErrorHandler
 import identifiers.{IsPsaSuspendedId, SchemeNameId, SchemeSrnId, SchemeStatusId}
 import models._
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, when, _}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.JsNull
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.{error_template, error_template_page_not_found, schemeDetailsTaskList}
-
-import scala.concurrent.Future
+import views.html.schemeDetailsTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   import SchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(fakeSchemeDetailsConnector, fakeMinimalPsaConnector, fakeLockConnector, fakeUpdateCacheConnector, fakeHsTaskListHelperRegistration)
+    reset(fakeHsTaskListHelperRegistration)
   }
 
   "SchemeTaskList Controller" when {
@@ -70,11 +65,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "In UpdateMode when user holds the lock" must {
 
       "return OK and the correct view for a GET where scheme status is open" in {
-        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
-          .thenReturn(Future.successful(false))
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
-          .thenReturn(Future.successful(JsNull))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
@@ -88,19 +78,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
         val updatedUserAnswers =
           UserAnswers(userAnswersJson).set(IsPsaSuspendedId)(false).flatMap(_.set(SchemeSrnId)(srnValue)).asOpt.getOrElse(UserAnswers(userAnswersJson))
-
-        verify(fakeUpdateCacheConnector, times(1)).upsert(any(), eqTo(updatedUserAnswers.json))(any(), any())
-
       }
 
       "return OK and the correct view for a GET where scheme status is rejected" in {
-        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(UserAnswers(userAnswersJsonRejected)))
-        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any()))
-          .thenReturn(Future.successful(false))
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(None))
-        when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
-          .thenReturn(Future.successful(JsNull))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
 
         val result = controller(dataRetrievalAction = userAnswersRejected).onPageLoad(UpdateMode, srn)(fakeRequest)
@@ -113,12 +93,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
       "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa and cannot be edited" in {
         val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
-        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(answers))
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SchemeLock)))
-        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
-        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
-          .thenReturn(Future.successful(JsNull))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
           SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
         )))
@@ -133,10 +107,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
       "return OK and correct view when viewOnly flag set to false if scheme is locked by same psa and can be edited" in {
         val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(Some(VarianceLock)))
-        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
-        when(fakeUpdateCacheConnector.upsert(any(), any())(any(), any()))
-          .thenReturn(Future.successful(JsNull))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
@@ -152,12 +122,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
       "return OK and correct view when viewOnly flag set to true if the scheme is not locked but the scheme status is rejected" in {
         val answers = UserAnswers().set(SchemeStatusId)("Rejected").asOpt.value
-        when(fakeSchemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(answers))
-        when(fakeLockConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future.successful(None))
-        when(fakeMinimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
-        when(fakeSchemeDetailsReadOnlyCacheConnector.upsert(any(), any())(any(), any()))
-          .thenReturn(Future.successful(JsNull))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
           SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
         )))
@@ -177,12 +141,15 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
 
+  /*
+   schemeDetailsConnector: SchemeDetailsConnector,
+                                         lockConnector: PensionSchemeVarianceLockConnector,
+                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                         updateConnector: UpdateSchemeCacheConnector,
+                                         minimalPsaConnector: MinimalPsaC
+   */
+
   private val view = injector.instanceOf[schemeDetailsTaskList]
-  private val fakeSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
-  private val fakeSchemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
-  private val fakeUpdateCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
-  private val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
-  private val fakeMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
 
@@ -197,11 +164,6 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      fakeSchemeDetailsConnector,
-      fakeLockConnector,
-      fakeSchemeDetailsReadOnlyCacheConnector,
-      fakeUpdateCacheConnector,
-      fakeMinimalPsaConnector,
       stubMessagesControllerComponents(),
       view,
       fakeHsTaskListHelperRegistration,

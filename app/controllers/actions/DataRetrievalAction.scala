@@ -68,12 +68,12 @@ class DataRetrievalImpl(
           }
         }.getOrElse(Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId)))
       case (UpdateMode | CheckUpdateMode, true) =>
-         variationsTransformWithRefresh(srn)(request, hc)
+         variationsTransformWithDataRefresh(srn)(request, hc)
     }
   }
 
   //scalastyle:off cyclomatic.complexity
-  private def variationsTransformWithRefresh[A](srn:Option[String])(implicit
+  private def variationsTransformWithDataRefresh[A](srn:Option[String])(implicit
                                                                     request: AuthenticatedRequest[A],
                                                                     hc: HeaderCarrier):Future[OptionalDataRequest[A]] = {
     srn match {
@@ -189,8 +189,15 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         minimalPsaConnector: MinimalPsaConnector
                                        )(implicit ec: ExecutionContext) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
-    println( "\n>>>AA")
-    new DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, schemeDetailsConnector, minimalPsaConnector, mode, srn, refreshData)
+    new DataRetrievalImpl(dataConnector,
+      viewConnector,
+      updateConnector,
+      lockConnector,
+      schemeDetailsConnector,
+      minimalPsaConnector,
+      mode,
+      srn,
+      refreshData)
   }
 }
 
