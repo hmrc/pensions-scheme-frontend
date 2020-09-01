@@ -75,7 +75,7 @@ class DataRetrievalImpl(
     srn match {
       case Some(extractedSrn) =>
         lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn) flatMap { optionLock =>
-          refreshRepository(extractedSrn, optionLock)(request, implicitly)
+          getUserAnswersWithDataRefreshIfNotLocked(extractedSrn, optionLock)(request, implicitly)
             .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
         }
       case _ => Future.successful(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
@@ -118,17 +118,10 @@ class DataRetrievalImpl(
     futureRetrievedJson.map(optJsValue => optJsValue.map(UserAnswers))
   }
 
-  private def getOptionalRequest[A](optionUA: Option[UserAnswers], viewOnly: Boolean)(implicit
-                                                                                      request: AuthenticatedRequest[A])
-  : OptionalDataRequest[A] =
-    optionUA match {
-      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
-      case ua@Some(_) => OptionalDataRequest(request.request, request.externalId, ua, request.psaId, viewOnly)
-    }
-
-  private def refreshRepository[A](srn: String,
-                                   optionLock: Option[Lock])(implicit request: AuthenticatedRequest[A],
-                                                             hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+  private def getUserAnswersWithDataRefreshIfNotLocked[A](srn: String,
+                                           optionLock: Option[Lock])(implicit
+                                                                     request: AuthenticatedRequest[A],
+                                                                     hc: HeaderCarrier): Future[Option[UserAnswers]] = {
     getUserAnswersIfHasLocked(srn, optionLock).flatMap { optionUA =>
       val futureOptionJsValue = (optionLock, optionUA) match {
         case (Some(VarianceLock), Some(ua)) =>
@@ -143,6 +136,14 @@ class DataRetrievalImpl(
       futureOptionJsValue.map(_.map(UserAnswers))
     }
   }
+
+  private def getOptionalRequest[A](optionUA: Option[UserAnswers], viewOnly: Boolean)(implicit
+                                                                                      request: AuthenticatedRequest[A])
+  : OptionalDataRequest[A] =
+    optionUA match {
+      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
+      case ua@Some(_) => OptionalDataRequest(request.request, request.externalId, ua, request.psaId, viewOnly)
+    }
 
   private def addSuspensionFlagAndUpdateRepository[A](srn: String,
                                                       userAnswers: UserAnswers,
@@ -177,10 +178,13 @@ class DataRetrievalImpl(
       case Some(ua) =>
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+            println("\n>>1:" + status)
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
+            println("\n>>2")
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
           case _ =>
+            println("\n>>3")
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = true)
         }
       case None =>
