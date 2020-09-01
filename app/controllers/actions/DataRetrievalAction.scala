@@ -53,42 +53,37 @@ class DataRetrievalImpl(
       case (UpdateMode | CheckUpdateMode, false) =>
         variationsTransformWithoutDataRefresh(srn)(request, hc)
       case (UpdateMode | CheckUpdateMode, true) =>
-         variationsTransformWithDataRefresh(srn)(request, hc)
+        variationsTransformWithDataRefresh(srn)(request, hc)
     }
   }
 
-  private def variationsTransformWithoutDataRefresh[A](srn:Option[String])(implicit
-                                                                        request: AuthenticatedRequest[A],
-                                                                        hc: HeaderCarrier):Future[OptionalDataRequest[A]] =
+  private def variationsTransformWithoutDataRefresh[A](srn: Option[String])(implicit
+                                                                            request: AuthenticatedRequest[A],
+                                                                            hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     srn match {
       case Some(extractedSrn) =>
-        lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap( optionLock =>
+        lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap(optionLock =>
           getUserAnswersBasedOnLockStatus(extractedSrn, optionLock)
             .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
         )
       case _ => Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
     }
 
-  private def variationsTransformWithDataRefresh[A](srn:Option[String])(implicit
-                                                                    request: AuthenticatedRequest[A],
-                                                                    hc: HeaderCarrier):Future[OptionalDataRequest[A]] =
+  private def variationsTransformWithDataRefresh[A](srn: Option[String])(implicit
+                                                                         request: AuthenticatedRequest[A],
+                                                                         hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     srn match {
       case Some(extractedSrn) =>
         lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn) flatMap { optionLock =>
-          getUserAnswersIfHasLocked(extractedSrn, optionLock).flatMap { currentOptionUA =>
-            (optionLock, currentOptionUA) match {
-              case (optionLock, optionCurrentUA) =>
-                refreshRepository(extractedSrn, optionLock, optionCurrentUA)(request, implicitly)
-                  .map( refreshedUAData => getOptionalDataRequest(extractedSrn, optionLock, refreshedUAData))
-            }
-          }
+          refreshRepository(extractedSrn, optionLock)(request, implicitly)
+            .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
         }
       case _ => Future.successful(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
     }
 
   private def getUserAnswersIfHasLocked(srn: String,
-                                        optionLock:Option[Lock])(implicit
-                                                                 hc: HeaderCarrier):Future[Option[UserAnswers]] = {
+                                        optionLock: Option[Lock])(implicit
+                                                                  hc: HeaderCarrier): Future[Option[UserAnswers]] = {
     optionLock match {
       case Some(VarianceLock) =>
         updateConnector.fetch(srn).map {
@@ -103,7 +98,7 @@ class DataRetrievalImpl(
                                         optionLock: Option[Lock],
                                         optionUserAnswers: Option[UserAnswers])(implicit
                                                                                 request: AuthenticatedRequest[A],
-                                                                                hc: HeaderCarrier):OptionalDataRequest[A] = {
+                                                                                hc: HeaderCarrier): OptionalDataRequest[A] = {
     optionLock match {
       case Some(VarianceLock) => getOptionalRequest(optionUserAnswers, viewOnly = false)(request)
       case Some(_) => getRequestWithLock(request, srn, optionUserAnswers)
@@ -114,7 +109,7 @@ class DataRetrievalImpl(
   private def getUserAnswersBasedOnLockStatus[A](srn: String,
                                                  optionLock: Option[Lock])(implicit
                                                                            request: AuthenticatedRequest[A],
-                                                                           hc: HeaderCarrier):Future[Option[UserAnswers]] = {
+                                                                           hc: HeaderCarrier): Future[Option[UserAnswers]] = {
     val futureRetrievedJson = optionLock match {
       case Some(VarianceLock) => updateConnector.fetch(srn)
       case Some(_) => viewConnector.fetch(request.externalId)
@@ -124,7 +119,7 @@ class DataRetrievalImpl(
   }
 
   private def getOptionalRequest[A](optionUA: Option[UserAnswers], viewOnly: Boolean)(implicit
-                                                                                   request: AuthenticatedRequest[A])
+                                                                                      request: AuthenticatedRequest[A])
   : OptionalDataRequest[A] =
     optionUA match {
       case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly)
@@ -132,27 +127,28 @@ class DataRetrievalImpl(
     }
 
   private def refreshRepository[A](srn: String,
-                                   optionLock: Option[Lock],
-                                   optionUA: Option[UserAnswers])(implicit request: AuthenticatedRequest[A],
-                                                            hc: HeaderCarrier): Future[Option[UserAnswers]] = {
-    val futureOptionJsValue = (optionLock, optionUA) match {
-      case (Some(VarianceLock), Some(ua)) =>
-        addSuspensionFlagAndUpdateRepository(srn, ua, updateConnector.upsert(srn, _)).map(Some(_))
-      case (Some(VarianceLock), None) => Future.successful(None)
-      case _ =>
-        schemeDetailsConnector
+                                   optionLock: Option[Lock])(implicit request: AuthenticatedRequest[A],
+                                                             hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+    getUserAnswersIfHasLocked(srn, optionLock).flatMap { optionUA =>
+      val futureOptionJsValue = (optionLock, optionUA) match {
+        case (Some(VarianceLock), Some(ua)) =>
+          addSuspensionFlagAndUpdateRepository(srn, ua, updateConnector.upsert(srn, _)).map(Some(_))
+        case (Some(VarianceLock), None) => Future.successful(None)
+        case _ =>
+          schemeDetailsConnector
             .getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
             .flatMap(addSuspensionFlagAndUpdateRepository(srn, _, viewConnector.upsert(request.externalId, _)))
             .map(Some(_))
+      }
+      futureOptionJsValue.map(_.map(UserAnswers))
     }
-    futureOptionJsValue.map(_.map(UserAnswers))
   }
 
   private def addSuspensionFlagAndUpdateRepository[A](srn: String,
-                                              userAnswers: UserAnswers,
-                                              upsertUserAnswers: JsValue => Future[JsValue])(implicit
-                                                                 request: AuthenticatedRequest[A],
-                                                                 hc: HeaderCarrier): Future[JsValue] = {
+                                                      userAnswers: UserAnswers,
+                                                      upsertUserAnswers: JsValue => Future[JsValue])(implicit
+                                                                                                     request: AuthenticatedRequest[A],
+                                                                                                     hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
       val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
