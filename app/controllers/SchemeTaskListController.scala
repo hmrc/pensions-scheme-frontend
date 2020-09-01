@@ -44,7 +44,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn, refreshData = false)
     andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
