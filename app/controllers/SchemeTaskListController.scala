@@ -20,12 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import models.Mode
-import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.schemeDetailsTaskList
@@ -50,21 +47,12 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       (srn, request.userAnswers) match {
         case (None, Some(userAnswers)) =>
           Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
-        case (Some(srnValue), optionUserAnswers) =>
-          onPageLoadVariations(srnValue, optionUserAnswers)
+        case (Some(_), Some(ua)) =>
+          Future.successful(Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn))))
+        case (Some(_), _) =>
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
-  }
-
-  private def onPageLoadVariations(srn: String,
-                                   ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
-                                                            hc: HeaderCarrier): Future[Result] = {
-    request.userAnswers match {
-      case Some(ua) =>
-        val taskList = hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), Some(srn))
-        Future.successful(Ok(view(taskList)))
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
   }
 }
