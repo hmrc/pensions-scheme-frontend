@@ -18,7 +18,7 @@ package controllers
 
 import base.JsonFileReader
 import controllers.actions._
-import identifiers.{IsPsaSuspendedId, SchemeNameId, SchemeSrnId, SchemeStatusId}
+import identifiers.SchemeNameId
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
@@ -41,8 +41,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
   "SchemeTaskList Controller" when {
 
-    "accessed in NormalMode with srn as None" must {
-
+    "srn is None and there is user answers" must {
       "return OK and the correct view" in {
         when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
@@ -53,8 +52,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
     }
 
-    "accessed in NormalMode with no user answers and srn as None" must {
-      "return OK and the correct view" in {
+    "srn as None and no user answers" must {
+      "return REDIRECT to manage" in {
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
@@ -62,12 +61,11 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
       }
     }
 
-    "In UpdateMode when user holds the lock" must {
-
-      "return OK and the correct view for a GET where scheme status is open" in {
+    "srn is some value and there is user answers" must {
+      "return OK and the correct view" in {
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
-          "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
+            "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
@@ -75,80 +73,25 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
-
-        val updatedUserAnswers =
-          UserAnswers(userAnswersJson).set(IsPsaSuspendedId)(false).flatMap(_.set(SchemeSrnId)(srnValue)).asOpt.getOrElse(UserAnswers(userAnswersJson))
       }
+    }
 
-      "return OK and the correct view for a GET where scheme status is rejected" in {
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
-
-        val result = controller(dataRetrievalAction = userAnswersRejected).onPageLoad(UpdateMode, srn)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
-      }
-
-      "return OK and correct view when viewOnly flag set to true if the scheme is locked by another psa and cannot be edited" in {
-        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
-          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
-        )))
-
-        val result = controller(dataRetrievalAction = getEmptyData).onPageLoad(UpdateMode, srn)(fakeRequest)
-
-        status(result) mustBe OK
-
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
-      }
-
-      "return OK and correct view when viewOnly flag set to false if scheme is locked by same psa and can be edited" in {
-        val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
+    "srn is some value and there is no user answers" must {
+      "return REDIRECT to session expired page" in {
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
-          .onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
 
-        status(result) mustBe OK
-
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
-
-      "return OK and correct view when viewOnly flag set to true if the scheme is not locked but the scheme status is rejected" in {
-        val answers = UserAnswers().set(SchemeStatusId)("Rejected").asOpt.value
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(addTrusteeHeader = Some(
-          SchemeDetailsTaskListEntitySection(None, Nil, None, Message("messages__schemeTaskList__sectionTrustees_no_trustees"))
-        )))
-
-        val result = controller(dataRetrievalAction = answers.dataRetrievalAction)
-          .onPageLoad(UpdateMode, srn)(fakeRequest)
-
-        status(result) mustBe OK
-
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe false
-        contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe true
-      }
-
     }
   }
 }
 
 object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
-
-  /*
-   schemeDetailsConnector: SchemeDetailsConnector,
-                                         lockConnector: PensionSchemeVarianceLockConnector,
-                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                         updateConnector: UpdateSchemeCacheConnector,
-                                         minimalPsaConnector: MinimalPsaC
-   */
-
   private val view = injector.instanceOf[schemeDetailsTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
@@ -171,9 +114,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
-  private val userAnswersJsonRejected = readJsonFromFile("/payloadRejected.json")
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
-  private val userAnswersRejected = new FakeDataRetrievalAction(Some(userAnswersJsonRejected))
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
     controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
