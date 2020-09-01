@@ -25,7 +25,7 @@ import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.domain.PsaId
@@ -47,6 +47,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val viewCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
   private val updateCacheConnector = mock[UpdateSchemeCacheConnector]
   private val lockRepoConnector = mock[PensionSchemeVarianceLockConnector]
+  private val schemeDetailsConnector = mock[SchemeDetailsConnector]
+  private val minimalPsaConnector = mock[MinimalPsaConnector]
 
   private val testData = Json.obj("test" -> "data")
 
@@ -54,17 +56,29 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 viewConnector: SchemeDetailsReadOnlyCacheConnector = viewCacheConnector,
                 updateConnector: UpdateSchemeCacheConnector = updateCacheConnector,
                 lockConnector: PensionSchemeVarianceLockConnector = lockRepoConnector,
+                schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
+                minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: Option[String] = None) extends
-    DataRetrievalImpl(dataConnector, viewConnector, updateConnector, lockConnector, mode, srn) {
+                srn: Option[String] = None,
+                refreshData: Boolean = false
+               ) extends
+    DataRetrievalImpl(
+      dataConnector = dataConnector,
+      viewConnector = viewConnector,
+      updateConnector = updateConnector,
+      lockConnector = lockConnector,
+      schemeDetailsConnector = schemeDetailsConnector,
+      minimalPsaConnector = minimalPsaConnector,
+      mode = mode,
+      srn = srn,
+      refreshData = refreshData
+    ) {
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
   override def beforeEach(): Unit = {
-    reset(dataCacheConnector)
-    reset(lockRepoConnector)
-    reset(updateCacheConnector)
-    reset(viewCacheConnector)
+    reset(dataCacheConnector, viewCacheConnector, updateCacheConnector,
+      lockRepoConnector, schemeDetailsConnector, minimalPsaConnector)
   }
 
   "Data Retrieval Action" when {
