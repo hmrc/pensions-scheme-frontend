@@ -18,29 +18,30 @@ package controllers.actions
 
 import base.SpecBase
 import connectors._
-import identifiers.{SchemeSrnId, SchemeStatusId}
+import identifiers.{SchemeSrnId, SchemeStatusId, UKBankAccountId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import matchers.JsonMatchers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
+class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures with JsonMatchers with BeforeAndAfterEach {
 
   private val srn = "123"
   private val srnOpt = Some(srn)
   private val psa = "A0000000"
   private val externalId = "id"
-  private val schemeVariance = SchemeVariance(psa, srn)
   private val authRequest: AuthenticatedRequest[AnyContent] = AuthenticatedRequest(fakeRequest, externalId, PsaId(psa))
 
   private val dataCacheConnector = mock[UserAnswersCacheConnector]
@@ -76,7 +77,10 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
-  private val answers = UserAnswers().set(SchemeStatusId)("Open").asOpt.value
+  private val statusOpen = "Open"
+  private val statusPending = "Pending"
+
+  private val answersFromDES = UserAnswers().set(SchemeStatusId)(statusOpen).asOpt.value
 
   private def userAnswersDummy(status: String, srn: String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
     .set(SchemeSrnId)(srn).asOpt.value
@@ -90,13 +94,11 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     when(viewCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))
     when(schemeDetailsConnector.getSchemeDetailsVariations(any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(answers))
-
+      .thenReturn(Future.successful(answersFromDES))
   }
 
-
   "transform" must {
-    behave like dataRetrievalAction(refreshData = false)
+    behave like requestTransformer(refreshData = false)
 
     "when refreshData is false and there is no data in the read-only cache in UpdateMode and " +
       s"lock is not held by psa set userAnswers to 'None' in the request" in {
@@ -117,7 +119,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(answers))
 
@@ -140,7 +142,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusPending).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
@@ -164,7 +166,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is different from cached srn then no user answers is added to the request" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
@@ -186,7 +188,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
@@ -209,7 +211,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
@@ -253,14 +255,17 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       }
     }
 
-    behave like dataRetrievalAction(refreshData = true)
+    behave like requestTransformer(refreshData = true)
 
     "when refreshData is true and there is no data in the read-only cache in UpdateMode and " +
-      s"lock is not held by psa set userAnswers to 'None' in the request" in {
+      s"lock is not held by psa then build new user answers with data retrieved from scheme details" in {
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, srn = srn).set(UKBankAccountId)(true).asOpt.value
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future(None)
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
 
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(status = "Open", srn = srn).json))
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
       val action = new Harness(viewConnector = viewCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
@@ -270,17 +275,24 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val futureResult = action.callTransform(authRequest)
 
       whenReady(futureResult) { result =>
-        result.userAnswers mustBe Some(userAnswersDummy("Open", srn))
+        result.userAnswers mustBe Some(uaInsertedIntoViewCache)
+        verify(schemeDetailsConnector, times(1)).getSchemeDetailsVariations(any(), any(), any())(any(), any())
+        verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+        jsonCaptor.getValue must containJson(answersFromDES.json.as[JsObject])
       }
     }
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-      "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      "overwrite data with new user answers with data retrieved from scheme details and add it to the request" in {
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val answersInViewCache = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      val ua = userAnswersDummy(status = statusOpen, srn = srn).set(UKBankAccountId)(true).asOpt.value
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(answers))
+      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(answersInViewCache))
+      //when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(status = statusOpen, srn = srn).json))
 
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(status = "Open", srn = srn).json))
+      verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+      jsonCaptor.getValue must containJson(answersFromDES.json.as[JsObject])
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
@@ -295,17 +307,17 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       whenReady(futureResult) { result =>
         result.userAnswers.isDefined mustBe true
         result.viewOnly mustBe false
-        result.userAnswers mustBe Some(userAnswersDummy("Open", srn))
+        result.userAnswers mustBe Some(userAnswersDummy(statusOpen, srn))
       }
     }
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusPending).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy("Pending", srn).json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusPending, srn).json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
@@ -320,17 +332,17 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       whenReady(futureResult) { result =>
         result.userAnswers.isDefined mustBe true
         result.viewOnly mustBe true
-        result.userAnswers mustBe Some(userAnswersDummy("Pending", srn))
+        result.userAnswers mustBe Some(userAnswersDummy(statusPending, srn))
       }
     }
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is different from cached srn then no user answers is added to the request" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy("Open", "different-srn").json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, "different-srn").json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
@@ -349,11 +361,11 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy("Open", "different-srn").json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, "different-srn").json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
@@ -373,11 +385,11 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      val answers = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy("Open", srn).json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, srn).json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
@@ -398,7 +410,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "when the scheme SRN is found in the user answers cache fetch data from viewConnector to build a userAnswers object and add it to the request" in {
-      val testUA = userAnswersDummy("Open", srn)
+      val testUA = userAnswersDummy(statusOpen, srn)
       val testData = testUA.json
 
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
@@ -423,7 +435,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   }
 
   //scalastyle:off method.length
-  private def dataRetrievalAction(refreshData: Boolean):Unit = {
+  private def requestTransformer(refreshData: Boolean): Unit = {
     s"when refreshData is $refreshData and there is no data in the cache in NormalMode set userAnswers to 'None' in the request" in {
       when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
       val action = new Harness(dataCacheConnector, refreshData = refreshData)
@@ -457,8 +469,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     }
 
     s"when refreshData is $refreshData and there is data in the update cache in UpdateMode and " +
-      s"lock is held by psa build a userAnswers object and add it to the request" in {
-
+      s"lock is held by psa then a userAnswers object is built and added to the request" in {
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(VarianceLock)))
       when(updateCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(Json.obj()))
       val action = new Harness(updateConnector = updateCacheConnector,
@@ -474,10 +485,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       }
     }
 
-
     s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-      "status is Pending and srn is same as cached srn then user answers is added to the request and viewOnly is true" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      "and status is Pending and srn is same as cached srn then user answers is added to the request and viewOnly is true" in {
+      val answers = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
@@ -499,42 +509,37 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     }
 
     s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-      "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
-      "when the scheme SRN is not found in the user answers cache return no user answer" in {
-        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
-        when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
+      "and there is data in the read-only cache in UpdateMode and lock is held by someone else and " +
+      "the scheme SRN is not found in the user answers cache then return no user answers" in {
+      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
+      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
 
-        val action = new Harness(
-          viewConnector = viewCacheConnector,
-          updateConnector = updateCacheConnector,
-          lockConnector = lockRepoConnector,
-          mode = UpdateMode,
-          srn = srnOpt,
-          refreshData = refreshData)
+      val action = new Harness(
+        viewConnector = viewCacheConnector,
+        updateConnector = updateCacheConnector,
+        lockConnector = lockRepoConnector,
+        mode = UpdateMode,
+        srn = srnOpt,
+        refreshData = refreshData)
 
-        val futureResult = action.callTransform(authRequest)
+      val futureResult = action.callTransform(authRequest)
 
-        whenReady(futureResult) { result =>
-          result.userAnswers.isDefined mustBe false
-        }
+      whenReady(futureResult) { result =>
+        result.userAnswers.isDefined mustBe false
       }
+    }
 
-      s"when refreshData is $refreshData and no SRN is defined for UpdateMode " +
-        "set userAnswers to 'None' in the request" in {
-        when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
-        val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, refreshData = refreshData)
+    s"when refreshData is $refreshData and no SRN is defined for UpdateMode then " +
+      "set userAnswers to 'None' in the request" in {
+      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+      val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, refreshData = refreshData)
 
-        val futureResult = action.callTransform(authRequest)
+      val futureResult = action.callTransform(authRequest)
 
-        whenReady(futureResult) { result =>
-          result.userAnswers.isEmpty mustBe true
-        }
+      whenReady(futureResult) { result =>
+        result.userAnswers.isEmpty mustBe true
       }
     }
   }
-
-
 }
-
-
 
