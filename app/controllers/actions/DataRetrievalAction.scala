@@ -178,10 +178,13 @@ class DataRetrievalImpl(
       case Some(ua) =>
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+            println("\n1")
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
+            println("\n2")
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
           case _ =>
+            println("\n3")
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = true)
         }
       case None =>
