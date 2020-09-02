@@ -99,7 +99,7 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.upsert(_, value))
     }
 
-  def lockAndCall(srn: Option[String], f: String => Future[JsValue])(implicit
+  private def lockAndCall(srn: Option[String], f: String => Future[JsValue])(implicit
                                                                      ec: ExecutionContext,
                                                                      hc: HeaderCarrier,
                                                                      request: DataRequest[AnyContent]

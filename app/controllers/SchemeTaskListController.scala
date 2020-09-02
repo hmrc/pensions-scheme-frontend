@@ -17,22 +17,14 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors._
 import controllers.actions._
-import handlers.ErrorHandler
-import identifiers.{IsPsaSuspendedId, SchemeSrnId}
 import javax.inject.Inject
-import models.requests.OptionalDataRequest
-import models.{Mode, VarianceLock}
+import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import viewmodels.SchemeDetailsTaskList
 import views.html.schemeDetailsTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,11 +34,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          @TaskList allowAccess: AllowAccessActionProvider,
-                                         schemeDetailsConnector: SchemeDetailsConnector,
-                                         lockConnector: PensionSchemeVarianceLockConnector,
-                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                         updateConnector: UpdateSchemeCacheConnector,
-                                         minimalPsaConnector: MinimalPsaConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: schemeDetailsTaskList,
                                          hsTaskListHelperRegistration: HsTaskListHelperRegistration,
@@ -54,60 +41,18 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
       (srn, request.userAnswers) match {
-
         case (None, Some(userAnswers)) =>
           Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
-        case (Some(srnValue), optionUserAnswers) =>
-          onPageLoadVariations(srnValue, optionUserAnswers)
+        case (Some(_), Some(ua)) =>
+          Future.successful(Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn))))
+        case (Some(_), _) =>
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
   }
-
-  private def onPageLoadVariations(srn: String,
-                                   ua: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent],
-                                                            hc: HeaderCarrier): Future[Result] = {
-    lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, srn).flatMap {
-      case Some(VarianceLock) =>
-        ua match {
-          case Some(userAnswers) =>
-            createViewWithSuspensionFlag(srn, userAnswers, updateConnector.upsert(srn, _), viewOnly = false)
-          case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
-      case Some(_) =>
-        getSchemeDetailsAndReturnResult(srn, viewOnly = true)
-      case _ =>
-        getSchemeDetailsAndReturnResult(srn, viewOnly = false)
-    }
-  }
-
-  private def getSchemeDetailsAndReturnResult(srn: String, viewOnly: Boolean)(implicit
-                                                                              request: OptionalDataRequest[AnyContent],
-                                                                              hc: HeaderCarrier): Future[Result] = {
-    schemeDetailsConnector.getSchemeDetailsVariations(request.psaId.id, schemeIdType = "srn", srn)
-      .flatMap { userAnswers =>
-        createViewWithSuspensionFlag(srn, userAnswers, viewConnector.upsert(request.externalId, _), viewOnly)
-      }
-  }
-
-  private def createViewWithSuspensionFlag(srn: String, userAnswers: UserAnswers,
-                                           upsertUserAnswers: JsValue => Future[JsValue], viewOnly: Boolean)(implicit
-                                                                                                             request: OptionalDataRequest[AnyContent],
-                                                                                                             hc: HeaderCarrier): Future[Result] =
-    minimalPsaConnector.isPsaSuspended(request.psaId.id).flatMap { isSuspended =>
-
-      val updatedUserAnswers = userAnswers.set(IsPsaSuspendedId)(isSuspended).flatMap(
-        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(userAnswers)
-      val taskList: SchemeDetailsTaskList = hsTaskListHelperVariations.taskList(updatedUserAnswers, Some(viewOnly),
-        Some(srn))
-
-      upsertUserAnswers(updatedUserAnswers.json).flatMap { _ =>
-        Future.successful(Ok(view(taskList)))
-      }
-    }
 }
