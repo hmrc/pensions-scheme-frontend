@@ -51,34 +51,23 @@ class DataRetrievalImpl(
           .fetch(request.externalId)
           .map(optJsValue => getOptionalRequest(optJsValue.map(UserAnswers), viewOnly = false)(request))
       case (UpdateMode | CheckUpdateMode, false) =>
-        variationsTransformWithoutDataRefresh(srn)(request, hc)
+        variationsTransform(srn, getUserAnswersBasedOnLockStatus(_, _)(request, hc))(request, hc)
       case (UpdateMode | CheckUpdateMode, true) =>
-        variationsTransformWithDataRefresh(srn)(request, hc)
+        variationsTransform(srn, getUserAnswersWithDataRefreshIfNotLocked(_, _)(request, hc))(request, hc)
     }
   }
 
-  private def variationsTransformWithoutDataRefresh[A](srn: Option[String])(implicit
-                                                                            request: AuthenticatedRequest[A],
-                                                                            hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
+  private def variationsTransform[A](srn: Option[String],
+                                     obtainUserAnswers: (String, Option[Lock]) => Future[Option[UserAnswers]]
+                                    )(implicit request: AuthenticatedRequest[A],
+                                      hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     srn match {
       case Some(extractedSrn) =>
         lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn).flatMap(optionLock =>
-          getUserAnswersBasedOnLockStatus(extractedSrn, optionLock)
+          obtainUserAnswers(extractedSrn, optionLock)
             .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
         )
       case _ => Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
-    }
-
-  private def variationsTransformWithDataRefresh[A](srn: Option[String])(implicit
-                                                                         request: AuthenticatedRequest[A],
-                                                                         hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
-    srn match {
-      case Some(extractedSrn) =>
-        lockConnector.isLockByPsaIdOrSchemeId(request.psaId.id, extractedSrn) flatMap { optionLock =>
-          getUserAnswersWithDataRefreshIfNotLocked(extractedSrn, optionLock)(request, implicitly)
-            .map(optionUA => getOptionalDataRequest(extractedSrn, optionLock, optionUA))
-        }
-      case _ => Future.successful(OptionalDataRequest(request.request, request.externalId, None, request.psaId))
     }
 
   private def getUserAnswersIfHasLocked(srn: String,
@@ -119,9 +108,9 @@ class DataRetrievalImpl(
   }
 
   private def getUserAnswersWithDataRefreshIfNotLocked[A](srn: String,
-                                           optionLock: Option[Lock])(implicit
-                                                                     request: AuthenticatedRequest[A],
-                                                                     hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+                                                          optionLock: Option[Lock])(implicit
+                                                                                    request: AuthenticatedRequest[A],
+                                                                                    hc: HeaderCarrier): Future[Option[UserAnswers]] = {
     getUserAnswersIfHasLocked(srn, optionLock).flatMap { optionUA =>
       val futureOptionJsValue = (optionLock, optionUA) match {
         case (Some(VarianceLock), Some(ua)) =>
@@ -178,13 +167,10 @@ class DataRetrievalImpl(
       case Some(ua) =>
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            println("\n1")
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = status != "Open")
           case (Some(_), _) =>
-            println("\n2")
             OptionalDataRequest(request.request, request.externalId, None, request.psaId, viewOnly = true)
           case _ =>
-            println("\n3")
             OptionalDataRequest(request.request, request.externalId, optionUA, request.psaId, viewOnly = true)
         }
       case None =>
