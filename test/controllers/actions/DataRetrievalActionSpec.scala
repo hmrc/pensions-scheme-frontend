@@ -91,59 +91,11 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
   }
 
-  //scalastyle:off method.length
-  private def ook(refreshData:Boolean) = {
-//    s"when refreshData is $refreshData and there is no data in the cache in NormalMode set userAnswers to 'None' in the request" in {
-//      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
-//      val action = new Harness(dataCacheConnector, refreshData = refreshData)
+
+  "transform" must {
+//    behave like dataRetrievalAction(refreshData = false)
 //
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isEmpty mustBe true
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is data in the cache in NormalMode build a userAnswers object and add it to the request" in {
-//      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
-//      val action = new Harness(dataCacheConnector, refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe true
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is no srn in UpdateMode set userAnswers to 'None' in the request" in {
-//      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = None, refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isEmpty mustBe true
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is data in the update cache in UpdateMode and " +
-//      s"lock is held by psa build a userAnswers object and add it to the request" in {
-//
-//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(VarianceLock)))
-//      when(updateCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(Json.obj()))
-//      val action = new Harness(updateConnector = updateCacheConnector,
-//        lockConnector = lockRepoConnector,
-//        mode = UpdateMode,
-//        srn = srnOpt,
-//        refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe true
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is no data in the read-only cache in UpdateMode and " +
+//    "when refreshData is false and there is no data in the read-only cache in UpdateMode and " +
 //      s"lock is not held by psa set userAnswers to 'None' in the request" in {
 //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
 //      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future(None)
@@ -151,7 +103,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        lockConnector = lockRepoConnector,
 //        mode = UpdateMode,
 //        srn = srnOpt,
-//        refreshData = refreshData)
+//        refreshData = false)
 //
 //      val futureResult = action.callTransform(authRequest)
 //
@@ -159,143 +111,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        result.userAnswers.isEmpty mustBe true
 //      }
 //    }
-
-    // HERE
-
-
-
-
-
 //
-//
-//    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//      "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
-//      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
-//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
-//        Future.successful(Some(answers))
-//
-//      val action = new Harness(
-//        viewConnector = viewCacheConnector,
-//        updateConnector = updateCacheConnector,
-//        lockConnector = lockRepoConnector,
-//        mode = UpdateMode,
-//        srn = srnOpt,
-//        refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe false
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//      "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
-//      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
-//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
-//        Future.successful(Some(answers))
-//
-//      val action = new Harness(
-//        viewConnector = viewCacheConnector,
-//        updateConnector = updateCacheConnector,
-//        lockConnector = lockRepoConnector,
-//        mode = UpdateMode,
-//        srn = srnOpt,
-//        refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe true
-//        result.viewOnly mustBe false
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//      "status is Pending and srn is same as cached srn then user answers is added to the request and viewOnly is true" in {
-//      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
-//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
-//        Future.successful(Some(answers))
-//
-//      val action = new Harness(
-//        viewConnector = viewCacheConnector,
-//        updateConnector = updateCacheConnector,
-//        lockConnector = lockRepoConnector,
-//        mode = UpdateMode,
-//        srn = srnOpt,
-//        refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe true
-//        result.viewOnly mustBe true
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//      "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
-//      "when the scheme SRN is not found in the user answers cache return no user answers" in {
-//        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
-//        when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
-//
-//        val action = new Harness(
-//          viewConnector = viewCacheConnector,
-//          updateConnector = updateCacheConnector,
-//          lockConnector = lockRepoConnector,
-//          mode = UpdateMode,
-//          srn = srnOpt,
-//          refreshData = refreshData)
-//
-//        val futureResult = action.callTransform(authRequest)
-//
-//        whenReady(futureResult) { result =>
-//          result.userAnswers.isDefined mustBe false
-//        }
-//      }
-//
-//      s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//        "when the scheme SRN is found in the user answers cache fetch data from viewConnector to build a userAnswers object and add it to the request" in {
-//        val testData = Json.obj(SchemeSrnId.toString -> srn)
-//
-//        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
-//        when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
-//
-//        val action = new Harness(
-//          viewConnector = viewCacheConnector,
-//          updateConnector = updateCacheConnector,
-//          lockConnector = lockRepoConnector,
-//          mode = UpdateMode,
-//          srn = srnOpt,
-//          refreshData = refreshData)
-//
-//        val futureResult = action.callTransform(authRequest)
-//
-//        whenReady(futureResult) { result =>
-//          result.userAnswers.isDefined mustBe true
-//          result.userAnswers.get mustBe UserAnswers(testData)
-//        }
-//      }
-//    }
-//
-//    s"when refreshData is $refreshData and no SRN is defined for UpdateMode " +
-//      "set userAnswers to 'None' in the request" in {
-//      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
-//      val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, refreshData = refreshData)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isEmpty mustBe true
-//      }
-//    }
-  }
-
-  "transform" must {
-    //behave like ook(refreshData = false)
 //    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
 //      "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
 //      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
@@ -318,81 +134,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        result.userAnswers.get mustBe UserAnswers(answers)
 //      }
 //    }
-
-    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-      "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
-        Future.successful(Some(answers))
-
-      val action = new Harness(
-        viewConnector = viewCacheConnector,
-        updateConnector = updateCacheConnector,
-        lockConnector = lockRepoConnector,
-        mode = UpdateMode,
-        srn = srnOpt,
-        refreshData = false)
-
-      val futureResult = action.callTransform(authRequest)
-
-      whenReady(futureResult) { result =>
-        result.userAnswers.isDefined mustBe true
-        result.viewOnly mustBe true
-        result.userAnswers.get mustBe UserAnswers(answers)
-      }
-    }
-
-    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-      "status is open and srn is different from cached srn then no user answers is added to the request" in {
-      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
-      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
-        Future.successful(Some(answers))
-
-      val action = new Harness(
-        viewConnector = viewCacheConnector,
-        updateConnector = updateCacheConnector,
-        lockConnector = lockRepoConnector,
-        mode = UpdateMode,
-        srn = srnOpt,
-        refreshData = false)
-
-      val futureResult = action.callTransform(authRequest)
-
-      whenReady(futureResult) { result =>
-        result.userAnswers.isDefined mustBe false
-      }
-    }
-
-    behave like ook(refreshData = true)
-//    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
-//      "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
-//      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
-//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
-//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(answers))
 //
-//      when(viewCacheConnector.upsert(any(), any())(any(), any()))
-//        .thenReturn(Future.successful(JsNull))
-//
-//      val action = new Harness(
-//        viewConnector = viewCacheConnector,
-//        updateConnector = updateCacheConnector,
-//        lockConnector = lockRepoConnector,
-//        mode = UpdateMode,
-//        srn = srnOpt,
-//        refreshData = true)
-//
-//      val futureResult = action.callTransform(authRequest)
-//
-//      whenReady(futureResult) { result =>
-//        result.userAnswers.isDefined mustBe true
-//        result.viewOnly mustBe false
-//        result.userAnswers.get mustBe UserAnswers(answers)
-//      }
-//    }
-
-//    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+//    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
 //      "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
 //      val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
 //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
@@ -405,7 +148,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        lockConnector = lockRepoConnector,
 //        mode = UpdateMode,
 //        srn = srnOpt,
-//        refreshData = true)
+//        refreshData = false)
 //
 //      val futureResult = action.callTransform(authRequest)
 //
@@ -415,8 +158,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        result.userAnswers.get mustBe UserAnswers(answers)
 //      }
 //    }
-
-//    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+//
+//    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
 //      "status is open and srn is different from cached srn then no user answers is added to the request" in {
 //      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
 //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
@@ -429,7 +172,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        lockConnector = lockRepoConnector,
 //        mode = UpdateMode,
 //        srn = srnOpt,
-//        refreshData = true)
+//        refreshData = false)
 //
 //      val futureResult = action.callTransform(authRequest)
 //
@@ -437,7 +180,351 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 //        result.userAnswers.isDefined mustBe false
 //      }
 //    }
+//
+//    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+//      "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
+//      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+//        Future.successful(Some(answers))
+//
+//      val action = new Harness(
+//        viewConnector = viewCacheConnector,
+//        updateConnector = updateCacheConnector,
+//        lockConnector = lockRepoConnector,
+//        mode = UpdateMode,
+//        srn = srnOpt,
+//        refreshData = false)
+//
+//      val futureResult = action.callTransform(authRequest)
+//
+//      whenReady(futureResult) { result =>
+//        result.userAnswers.isDefined mustBe false
+//      }
+//    }
+//
+//
+//    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+//      "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
+//      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+//        Future.successful(Some(answers))
+//
+//      val action = new Harness(
+//        viewConnector = viewCacheConnector,
+//        updateConnector = updateCacheConnector,
+//        lockConnector = lockRepoConnector,
+//        mode = UpdateMode,
+//        srn = srnOpt,
+//        refreshData = false)
+//
+//      val futureResult = action.callTransform(authRequest)
+//
+//      whenReady(futureResult) { result =>
+//        result.userAnswers.isDefined mustBe true
+//        result.viewOnly mustBe false
+//      }
+//    }
+//
+//    "when refreshData is false and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+//      "when the scheme SRN is found in the user answers cache fetch data from viewConnector to build a userAnswers object and add it to the request" in {
+//      val testData = Json.obj(SchemeSrnId.toString -> srn)
+//
+//      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
+//      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
+//
+//      val action = new Harness(
+//        viewConnector = viewCacheConnector,
+//        updateConnector = updateCacheConnector,
+//        lockConnector = lockRepoConnector,
+//        mode = UpdateMode,
+//        srn = srnOpt,
+//        refreshData = false)
+//
+//      val futureResult = action.callTransform(authRequest)
+//
+//      whenReady(futureResult) { result =>
+//        result.userAnswers.isDefined mustBe true
+//        result.userAnswers.get mustBe UserAnswers(testData)
+//      }
+//    }
 
+//    behave like dataRetrievalAction(refreshData = true)
+
+    //  "when refreshData is true and there is no data in the read-only cache in UpdateMode and " +
+    //    s"lock is not held by psa set userAnswers to 'None' in the request" in {
+    //    when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //    when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future(None)
+    //    val action = new Harness(viewConnector = viewCacheConnector,
+    //      lockConnector = lockRepoConnector,
+    //      mode = UpdateMode,
+    //      srn = srnOpt,
+    //      refreshData = true)
+    //
+    //    val futureResult = action.callTransform(authRequest)
+    //
+    //    whenReady(futureResult) { result =>
+    //      result.userAnswers.isEmpty mustBe true
+    //    }
+    //  }
+
+    //    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //      "build a userAnswers object and add it to the request, acquire lock, save data to updateCache" in {
+    //      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+    //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(answers))
+    //
+    //      when(viewCacheConnector.upsert(any(), any())(any(), any()))
+    //        .thenReturn(Future.successful(JsNull))
+    //
+    //      val action = new Harness(
+    //        viewConnector = viewCacheConnector,
+    //        updateConnector = updateCacheConnector,
+    //        lockConnector = lockRepoConnector,
+    //        mode = UpdateMode,
+    //        srn = srnOpt,
+    //        refreshData = true)
+    //
+    //      val futureResult = action.callTransform(authRequest)
+    //
+    //      whenReady(futureResult) { result =>
+    //        result.userAnswers.isDefined mustBe true
+    //        result.viewOnly mustBe false
+    //        result.userAnswers.get mustBe UserAnswers(answers)
+    //      }
+    //    }
+
+    //    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //      "status is not open, build a userAnswers object and add it to the request and set view only to true" in {
+    //      val answers = UserAnswers().set(SchemeStatusId)("Pending").asOpt.value.json
+    //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+    //        Future.successful(Some(answers))
+    //
+    //      val action = new Harness(
+    //        viewConnector = viewCacheConnector,
+    //        updateConnector = updateCacheConnector,
+    //        lockConnector = lockRepoConnector,
+    //        mode = UpdateMode,
+    //        srn = srnOpt,
+    //        refreshData = true)
+    //
+    //      val futureResult = action.callTransform(authRequest)
+    //
+    //      whenReady(futureResult) { result =>
+    //        result.userAnswers.isDefined mustBe true
+    //        result.viewOnly mustBe true
+    //        result.userAnswers.get mustBe UserAnswers(answers)
+    //      }
+    //    }
+
+    //    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //      "status is open and srn is different from cached srn then no user answers is added to the request" in {
+    //      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+    //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+    //        Future.successful(Some(answers))
+    //
+    //      val action = new Harness(
+    //        viewConnector = viewCacheConnector,
+    //        updateConnector = updateCacheConnector,
+    //        lockConnector = lockRepoConnector,
+    //        mode = UpdateMode,
+    //        srn = srnOpt,
+    //        refreshData = true)
+    //
+    //      val futureResult = action.callTransform(authRequest)
+    //
+    //      whenReady(futureResult) { result =>
+    //        result.userAnswers.isDefined mustBe false
+    //      }
+    //    }
+
+    //        "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //          "status is Pending and srn is different from cached srn then no user answers is added to the request" in {
+    //          val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)("existing-srn")).asOpt.value.json
+    //          when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //          when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+    //            Future.successful(Some(answers))
+    //
+    //          val action = new Harness(
+    //            viewConnector = viewCacheConnector,
+    //            updateConnector = updateCacheConnector,
+    //            lockConnector = lockRepoConnector,
+    //            mode = UpdateMode,
+    //            srn = srnOpt,
+    //            refreshData = true)
+    //
+    //          val futureResult = action.callTransform(authRequest)
+    //
+    //          whenReady(futureResult) { result =>
+    //            result.userAnswers.isDefined mustBe false
+    //          }
+    //        }
+
+
+    //    "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //      "status is open and srn is same as cached srn then user answers is added to the request and viewOnly is false" in {
+    //      val answers = UserAnswers().set(SchemeStatusId)("Open").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+    //      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+    //      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+    //        Future.successful(Some(answers))
+    //
+    //      val action = new Harness(
+    //        viewConnector = viewCacheConnector,
+    //        updateConnector = updateCacheConnector,
+    //        lockConnector = lockRepoConnector,
+    //        mode = UpdateMode,
+    //        srn = srnOpt,
+    //        refreshData = true)
+    //
+    //      val futureResult = action.callTransform(authRequest)
+    //
+    //      whenReady(futureResult) { result =>
+    //        result.userAnswers.isDefined mustBe true
+    //        result.viewOnly mustBe false
+    //      }
+    //    }
+
+
+    //            "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+    //              "when the scheme SRN is found in the user answers cache fetch data from viewConnector to build a userAnswers object and add it to the request" in {
+    //              val testData = Json.obj(SchemeSrnId.toString -> srn)
+    //
+    //              when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
+    //              when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
+    //
+    //              val action = new Harness(
+    //                viewConnector = viewCacheConnector,
+    //                updateConnector = updateCacheConnector,
+    //                lockConnector = lockRepoConnector,
+    //                mode = UpdateMode,
+    //                srn = srnOpt,
+    //                refreshData = true)
+    //
+    //              val futureResult = action.callTransform(authRequest)
+    //
+    //              whenReady(futureResult) { result =>
+    //                result.userAnswers.isDefined mustBe true
+    //                result.userAnswers.get mustBe UserAnswers(testData)
+    //              }
+    //            }
   }
 
+  //scalastyle:off method.length
+  private def dataRetrievalAction(refreshData: Boolean) = {
+    s"when refreshData is $refreshData and there is no data in the cache in NormalMode set userAnswers to 'None' in the request" in {
+      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+      val action = new Harness(dataCacheConnector, refreshData = refreshData)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers.isEmpty mustBe true
+      }
+    }
+
+    s"when refreshData is $refreshData and there is data in the cache in NormalMode build a userAnswers object and add it to the request" in {
+      when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(testData))
+      val action = new Harness(dataCacheConnector, refreshData = refreshData)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers.isDefined mustBe true
+      }
+    }
+
+    s"when refreshData is $refreshData and there is no srn in UpdateMode set userAnswers to 'None' in the request" in {
+      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = None, refreshData = refreshData)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers.isEmpty mustBe true
+      }
+    }
+
+    s"when refreshData is $refreshData and there is data in the update cache in UpdateMode and " +
+      s"lock is held by psa build a userAnswers object and add it to the request" in {
+
+      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(VarianceLock)))
+      when(updateCacheConnector.fetch(eqTo(srn))(any(), any())) thenReturn Future.successful(Some(Json.obj()))
+      val action = new Harness(updateConnector = updateCacheConnector,
+        lockConnector = lockRepoConnector,
+        mode = UpdateMode,
+        srn = srnOpt,
+        refreshData = refreshData)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers.isDefined mustBe true
+      }
+    }
+
+
+    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+      "status is Pending and srn is same as cached srn then user answers is added to the request and viewOnly is true" in {
+      val answers = UserAnswers().set(SchemeStatusId)("Pending").flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
+      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
+      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
+        Future.successful(Some(answers))
+
+      val action = new Harness(
+        viewConnector = viewCacheConnector,
+        updateConnector = updateCacheConnector,
+        lockConnector = lockRepoConnector,
+        mode = UpdateMode,
+        srn = srnOpt,
+        refreshData = refreshData)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers.isDefined mustBe true
+        result.viewOnly mustBe true
+      }
+    }
+
+    s"when refreshData is $refreshData and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
+      "there is data in the read-only cache in UpdateMode and lock is held by someone else" must {
+      "when the scheme SRN is not found in the user answers cache return no user answer" in {
+        when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(SchemeLock)))
+        when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future.successful(Some(testData))
+
+        val action = new Harness(
+          viewConnector = viewCacheConnector,
+          updateConnector = updateCacheConnector,
+          lockConnector = lockRepoConnector,
+          mode = UpdateMode,
+          srn = srnOpt,
+          refreshData = refreshData)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isDefined mustBe false
+        }
+      }
+
+      s"when refreshData is $refreshData and no SRN is defined for UpdateMode " +
+        "set userAnswers to 'None' in the request" in {
+        when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
+        val action = new Harness(updateConnector = updateCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, refreshData = refreshData)
+
+        val futureResult = action.callTransform(authRequest)
+
+        whenReady(futureResult) { result =>
+          result.userAnswers.isEmpty mustBe true
+        }
+      }
+    }
+  }
+
+
 }
+
+
+
