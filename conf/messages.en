@@ -17,7 +17,7 @@ error.integer = Give an answer in whole numbers
 error.non_numeric = Give a value using only numbers
 error.number = Please enter a valid number
 error.required = Please enter a value
-error.summary.title = There was a problem with the page
+error.summary.title = There is a problem
 
 messages__common__firstname = First name
 messages__common__lastname = Last name
@@ -1564,7 +1564,7 @@ messages__whatYouWillNeedAddress__item2 = previous address if {0} has been at th
 messages__whatYouWillNeedTrusteePartnershipAddress__p1 = You will need to tell us {0}’s:
 messages__whatYouWillNeedTrusteePartnershipAddress__item1 = current address
 messages__whatYouWillNeedTrusteePartnershipAddress__item2 = previous address if {0} has been at the current address for less than 1 year
-        
+
 messages__directors__heading = Directors
 messages__whatYouWillNeedDirectors__p1 = For every director associated with the company you’re registering, you will need to tell us the director’s:
 messages__whatYouWillNeed__item1 = name
