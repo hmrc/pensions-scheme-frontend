@@ -50,13 +50,13 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
   AddressListController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map {
           vm =>

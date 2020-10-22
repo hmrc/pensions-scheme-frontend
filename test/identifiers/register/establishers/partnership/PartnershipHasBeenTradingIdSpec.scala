@@ -64,7 +64,7 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
   }
 
   "cya" when {
-    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(index, flag = true), PsaId("A0000000"))
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(index, flag = true), Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {
@@ -82,7 +82,7 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
 
     "in Update Mode for an existing partnership returned from ETMP" must {
       "return no rows" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         PartnershipHasBeenTradingId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

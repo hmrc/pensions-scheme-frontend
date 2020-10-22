@@ -62,7 +62,7 @@ class HasBeenTradingCompanyIdSpec extends SpecBase {
   }
 
   "cya" when {
-    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isTrusteeNew(index, flag = true), PsaId("A0000000"))
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isTrusteeNew(index, flag = true), Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {
@@ -80,7 +80,7 @@ class HasBeenTradingCompanyIdSpec extends SpecBase {
 
     "in Update Mode for an existing company returned from ETMP" must {
       "return no rows" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         HasBeenTradingCompanyId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

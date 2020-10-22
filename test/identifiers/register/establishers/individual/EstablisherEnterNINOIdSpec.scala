@@ -45,7 +45,7 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         EstablisherEnterNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -56,7 +56,7 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -65,7 +65,7 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
     "in update mode for existing establisher - individual nino" must {
 
       "return answers rows without change links if nino is available and not editable" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
@@ -76,14 +76,14 @@ class EstablisherEnterNINOIdSpec extends SpecBase {
 
       "return answers rows with change links if nino is available and editable" in {
         val answers = UserAnswers().set(EstablisherEnterNINOId(0))(ReferenceValue("nino", true)).asOpt.get
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(

@@ -38,7 +38,7 @@ class CompanyDetailsIdSpec extends SpecBase with Enumerable.Implicits {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         CompanyDetailsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__name"),List("test company"),false,
@@ -52,7 +52,7 @@ class CompanyDetailsIdSpec extends SpecBase with Enumerable.Implicits {
       def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         CompanyDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__name"),List("test company"),false,
@@ -64,7 +64,7 @@ class CompanyDetailsIdSpec extends SpecBase with Enumerable.Implicits {
     "in update mode for existing trustee - company" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
 
         CompanyDetailsId(0).row(onwardUrl, UpdateMode) must equal(Seq(

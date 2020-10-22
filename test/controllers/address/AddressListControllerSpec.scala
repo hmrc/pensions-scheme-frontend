@@ -203,7 +203,7 @@ object AddressListControllerSpec {
 
       get(
         viewModel
-      )(DataRequest(FakeRequest(), "cacheId", UserAnswers(), PsaId("A0000000")))
+      )(DataRequest(FakeRequest(), "cacheId", UserAnswers(), Some(PsaId("A0000000"))))
 
     }
 
@@ -222,7 +222,7 @@ object AddressListControllerSpec {
         NormalMode,
         "test-context",
         fakeSeqTolerantAddressId
-      )(DataRequest(request, "cacheId", UserAnswers(json), PsaId("A0000000")))
+      )(DataRequest(request, "cacheId", UserAnswers(json), Some(PsaId("A0000000"))))
 
     }
   }

@@ -45,7 +45,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
@@ -64,7 +64,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = authenticate() {
     implicit request =>
       Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }

@@ -172,11 +172,11 @@ object UTRControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends UTRController {
 
     def onPageLoad(viewmodel: UTRViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel, formProvider())(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, viewmodel, formProvider())(DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000"))))
     }
 
     def onSubmit(viewmodel: UTRViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel, formProvider())(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider())(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
     }
   }
 

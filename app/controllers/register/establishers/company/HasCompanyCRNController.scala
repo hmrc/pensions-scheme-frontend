@@ -49,7 +49,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>
@@ -71,7 +71,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
     formProvider("messages__hasCompanyNumber__error__required", companyName)
 
   def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           details =>

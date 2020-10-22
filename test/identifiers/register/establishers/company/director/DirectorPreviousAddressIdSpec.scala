@@ -53,7 +53,7 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         DirectorPreviousAddressId(index, index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
       }
@@ -63,28 +63,28 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
       "for new director" must {
         "return answer row with change links" in {
           val answersNew = answers.set(IsNewDirectorId(index, index))(value = true).asOpt.value
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
 
           DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
       }
       "for existing director" must {
         "return answer row with change links if there is a previous address" in {
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
           DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
           val answersWithNoIsThisPreviousAddress = userAnswersWithName.set(DirectorConfirmPreviousAddressId(index, index))(value = false).asOpt.value
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
           DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
         }
 
         "return no answer row if there is no previous address and `is this previous address` is yes" in {
           val answersWithYesIsThisPreviousAddress = UserAnswers().set(DirectorConfirmPreviousAddressId(index, index))(value = true).asOpt.value
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, Some(PsaId("A0000000")))
 
           DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
         }

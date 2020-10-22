@@ -70,7 +70,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
       s"in ${mode.toString} mode" must {
         "return answers rows with change links for subscription or variation when adding new trustee" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            answers.set(IsTrusteeNewId(0))(value = true).asOpt.value, PsaId("A0000000"))
+            answers.set(IsTrusteeNewId(0))(value = true).asOpt.value, Some(PsaId("A0000000")))
 
           TrusteePreviousAddressId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLInks)
         }
@@ -81,7 +81,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
       "return answer row with add link if there is no previous address and `is this previous address` is no" in {
         val answersWithNoIsThisPreviousAddress = UserAnswers().trusteeName(0, PersonName("Test", "Name")).
           set(IndividualConfirmPreviousAddressId(0))(value = false).asOpt.value
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
         TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
@@ -92,7 +92,7 @@ class TrusteePreviousAddressIdSpec extends SpecBase {
       }
 
       "return answer row with change links if there is a previous address" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         TrusteePreviousAddressId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLInks)
       }

@@ -56,7 +56,7 @@ class AdviserAddressIdSpec extends SpecBase with Enumerable.Implicits {
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(AdviserAddressId)(address).flatMap(
-              _.set(AdviserNameId)(name)).asOpt.value, PsaId("A0000000"))
+              _.set(AdviserNameId)(name)).asOpt.value, Some(PsaId("A0000000")))
 
           implicit val ua: UserAnswers = request.userAnswers
 

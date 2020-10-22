@@ -41,7 +41,7 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -62,7 +62,7 @@ class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(value = true).asOpt.value
 
       "return no answer rows" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         IsCompanyDormantId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

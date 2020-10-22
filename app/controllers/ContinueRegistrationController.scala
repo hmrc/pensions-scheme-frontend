@@ -36,7 +36,7 @@ class ContinueRegistrationController @Inject()(
                                               )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController {
 
-  def continue(): Action[AnyContent] = (authenticate andThen getData()) {
+  def continue(): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers())))
   }

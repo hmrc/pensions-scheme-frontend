@@ -62,7 +62,7 @@ class PartnershipHasUTRIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         PartnershipHasUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -72,7 +72,7 @@ class PartnershipHasUTRIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(value = true).asOpt.value
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         PartnershipHasUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -80,7 +80,7 @@ class PartnershipHasUTRIdSpec extends SpecBase {
     "in update mode for existing establisher - partnership" must {
 
       "not display any row" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         PartnershipHasUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }

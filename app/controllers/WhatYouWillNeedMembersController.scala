@@ -36,12 +36,12 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
                                                 )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       Future.successful(Ok(view(existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = authenticate() {
     implicit request =>
       Redirect(controllers.routes.CurrentMembersController.onPageLoad(NormalMode))
   }

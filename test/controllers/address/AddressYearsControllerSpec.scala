@@ -58,12 +58,12 @@ object AddressYearsControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends AddressYearsController {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
-      implicit def request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      implicit def request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000")))
       get(FakeIdentifier, formProvider("error"), viewmodel)
     }
 
     def onSubmit(viewmodel: AddressYearsViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      implicit def request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      implicit def request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000")))
       post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)
     }
   }

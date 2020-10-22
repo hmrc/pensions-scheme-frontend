@@ -51,7 +51,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>
           if (director.isDeleted) {
@@ -75,7 +75,7 @@ class ConfirmDeleteDirectorController @Inject()(
   private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
   def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
 
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { director =>

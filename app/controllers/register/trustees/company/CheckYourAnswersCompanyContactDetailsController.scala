@@ -55,7 +55,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
   with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
       val contactDetails = AnswerSection(

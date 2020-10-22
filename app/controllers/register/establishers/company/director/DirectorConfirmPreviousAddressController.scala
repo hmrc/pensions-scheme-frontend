@@ -58,7 +58,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map { vm =>
           get(DirectorConfirmPreviousAddressId(establisherIndex, directorIndex), vm)
@@ -66,7 +66,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map { vm =>
           post(DirectorConfirmPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressId

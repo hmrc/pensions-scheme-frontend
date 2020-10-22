@@ -52,7 +52,7 @@ class CompanyPreviousAddressListController @Inject()(
   AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map(get)
     }
@@ -75,7 +75,7 @@ class CompanyPreviousAddressListController @Inject()(
     )
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).right.map {
           vm =>

@@ -23,15 +23,14 @@ import base.SpecBase
 import connectors.{UserAnswersCacheConnector, _}
 import models._
 import models.requests.OptionalDataRequest
-import play.api.mvc.Results.Ok
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterEach, MustMatchers}
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.Matchers.{eq => eqTo, _}
 import play.api.libs.json.{JsNumber, JsObject, Json}
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.AnyContent
+import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
@@ -48,7 +47,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
   import UrlsPartialServiceSpec._
 
   implicit val request: OptionalDataRequest[AnyContent] =
-    OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeNameJsonOption)), PsaId("A0000000"))
+    OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeNameJsonOption)), Some(PsaId("A0000000")))
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def service: UrlsPartialService =
@@ -72,52 +71,52 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     super.beforeEach()
   }
 
-//  "schemeLinks" must {
-//
-//    "return the relevant links" when {
-//      "when all possible links are displayed" in {
-//
-//        whenReady(service.schemeLinks) { result =>
-//          result mustBe subscriptionLinks ++ variationLinks
-//        }
-//
-//      }
-//
-//      "when there is no ongoing subscription" in {
-//        implicit val request: OptionalDataRequest[AnyContent] =
-//          OptionalDataRequest(FakeRequest("", ""), "id", None, PsaId("A0000000"))
-//        when(lockConnector.getLockByPsa(any())(any(), any())).thenReturn(Future.successful(None))
-//        whenReady(service.schemeLinks) { result =>
-//          result mustBe registerLink
-//        }
-//      }
-//
-//      "when there is no lock for any scheme" in {
-//        when(lockConnector.getLockByPsa(eqTo(psaId))(any(), any())).thenReturn(Future.successful(None))
-//
-//        whenReady(service.schemeLinks) {
-//          _ mustBe subscriptionLinks
-//        }
-//      }
-//
-//      "when there is a lock for a scheme but the scheme is not in the update collection" in {
-//        when(updateConnector.fetch(any())(any(), any()))
-//          .thenReturn(Future.successful(None))
-//
-//        whenReady(service.schemeLinks) {
-//          _ mustBe subscriptionLinks
-//        }
-//      }
-//
-//    }
-//  }
+  "schemeLinks" must {
+
+    "return the relevant links" when {
+      "when all possible links are displayed" in {
+
+        whenReady(service.schemeLinks(psaId)) { result =>
+          result mustBe subscriptionLinks ++ variationLinks
+        }
+
+      }
+
+      "when there is no ongoing subscription" in {
+        implicit val request: OptionalDataRequest[AnyContent] =
+          OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
+        when(lockConnector.getLockByPsa(any())(any(), any())).thenReturn(Future.successful(None))
+        whenReady(service.schemeLinks(psaId)) { result =>
+          result mustBe registerLink
+        }
+      }
+
+      "when there is no lock for any scheme" in {
+        when(lockConnector.getLockByPsa(eqTo(psaId))(any(), any())).thenReturn(Future.successful(None))
+
+        whenReady(service.schemeLinks(psaId)) {
+          _ mustBe subscriptionLinks
+        }
+      }
+
+      "when there is a lock for a scheme but the scheme is not in the update collection" in {
+        when(updateConnector.fetch(any())(any(), any()))
+          .thenReturn(Future.successful(None))
+
+        whenReady(service.schemeLinks(psaId)) {
+          _ mustBe subscriptionLinks
+        }
+      }
+
+    }
+  }
 
   "checkIfSchemeCanBeRegistered" must {
 
     "redirect to the cannot start registration page if called without a psa name but psa is suspended" in {
       when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.checkIfSchemeCanBeRegistered
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe cannotStartRegistrationUrl
@@ -125,9 +124,10 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to the register scheme page if called without psa name but psa is not suspended" in {
       when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
-      implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "id", None, PsaId("A0000000"))
+      implicit val request: OptionalDataRequest[AnyContent] =
+        OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
 
-      val result = service.checkIfSchemeCanBeRegistered
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.registerUrl
@@ -136,7 +136,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     "redirect to continue register a scheme page if called with a psa name and psa is not suspended" in {
       when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
 
-      val result = service.checkIfSchemeCanBeRegistered
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.continueUrl
@@ -145,7 +145,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     "redirect to cannot start registration page if called with a psa name and psa is suspended" in {
       when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.checkIfSchemeCanBeRegistered
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe cannotStartRegistrationUrl
@@ -153,11 +153,11 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to cannot start registration page if  scheme details are found with scheme name missing and srn number present" in {
       implicit val request: OptionalDataRequest[AnyContent] =
-        OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeSrnNumberOnlyData)), PsaId("A0000000"))
+        OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeSrnNumberOnlyData)), Some(PsaId("A0000000")))
       when(dataCacheConnector.removeAll(eqTo("id"))(any(), any())).thenReturn(Future(Ok))
       when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
 
-      val result = service.checkIfSchemeCanBeRegistered
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
 
       status(result) mustBe SEE_OTHER
       verify(dataCacheConnector, times(1)).removeAll(any())(any(), any())

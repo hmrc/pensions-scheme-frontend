@@ -175,12 +175,12 @@ object ReasonControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends ReasonController {
 
     def onPageLoad(viewmodel: ReasonViewModel, answers: UserAnswers): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000")))
       get(FakeIdentifier, viewmodel, formProvider(errorKey, companyName))
     }
 
     def onSubmit(viewmodel: ReasonViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000")))
       post(FakeIdentifier, NormalMode, viewmodel, formProvider(errorKey, companyName))
     }
   }

@@ -56,7 +56,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.right.map { vm =>
           get(CompanyConfirmPreviousAddressId(index), vm)
@@ -64,7 +64,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.right.map { vm =>
           post(CompanyConfirmPreviousAddressId(index), CompanyPreviousAddressId(index), vm, mode)

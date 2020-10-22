@@ -76,7 +76,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCh
         val answers = UserAnswers(Json.obj())
           .set(BenefitsSecuredByInsuranceId)(false)
           .asOpt.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
@@ -86,7 +86,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCh
         val answers = UserAnswers(Json.obj())
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(Message("insuranceCompanyName.checkYourAnswersLabel"),

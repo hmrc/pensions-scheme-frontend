@@ -103,13 +103,14 @@ trait UserAnswersService {
                                                                      ec: ExecutionContext,
                                                                      hc: HeaderCarrier,
                                                                      request: DataRequest[AnyContent]
-  ): Future[JsValue] = srn match {
-    case Some(srnId) => lockConnector.lock(request.psaId.id, srnId).flatMap {
+  ): Future[JsValue] = (srn, request.psaId) match {
+    case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
       case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
       case _ => Future(Json.obj())
     }
 
-    case _ => Future.failed(MissingSrnNumber)
+    case (None, _) => Future.failed(MissingSrnNumber)
+    case _ => Future.failed(MissingPsaId)
   }
 
   def upsert(mode: Mode, srn: Option[String], value: JsValue,
@@ -171,7 +172,7 @@ trait UserAnswersService {
   protected def appConfig: FrontendAppConfig
 
   case object MissingSrnNumber extends Exception
-
+  case object MissingPsaId extends Exception("Psa ID missing in request")
 }
 
 @Singleton

@@ -58,7 +58,7 @@ class DirectorEnterNINOController @Inject()(
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>
@@ -68,7 +68,7 @@ class DirectorEnterNINOController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.right.map {
           name =>

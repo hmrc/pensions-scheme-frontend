@@ -50,7 +50,7 @@ class HaveAnyTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
         val preparedForm = request.userAnswers.get(HaveAnyTrusteesId) match {
@@ -61,7 +61,7 @@ class HaveAnyTrusteesController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

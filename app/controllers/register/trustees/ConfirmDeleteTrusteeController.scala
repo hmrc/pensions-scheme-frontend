@@ -58,7 +58,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
           trustee =>
@@ -93,7 +93,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   }
 
   def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeKind match {
           case Company =>

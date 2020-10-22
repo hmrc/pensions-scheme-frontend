@@ -49,7 +49,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>
@@ -73,7 +73,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
     formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
           details =>

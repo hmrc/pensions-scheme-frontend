@@ -56,13 +56,13 @@ class PreviousAddressPostCodeLookupController @Inject()(
   private val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.right.map {
           vm =>

@@ -64,7 +64,7 @@ class TrusteeAddressController @Inject()(
   private[controllers] val postCall = TrusteeAddressController.onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.right.map {
           name =>
@@ -81,7 +81,7 @@ class TrusteeAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.right.map {

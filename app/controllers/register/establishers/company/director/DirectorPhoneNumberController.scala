@@ -53,7 +53,7 @@ class DirectorPhoneNumberController @Inject()(
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
           vm =>
@@ -78,7 +78,7 @@ class DirectorPhoneNumberController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
           vm =>

@@ -54,7 +54,7 @@ class DirectorNameController @Inject()(
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](DirectorNameId(establisherIndex, directorIndex)) match {
           case None => form
@@ -65,7 +65,7 @@ class DirectorNameController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

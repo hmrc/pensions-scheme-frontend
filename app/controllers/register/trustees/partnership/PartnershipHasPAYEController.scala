@@ -49,7 +49,7 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
@@ -72,7 +72,7 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
     formProvider("messages__partnershipHasPaye__error__required", partnershipName)
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>

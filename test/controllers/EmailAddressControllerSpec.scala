@@ -171,11 +171,11 @@ object EmailAddressControllerSpec {
                                 )(implicit val executionContext: ExecutionContext) extends EmailAddressController {
 
     def onPageLoad(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, formProvider(), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000"))))
     }
 
     def onSubmit(viewmodel: CommonFormWithHintViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel, None)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, CheckUpdateMode, formProvider(), viewmodel, None)(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
     }
   }
 }

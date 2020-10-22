@@ -52,7 +52,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
             InputOption("GB", "United Kingdom")))
           implicit val request: DataRequest[AnyContent] =
             DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(EstablishedCountryId.toString -> "AU",
-              SchemeNameId.toString -> "Test Scheme Name")), PsaId("A0000000"))
+              SchemeNameId.toString -> "Test Scheme Name")), Some(PsaId("A0000000")))
           implicit val userAnswers = request.userAnswers
 
           EstablishedCountryId.row(onwardUrl) must equal(Seq(
@@ -62,7 +62,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         "any id other than schemeEstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")), PsaId("A0000000"))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")), Some(PsaId("A0000000")))
 
           testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow(Message("testId.checkYourAnswersLabel"), Seq("value"),
             false, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__testId")))))))
@@ -70,7 +70,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
       }
 
       "boolean" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), Some(PsaId("A0000000")))
 
         testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow(Message("testId.checkYourAnswersLabel"), Seq("site.yes"),
           true, Some(Link("site.change", onwardUrl, Some(Message("messages__visuallyhidden__testId")))))))
@@ -78,7 +78,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
       "members" in {
         val membershipVal = Members.options.head.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), Some(PsaId("A0000000")))
 
         testIdentifier[Members].row(onwardUrl) must equal(Seq(AnswerRow(
           Message("testId.checkYourAnswersLabel"), Seq(s"messages__members__$membershipVal"), true,
@@ -91,7 +91,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
           "testId" -> companyDetails
-        )), PsaId("A0000000"))
+        )), Some(PsaId("A0000000")))
 
         testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
           Message("messages__common__cya__name"),
@@ -109,7 +109,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
           "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
         )
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> address)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> address)), Some(PsaId("A0000000")))
 
         def addressAnswer(address: Address): Seq[String] = {
           val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
@@ -137,7 +137,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         val addressYears = AddressYears.values.head
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), Some(PsaId("A0000000")))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
           Message("messages__establisher_address_years__title"),
@@ -151,7 +151,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
       "is dormant" when {
         "yes" in {
           val declarationDormat = DeclarationDormant.Yes.toString
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> declarationDormat)), PsaId("A0000000"))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> declarationDormat)), Some(PsaId("A0000000")))
 
           testIdentifier[DeclarationDormant].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -164,7 +164,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
         }
         "no" in {
           val declarationDormat = DeclarationDormant.No.toString
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> declarationDormat)), PsaId("A0000000"))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> declarationDormat)), Some(PsaId("A0000000")))
 
           testIdentifier[DeclarationDormant].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -179,7 +179,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
       "partnershipDetails" in {
         val partnershipDetails = PartnershipDetails("partnership name")
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> partnershipDetails)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> partnershipDetails)), Some(PsaId("A0000000")))
 
         testIdentifier[PartnershipDetails].row(onwardUrl) must equal(Seq(
           AnswerRow(
@@ -196,7 +196,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
           "testId" -> reference
-        )), PsaId("A0000000"))
+        )), Some(PsaId("A0000000")))
 
         testIdentifier[ReferenceValue].row("onwardUrl") must equal(Seq(AnswerRow(
           Message("messages__common__cya__name"),
@@ -211,7 +211,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
       "members without change url" in {
         val membershipVal = Members.options.head.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), Some(PsaId("A0000000")))
 
         testIdentifier[Members].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           Message("testId.checkYourAnswersLabel"), Seq(s"messages__members__$membershipVal"), true, None)))
@@ -219,7 +219,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
       "partnershipDetails without change url" in {
         val partnershipDetails = PartnershipDetails("partnership name")
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> partnershipDetails)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> partnershipDetails)), Some(PsaId("A0000000")))
 
         testIdentifier[PartnershipDetails].row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
@@ -234,7 +234,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         val dormant = DeclarationDormant.Yes.toString
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> dormant)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> dormant)), Some(PsaId("A0000000")))
 
         testIdentifier[DeclarationDormant].row(onwardUrl, UpdateMode) must equal(Nil)
       }
@@ -243,13 +243,13 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         val addressYears = AddressYears.values.head
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), Some(PsaId("A0000000")))
 
         testIdentifier[AddressYears].row(onwardUrl, UpdateMode) must equal(Nil)
       }
 
       "boolean without change url" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), Some(PsaId("A0000000")))
 
         testIdentifier[Boolean].row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           Message("testId.checkYourAnswersLabel"), Seq("site.yes"), true, None)))
@@ -261,7 +261,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> reference
-          )), PsaId("A0000000"))
+          )), Some(PsaId("A0000000")))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             Message("messages__common__cya__name"),
@@ -276,7 +276,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> reference
-          )), PsaId("A0000000"))
+          )), Some(PsaId("A0000000")))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             Message("messages__common__cya__name"),
@@ -288,7 +288,7 @@ class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPro
 
         "not have any value" in {
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers(Json.obj()), PsaId("A0000000"))
+            UserAnswers(Json.obj()), Some(PsaId("A0000000")))
 
           testIdentifier[ReferenceValue].row("onwardUrl", UpdateMode) must equal(Seq(AnswerRow(
             Message("messages__common__cya__name"),

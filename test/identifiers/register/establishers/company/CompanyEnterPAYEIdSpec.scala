@@ -55,7 +55,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers         = request.userAnswers
         CompanyEnterPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -66,7 +66,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers(isEditable = false).set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers         = request.userAnswers
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -75,7 +75,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
     "in update mode for existing establisher - company paye" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(
@@ -85,14 +85,14 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
       }
 
       "return answers rows with change links if paye is available and editable" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if no answer is found" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, CheckUpdateMode) must equal(

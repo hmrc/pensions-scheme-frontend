@@ -26,6 +26,7 @@ import models.UpdateMode
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
@@ -50,7 +51,7 @@ class VariationDeclarationController @Inject()(
   FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
     allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = VariationDeclarationController.onClickAgree(srn)
@@ -62,18 +63,19 @@ class VariationDeclarationController @Inject()(
       }
   }
 
-  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn) andThen
+  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
     requireData).async {
     implicit request =>
+      val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       srn.flatMap { srnId =>
         request.userAnswers.get(PstrId).map {
           pstr =>
             val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
             for {
-              _ <- pensionsSchemeConnector.updateSchemeDetails(request.psaId.id, pstr, ua).map(_.status == OK)
+              _ <- pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua).map(_.status == OK)
               _ <- updateSchemeCacheConnector.removeAll(srnId)
               _ <- viewConnector.removeAll(request.externalId)
-              _ <- lockConnector.releaseLock(request.psaId.id, srnId)
+              _ <- lockConnector.releaseLock(psaId.id, srnId)
             } yield {
               Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
             }
@@ -82,4 +84,5 @@ class VariationDeclarationController @Inject()(
 
   }
 
+  case object MissingPsaId extends Exception("Psa ID missing in request")
 }

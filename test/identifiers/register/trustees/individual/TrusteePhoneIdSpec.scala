@@ -41,7 +41,7 @@ class TrusteePhoneIdSpec extends SpecBase {
         "return answers rows with change links" in {
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(TrusteePhoneId(0))(phone).flatMap(
-              _.set(TrusteeNameId(0))(personName)).asOpt.value, PsaId("A0000000"))
+              _.set(TrusteeNameId(0))(personName)).asOpt.value, Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           TrusteePhoneId(0).row(onwardUrl, mode) must equal(Seq(

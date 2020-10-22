@@ -44,17 +44,18 @@ class DeleteSchemeController @Inject()(
                                       )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-  private lazy val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
+  private val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
+  private val sessionExpired: Future[Result] = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
 
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeName { (schemeName, psaName) =>
               Future.successful(Ok(view(form, schemeName, psaName)))
       }
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData()).async {
+  def onSubmit: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeName { (schemeName, psaName) =>
         form.bindFromRequest().fold(
@@ -79,11 +80,14 @@ class DeleteSchemeController @Inject()(
       case Some(data) =>
         (data \ "schemeName").validate[String] match {
           case JsSuccess(schemeName, _) =>
-            minimalPsaConnector.getPsaNameFromPsaID(request.psaId.id).flatMap(_.map{ psaName =>
-              f(schemeName, psaName)
-            }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))))
-          case JsError(_) => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            request.psaId.map { psaId =>
+              minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+                f(schemeName, psaName)
+              }.getOrElse(sessionExpired))
+            }.getOrElse(sessionExpired)
+          case JsError(_) => sessionExpired
         }
     }
   }
 }
+

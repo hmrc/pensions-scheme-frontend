@@ -49,7 +49,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.right.map {
           name =>
@@ -72,7 +72,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
     formProvider("messages__hasUtr__error__required", trusteeName)
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.right.map {
           name =>

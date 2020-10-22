@@ -63,7 +63,7 @@ class PartnershipAddressController @Inject()(
   private[controllers] val hint: Message = "messages__partnershipAddress__lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
@@ -81,7 +81,7 @@ class PartnershipAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.right.map {

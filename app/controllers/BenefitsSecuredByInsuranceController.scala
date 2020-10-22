@@ -51,7 +51,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
   val postCall: (Mode, Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
           val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
@@ -64,7 +64,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
 
   private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>

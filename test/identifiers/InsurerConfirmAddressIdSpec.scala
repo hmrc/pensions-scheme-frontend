@@ -56,7 +56,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
 
     s"in normal mode" must {
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -72,7 +72,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
 
     s"in Update mode" must {
       "return answers rows with change links when there is an address" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -87,7 +87,7 @@ class InsurerConfirmAddressIdSpec extends SpecBase {
 
       "return answers rows with add links when there is no address and benefitsSecuredByInsurance is Yes" in {
         val answers = UserAnswers(Json.obj("insuranceCompanyName" -> insuranceCompany, "securedBenefits" -> true))
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         implicit val userAnswers: UserAnswers = request.userAnswers
 

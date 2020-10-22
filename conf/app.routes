@@ -7,6 +7,7 @@ GET         /                                                        controllers
 
 GET         /scheme-details                                          controllers.SchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /scheme-details/:srn                                     controllers.SchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
+GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: String)
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 

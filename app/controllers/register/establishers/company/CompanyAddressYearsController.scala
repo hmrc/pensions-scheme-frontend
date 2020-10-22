@@ -52,7 +52,7 @@ class CompanyAddressYearsController @Inject()(
   Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { companyDetails =>
           get(CompanyAddressYearsId(index), form(companyDetails.companyName), viewModel(mode, srn, index,
@@ -60,7 +60,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate andThen getData
+  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>

@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
   I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map {
           case CompanyDetails(companyName, _) =>
