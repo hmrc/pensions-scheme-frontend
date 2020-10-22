@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthImpl @Inject()(override val authConnector: AuthConnector,
+class AuthImpl(override val authConnector: AuthConnector,
                          config: FrontendAppConfig,
                          val parser: BodyParsers.Default,
                         authEntity: AuthEntity)
