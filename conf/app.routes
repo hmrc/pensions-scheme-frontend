@@ -149,14 +149,17 @@ POST        /:mode/confirm-address/:srn                              controllers
 
 GET         /check-your-answers-before-start                         controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-before-start/:srn              controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode, srn: Option[String])
+GET         /check-your-answers-before-start/:srn                    controllers.CheckYourAnswersBeforeYouStartController.pspOnPageLoad(srn: String)
 
 GET         /check-your-answers-members                              controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: Option[String])
+GET         /check-your-answers-members/:srn                         controllers.CheckYourAnswersMembersController.pspOnPageLoad(srn: String)
 
 GET         /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 
 GET         /check-your-answers-benefits-insurance                   controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /:mode/check-your-answers-benefits-insurance/:srn        controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode, srn: Option[String])
+GET         /check-your-answers-benefits-insurance/:srn              controllers.CheckYourAnswersBenefitsAndInsuranceController.pspOnPageLoad(srn: String)
 
 GET         /select-adviser-address                                  controllers.AdviserAddressListController.onPageLoad(mode: Mode = NormalMode)
 POST        /select-adviser-address                                  controllers.AdviserAddressListController.onSubmit(mode: Mode = NormalMode)

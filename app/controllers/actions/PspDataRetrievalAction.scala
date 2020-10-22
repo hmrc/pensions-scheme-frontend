@@ -29,17 +29,17 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class PspSchemeDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                           schemeDetailsConnector: SchemeDetailsConnector,
-                                           srn: String
-                                       )(implicit val executionContext: ExecutionContext) extends PspSchemeDataRetrieval {
+class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                     schemeDetailsConnector: SchemeDetailsConnector,
+                                     srn: String
+                                       )(implicit val executionContext: ExecutionContext) extends PspDataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     viewConnector.fetch(request.externalId).flatMap {
       case None =>
-        schemeDetailsConnector.getSchemeDetails("psaId", schemeIdType = "srn", srn).map { ua =>
+        schemeDetailsConnector.getSchemeDetails(psaId = "psaId", schemeIdType = "srn", srn).map { ua =>
             val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
             OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true)
           }
@@ -51,19 +51,19 @@ class PspSchemeDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadO
   }
 }
 
-@ImplementedBy(classOf[PspSchemeDataRetrievalImpl])
-trait PspSchemeDataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]
+@ImplementedBy(classOf[PspDataRetrievalImpl])
+trait PspDataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]
 
-class PspSchemeDataRetrievalActionImpl @Inject()(
+class PspDataRetrievalActionImpl @Inject()(
                                         viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                         schemeDetailsConnector: SchemeDetailsConnector
-                                       )(implicit ec: ExecutionContext) extends PspSchemeDataRetrievalAction {
-  override def apply(srn: String): PspSchemeDataRetrieval = {
-    new PspSchemeDataRetrievalImpl(viewConnector, schemeDetailsConnector, srn)
+                                       )(implicit ec: ExecutionContext) extends PspDataRetrievalAction {
+  override def apply(srn: String): PspDataRetrieval = {
+    new PspDataRetrievalImpl(viewConnector, schemeDetailsConnector, srn)
   }
 }
 
-@ImplementedBy(classOf[PspSchemeDataRetrievalActionImpl])
-trait PspSchemeDataRetrievalAction {
-  def apply(srn: String): PspSchemeDataRetrieval
+@ImplementedBy(classOf[PspDataRetrievalActionImpl])
+trait PspDataRetrievalAction {
+  def apply(srn: String): PspDataRetrieval
 }

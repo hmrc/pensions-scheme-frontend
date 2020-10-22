@@ -19,7 +19,7 @@ package controllers.actions
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import models.{Mode, NormalMode}
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.domain.{PsaId, PspId}
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +37,27 @@ class FakeDataRetrieval(optionalJson: Option[JsValue], mode: Mode = NormalMode, 
       case Some(json) =>
         Future.successful(OptionalDataRequest(request.request, request.externalId,
           Some(UserAnswers(json)), Some(PsaId("A0000000")), viewOnly = viewOnly))
+    }
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+}
+
+
+class FakePspDataRetrievalAction(json: Option[JsValue]) extends PspDataRetrievalAction {
+  override def apply(srn: String): PspDataRetrieval = new FakePspDataRetrieval(json)
+}
+
+class FakePspDataRetrieval(optionalJson: Option[JsValue]) extends PspDataRetrieval {
+
+  override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+    optionalJson match {
+      case None =>
+        Future.successful(OptionalDataRequest(request.request, request.externalId,
+          None, Some(PsaId("A0000000")), viewOnly = true))
+
+      case Some(json) =>
+        Future.successful(OptionalDataRequest(request.request, request.externalId,
+          Some(UserAnswers(json)), None, Some(PspId("00000000")), viewOnly = true))
     }
 
   override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global

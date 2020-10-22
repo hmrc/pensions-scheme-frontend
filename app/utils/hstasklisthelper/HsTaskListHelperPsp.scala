@@ -16,96 +16,59 @@
 
 package utils.hstasklisthelper
 
-import com.google.inject.Inject
 import identifiers.SchemeNameId
 import models._
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperPsp @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
-  spokeCreationService) {
+class HsTaskListHelperPsp {
 
-  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList = {
-    SchemeDetailsTaskList(
+  def taskList(answers: UserAnswers, srn: String): PspTaskList =
+    PspTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       srn,
       beforeYouStartSection(answers, srn),
-      aboutSection(answers, UpdateMode, srn),
-      None,
-      addEstablisherHeader(answers, UpdateMode, srn, true),
-      establishersSection(answers, UpdateMode, srn),
-      addTrusteeHeader(answers, UpdateMode, srn, true),
-      trusteesSection(answers, UpdateMode, srn),
-      declarationSection(answers, srn, true),
-      Some(answers.areVariationChangesCompleted)
+      aboutSection(answers, srn),
+      establishersSection(answers),
+      addTrusteeHeader(answers),
+      trusteesSection(answers)
     )
-  }
 
-  private[utils] def beforeYouStartSection(userAnswers: UserAnswers, srn: Option[String])
-  : SchemeDetailsTaskListEntitySection = {
+  private def name(ua: UserAnswers): String = ua.get(SchemeNameId).getOrElse("")
+
+  private def beforeYouStartSection(ua: UserAnswers, srn: String)
+  : SchemeDetailsTaskListEntitySection =
     SchemeDetailsTaskListEntitySection(None,
-      spokeCreationService.getBeforeYouStartSpoke(
-        userAnswers, UpdateMode, srn,
-        userAnswers.get(SchemeNameId).getOrElse(""), None
-      ),
+      Seq(EntitySpoke(TaskListLink(
+        Message("messages__schemeTaskList__scheme_info_link_text", name(ua)),
+        controllers.routes.CheckYourAnswersBeforeYouStartController.pspOnPageLoad(srn).url
+      ), None)),
       Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
-  }
 
-  private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
-                                          mode: Mode, srn: Option[String], viewOnly: Boolean)
-  : Option[SchemeDetailsTaskListEntitySection] = {
-    if (userAnswers.allEstablishersAfterDelete(mode).isEmpty && viewOnly) {
-      Some(
-        SchemeDetailsTaskListEntitySection(None, Nil, None, Message
-  ("messages__schemeTaskList__sectionEstablishers_no_establishers"))
-      )
-    } else {
-      spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, mode, srn, viewOnly) match {
-        case Nil =>
-          None
-        case establisherHeaderSpokes =>
-          Some(SchemeDetailsTaskListEntitySection(None, establisherHeaderSpokes, None))
-      }
-    }
-  }
+  private def aboutSection(ua: UserAnswers, srn: String)
+  : SchemeDetailsTaskListEntitySection =
+    SchemeDetailsTaskListEntitySection(None,
+      Seq(EntitySpoke(TaskListLink(
+        Message("messages__schemeTaskList__about_members_link_psp"),
+        controllers.routes.CheckYourAnswersMembersController.pspOnPageLoad(srn).url
+      ), None),
+        EntitySpoke(TaskListLink(
+          Message("messages__schemeTaskList__about_benefits_and_insurance_link_psp"),
+          controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.pspOnPageLoad(srn).url
+        ), None)),
+      Some(Message("messages__schemeTaskList__about_scheme_header", name(ua)))
+    )
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode,
-                                      srn: Option[String], viewOnly: Boolean)
-  : Option[SchemeDetailsTaskListEntitySection] = {
-    if (userAnswers.allTrusteesAfterDelete.isEmpty && viewOnly) {
-      Some(
-        SchemeDetailsTaskListEntitySection(None, Nil, None, Message
-  ("messages__schemeTaskList__sectionTrustees_no_trustees"))
-      )
-    } else {
-      val trusteeHeaderSpokes = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly)
-      Some(SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
-    }
-  }
-
-  private[utils] def declarationSection(userAnswers: UserAnswers, srn: Option[String], viewOnly: Boolean)
-  : Option[SchemeDetailsTaskListEntitySection] = {
-    if (viewOnly) {
+  private def addTrusteeHeader(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] =
+    if (userAnswers.allTrusteesAfterDelete.isEmpty)
       None
-    } else {
-      val spoke = if (userAnswers.isUserAnswerUpdated) {
-        val call = if (userAnswers.areVariationChangesCompleted) {
-          controllers.routes.VariationDeclarationController.onPageLoad(srn)
-        } else {
-          controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
-        }
-        spokeCreationService.getDeclarationSpoke(call)
-      } else {
-        Nil
-      }
-      Some(SchemeDetailsTaskListEntitySection(None,
-        spoke,
-        Some("messages__schemeTaskList__sectionDeclaration_header"),
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
-        "messages__schemeTaskList__sectionDeclaration_incomplete_v2")
-      )
-    }
-  }
-}
+    else
+      Some(SchemeDetailsTaskListEntitySection(None, Nil, None))
 
+  protected def establishersSection(userAnswers: UserAnswers): Seq[String] =
+    for ((establisher, _) <- userAnswers.allEstablishersAfterDelete(UpdateMode).zipWithIndex) yield establisher.name
+
+  protected def trusteesSection(userAnswers: UserAnswers): Seq[String] =
+    for ((trustee, _) <- userAnswers.allTrusteesAfterDelete.zipWithIndex) yield trustee.name
+}

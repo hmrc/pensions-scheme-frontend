@@ -20,7 +20,6 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
@@ -64,13 +63,12 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      getEmptyDataPsp,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeUserAnswersService,
       stubMessagesControllerComponents(),
       view
     )
