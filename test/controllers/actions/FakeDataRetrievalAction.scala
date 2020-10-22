@@ -32,11 +32,11 @@ class FakeDataRetrieval(optionalJson: Option[JsValue], mode: Mode = NormalMode, 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     optionalJson match {
       case None =>
-        Future.successful(OptionalDataRequest(request.request, request.externalId, None, PsaId("A0000000"), viewOnly = viewOnly))
+        Future.successful(OptionalDataRequest(request.request, request.externalId, None, Some(PsaId("A0000000")), viewOnly = viewOnly))
 
       case Some(json) =>
         Future.successful(OptionalDataRequest(request.request, request.externalId,
-          Some(new UserAnswers(json)), PsaId("A0000000"), viewOnly = viewOnly))
+          Some(UserAnswers(json)), Some(PsaId("A0000000")), viewOnly = viewOnly))
     }
 
   override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global

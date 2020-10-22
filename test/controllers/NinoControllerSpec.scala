@@ -70,11 +70,11 @@ class NinoControllerSpec extends ControllerSpecBase {
                                     )(implicit val ec: ExecutionContext) extends NinoController {
 
     def onPageLoad(answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, form, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(FakeIdentifier, form, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000"))))
     }
 
     def onSubmit(mode: Mode, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, form, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, NormalMode, form, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
     }
   }
 

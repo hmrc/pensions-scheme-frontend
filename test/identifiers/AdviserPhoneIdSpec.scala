@@ -47,7 +47,7 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         AdviserPhoneId.row(onwardUrl, NormalMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
       }
@@ -56,7 +56,7 @@ class AdviserPhoneIdSpec extends SpecBase with Enumerable.Implicits  {
     "in update mode " must {
 
       "return answers rows without links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         AdviserPhoneId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
       }

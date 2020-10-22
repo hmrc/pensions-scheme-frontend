@@ -61,7 +61,7 @@ class DeclarationController @Inject()(
                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
         showPage(Ok.apply)
@@ -116,17 +116,17 @@ class DeclarationController @Inject()(
       case _ => false
     }
 
-  def onClickAgree: Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-
+      val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       (for {
         cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-        eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+        eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id)
       } yield eitherSubmissionResponse).flatMap {
         case Right(submissionResponse) =>
           for {
             cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-            _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+            _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
           } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
         case Left(_) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -137,7 +137,7 @@ class DeclarationController @Inject()(
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     Logger.debug("Fetch email from API")
 
-    minimalPsaConnector.getMinimalPsaDetails(request.psaId.id) flatMap { minimalPsa =>
+    minimalPsaConnector.getMinimalPsaDetails(psaId.id) flatMap { minimalPsa =>
       emailConnector.sendEmail(minimalPsa.email, appConfig.emailTemplateId,
         Map("srn" -> formatSrnForEmail(srn), "psaName" -> minimalPsa.name), psaId)
     } recoverWith {
@@ -151,5 +151,7 @@ class DeclarationController @Inject()(
     val (start, end) = srn.splitAt(6)
     start + ' ' + end
   }
+
+  case object MissingPsaId extends Exception("Psa ID missing in request")
 
 }

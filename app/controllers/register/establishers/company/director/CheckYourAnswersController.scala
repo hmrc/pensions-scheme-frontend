@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
 
         val directorAnswerSection = anwerSection(companyIndex, directorIndex, mode, srn)

@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValues with ScalaFutures {
 
-  def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data), PsaId("A0000000"))
+  def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data), Some(PsaId("A0000000")))
 
   class TestController @Inject()(
                                   val controllerComponents: MessagesControllerComponents

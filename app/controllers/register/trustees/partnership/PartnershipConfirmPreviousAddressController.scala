@@ -53,7 +53,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(srn, index).retrieve.right.map { vm =>
@@ -78,7 +78,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
         }
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(srn, index).retrieve.right.map { vm =>

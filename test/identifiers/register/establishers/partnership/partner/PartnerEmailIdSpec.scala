@@ -36,7 +36,7 @@ class PartnerEmailIdSpec extends SpecBase {
     val personName = PersonName("first", "last")
     val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
       UserAnswers().set(PartnerEmailId(0, 0))(email).flatMap(
-        _.set(PartnerNameId(0, 0))(personName)).asOpt.value, PsaId("A0000000"))
+        _.set(PartnerNameId(0, 0))(personName)).asOpt.value, Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
 

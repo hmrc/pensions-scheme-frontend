@@ -89,11 +89,11 @@ object ManualAddressControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends ManualAddressController {
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))
+      get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, Some(psaId)))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       post(fakeAddressId, fakeAddressListId, viewModel, NormalMode, "test-context", fakeSeqTolerantAddressId)(
-        DataRequest(request, externalId, answers, psaId))
+        DataRequest(request, externalId, answers, Some(psaId)))
 
     override protected val form: Form[Address] = formProvider()
   }

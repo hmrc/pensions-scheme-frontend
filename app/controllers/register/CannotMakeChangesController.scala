@@ -40,7 +40,7 @@ class CannotMakeChangesController @Inject()(
   FrontendBaseController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(UpdateMode, srn)).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn)).async {
     implicit request =>
       Future.successful(Ok(view(srn, existingSchemeName)))
   }

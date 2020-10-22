@@ -50,7 +50,7 @@ class WorkingKnowledgeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
@@ -63,7 +63,7 @@ class WorkingKnowledgeController @Inject()(
   private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
     existingSchemeName.getOrElse("")
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

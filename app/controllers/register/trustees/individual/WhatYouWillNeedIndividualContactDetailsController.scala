@@ -47,7 +47,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
   extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request => {
         val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
 

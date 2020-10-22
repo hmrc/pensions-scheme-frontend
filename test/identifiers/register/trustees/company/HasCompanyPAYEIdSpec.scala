@@ -82,7 +82,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         HasCompanyPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -93,7 +93,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -102,7 +102,7 @@ class HasCompanyPAYEIdSpec extends SpecBase {
     "in update mode for existing establisher - company paye" must {
 
       "not display any row" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         HasCompanyPAYEId(0).row(onwardUrl, UpdateMode) mustEqual Nil

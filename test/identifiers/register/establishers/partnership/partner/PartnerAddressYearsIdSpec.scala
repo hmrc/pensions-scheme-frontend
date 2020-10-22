@@ -109,7 +109,7 @@ class PartnerAddressYearsIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         PartnerAddressYearsId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__hasBeen1Year", partnerName.fullName),
@@ -126,7 +126,7 @@ class PartnerAddressYearsIdSpec extends SpecBase {
       def answersNew: UserAnswers = answers.set(IsNewPartnerId(0, 0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__hasBeen1Year", partnerName.fullName),
@@ -141,7 +141,7 @@ class PartnerAddressYearsIdSpec extends SpecBase {
     "in update mode for existing partner" must {
 
       "return answers rows without change links" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
         PartnerAddressYearsId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

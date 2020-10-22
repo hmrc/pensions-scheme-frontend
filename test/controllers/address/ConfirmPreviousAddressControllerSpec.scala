@@ -52,7 +52,7 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with OptionValues wi
 
   import ConfirmPreviousAddressControllerSpec._
 
-  val view = injector.instanceOf[confirmPreviousAddress]
+  val view: confirmPreviousAddress = injector.instanceOf[confirmPreviousAddress]
 
   "get" must {
 
@@ -265,11 +265,11 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
                                 )(implicit val ec: ExecutionContext) extends ConfirmPreviousAddressController {
 
     def onPageLoad(viewmodel: ConfirmAddressViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))
+      get(FakeIdentifier, viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, Some(psaId)))
     }
 
     def onSubmit(viewmodel: ConfirmAddressViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, PreviousAddressId, viewmodel, NormalMode)(DataRequest(fakeRequest, "cacheId", answers, psaId))
+      post(FakeIdentifier, PreviousAddressId, viewmodel, NormalMode)(DataRequest(fakeRequest, "cacheId", answers, Some(psaId)))
     }
 
 

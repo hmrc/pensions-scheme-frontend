@@ -110,7 +110,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
@@ -128,7 +128,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
       def answersNew: UserAnswers = answers.set(IsEstablisherNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
@@ -144,7 +144,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
     "in update mode for existing trustee - company paye" must {
 
       "return answers rows without change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)

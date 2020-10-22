@@ -52,14 +52,14 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
   val form: Form[LocalDate] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
         ("messages__theIndividual")), mode)
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
         ("messages__theIndividual")), mode)

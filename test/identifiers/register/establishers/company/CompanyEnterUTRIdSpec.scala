@@ -76,7 +76,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+        val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyEnterUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
@@ -88,7 +88,7 @@ class CompanyEnterUTRIdSpec extends SpecBase {
       "for new establisher" must {
 
         "return answers rows with change links" in {
-          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answersNew, PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
           CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
@@ -104,21 +104,21 @@ class CompanyEnterUTRIdSpec extends SpecBase {
             Some(Link("site.add", onwardUrl, Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))))
           )
           val answers                           = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
-          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
-          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
-          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(isEditable = true), PsaId("A0000000"))
+          val request: DataRequest[AnyContent]  = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
 
           CompanyEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks

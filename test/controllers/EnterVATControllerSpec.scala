@@ -174,12 +174,12 @@ object EnterVATControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends EnterVATController {
 
     def onPageLoad(viewmodel: EnterVATViewModel, answers: UserAnswers): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000")))
       get(FakeIdentifier, viewmodel, formProvider(companyName))
     }
 
     def onSubmit(viewmodel: EnterVATViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000")))
       post(FakeIdentifier, NormalMode, viewmodel, formProvider(companyName))
     }
   }

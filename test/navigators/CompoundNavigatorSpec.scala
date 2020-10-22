@@ -44,7 +44,7 @@ class CompoundNavigatorSpec extends FreeSpec with MustMatchers {
   "a CompoundNavigator" - {
 
     implicit val identifiedRequest: IdentifiedRequest =
-      AuthenticatedRequest(FakeRequest(), "foo", PsaId("A1234567"))
+      AuthenticatedRequest(FakeRequest(), "foo", Some(PsaId("A1234567")))
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 

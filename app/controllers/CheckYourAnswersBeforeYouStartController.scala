@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
 import javax.inject.Inject
+import models.AuthEntity.PSA
 import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,7 +49,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         implicit val userAnswers: UserAnswers = request.userAnswers

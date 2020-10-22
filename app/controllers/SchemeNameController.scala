@@ -51,13 +51,13 @@ class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData()) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

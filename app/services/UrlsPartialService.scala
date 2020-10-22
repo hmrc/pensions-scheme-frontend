@@ -44,10 +44,10 @@ class UrlsPartialService @Inject()(
                                   minimalPsaConnector: MinimalPsaConnector
                                   ) {
 
-  def schemeLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+  def schemeLinks(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
     for {
       subscription <- subscriptionLinks
-      variations <- variationsLinks
+      variations <- variationsLinks(psaId)
     } yield {
       subscription ++ variations
     }
@@ -75,8 +75,9 @@ class UrlsPartialService @Inject()(
         }
     }
 
-  private def variationsLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
-    pensionSchemeVarianceLockConnector.getLockByPsa(request.psaId.id).flatMap {
+  private def variationsLinks(psaId: String)
+                             (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+    pensionSchemeVarianceLockConnector.getLockByPsa(psaId).flatMap {
       case Some(schemeVariance) =>
         updateConnector.fetch(schemeVariance.srn).flatMap {
           case Some(data) => variationsDeleteDate(schemeVariance.srn).map { dateOfDeletion =>
@@ -92,9 +93,9 @@ class UrlsPartialService @Inject()(
       case None => Future.successful(Seq.empty[OverviewLink])
     }
 
-  def checkIfSchemeCanBeRegistered(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  def checkIfSchemeCanBeRegistered(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
-      isPsaSuspended <- minimalPsaConnector.isPsaSuspended(request.psaId.id)
+      isPsaSuspended <- minimalPsaConnector.isPsaSuspended(psaId)
       result <- retrieveResult(request.userAnswers, isPsaSuspended)
     } yield result
 

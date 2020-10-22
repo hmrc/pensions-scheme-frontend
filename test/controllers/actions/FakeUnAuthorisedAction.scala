@@ -17,6 +17,8 @@
 package controllers.actions
 
 import controllers.routes
+import models.AuthEntity
+import models.AuthEntity.PSA
 import models.requests.AuthenticatedRequest
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, BodyParser, Request, Result}
@@ -24,9 +26,9 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeUnAuthorisedAction {
-  def apply(): AuthAction = {
-    new AuthAction {
+object FakeUnAuthorisedAction extends AuthAction {
+  def apply(authEntity: AuthEntity = PSA): Auth = {
+    new Auth {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
 
@@ -37,4 +39,3 @@ object FakeUnAuthorisedAction {
     }
   }
 }
-

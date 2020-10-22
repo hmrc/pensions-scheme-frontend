@@ -70,10 +70,10 @@ object PostcodeLookupControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
     def onPageLoad(viewmodel: PostcodeLookupViewModel, answers: UserAnswers): Future[Result] =
-      get(viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000"))))
 
     def onSubmit(viewmodel: PostcodeLookupViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(FakeIdentifier, viewmodel, NormalMode, invalidError)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+      post(FakeIdentifier, viewmodel, NormalMode, invalidError)(DataRequest(request, "cacheId", answers, Some(PsaId("A0000000"))))
 
     private val invalidError: Message = "foo"
 

@@ -47,7 +47,7 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends ReasonController {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
           val partnerName = details.fullName
@@ -57,7 +57,7 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
           val partnerName = details.fullName

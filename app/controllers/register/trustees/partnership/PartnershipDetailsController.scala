@@ -51,7 +51,7 @@ class PartnershipDetailsController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(mode,
           index, srn)
@@ -59,7 +59,7 @@ class PartnershipDetailsController @Inject()(
         Future.successful(Ok(view(updatedForm, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

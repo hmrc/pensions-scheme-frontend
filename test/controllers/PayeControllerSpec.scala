@@ -170,12 +170,12 @@ object PayeControllerSpec {
                                 )(implicit val ec: ExecutionContext) extends PayeController {
 
     def onPageLoad(viewmodel: PayeViewModel, answers: UserAnswers): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000")))
       get(FakeIdentifier, formProvider(companyName), viewmodel)
     }
 
     def onSubmit(viewmodel: PayeViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000"))
+      implicit val request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000")))
       post(FakeIdentifier, CheckUpdateMode, formProvider(companyName), viewmodel)
     }
   }

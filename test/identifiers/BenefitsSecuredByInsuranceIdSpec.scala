@@ -109,7 +109,7 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with S
 
       "return empty AnswerRow when BenefitsSecuredByInsuranceId is false" in {
         val answers = UserAnswers(Json.obj())
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
@@ -119,7 +119,7 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with S
         val answers = UserAnswers(Json.obj())
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(

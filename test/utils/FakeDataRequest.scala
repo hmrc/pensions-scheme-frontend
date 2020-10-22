@@ -22,7 +22,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 
 class FakeDataRequest(request: Request[AnyContentAsEmpty.type], externalId: String, answers: UserAnswers, psaId: PsaId)
-  extends DataRequest[AnyContent](request, externalId, answers, psaId)
+  extends DataRequest[AnyContent](request, externalId, answers, Some(psaId))
 
 object FakeDataRequest {
   def apply(answers: UserAnswers): FakeDataRequest = {
@@ -31,7 +31,7 @@ object FakeDataRequest {
 }
 
 class FakeOptionalDataRequest(request: Request[AnyContentAsEmpty.type], externalId: String, answers: Option[UserAnswers], psaId: PsaId)
-  extends OptionalDataRequest[AnyContent](request, externalId, answers, psaId)
+  extends OptionalDataRequest[AnyContent](request, externalId, answers, Some(psaId))
 
 object FakeOptionalDataRequest {
   def apply(answers: Option[UserAnswers]): FakeOptionalDataRequest = {

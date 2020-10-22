@@ -41,7 +41,7 @@ class PartnerPhoneIdSpec extends SpecBase {
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(PartnerPhoneId(0, 0))(phone).flatMap(
-              _.set(PartnerNameId(0, 0))(personName)).asOpt.value, PsaId("A0000000"))
+              _.set(PartnerNameId(0, 0))(personName)).asOpt.value, Some(PsaId("A0000000")))
 
           PartnerPhoneId(0, 0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(

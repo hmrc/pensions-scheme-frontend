@@ -47,7 +47,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
-    connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber).map(schemeDetails =>
+    connector.getSchemeDetails(psaId, schemeIdType, idNumber).map(schemeDetails =>
       schemeDetails shouldBe psaSchemeDetailsVariationsResponse
     )
   }
@@ -68,7 +68,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
     val connector = injector.instanceOf[SchemeDetailsConnector]
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
     }
   }
 
@@ -88,7 +88,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
     }
 
   }
@@ -105,7 +105,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
     }
 
   }
@@ -123,7 +123,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetailsVariations(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
     }
 
   }

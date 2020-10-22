@@ -52,7 +52,7 @@ class TrusteeNoUTRReasonIdSpec extends SpecBase with OptionValues {
     "in normal mode" must {
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
@@ -64,7 +64,7 @@ class TrusteeNoUTRReasonIdSpec extends SpecBase with OptionValues {
       val updatedAnswers = answers.set(IsTrusteeNewId(0))(true).asOpt.value
 
       "return answers rows with change links" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
@@ -75,7 +75,7 @@ class TrusteeNoUTRReasonIdSpec extends SpecBase with OptionValues {
     "in update mode for existing trustee" must {
 
       "Not return answer rows" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 

@@ -60,7 +60,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         InsuranceCompanyNameId.retrieve.right.map { name =>
           get(viewModel(mode, srn, name))
@@ -78,7 +78,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.right.map { name =>

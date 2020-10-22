@@ -35,7 +35,7 @@ class CompanyEmailIdSpec extends SpecBase {
     val request: DataRequest[AnyContent] = DataRequest(
       FakeRequest(),
       "id",
-      UserAnswers().trusteesCompanyDetails(0, companyDetails).trusteeCompanyEmail(0, email), PsaId("A0000000")
+      UserAnswers().trusteesCompanyDetails(0, companyDetails).trusteeCompanyEmail(0, email), Some(PsaId("A0000000"))
     )
     implicit val userAnswers: UserAnswers = request.userAnswers
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])

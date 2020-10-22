@@ -94,7 +94,7 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
       s"in ${mode.toString} mode" must {
         "return answers rows with change links for subscription or variation when adding new trustee" in {
           val answersWithNew = answers.set(IsTrusteeNewId(0))(value = true).asOpt.value
-          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNew, PsaId("A0000000"))
+          val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNew, Some(PsaId("A0000000")))
           implicit val userAnswers: UserAnswers = request.userAnswers
           TrusteeAddressYearsId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
@@ -111,7 +111,7 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
     "in update mode for existing trustee" must {
 
       "return no answers row" in {
-        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, PsaId("A0000000"))
+        val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
 
         TrusteeAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)

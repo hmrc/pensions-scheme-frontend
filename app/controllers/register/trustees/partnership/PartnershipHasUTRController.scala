@@ -49,7 +49,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
@@ -71,7 +71,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
     formProvider("messages__hasUtr__partnership_error_required", partnershipName)
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.right.map {
           details =>

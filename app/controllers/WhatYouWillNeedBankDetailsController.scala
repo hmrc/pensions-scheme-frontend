@@ -36,12 +36,12 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData()).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       Future.successful(Ok(view(existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = authenticate() {
     implicit request =>
       Redirect(controllers.routes.UKBankAccountController.onPageLoad(NormalMode))
   }

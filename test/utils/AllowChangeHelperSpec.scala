@@ -34,7 +34,7 @@ class AllowChangeHelperSpec extends WordSpec with MustMatchers with OptionValues
   }
 
   def request(viewOnly:Boolean, ua:UserAnswers): DataRequest[AnyContent] =
-    DataRequest(FakeRequest(), "id", ua, PsaId("A0000000"), viewOnly = viewOnly)
+    DataRequest(FakeRequest(), "id", ua, Some(PsaId("A0000000")), viewOnly = viewOnly)
 
   private val uaWithId = UserAnswers(Json.obj(
     id.toString -> true

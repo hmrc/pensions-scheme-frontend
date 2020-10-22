@@ -48,7 +48,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       viewModel(mode).right.map(get)
   }
@@ -68,7 +68,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
     }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       viewModel(mode).right.map {
         vm =>

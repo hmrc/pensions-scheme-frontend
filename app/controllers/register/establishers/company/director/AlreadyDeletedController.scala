@@ -43,7 +43,7 @@ class AlreadyDeletedController @Inject()(
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate andThen getData(srn = srn) andThen requireData).async {
+    (authenticate() andThen getData(srn = srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { details =>
           Future.successful(Ok(view(vm(establisherIndex, details.fullName, srn))))

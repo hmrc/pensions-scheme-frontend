@@ -38,9 +38,10 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
   val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
   val schemeName = "My Scheme Reg"
 
-  implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
+  implicit val request: OptionalDataRequest[AnyContent] =
+    OptionalDataRequest(FakeRequest("", ""), "externalId", None, Some(PsaId("A0000000")))
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "NameMatchingFactory" must {
     "return an instance of NameMatching when PSA name is retrieved from PSA Id" which {

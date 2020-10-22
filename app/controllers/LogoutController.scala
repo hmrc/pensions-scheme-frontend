@@ -30,7 +30,7 @@ class LogoutController @Inject()(appConfig: FrontendAppConfig,
                                  authenticate: AuthAction)(implicit val ec: ExecutionContext) extends
   FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = authenticate() {
     implicit request =>
       Redirect(appConfig.serviceSignOut).withNewSession
   }
