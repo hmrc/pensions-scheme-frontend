@@ -113,7 +113,7 @@
 
         @if(taskSections.trustees.nonEmpty){
             <section aria-labelledby="section-trustees-header">
-                    @taskSections.addTrusteeHeader.map { _ =>
+                    @taskSections.trusteeHeader.map { _ =>
                         <h2 id="section-trustees-header" class="heading-large">
                             @messages("messages__schemeTaskList__sectionTrustees_header")
                         </h2>
