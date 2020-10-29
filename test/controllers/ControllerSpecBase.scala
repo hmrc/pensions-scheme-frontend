@@ -18,7 +18,7 @@ package controllers
 
 
 import base.SpecBase
-import controllers.actions.FakeDataRetrievalAction
+import controllers.actions.{FakeDataRetrievalAction, FakePspDataRetrievalAction}
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
@@ -42,6 +42,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
   val cacheMapId = "id"
 
   def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))
+  def getEmptyDataPsp: FakePspDataRetrievalAction = new FakePspDataRetrievalAction(Some(Json.obj()))
 
   def getMandatorySchemeNameHs: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
     SchemeNameId.toString -> "Test Scheme Name")))

@@ -92,13 +92,12 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      getEmptyDataPsp,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeUserAnswersService,
       new FakeCountryOptions,
       stubMessagesControllerComponents(),
       view

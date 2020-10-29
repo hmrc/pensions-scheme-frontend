@@ -20,7 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId}
 import javax.inject.Inject
+import models.AuthEntity.PSP
 import models._
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -33,13 +35,12 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
+class CheckYourAnswersMembersController @Inject()(override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
+                                                  getPspData: PspDataRetrievalAction,
                                                   @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
-                                                  userAnswersService: UserAnswersService,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: checkYourAnswers
                                                  )(implicit val executionContext: ExecutionContext) extends
@@ -49,29 +50,37 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        val membersSection = AnswerSection(
-          None,
-          CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
-            FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
-        )
-
-        val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
-          Message("messages__membershipDetailsFor", name)
-
-        val vm = CYAViewModel(
-          answerSections = Seq(membersSection),
-          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly,
-          srn = srn,
-          hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-          title = heading(Message("messages__theScheme")),
-          h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
-        )
-
-        Future.successful(Ok(view(vm)))
+        Future.successful(Ok(view(vm(mode, srn))))
     }
+
+  def pspOnPageLoad(srn: String): Action[AnyContent] =
+    (authenticate(PSP) andThen getPspData(srn) andThen requireData).async {
+      implicit request =>
+        Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+    }
+
+  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+    implicit val userAnswers: UserAnswers = request.userAnswers
+    val membersSection = AnswerSection(
+      None,
+      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
+        FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
+    )
+
+    val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+      Message("messages__membershipDetailsFor", name)
+
+    CYAViewModel(
+      answerSections = Seq(membersSection),
+      href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+      schemeName = existingSchemeName,
+      returnOverview = false,
+      hideEditLinks = request.viewOnly,
+      srn = srn,
+      hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+      title = heading(Message("messages__theScheme")),
+      h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
+    )
+  }
 
 }

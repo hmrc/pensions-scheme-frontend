@@ -65,7 +65,6 @@ class DataRetrievalImpl(
                                        (implicit request: AuthenticatedRequest[A],
                                         hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
 
-
     (refresh, optionLock) match {
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
@@ -87,29 +86,28 @@ class DataRetrievalImpl(
       case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly)
     }
 
+  private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
+                                    (implicit request: AuthenticatedRequest[A],
+                                     hc: HeaderCarrier): Future[Option[JsValue]] =
+    if (refresh) {
+      schemeDetailsConnector
+        .getSchemeDetails(psaId, schemeIdType = "srn", srn)
+        .flatMap(ua => addSuspensionFlagAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
+        .map(Some(_))
+    } else {
+      viewConnector.fetch(request.externalId)
+    }
+
   private def addSuspensionFlagAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
                                                       psaId: String,
-                                                      upsertUserAnswers: JsValue => Future[JsValue])(implicit
-                                                                                                     request: AuthenticatedRequest[A],
-                                                                                                     hc: HeaderCarrier): Future[JsValue] = {
+                                                      upsertUserAnswers: JsValue => Future[JsValue])
+                                                     (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.isPsaSuspended(psaId).flatMap { isSuspended =>
       val updatedUserAnswers = UserAnswers(jsValue).set(IsPsaSuspendedId)(isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
       upsertUserAnswers(updatedUserAnswers.json)
     }
-  }
-
-  private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
-                                 (implicit request: AuthenticatedRequest[A],
-                                  hc: HeaderCarrier): Future[Option[JsValue]] =
-    if(refresh){
-    schemeDetailsConnector
-      .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-      .flatMap(ua => addSuspensionFlagAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
-      .map(Some(_))
-  } else {
-    viewConnector.fetch(request.externalId)
   }
 
   private def getRequestWithLock[A](srn: String, refresh: Boolean, psaId: String)

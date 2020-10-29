@@ -22,26 +22,25 @@ import models.AuthEntity.PSP
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import utils.UserAnswers
 import utils.hstasklisthelper.HsTaskListHelperPsp
-import views.html.schemeDetailsTaskList
+import views.html.pspTaskList
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PspSchemeTaskListController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: PspSchemeDataRetrievalAction,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         val view: schemeDetailsTaskList,
-                                         hsTaskListHelperPsp: HsTaskListHelperPsp
+                                             override val messagesApi: MessagesApi,
+                                             authenticate: AuthAction,
+                                             getData: PspDataRetrievalAction,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             val view: pspTaskList,
+                                             hsTaskListHelperPsp: HsTaskListHelperPsp
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate(PSP) andThen getData(srn)) {
     implicit request =>
       request.userAnswers match {
-        case Some(ua) => Ok(view(hsTaskListHelperPsp.taskList(ua, Some(true), Some(srn))))
+        case Some(ua) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn)))
         case _ => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }

@@ -1648,6 +1648,8 @@ messages__schemeTaskList__before_you_start_header = Before you start
 messages__schemeTaskList__about_scheme_header = About {0}
 messages__schemeTaskList__working_knowledge_header = Working knowledge of pensions and pensions tax legislation
 messages__schemeTaskList__persons_details__link_text = {0}’s details
+messages__schemeTaskList__about_members_link_psp = Membership details
+messages__schemeTaskList__about_benefits_and_insurance_link_psp = Benefits and insurance
 
 messages__any_more_changes__title = Do you want to make any more changes?
 messages__any_more_changes__p1 = The pension scheme has not been updated yet.

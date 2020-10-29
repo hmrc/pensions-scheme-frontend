@@ -1,0 +1,139 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import play.api.mvc.Call
+@import uk.gov.hmrc.play.views.html._
+@import views.html._
+@import viewmodels.PspTaskList
+@import models.NormalMode
+@import controllers.register.establishers.routes._
+@import controllers.register.trustees.routes._
+@import uk.gov.hmrc.play.views.html._
+
+@this(
+    main_template: main_template,
+    appConfig: FrontendAppConfig
+)
+
+@(taskSections: PspTaskList)(implicit request: Request[_], messages: Messages)
+
+@status(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "messages__schemeTaskList__completed"
+    } else {
+        "messages__schemeTaskList__inProgress"
+    }
+}
+
+@statusClass(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "task-status--completed"
+    } else {
+        "task-status--in-progress"
+    }
+}
+
+@main_template(
+    title = messages("messages__scheme_details__title")
+    ) {
+        @components.back_link()
+
+        @components.heading(taskSections.h1)
+
+    <div class="task-list">
+
+        <section aria-labelledby="section-before-you-start-header">
+            <h2 id="section-before-you-start-header" class="heading-large">
+                @messages("messages__scheme_details__title")
+            </h2>
+
+            @taskSections.beforeYouStart.header.map{ item=>
+                <h3 id="section-information-h3" class="heading-medium">
+                    @messages(item)
+                </h3>
+            }
+
+            @taskSections.beforeYouStart.entities.map{ spoke =>
+                <ul class="task-list-items">
+                    <li class="task-list-item">
+                        <a id="section-before-you-start-link" class="task-name" href="@spoke.link.target">
+                            @messages(spoke.link.text)
+                        </a>
+                    </li>
+                </ul>
+            }
+
+        </section>
+
+        <section aria-labelledby="section-about-header">
+            @taskSections.about.header.map{ item=>
+                <h3 id="section-about-header" class="heading-medium">
+                    @messages(item)
+                </h3>
+            }
+
+            <ul class="task-list-items">
+                @for((item, i) <- taskSections.about.entities.zipWithIndex){
+                <li class="task-list-item">
+                    <a id="section-about-link-@i" class="task-name" href="@{item.link.target}">
+                        @messages(item.link.text)
+                    </a>
+                </li>
+                }
+            </ul>
+        </section>
+
+        <section aria-labelledby="section-establishers-header">
+            <h2 id="section-establishers-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
+            </h2>
+
+            @if(taskSections.establishers.nonEmpty){
+                <ul class="task-list-items">
+                    @for((item, i) <- taskSections.establishers.zipWithIndex){
+                            <li>@messages(item)</li>
+                    }
+                </ul>
+            }
+        </section>
+
+        @if(taskSections.trustees.nonEmpty){
+            <section aria-labelledby="section-trustees-header">
+                    @taskSections.trusteeHeader.map { _ =>
+                        <h2 id="section-trustees-header" class="heading-large">
+                            @messages("messages__schemeTaskList__sectionTrustees_header")
+                        </h2>
+                    }
+
+                    <ul class="task-list-items">
+                        @for((item, i) <- taskSections.trustees.zipWithIndex){
+                                    <li>@messages(item)</li>
+                        }
+                    </ul>
+            </section>
+        }
+
+
+    </div>
+
+    <hr aria-hidden="true">
+    <a id="save-and-return" class="task-name"
+       href="@appConfig.managePensionsSchemeSummaryUrl.format(taskSections.srn)">
+       @messages("messages__complete__returnToSchemeSummary")
+    </a>
+
+}
