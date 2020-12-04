@@ -33,7 +33,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
-  val date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
+  def date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
   val srn = Some("123")
 
@@ -54,7 +54,8 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, schemeName, date, postCall(srn), srn)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, schemeName, controller().dateToCompleteDeclaration,
+    postCall(srn), srn)(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 

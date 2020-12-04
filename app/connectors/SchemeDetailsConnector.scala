@@ -18,10 +18,9 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
-import models.details.PsaSchemeDetails
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.{HttpResponseHelper, UserAnswers}
@@ -31,16 +30,18 @@ import scala.util.Failure
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
-  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)(implicit hc: HeaderCarrier,
-                                                                              ec: ExecutionContext)
-  : Future[UserAnswers]
+  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)
+                      (implicit hc: HeaderCarrier,ec: ExecutionContext): Future[UserAnswers]
+
+  def getPspSchemeDetails(pspId: String, srn: String)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
 @Singleton
 class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
   SchemeDetailsConnector with HttpResponseHelper {
 
-  def getSchemeDetails(psaId: String,
+  override def getSchemeDetails(psaId: String,
                        schemeIdType: String,
                        idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[UserAnswers] = {
@@ -57,6 +58,22 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
       }
     } andThen {
       case Failure(t: Throwable) => Logger.warn("Unable to get scheme details", t)
+    }
+  }
+
+  override def getPspSchemeDetails(pspId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[UserAnswers] = {
+
+    val url = config.pspSchemeDetailsUrl
+    val schemeHc = hc.withExtraHeaders("srn" -> srn, "pspId" -> pspId)
+
+    http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
+      response.status match {
+        case OK => UserAnswers(Json.parse(response.body))
+        case _ => handleErrorResponse("GET", url)(response)
+      }
+    } andThen {
+      case Failure(t: Throwable) => Logger.warn("Unable to psp get scheme details", t)
     }
   }
 }

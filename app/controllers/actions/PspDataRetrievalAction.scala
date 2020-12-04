@@ -39,7 +39,8 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
 
     viewConnector.fetch(request.externalId).flatMap {
       case None =>
-        schemeDetailsConnector.getSchemeDetails(psaId = "psaId", schemeIdType = "srn", srn).map { ua =>
+          val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
+          schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
             val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
             OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true)
           }

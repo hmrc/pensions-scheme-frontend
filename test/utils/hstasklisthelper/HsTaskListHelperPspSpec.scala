@@ -66,7 +66,7 @@ class HsTaskListHelperPspSpec extends WordSpec with MustMatchers with MockitoSug
 
       val result = helper.taskList(userAnswers, srn).establishers
 
-      result mustBe Seq("test company 0", "first 2 last 2", "test partnership 5")
+      result mustBe Seq("test company 0", "test company 1", "first 2 last 2", "first 3 last 3", "test partnership 4", "test partnership 5")
     }
   }
 
@@ -74,14 +74,14 @@ class HsTaskListHelperPspSpec extends WordSpec with MustMatchers with MockitoSug
     "return the seq of trustees without the deleted ones" in {
       val userAnswers = userAnswersJson.trusteeCompanyEntity(index = 0, isDeleted = true).
         trusteeCompanyEntity(index = 1).
-        trusteeIndividualEntity(index = 2, isDeleted = true).
+        trusteeIndividualEntity(index = 2).
         trusteeIndividualEntity(index = 3).
         trusteePartnershipEntity(index = 4).
-        trusteePartnershipEntity(index = 5, isDeleted = true)
+        trusteePartnershipEntity(index = 5)
 
       val result = helper.taskList(userAnswers, srn).trustees
 
-      result mustBe Seq("test company 1", "first 3 last 3", "test partnership 4")
+      result mustBe Seq("test company 0", "test company 1", "first 2 last 2", "first 3 last 3", "test partnership 4", "test partnership 5")
     }
   }
 
