@@ -37,7 +37,8 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
   val srn = Some("123")
 
-
+  def dateToCompleteDeclaration: String = LocalDate.now().plusDays(28).
+    format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
   private val view = injector.instanceOf[anyMoreChanges]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =
@@ -54,7 +55,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, schemeName, controller().dateToCompleteDeclaration,
+  private def viewAsString(form: Form[_] = form) = view(form, schemeName, dateToCompleteDeclaration,
     postCall(srn), srn)(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {

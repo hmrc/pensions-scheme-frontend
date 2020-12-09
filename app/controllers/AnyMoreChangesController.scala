@@ -71,7 +71,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).
+  private def dateToCompleteDeclaration: String = LocalDate.now().plusDays(appConfig.daysDataSaved).
     format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
 }
