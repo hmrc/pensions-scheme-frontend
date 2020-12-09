@@ -69,6 +69,8 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val emailSendForce: Boolean = runModeConfiguration.getOptional[Boolean]("email.force").getOrElse(false)
   lazy val schemeDetailsUrl: String = s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying
     .getString("urls.schemeDetails")}"
+  lazy val pspSchemeDetailsUrl: String = s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying
+    .getString("urls.pspSchemeDetails")}"
   lazy val updateSchemeDetailsUrl: String = s"${servicesConfig.baseUrl("pensions-scheme")}${
     runModeConfiguration
       .underlying.getString("urls.updateSchemeDetails")

@@ -465,7 +465,95 @@ final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Impl
 
   protected def schemeType: Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
     case JsSuccess(scheme, _) => Some(scheme.value)
-    case JsError(errors) => None
+    case JsError(_) => None
+  }
+
+  def pspEstablishers: Seq[String] =
+    json.validate[Seq[String]](readPspEstablishers) match {
+      case JsSuccess(establishers, _) => establishers
+      case JsError(errors) =>
+        Logger.warn(s"Invalid json while reading establishers from psp scheme details: $errors")
+        Nil
+    }
+
+  def readPspEstablishers: Reads[Seq[String]] = new Reads[Seq[String]] {
+
+    private def readsIndividual: Reads[String] = (
+      (JsPath \ "establisherDetails" \ "firstName").read[String] and
+      (JsPath \ "establisherDetails" \ "lastName").read[String])((firstName, lastName) => s"$firstName $lastName")
+
+    private def readsCompany: Reads[String] = (JsPath \ "companyDetails" \ "companyName").read[String]
+
+    private def readsPartnership: Reads[String] = (JsPath \ "partnershipDetails" \ "name").read[String]
+
+    override def reads(json: JsValue): JsResult[Seq[String]] = {
+      json \ EstablishersId.toString match {
+        case JsDefined(JsArray(establishers)) =>
+          val jsResults = establishers.zipWithIndex.map { case (jsValue, _) =>
+            val establisherKind = (jsValue \ EstablisherKindId.toString).validate[String].asOpt
+            val readsForEstablisherKind = establisherKind match {
+              case Some(EstablisherKind.Indivdual.toString) => readsIndividual
+              case Some(EstablisherKind.Company.toString) => readsCompany
+              case Some(EstablisherKind.Partnership.toString) => readsPartnership
+              case _ => readsBlankString
+            }
+            readsForEstablisherKind.reads(jsValue)
+          }
+
+          asJsResultSeq(jsResults)
+        case _ => JsSuccess(Nil)
+      }
+    }
+  }
+
+  def pspTrustees: Seq[String] =
+    json.validate[Seq[String]](readPspTrustees) match {
+      case JsSuccess(trustees, _) =>
+        trustees
+      case JsError(errors) =>
+        Logger.warn(s"Invalid json while reading trustees from psp scheme details: $errors")
+        Nil
+    }
+
+  def readPspTrustees: Reads[Seq[String]] = new Reads[Seq[String]] {
+
+    private def readsIndividual: Reads[String] =
+      ((JsPath \ TrusteeNameId.toString \ "firstName").read[String] and
+        (JsPath \ TrusteeNameId.toString \ "lastName").read[String]
+        ) ((firstName, lastName) => s"$firstName $lastName")
+
+    private def readsCompany: Reads[String] =
+      (JsPath \ CompanyDetailsId.toString \ "companyName").read[String]
+
+    private def readsPartnership: Reads[String] =
+      (JsPath \ TrusteePartnershipDetailsId.toString \ "name").read[String]
+
+    override def reads(json: JsValue): JsResult[Seq[String]] = {
+      json \ TrusteesId.toString match {
+        case JsDefined(JsArray(trustees)) =>
+          val jsResults = trustees.zipWithIndex.map { case (jsValue, index) =>
+            val trusteeKind = (jsValue \ TrusteeKindId.toString).validate[String].asOpt
+            val readsForTrusteeKind = trusteeKind match {
+              case Some(TrusteeKind.Individual.toString) => readsIndividual
+              case Some(TrusteeKind.Company.toString) => readsCompany
+              case Some(TrusteeKind.Partnership.toString) => readsPartnership
+              case _ => readsBlankString
+            }
+            readsForTrusteeKind.reads(jsValue)
+          }
+
+          asJsResultSeq(jsResults)
+        case _ => JsSuccess(Nil)
+      }
+    }
+  }
+
+  private def readsBlankString: Reads[String] = new Reads[String] {
+    override def reads(json: JsValue): JsResult[String] = {
+      (json \ EstablisherKindId.toString)
+        .toOption.map(_ => JsSuccess(""))
+        .getOrElse(JsError(s"Entity is neither individual, company or partnership"))
+    }
   }
 
 }

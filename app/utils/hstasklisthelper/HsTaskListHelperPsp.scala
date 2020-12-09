@@ -18,6 +18,7 @@ package utils.hstasklisthelper
 
 import identifiers.SchemeNameId
 import models._
+import play.api.libs.json.Reads._
 import utils.UserAnswers
 import viewmodels._
 
@@ -29,9 +30,9 @@ class HsTaskListHelperPsp {
       srn,
       beforeYouStartSection(answers, srn),
       aboutSection(answers, srn),
-      establishersSection(answers),
+      answers.pspEstablishers,
       addTrusteeHeader(answers),
-      trusteesSection(answers)
+      answers.pspTrustees
     )
 
   private def name(ua: UserAnswers): String = ua.get(SchemeNameId).getOrElse("")
@@ -65,9 +66,6 @@ class HsTaskListHelperPsp {
       None
     else
       Some(SchemeDetailsTaskListEntitySection(None, Nil, None))
-
-  protected def establishersSection(userAnswers: UserAnswers): Seq[String] =
-    for ((establisher, _) <- userAnswers.allEstablishersAfterDelete(UpdateMode).zipWithIndex) yield establisher.name
 
   protected def trusteesSection(userAnswers: UserAnswers): Seq[String] =
     for ((trustee, _) <- userAnswers.allTrusteesAfterDelete.zipWithIndex) yield trustee.name

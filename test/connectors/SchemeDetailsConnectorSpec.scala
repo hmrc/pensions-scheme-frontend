@@ -128,26 +128,122 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
   }
 
+  "getPspSchemeDetails" should "return the PspSchemeDetails for a valid request/response" in {
+
+    server.stubFor(
+      get(urlEqualTo(pspSchemeDetailsUrl))
+        .withHeader("srn", equalTo(idNumber))
+        .withHeader("pspId", equalTo(psaId))
+        .willReturn(
+          aResponse()
+            .withStatus(Status.OK)
+            .withHeader("Content-Type", "application/json")
+            .withBody(validSchemeDetailsVariationsResponse)
+        )
+    )
+
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    connector.getPspSchemeDetails(pspId, idNumber).map(schemeDetails =>
+      schemeDetails shouldBe psaSchemeDetailsVariationsResponse
+    )
+  }
+
+  it should "throw BadRequestException for a 400 INVALID_IDTYPE response" in {
+
+    server.stubFor(
+      get(urlEqualTo(pspSchemeDetailsUrl))
+        .withHeader("srn", equalTo(idNumber))
+        .withHeader("pspId", equalTo(psaId))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_IDTYPE"))
+        )
+    )
+
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+    recoverToSucceededIf[BadRequestException] {
+      connector.getPspSchemeDetails(pspId, idNumber)
+    }
+  }
+
+  it should "throw BadRequestException for a 400 INVALID_SRN response" in {
+
+    server.stubFor(
+      get(urlEqualTo(pspSchemeDetailsUrl))
+        .withHeader("srn", equalTo(idNumber))
+        .withHeader("pspId", equalTo(psaId))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_SRN"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getPspSchemeDetails(pspId, idNumber)
+    }
+
+  }
+  it should "throw BadRequestException for a 400 INVALID_PSTR response" in {
+
+    server.stubFor(
+      get(urlEqualTo(pspSchemeDetailsUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_PSTR"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getPspSchemeDetails(pspId, idNumber)
+    }
+
+  }
+
+  it should "throw BadRequest for a 400 INVALID_CORRELATIONID response" in {
+
+    server.stubFor(
+      get(urlEqualTo(pspSchemeDetailsUrl))
+        .willReturn(
+          badRequest
+            .withHeader("Content-Type", "application/json")
+            .withBody(errorResponse("INVALID_CORRELATIONID"))
+        )
+    )
+    val connector = injector.instanceOf[SchemeDetailsConnector]
+
+    recoverToSucceededIf[BadRequestException] {
+      connector.getPspSchemeDetails(pspId, idNumber)
+    }
+
+  }
+
 }
 
 object SchemeDetailsConnectorSpec {
 
   private val psaId = "0000"
+  private val pspId = "0000"
   private val schemeIdType = "pstr"
   private val idNumber = "00000000AA"
   private val schemeDetailsUrl = s"/pensions-scheme/scheme"
-  val mockSchemeDetails = SchemeDetails(Some("S9000000000"), Some("00000000AA"), "Open", "Benefits Scheme", true, None, None, false,
-    SchemeMemberNumbers("0","0"), false, false, "AD", "GB", false, None)
+  private val pspSchemeDetailsUrl = s"/pensions-scheme/psp-scheme"
+  val mockSchemeDetails: SchemeDetails = SchemeDetails(Some("S9000000000"), Some("00000000AA"), "Open", "Benefits Scheme",
+    isMasterTrust = true, typeOfScheme = None, otherTypeOfScheme = None, hasMoreThanTenTrustees = false,
+    members = SchemeMemberNumbers("0", "0"), isInvestmentRegulated = false, isOccupational = false, benefits = "AD",
+    country = "GB", areBenefitsSecured = false, insuranceCompany = None)
 
-  val psaDetails1 = PsaDetails("A0000000",Some("partnetship name"),Some(Name(Some("Taylor"),Some("Middle"),Some("Rayon"))))
-  val psaDetails2 = PsaDetails("A0000001",Some("partnetship name 1"),Some(Name(Some("Smith"),Some("A"),Some("Tony"))))
+  val psaDetails1: PsaDetails = PsaDetails("A0000000",Some("partnetship name"),Some(Name(Some("Taylor"),Some("Middle"),Some("Rayon"))))
+  val psaDetails2: PsaDetails = PsaDetails("A0000001",Some("partnetship name 1"),Some(Name(Some("Smith"),Some("A"),Some("Tony"))))
 
-  val psaSchemeDetailsResponse = PsaSchemeDetails(mockSchemeDetails, None, None, Seq(psaDetails1, psaDetails2))
+  val psaSchemeDetailsResponse: PsaSchemeDetails = PsaSchemeDetails(mockSchemeDetails, None, None, Seq(psaDetails1, psaDetails2))
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-
-  private val validSchemeDetailsResponse = Json.toJson(psaSchemeDetailsResponse).toString()
-
 
   private val validSchemeDetailsVariationsResponse = """
         { "somedata": "somevalue" }
