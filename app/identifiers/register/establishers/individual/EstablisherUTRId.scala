@@ -20,8 +20,8 @@ import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -34,8 +34,7 @@ case class EstablisherUTRId(index: Int) extends TypedIdentifier[ReferenceValue] 
 object EstablisherUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherUTRId] = {
+  implicit def cya: CheckYourAnswers[EstablisherUTRId] = {
 
     new CheckYourAnswersIndividual[EstablisherUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

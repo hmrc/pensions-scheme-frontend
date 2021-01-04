@@ -21,7 +21,7 @@ import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{AddressYears, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

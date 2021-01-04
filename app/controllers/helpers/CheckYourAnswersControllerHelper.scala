@@ -17,9 +17,9 @@
 package controllers.helpers
 
 import identifiers.TypedIdentifier
+import models._
 import models.person.PersonName
 import models.requests.DataRequest
-import models._
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
@@ -36,26 +36,26 @@ object CheckYourAnswersControllerHelper {
     }
 
   def companyName(id: TypedIdentifier[CompanyDetails])(implicit request: DataRequest[AnyContent],
-                                                       messages: Messages, reads: Reads[PersonName]): String =
+                                                       messages: Messages): String =
     request.userAnswers.get(id) match {
       case Some(name) => name.companyName
       case _ => Message("messages__theCompany")
     }
 
   def partnershipName(id: TypedIdentifier[PartnershipDetails])(implicit request: DataRequest[AnyContent],
-                                                               messages: Messages, reads: Reads[PersonName]): String =
+                                                               messages: Messages): String =
     request.userAnswers.get(id) match {
       case Some(name) => name.name
       case _ => Message("messages__thePartnership")
     }
 
-  def headingDetails(mode: Mode, name: => String, isNew: Boolean)(implicit messages: Messages): Message =
+  def headingDetails(mode: Mode, name: => String, isNew: Boolean): Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__detailsFor", name)
 
-  def headingAddressDetails(mode: Mode, name: => String, isNew: Boolean)(implicit messages: Messages): Message =
+  def headingAddressDetails(mode: Mode, name: => String, isNew: Boolean): Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__addressFor", name)
 
-  def headingContactDetails(mode: Mode, name: => String, isNew: Boolean)(implicit messages: Messages): Message =
+  def headingContactDetails(mode: Mode, name: => String, isNew: Boolean): Message =
     if (isNew) Message("checkYourAnswers.hs.heading") else Message("messages__contactDetailsFor", name)
 
   def isNewItem(mode: Mode, ua: UserAnswers, id: TypedIdentifier[Boolean]): Boolean =

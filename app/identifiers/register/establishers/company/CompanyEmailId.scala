@@ -31,7 +31,7 @@ case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
 object CompanyEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswersCompany[CompanyEmailId] {
 
     private def label(index : Int, ua : UserAnswers) : Message =

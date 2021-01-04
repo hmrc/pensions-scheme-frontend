@@ -16,18 +16,18 @@
 
 package identifiers.register.establishers.partnership.partner
 
+import java.time.LocalDate
+
 import base.SpecBase
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{Link, NormalMode, UpdateMode}
-import java.time.LocalDate
-
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
-import utils.checkyouranswers.Ops._
 
 class PartnerDOBIdSpec extends SpecBase {
 

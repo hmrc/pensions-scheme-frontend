@@ -22,11 +22,11 @@ import controllers.register.trustees.partnership.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
+import models.Mode._
 import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
-import models.Mode._
 
 //scalastyle:off cyclomatic.complexity
 class TrusteesPartnershipContactDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends

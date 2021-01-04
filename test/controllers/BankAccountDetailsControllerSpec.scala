@@ -52,7 +52,7 @@ class BankAccountDetailsControllerSpec extends ControllerWithQuestionPageBehavio
 
   private val view = injector.instanceOf[bankAccountDetails]
 
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
 
   private def controller(

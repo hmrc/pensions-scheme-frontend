@@ -19,7 +19,7 @@ package identifiers.register.trustees.partnership
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.requests.DataRequest
-import models.{Link, NormalMode, PartnershipDetails, ReferenceValue, UpdateMode}
+import models._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

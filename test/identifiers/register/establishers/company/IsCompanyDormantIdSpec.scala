@@ -24,8 +24,8 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {

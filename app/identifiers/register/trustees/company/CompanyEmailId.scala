@@ -31,7 +31,7 @@ case class CompanyEmailId(index: Int) extends TypedIdentifier[String] {
 object CompanyEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyEmailId] = new
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEmailId] = new
       CheckYourAnswersTrusteeCompany[CompanyEmailId] {
     def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
       (dynamicMessage(index, ua, "messages__enterEmail"),

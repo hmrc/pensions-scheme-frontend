@@ -153,7 +153,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[confirmDeleteDirector]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteDirectorController(
       frontendAppConfig,
       messagesApi,

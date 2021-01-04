@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.helpers.CheckYourAnswersControllerHelper._
 import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
@@ -29,13 +30,12 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 

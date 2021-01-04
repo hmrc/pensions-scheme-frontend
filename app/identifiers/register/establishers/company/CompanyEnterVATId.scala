@@ -20,8 +20,8 @@ import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterVATId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -31,7 +31,7 @@ case class CompanyEnterVATId(index: Int) extends TypedIdentifier[ReferenceValue]
 object CompanyEnterVATId {
   override def toString: String = "companyVat"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterVATId] = {
+  implicit def cya: CheckYourAnswers[CompanyEnterVATId] = {
     new CheckYourAnswersCompany[CompanyEnterVATId] {
 
       private val label: Message = Message("messages__common__cya__vat")

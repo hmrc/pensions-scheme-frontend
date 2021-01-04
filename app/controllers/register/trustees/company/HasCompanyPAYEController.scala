@@ -66,8 +66,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = routes.HasCompanyPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__hasPAYE", Message("messages__theCompany")),

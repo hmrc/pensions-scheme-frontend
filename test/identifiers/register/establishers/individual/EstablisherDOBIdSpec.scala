@@ -16,13 +16,13 @@
 
 package identifiers.register.establishers.individual
 
+import java.time.LocalDate
+
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
 import models.person.PersonName
 import models.requests.DataRequest
-import java.time.LocalDate
-
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId

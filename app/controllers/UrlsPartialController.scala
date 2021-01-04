@@ -25,7 +25,7 @@ import services.UrlsPartialService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.urlsPartial
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,

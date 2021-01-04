@@ -27,11 +27,10 @@ import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.FakeNavigator
+import utils.{FakeNavigator, _}
 import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
-import utils._
 
 class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
 

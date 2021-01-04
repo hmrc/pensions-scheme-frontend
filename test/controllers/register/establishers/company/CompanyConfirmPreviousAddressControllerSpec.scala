@@ -68,7 +68,7 @@ class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val index = 0
   val srn = Some("srn")
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new CompanyConfirmPreviousAddressController(
       frontendAppConfig,
       messagesApi,

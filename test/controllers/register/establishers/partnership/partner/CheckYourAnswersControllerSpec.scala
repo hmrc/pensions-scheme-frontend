@@ -43,7 +43,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+  private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -60,9 +60,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       view
     )
 
-  private def viewAsString(mode: Mode = NormalMode,
-                           answerSection: Seq[AnswerSection] = Seq.empty,
-                           srn: Option[String] = None, title:Message, h1:Message) = view(
+  private def viewAsString(mode: Mode, answerSection: Seq[AnswerSection],
+                           srn: Option[String], title:Message, h1:Message) = view(
     CYAViewModel(
       answerSections = answerSection,
       href = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, firstIndex, srn),
@@ -138,11 +137,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val personName = PersonName("first name", "last name")
   private val address = Address("Address 1", "Address 2", None, None, None, "GB")
   private val desiredRoute = controllers.routes.IndexController.onPageLoad()
-
-  private val partnerAnswersUpdate = UserAnswers()
-    .set(PartnerNameId(firstIndex, firstIndex))(PersonName("first name", "last name"))
-    .asOpt.value
-    .set(PartnerEnterNINOId(firstIndex, firstIndex))(ReferenceValue("AB100100A")).asOpt.value
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)
@@ -305,22 +299,4 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     Link("site.change", routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, srn).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName))
     )))
-
-  private def answerRowsYes = Seq(AnswerSection(
-    None,
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None)
-    )
-  )
-  )
-
-  private def answerRowsNo = Seq(AnswerSection(
-    None,
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("first name last name"), false, None),
-      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(LocalDate.now())), answerIsMessageKey = false, None)
-    )
-  )
-  )
 }

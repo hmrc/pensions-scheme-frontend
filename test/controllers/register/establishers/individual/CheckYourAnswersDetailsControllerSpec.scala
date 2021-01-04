@@ -25,9 +25,8 @@ import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
 import models.person.PersonName
-import models.requests.DataRequest
 import org.scalatest.OptionValues
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -46,7 +45,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -56,7 +55,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -68,7 +67,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allChangeLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(allChangeLinksVariations, UpdateMode, srn, postUrlUpdateMode,
           title = Message("messages__detailsFor", Message("messages__thePerson")),
           h1 = Message("messages__detailsFor", establisherName.fullName))
       }
@@ -78,7 +77,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allAddLinksVariations(request), UpdateMode, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(allAddLinksVariations, UpdateMode, srn, postUrlUpdateMode,
           title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
           h1 = Message("messages__detailsFor", establisherName.fullName))
       }
@@ -92,9 +91,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index = Index(0)
-  private val testSchemeName = "Test Scheme Name"
   private val srn = Some("S123")
   private val name = "test name"
   private val establisherName = PersonName("test", "name")
@@ -149,7 +146,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
   def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
-  private def allAddLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def allAddLinksVariations: Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -161,7 +158,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       )
     ))
 
-  private def allChangeLinksVariations(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def allChangeLinksVariations: Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -171,8 +168,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[String]
-                          )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -190,8 +186,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     ))
 
 
-  private def allValuesNo(mode: Mode, srn: Option[String]
-                         )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(

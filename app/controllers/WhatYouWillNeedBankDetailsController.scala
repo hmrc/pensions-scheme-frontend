@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.whatYouWillNeedBankDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,6 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
   }
 
   def onSubmit: Action[AnyContent] = authenticate() {
-    implicit request =>
       Redirect(controllers.routes.UKBankAccountController.onPageLoad(NormalMode))
   }
 }

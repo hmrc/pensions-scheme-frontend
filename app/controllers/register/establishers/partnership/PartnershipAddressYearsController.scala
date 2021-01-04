@@ -70,8 +70,7 @@ class PartnershipAddressYearsController @Inject()(
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))
 
-  private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership")),
     heading = Message("messages__partnershipAddressYears__heading", partnershipName),

@@ -28,8 +28,8 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
 import utils.annotations.EstablishersCompany
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 

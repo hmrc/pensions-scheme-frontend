@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId,
-  CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}

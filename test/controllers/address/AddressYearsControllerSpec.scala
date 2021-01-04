@@ -28,8 +28,8 @@ import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -144,8 +144,6 @@ class AddressYearsControllerSpec extends SpecBase with MustMatchers with OptionV
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
 
           when(userAnswersService.save[AddressYears, FakeIdentifier.type](
             eqTo(NormalMode), eqTo(None),

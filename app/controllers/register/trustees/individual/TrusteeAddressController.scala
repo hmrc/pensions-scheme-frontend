@@ -22,8 +22,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{IndividualAddressListId, IndividualPostCodeLookupId,
-  TrusteeAddressId, TrusteeNameId}
+import identifiers.register.trustees.individual.{IndividualAddressListId, IndividualPostCodeLookupId, TrusteeAddressId, TrusteeNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}

@@ -17,11 +17,11 @@
 package identifiers
 
 import base.SpecBase
-import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import models.{Link, UpdateMode}
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

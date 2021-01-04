@@ -32,8 +32,6 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours {
 
   private val view = injector.instanceOf[typeOfBenefits]
@@ -44,7 +42,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(

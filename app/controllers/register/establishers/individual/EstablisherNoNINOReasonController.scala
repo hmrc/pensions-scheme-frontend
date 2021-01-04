@@ -25,6 +25,7 @@ import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -65,11 +66,10 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
         }
     }
 
-  private def form(name: String)(implicit request: DataRequest[AnyContent]) =
+  private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_ninoRequired", name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoNINOReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoNINO", Message("messages__theIndividual")),

@@ -62,8 +62,7 @@ class PartnerAddressYearsController @Inject()(
     new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String,
-                        srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]) = AddressYearsViewModel(
+                        srn: Option[String]) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_address_years__title", Message("messages__common__address_years__partner")),
     heading = Message("messages__partner_address_years__heading", partnerName),

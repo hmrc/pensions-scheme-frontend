@@ -18,9 +18,9 @@ package identifiers.register.establishers.individual
 
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
-import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import models.person.PersonName
 import models.requests.DataRequest
+import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

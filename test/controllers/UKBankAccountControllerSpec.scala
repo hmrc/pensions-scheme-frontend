@@ -30,8 +30,6 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.uKBankAccount
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
 
   private val schemeName = "Test Scheme Name"
@@ -42,7 +40,7 @@ class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private val view = injector.instanceOf[uKBankAccount]
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
 
   private def controller(

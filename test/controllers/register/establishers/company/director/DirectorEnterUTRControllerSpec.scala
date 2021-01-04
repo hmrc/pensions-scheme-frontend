@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
 import play.api.inject.bind

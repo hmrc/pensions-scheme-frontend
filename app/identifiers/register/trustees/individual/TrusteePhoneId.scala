@@ -31,7 +31,7 @@ case class TrusteePhoneId(index: Int) extends TypedIdentifier[String] {
 object TrusteePhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteePhoneId] = new
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePhoneId] = new
       CheckYourAnswersTrusteeIndividual[TrusteePhoneId] {
     def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
       (dynamicMessage(index, ua, "messages__enterPhoneNumber"),

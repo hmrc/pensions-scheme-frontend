@@ -71,8 +71,7 @@ class CompanyEnterPAYEController @Inject()(
   protected def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(companyName)
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): PayeViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__theCompany")),

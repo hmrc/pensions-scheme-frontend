@@ -18,11 +18,10 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerHasNINOId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {

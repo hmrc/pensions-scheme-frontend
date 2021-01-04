@@ -59,8 +59,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
     }
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
-                        personName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+                        personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasNINO", Message("messages__thePartner")),

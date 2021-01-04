@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.partnership.partner
 
-import java.time.LocalDate
-
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
@@ -79,7 +77,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   private val view = injector.instanceOf[manualAddress]
 
-  private def viewmodel(postCall: Call = postCall) = ManualAddressViewModel(
+  private def viewmodel(postCall: Call) = ManualAddressViewModel(
     postCall,
     countryOptions.options,
     title = Message("messages__common__confirmAddress__h1", Message("messages__thePartner")),

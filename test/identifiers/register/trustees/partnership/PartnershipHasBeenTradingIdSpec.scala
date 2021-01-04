@@ -17,16 +17,16 @@
 package identifiers.register.trustees.partnership
 
 import base.SpecBase
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipHasBeenTradingIdSpec extends SpecBase {
 

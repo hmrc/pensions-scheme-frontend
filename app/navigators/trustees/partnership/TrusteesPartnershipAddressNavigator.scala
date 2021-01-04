@@ -19,15 +19,15 @@ package navigators.trustees.partnership
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes._
+import controllers.routes.{AnyMoreChangesController, SessionExpiredController}
 import identifiers.Identifier
+import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models.Mode._
 import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers
-import controllers.routes.{AnyMoreChangesController, SessionExpiredController}
-import identifiers.register.trustees.IsTrusteeNewId
 
 //scalastyle:off cyclomatic.complexity
 class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)

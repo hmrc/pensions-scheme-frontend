@@ -19,7 +19,6 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.company.CheckYourAnswersCompanyAddressControllerSpec.companyName
 import models.Mode.checkMode
 import models._
 import models.address.Address

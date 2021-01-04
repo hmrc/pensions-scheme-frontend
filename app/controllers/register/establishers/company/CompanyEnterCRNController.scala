@@ -22,7 +22,6 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.CompanyRegistrationNumberBaseController
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterCRNId}
-import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -57,12 +56,11 @@ class CompanyEnterCRNController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          get(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+          get(mode, srn, index, viewModel(companyName), companyName)
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CompanyRegistrationNumberViewModel = {
+  private def viewModel(companyName: String): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__enterCRN", Message("messages__theCompany")),
       heading = Message("messages__enterCRN", companyName),
@@ -75,7 +73,7 @@ class CompanyEnterCRNController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.right.map { details =>
           val companyName = details.companyName
-          post(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+          post(mode, srn, index, viewModel(companyName), companyName)
         }
     }
 }

@@ -434,8 +434,6 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with MustMatchers with Wire
           "lastUpdated" -> "1528107399697"
         )
 
-        val plaintext = PlainText("{}")
-
         server.stubFor(
           get(urlEqualTo(lastUpdatedUrl("foo")))
             .willReturn(

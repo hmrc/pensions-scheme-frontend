@@ -21,7 +21,7 @@ import models.{PsaLock, SchemeVariance, VarianceLock}
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.http.Status
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
 class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {

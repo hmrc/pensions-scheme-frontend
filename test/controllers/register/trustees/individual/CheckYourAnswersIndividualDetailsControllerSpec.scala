@@ -16,6 +16,8 @@
 
 package controllers.register.trustees.individual
 
+import java.time.LocalDate
+
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -24,8 +26,6 @@ import models.Mode.checkMode
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{NormalMode, _}
-import java.time.LocalDate
-
 import org.scalatest.OptionValues
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._

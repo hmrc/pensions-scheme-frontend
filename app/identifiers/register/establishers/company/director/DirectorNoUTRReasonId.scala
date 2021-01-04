@@ -33,8 +33,7 @@ case class DirectorNoUTRReasonId(establisherIndex: Int, directorIndex: Int) exte
 object DirectorNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[DirectorNoUTRReasonId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorNoUTRReasonId] = {
 
     new CheckYourAnswersDirectors[DirectorNoUTRReasonId] {
 

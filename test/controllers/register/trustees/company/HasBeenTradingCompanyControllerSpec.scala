@@ -21,9 +21,7 @@ import controllers.actions._
 import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
-import identifiers.register.trustees.individual.TrusteeNameId
 import models.address.{Address, TolerantAddress}
-import models.person.PersonName
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json

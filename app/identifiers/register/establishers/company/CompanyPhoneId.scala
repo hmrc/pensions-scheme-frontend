@@ -31,7 +31,7 @@ case class CompanyPhoneId(index: Int) extends TypedIdentifier[String] {
 object CompanyPhoneId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[CompanyPhoneId] = new
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPhoneId] = new
       CheckYourAnswersCompany[CompanyPhoneId] {
 
     private def hiddenLabel(index: Int, ua: UserAnswers): Message =

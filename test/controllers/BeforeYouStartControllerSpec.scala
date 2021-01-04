@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
+import connectors.PensionAdministratorConnector
 import controllers.actions._
 import models.NormalMode
 import org.mockito.Matchers._

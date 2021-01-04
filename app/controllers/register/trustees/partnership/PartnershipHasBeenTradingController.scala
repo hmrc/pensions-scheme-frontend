@@ -57,8 +57,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(mode,
         index, srn),

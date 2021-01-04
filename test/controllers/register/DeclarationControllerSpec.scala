@@ -33,7 +33,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -228,7 +227,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private val mockEmailConnector = mock[EmailConnector]
-  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 

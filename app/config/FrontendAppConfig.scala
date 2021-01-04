@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environment: Environment,
                                   servicesConfig: ServicesConfig) {
 
-  lazy val contactHost = baseUrl("contact-frontend")
+  lazy val contactHost: String = baseUrl("contact-frontend")
   lazy val managePensionsSchemeOverviewUrl: Call = Call("GET", loadConfig("urls.manage-pensions-frontend" +
     ".schemesOverview"))
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")
@@ -87,11 +87,10 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   //FEATURES
   lazy val languageTranslationEnabled: Boolean = runModeConfiguration.getOptional[Boolean]("features" +
     ".welsh-translation").getOrElse(true)
-  val reportAProblemPartialUrl = getConfigString("contact-frontend.report-problem-url.with-js")
-  val reportAProblemNonJSUrl = getConfigString("contact-frontend.report-problem-url.non-js")
-  val betaFeedbackUrl = getConfigString("contact-frontend.beta-feedback-url.authenticated")
-  val betaFeedbackUnauthenticatedUrl = getConfigString("contact-frontend.beta-feedback-url.unauthenticated")
-  private val contactFormServiceIdentifier = "pensionsschemefrontend"
+  val reportAProblemPartialUrl: String = getConfigString("contact-frontend.report-problem-url.with-js")
+  val reportAProblemNonJSUrl: String = getConfigString("contact-frontend.report-problem-url.non-js")
+  val betaFeedbackUrl: String = getConfigString("contact-frontend.beta-feedback-url.authenticated")
+  val betaFeedbackUnauthenticatedUrl: String = getConfigString("contact-frontend.beta-feedback-url.unauthenticated")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -101,10 +100,10 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
 
   protected def mode: Mode = environment.mode
 
-  private def loadConfig(key: String) = runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception
+  private def loadConfig(key: String): String = runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception
   (s"Missing configuration key: $key"))
 
-  private def baseUrl(serviceName: String) = {
+  private def baseUrl(serviceName: String): String = {
     val protocol = runModeConfiguration.getOptional[String](s"microservice.services.$serviceName.protocol")
       .getOrElse("http")
     val host = runModeConfiguration.get[String](s"microservice.services.$serviceName.host")

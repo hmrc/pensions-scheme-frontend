@@ -16,17 +16,16 @@
 
 package identifiers
 
+import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 
 case object InvestmentRegulatedSchemeId extends TypedIdentifier[Boolean] {
   self =>
   override def toString: String = "investmentRegulated"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(Message("messages__investment_regulated_scheme__h1", userAnswers.get(SchemeNameId).getOrElse(""))),
       hiddenLabel = Some(Message(

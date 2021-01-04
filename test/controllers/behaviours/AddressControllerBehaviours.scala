@@ -26,13 +26,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import utils.{CountryOptions, InputOption}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.{manualAddress => manualAddressView}
-import play.api.test.CSRFTokenHelper.addCSRFToken
 
 trait AddressControllerBehaviours extends ControllerSpecBase
   with MockitoSugar

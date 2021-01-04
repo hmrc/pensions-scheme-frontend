@@ -42,7 +42,7 @@ case class EstablisherHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 object EstablisherHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[EstablisherHasUTRId] = {
+  implicit def cya: CheckYourAnswers[EstablisherHasUTRId] = {
 
     new CheckYourAnswersIndividual[EstablisherHasUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

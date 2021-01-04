@@ -79,7 +79,7 @@ class EstablisherNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String])(implicit request: DataRequest[AnyContent]) =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
     title = Message("messages__individualName__title"),

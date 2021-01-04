@@ -19,9 +19,9 @@ package controllers.register.trustees.individual
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteeNameId,
-  TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeAddressYearsId, TrusteeNameId, TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}
@@ -29,13 +29,12 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import controllers.helpers.CheckYourAnswersControllerHelper._
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -24,6 +24,7 @@ import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -36,7 +37,6 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-import org.mockito.Mockito.when
 
 import scala.concurrent.Future
 

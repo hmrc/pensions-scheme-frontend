@@ -18,8 +18,7 @@ package navigators.establishers.individual
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.establishers.individual.routes.{CheckYourAnswersContactDetailsController,
-  EstablisherPhoneController}
+import controllers.register.establishers.individual.routes.{CheckYourAnswersContactDetailsController, EstablisherPhoneController}
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherPhoneId}

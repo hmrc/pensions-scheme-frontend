@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.address.AddressListFormProvider
@@ -28,6 +27,7 @@ import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}

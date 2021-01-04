@@ -18,7 +18,6 @@ package identifiers
 
 import models.Link
 import models.address.Address
-import play.api.i18n.Messages
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}

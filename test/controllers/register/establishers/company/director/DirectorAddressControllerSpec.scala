@@ -16,13 +16,10 @@
 
 package controllers.register.establishers.company.director
 
-import java.time.LocalDate
-
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorNameId}
@@ -76,7 +73,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   )
   )
 
-  private def viewmodel(postCall: Call = postCall) = ManualAddressViewModel(
+  private def viewmodel(postCall: Call) = ManualAddressViewModel(
     postCall,
     countryOptions.options,
     title = Message("messages__common__confirmAddress__h1", Message("messages__theDirector")),

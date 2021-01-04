@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.company
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.TrusteesId
@@ -26,6 +25,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsResult, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message

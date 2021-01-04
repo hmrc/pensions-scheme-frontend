@@ -16,6 +16,8 @@
 
 package controllers.register
 
+import java.time.LocalDate
+
 import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
@@ -24,8 +26,6 @@ import identifiers.SchemeTypeId
 import identifiers.register.SubmissionReferenceNumberId
 import javax.inject.Inject
 import models.register.SchemeType.MasterTrust
-import models.requests.DataRequest
-import java.time.LocalDate
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -64,8 +64,5 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit: Action[AnyContent] = authenticate() {
-    implicit request =>
-      Redirect(appConfig.managePensionsSchemeOverviewUrl)
-  }
+  def onSubmit: Action[AnyContent] = authenticate() { Redirect(appConfig.managePensionsSchemeOverviewUrl) }
 }

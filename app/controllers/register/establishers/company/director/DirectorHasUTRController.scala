@@ -59,8 +59,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
     }
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
-                        personName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+                        personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode,
         establisherIndex, directorIndex, srn),

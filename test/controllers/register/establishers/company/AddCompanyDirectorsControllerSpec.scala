@@ -48,7 +48,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[addCompanyDirectors]
 
   private def controller(
-      dataRetrievalAction: DataRetrievalAction = getEmptyData,
+      dataRetrievalAction: DataRetrievalAction,
       navigator: Navigator = fakeNavigator()
   ) =
     new AddCompanyDirectorsController(

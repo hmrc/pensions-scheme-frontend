@@ -21,8 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId,
-  TrusteePreviousAddressId}
+import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId, TrusteePreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator

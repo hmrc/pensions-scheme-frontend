@@ -41,8 +41,7 @@ case object InsuranceCompanyNameId extends TypedIdentifier[String] {
     }
   }
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {
 

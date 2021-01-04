@@ -18,7 +18,6 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
@@ -32,7 +31,7 @@ case class PartnershipEmailId(index: Int) extends TypedIdentifier[String] {
 object PartnershipEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[PartnershipEmailId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEmailId] =
     new CheckYourAnswersPartnership[PartnershipEmailId] {
       private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__enterEmail")

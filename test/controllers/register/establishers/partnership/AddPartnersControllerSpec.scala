@@ -52,7 +52,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[addPartners]
 
   private def controller(
-                          dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                          dataRetrievalAction: DataRetrievalAction,
                           navigator: Navigator = fakeNavigator()
                         ) =
     new AddPartnersController(

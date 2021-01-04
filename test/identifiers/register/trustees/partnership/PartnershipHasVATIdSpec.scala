@@ -18,8 +18,8 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import models.requests.DataRequest
+import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

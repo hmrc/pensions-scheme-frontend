@@ -113,9 +113,6 @@ class PayeControllerSpec extends SpecBase with MustMatchers with OptionValues wi
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
           ("paye", "123456789")
           )

@@ -20,8 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -34,8 +34,7 @@ case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue]
 object CompanyEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterUTRId] = {
+  implicit def cya: CheckYourAnswers[CompanyEnterUTRId] = {
 
     val label: Message = Message("messages__utr__checkyouranswerslabel")
 

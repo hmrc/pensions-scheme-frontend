@@ -43,7 +43,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
   private val form = formProvider(partnerName)
 
   private val view = injector.instanceOf[nino]
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PartnerEnterNINOController =
+  private def controller(dataRetrievalAction: DataRetrievalAction): PartnerEnterNINOController =
     new PartnerEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
 

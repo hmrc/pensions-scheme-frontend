@@ -76,7 +76,7 @@ class UrlsPartialService @Inject()(
     }
 
   private def variationsLinks(psaId: String)
-                             (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
     pensionSchemeVarianceLockConnector.getLockByPsa(psaId).flatMap {
       case Some(schemeVariance) =>
         updateConnector.fetch(schemeVariance.srn).flatMap {

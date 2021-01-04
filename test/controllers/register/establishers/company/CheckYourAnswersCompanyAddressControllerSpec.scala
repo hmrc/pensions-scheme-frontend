@@ -27,10 +27,10 @@ import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
@@ -89,27 +89,27 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
-  val index = Index(0)
+  val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
   val companyName = "Test company Name"
-  val srn = Some("S123")
+  val srn: Option[String] = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
-  private val addressYearsOverAYear = AddressYears.OverAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
   private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, srn, Index(index)).url
   private def companyAddressYearsRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
-  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
+  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+    routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
   private def companyTradingTimeRoute(mode: Mode, srn: Option[String]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index).url
 
   private val fullAnswers = emptyAnswers.
     establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).
     establisherCompanyAddressYears(0, addressYearsUnderAYear).
-    establisherCompanyTradingTime(0, true).
+    establisherCompanyTradingTime(0, hasBeenTrading = true).
     establishersCompanyPreviousAddress(0, previousAddress)
 
   private val partialAnswers = emptyAnswers.

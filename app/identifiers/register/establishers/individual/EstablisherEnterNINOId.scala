@@ -20,8 +20,8 @@ import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class EstablisherEnterNINOId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -32,7 +32,7 @@ object EstablisherEnterNINOId {
 
   override lazy val toString: String = "establisherNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[EstablisherEnterNINOId] = {
+  implicit def cya: CheckYourAnswers[EstablisherEnterNINOId] = {
 
     new CheckYourAnswersIndividual[EstablisherEnterNINOId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

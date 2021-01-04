@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
@@ -29,9 +28,9 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
-import utils.annotations.Trustees
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.Trustees
 import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.{ExecutionContext, Future}

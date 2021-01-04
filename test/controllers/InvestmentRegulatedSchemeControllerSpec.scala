@@ -42,7 +42,7 @@ class InvestmentRegulatedSchemeControllerSpec extends SpecBase with ControllerWi
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private val view = injector.instanceOf[investmentRegulatedScheme]
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, Some(schemeName))(fakeRequest, messages).toString()
 
   private def controller(

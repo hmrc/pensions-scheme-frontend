@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId,
-  PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}

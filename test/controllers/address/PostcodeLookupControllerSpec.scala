@@ -30,8 +30,8 @@ import navigators.Navigator
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
@@ -137,8 +137,6 @@ class PostcodeLookupControllerSpec extends SpecBase with MustMatchers with Mocki
         bind[AddressLookupConnector].toInstance(addressConnector)
       )) {
         app =>
-
-          implicit val mat: Materializer = app.materializer
 
           val request = FakeRequest()
           val controller = app.injector.instanceOf[TestController]

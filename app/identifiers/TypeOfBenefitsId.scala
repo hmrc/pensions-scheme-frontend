@@ -17,7 +17,6 @@
 package identifiers
 
 import models.{Link, TypeOfBenefits}
-import play.api.i18n.Messages
 import play.api.libs.json.Reads
 import utils.checkyouranswers.CheckYourAnswers
 import utils.{Enumerable, UserAnswers}

@@ -79,13 +79,11 @@ trait Retrievals {
     def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A]
 
     def and[B](query: Retrieval[B]): Retrieval[A ~ B] =
-      new Retrieval[A ~ B] {
-        override def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A ~ B] = {
-          for {
-            a <- self.retrieve.right
-            b <- query.retrieve.right
-          } yield new ~(a, b)
-        }
+      (request: DataRequest[AnyContent]) => {
+        for {
+          a <- self.retrieve(request).right
+          b <- query.retrieve(request).right
+        } yield new ~(a, b)
       }
   }
 
@@ -94,17 +92,8 @@ trait Retrievals {
 
   object Retrieval {
 
-    def static[A](a: A): Retrieval[A] =
-      Retrieval {
-        implicit request =>
-          Right(a)
-      }
-
     def apply[A](f: DataRequest[AnyContent] => Either[Future[Result], A]): Retrieval[A] =
-      new Retrieval[A] {
-        override def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A] =
-          f(request)
-      }
+      (request: DataRequest[AnyContent]) => f(request)
   }
 
   implicit def fromId[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Retrieval[A] =

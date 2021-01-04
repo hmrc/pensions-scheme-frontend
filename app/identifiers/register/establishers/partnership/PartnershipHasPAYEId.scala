@@ -18,11 +18,10 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
@@ -41,7 +40,7 @@ case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasPAYEId {
   override def toString: String = "hasPaye"
 
-  implicit def cya(implicit messages: Messages): CheckYourAnswers[PartnershipHasPAYEId] = {
+  implicit def cya: CheckYourAnswers[PartnershipHasPAYEId] = {
 
     new CheckYourAnswersPartnership[PartnershipHasPAYEId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

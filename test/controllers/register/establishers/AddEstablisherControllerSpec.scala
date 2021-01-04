@@ -16,8 +16,6 @@
 
 package controllers.register.establishers
 
-import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
@@ -127,8 +125,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val schemeName = "Test Scheme Name"
-
   private val formProvider = new AddEstablisherFormProvider()
   private val form = formProvider(Seq.empty)
 
@@ -158,10 +154,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       None,
       None
     )(fakeRequest, messages).toString
-
-  private val day = LocalDate.now().getDayOfMonth
-  private val month = LocalDate.now().getDayOfMonth
-  private val year = LocalDate.now().getYear - 20
 
   private val personDetails = PersonName("John", "Doe")
   private val johnDoe = EstablisherIndividualEntity(

@@ -22,7 +22,6 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -72,8 +71,7 @@ class DirectorEnterUTRController @Inject()(
   private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
-                        directorName: String)
-                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
+                        directorName: String): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterUTRController.onSubmit(mode,
         establisherIndex, directorIndex, srn),

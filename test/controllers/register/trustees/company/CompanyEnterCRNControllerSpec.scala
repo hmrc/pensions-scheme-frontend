@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.company
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -24,18 +23,15 @@ import forms.CompanyRegistrationNumberFormProvider
 import models.{CheckUpdateMode, Index, Mode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
-
-import scala.concurrent.Future
 
 class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
 

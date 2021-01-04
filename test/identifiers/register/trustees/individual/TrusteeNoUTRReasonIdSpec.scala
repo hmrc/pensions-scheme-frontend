@@ -18,15 +18,15 @@ package identifiers.register.trustees.individual
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import models.{Link, NormalMode, UpdateMode}
 import models.person.PersonName
 import models.requests.DataRequest
+import models.{Link, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, InputOption, UserAnswers}
 import utils.checkyouranswers.Ops.toOps
+import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class TrusteeNoUTRReasonIdSpec extends SpecBase with OptionValues {

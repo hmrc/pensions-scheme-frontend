@@ -23,7 +23,7 @@ import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.{FakeCountryOptions, FakeNavigator}
+import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -47,10 +47,9 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBankDetailsController =
+  private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersBankDetailsController =
     new CheckYourAnswersBankDetailsController(
       frontendAppConfig,
       messagesApi,

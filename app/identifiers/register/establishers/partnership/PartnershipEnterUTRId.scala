@@ -19,10 +19,9 @@ package identifiers.register.establishers.partnership
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -35,7 +34,7 @@ case class PartnershipEnterUTRId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterUTRId] = {
+  implicit def cya: CheckYourAnswers[PartnershipEnterUTRId] = {
 
     new CheckYourAnswersPartnership[PartnershipEnterUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

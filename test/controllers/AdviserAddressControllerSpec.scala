@@ -18,7 +18,6 @@ package controllers
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes._
@@ -34,6 +33,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}

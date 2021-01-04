@@ -19,7 +19,6 @@ package identifiers.register.establishers.individual
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.AddressYears
-import play.api.i18n.Messages
 import play.api.libs.json._
 import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersIndividual}
@@ -44,7 +43,7 @@ case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
 object AddressYearsId {
   override lazy val toString: String = "addressYears"
 
-  implicit def cya(implicit messages: Messages, ua: UserAnswers): CheckYourAnswers[AddressYearsId] =
+  implicit def cya: CheckYourAnswers[AddressYearsId] =
     new CheckYourAnswersIndividual[AddressYearsId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__addressYears"),

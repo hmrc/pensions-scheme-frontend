@@ -23,9 +23,8 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode.checkMode
 import models._
-import models.requests.DataRequest
 import org.scalatest.OptionValues
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
@@ -43,7 +42,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -53,7 +52,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -66,7 +65,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAllExistingAnswers(UpdateMode, srn)(request), UpdateMode, srn,
+          viewAsString(partnershipDetailsAllExistingAnswers, UpdateMode, srn,
             title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
             h1 = Message("messages__detailsFor", partnershipName))
       }
@@ -77,7 +76,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAddLinksValues(request), UpdateMode, srn,
+          viewAsString(partnershipDetailsAddLinksValues, UpdateMode, srn,
             title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
             h1 = Message("messages__detailsFor", partnershipName))
       }
@@ -91,7 +90,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn), mode = UpdateMode, srn = srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -102,7 +101,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn)(request), mode = UpdateMode, srn = srn,
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn), mode = UpdateMode, srn = srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -118,9 +117,9 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
-  val index = Index(0)
+  val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn = Some("S123")
+  val srn: Option[String] = Some("S123")
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -130,25 +129,25 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def partnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipUTRRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def noPartnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def noPartnershipUTRRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipVatRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipVatRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipEnterVATRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipEnterVATRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[String]): String =
     routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
@@ -168,7 +167,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       ))).asOpt.value
 
 
-  private def partnershipDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def partnershipDetailsAddLinksValues: Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -181,8 +180,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, srn: Option[String]
-                                         )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -201,8 +199,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       )
     ))
 
-  private def partnershipDetailsAllExistingAnswers(mode: Mode, srn: Option[String]
-                                                  )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def partnershipDetailsAllExistingAnswers: Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -213,8 +210,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[String]
-                                          )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(

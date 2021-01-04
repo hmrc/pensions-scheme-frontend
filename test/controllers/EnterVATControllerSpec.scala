@@ -26,10 +26,10 @@ import models.requests.DataRequest
 import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -114,9 +114,6 @@ class EnterVATControllerSpec extends SpecBase with MustMatchers with OptionValue
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
             ("vat", "123456789")
           )

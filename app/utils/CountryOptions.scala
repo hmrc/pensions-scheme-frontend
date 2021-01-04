@@ -19,7 +19,7 @@ package utils
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import play.api.Environment
 import play.api.libs.json.Json
 

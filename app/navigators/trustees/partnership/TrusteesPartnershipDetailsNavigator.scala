@@ -23,8 +23,8 @@ import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
-import models._
 import models.Mode._
+import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers

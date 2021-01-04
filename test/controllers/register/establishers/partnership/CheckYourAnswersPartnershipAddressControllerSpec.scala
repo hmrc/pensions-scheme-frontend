@@ -25,10 +25,10 @@ import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   import CheckYourAnswersPartnershipAddressControllerSpec._
@@ -176,7 +176,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+  private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipAddressController =
     new CheckYourAnswersPartnershipAddressController(
       frontendAppConfig,

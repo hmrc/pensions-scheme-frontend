@@ -24,7 +24,6 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models._
-import models.address.Address
 import models.person.PersonName
 import models.register.SchemeType.SingleTrust
 import models.register._
@@ -49,14 +48,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
   private lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
   private val formProvider = new AddTrusteeFormProvider()
-  private val schemeName = "Test Scheme Name"
   private val form = formProvider()
-  private val submitUrl = controllers.register.trustees.routes.AddTrusteeController.onSubmit(NormalMode, None)
   private val testAnswer = "true"
-  private val address = Address("addr1", "addr2", None, None, Some("ZZ11ZZ"), "UK")
-  private val stringValue = "aa"
-  private val firstName = "First"
-  private val lastName = "Last"
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url

@@ -111,9 +111,6 @@ class UTRControllerSpec extends SpecBase with MustMatchers with OptionValues wit
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
             ("utr", "1234567890")
           )

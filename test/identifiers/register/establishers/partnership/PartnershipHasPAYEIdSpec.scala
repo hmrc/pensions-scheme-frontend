@@ -25,8 +25,8 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import viewmodels.{AnswerRow, Message}
 import utils.checkyouranswers.Ops._
+import viewmodels.{AnswerRow, Message}
 
 class PartnershipHasPAYEIdSpec extends SpecBase {
 

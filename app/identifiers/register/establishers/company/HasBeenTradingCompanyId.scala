@@ -18,11 +18,10 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany}
 import viewmodels.{AnswerRow, Message}
 
 case class HasBeenTradingCompanyId(index: Int) extends TypedIdentifier[Boolean] {
