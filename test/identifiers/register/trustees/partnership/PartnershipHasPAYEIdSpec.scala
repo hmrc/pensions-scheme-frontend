@@ -18,8 +18,8 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import models.requests.DataRequest
 import models._
+import models.requests.DataRequest
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -59,7 +59,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipHasPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -70,7 +70,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -79,7 +79,7 @@ class PartnershipHasPAYEIdSpec extends SpecBase {
 
       "not display any row" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipHasPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }

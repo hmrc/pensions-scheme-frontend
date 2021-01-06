@@ -88,7 +88,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeHasNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -99,7 +99,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeHasNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -109,7 +109,7 @@ class TrusteeHasNINOIdSpec extends SpecBase with OptionValues {
 
       "Not return answer rows" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeHasNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }

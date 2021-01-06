@@ -201,7 +201,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val establisherName = "John Doe"
   private val establisherKind = EstablisherKind.Indivdual
-  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
   private val personDetails = person.PersonName("John", "Doe")
   private val personName = PersonName("John", "Doe")
   private val companyDetails = CompanyDetails("Test Ltd")

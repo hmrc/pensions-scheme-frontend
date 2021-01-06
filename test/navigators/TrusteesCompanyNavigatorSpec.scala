@@ -224,8 +224,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, None)
 
-  private def confirmAddressPage(mode: Mode): Call = CompanyAddressController.onPageLoad(mode, 0, None)
-
   private def addressYearsPage(mode: Mode): Call = CompanyAddressYearsController.onPageLoad(mode, 0, None)
 
   private def hasBeenTradingPage(mode: Mode): Call = HasBeenTradingCompanyController.onPageLoad(mode, 0, None)
@@ -233,8 +231,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def previousAddressLookupPage(mode: Mode): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, None)
 
   private def selectPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressListController.onPageLoad(mode, 0, None)
-
-  private def confirmPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressController.onPageLoad(mode, 0, None)
 
   private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, None)
 

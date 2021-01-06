@@ -24,6 +24,7 @@ import models.person.PersonName
 import models.register.PartnerEntity
 import play.api.data.Form
 import play.api.mvc.Call
+import play.twirl.api.HtmlFormat
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.addPartners
 
@@ -58,7 +59,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         None
       )(fakeRequest, messages)
 
-  private def createUpdateView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+  private def createUpdateView(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false): () => HtmlFormat.Appendable =
     () =>
       view(
         form,
@@ -70,7 +71,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         Some("srn")
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil, viewOnly: Boolean = false) =
+  private def createViewUsingForm(partners: Seq[PartnerEntity], viewOnly: Boolean = false): Form[_] => HtmlFormat.Appendable =
     (form: Form[_]) =>
       view(
         form,

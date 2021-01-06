@@ -27,8 +27,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class TrusteeAddressYearsIdSpec extends SpecBase {
@@ -82,8 +82,6 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
     val onwardUrl = "onwardUrl"
     val trusteeName = "Test Name"
 
-    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
-
     def answers: UserAnswers = UserAnswers().set(TrusteeAddressYearsId(0))(UnderAYear).flatMap(
       _.set(TrusteeNameId(0))(PersonName("Test", "Name")
       )
@@ -95,7 +93,7 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
         "return answers rows with change links for subscription or variation when adding new trustee" in {
           val answersWithNew = answers.set(IsTrusteeNewId(0))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNew, Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
           TrusteeAddressYearsId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(
               Message("messages__trusteeAddressYears__heading", trusteeName),
@@ -112,7 +110,7 @@ class TrusteeAddressYearsIdSpec extends SpecBase {
 
       "return no answers row" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

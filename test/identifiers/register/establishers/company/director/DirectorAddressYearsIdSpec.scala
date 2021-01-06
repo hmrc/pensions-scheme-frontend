@@ -31,16 +31,8 @@ import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
-  private val userAnswersWithName: UserAnswers =
-    UserAnswers()
-      .set(DirectorNameId(0, 0))(PersonName("first", "last"))
-      .asOpt
-      .value
 
-  private val name                            = "first last"
   "Cleanup" must {
-
-
 
     val answers = UserAnswers(Json.obj())
       .set(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear)
@@ -112,7 +104,7 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
     val directorDetails = PersonName("John",  "One")
 
-    def answers = UserAnswers()
+    def answers: UserAnswers = UserAnswers()
       .set(DirectorAddressYearsId(0, 0))(UnderAYear).asOpt.value
       .set(DirectorNameId(0, 0))(directorDetails).asOpt.value
 
@@ -120,7 +112,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
@@ -140,7 +131,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers:UserAnswers = request.userAnswers
 
         val expectedResult = Seq(
           AnswerRow(
@@ -158,7 +148,6 @@ class DirectorAddressYearsIdSpec extends SpecBase with Enumerable.Implicits {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers:UserAnswers = request.userAnswers
 
         DirectorAddressYearsId(0, 0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

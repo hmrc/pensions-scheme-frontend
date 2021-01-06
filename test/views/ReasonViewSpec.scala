@@ -16,20 +16,20 @@
 
 package views
 
-import forms.{ReasonFormProvider, EnterVATFormProvider}
+import forms.ReasonFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, ReasonViewModel, EnterVATViewModel}
+import viewmodels.{Message, ReasonViewModel}
 import views.behaviours.QuestionViewBehaviours
-import views.html.{reason, enterVATView}
+import views.html.reason
 
 class ReasonViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "noCompanyUtr"
 
   val form = new ReasonFormProvider()("messages__reason__error_ninoRequired", "companyName")
-  val postCall = Call("GET", "/")
+  val postCall: Call = Call("GET", "/")
 
   def viewmodel(srn:Option[String]): ReasonViewModel = ReasonViewModel(
     postCall = postCall,

@@ -43,7 +43,7 @@ class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with ScalaC
           .set(BenefitsSecuredByInsuranceId)(false)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
@@ -53,7 +53,7 @@ class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with ScalaC
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           Message("messages__insurance_policy_number__title"),List("site.not_entered"),true,Some(Link("site.add",

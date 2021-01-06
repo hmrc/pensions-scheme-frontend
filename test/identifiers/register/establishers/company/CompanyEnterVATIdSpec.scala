@@ -49,7 +49,6 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyEnterVATId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -60,7 +59,6 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -69,7 +67,6 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
       "return answers rows without change links if vat is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__vat"),List("vat"),false, None)
@@ -78,7 +75,6 @@ class CompanyEnterVATIdSpec extends SpecBase {
 
       "return answers rows with change links if vat is available and editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -86,7 +82,6 @@ class CompanyEnterVATIdSpec extends SpecBase {
       "display an add link if vat is not available" in {
         val answers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         CompanyEnterVATId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__vat"), Seq("site.not_entered"), answerIsMessageKey = true,

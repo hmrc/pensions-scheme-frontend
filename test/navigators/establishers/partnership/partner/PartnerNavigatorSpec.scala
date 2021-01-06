@@ -185,9 +185,6 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(index, index))(value = true).asOpt.value
 
-  private def isNewPartner( ua: UserAnswers): Boolean =
-    ua.get(IsNewPartnerId(index, index)).getOrElse(false)
-
   private def isThisPaPage(mode: Mode,  srn: Option[String]): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(index, index, srn)
 
@@ -197,7 +194,7 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private def taskListPage(mode: Mode,  srn: Option[String]): Call =
     controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
 
-  private def partnerNamePage(mode: Mode, srn: Option[String], partnerIndex: Int = index): Call =
+  private def partnerNamePage(mode: Mode, srn: Option[String], partnerIndex: Int): Call =
     controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)
 
   private def dobPage(mode: Mode, srn: Option[String]): Call =
@@ -230,17 +227,11 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private def addressListPage(mode: Mode,  srn: Option[String]): Call =
     PartnerAddressListController.onPageLoad(mode, index, index, srn)
 
-  private def addressPage(mode: Mode,  srn: Option[String]): Call =
-    PartnerAddressController.onPageLoad(mode, index, index, srn)
-
   private def paPostcodeLookupPage(mode: Mode,  srn: Option[String]): Call =
     PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
 
   private def paAddressListPage(mode: Mode,  srn: Option[String]): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, index, index, srn)
-
-  private def paAddressPage(mode: Mode,  srn: Option[String]): Call =
-    PartnerPreviousAddressController.onPageLoad(mode, index, index, srn)
 
   private def addressYearsPage(mode: Mode,  srn: Option[String]): Call =
     PartnerAddressYearsController.onPageLoad(mode, index, index, srn)

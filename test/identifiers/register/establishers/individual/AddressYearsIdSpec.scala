@@ -111,7 +111,7 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         AddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__addressYears", name),
@@ -129,7 +129,7 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         AddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__addressYears", name),
@@ -145,7 +145,7 @@ class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues wi
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
 
         AddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

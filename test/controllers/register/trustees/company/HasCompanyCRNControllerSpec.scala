@@ -43,7 +43,6 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
   private val form = formProvider("messages__hasCompanyNumber__error__required", "test company name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
 
   private val viewModel = CommonFormWithHintViewModel(
     controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, index, srn),

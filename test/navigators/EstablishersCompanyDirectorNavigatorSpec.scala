@@ -211,9 +211,6 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val directorIndex    = Index(0)
   private val newDirector      = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
-  private def hasNino(ua: UserAnswers, value: Boolean): UserAnswers =
-    ua.set(DirectorHasNINOId(0, 0))(value = value).asOpt.value
-
   private def addressYearsLessThanTwelveEdit(mode: => Mode, userAnswers: => UserAnswers, srn: Option[String]) =
     (
       userAnswers.get(ExistingCurrentAddressId(establisherIndex, directorIndex)),
@@ -229,8 +226,6 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def confirmPreviousAddress(srn: Option[String]) = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, srn)
 
-  private def none: Call = controllers.routes.IndexController.onPageLoad()
-
   private def anyMoreChanges(srn: Option[String]) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
   private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: Option[String]) =
@@ -239,9 +234,6 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
       if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode, srn)
       else anyMoreChanges(srn)
     }
-
-  private def hasUtr(ua: UserAnswers, value: Boolean): UserAnswers =
-    ua.set(DirectorHasUTRId(0, 0))(value = value).asOpt.value
 
   private def directorPhone(mode: Mode, srn: Option[String]) =
     routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, srn)
@@ -261,9 +253,6 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private def directorAddressList(mode: Mode, srn: Option[String]) =
     routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorAddress(mode: Mode, srn: Option[String]) =
-    routes.DirectorAddressController.onPageLoad(mode, directorIndex, establisherIndex, srn)
-
   private def directorAddressYears(mode: Mode, srn: Option[String]) =
     routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
@@ -272,9 +261,6 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def directorPreviousAddList(mode: Mode, srn: Option[String]) =
     routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
-
-  private def directorPreviousAddress(mode: Mode, srn: Option[String]) =
-    routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
   private def checkYourAnswers(mode: Mode, srn: Option[String]) =
     routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, mode, srn)

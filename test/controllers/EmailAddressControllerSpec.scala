@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -48,7 +47,7 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
 
   private val view = injector.instanceOf[emailAddress]
 
-  val viewmodel = CommonFormWithHintViewModel(
+  val viewmodel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",

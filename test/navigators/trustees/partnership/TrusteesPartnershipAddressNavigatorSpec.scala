@@ -124,8 +124,6 @@ object TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatcher
 
   private def addressListPage(mode: Mode, srn: Option[String]): Call = PartnershipAddressListController.onPageLoad(mode, index, srn)
 
-  private def addressPage(mode: Mode, srn: Option[String]): Call = PartnershipAddressController.onPageLoad(mode, index, srn)
-
   private def previousAddressPostcodeLookupPage(mode: Mode, srn: Option[String]): Call =
     PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 
@@ -134,8 +132,6 @@ object TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatcher
   private def isThisPreviousAddressPage(srn: Option[String]): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, srn)
 
   private def previousAddressListPage(mode: Mode, srn: Option[String]): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
-
-  private def previousAddressPage(mode: Mode, srn: Option[String]): Call = PartnershipPreviousAddressController.onPageLoad(mode, index, srn)
 
   private def hasBeenTradingPage(mode: Mode, srn: Option[String]): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
 }

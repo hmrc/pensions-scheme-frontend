@@ -19,13 +19,12 @@ import java.time.LocalDate
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
-import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
-import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
-import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
+import identifiers.register.establishers.{EstablisherKindId, IsEstablisherNewId}
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
 import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models._
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
@@ -33,7 +32,6 @@ import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
-import play.api.i18n.Messages
 
 //scalastyle:off number.of.methods
 package object utils {

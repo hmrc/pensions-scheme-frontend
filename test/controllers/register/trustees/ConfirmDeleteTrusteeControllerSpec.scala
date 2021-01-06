@@ -169,7 +169,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[confirmDeleteTrustee]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteTrusteeController(
       frontendAppConfig,
       messagesApi,

@@ -46,8 +46,6 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
 object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-
   private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersBankDetailsController =
     new CheckYourAnswersBankDetailsController(

@@ -48,7 +48,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipEnterVATId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -59,7 +59,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -68,7 +68,7 @@ class PartnershipEnterVATIdSpec extends SpecBase {
 
       "return answers rows without change links if vat is available and not editable" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterVAT", partnershipName),List("vat"),false, None)
@@ -78,14 +78,14 @@ class PartnershipEnterVATIdSpec extends SpecBase {
       "return answers rows with change links if vat is available and editable" in {
         val answers = ua.set(PartnershipEnterVATId(0))(ReferenceValue("vat", true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if vat is not available" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterVATId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterVAT", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,

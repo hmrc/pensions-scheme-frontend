@@ -47,7 +47,7 @@ class PartnershipNoUTRReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipNoUTRReasonId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -58,7 +58,7 @@ class PartnershipNoUTRReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -67,7 +67,7 @@ class PartnershipNoUTRReasonIdSpec extends SpecBase {
 
       "not display any row" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipNoUTRReasonId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Nil
       }

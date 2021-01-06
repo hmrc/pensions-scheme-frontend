@@ -37,7 +37,7 @@ class TrusteeEmailIdSpec extends SpecBase {
     val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
       UserAnswers().set(TrusteeEmailId(0))(email).flatMap(
         _.set(TrusteeNameId(0))(personName)).asOpt.value, Some(PsaId("A0000000")))
-    implicit val userAnswers: UserAnswers = request.userAnswers
+
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
 

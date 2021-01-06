@@ -257,6 +257,4 @@ object DataCompletionEstablishersSpec extends JsonFileReader with DataCompletion
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
   private val userAnswersUninitiated: JsValue = readJsonFromFile("/payloadUninitiated.json")
-
-  private val emptyAnswers = UserAnswers()
 }

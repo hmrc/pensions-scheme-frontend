@@ -68,8 +68,6 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
 object WorkingKnowledgeNavigatorSpec {
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
-  private def adviserAddress(mode: Mode) = controllers.routes.AdviserAddressController.onPageLoad(mode)
-
   private def adviserAddressList(mode: Mode) = controllers.routes.AdviserAddressListController.onPageLoad(mode)
 
   private def adviserPostCodeLookup(mode: Mode) = controllers.routes.AdviserPostCodeLookupController.onPageLoad(mode)

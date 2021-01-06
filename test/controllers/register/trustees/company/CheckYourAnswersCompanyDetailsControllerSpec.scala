@@ -21,10 +21,9 @@ import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.company._
 import models.Mode.checkMode
-import models.requests.DataRequest
 import models.{Index, NormalMode, _}
 import org.scalatest.OptionValues
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -44,7 +43,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -54,7 +53,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None)(request),
+        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -67,7 +66,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAllValues(UpdateMode, srn)(request), UpdateMode, srn, postUrlUpdateMode,
+          viewAsString(companyDetailsAllValues(UpdateMode, srn), UpdateMode, srn, postUrlUpdateMode,
             title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
@@ -78,7 +77,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
+          viewAsString(companyDetailsAddLinksValues, UpdateMode, srn, postUrlUpdateMode,
             title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
@@ -89,7 +88,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(companyDetailsAddLinksValues(request), UpdateMode, srn, postUrlUpdateMode,
+          viewAsString(companyDetailsAddLinksValues, UpdateMode, srn, postUrlUpdateMode,
             title = Message("messages__detailsFor", Message("messages__theCompany")),
             h1 = Message("messages__detailsFor", companyName))
       }
@@ -111,9 +110,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
-  val index = Index(0)
+  val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn = Some("S123")
+  val srn: Option[String] = Some("S123")
   val companyName = "test company name"
 
   private val crn = "crn"
@@ -179,7 +178,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
-  private def companyDetailsAddLinksValues(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def companyDetailsAddLinksValues: Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -194,8 +193,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       )
     ))
 
-  private def companyDetailsAllValues(mode: Mode, srn: Option[String]
-                                     )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def companyDetailsAllValues(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       hasCompanyNumberYesRow(mode, srn) ++
@@ -244,8 +242,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       Seq(booleanChangeLink(messages("messages__hasPAYE", companyName), hasCompanyPayeRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__dynamic_hasPaye", companyName))) else Nil
 
-  private def companyDetailsAllReasons(mode: Mode, srn: Option[String]
-                                      )(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] =
+  private def companyDetailsAllReasons(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -277,13 +274,6 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       Some(Link("site.change", changeUrl,
         Some(hiddenLabel)
       )))
-
-  private def stringLink(label: String, changeUrl: String, ansOrReason: String, hiddenLabel: String) =
-    AnswerRow(
-      label,
-      Seq(ansOrReason),
-      answerIsMessageKey = false,
-      None)
 
 
   private def addLink(label: String, changeUrl: String, hiddenLabel: String) =

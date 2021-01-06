@@ -16,47 +16,27 @@
 
 package views.register.establishers
 
-import controllers.register.establishers.routes
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.person.PersonName
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
-import models.{CompanyDetails, NormalMode, UpdateMode}
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EntityListBehaviours {
 
-  private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, index).url
-
   private val messageKeyPrefix = "establishers__add"
-  private val postCall = routes.AddEstablisherController.onSubmit _
 
-
-  private val companyDetails = CompanyDetails(
-    "Establisher Company"
-  )
-
-  private val individualDetails = PersonName(
-    "John",
-    "Doe"
-  )
-
-  private val userAnswers =
-    UserAnswers()
-      .set(CompanyDetailsId(0))(companyDetails)
-      .flatMap(_.set(EstablisherNameId(1))(individualDetails))
-      .asOpt
-      .value
-
-  private val johnDoe = EstablisherIndividualEntity(EstablisherNameId(0), "John Doe", false, false, true, 3)
-  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true, true, 3)
-  private val testPartnership = EstablisherPartnershipEntity(PartnershipDetailsId(2), "Establisher Partnership", false, true, true, 3)
+  private val johnDoe = EstablisherIndividualEntity(EstablisherNameId(0), "John Doe", isDeleted = false,
+    isCompleted = false, isNewEntity = true, noOfRecords = 3)
+  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", isDeleted = false,
+    isCompleted = true, isNewEntity = true, noOfRecords = 3)
+  private val testPartnership = EstablisherPartnershipEntity(PartnershipDetailsId(2), "Establisher Partnership",
+    isDeleted = false, isCompleted = true, isNewEntity = true, noOfRecords = 3)
 
   private val establishers = Seq(johnDoe, testCompany, testPartnership)
   private val establisher = Seq(johnDoe)
@@ -67,10 +47,6 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     view(form, NormalMode, establishers, None, None)(fakeRequest, messages)
-
-  private def createViewUsingForm(establishers: Seq[Establisher[_]] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable =
-    (form: Form[Boolean]) =>
-      view(form, NormalMode, establishers, None, None)(fakeRequest, messages)
 
   private def createUpdateView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     view(form, UpdateMode, establishers, None, Some("srn"))(fakeRequest, messages)

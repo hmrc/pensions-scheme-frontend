@@ -67,7 +67,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         Some("srn")
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil, viewOnly: Boolean = false) =
+  private def createViewUsingForm(directors: Seq[DirectorEntity], viewOnly: Boolean = false) =
     (form: Form[_]) =>
       view(
         form,

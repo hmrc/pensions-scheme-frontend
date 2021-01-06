@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register._
 import identifiers.{Identifier, VariationDeclarationId}
@@ -75,8 +74,6 @@ object RegisterNavigatorSpec extends OptionValues{
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
-
-  private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
 
   private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
   private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")

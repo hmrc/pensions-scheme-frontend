@@ -48,7 +48,6 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   private val directorIndex = Index(0)
 
   private val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
-  private val postCall = routes.DirectorAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(directorIndex), None)
   private val director = PersonName("first", "last")
 
   private val countryOptions = new CountryOptions(

@@ -18,8 +18,8 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
-import models.requests.DataRequest
 import models._
+import models.requests.DataRequest
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -52,7 +52,7 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipEnterUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -64,7 +64,7 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
           PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
@@ -78,21 +78,21 @@ class PartnershipEnterUTRIdSpec extends SpecBase {
             )))
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().trusteePartnershipDetails(index = 0, PartnershipDetails(name)), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data avalable and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           PartnershipEnterUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }

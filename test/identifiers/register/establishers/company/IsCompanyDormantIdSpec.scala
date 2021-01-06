@@ -30,8 +30,6 @@ import viewmodels.{AnswerRow, Message}
 
 class IsCompanyDormantIdSpec extends SpecBase with Enumerable.Implicits {
 
-  private val companyName = "the company"
-
   "cya" when {
 
     val onwardUrl = "onwardUrl"

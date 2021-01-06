@@ -19,16 +19,16 @@ package identifiers.register.establishers.partnership
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models.AddressYears.UnderAYear
+import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models._
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
@@ -103,7 +103,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
 
     val onwardUrl = "onwardUrl"
     val name = "test partnership name"
-    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+
     def answers: UserAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(name)).asOpt.value
       .set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.value
 
@@ -111,7 +111,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__partnershipAddressYears__heading", name),
@@ -129,7 +129,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(
             Message("messages__partnershipAddressYears__heading", name),
@@ -145,7 +145,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with Opti
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
       }

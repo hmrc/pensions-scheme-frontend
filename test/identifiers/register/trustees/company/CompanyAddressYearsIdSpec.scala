@@ -26,8 +26,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class CompanyAddressYearsIdSpec extends SpecBase {
@@ -72,12 +72,10 @@ class CompanyAddressYearsIdSpec extends SpecBase {
       .set(CompanyAddressYearsId(0))(UnderAYear).asOpt.get
       .set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
-    implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
-
     "in normal mode" must {
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         CompanyAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
             Message("messages__trusteeAddressYears__heading", companyName),
@@ -99,7 +97,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
             Message("messages__trusteeAddressYears__heading", companyName),
@@ -115,7 +113,7 @@ class CompanyAddressYearsIdSpec extends SpecBase {
 
       "return no rows" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         CompanyAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

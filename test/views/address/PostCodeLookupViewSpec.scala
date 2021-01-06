@@ -18,8 +18,8 @@ package views.address
 
 import controllers.routes
 import forms.address.AddressFormProvider
+import models.NormalMode
 import models.address.Address
-import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.mvc.Call
 import utils.{FakeCountryOptions, InputOption}
@@ -35,7 +35,7 @@ class PostCodeLookupViewSpec extends QuestionViewBehaviours[Address] {
 
   def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
 
-  val viewModel = PostcodeLookupViewModel(
+  val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
     manualInputCall = manualInputCall,
     title = Message("messages__adviserPostCodeLookup__title"),
@@ -44,7 +44,7 @@ class PostCodeLookupViewSpec extends QuestionViewBehaviours[Address] {
     enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
   )
 
-  val updateViewModel = PostcodeLookupViewModel(
+  val updateViewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
     manualInputCall = manualInputCall,
     title = Message("messages__adviserPostCodeLookup__title"),
@@ -64,7 +64,7 @@ class PostCodeLookupViewSpec extends QuestionViewBehaviours[Address] {
 def createUpdateView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
   view(new AddressFormProvider(FakeCountryOptions()).apply(), updateViewModel, None)(fakeRequest, messages)
 
-  def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) =>
+  def createViewUsingForm: Form[_] => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) =>
     view(form, viewModel, None)(fakeRequest, messages)
 
   "ManualAddress view" must {

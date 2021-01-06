@@ -49,7 +49,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         CompanyEnterPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -60,7 +60,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         CompanyEnterPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -69,7 +69,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__paye", companyName), List("paye"),false,None)
@@ -81,7 +81,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).flatMap(
           _.set(CompanyEnterPAYEId(0))(ReferenceValue("paye", true))).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -91,7 +91,7 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
         val answers: UserAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.get
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         CompanyEnterPAYEId(0).row(onwardUrl, CheckUpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__cya__paye", companyName), Seq("site.not_entered"), answerIsMessageKey = true,
