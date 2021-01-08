@@ -56,7 +56,6 @@ lazy val root = (project in file("."))
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(resolvers ++= Seq(
     Resolver.bintrayRepo("hmrc", "releases"),
     Resolver.jcenterRepo,
