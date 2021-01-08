@@ -40,6 +40,7 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.play.views.html.layouts._"
     ))
   .settings(
+    name := appName,
     PlayKeys.playDefaultPort := 8200,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*models.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;.*UserAnswersCacheConnector;" +
