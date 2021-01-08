@@ -7,7 +7,7 @@ This service allows a pensions administrator, either an individual or an organis
 This service has a corresponding back-end service, namely pensions-scheme.
 
 ### Dependencies
-
+ 
 |Service                |Link                                           |
 |-----------------------|-----------------------------------------------|
 |Pensions-scheme        |https://github.com/hmrc/pensions-scheme        |
