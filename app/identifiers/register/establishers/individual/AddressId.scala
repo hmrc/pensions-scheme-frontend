@@ -31,7 +31,7 @@ case class AddressId(index: Int) extends TypedIdentifier[Address] {
 object AddressId {
   override def toString: String = "address"
 
-  implicit def cya(implicit countryOptions: CountryOptions, ua: UserAnswers): CheckYourAnswers[AddressId] =
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[AddressId] =
     new CheckYourAnswersIndividual[AddressId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__addressFor"),

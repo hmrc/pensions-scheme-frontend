@@ -66,11 +66,9 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
 object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
-  private val onwardRoute = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
-
   private val view = injector.instanceOf[checkYourAnswers]
   private def controller(
-                          dataRetrievalAction: DataRetrievalAction = getEmptyData
+                          dataRetrievalAction: DataRetrievalAction
                         ): CheckYourAnswersBeforeYouStartController =
     new CheckYourAnswersBeforeYouStartController(
       messagesApi,
@@ -137,7 +135,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def vm(returnOverview: Boolean = false, data: AnswerSection) = CYAViewModel(
+  private def vm(returnOverview: Boolean, data: AnswerSection) = CYAViewModel(
     answerSections = Seq(data),
     href = postUrl,
     schemeName = Some("Test Scheme"),

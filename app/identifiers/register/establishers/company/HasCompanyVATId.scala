@@ -18,7 +18,6 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
@@ -41,7 +40,7 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyVATId] = {
+  implicit def cya: CheckYourAnswers[HasCompanyVATId] = {
 
     new CheckYourAnswersCompany[HasCompanyVATId] {
 

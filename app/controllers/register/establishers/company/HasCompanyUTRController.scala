@@ -57,8 +57,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(mode, srn, index),
       title = Message("messages__hasUTR", Message("messages__theCompany")),

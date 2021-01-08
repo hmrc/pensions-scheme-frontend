@@ -33,7 +33,7 @@ case class EstablisherDOBId(index: Int) extends TypedIdentifier[LocalDate] {
 object EstablisherDOBId {
   override def toString: String = "dateOfBirth"
 
-  implicit def cya(implicit answers: UserAnswers): CheckYourAnswers[EstablisherDOBId] = {
+  implicit def cya: CheckYourAnswers[EstablisherDOBId] = {
     new CheckYourAnswersIndividual[EstablisherDOBId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__DOB__heading"),

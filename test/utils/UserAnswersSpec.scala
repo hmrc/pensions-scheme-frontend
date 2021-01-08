@@ -451,11 +451,14 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
   private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Trustee[_] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
-        TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+        TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete,
+          isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case TrusteeKind.Company =>
-        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+        TrusteeCompanyEntity(TrusteeCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete,
+          isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
       case _ =>
-        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
+        TrusteePartnershipEntity(partnership.PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete,
+          isNewEntity = true, countAfterDeleted, Some(SingleTrust.toString))
     }
   }
 
@@ -473,7 +476,6 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
 
   private val company = CompanyDetails("test-company-name")
   private val person = PersonName("test-first-name",  "test-last-name")
-  private val partnershipDetails = PartnershipDetails("test-first-name")
 
   private val policyNumber = "Test policy number"
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
@@ -484,10 +486,6 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYears = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
-
-  private val stringValue = "aa"
-  private val firstName = "First"
-  private val lastName = "Last"
 
   private val insuranceCompanyDetails = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(company.companyName).

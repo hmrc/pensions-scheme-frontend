@@ -68,7 +68,6 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
   lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  private val view = injector.instanceOf[addressList]
 
   "Partnership Address List Controller" must {
     "return Ok and the correct view on a GET Request" in {

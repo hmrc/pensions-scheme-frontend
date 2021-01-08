@@ -18,11 +18,10 @@ package identifiers.register.establishers.company.director
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class DirectorPhoneNumberId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[String] {
@@ -35,8 +34,7 @@ case class DirectorPhoneNumberId(establisherIndex: Int, directorIndex: Int) exte
 object DirectorPhoneNumberId {
   override def toString: String = "phoneNumber"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[DirectorPhoneNumberId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorPhoneNumberId] = {
 
     new CheckYourAnswersDirectors[DirectorPhoneNumberId] {
 

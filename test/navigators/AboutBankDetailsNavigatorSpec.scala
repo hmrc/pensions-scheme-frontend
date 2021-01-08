@@ -64,5 +64,4 @@ object AboutBankDetailsNavigatorSpec {
   private val ukBankDetailsPage: Call    = controllers.routes.BankAccountDetailsController.onPageLoad(NormalMode)
   private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad()
 
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

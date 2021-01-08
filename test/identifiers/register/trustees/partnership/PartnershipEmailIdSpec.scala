@@ -36,7 +36,7 @@ class PartnershipEmailIdSpec extends SpecBase {
     val index = 0
     val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
       UserAnswers().trusteePartnershipEmail(index, email).trusteePartnershipDetails(index, partnershipDetails), Some(PsaId("A0000000")))
-    implicit val userAnswers: UserAnswers = request.userAnswers
+
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
 

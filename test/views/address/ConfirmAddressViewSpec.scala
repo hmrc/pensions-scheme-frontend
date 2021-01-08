@@ -17,7 +17,7 @@
 package views.address
 
 import forms.address.ConfirmAddressFormProvider
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.{Mode, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.mvc.Call
@@ -31,12 +31,12 @@ import views.html.address.confirmPreviousAddress
 class ConfirmAddressViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "confirmPreviousAddress"
-  val schemeName = Some("Test Scheme Name")
+  val schemeName: Option[String] = Some("Test Scheme Name")
   val name = "Test name"
   val formProvider = new ConfirmAddressFormProvider()
-  val form = formProvider(name)
+  val form: Form[Boolean] = formProvider(name)
 
-  val testAddress = Address(
+  val testAddress: Address = Address(
     "address line 1",
     "address line 2",
     Some("test town"),

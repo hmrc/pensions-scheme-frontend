@@ -16,16 +16,16 @@
 
 package controllers.register.trustees.individual
 
+import java.time.LocalDate
+
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
-import java.time.LocalDate
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
@@ -58,8 +58,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
         ), mode)
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String
-                       )(implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,

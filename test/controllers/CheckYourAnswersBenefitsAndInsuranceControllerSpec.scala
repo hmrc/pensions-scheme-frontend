@@ -22,7 +22,6 @@ import models._
 import models.address.Address
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
@@ -90,7 +89,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     .insuranceCompanyName(insuranceCompanyName).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
+  private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
       messagesApi,
       FakeAuthAction,

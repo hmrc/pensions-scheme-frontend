@@ -20,8 +20,8 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[ReferenceValue] {
@@ -36,7 +36,7 @@ case class PartnerEnterUTRId(establisherIndex: Int, partnerIndex: Int) extends T
 object PartnerEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnerEnterUTRId] = {
+  implicit def cya: CheckYourAnswers[PartnerEnterUTRId] = {
 
     new CheckYourAnswersPartners[PartnerEnterUTRId] {
 

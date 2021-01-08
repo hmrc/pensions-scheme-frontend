@@ -48,8 +48,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theIndividual")),

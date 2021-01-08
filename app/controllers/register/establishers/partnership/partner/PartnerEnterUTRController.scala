@@ -22,7 +22,6 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -71,8 +70,7 @@ class PartnerEnterUTRController @Inject()(
   private def form: Form[ReferenceValue] = formProvider()
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
-                        partnerName: String)
-                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
+                        partnerName: String): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit
       (mode, establisherIndex, partnerIndex, srn),

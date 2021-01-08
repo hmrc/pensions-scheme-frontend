@@ -44,7 +44,7 @@ case class DirectorHasNINOId(establisherIndex: Int, directorIndex: Int) extends 
 object DirectorHasNINOId {
   override def toString: String = "hasNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[DirectorHasNINOId] = {
+  implicit def cya: CheckYourAnswers[DirectorHasNINOId] = {
 
     new CheckYourAnswersDirectors[DirectorHasNINOId] {
 

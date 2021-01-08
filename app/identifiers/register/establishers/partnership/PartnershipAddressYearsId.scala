@@ -19,9 +19,8 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.AddressYears
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
-import utils.{CountryOptions, UserAnswers}
+import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersPartnership}
 import viewmodels.{AnswerRow, Message}
 
@@ -42,7 +41,7 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override def toString: String = "partnershipAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages): CheckYourAnswers[PartnershipAddressYearsId] =
+  implicit def cya: CheckYourAnswers[PartnershipAddressYearsId] =
     new CheckYourAnswersPartnership[PartnershipAddressYearsId] {
       private def label(index: Int, ua: UserAnswers): Message =
         dynamicMessage(index, ua, "messages__partnershipAddressYears__heading")

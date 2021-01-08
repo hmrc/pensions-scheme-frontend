@@ -21,8 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
-import identifiers.register.establishers.individual.{EstablisherNameId, IndividualConfirmPreviousAddressId,
-  PreviousAddressId}
+import identifiers.register.establishers.individual.{EstablisherNameId, IndividualConfirmPreviousAddressId, PreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator

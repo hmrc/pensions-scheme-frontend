@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Lang}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 
 // TODO, upstream this into play-language
@@ -48,6 +48,4 @@ class LanguageSwitchController @Inject()(
 
   private def isWelshEnabled: Boolean =
     configuration.getOptional[Boolean]("features.welsh-translation").getOrElse(true)
-
-  private def langToCall(lang: String): (String) => Call = appConfig.routeToSwitchLanguage
 }

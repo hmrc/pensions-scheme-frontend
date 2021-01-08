@@ -42,7 +42,7 @@ class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWi
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
   private val view = injector.instanceOf[occupationalPensionScheme]
-  private def viewAsStringview(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsStringview(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(

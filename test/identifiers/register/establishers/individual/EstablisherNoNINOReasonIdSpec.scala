@@ -48,7 +48,7 @@ class EstablisherNoNINOReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         EstablisherNoNINOReasonId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -59,7 +59,7 @@ class EstablisherNoNINOReasonIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         EstablisherNoNINOReasonId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -68,7 +68,7 @@ class EstablisherNoNINOReasonIdSpec extends SpecBase {
 
       "not display an answer row for this answer" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         EstablisherNoNINOReasonId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

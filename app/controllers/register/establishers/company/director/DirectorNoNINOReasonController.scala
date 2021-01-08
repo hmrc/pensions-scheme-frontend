@@ -28,8 +28,8 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.EstablishersCompanyDirector
 import utils.Enumerable
+import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
@@ -72,14 +72,13 @@ class DirectorNoNINOReasonController @Inject()(
   private def form(name: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__reason__error_ninoRequired", name)
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+  private def viewModel(mode: Mode, establisherIndex: Index,
+                        directorIndex: Index, srn: Option[String], name: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__whyNoNINO", Message("messages__theDirector")),
       heading = Message("messages__whyNoNINO", name),
       srn = srn
     )
-  }
 
 }

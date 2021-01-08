@@ -27,12 +27,10 @@ import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
 import play.api.data.Form
-import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

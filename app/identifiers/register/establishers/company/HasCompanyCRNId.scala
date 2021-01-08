@@ -42,7 +42,7 @@ case class HasCompanyCRNId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyCRNId {
   override def toString: String = "hasCrn"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyCRNId] = {
+  implicit def cya: CheckYourAnswers[HasCompanyCRNId] = {
 
     new CheckYourAnswersCompany[HasCompanyCRNId] {
 

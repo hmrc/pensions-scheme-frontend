@@ -88,7 +88,6 @@ class DirectorHasNINOIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorHasNINOId(0, 0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
@@ -99,7 +98,6 @@ class DirectorHasNINOIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorHasNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
@@ -109,7 +107,6 @@ class DirectorHasNINOIdSpec extends SpecBase {
 
       "Not return answer rows" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorHasNINOId(0, 0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq.empty[AnswerRow])
       }

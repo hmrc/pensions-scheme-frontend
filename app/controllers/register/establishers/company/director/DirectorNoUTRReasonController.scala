@@ -72,8 +72,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
     formProvider("messages__reason__error_utrRequired", directorName)
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String],
-                        directorName: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+                        directorName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__whyNoUTR", Message("messages__theDirector")),

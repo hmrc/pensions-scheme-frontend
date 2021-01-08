@@ -52,8 +52,6 @@ class PreviousAddressPostCodeLookupController @Inject()(
   GenericPostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
-  private val title: Message = "messages__establisher_individual_previous_address__title"
-  private val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

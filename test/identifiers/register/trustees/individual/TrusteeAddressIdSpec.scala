@@ -57,7 +57,6 @@ class TrusteeAddressIdSpec extends SpecBase {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
             UserAnswers().set(TrusteeAddressId(0))(address).flatMap(
               _.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value, Some(PsaId("A0000000")))
-          implicit val ua: UserAnswers = request.userAnswers
 
           TrusteeAddressId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(
             AnswerRow(

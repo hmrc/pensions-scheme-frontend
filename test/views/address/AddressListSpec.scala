@@ -17,12 +17,10 @@
 package views.address
 
 import forms.address.AddressListFormProvider
-import models.UpdateMode
 import models.address.TolerantAddress
 import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.behaviours.ViewBehaviours
 import views.html.address.addressList

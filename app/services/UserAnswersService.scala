@@ -124,9 +124,7 @@ trait UserAnswersService {
         lockAndCall(srn, updateSchemeCacheConnector.upsert(_, answers.json))
     }
 
-  def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
-                        (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent])
-  : UserAnswers = {
+  def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers): UserAnswers = {
     val existingAddressPathNode = List(KeyPathNode("existingCurrentAddress"))
     val existingAddressPath = JsPath(id.path.path.init ++ existingAddressPathNode)
     userAnswers.get(id) match {

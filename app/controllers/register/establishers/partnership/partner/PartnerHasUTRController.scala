@@ -46,8 +46,8 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
                                         val view: hasReferenceNumber
                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], personName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index,
+                        srn: Option[String], personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasUTR", Message("messages__thePartner")),

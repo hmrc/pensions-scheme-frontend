@@ -17,11 +17,10 @@
 package identifiers
 
 import base.SpecBase
-import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import models.{Link, UpdateMode}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -44,7 +43,7 @@ class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with ScalaC
           .set(BenefitsSecuredByInsuranceId)(false)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
@@ -54,7 +53,7 @@ class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with ScalaC
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+        implicit val userAnswers: UserAnswers = request.userAnswers
         val onwardUrl = "onwardUrl"
         InsurancePolicyNumberId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           Message("messages__insurance_policy_number__title"),List("site.not_entered"),true,Some(Link("site.add",

@@ -155,7 +155,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeletePartnerController(
       frontendAppConfig,
       messagesApi,

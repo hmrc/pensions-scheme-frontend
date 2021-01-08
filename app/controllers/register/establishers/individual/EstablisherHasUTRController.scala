@@ -61,8 +61,7 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
       }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode,
         index, srn),

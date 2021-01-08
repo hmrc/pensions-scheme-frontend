@@ -248,7 +248,8 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct status of in progress for item no $index with visually hidden text" in {
           val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
-          doc.getElementById(s"section-establishers-status-$index-0").text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
+          doc.getElementById(s"section-establishers-status-$index-0").text() mustBe
+            messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
         }
       }
 
@@ -369,7 +370,8 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
           val view = createView(schemeDetailsTaskListData())
           val doc = asDocument(view())
 
-          doc.getElementById(s"section-trustees-status-$index-0").text() mustBe messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
+          doc.getElementById(s"section-trustees-status-$index-0").text() mustBe
+            messages("messages__schemeTaskList__status_visuallyHidden") + " " + messages(msg)
         }
       }
     }
@@ -471,8 +473,6 @@ object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
   private lazy val changeEstablisherLinkText = Message("messages__schemeTaskList__sectionEstablishers_change_link")
   private lazy val individualLinkText = Message("messages__schemeTaskList__individual_link")
   private lazy val changeTrusteesLinkText = Message("messages__schemeTaskList__sectionTrustees_change_link")
-  private val testAboutHeader = "testabout"
-  private val pageHeader = Message("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
 
   private def schemeDetailsTaskListData(srn: Option[String] = None,

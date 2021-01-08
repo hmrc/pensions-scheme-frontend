@@ -22,13 +22,12 @@ import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnerAddressYearsIdSpec extends SpecBase {

@@ -31,8 +31,6 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.futureMembers
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
 
   private val view = injector.instanceOf[futureMembers]
@@ -43,7 +41,7 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
 
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
 
   private def controller(

@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId,
-  CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
@@ -32,8 +31,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.EstablishersCompany
 import utils.CountryOptions
+import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

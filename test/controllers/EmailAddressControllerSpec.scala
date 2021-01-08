@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -30,7 +29,7 @@ import org.scalatest.{MustMatchers, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -48,7 +47,7 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
 
   private val view = injector.instanceOf[emailAddress]
 
-  val viewmodel = CommonFormWithHintViewModel(
+  val viewmodel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
@@ -63,8 +62,6 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
 
           val formProvider = app.injector.instanceOf[EmailFormProvider]
           val request = FakeRequest()
@@ -83,8 +80,6 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
 
           val formProvider = app.injector.instanceOf[EmailFormProvider]
           val request = FakeRequest()
@@ -115,8 +110,6 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
             ("email", "test@test.com")
           )
@@ -135,8 +128,6 @@ class EmailAddressControllerSpec extends SpecBase with MustMatchers with OptionV
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
 
           val formProvider = app.injector.instanceOf[EmailFormProvider]
           val request = FakeRequest()

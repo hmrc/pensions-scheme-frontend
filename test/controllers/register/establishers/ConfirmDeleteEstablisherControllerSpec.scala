@@ -16,8 +16,6 @@
 
 package controllers.register.establishers
 
-import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -203,10 +201,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val establisherName = "John Doe"
   private val establisherKind = EstablisherKind.Indivdual
-  private val day = LocalDate.now().getDayOfMonth
-  private val month = LocalDate.now().getDayOfMonth
-  private val year = LocalDate.now().getYear - 20
-  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, establisherKind, None)
   private val personDetails = person.PersonName("John", "Doe")
   private val personName = PersonName("John", "Doe")
   private val companyDetails = CompanyDetails("Test Ltd")
@@ -246,7 +240,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[confirmDeleteEstablisher]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -263,7 +257,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(hintText:Option[String] = None,
                            estName:String = establisherName,
-                           postCall:Call = postCall, form: Form[_] = form) = view(
+                           postCall:Call, form: Form[_] = form) = view(
     form,
     estName,
     hintText,

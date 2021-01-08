@@ -70,8 +70,7 @@ class PartnershipEnterPAYEController @Inject()(
   protected def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(partnershipName)
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): PayeViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__thePartnership")),

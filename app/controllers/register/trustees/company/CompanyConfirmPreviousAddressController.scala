@@ -20,16 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
-import identifiers.register.trustees.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId,
-  CompanyPreviousAddressId}
 import identifiers.register.trustees.ExistingCurrentAddressId
+import identifiers.register.trustees.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId, CompanyPreviousAddressId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
-import utils.annotations.TrusteesCompany
 import utils.CountryOptions
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel

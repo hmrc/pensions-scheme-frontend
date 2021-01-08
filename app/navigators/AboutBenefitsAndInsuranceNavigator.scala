@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
-import models.Mode.journeyMode
-import models.{CheckMode, CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models._
 import utils.UserAnswers
 
 class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

@@ -17,9 +17,9 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
-import models.{CompanyDetails, Link, NormalMode, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{CompanyDetails, Link, NormalMode, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

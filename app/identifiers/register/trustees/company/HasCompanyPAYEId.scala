@@ -40,7 +40,7 @@ case class HasCompanyPAYEId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyPAYEId {
   override def toString: String = "hasPaye"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyPAYEId] = {
+  implicit def cya: CheckYourAnswers[HasCompanyPAYEId] = {
 
     new CheckYourAnswersTrusteeCompany[HasCompanyPAYEId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

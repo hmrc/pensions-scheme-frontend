@@ -53,8 +53,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
   }
 
 
-  override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers)
-                                 (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): UserAnswers = {
+  override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers): UserAnswers = {
     userAnswers.get(id).fold(userAnswers) {
       address =>
         data += ("fakeExistingAddressId" -> Json.toJson(address))
@@ -79,41 +78,21 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     Future.successful(request.userAnswers.json)
   }
 
-  def fetch(cacheId: String)(implicit
-                                      ec: ExecutionContext,
-                                      hc: HeaderCarrier
-  ): Future[Option[JsValue]] = {
+  def fetch(cacheId: String): Future[Option[JsValue]] = Future.successful(Some(Json.obj()))
 
-    Future.successful(Some(Json.obj()))
-  }
+  def lastUpdated(cacheId: String): Future[Option[JsValue]] = Future.successful(Some(Json.obj()))
 
-  def lastUpdated(cacheId: String)(implicit
-                                            ec: ExecutionContext,
-                                            hc: HeaderCarrier
-  ): Future[Option[JsValue]] = {
-
-    Future.successful(Some(Json.obj()))
-  }
-
-  def userAnswer: UserAnswers = {
-    UserAnswers(data.getOrElse("userAnswer", Json.obj()))
-  }
+  def userAnswer: UserAnswers = UserAnswers(data.getOrElse("userAnswer", Json.obj()))
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
     data should contain(id.toString -> Json.toJson(value))
   }
 
-  def verifyNot(id: TypedIdentifier[_]): Unit = {
-    data should not contain key(id.toString)
-  }
+  def verifyNot(id: TypedIdentifier[_]): Unit = data should not contain key(id.toString)
 
-  def verifyRemoved(id: TypedIdentifier[_]): Unit = {
-    removed should contain(id.toString)
-  }
+  def verifyRemoved(id: TypedIdentifier[_]): Unit = removed should contain(id.toString)
 
-  def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
-    Future.successful(Ok)
-  }
+  def removeAll(cacheId: String): Future[Result] = Future.successful(Ok)
 
   def reset(): Unit = {
     data.clear()

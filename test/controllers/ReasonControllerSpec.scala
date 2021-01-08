@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -26,10 +25,10 @@ import models.NormalMode
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -44,11 +43,11 @@ class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues 
 
   import ReasonControllerSpec._
 
-  val viewmodel = ReasonViewModel(
+  val viewmodel: ReasonViewModel = ReasonViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
-    heading = "heading"
-  )
+    heading = "heading")
+
   private val view = injector.instanceOf[reason]
 
   "get" must {
@@ -59,10 +58,6 @@ class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues 
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ReasonFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -81,9 +76,6 @@ class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues 
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ReasonFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -113,8 +105,6 @@ class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues 
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
             ("reason", "123456789")
           )
@@ -134,9 +124,6 @@ class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues 
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[ReasonFormProvider]
           val controller = app.injector.instanceOf[TestController]
           val request = FakeRequest().withFormUrlEncodedBody(("reason", "1234567^89{0}12345"))

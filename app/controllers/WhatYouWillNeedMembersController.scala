@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.whatYouWillNeedMembers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,8 +41,5 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(view(existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate() {
-    implicit request =>
-      Redirect(controllers.routes.CurrentMembersController.onPageLoad(NormalMode))
-  }
+  def onSubmit: Action[AnyContent] = authenticate() { Redirect(controllers.routes.CurrentMembersController.onPageLoad(NormalMode)) }
 }

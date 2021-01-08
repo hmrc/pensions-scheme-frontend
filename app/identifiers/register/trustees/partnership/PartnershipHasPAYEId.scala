@@ -40,7 +40,7 @@ case class PartnershipHasPAYEId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasPAYEId {
   override def toString: String = "hasPaye"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[PartnershipHasPAYEId] = {
+  implicit def cya: CheckYourAnswers[PartnershipHasPAYEId] = {
     new CheckYourAnswersTrusteePartnership[PartnershipHasPAYEId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__hasPAYE"),

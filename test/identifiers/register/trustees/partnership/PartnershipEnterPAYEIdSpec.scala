@@ -47,7 +47,7 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipEnterPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -58,7 +58,7 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         PartnershipEnterPAYEId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -67,7 +67,7 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows without change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterPAYE", partnershipName), List("paye"),false,None)
@@ -77,14 +77,14 @@ class PartnershipEnterPAYEIdSpec extends SpecBase {
       "return answers rows with change links if paye is available and editable" in {
         val answers = ua.set(PartnershipEnterPAYEId(0))(ReferenceValue("paye", true)).asOpt.get
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterPAYEId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if no answer if found" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", ua, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         PartnershipEnterPAYEId(0).row(onwardUrl, CheckUpdateMode)(request, implicitly) must equal(Seq(
           AnswerRow(Message("messages__enterPAYE", partnershipName), Seq("site.not_entered"), answerIsMessageKey = true,

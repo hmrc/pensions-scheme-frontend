@@ -42,7 +42,7 @@ case class HasCompanyCRNId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyCRNId {
   override def toString: String = "hasCrn"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyCRNId] = {
+  implicit def cya: CheckYourAnswers[HasCompanyCRNId] = {
     new CheckYourAnswersTrusteeCompany[HasCompanyCRNId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__hasCRN"),

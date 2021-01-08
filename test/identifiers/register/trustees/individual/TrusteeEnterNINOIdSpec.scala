@@ -60,7 +60,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         TrusteeEnterNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -71,7 +71,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -80,7 +80,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows without change links if nino is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", name), List("nino"),false, None)
@@ -91,7 +91,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
         val answers = UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
           .set(TrusteeEnterNINOId(0))(ReferenceValue("nino", true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -99,7 +99,7 @@ class TrusteeEnterNINOIdSpec extends SpecBase with OptionValues {
       "display an add link if nino is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
           UserAnswers().set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
 
         TrusteeEnterNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__enterNINO", name), Seq("site.not_entered"), answerIsMessageKey = true,

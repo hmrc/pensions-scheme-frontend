@@ -21,9 +21,9 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAut
 import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
@@ -32,7 +32,6 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val directorName = "first last"
-  private val companyName = "test company name"
 
   private val view = injector.instanceOf[alreadyDeleted]
 

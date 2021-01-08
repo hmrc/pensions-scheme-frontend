@@ -23,8 +23,9 @@ import forms.EnterVATFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
@@ -56,10 +57,10 @@ class PartnershipEnterVATController @Inject()(
         }
     }
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider(companyName)
+  private def form(companyName: String)
+                  (implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String)
-                       (implicit request: DataRequest[AnyContent]): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
       title = Message("messages__enterVAT", Message("messages__thePartnership")),

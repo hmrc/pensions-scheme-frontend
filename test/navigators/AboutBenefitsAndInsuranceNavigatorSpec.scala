@@ -110,7 +110,6 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private def policyNumber(mode: Mode = NormalMode): Call       = InsurancePolicyNumberController.onPageLoad(mode, None)
   private def insurerPostcode(mode: Mode = NormalMode): Call    = InsurerEnterPostcodeController.onPageLoad(mode, None)
   private def insurerAddressList(mode: Mode = NormalMode): Call = InsurerSelectAddressController.onPageLoad(mode, None)
-  private def insurerAddress(mode: Mode = NormalMode): Call     = InsurerConfirmAddressController.onPageLoad(mode, None)
   private def checkYouAnswers(mode: Mode = NormalMode): Call    = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
   private def anyMoreChanges: Call                              = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 }

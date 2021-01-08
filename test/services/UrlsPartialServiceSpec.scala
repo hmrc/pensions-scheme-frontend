@@ -38,17 +38,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 import viewmodels.Message
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.language.postfixOps
 
 class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
   import UrlsPartialServiceSpec._
 
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+  implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: OptionalDataRequest[AnyContent] =
     OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeNameJsonOption)), Some(PsaId("A0000000")))
-  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def service: UrlsPartialService =
     new UrlsPartialService(frontendAppConfig, dataCacheConnector,
@@ -203,9 +202,6 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   private val minimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val lockConnector = mock[PensionSchemeVarianceLockConnector]
   private val updateConnector = mock[UpdateSchemeCacheConnector]
-
-
-
 
 }
 

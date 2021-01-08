@@ -27,7 +27,7 @@ import models._
 import models.person.PersonName
 import org.scalatest.prop.TableFor3
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
@@ -232,7 +232,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val newEstablisher = UserAnswers(Json.obj()).set(IsEstablisherNewId(0))(true).asOpt.value
 
   private val establisherIndex = Index(0)
-  private val directorIndexNew = Index(1)
 
   private def establisherHasPAYE(v: Boolean) = UserAnswers(Json.obj())
     .set(HasCompanyPAYEId(0))(v).asOpt.value
@@ -240,11 +239,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def establisherEnteredPAYE = UserAnswers(Json.obj())
     .set(CompanyEnterVATId(0))(ReferenceValue("123456789")).asOpt.value
 
-  private def hasCompanyVat(yesNo: Boolean) = UserAnswers(Json.obj()).set(HasCompanyVATId(0))(yesNo).flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
-
   private val johnDoe = PersonName("John", "Doe")
 
-  private def validData(directors: PersonName*) = {
+  private def validData(directors: PersonName*): JsObject = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
@@ -257,14 +254,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def startDirectorJourney(mode: Mode, index: Index) = directorName(mode, index)
 
-  private def directorName(mode: Mode, index: Index = directorIndexNew) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
-
-  private def none: Call = controllers.routes.IndexController.onPageLoad()
+  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
-
-  private def hasCompanyNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyCRNController.onPageLoad(mode, None, 0)
 
   private def whatIsPAYE(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)
@@ -274,9 +266,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyNoCRNReasonController.onPageLoad(mode, None, 0)
-
-  private def companyVatNumberNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
 
   private def hasCompanyUTR(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, None, 0)
@@ -302,11 +291,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def hasBeenTrading(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onPageLoad(mode, None, 0)
 
-  private def companyPostCodeLookup(mode: Mode) = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, None, 0)
-
   private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, 0)
-
-  private def companyManualAddress(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(mode, None, 0)
 
   private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, None, 0)
 
@@ -315,9 +300,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def companyPaList(mode: Mode) =
     controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, None, 0)
-
-  private def companyPreviousAddress(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(mode, None, 0)
 
   private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, None, 0)
 
@@ -334,7 +316,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, cyaPage: Call) = {
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int , cyaPage: Call) = {
     if (mode == NormalMode)
       cyaPage
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
@@ -373,10 +355,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private val addressYearsUnderAYearWithExistingCurrentAddress = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
     _.set(IsEstablisherNewId(0))(true)).asOpt.value
-
-  private def addCompanyDirectorsTrue = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(true).asOpt.value
-
-  private def addCompanyDirectorsFalse = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false).asOpt.value
 
   private def addCompanyDirectorsFalseWithChanges = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false).flatMap(
     _.set(EstablishersOrTrusteesChangedId)(true)).asOpt.value

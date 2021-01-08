@@ -23,9 +23,9 @@ import models.{Link, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
-import utils.checkyouranswers.Ops._
 
 class PartnerNoUTRReasonIdSpec extends SpecBase {
   private val onwardUrl = "onwardUrl"

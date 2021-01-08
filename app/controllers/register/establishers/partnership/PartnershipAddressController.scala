@@ -21,8 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId,
-  PartnershipDetailsId, PartnershipPostcodeLookupId}
+import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest

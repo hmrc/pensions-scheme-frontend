@@ -20,12 +20,9 @@ import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
+import models.NormalMode
 import models.register.SchemeType
-import models.requests.OptionalDataRequest
-import models.{NormalMode, PSAName}
 import play.api.data.Form
-import play.api.libs.json.Reads
-import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -49,11 +46,9 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector) {
     override def nameMatching(schemeName: String)
-                             (implicit request: OptionalDataRequest[AnyContent],
-                              ec: ExecutionContext,
-                              hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
+                             (implicit ec: ExecutionContext,
+                              hc: HeaderCarrier): Future[NameMatching] =
       Future.successful(NameMatching("value 1", "My PSA"))
-    }
   }
 
   def controller(dataRetrievalAction: DataRetrievalAction = minData): SchemeTypeController =

@@ -26,8 +26,8 @@ import models.person.PersonName
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.UserAnswers
 import utils.annotations.NoSuspendedCheck
-import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -36,7 +36,6 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val index = Index(0)
   private val srn = Some("test-srn")
   private val establisherName = PersonName("test", "name")
-  private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val email = "test@test.com"
   private val phone = "1234"
 

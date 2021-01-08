@@ -26,8 +26,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
+import utils.UserAnswers
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnershipAddressYearsIdSpec extends SpecBase {
@@ -87,8 +87,6 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
   "cya" when {
 
-    implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
-
     val onwardUrl = "onwardUrl"
 
     def answers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
@@ -97,7 +95,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         PartnershipAddressYearsId(0).row(onwardUrl, NormalMode) must equal(Seq(
           AnswerRow(
             Message("messages__trusteeAddressYears__heading", Message("messages__thePartnership")),
@@ -115,7 +113,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(
             Message("messages__trusteeAddressYears__heading", Message("messages__thePartnership")),
@@ -131,7 +129,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
 
         PartnershipAddressYearsId(0).row(onwardUrl, UpdateMode) must equal(Nil)
       }

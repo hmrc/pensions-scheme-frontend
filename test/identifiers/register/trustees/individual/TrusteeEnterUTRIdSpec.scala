@@ -64,7 +64,7 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
+
         TrusteeUTRId(0).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -76,7 +76,7 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
 
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowsWithChangeLinks)
         }
       }
@@ -92,21 +92,21 @@ class TrusteeEnterUTRIdSpec extends SpecBase {
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("test", "name")).asOpt.value
               .trusteesCompanyDetails(index = 0, CompanyDetails(name)), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual Seq(answerRowWithAddLink)
         }
 
         "return row without change link if there is data available and is not editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithoutChangeLink
         }
 
         "return row with change link if there is data available and is editable" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
-          implicit val userAnswers: UserAnswers = request.userAnswers
+
 
           TrusteeUTRId(0).row(onwardUrl, UpdateMode)(request, implicitly) mustEqual answerRowsWithChangeLinks
         }

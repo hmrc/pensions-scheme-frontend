@@ -17,17 +17,16 @@
 package identifiers
 
 import play.api.libs.json.JsResult
+import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 
 case object UKBankAccountId extends TypedIdentifier[Boolean] {
   self =>
   override def toString: String = "uKBankAccount"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(Message("uKBankAccount.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
       hiddenLabel = Some(Message("messages__visuallyhidden__uKBankAccount", userAnswers.get(SchemeNameId)

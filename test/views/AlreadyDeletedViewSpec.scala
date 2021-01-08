@@ -16,8 +16,8 @@
 
 package views
 
-import models.UpdateMode
 import play.api.mvc.Call
+import play.twirl.api.HtmlFormat
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.behaviours.ViewBehaviours
 import views.html.alreadyDeleted
@@ -30,14 +30,14 @@ class AlreadyDeletedViewSpec extends ViewBehaviours {
     Message(s"messages__${messageKeyPrefix}_lede", deletedEntity)
   )
 
-  def viewmodel = AlreadyDeletedViewModel(Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"))
-  def updatedViewmodel = AlreadyDeletedViewModel(
+  def viewmodel: AlreadyDeletedViewModel = AlreadyDeletedViewModel(Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"))
+  def updatedViewmodel: AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__director_title"), deletedEntity, Call("GET", "/"), Some("srn"), Some("Scheme Name"))
 
   val view: alreadyDeleted = app.injector.instanceOf[alreadyDeleted]
 
-  def createView = () => view(viewmodel)(fakeRequest, messages)
-  def createUpdateView = () => view(updatedViewmodel)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => view(viewmodel)(fakeRequest, messages)
+  def createUpdateView: () => HtmlFormat.Appendable = () => view(updatedViewmodel)(fakeRequest, messages)
 
   "Already Deleted view" must {
 

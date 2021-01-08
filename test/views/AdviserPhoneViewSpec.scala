@@ -22,12 +22,12 @@ import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.{adviserName, adviserPhone}
+import views.html.adviserPhone
 
 class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
 
   val messageKeyPrefix = "adviser__phone"
-  val form = new AdviserEmailFormProvider().apply()
+  val form: Form[String] = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
 
   val view: adviserPhone = app.injector.instanceOf[adviserPhone]

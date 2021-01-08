@@ -17,7 +17,7 @@
 package controllers
 
 
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
@@ -30,8 +30,6 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insuranceCompanyName
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehaviours {
 
@@ -49,7 +47,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
   private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
 
   private val view = injector.instanceOf[insuranceCompanyName]
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages).toString()
 
   private def controller(

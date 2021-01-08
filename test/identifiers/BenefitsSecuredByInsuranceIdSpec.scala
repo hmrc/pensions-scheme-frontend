@@ -27,7 +27,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
@@ -104,13 +104,10 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with S
 
     "no data defined for InsurancePolicyNumberId" must {
 
-      implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
-        InputOption("GB", "United Kingdom")))
-
       "return empty AnswerRow when BenefitsSecuredByInsuranceId is false" in {
         val answers = UserAnswers(Json.obj())
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         val onwardUrl = "onwardUrl"
         BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
@@ -120,7 +117,7 @@ class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with S
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         val onwardUrl = "onwardUrl"
         BenefitsSecuredByInsuranceId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(
           Message("securedBenefits.checkYourAnswersLabel"), List("site.yes"),true,Some(Link("site.change",

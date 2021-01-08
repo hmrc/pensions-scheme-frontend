@@ -17,8 +17,6 @@
 package identifiers.register.establishers.company
 
 import base.SpecBase
-import identifiers.register.establishers.IsEstablisherNewId
-import models.AddressYears.UnderAYear
 import models.address.Address
 import models.requests.DataRequest
 import models.{CompanyDetails, Link, NormalMode, UpdateMode}

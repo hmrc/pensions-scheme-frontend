@@ -24,7 +24,6 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.individual._
 import javax.inject.Inject
 import models.address.Address
-import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -72,8 +71,7 @@ class PreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
-                       (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,

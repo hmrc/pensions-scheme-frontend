@@ -40,7 +40,7 @@ case class HasCompanyVATId(index: Int) extends TypedIdentifier[Boolean] {
 object HasCompanyVATId {
   override def toString: String = "hasVat"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[HasCompanyVATId] = {
+  implicit def cya: CheckYourAnswers[HasCompanyVATId] = {
     new CheckYourAnswersTrusteeCompany[HasCompanyVATId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__hasVAT"),

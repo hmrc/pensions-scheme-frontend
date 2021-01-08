@@ -22,10 +22,8 @@ import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.MustMatchers
-import play.api.Application
-import play.api.http.Writeable
 import play.api.inject.bind
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
@@ -33,8 +31,6 @@ import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
 import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
-
-import scala.concurrent.Future
 
 class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
 

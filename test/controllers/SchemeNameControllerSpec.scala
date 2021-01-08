@@ -21,14 +21,12 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
-import models.requests.OptionalDataRequest
-import models.{NormalMode, PSAName}
+import models.NormalMode
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.{Json, Reads}
-import play.api.mvc.AnyContent
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -42,7 +40,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
   val formProvider = new SchemeNameFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
@@ -50,18 +48,16 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector) {
     override def nameMatching(schemeName: String)
-                             (implicit request: OptionalDataRequest[AnyContent],
-                              ec: ExecutionContext,
-                              hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
+                             (implicit ec: ExecutionContext,
+                              hc: HeaderCarrier): Future[NameMatching] = {
       Future.successful(NameMatching("value 1", "My PSA"))
     }
   }
 
   object FakeNameMatchingFactoryWithMatch extends NameMatchingFactory(pensionAdministratorConnector) {
     override def nameMatching(schemeName: String)
-                             (implicit request: OptionalDataRequest[AnyContent],
-                              ec: ExecutionContext,
-                              hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
+                             (implicit ec: ExecutionContext,
+                              hc: HeaderCarrier): Future[NameMatching] = {
       Future.successful(NameMatching("My PSA", "My PSA"))
     }
   }

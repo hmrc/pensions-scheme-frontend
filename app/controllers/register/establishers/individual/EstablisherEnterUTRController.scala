@@ -22,7 +22,6 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.UTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherUTRId}
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -58,8 +57,7 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.EstablisherEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual")),

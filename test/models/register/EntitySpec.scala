@@ -89,7 +89,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 1, None).url
       partnershipEntity.editLink(NormalMode, None) mustBe None
     }
 
@@ -114,7 +113,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, None, 1).url
       companyEntity.editLink(NormalMode, None) mustBe None
     }
 
@@ -182,7 +180,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 1, None).url
       partnershipEntity.editLink(NormalMode, None) mustBe None
     }
 
@@ -192,7 +189,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "dont have delete link with update mode" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Partnership, None).url
       partnershipEntity.deleteLink(UpdateMode, None) mustBe None
     }
 
@@ -218,7 +214,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "have no edit link" in {
-      val expectedEditLink = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 1, None).url
       companyEntity.editLink(NormalMode, None) mustBe None
     }
 
@@ -230,7 +225,6 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "dont have delete link with update mode" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, None).url
       companyEntity.deleteLink(UpdateMode, None) mustBe None
     }
 

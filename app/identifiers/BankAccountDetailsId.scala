@@ -17,16 +17,15 @@
 package identifiers
 
 import models.BankAccountDetails
+import utils.UserAnswers
 import utils.checkyouranswers.{BankDetailsCYA, CheckYourAnswers}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 
 case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
   self =>
   override def toString: String = "uKBankDetails"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BankDetailsCYA[self.type](
       label = Some(Message("uKBankDetails.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
       hiddenLabel = Some(Message("messages__visuallyhidden__uKBankDetails", userAnswers.get(SchemeNameId)

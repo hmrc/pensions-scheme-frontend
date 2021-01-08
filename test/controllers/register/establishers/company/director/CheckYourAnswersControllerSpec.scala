@@ -45,7 +45,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+  private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -69,10 +69,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
                            h1: Message): String =
     viewAsString(mode, answerSection(NormalMode, srn), href, srn, title, h1)
 
-  private def viewAsString(mode: Mode = NormalMode,
+  private def viewAsString(mode: Mode,
                            answerSection: Seq[AnswerSection],
                            href: Call,
-                           srn: Option[String] = None,
+                           srn: Option[String],
                            title: Message,
                            h1: Message): String =
     view(
@@ -91,8 +91,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "having set up answer sections" when {
     val request: DataRequest[AnyContent]  = FakeDataRequest(directorAnswers)
-    implicit val userAnswers: UserAnswers = request.userAnswers
-    def answerSectionDirector(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] =
+    def answerSectionDirector(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
       Seq(
         AnswerSection(
           None,

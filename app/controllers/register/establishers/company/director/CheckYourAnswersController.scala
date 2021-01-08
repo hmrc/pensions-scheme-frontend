@@ -80,7 +80,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     }
 
   private def anwerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])(implicit request:DataRequest[AnyContent]) = {
-    implicit val userAnswers: UserAnswers = request.userAnswers
+
     AnswerSection(None,
       Seq(
         DirectorNameId(companyIndex, directorIndex)

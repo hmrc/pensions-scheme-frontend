@@ -17,8 +17,7 @@
 package controllers
 
 import base.SpecBase
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
 import forms.mappings.Transforms
@@ -29,6 +28,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insurancePolicyNumber
 
@@ -78,7 +78,7 @@ object InsurancePolicyNumberControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
-  private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form => {
+  private def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String = form => {
     val view = base.injector.instanceOf[insurancePolicyNumber]
     view(form, NormalMode, Some(companyName), None, postUrl, None)(base.fakeRequest, base.messages).toString()
   }

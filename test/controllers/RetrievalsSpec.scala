@@ -73,12 +73,6 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
   val validData: JsObject = Json.obj(SchemeNameId.toString -> "Test Scheme")
 
-  "static" must {
-    "return a retrieval which always successfully returns the argument" in {
-      Retrieval.static("foobar").retrieve(dataRequest(Json.obj())).right.value mustEqual "foobar"
-    }
-  }
-
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
 

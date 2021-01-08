@@ -32,8 +32,6 @@ import play.api.libs.json.Reads
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-import scala.language.implicitConversions
-
 trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 
@@ -61,7 +59,7 @@ trait CheckYourAnswersPartners[I <: TypedIdentifier.PathDependent] extends Check
   private def partnerName(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers): Option[String] =
     ua.get(PartnerNameId(establisherIndex, partnerIndex)).map(_.fullName)
 
-  protected def dynamicMessage(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers, messageKey: String) =
+  protected def dynamicMessage(establisherIndex: Int, partnerIndex: Int, ua: UserAnswers, messageKey: String): Message =
     Message(messageKey, partnerName(establisherIndex, partnerIndex, ua).getOrElse(Message("messages__thePartner")))
 }
 
@@ -69,7 +67,7 @@ trait CheckYourAnswersCompany[I <: TypedIdentifier.PathDependent] extends CheckY
   private def companyName(establisherIndex: Int, ua: UserAnswers): Option[String] =
     ua.get(CompanyDetailsId(establisherIndex)).map(_.companyName)
 
-  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String): Message =
     Message(messageKey, companyName(establisherIndex, ua).getOrElse(Message("messages__theCompany")))
 }
 
@@ -77,7 +75,7 @@ trait CheckYourAnswersPartnership[I <: TypedIdentifier.PathDependent] extends Ch
   private def partnershipName(establisherIndex: Int, ua: UserAnswers): Option[String] =
     ua.get(PartnershipDetailsId(establisherIndex)).map(_.name)
 
-  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String) =
+  protected def dynamicMessage(establisherIndex: Int, ua: UserAnswers, messageKey: String): Message =
     Message(messageKey, partnershipName(establisherIndex, ua).getOrElse(Message("messages__thePartnership")))
 }
 
@@ -85,7 +83,7 @@ trait CheckYourAnswersTrusteeCompany[I <: TypedIdentifier.PathDependent] extends
   private def companyName(trusteeIndex: Int, ua: UserAnswers): Option[String] =
     ua.get(TrusteeCompanyDetailsId(trusteeIndex)).map(_.companyName)
 
-  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String) =
+  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String): Message =
     Message(messageKey, companyName(trusteeIndex, ua).getOrElse(Message("messages__theCompany")))
 }
 
@@ -93,7 +91,7 @@ trait CheckYourAnswersTrusteeIndividual[I <: TypedIdentifier.PathDependent] exte
   private def trusteeName(trusteeIndex: Int, ua: UserAnswers): Option[String] =
     ua.get(TrusteeNameId(trusteeIndex)).map(_.fullName)
 
-  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String) =
+  protected def dynamicMessage(trusteeIndex: Int, ua: UserAnswers, messageKey: String): Message =
     Message(messageKey, trusteeName(trusteeIndex, ua).getOrElse(Message("messages__theTrustee")))
 }
 
@@ -293,7 +291,7 @@ object CheckYourAnswers {
 case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[Message] = None,
                                                                     hiddenLabel: Option[Message] = None) {
 
-  def apply()(implicit rds: Reads[BankAccountDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[BankAccountDetails]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map {

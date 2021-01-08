@@ -19,6 +19,8 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.company.routes._
+import controllers.register.trustees.routes.AddTrusteeController
+import controllers.routes.AnyMoreChangesController
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
@@ -26,8 +28,6 @@ import models.Mode._
 import models._
 import play.api.mvc.Call
 import utils.UserAnswers
-import controllers.register.trustees.routes.AddTrusteeController
-import controllers.routes.AnyMoreChangesController
 
 //scalastyle:off cyclomatic.complexity
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
@@ -195,9 +195,6 @@ object TrusteesCompanyNavigator {
   private def selectAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CompanyAddressListController.onPageLoad(mode, index, srn)
 
-  private def confirmAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
-    CompanyAddressController.onPageLoad(mode, index, srn)
-
   private def addressYearsPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CompanyAddressYearsController.onPageLoad(mode, index, srn)
 
@@ -209,9 +206,6 @@ object TrusteesCompanyNavigator {
 
   private def selectPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CompanyPreviousAddressListController.onPageLoad(mode, index, srn)
-
-  private def confirmPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
-    CompanyPreviousAddressController.onPageLoad(mode, index, srn)
 
   private def isThisPreviousAddressPage(index: Int, srn: Option[String]): Call =
     CompanyConfirmPreviousAddressController.onPageLoad(index, srn)

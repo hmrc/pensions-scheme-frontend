@@ -18,10 +18,9 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
@@ -32,7 +31,7 @@ case class TrusteeEmailId(index: Int) extends TypedIdentifier[String] {
 object TrusteeEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit messages: Messages, countryOptions: CountryOptions, userAnswers: UserAnswers): CheckYourAnswers[TrusteeEmailId] = new
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteeEmailId] = new
       CheckYourAnswersTrusteeIndividual[TrusteeEmailId] {
     def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
       (dynamicMessage(index, ua, "messages__enterEmail"),

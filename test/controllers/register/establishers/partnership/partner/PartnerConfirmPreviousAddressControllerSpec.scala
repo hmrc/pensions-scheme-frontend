@@ -43,7 +43,7 @@ class PartnerConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val formProvider = new ConfirmAddressFormProvider()
   val form: Form[Boolean] = formProvider(Message("confirmPreviousAddress.error", name))
 
-  val testAddress = Address(
+  val testAddress: Address = Address(
     "address line 1",
     "address line 2",
     Some("test town"),
@@ -65,10 +65,10 @@ class PartnerConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndex = 0
   val partnerIndex = 0
-  val srn = Some("srn")
+  val srn: Option[String] = Some("srn")
   private val view = injector.instanceOf[confirmPreviousAddress]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new PartnerConfirmPreviousAddressController(
       frontendAppConfig,
       messagesApi,

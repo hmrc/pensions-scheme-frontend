@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.company
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
@@ -36,6 +35,7 @@ import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}

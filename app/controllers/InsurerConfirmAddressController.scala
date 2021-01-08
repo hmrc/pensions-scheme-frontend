@@ -18,7 +18,6 @@ package controllers
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
@@ -31,8 +30,8 @@ import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import services.UserAnswersService
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import utils.CountryOptions
+import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions.FakeDataRetrievalAction
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
 import models.address.TolerantAddress
@@ -29,8 +29,8 @@ import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
 import utils.annotations.EstablishersCompany
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -65,8 +65,6 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
       .asOpt.map(_.json)
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
-
-  private val view = injector.instanceOf[addressList]
 
   private val onwardRoute = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, None, 0)
 

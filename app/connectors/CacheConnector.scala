@@ -34,13 +34,12 @@ package connectors
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import models.requests.DataRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
+import play.api.mvc.Result
 import play.api.mvc.Results._
-import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http._
 import utils.UserAnswers

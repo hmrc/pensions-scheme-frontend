@@ -23,8 +23,7 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId,
-  CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator

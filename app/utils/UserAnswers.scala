@@ -43,7 +43,6 @@ import utils.datacompletion.{DataCompletionEstablishers, DataCompletionTrustees}
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
-import scala.language.implicitConversions
 
 //scalastyle:off number.of.methods
 final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits

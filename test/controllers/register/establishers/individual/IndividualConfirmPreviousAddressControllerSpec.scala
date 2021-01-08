@@ -69,7 +69,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
 
   private val view = injector.instanceOf[confirmPreviousAddress]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs) =
+  private def controller(dataRetrievalAction: DataRetrievalAction) =
     new IndividualConfirmPreviousAddressController(
       frontendAppConfig,
       messagesApi,

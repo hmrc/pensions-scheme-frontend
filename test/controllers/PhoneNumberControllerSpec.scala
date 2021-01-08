@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -26,11 +25,11 @@ import models.CheckUpdateMode
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{MustMatchers, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
@@ -45,7 +44,7 @@ class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionVa
 
   import PhoneNumberControllerSpec._
 
-  val viewmodel = CommonFormWithHintViewModel(
+  val viewmodel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
@@ -63,9 +62,6 @@ class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionVa
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[PhoneFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -84,9 +80,6 @@ class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionVa
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[PhoneFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
@@ -116,8 +109,6 @@ class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionVa
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
           val request = FakeRequest().withFormUrlEncodedBody(
             ("phone", "098777777777")
           )
@@ -137,9 +128,6 @@ class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionVa
       )) {
         app =>
 
-          implicit val materializer: Materializer = app.materializer
-
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[PhoneFormProvider]
           val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)

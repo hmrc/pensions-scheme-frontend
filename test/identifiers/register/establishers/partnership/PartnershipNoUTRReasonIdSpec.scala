@@ -23,8 +23,8 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnershipNoUTRReasonIdSpec extends SpecBase {

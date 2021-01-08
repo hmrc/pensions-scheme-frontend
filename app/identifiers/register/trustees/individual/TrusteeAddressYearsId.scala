@@ -20,8 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
@@ -42,7 +42,7 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteeAddressYearsId] =
+  implicit def cya: CheckYourAnswers[TrusteeAddressYearsId] =
     new CheckYourAnswersTrusteeIndividual[TrusteeAddressYearsId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__trusteeAddressYears__heading"),

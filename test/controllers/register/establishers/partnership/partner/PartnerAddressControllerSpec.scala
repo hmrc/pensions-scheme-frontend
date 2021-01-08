@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.partnership.partner
 
-import java.time.LocalDate
-
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
@@ -46,13 +44,12 @@ import views.html.address.manualAddress
 
 class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
-  val establisherIndex = Index(0)
-  val partnerIndex = Index(0)
+  val establisherIndex: Index = Index(0)
+  val partnerIndex: Index = Index(0)
 
-  private val postCall = routes.PartnerAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(partnerIndex), None)
   private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
 
-  val partner = PersonName("first", "last")
+  val partner: PersonName = PersonName("first", "last")
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -79,7 +76,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   private val view = injector.instanceOf[manualAddress]
 
-  private def viewmodel(postCall: Call = postCall) = ManualAddressViewModel(
+  private def viewmodel(postCall: Call) = ManualAddressViewModel(
     postCall,
     countryOptions.options,
     title = Message("messages__common__confirmAddress__h1", Message("messages__thePartner")),

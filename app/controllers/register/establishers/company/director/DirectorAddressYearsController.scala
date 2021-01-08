@@ -80,8 +80,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
     new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String,
-                        srn: Option[String])
-                       (implicit request: DataRequest[AnyContent]) =
+                        srn: Option[String]) =
     AddressYearsViewModel(
       postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__director_address_years__title", Message("messages__common__address_years__director")),

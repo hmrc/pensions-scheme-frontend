@@ -17,11 +17,11 @@
 package identifiers
 
 import base.SpecBase
-import models.{Link, UpdateMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import models.{Link, UpdateMode}
 import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -77,7 +77,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCh
           .set(BenefitsSecuredByInsuranceId)(false)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         val onwardUrl = "onwardUrl"
         InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }
@@ -87,7 +87,7 @@ class InsuranceCompanyNameIdSpec extends SpecBase with MustMatchers with ScalaCh
           .set(BenefitsSecuredByInsuranceId)(true)
           .asOpt.value
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers = request.userAnswers
+
         val onwardUrl = "onwardUrl"
         InsuranceCompanyNameId.row(onwardUrl, UpdateMode) must equal(Seq(AnswerRow(Message("insuranceCompanyName.checkYourAnswersLabel"),
           List("site.not_entered"),true,Some(Link("site.add",onwardUrl,Some(Message("messages__visuallyhidden__insuranceCompanyName")))))))

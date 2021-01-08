@@ -68,8 +68,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider(name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.CompanyNoCRNReasonController.onSubmit(mode, srn, index),
       title = Message("messages__whyNoCRN", Message("messages__theCompany")),

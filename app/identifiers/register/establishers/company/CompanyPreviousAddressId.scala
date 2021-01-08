@@ -19,7 +19,6 @@ package identifiers.register.establishers.company
 import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersCompany, PreviousAddressCYA}
 import utils.{CountryOptions, UserAnswers}

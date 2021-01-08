@@ -16,11 +16,10 @@
 
 package identifiers
 
-import play.api.i18n.Messages
 import play.api.libs.json.JsResult
+import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.AnswerRow
 
 case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
@@ -35,8 +34,7 @@ case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
     }
   }
 
-  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions)
-  : CheckYourAnswers[self.type] = {
+  implicit def cya: CheckYourAnswers[self.type] = {
 
     new CheckYourAnswers[self.type] {
 

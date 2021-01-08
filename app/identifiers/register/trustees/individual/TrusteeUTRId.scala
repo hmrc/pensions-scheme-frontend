@@ -20,10 +20,9 @@ import identifiers._
 import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
-import play.api.i18n.Messages
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class TrusteeUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -36,9 +35,7 @@ case class TrusteeUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
 object TrusteeUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   messages: Messages,
-                   countryOptions: CountryOptions): CheckYourAnswers[TrusteeUTRId] = {
+  implicit def cya: CheckYourAnswers[TrusteeUTRId] = {
 
     new CheckYourAnswersTrusteeIndividual[TrusteeUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

@@ -56,7 +56,6 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
         CompanyEnterPAYEId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -67,7 +66,6 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -76,7 +74,6 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows without change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = false), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(
           Seq(
@@ -86,14 +83,12 @@ class CompanyEnterPAYEIdSpec extends SpecBase {
 
       "return answers rows with change links if paye is available and editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers(isEditable = true), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if no answer is found" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(), Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
 
         CompanyEnterPAYEId(0).row(onwardUrl, CheckUpdateMode) must equal(
           Seq(AnswerRow(

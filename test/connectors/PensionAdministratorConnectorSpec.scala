@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
 class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {

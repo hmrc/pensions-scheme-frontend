@@ -23,7 +23,6 @@ import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.mvc.Results._
-import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
@@ -433,8 +432,6 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with MustMatchers with Wire
         val json = Json.obj(
           "lastUpdated" -> "1528107399697"
         )
-
-        val plaintext = PlainText("{}")
 
         server.stubFor(
           get(urlEqualTo(lastUpdatedUrl("foo")))

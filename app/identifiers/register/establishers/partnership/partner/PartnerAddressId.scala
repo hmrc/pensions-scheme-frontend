@@ -19,10 +19,9 @@ package identifiers.register.establishers.partnership.partner
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
-import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers, CheckYourAnswersPartners}
+import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnerAddressId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Address] {

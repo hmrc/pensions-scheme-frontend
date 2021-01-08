@@ -24,8 +24,8 @@ import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
-import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext
 
 class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends Navigator {
 

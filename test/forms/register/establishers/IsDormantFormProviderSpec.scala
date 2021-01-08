@@ -16,7 +16,6 @@
 
 package forms.register.establishers
 
-import base.SpecBase
 import forms.behaviours.FormBehaviours
 import models.register.DeclarationDormant
 import models.{Field, Invalid, Required}

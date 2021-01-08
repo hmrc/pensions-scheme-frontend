@@ -32,10 +32,6 @@ import utils.UserAnswers
 trait DataCompletionHelper extends OptionValues {
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val stringValue = "value"
-  private val refValue = ReferenceValue(stringValue)
-  private val firstName = "firstName"
-  private val lastName = "lastName"
-  private val dateValue = LocalDate.of(2000, 6, 9)
 
   protected def setTrusteeCompletionStatusIndividualDetails(isComplete: Boolean, index: Int = 0, ua: UserAnswers = UserAnswers()): UserAnswers =
     setTrusteeCompletionStatusJsResultIndividualDetails(isComplete, index, ua).asOpt.value

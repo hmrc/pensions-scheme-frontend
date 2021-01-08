@@ -43,7 +43,7 @@ case class PartnershipHasUTRId(index: Int) extends TypedIdentifier[Boolean] {
 object PartnershipHasUTRId {
   override def toString: String = "hasUtr"
 
-  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[PartnershipHasUTRId] = {
+  implicit def cya: CheckYourAnswers[PartnershipHasUTRId] = {
 
     new CheckYourAnswersTrusteePartnership[PartnershipHasUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

@@ -73,8 +73,7 @@ class PartnershipNoUTRReasonController @Inject()(
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String
-                       )(implicit request: DataRequest[AnyContent]): ReasonViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__thePartnership")),

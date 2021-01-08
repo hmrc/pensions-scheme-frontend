@@ -18,13 +18,13 @@ package navigators.establishers.individual
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.establishers.routes._
 import controllers.register.establishers.individual.routes._
+import controllers.register.establishers.routes._
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
-import models._
 import models.Mode._
+import models._
 import navigators.AbstractNavigator
 import play.api.mvc.Call
 import utils.UserAnswers

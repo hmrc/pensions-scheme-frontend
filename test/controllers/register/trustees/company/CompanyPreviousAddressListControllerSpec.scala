@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.company
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -25,6 +24,7 @@ import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.inject.bind
 import play.api.libs.json._
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}

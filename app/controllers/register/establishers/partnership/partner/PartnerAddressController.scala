@@ -22,8 +22,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.partnership.partner.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId,
-  PartnerAddressPostcodeLookupId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerNameId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest

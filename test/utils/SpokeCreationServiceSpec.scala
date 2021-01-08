@@ -455,7 +455,7 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
         "display all the spokes with appropriate links, in progress status when trustee company is in progress" in {
           val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
             trusteesCompanyDetails(index = 0, CompanyDetails("test company")).
-            trusteesCompanyHasUTR(0, true).
+            trusteesCompanyHasUTR(0, hasUtr = true).
             trusteesCompanyEnterUTR(0, ReferenceValue("test-utr")).
             trusteesCompanyAddress(index = 0, address).
             trusteeCompanyEmail(index = 0, email = "s@s.com")
@@ -719,7 +719,8 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       result mustBe expectedSpoke
     }
 
-    "return all the spokes with appropriate links when have any trustees flag has value of true AND there are trustees AND NOT view only and there is an srn" in {
+    "return all the spokes with appropriate links when have any trustees flag has value of true AND" +
+      " there are trustees AND NOT view only and there is an srn" in {
       val userAnswers = userAnswersWithSchemeName
         .trusteeKind(0, TrusteeKind.Individual)
         .trusteeName(0, personName)
@@ -749,7 +750,8 @@ class SpokeCreationServiceSpec extends WordSpec with MustMatchers with OptionVal
       result mustBe expectedSpoke
     }
 
-    "return all the spokes with appropriate links when have any trustees flag has value of true AND there are trustees AND NOT view only and there is no srn" in {
+    "return all the spokes with appropriate links when have any trustees flag has value of true AND" +
+      " there are trustees AND NOT view only and there is no srn" in {
       val userAnswers = userAnswersWithSchemeName
         .trusteeKind(0, TrusteeKind.Individual)
         .trusteeName(0, personName)
@@ -809,15 +811,6 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val address = Address("line1", "line2", None, None, None, "GB")
-
-  private def aboutSpokeAddOrInprogessSpoke(status: Option[Boolean]) = Seq(
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_add", schemeName),
-      controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), status),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName),
-      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), status),
-    EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), status)
-  )
 
   private def estCompanyAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean] = None) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),

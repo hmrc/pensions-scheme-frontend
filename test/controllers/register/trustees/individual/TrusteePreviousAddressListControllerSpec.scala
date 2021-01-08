@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -27,6 +26,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}

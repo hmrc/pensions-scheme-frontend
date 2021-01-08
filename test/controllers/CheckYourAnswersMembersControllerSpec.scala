@@ -61,7 +61,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
       messagesApi,
       FakeAuthAction,

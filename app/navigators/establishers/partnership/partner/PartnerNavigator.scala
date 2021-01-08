@@ -22,8 +22,8 @@ import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner.routes._
 import controllers.routes.SessionExpiredController
 import identifiers.Identifier
-import identifiers.register.establishers.partnership.{AddPartnersId, OtherPartnersId, partner}
 import identifiers.register.establishers.partnership.partner._
+import identifiers.register.establishers.partnership.{AddPartnersId, OtherPartnersId, partner}
 import models.Mode.journeyMode
 import models._
 import navigators.AbstractNavigator
@@ -194,14 +194,8 @@ object PartnerNavigator {
   private def addressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerAddressListController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def addressPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    PartnerAddressController.onPageLoad(mode, estIndex, partnerIndex, srn)
-
   private def paAddressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, estIndex, partnerIndex, srn)
-
-  private def paAddressPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
-    PartnerPreviousAddressController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def addressYearsPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
     PartnerAddressYearsController.onPageLoad(mode, estIndex, partnerIndex, srn)

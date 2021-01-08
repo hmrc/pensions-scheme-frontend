@@ -23,8 +23,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class AddressLookupConnectorSpec extends AsyncWordSpec
   with MustMatchers
   with WireMockHelper

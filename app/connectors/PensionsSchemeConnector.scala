@@ -20,16 +20,15 @@ import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
 import models.register.SchemeSubmissionResponse
 import play.api.Logger
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.UserAnswers
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import play.api.http.Status._
+
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
 
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
@@ -68,14 +67,6 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
           Left(response)
       }
     }
-  }
-
-  private def translateExceptions[I](): PartialFunction[Throwable, Future[I]] = {
-    case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
-  }
-
-  private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
-    case Failure(t: Throwable) => Logger.error(msg, t)
   }
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)

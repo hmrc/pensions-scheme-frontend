@@ -21,15 +21,14 @@ import models.register.trustees.TrusteeKind
 import play.api.libs.json.{JsResult, JsSuccess}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import utils.{CountryOptions, Enumerable, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import viewmodels.Message
 
 case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.Implicits {
   self =>
   override def toString: String = "haveAnyTrustees"
 
-  implicit def cya(implicit countryOptions: CountryOptions,
-                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+  implicit def cya(implicit userAnswers: UserAnswers): CheckYourAnswers[self.type] =
     BooleanCYA[self.type](
       label = Some(Message("haveAnyTrustees.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
       hiddenLabel = Some(Message("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId)

@@ -16,7 +16,6 @@
 
 package forms.behaviours
 
-import forms.FormSpec
 import forms.mappings.{Constraints, EmailMapping, RegexBehaviourSpec}
 import play.api.data.{Form, FormError}
 

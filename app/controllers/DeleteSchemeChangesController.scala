@@ -21,7 +21,6 @@ import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, Upda
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
 import javax.inject.Inject
-import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
@@ -62,7 +61,7 @@ class DeleteSchemeChangesController @Inject()(
   }
 
       private def getSchemeName(srn: String, psaId: String)(block: (String, String) => Future[Result])
-                               (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
+                               (implicit hc: HeaderCarrier): Future[Result] =
         minimalPsaConnector.getPsaNameFromPsaID(psaId).flatMap { psaName =>
           updateConnector.fetch(srn).flatMap { data =>
             (data, psaName) match {

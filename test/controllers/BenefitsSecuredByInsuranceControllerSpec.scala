@@ -43,7 +43,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
   private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
 
   private val view = injector.instanceOf[benefitsSecuredByInsurance]
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
     view(form, NormalMode, Some("Test Scheme Name"), postCall, None)(fakeRequest, messages).toString()
 
   private def controller(

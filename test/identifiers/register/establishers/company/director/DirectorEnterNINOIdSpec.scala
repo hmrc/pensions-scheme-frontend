@@ -69,7 +69,6 @@ class DirectorEnterNINOIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
         DirectorEnterNINOId(0, 0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -80,7 +79,6 @@ class DirectorEnterNINOIdSpec extends SpecBase {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
     }
@@ -95,7 +93,6 @@ class DirectorEnterNINOIdSpec extends SpecBase {
 
       "return answers rows without change links if nino is available and not editable" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__nino", name),List("nino"),false, None)
@@ -105,14 +102,12 @@ class DirectorEnterNINOIdSpec extends SpecBase {
       "return answers rows with change links if nino is available and editable" in {
         val answers = userAnswersWithName.set(DirectorEnterNINOId(0, 0))(ReferenceValue("nino", isEditable = true)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers         = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
 
       "display an add link if nino is not available" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", userAnswersWithName, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         DirectorEnterNINOId(0, 0).row(onwardUrl, UpdateMode) must equal(Seq(
           AnswerRow(Message("messages__common__nino", name), Seq("site.not_entered"), answerIsMessageKey = true,

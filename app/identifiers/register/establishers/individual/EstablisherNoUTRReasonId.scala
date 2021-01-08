@@ -31,8 +31,7 @@ case class EstablisherNoUTRReasonId(index: Int) extends TypedIdentifier[String] 
 object EstablisherNoUTRReasonId {
   override def toString: String = "noUtrReason"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoUTRReasonId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[EstablisherNoUTRReasonId] = {
 
     new CheckYourAnswersIndividual[EstablisherNoUTRReasonId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

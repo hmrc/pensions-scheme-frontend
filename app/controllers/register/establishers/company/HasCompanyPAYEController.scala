@@ -25,8 +25,9 @@ import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPA
 import models.requests.DataRequest
 import models.{Index, Mode}
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
@@ -67,8 +68,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__hasPAYE", Message("messages__theCompany")),
@@ -78,9 +78,6 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
       formFieldName = Some("hasPaye")
     )
 
-  private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
+  private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__companyPayeRef__error__required", companyName)
-
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call =
-    controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index)
 }

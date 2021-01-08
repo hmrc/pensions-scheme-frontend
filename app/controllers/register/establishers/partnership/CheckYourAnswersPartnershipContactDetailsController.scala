@@ -21,8 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId,
-  PartnershipPhoneNumberId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneNumberId}
 import javax.inject.Inject
 import models.Mode.checkMode
 import models.{Index, Mode}

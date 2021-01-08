@@ -17,8 +17,6 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
-import controllers.register.trustees.partnership.PartnershipHasVATControllerSpec.onwardRoute
 import forms.EmailFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator

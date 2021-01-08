@@ -16,7 +16,6 @@
 
 package controllers
 
-import play.api.test.CSRFTokenHelper.addCSRFToken
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -26,14 +25,13 @@ import models.address.{Address, TolerantAddress}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import play.api.Application
-import play.api.http.Writeable
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, Request, Result}
+import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, route, _}
+import play.api.test.Helpers.{contentAsString, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator

@@ -32,8 +32,7 @@ case class DirectorEmailId(establisherIndex: Int, directorIndex: Int) extends Ty
 object DirectorEmailId {
   override def toString: String = "emailAddress"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[DirectorEmailId] = {
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[DirectorEmailId] = {
 
     new CheckYourAnswersDirectors[DirectorEmailId] {
 

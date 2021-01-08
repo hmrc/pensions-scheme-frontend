@@ -23,12 +23,12 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
-import models.person.PersonName
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, NormalMode, UpdateMode, person}
 import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import utils.{Enumerable, UserAnswers}
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
@@ -44,7 +44,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
     "John",
     "Doe"
   )
-  private val trusteeName = PersonName("John", "Doe")
 
   private val userAnswers =
     UserAnswers()
@@ -62,9 +61,12 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
   private val fullTrustees: Seq[TrusteeIndividualEntity] = (0 to 9).map(index => TrusteeIndividualEntity(
     TrusteeNameId(index), "trustee name", isDeleted = false, isCompleted = false, isNewEntity = true, 10, Some(SingleTrust.toString)))
 
-  private val johnDoe = TrusteeIndividualEntity(TrusteeNameId(2), "John Doe", false, false, true, 3, Some("single"))
-  private val testCompany = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company", false, true, true, 3, Some("single"))
-  private val testPartnership = TrusteePartnershipEntity(PartnershipDetailsId(0), "Trustee Partnership", false, true, true, 3, Some("single"))
+  private val johnDoe = TrusteeIndividualEntity(TrusteeNameId(2), "John Doe", isDeleted = false,
+    isCompleted = false, isNewEntity = true, noOfRecords = 3, schemeType = Some("single"))
+  private val testCompany = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company", isDeleted = false,
+    isCompleted = true, isNewEntity = true, noOfRecords = 3, schemeType = Some("single"))
+  private val testPartnership = TrusteePartnershipEntity(PartnershipDetailsId(0), "Trustee Partnership", isDeleted = false,
+    isCompleted = true, isNewEntity = true, noOfRecords = 3, schemeType = Some("single"))
 
   private val trusteesAllTypes = Seq(johnDoe, testCompany, testPartnership)
 
@@ -72,13 +74,13 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours w
 
   val view: addTrustee = app.injector.instanceOf[addTrustee]
 
-  private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
+  private def createView(trustees: Seq[Trustee[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     view(form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
-  private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
+  private def createUpdateView(trustees: Seq[Trustee[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     view(form, UpdateMode, trustees, None, Some("srn"))(fakeRequest, messages)
 
-  private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
+  private def createViewUsingForm(trustees: Seq[Trustee[_]]): Form[Boolean] => HtmlFormat.Appendable = (form: Form[Boolean]) =>
     view(form, NormalMode, trustees, None, None)(fakeRequest, messages)
 
   "AddTrustee view" must {

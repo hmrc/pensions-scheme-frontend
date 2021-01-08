@@ -37,7 +37,7 @@ class CompanyEmailIdSpec extends SpecBase {
       "id",
       UserAnswers().trusteesCompanyDetails(0, companyDetails).trusteeCompanyEmail(0, email), Some(PsaId("A0000000"))
     )
-    implicit val userAnswers: UserAnswers = request.userAnswers
+
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
 
     Seq(NormalMode, UpdateMode).foreach { mode =>

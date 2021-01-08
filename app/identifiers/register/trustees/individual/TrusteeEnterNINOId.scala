@@ -21,8 +21,8 @@ import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class TrusteeEnterNINOId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -36,7 +36,7 @@ object TrusteeEnterNINOId {
 
   override lazy val toString: String = "trusteeNino"
 
-  implicit def cya(implicit userAnswers: UserAnswers, countryOptions: CountryOptions): CheckYourAnswers[TrusteeEnterNINOId] = {
+  implicit def cya: CheckYourAnswers[TrusteeEnterNINOId] = {
 
     new CheckYourAnswersTrusteeIndividual[TrusteeEnterNINOId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {

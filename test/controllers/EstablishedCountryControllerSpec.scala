@@ -49,7 +49,7 @@ class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehavio
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", testAnswer))
 
-  private def viewAsString(form: Form[_] = form): Form[_] => String = form =>
+  private def viewAsString(form: Form[_]): Form[_] => String = form =>
    view(form, NormalMode, options, schemeName)(fakeRequest, messages).toString()
 
   private def controller(

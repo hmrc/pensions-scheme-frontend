@@ -22,8 +22,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId,
-  CompanyPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest

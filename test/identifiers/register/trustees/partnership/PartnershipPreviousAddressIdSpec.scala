@@ -19,7 +19,6 @@ package identifiers.register.trustees.partnership
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
-import models.person.PersonName
 import models.requests.DataRequest
 import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
 import org.scalatest.OptionValues

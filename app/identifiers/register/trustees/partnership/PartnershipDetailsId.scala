@@ -19,7 +19,6 @@ package identifiers.register.trustees.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.PartnershipDetails
-import play.api.i18n.Messages
 import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.CheckYourAnswers

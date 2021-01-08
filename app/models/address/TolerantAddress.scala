@@ -19,7 +19,6 @@ package models.address
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import utils.CountryOptions
 
 import scala.language.implicitConversions
 

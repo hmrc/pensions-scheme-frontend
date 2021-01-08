@@ -21,8 +21,8 @@ import identifiers.register.trustees
 import identifiers.register.trustees.TrusteesId
 import models.ReferenceValue
 import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeCompany, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -35,8 +35,7 @@ case class CompanyEnterUTRId(index: Int) extends TypedIdentifier[ReferenceValue]
 object CompanyEnterUTRId {
   override def toString: String = "utr"
 
-  implicit def cya(implicit userAnswers: UserAnswers,
-                   countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterUTRId] = {
+  implicit def cya: CheckYourAnswers[CompanyEnterUTRId] = {
     new CheckYourAnswersTrusteeCompany[CompanyEnterUTRId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__utr__checkyouranswerslabel"),

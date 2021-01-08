@@ -17,14 +17,8 @@
 package utils.datacompletion
 
 import identifiers._
-import identifiers.register.establishers.company._
-import identifiers.register.trustees.{company => tc}
-import identifiers.register.trustees.{partnership => tp}
-import identifiers.register.establishers.company.director._
-import identifiers.register.trustees.individual._
-import identifiers.register.trustees.partnership.PartnershipHasBeenTradingId
-import models.address.Address
 import models._
+import models.address.Address
 import play.api.libs.json.Reads
 import utils.UserAnswers
 

@@ -18,7 +18,6 @@ package identifiers
 
 import models.Link
 import models.address.Address
-import play.api.i18n.Messages
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
@@ -36,9 +35,8 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
 
     new CheckYourAnswers[self.type] {
 
-      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         AddressCYA[self.type](label, hiddenLabel)().row(id)(changeUrl, userAnswers)
-      }
 
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         userAnswers.get(id) match {

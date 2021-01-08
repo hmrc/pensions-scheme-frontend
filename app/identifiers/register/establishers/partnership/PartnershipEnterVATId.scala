@@ -20,8 +20,8 @@ import identifiers._
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartnership, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -31,7 +31,7 @@ case class PartnershipEnterVATId(index: Int) extends TypedIdentifier[ReferenceVa
 object PartnershipEnterVATId {
   override def toString: String = "partnershipVat"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipEnterVATId] = {
+  implicit def cya: CheckYourAnswers[PartnershipEnterVATId] = {
     new CheckYourAnswersPartnership[PartnershipEnterVATId] {
       def getLabel(index: Int, ua: UserAnswers): (Message, Message) = {
         (dynamicMessage(index, ua, "messages__enterVAT"),

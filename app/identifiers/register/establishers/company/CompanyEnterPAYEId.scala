@@ -20,8 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.JsPath
+import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersCompany, ReferenceValueCYA}
-import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue] {
@@ -31,7 +31,7 @@ case class CompanyEnterPAYEId(index: Int) extends TypedIdentifier[ReferenceValue
 object CompanyEnterPAYEId {
   override def toString: String = "companyPaye"
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyEnterPAYEId] = {
+  implicit def cya: CheckYourAnswers[CompanyEnterPAYEId] = {
     new CheckYourAnswersCompany[CompanyEnterPAYEId] {
 
       private def hiddenLabel(index:  Int, ua: UserAnswers) : Message =

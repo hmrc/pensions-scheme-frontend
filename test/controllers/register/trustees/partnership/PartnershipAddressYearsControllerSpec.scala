@@ -16,15 +16,15 @@
 
 package controllers.register.trustees.partnership
 
-import services.FakeUserAnswersService
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models.{AddressYears, Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
+import services.FakeUserAnswersService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message

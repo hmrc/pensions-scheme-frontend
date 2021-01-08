@@ -57,8 +57,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
-                       (implicit request: DataRequest[AnyContent]): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index,
         srn),

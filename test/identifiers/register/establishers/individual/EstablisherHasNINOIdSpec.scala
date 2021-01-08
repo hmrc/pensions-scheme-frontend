@@ -18,9 +18,9 @@ package identifiers.register.establishers.individual
 
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
-import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import models.person.PersonName
 import models.requests.DataRequest
+import models.{Link, NormalMode, ReferenceValue, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
@@ -88,7 +88,6 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherHasNINOId(0).row(onwardUrl, NormalMode) must equal(answerRowsWithChangeLinks)
       }
@@ -99,7 +98,6 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
 
       "return answers rows with change links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", updatedAnswers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherHasNINOId(0).row(onwardUrl, UpdateMode) must equal(answerRowsWithChangeLinks)
       }
@@ -109,7 +107,6 @@ class EstablisherHasNINOIdSpec extends SpecBase with OptionValues {
 
       "Not return answer rows" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
 
         EstablisherHasNINOId(0).row(onwardUrl, UpdateMode) must equal(Seq.empty[AnswerRow])
       }

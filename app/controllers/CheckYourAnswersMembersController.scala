@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId}
 import javax.inject.Inject
@@ -25,7 +24,6 @@ import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._

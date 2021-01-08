@@ -23,9 +23,9 @@ import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
 import org.scalatest.prop.TableFor3
-import play.api.libs.json.{JsString, Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.UserAnswers
 
 class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
