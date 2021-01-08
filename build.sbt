@@ -12,8 +12,8 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "pensions-scheme-frontend"
 
-
 lazy val root = (project in file("."))
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(scalaSettings: _*)
   .settings(defaultSettings(): _*)
@@ -22,7 +22,9 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(scalaVersion := "2.12.11")
   .settings(silencerSettings)
-  .settings(RoutesKeys.routesImport ++= Seq(
+  .settings(
+    name := appName,
+    RoutesKeys.routesImport ++= Seq(
     "models.Index",
     "models.Mode",
     "models.CheckMode",
@@ -40,7 +42,6 @@ lazy val root = (project in file("."))
       "uk.gov.hmrc.play.views.html.layouts._"
     ))
   .settings(
-    name := appName,
     PlayKeys.playDefaultPort := 8200,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*models.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;.*UserAnswersCacheConnector;" +
