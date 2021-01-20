@@ -89,7 +89,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   override def beforeEach(): Unit = {
     reset(dataCacheConnector, viewCacheConnector, updateCacheConnector,
       lockRepoConnector, schemeDetailsConnector, minimalPsaConnector)
-    when(minimalPsaConnector.isPsaSuspended(any())(any(), any())).thenReturn(Future.successful(false))
+    when(minimalPsaConnector.getMinimalFlags(any())(any(), any())).thenReturn(Future.successful(PSAMinimalFlags(false, false)))
     when(updateCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))
     when(viewCacheConnector.upsert(any(), any())(any(), any()))

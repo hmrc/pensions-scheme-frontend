@@ -16,7 +16,7 @@
 
 package identifiers
 
-case object IsPsaSuspendedId extends TypedIdentifier[Boolean] {
-  override def toString: String = "getMinimalFlags"
+case object IsPsaDeceasedId extends TypedIdentifier[Boolean] {
+  override def toString: String = "isPsaDeceased"
 
 }

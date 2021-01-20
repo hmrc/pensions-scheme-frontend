@@ -18,7 +18,7 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import models.MinimalPSA
+import models.{MinimalPSA, PSAMinimalFlags}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
@@ -32,7 +32,7 @@ import scala.util.Failure
 @ImplementedBy(classOf[MinimalPsaConnectorImpl])
 trait MinimalPsaConnector {
 
-  def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean]
+  def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
 
   def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
 
@@ -71,13 +71,15 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
     }
   }
 
-  override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] = {
     val psaHc = hc.withExtraHeaders("psaId" -> psaId)
 
     http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
       response.status match {
         case OK =>
-          (response.json \ "isPsaSuspended").as[Boolean]
+          val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]
+          val isDeceased = (response.json \ "deceasedFlag").as[Boolean]
+          PSAMinimalFlags(isSuspended, isDeceased)
         case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
       }
     } andThen {

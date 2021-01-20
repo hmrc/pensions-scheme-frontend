@@ -103,8 +103,8 @@ class DataRetrievalImpl(
                                                       psaId: String,
                                                       upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.isPsaSuspended(psaId).flatMap { isSuspended =>
-      val updatedUserAnswers = UserAnswers(jsValue).set(IsPsaSuspendedId)(isSuspended).flatMap(
+    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+      val updatedUserAnswers = UserAnswers(jsValue).set(IsPsaSuspendedId)(minimalFlags.isSuspended).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
       upsertUserAnswers(updatedUserAnswers.json)
     }

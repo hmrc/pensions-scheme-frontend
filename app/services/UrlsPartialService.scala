@@ -95,8 +95,8 @@ class UrlsPartialService @Inject()(
 
   def checkIfSchemeCanBeRegistered(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
-      isPsaSuspended <- minimalPsaConnector.isPsaSuspended(psaId)
-      result <- retrieveResult(request.userAnswers, isPsaSuspended)
+      minimalFlags <- minimalPsaConnector.getMinimalFlags(psaId)
+      result <- retrieveResult(request.userAnswers, minimalFlags.isSuspended)
     } yield result
 
 

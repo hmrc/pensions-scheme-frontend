@@ -54,8 +54,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       lockConnector, updateConnector, minimalPsaConnector)
 
   override def beforeEach(): Unit = {
-    when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any()))
-      .thenReturn(Future.successful(false))
+    when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
     when(dataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(schemeNameJsonOption)))
     when(dataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
     when(dataCacheConnector.lastUpdated(any())(any(), any()))
@@ -113,7 +113,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
   "checkIfSchemeCanBeRegistered" must {
 
     "redirect to the cannot start registration page if called without a psa name but psa is suspended" in {
-      when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(true))
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -122,7 +123,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
 
     "redirect to the register scheme page if called without psa name but psa is not suspended" in {
-      when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
       implicit val request: OptionalDataRequest[AnyContent] =
         OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
 
@@ -133,7 +135,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
 
     "redirect to continue register a scheme page if called with a psa name and psa is not suspended" in {
-      when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -142,7 +145,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     }
 
     "redirect to cannot start registration page if called with a psa name and psa is suspended" in {
-      when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(true))
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -154,7 +158,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       implicit val request: OptionalDataRequest[AnyContent] =
         OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeSrnNumberOnlyData)), Some(PsaId("A0000000")))
       when(dataCacheConnector.removeAll(eqTo("id"))(any(), any())).thenReturn(Future(Ok))
-      when(minimalPsaConnector.isPsaSuspended(eqTo(psaId))(any(), any())).thenReturn(Future.successful(false))
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 

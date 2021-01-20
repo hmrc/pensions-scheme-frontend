@@ -40,7 +40,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
   override protected def portConfigKey: String = "microservice.services.pension-administrator.port"
 
-  "isPsaSuspended" should "return suspended flag the PSA subscription for a valid request" in {
+  "getMinimalFlags" should "return suspended flag the PSA subscription for a valid request" in {
 
     server.stubFor(
       get(urlEqualTo(minimalPsaDetailsUrl))
@@ -52,9 +52,10 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
-    connector.isPsaSuspended(psaId).map(isSuspended =>
-      isSuspended shouldBe true
-    )
+    connector.getMinimalFlags(psaId).map { minimalFlags =>
+      minimalFlags.isSuspended shouldBe true
+      minimalFlags.isDeceased shouldBe false
+    }
 
   }
 
@@ -71,7 +72,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[JsResultException] {
-      connector.isPsaSuspended(psaId)
+      connector.getMinimalFlags(psaId)
     }
 
   }
@@ -88,7 +89,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[NotFoundException] {
-      connector.isPsaSuspended(psaId)
+      connector.getMinimalFlags(psaId)
     }
 
   }
@@ -141,6 +142,7 @@ object MinimalPsaConnectorSpec extends OptionValues {
       Json.obj(
         "email" -> email,
         "isPsaSuspended" -> true,
+        "deceasedFlag" -> false,
         "organisationName" -> "test ltd"
       )
     )

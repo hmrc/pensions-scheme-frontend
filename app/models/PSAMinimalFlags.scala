@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers
+package models
 
-case object IsPsaSuspendedId extends TypedIdentifier[Boolean] {
-  override def toString: String = "getMinimalFlags"
+case class PSAMinimalFlags(isSuspended:Boolean, isDeceased:Boolean)
 
-}
+
