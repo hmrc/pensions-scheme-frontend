@@ -19,8 +19,9 @@ package controllers.actions
 import com.google.inject.Inject
 import connectors.PensionsSchemeConnector
 import handlers.ErrorHandlerWithReturnLinkToManage
-import identifiers.IsPsaSuspendedId
-import models.UpdateMode
+import identifiers.PsaMinimalFlagsId
+import PsaMinimalFlagsId._
+import models.{PSAMinimalFlags, UpdateMode}
 import models.requests.OptionalDataRequest
 import play.api.http.Status._
 import play.api.mvc.Results._
@@ -45,10 +46,11 @@ abstract class AllowAccessAction(srn: Option[String],
       .session))
 
     val optionUA = request.userAnswers
-    val optionIsSuspendedId = optionUA.flatMap(_.get(IsPsaSuspendedId))
 
-    (optionUA, optionIsSuspendedId, srn) match {
-      case (Some(_), Some(true), _) if checkForSuspended =>
+    val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
+
+    (optionUA, optionPsaMinimalFlagsId, srn) match {
+      case (Some(_), Some(PSAMinimalFlags(true, false)), _) if checkForSuspended =>
         Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
       case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {

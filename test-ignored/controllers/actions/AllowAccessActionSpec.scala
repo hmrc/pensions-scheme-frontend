@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import connectors.PensionsSchemeConnector
-import identifiers.IsPsaSuspendedId
+import identifiers.PsaMinimalFlagsId
 import models.UpdateMode
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.any
@@ -78,9 +78,8 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
   val srn = Some("S123")
 
-  val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
-  val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))
-
+  val suspendedUserAnswers = UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = true, isDeceased = false)))
+  val notSuspendedUserAnswers = UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = false, isDeceased = false))))
 
   def assertEqual(futureResult: Future[Option[Result]], expectedResult: => Option[String]): Unit = {
     whenReady(futureResult) {

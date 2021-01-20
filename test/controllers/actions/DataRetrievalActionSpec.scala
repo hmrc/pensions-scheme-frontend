@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import connectors._
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId, UKBankAccountId}
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId, UKBankAccountId}
 import matchers.JsonMatchers
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
@@ -32,6 +32,7 @@ import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
+import PsaMinimalFlagsId._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -81,7 +82,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val statusPending = "Pending"
 
   private val answersFromDES = UserAnswers().set(SchemeStatusId)(statusOpen).asOpt.value
-  private val answersFromDESWithSuspensionFlag = answersFromDES.set(IsPsaSuspendedId)(false).asOpt.value
+
+  private val answersFromDESWithSuspensionFlag = answersFromDES
+    .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false)).asOpt.value
 
   private def userAnswersDummy(status: String, srn: String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
     .set(SchemeSrnId)(srn).asOpt.value
@@ -89,7 +92,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   override def beforeEach(): Unit = {
     reset(dataCacheConnector, viewCacheConnector, updateCacheConnector,
       lockRepoConnector, schemeDetailsConnector, minimalPsaConnector)
-    when(minimalPsaConnector.getMinimalFlags(any())(any(), any())).thenReturn(Future.successful(PSAMinimalFlags(false, false)))
+    when(minimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
     when(updateCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))
     when(viewCacheConnector.upsert(any(), any())(any(), any()))
@@ -346,7 +350,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       "status is open and srn is different from cached srn then no user answers is added to the request and view only is true" in {
       val differentSrn = "different-srn"
       val answersFromDES = userAnswersDummy(statusOpen, srn = differentSrn)
-      val answersFromDESWithSuspensionFlag = answersFromDES.set(IsPsaSuspendedId)(false).asOpt.value
+      val answersFromDESWithSuspensionFlag = answersFromDES
+        .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false)).asOpt.value
       val uaInsertedIntoViewCache = answersFromDESWithSuspensionFlag.set(UKBankAccountId)(true).asOpt.value
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
 

@@ -40,7 +40,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
   override protected def portConfigKey: String = "microservice.services.pension-administrator.port"
 
-  "getMinimalFlags" should "return suspended flag the PSA subscription for a valid request" in {
+  "getMinimalFlags" should "return suspended flag and the deceased flag for the PSA subscription for a valid request" in {
 
     server.stubFor(
       get(urlEqualTo(minimalPsaDetailsUrl))
@@ -54,7 +54,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
     connector.getMinimalFlags(psaId).map { minimalFlags =>
       minimalFlags.isSuspended shouldBe true
-      minimalFlags.isDeceased shouldBe false
+      minimalFlags.isDeceased shouldBe true
     }
 
   }
@@ -142,7 +142,7 @@ object MinimalPsaConnectorSpec extends OptionValues {
       Json.obj(
         "email" -> email,
         "isPsaSuspended" -> true,
-        "deceasedFlag" -> false,
+        "deceasedFlag" -> true,
         "organisationName" -> "test ltd"
       )
     )

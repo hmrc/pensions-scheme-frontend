@@ -19,7 +19,8 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
+import identifiers.PsaMinimalFlagsId._
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -104,7 +105,7 @@ class DataRetrievalImpl(
                                                       upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
-      val updatedUserAnswers = UserAnswers(jsValue).set(IsPsaSuspendedId)(minimalFlags.isSuspended).flatMap(
+      val updatedUserAnswers = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
       upsertUserAnswers(updatedUserAnswers.json)
     }
