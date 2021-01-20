@@ -70,7 +70,7 @@ class DataRetrievalImpl(
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            addSuspensionFlagAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
+            addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
           case _ => Future.successful(None)
         }
         createOptionalRequest(optJs, viewOnly = false)
@@ -93,13 +93,13 @@ class DataRetrievalImpl(
     if (refresh) {
       schemeDetailsConnector
         .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-        .flatMap(ua => addSuspensionFlagAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
         .map(Some(_))
     } else {
       viewConnector.fetch(request.externalId)
     }
 
-  private def addSuspensionFlagAndUpdateRepository[A](srn: String,
+  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
                                                       psaId: String,
                                                       upsertUserAnswers: JsValue => Future[JsValue])
