@@ -17,31 +17,30 @@
 package views
 
 import controllers.routes
-import forms.TypeOfBenefitsFormProvider
-import models.{NormalMode, TypeOfBenefits}
+import forms.MoneyPurchaseBenefitsFormProvider
+import models.{MoneyPurchaseBenefits, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Call
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.typeOfBenefits
+import views.html.moneyPurchaseBenefits
 
-class TypeOfBenefitsViewSpec extends ViewBehaviours {
+class MoneyPurchaseBenefitsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "type_of_benefits"
+  val messageKeyPrefix = "moneyPurchaseBenefits"
 
-  val schemeName = "schemename"
-  val form = new TypeOfBenefitsFormProvider()(schemeName)
+  val schemeName = "schemeName"
+  val form = new MoneyPurchaseBenefitsFormProvider()()
+  val postCall: Call = routes.MoneyPurchaseBenefitsController.onSubmit(NormalMode, None)
+  val view: moneyPurchaseBenefits = app.injector.instanceOf[moneyPurchaseBenefits]
 
-  val view: typeOfBenefits = app.injector.instanceOf[typeOfBenefits]
+  private def createView(): () => HtmlFormat.Appendable = () =>
+    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages)
 
-  private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, None)
+  private def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages)
 
-  private def createView() = () =>
-    view(form, postCall, Some(schemeName))(fakeRequest, messages)
-
-  private def createViewUsingForm = (form: Form[_]) =>
-    view(form, postCall, Some(schemeName))(fakeRequest, messages)
-
-  "Type of benefits view" when {
+  "MoneyPurchaseBenefits view" when {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
 
@@ -49,21 +48,18 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- TypeOfBenefits.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for ((option, i) <- MoneyPurchaseBenefits.options.zipWithIndex) {
+          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
         }
       }
     }
 
-    for (option <- TypeOfBenefits.options) {
+    for ((option, i) <- MoneyPurchaseBenefits.options.zipWithIndex) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
 
-          for (unselectedOption <- TypeOfBenefits.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
-          }
         }
       }
     }

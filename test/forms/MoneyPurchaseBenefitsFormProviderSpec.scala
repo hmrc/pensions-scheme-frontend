@@ -16,15 +16,30 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.behaviours.CheckboxBehaviour
 import models.MoneyPurchaseBenefits
-import play.api.data.Form
-import play.api.data.Forms.seq
+import play.api.data.FormError
 
-import javax.inject.Inject
-class MoneyPurchaseBenefitsFormProvider @Inject() extends Mappings {
+class MoneyPurchaseBenefitsFormProviderSpec extends CheckboxBehaviour {
 
-  val errorKey: String = "messages__moneyPurchaseBenefits__error"
-  def apply(): Form[Seq[MoneyPurchaseBenefits]] =
-    Form("value" -> seq(enumerable[MoneyPurchaseBenefits](errorKey)).verifying(nonEmptySeq(errorKey)))
+  val form = new MoneyPurchaseBenefitsFormProvider()()
+
+  ".value" must {
+
+    val fieldName = "value"
+    val requiredKey = "messages__moneyPurchaseBenefits__error"
+
+    behave like checkboxField[MoneyPurchaseBenefits](
+      form,
+      fieldName,
+      validValues  = MoneyPurchaseBenefits.values,
+      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+    )
+
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
+  }
 }

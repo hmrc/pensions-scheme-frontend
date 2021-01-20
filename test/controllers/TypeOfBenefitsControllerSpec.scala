@@ -22,17 +22,25 @@ import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAct
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
+import models.FeatureToggle.Enabled
+import models.FeatureToggleName.TCMP
 import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 
-class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours {
+import scala.concurrent.Future
+
+class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours with MockitoSugar {
 
   private val view = injector.instanceOf[typeOfBenefits]
   private val formProvider = new TypeOfBenefitsFormProvider()
@@ -41,9 +49,12 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     SchemeNameId.toString -> "Test Scheme Name")).typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
+  private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, None)
+  private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
+
 
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
+    view(form, postCall, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -61,20 +72,22 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
-      view
+      view,
+      featureToggleService
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
   private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode)
+    controller(cache = cache).onSubmit(NormalMode, None)
 
   "Type of benefits Controller" when {
+    when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(TCMP)))
 
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction,

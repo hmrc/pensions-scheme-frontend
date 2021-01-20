@@ -181,6 +181,13 @@ trait Constraints {
       case _ => Valid
     }
 
+  protected def nonEmptySeq(errorKey: String): Constraint[Seq[_]] = Constraint {
+    case seq: Seq[_] =>
+      if (seq.nonEmpty) Valid else Invalid(errorKey)
+    case _ =>
+      Invalid("error.invalid")
+  }
+
   protected def emailAddressRestrictive(errorKey: String): Constraint[String] = regexp(regexEmailRestrictive, errorKey)
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regexPostcode, errorKey)

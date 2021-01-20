@@ -16,8 +16,9 @@
 
 package identifiers
 
+import models.TypeOfBenefits.Defined
 import models.{Link, TypeOfBenefits}
-import play.api.libs.json.Reads
+import play.api.libs.json.{JsResult, Reads}
 import utils.checkyouranswers.CheckYourAnswers
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
@@ -26,11 +27,17 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
   self =>
   override def toString: String = "benefits"
 
+  override def cleanup(value: Option[TypeOfBenefits], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    value match {
+      case Some(Defined) => userAnswers.remove(MoneyPurchaseBenefitsId)
+      case _ => super.cleanup(value, userAnswers)
+    }
+
   implicit def cya(implicit userAnswers: UserAnswers,
                    rds: Reads[TypeOfBenefits]): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
-    val label = Message("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
-    val hiddenLabel = Some(Message("messages__visuallyhidden__type_of_benefits_change", userAnswers.get(SchemeNameId).getOrElse("")))
+    val label: Message = Message("messages__type_of_benefits_cya_label", userAnswers.get(SchemeNameId).getOrElse(""))
+    val hiddenLabel: Option[Message] = Some(Message("messages__visuallyhidden__type_of_benefits_change", userAnswers.get(SchemeNameId).getOrElse("")))
       private def typeOfBenefitsCYARow(id: self.type , userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
         userAnswers.get(id).map {
           typeOfBenefits =>

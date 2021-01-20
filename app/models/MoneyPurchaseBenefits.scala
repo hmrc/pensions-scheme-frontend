@@ -24,25 +24,13 @@ sealed trait MoneyPurchaseBenefits
 
 object MoneyPurchaseBenefits extends Enumerable.Implicits {
 
-  case object OptionA extends WithName("optionA") with MoneyPurchaseBenefits
-  case object OptionB extends WithName("optionB") with MoneyPurchaseBenefits
+  case object Collective extends WithName("opt1") with MoneyPurchaseBenefits
+  case object CashBalance extends WithName("opt2") with MoneyPurchaseBenefits
+  case object Other extends WithName("opt3") with MoneyPurchaseBenefits
 
+  def values: Seq[MoneyPurchaseBenefits] = Seq(Collective, CashBalance, Other)
 
-  def values: Seq[MoneyPurchaseBenefits] = Seq(
-    OptionA, OptionB
-  )
+  val options: Seq[Checkbox] = values.map { value => Checkbox("messages__moneyPurchaseBenefits__", value.toString) }
 
-  def options: Seq[Checkbox] = Seq(
-    checkboxOption(OptionA),
-    checkboxOption(OptionB)
-  )
-
-  private def checkboxOption(option: MoneyPurchaseBenefits) =
-    Checkbox(
-      keyPrefix = "testCheckBoxes",
-      option = s"$option"
-    )
-
-  implicit val enumerable: Enumerable[MoneyPurchaseBenefits] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  implicit val enumerable: Enumerable[MoneyPurchaseBenefits] = Enumerable(values.map(v => v.toString -> v): _*)
 }

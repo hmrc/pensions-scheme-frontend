@@ -18,11 +18,18 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import identifiers.TcmpToggleId
+import models.FeatureToggle.Enabled
+import models.FeatureToggleName.TCMP
+
 import javax.inject.Inject
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.schemeDetailsTaskList
@@ -37,7 +44,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: schemeDetailsTaskList,
                                          hsTaskListHelperRegistration: HsTaskListHelperRegistration,
-                                         hsTaskListHelperVariations: HsTaskListHelperVariations
+                                         hsTaskListHelperVariations: HsTaskListHelperVariations,
+                                         featureToggleService: FeatureToggleService
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -46,13 +54,24 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       (srn, request.userAnswers) match {
         case (None, Some(userAnswers)) =>
-          Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn))))
-        case (Some(_), Some(ua)) =>
-          Future.successful(Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn))))
+          userAnswersWithTcmpToggle(userAnswers).flatMap { ua =>
+            Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn))))
+          }
+        case (Some(_), Some(userAnswers)) =>
+          userAnswersWithTcmpToggle(userAnswers).flatMap { ua =>
+            Future.successful(Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn))))
+          }
         case (Some(_), _) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
+  }
+
+  def userAnswersWithTcmpToggle(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] = {
+    featureToggleService.get(TCMP).map {
+      case Enabled(_) => userAnswers.set(TcmpToggleId)(true).get
+      case _ => userAnswers
+    }
   }
 }

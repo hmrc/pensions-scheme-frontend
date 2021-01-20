@@ -16,25 +16,13 @@
 
 package viewmodels
 
-import play.api.i18n.Messages
-import play.twirl.api.{Html, HtmlFormat}
-
-case class MessageA(key: String, args: Any*) {
-
-  def html(implicit messages: Messages): HtmlFormat.Appendable =
-    Html(string)
-
-  def string(implicit messages: Messages): String =
-    messages(key, args: _*)
-}
-
-case class Checkbox(id: String, value: String, message: MessageA)
+case class Checkbox(id: String, value: String, message: Message)
 
 object Checkbox {
   def apply(keyPrefix: String, option: String, messageArgs: Any*): Checkbox =
     Checkbox(
-      id = s"$keyPrefix.$option",
+      id = s"$keyPrefix$option",
       value = option,
-      message = MessageA(s"$keyPrefix.$option", messageArgs: _*)
+      message = Message(s"$keyPrefix$option", messageArgs: _*)
     )
 }

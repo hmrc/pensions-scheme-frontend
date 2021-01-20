@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers
 
-import forms.mappings.Mappings
-import models.MoneyPurchaseBenefits
-import play.api.data.Form
-import play.api.data.Forms.seq
-
-import javax.inject.Inject
-class MoneyPurchaseBenefitsFormProvider @Inject() extends Mappings {
-
-  val errorKey: String = "messages__moneyPurchaseBenefits__error"
-  def apply(): Form[Seq[MoneyPurchaseBenefits]] =
-    Form("value" -> seq(enumerable[MoneyPurchaseBenefits](errorKey)).verifying(nonEmptySeq(errorKey)))
+case object TcmpToggleId extends TypedIdentifier[Boolean] {
+  override def toString: String = "tcmpToggle"
 }

@@ -21,12 +21,17 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
+import models.FeatureToggle.Enabled
+import models.FeatureToggleName.TCMP
+import models.TypeOfBenefits.Defined
+
 import javax.inject.Inject
 import models.{Mode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.AboutBenefitsAndInsurance
 import utils.{Enumerable, UserAnswers}
@@ -43,34 +48,47 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: TypeOfBenefitsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         val view: typeOfBenefits
+                                         val view: typeOfBenefits,
+                                         featureToggleService: FeatureToggleService
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
         val preparedForm = request.userAnswers.get(TypeOfBenefitsId) match {
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, postCall(mode, srn), existingSchemeName)))
       }
   }
 
   private def form(schemeName: String)(implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
+  private def postCall: (Mode, Option[String]) => Call = routes.TypeOfBenefitsController.onSubmit
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
 
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+            Future.successful(BadRequest(view(formWithErrors, postCall(mode, srn), existingSchemeName))),
           value =>
-            dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap))))
+            dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).flatMap(cacheMap =>
+              featureToggleService.get(TCMP).map {
+                case Enabled(_) => Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap)))
+                case _ => Redirect(toggleOffNavigation(mode, srn, value))
+              }
+            )
+
         )
       }
+  }
+
+  private def toggleOffNavigation(mode: Mode, srn: Option[String], benefits: TypeOfBenefits): Call = benefits match {
+    case Defined => controllers.routes.BenefitsSecuredByInsuranceController.onPageLoad(mode, srn)
+    case _ => controllers.routes.MoneyPurchaseBenefitsController.onPageLoad(mode, srn)
+
   }
 }

@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package forms
+package services
 
-import forms.mappings.Mappings
-import models.MoneyPurchaseBenefits
-import play.api.data.Form
-import play.api.data.Forms.seq
+import connectors.FeatureToggleConnector
 
 import javax.inject.Inject
-class MoneyPurchaseBenefitsFormProvider @Inject() extends Mappings {
+import javax.inject.Singleton
+import models._
+import uk.gov.hmrc.http.HeaderCarrier
 
-  val errorKey: String = "messages__moneyPurchaseBenefits__error"
-  def apply(): Form[Seq[MoneyPurchaseBenefits]] =
-    Form("value" -> seq(enumerable[MoneyPurchaseBenefits](errorKey)).verifying(nonEmptySeq(errorKey)))
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+
+@Singleton
+class FeatureToggleService @Inject()(featureToggleConnector:FeatureToggleConnector) {
+  def get(name: FeatureToggleName)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[FeatureToggle] =
+    featureToggleConnector.get(name.asString)
 }

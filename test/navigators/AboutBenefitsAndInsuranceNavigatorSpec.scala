@@ -20,7 +20,8 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.routes._
 import identifiers._
-import models.TypeOfBenefits.MoneyPurchase
+import models.TypeOfBenefits._
+import models.MoneyPurchaseBenefits._
 import models._
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
@@ -43,7 +44,9 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           ("Id", "UserAnswers", "Next Page"),
           row(InvestmentRegulatedSchemeId)(false, occupationalPension),
           row(OccupationalPensionSchemeId)(false, typesofBenefits),
-          row(TypeOfBenefitsId)(MoneyPurchase, benefitsSecured),
+          row(TypeOfBenefitsId)(Defined, benefitsSecured),
+          row(TypeOfBenefitsId)(MoneyPurchase, moneyPurchaseBenefits()),
+          row(MoneyPurchaseBenefitsId)(Seq(Other, CashBalance), benefitsSecured),
           row(BenefitsSecuredByInsuranceId)(false, checkYouAnswers()),
           row(BenefitsSecuredByInsuranceId)(true, insuranceCompanyName(NormalMode)),
           row(InsuranceCompanyNameId)(someStringValue, policyNumber()),
@@ -61,7 +64,9 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           ("Id", "UserAnswers", "Next Page"),
           row(InvestmentRegulatedSchemeId)(false, checkYouAnswers()),
           row(OccupationalPensionSchemeId)(false, checkYouAnswers()),
-          row(TypeOfBenefitsId)(MoneyPurchase, checkYouAnswers()),
+          row(TypeOfBenefitsId)(Defined, checkYouAnswers()),
+          row(TypeOfBenefitsId)(MoneyPurchase, moneyPurchaseBenefits(CheckMode)),
+          row(MoneyPurchaseBenefitsId)(Seq(Other, CashBalance), checkYouAnswers()),
           row(BenefitsSecuredByInsuranceId)(false, checkYouAnswers()),
           row(BenefitsSecuredByInsuranceId)(true, insuranceCompanyName(CheckMode)),
           row(InsuranceCompanyNameId)(someStringValue, policyNumber(NormalMode)),
@@ -103,13 +108,14 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
 
   private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
 
-  private def occupationalPension: Call                         = OccupationalPensionSchemeController.onPageLoad(NormalMode)
-  private def typesofBenefits: Call                             = TypeOfBenefitsController.onPageLoad(NormalMode)
-  private def benefitsSecured: Call                             = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)
-  private def insuranceCompanyName(mode: Mode): Call            = InsuranceCompanyNameController.onPageLoad(mode, None)
-  private def policyNumber(mode: Mode = NormalMode): Call       = InsurancePolicyNumberController.onPageLoad(mode, None)
-  private def insurerPostcode(mode: Mode = NormalMode): Call    = InsurerEnterPostcodeController.onPageLoad(mode, None)
-  private def insurerAddressList(mode: Mode = NormalMode): Call = InsurerSelectAddressController.onPageLoad(mode, None)
-  private def checkYouAnswers(mode: Mode = NormalMode): Call    = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
-  private def anyMoreChanges: Call                              = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+  private def occupationalPension: Call                               = OccupationalPensionSchemeController.onPageLoad(NormalMode)
+  private def typesofBenefits: Call                                   = TypeOfBenefitsController.onPageLoad(NormalMode, None)
+  private def moneyPurchaseBenefits(mode: Mode = NormalMode): Call    = MoneyPurchaseBenefitsController.onPageLoad(mode, None)
+  private def benefitsSecured: Call                                   = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)
+  private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(mode, None)
+  private def policyNumber(mode: Mode = NormalMode): Call             = InsurancePolicyNumberController.onPageLoad(mode, None)
+  private def insurerPostcode(mode: Mode = NormalMode): Call          = InsurerEnterPostcodeController.onPageLoad(mode, None)
+  private def insurerAddressList(mode: Mode = NormalMode): Call       = InsurerSelectAddressController.onPageLoad(mode, None)
+  private def checkYouAnswers(mode: Mode = NormalMode): Call          = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
+  private def anyMoreChanges: Call                                    = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 }
