@@ -24,7 +24,7 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.SchemeNameId
 import identifiers.register.SubmissionReferenceNumberId
-import models.LastUpdated
+import models.{LastUpdated, PSAMinimalFlags}
 import models.requests.OptionalDataRequest
 import play.api.Logger
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
@@ -96,22 +96,22 @@ class UrlsPartialService @Inject()(
   def checkIfSchemeCanBeRegistered(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
       minimalFlags <- minimalPsaConnector.getMinimalFlags(psaId)
-      result <- retrieveResult(request.userAnswers, minimalFlags.isSuspended)
+      result <- retrieveResult(request.userAnswers, minimalFlags)
     } yield result
 
 
   //LINK WITH PSA SUSPENSION HELPER METHODS
-  private def retrieveResult(schemeDetailsCache: Option[UserAnswers], isPsaSuspended: Boolean
+  private def retrieveResult(schemeDetailsCache: Option[UserAnswers], minimalFlags: PSAMinimalFlags
                             )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     schemeDetailsCache match {
-      case None => Future.successful(redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended))
+      case None => Future.successful(redirectBasedOnPsaSuspension(appConfig.registerUrl, minimalFlags))
       case Some(ua) => ua.get(SchemeNameId) match {
-        case Some(_) => Future.successful(redirectBasedOnPsaSuspension(appConfig.continueUrl, isPsaSuspended))
-        case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, isPsaSuspended)
+        case Some(_) => Future.successful(redirectBasedOnPsaSuspension(appConfig.continueUrl, minimalFlags))
+        case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, minimalFlags)
       }
     }
 
-  private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, isPsaSuspended: Boolean
+  private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, minimalFlags: PSAMinimalFlags
                                                    )(implicit request: OptionalDataRequest[AnyContent],
                                                      hc: HeaderCarrier,
                                                      ec: ExecutionContext): Future[Result] =
@@ -121,11 +121,17 @@ class UrlsPartialService @Inject()(
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }{ _ => dataCacheConnector.removeAll(request.externalId).map { _ =>
         Logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
-        redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended)
+        redirectBasedOnPsaSuspension(appConfig.registerUrl, minimalFlags)
       }}
 
-  private def redirectBasedOnPsaSuspension(redirectUrl: String, isPsaSuspended: Boolean): Result =
-    if (isPsaSuspended) Redirect(appConfig.cannotStartRegUrl) else Redirect(redirectUrl)
+  private def redirectBasedOnPsaSuspension(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
+    Redirect(
+      minimalFlags match {
+        case PSAMinimalFlags(true, _) => appConfig.cannotStartRegUrl
+        case PSAMinimalFlags(_, true) => appConfig.youMustContactHMRCUrl
+        case _ => redirectUrl
+      }
+    )
 
   //DATE FORMATIING HELPER METHODS
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")

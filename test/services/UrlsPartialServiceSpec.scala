@@ -122,6 +122,16 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       redirectLocation(result).value mustBe cannotStartRegistrationUrl
     }
 
+    "redirect to the cannot start registration page if called without a psa name but psa is dead" in {
+      when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true)))
+
+      val result = service.checkIfSchemeCanBeRegistered(psaId)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe youMustContactHMRCUrl
+    }
+
     "redirect to the register scheme page if called without psa name but psa is not suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
@@ -183,6 +193,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   private val deleteDate = LocalDate.now(ZoneOffset.UTC).plusDays(frontendAppConfig.daysDataSaved).format(formatter)
 
   val cannotStartRegistrationUrl: String = frontendAppConfig.cannotStartRegUrl
+  val youMustContactHMRCUrl: String = frontendAppConfig.youMustContactHMRCUrl
 
   val schemeNameJsonOption: JsObject = Json.obj("schemeName" -> schemeName)
   val schemeSrnNumberOnlyData: JsObject =
