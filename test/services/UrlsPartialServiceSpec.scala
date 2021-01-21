@@ -112,7 +112,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
   "checkIfSchemeCanBeRegistered" must {
 
-    "redirect to the cannot start registration page if called without a psa name but psa is suspended" in {
+    "redirect to the cannot start registration page if called when psa is suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
 
@@ -122,7 +122,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       redirectLocation(result).value mustBe cannotStartRegistrationUrl
     }
 
-    "redirect to the cannot start registration page if called without a psa name but psa is dead" in {
+    "redirect to the cannot start registration page if called when psa is dead" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true)))
 
@@ -132,7 +132,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       redirectLocation(result).value mustBe youMustContactHMRCUrl
     }
 
-    "redirect to the register scheme page if called without psa name but psa is not suspended" in {
+    "redirect to the register scheme page if called when psa is not suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
       implicit val request: OptionalDataRequest[AnyContent] =
@@ -144,7 +144,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       redirectLocation(result).value mustBe frontendAppConfig.registerUrl
     }
 
-    "redirect to continue register a scheme page if called with a psa name and psa is not suspended" in {
+    "redirect to continue register a scheme page if called when psa is not suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
 
@@ -154,7 +154,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
       redirectLocation(result).value mustBe frontendAppConfig.continueUrl
     }
 
-    "redirect to cannot start registration page if called with a psa name and psa is suspended" in {
+    "redirect to cannot start registration page if called when psa is suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
 

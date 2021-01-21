@@ -99,14 +99,12 @@ class UrlsPartialService @Inject()(
       result <- retrieveResult(request.userAnswers, minimalFlags)
     } yield result
 
-
-  //LINK WITH PSA SUSPENSION HELPER METHODS
   private def retrieveResult(schemeDetailsCache: Option[UserAnswers], minimalFlags: PSAMinimalFlags
                             )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     schemeDetailsCache match {
-      case None => Future.successful(redirectBasedOnPsaSuspension(appConfig.registerUrl, minimalFlags))
+      case None => Future.successful(redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags))
       case Some(ua) => ua.get(SchemeNameId) match {
-        case Some(_) => Future.successful(redirectBasedOnPsaSuspension(appConfig.continueUrl, minimalFlags))
+        case Some(_) => Future.successful(redirectBasedOnMinimalFlags(appConfig.continueUrl, minimalFlags))
         case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, minimalFlags)
       }
     }
@@ -121,10 +119,10 @@ class UrlsPartialService @Inject()(
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }{ _ => dataCacheConnector.removeAll(request.externalId).map { _ =>
         Logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
-        redirectBasedOnPsaSuspension(appConfig.registerUrl, minimalFlags)
+        redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags)
       }}
 
-  private def redirectBasedOnPsaSuspension(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
+  private def redirectBasedOnMinimalFlags(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
     Redirect(
       minimalFlags match {
         case PSAMinimalFlags(true, _) => appConfig.cannotStartRegUrl

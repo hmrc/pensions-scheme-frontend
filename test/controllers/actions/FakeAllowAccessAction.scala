@@ -38,11 +38,7 @@ class FakeAllowAccessAction(srn: Option[String],
 }
 
 object FakeAllowAccessAction extends MockitoSugar {
-  def getMockConfig:FrontendAppConfig = {
-    val config = mock[FrontendAppConfig]
-    when(config.youMustContactHMRCUrl).thenReturn("youMustContactHMRCUrl")
-    config
-  }
+  def getMockConfig:FrontendAppConfig = mock[FrontendAppConfig]
 }
 
 case class FakeAllowAccessProvider(srn: Option[String] = None,

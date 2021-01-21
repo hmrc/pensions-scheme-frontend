@@ -23,7 +23,3 @@ case class PSAMinimalFlags(isSuspended:Boolean, isDeceased:Boolean)
 object PSAMinimalFlags {
   implicit val formats: OFormat[PSAMinimalFlags] = Json.format[PSAMinimalFlags]
 }
-
-
-
-
