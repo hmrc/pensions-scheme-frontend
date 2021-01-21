@@ -23,10 +23,9 @@ import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
-import models.TypeOfBenefits.Defined
 
 import javax.inject.Inject
-import models.{Mode, TypeOfBenefits}
+import models.{CheckMode, Mode, NormalMode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -78,7 +77,7 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
             dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).flatMap(cacheMap =>
               featureToggleService.get(TCMP).map {
                 case Enabled(_) => Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap)))
-                case _ => Redirect(toggleOffNavigation(mode, srn, value))
+                case _ => Redirect(toggleOffNavigation(mode, srn))
               }
             )
 
@@ -86,9 +85,10 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def toggleOffNavigation(mode: Mode, srn: Option[String], benefits: TypeOfBenefits): Call = benefits match {
-    case Defined => controllers.routes.BenefitsSecuredByInsuranceController.onPageLoad(mode, srn)
-    case _ => controllers.routes.MoneyPurchaseBenefitsController.onPageLoad(mode, srn)
+  private def toggleOffNavigation(mode: Mode, srn: Option[String]): Call = mode match {
+    case NormalMode => controllers.routes.BenefitsSecuredByInsuranceController.onPageLoad(mode, srn)
+    case CheckMode => controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn)
+    case _ => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
   }
 }
