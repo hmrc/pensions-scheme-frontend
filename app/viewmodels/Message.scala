@@ -17,6 +17,7 @@
 package viewmodels
 
 import play.api.i18n.Messages
+import play.twirl.api.{Html, HtmlFormat}
 
 import scala.language.implicitConversions
 
@@ -24,6 +25,8 @@ sealed trait Message {
   def resolve(implicit messages: Messages): String
 
   def withArgs(args: Any*): Message
+
+  def html(implicit messages: Messages): HtmlFormat.Appendable
 }
 
 object Message {
@@ -43,6 +46,10 @@ object Message {
 
     override def withArgs(args: Any*): Message =
       copy(args = args)
+
+
+    override def html(implicit messages: Messages): HtmlFormat.Appendable =
+      Html(resolve)
   }
 
   case class Literal(value: String) extends Message {
@@ -52,6 +59,9 @@ object Message {
 
     // should this log a warning?
     override def withArgs(args: Any*): Message = this
+
+    override def html(implicit messages: Messages): HtmlFormat.Appendable =
+      Html(resolve)
   }
 
   implicit def literal(string: String): Message = Literal(string)

@@ -19,17 +19,22 @@ package controllers
 import base.JsonFileReader
 import controllers.actions._
 import identifiers.SchemeNameId
+import models.FeatureToggle.Enabled
+import models.FeatureToggleName.TCMP
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
 import views.html.schemeDetailsTaskList
+
+import scala.concurrent.Future
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
@@ -37,6 +42,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
+    when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(TCMP)))
   }
 
   "SchemeTaskList Controller" when {
@@ -95,6 +101,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   private val view = injector.instanceOf[schemeDetailsTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
+  private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
 
   private val srnValue = "S1000000456"
   private val srn = Some(srnValue)
@@ -110,7 +117,8 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       stubMessagesControllerComponents(),
       view,
       fakeHsTaskListHelperRegistration,
-      fakeHsTaskListHelperVariation
+      fakeHsTaskListHelperVariation,
+      featureToggleService
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")

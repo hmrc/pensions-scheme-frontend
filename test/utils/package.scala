@@ -46,6 +46,10 @@ package object utils {
       answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
     }
 
+    def moneyPurchaseBenefits(benefits: Seq[MoneyPurchaseBenefits]): UserAnswers = {
+      answers.set(identifiers.MoneyPurchaseBenefitsId)(benefits).asOpt.value
+    }
+
     def benefitsSecuredByInsurance(isInsured: Boolean): UserAnswers = {
       answers.set(identifiers.BenefitsSecuredByInsuranceId)(isInsured).asOpt.value
     }

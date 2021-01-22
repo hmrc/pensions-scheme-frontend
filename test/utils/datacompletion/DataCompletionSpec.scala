@@ -18,6 +18,7 @@ package utils.datacompletion
 
 import base.JsonFileReader
 import helpers.DataCompletionHelper
+import identifiers.TcmpToggleId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorHasNINOId, DirectorNoNINOReasonId}
 import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeHasNINOId, TrusteeNoNINOReasonId}
@@ -447,15 +448,22 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
   "isBenefitsAndInsuranceCompleted" must {
     "return true when all the answers are completed with benefits secured by insurance" in {
       val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
-        typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(true).insuranceCompanyName("test name").
+        typeOfBenefits(TypeOfBenefits.MoneyPurchase).moneyPurchaseBenefits(Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Collective))
+        .benefitsSecuredByInsurance(true).insuranceCompanyName("test name").
         insurancePolicyNumber("112").insurerConfirmAddress(Address("a", "b", None, None, None, "GB"))
       answers.isBenefitsAndInsuranceCompleted.value mustBe true
     }
 
     "return true when all the answers are completed with no benefits secured by insurance" in {
       val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
-        typeOfBenefits(TypeOfBenefits.MoneyPurchase).benefitsSecuredByInsurance(false)
+        typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(false)
       answers.isBenefitsAndInsuranceCompleted.value mustBe true
+    }
+
+    "return false when benefits are mixed but money purchase benefits are not defined if tcmp toggle is true" in {
+      val answers = UserAnswers().set(TcmpToggleId)(true).get.investmentRegulated(true).occupationalPensionScheme(true).
+        typeOfBenefits(TypeOfBenefits.MoneyPurchaseDefinedMix).benefitsSecuredByInsurance(false)
+      answers.isBenefitsAndInsuranceCompleted.value mustBe false
     }
 
     "return false when insurance details are not provided" in {
