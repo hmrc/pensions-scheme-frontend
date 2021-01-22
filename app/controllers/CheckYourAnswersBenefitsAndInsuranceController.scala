@@ -65,7 +65,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
       None,
       InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
         OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
-        TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url, mode) ++
+        TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
+        MoneyPurchaseBenefitsId.row(routes.MoneyPurchaseBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
         BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
         InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url, mode) ++
         InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++

@@ -1843,3 +1843,15 @@ messages__schemeOverview__scheme_subscription_delete = Delete details already en
 messages__schemeOverview__scheme_variations_continue = Finish making changes to {0} by {1}
 messages__schemeOverview__scheme_variations_delete = Delete changes already entered for {0}
 
+messages__moneyPurchaseBenefits__title = What type of money purchase benefits does the scheme provide?
+messages__moneyPurchaseBenefits__h1 = What type of money purchase benefits does {0} provide?
+messages__moneyPurchaseBenefits__hint = Select all that apply.
+messages__moneyPurchaseBenefits__opt1 = Collective money purchase benefits
+messages__moneyPurchaseBenefits__opt2 = Cash balance benefits
+messages__moneyPurchaseBenefits__opt3 = Other money purchase benefits
+messages__moneyPurchaseBenefits__error = Select what type of money purchase benefits the scheme provides
+messages__moneyPurchaseBenefits__cya = What type of money purchase benefits does {0} provide?
+messages__moneyPurchaseBenefits__cya_hidden = type of money purchase benefits {0} has
+
+
+

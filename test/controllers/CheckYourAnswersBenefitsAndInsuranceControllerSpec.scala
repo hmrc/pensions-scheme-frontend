@@ -171,7 +171,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
         answerIsMessageKey = true,
         if(mode==UpdateMode) { None } else {
-          Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode)).url,
+          Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), None).url,
             Some(messages("messages__visuallyhidden__type_of_benefits_change", schemeName))))
         }
       ),

@@ -28,6 +28,8 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
                                   servicesConfig: ServicesConfig) {
 
   lazy val contactHost: String = baseUrl("contact-frontend")
+  def featureToggleUrl(toggle:String) : String =
+    s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.featureToggle").format(toggle)}"
   lazy val managePensionsSchemeOverviewUrl: Call = Call("GET", loadConfig("urls.manage-pensions-frontend" +
     ".schemesOverview"))
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")

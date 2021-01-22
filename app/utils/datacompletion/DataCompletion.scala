@@ -17,6 +17,7 @@
 package utils.datacompletion
 
 import identifiers._
+import models.TypeOfBenefits._
 import models._
 import models.address.Address
 import play.api.libs.json.Reads
@@ -90,7 +91,7 @@ trait DataCompletion {
 
   def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
 
-    val isBenefitsSecuredByContractCompleted = get(BenefitsSecuredByInsuranceId) match {
+    val isBenefitsSecuredByContractCompleted: Option[Boolean] = get(BenefitsSecuredByInsuranceId) match {
       case Some(true) => isComplete(Seq(
         isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete
         (InsurerConfirmAddressId)))
@@ -98,10 +99,16 @@ trait DataCompletion {
       case _ => None
     }
 
+    val isTypeOfBenefitsCompleted: Option[Boolean] = (get(TcmpToggleId), get(TypeOfBenefitsId)) match {
+      case (Some(true), Some(MoneyPurchaseDefinedMix)|Some(MoneyPurchase)) => isAnswerComplete(MoneyPurchaseBenefitsId)
+      case (_, None) => None
+      case _ => Some(true)
+    }
+
     isComplete(Seq(
       isAnswerComplete(InvestmentRegulatedSchemeId),
       isAnswerComplete(OccupationalPensionSchemeId),
-      isAnswerComplete(TypeOfBenefitsId),
+      isTypeOfBenefitsCompleted,
       isBenefitsSecuredByContractCompleted))
   }
 

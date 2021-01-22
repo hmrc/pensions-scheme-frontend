@@ -114,10 +114,19 @@ POST        /occupational-pension-scheme                             controllers
 GET         /:mode/occupational-pension-scheme                       controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode)
 POST        /:mode/occupational-pension-scheme                       controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode)
 
-GET         /type-of-benefits                                        controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode)
-POST        /type-of-benefits                                        controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode)
-GET         /:mode/type-of-benefits                                  controllers.TypeOfBenefitsController.onPageLoad(mode: Mode)
-POST        /:mode/type-of-benefits                                  controllers.TypeOfBenefitsController.onSubmit(mode: Mode)
+GET         /type-of-benefits                                        controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST        /type-of-benefits                                        controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /change/type-of-benefits                                  controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST        /change/type-of-benefits                                  controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET         /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onPageLoad(mode: Mode, srn: Option[String])
+POST        /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: Option[String])
+
+GET         /money-purchase-benefits                                 controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST        /money-purchase-benefits                                 controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /change/money-purchase-benefits                          controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST        /change/money-purchase-benefits                          controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET         /:mode/money-purchase-benefits/:srn                      controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode, srn: Option[String])
+POST        /:mode/money-purchase-benefits/:srn                      controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode, srn: Option[String])
 
 GET         /benefits-secured-by-insurance                           controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST        /benefits-secured-by-insurance                           controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
@@ -125,6 +134,7 @@ GET         /change/benefits-secured-by-insurance                    controllers
 POST        /change/benefits-secured-by-insurance                    controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
 GET         /:mode/benefits-secured-by-insurance/:srn                controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode, srn: Option[String])
 POST        /:mode/benefits-secured-by-insurance/:srn                controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode, srn: Option[String])
+
 
 GET         /enter-postcode                                          controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST        /enter-postcode                                          controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)

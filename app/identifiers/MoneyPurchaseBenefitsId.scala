@@ -1,0 +1,53 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package identifiers
+
+import models.{Link, MoneyPurchaseBenefits}
+import play.api.i18n.Messages
+import play.api.libs.json.Reads
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.{AnswerRow, Message}
+
+case object MoneyPurchaseBenefitsId extends TypedIdentifier[Seq[MoneyPurchaseBenefits]] {
+  self =>
+  override def toString: String = "moneyPurchaseBenefits"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages,
+                   rds: Reads[MoneyPurchaseBenefits]): CheckYourAnswers[self.type] = {
+    new CheckYourAnswers[self.type] {
+
+      val label: Message = Message("messages__moneyPurchaseBenefits__cya", userAnswers.get(SchemeNameId).getOrElse(""))
+      val hiddenLabel: Option[Message] = Some(Message("messages__moneyPurchaseBenefits__cya_hidden", userAnswers.get(SchemeNameId).getOrElse("")))
+
+      private def moneyPurchaseBenefitsCYARow(id: self.type , userAnswers: UserAnswers, changeUrl: Option[Link]): Seq[AnswerRow] = {
+        userAnswers.get(id).map {
+          moneyBenefits =>
+            Seq(AnswerRow(label, moneyBenefits.map(mpb => messages(s"messages__moneyPurchaseBenefits__$mpb")), answerIsMessageKey = false, changeUrl)
+            )
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+
+      override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        moneyPurchaseBenefitsCYARow(id, userAnswers,
+          Some(Link("site.change", changeUrl, hiddenLabel)))
+
+      override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        moneyPurchaseBenefitsCYARow(id, userAnswers, None)
+    }
+  }
+}
