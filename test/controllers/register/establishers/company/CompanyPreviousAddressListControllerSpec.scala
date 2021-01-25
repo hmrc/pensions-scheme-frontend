@@ -29,7 +29,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -78,7 +78,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   def viewAsString(form: Form[_] = form): String =

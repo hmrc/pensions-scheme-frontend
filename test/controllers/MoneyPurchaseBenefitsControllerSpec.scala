@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.moneyPurchaseBenefits
 
@@ -43,7 +43,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): MoneyPurchaseBenefitsController =
     new MoneyPurchaseBenefitsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, None), None)(fakeRequest, messages).toString
 

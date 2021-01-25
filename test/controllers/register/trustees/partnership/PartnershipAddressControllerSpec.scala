@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -69,7 +69,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       formProvider,
       countryOptions,
       fakeAuditService,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

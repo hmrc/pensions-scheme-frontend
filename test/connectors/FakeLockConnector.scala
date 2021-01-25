@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 object FakeLockConnector extends SpecBase {
   def getConnector: PensionSchemeVarianceLockConnector =

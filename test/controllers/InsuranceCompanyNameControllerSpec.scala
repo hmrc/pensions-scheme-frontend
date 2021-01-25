@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insuranceCompanyName
 
@@ -66,7 +66,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

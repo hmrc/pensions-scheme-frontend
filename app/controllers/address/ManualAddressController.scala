@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

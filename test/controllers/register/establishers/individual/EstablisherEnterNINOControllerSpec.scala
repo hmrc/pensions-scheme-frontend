@@ -28,7 +28,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.NinoViewModel
 import views.html.nino
@@ -137,7 +137,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {

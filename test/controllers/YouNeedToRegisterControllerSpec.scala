@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.youNeedToRegister
 
 class YouNeedToRegisterControllerSpec extends ControllerSpecBase {
@@ -27,7 +27,7 @@ class YouNeedToRegisterControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): YouNeedToRegisterController =
     new YouNeedToRegisterController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

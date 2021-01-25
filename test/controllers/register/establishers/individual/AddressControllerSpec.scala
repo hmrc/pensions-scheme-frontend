@@ -31,7 +31,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -69,7 +69,7 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
       countryOptions,
       fakeAuditService,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   def viewAsString(form: Form[_] = form): String = view(

@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -69,7 +69,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       getEmptyDataPsp,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

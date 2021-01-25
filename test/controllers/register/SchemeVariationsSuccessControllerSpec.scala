@@ -26,7 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.Future
@@ -50,7 +50,7 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
       fakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

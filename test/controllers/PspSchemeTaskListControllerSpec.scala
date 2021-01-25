@@ -24,7 +24,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.hstasklisthelper.HsTaskListHelperPsp
 import viewmodels._
 import views.html.pspTaskList
@@ -70,7 +70,7 @@ object PspSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view,
       fakeHsTaskListHelper
     )

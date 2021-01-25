@@ -28,7 +28,7 @@ import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.variationDeclaration
 
@@ -55,7 +55,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
     new VariationDeclarationController(messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       pensionsSchemeConnector, lockConnector, updateSchemeCacheConnector, viewConnector,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

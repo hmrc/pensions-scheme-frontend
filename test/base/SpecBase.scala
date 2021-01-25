@@ -26,11 +26,13 @@ import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
-import play.api.mvc.{AnyContentAsEmpty, Call}
+import play.api.mvc.{AnyContentAsEmpty, Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
-trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
+trait SpecBase
+  extends PlaySpec
+    with GuiceOneAppPerSuite {
   protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   def injector: Injector = app.injector
@@ -44,6 +46,8 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   def environment: Environment = injector.instanceOf[Environment]
+
+  def controllerComponents: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
 
   def appRunning(): Unit = app
 
@@ -67,3 +71,5 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
         modules(dataRetrievalAction): _*
       )
 }
+
+object SpecBase extends SpecBase

@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel

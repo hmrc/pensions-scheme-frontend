@@ -31,7 +31,7 @@ import models.requests.DataRequest
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
@@ -57,7 +57,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       FakeUserAnswersService,
       countryOptions,
       allowChangeHelper,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

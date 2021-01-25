@@ -22,7 +22,7 @@ import models.Link
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.error_template_page_not_found
 import views.html.error_template
 

@@ -26,7 +26,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.register.trustees.moreThanTenTrustees
 
@@ -48,7 +48,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
     new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view)
 
   val submitUrl: Call = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)

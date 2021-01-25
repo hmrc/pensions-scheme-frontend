@@ -35,7 +35,7 @@ import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
@@ -183,7 +183,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       fakePensionsSchemeConnector,
       fakeEmailConnector,
       fakeMinimalPsaConnector,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       mockHsTaskListHelperRegistration,
       view
     )

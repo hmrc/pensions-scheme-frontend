@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers, _}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
@@ -53,7 +53,7 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

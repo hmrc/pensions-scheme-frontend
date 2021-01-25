@@ -21,7 +21,7 @@ import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import play.api.libs.json._
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.register.cannotMakeChanges
 
 
@@ -38,7 +38,7 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): CannotMakeChangesController =
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
-      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, stubMessagesControllerComponents(), view)
+      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view)
 
   def viewAsString(): String = view(srn, Some(schemeName))(fakeRequest, messages).toString
 

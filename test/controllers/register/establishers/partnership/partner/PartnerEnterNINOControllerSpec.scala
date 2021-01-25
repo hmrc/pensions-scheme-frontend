@@ -30,7 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -45,7 +45,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[nino]
   private def controller(dataRetrievalAction: DataRetrievalAction): PartnerEnterNINOController =
     new PartnerEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   private def viewAsString(form: Form[_] = form): String = {
     val viewmodel = NinoViewModel(

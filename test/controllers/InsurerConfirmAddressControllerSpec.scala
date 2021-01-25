@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -72,7 +72,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       formProvider,
       countryOptions,
       fakeAuditService,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

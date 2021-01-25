@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
@@ -52,7 +52,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   def viewAsString(form: Form[_] = form): String =

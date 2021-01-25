@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{CountryOptions, FakeNavigator, InputOption, UserAnswers}
 import views.html.establishedCountry
 
@@ -68,7 +68,7 @@ class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehavio
       new DataRequiredActionImpl(),
       formProvider,
       countryOptions,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

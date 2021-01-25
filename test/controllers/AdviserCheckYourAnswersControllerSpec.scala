@@ -28,7 +28,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -142,7 +142,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 
