@@ -33,14 +33,133 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
-  import AllowAccessActionSpec._
+class AllowAccessActionSpec
+  extends SpecBase
+    with ScalaFutures
+    with MockitoSugar {
+
+  def allowAccessWithRedirectBasedOnUserAnswers(
+                                                 testHarness: (Option[String], PensionsSchemeConnector) => TestHarness,
+                                                 userAnswers: UserAnswers,
+                                                 description: String,
+                                                 expectedResult: => Option[String]
+                                               ): Unit = {
+    s"respond correctly where association between psa id and srn and " +
+      s"user answers present and an srn IS present and viewonly mode and $description" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Right(true)))
+
+      val futureResult = testHarness(srn, psc)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000")), viewOnly = true))
+
+      assertEqual(futureResult, expectedResult)
+    }
+
+    s"respond correctly where association between psa id and srn and " +
+      s"user answers present and an srn IS present and not viewonly mode and $description" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Right(true)))
+
+      val futureResult = testHarness(srn, psc)
+        .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000"))))
+
+      assertEqual(futureResult, expectedResult)
+    }
+  }
+
+  private val config = injector.instanceOf[FrontendAppConfig]
+
+  private val errorHandler = new FrontendErrorHandler {
+    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
+                                      (implicit request: Request[_]): Html = Html("")
+
+    override def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  }
+
+  private val pensionsSchemeConnector: PensionsSchemeConnector = {
+    val psc = mock[PensionsSchemeConnector]
+    when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(Right(true)))
+    psc
+  }
+
+  trait TestHarness {
+    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
+  }
+
+  class TestAllowAccessAction(srn: Option[String],
+                              psc: PensionsSchemeConnector = pensionsSchemeConnector
+                             )
+    extends AllowAccessActionMain(srn, psc, config, errorHandler)
+      with TestHarness {
+    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
+      super.filter(request)
+
+  }
+
+  class TestAllowAccessActionTaskList(
+                                       srn: Option[String],
+                                       psc: PensionsSchemeConnector = pensionsSchemeConnector
+                                     )
+    extends AllowAccessActionTaskList(srn, psc, config, errorHandler)
+      with TestHarness {
+    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
+      super.filter(request)
+  }
+
+  class TestAllowAccessActionNoSuspendedCheck(
+                                               srn: Option[String],
+                                               psc: PensionsSchemeConnector = pensionsSchemeConnector
+                                             )
+    extends AllowAccessActionNoSuspendedCheck(srn, psc, config, errorHandler)
+      with TestHarness {
+    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
+      super.filter(request)
+  }
+
+  private val generateTestHarnessForAllowAccessMain: (Option[String], PensionsSchemeConnector) => TestHarness =
+    new TestAllowAccessAction(_, _)
+  private val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness =
+    new TestAllowAccessActionTaskList(_, _)
+  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness =
+    new TestAllowAccessActionNoSuspendedCheck(_, _)
+
+  private val srn = Some("S123")
+
+  private val suspendedUserAnswers = UserAnswers(
+    Json.obj(
+      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = true, isDeceased = false))
+    )
+  )
+
+  private val deceasedUserAnswers = UserAnswers(
+    Json.obj(
+      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = false, isDeceased = true))
+    )
+  )
+
+  private val notSuspendedUserAnswers =
+    UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+
+  private def assertEqual(
+                           futureResult: Future[Option[Result]],
+                           expectedResult: => Option[String]
+                         ): Unit =
+    whenReady(futureResult) {
+      case result@Some(_) =>
+        result.map(_.header.status) mustBe Some(SEE_OTHER)
+        result.flatMap(_.header.headers.get(LOCATION)) mustBe expectedResult
+      case result =>
+        result mustBe expectedResult
+    }
 
   "AllowAccessActionMain" must {
     behave like allowAccessAction(testHarness = generateTestHarnessForAllowAccessMain)
@@ -52,14 +171,17 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       expectedResult = Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url)
     )
 
-    behave like allowAccessWithRedirectBasedOnUserAnswers(generateTestHarnessForAllowAccessMain, deceasedUserAnswers,
-      "PSA is deceased",
-      Some(frontendAppConfig.youMustContactHMRCUrl)
+    behave like allowAccessWithRedirectBasedOnUserAnswers(
+      testHarness = generateTestHarnessForAllowAccessMain,
+      userAnswers = deceasedUserAnswers,
+      description = "PSA is deceased",
+      expectedResult = Some(frontendAppConfig.youMustContactHMRCUrl)
     )
 
-    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+    "redirect to task list page where association between psa id and srn and " +
+      "no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
@@ -79,12 +201,15 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       expectedResult = None
     )
 
-    behave like allowAccessWithRedirectBasedOnUserAnswers(generateTestHarnessForAllowAccessTaskList, deceasedUserAnswers, "PSA is deceased",
-      Some(frontendAppConfig.youMustContactHMRCUrl))
+    behave like allowAccessWithRedirectBasedOnUserAnswers(
+      testHarness = generateTestHarnessForAllowAccessTaskList,
+      userAnswers = deceasedUserAnswers,
+      description = "PSA is deceased",
+      expectedResult = Some(frontendAppConfig.youMustContactHMRCUrl))
 
     "allow access where association between psa id and srn and no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
@@ -104,9 +229,10 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       expectedResult = None
     )
 
-    "redirect to task list page where association between psa id and srn and no user answers present but an srn IS present" in {
+    "redirect to task list page where association between psa id and srn and " +
+      "no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessNoSuspendedCheck(srn, pensionsSchemeConnector)
@@ -118,20 +244,23 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
   //scalastyle:off method.length
   def allowAccessAction(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness): Unit = {
-    "allow access where association between psa id and srn and user answers present and an srn IS present and viewonly mode" in {
+    "allow access where association between psa id and srn and " +
+      "user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
-        .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000")), viewOnly = true))
+        .test(OptionalDataRequest(
+          fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000")), viewOnly = true)
+        )
 
       assertEqual(futureResult, None)
     }
 
     "return NOT FOUND for user where NO association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(false)))
 
       val futureResult = testHarness(srn, psc)
@@ -146,7 +275,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
 
     "allow access for user where association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
@@ -176,103 +305,4 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       assertEqual(futureResult, None)
     }
   }
-
-  def allowAccessWithRedirectBasedOnUserAnswers(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness,
-                                                userAnswers: UserAnswers, description:String, expectedResult: => Option[String]):Unit = {
-    s"respond correctly where association between psa id and srn and user answers present and an srn IS present and viewonly mode and $description" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
-        .thenReturn(Future.successful(Right(true)))
-
-      val futureResult = testHarness(srn, psc)
-        .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000")), viewOnly = true))
-
-      assertEqual(futureResult, expectedResult)
-    }
-
-    s"respond correctly where association between psa id and srn and user answers present and an srn IS present and not viewonly mode and $description" in {
-      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(),any(),any()))
-        .thenReturn(Future.successful(Right(true)))
-
-      val futureResult = testHarness(srn, psc)
-        .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000"))))
-
-      assertEqual(futureResult, expectedResult)
-    }
-  }
-}
-
-object AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar {
-  private val config = injector.instanceOf[FrontendAppConfig]
-
-  private val errorHandler = new FrontendErrorHandler {
-    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
-
-    override def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-  }
-
-  private val pensionsSchemeConnector: PensionsSchemeConnector = {
-    val psc = mock[PensionsSchemeConnector]
-    when(psc.checkForAssociation(any(), any())(any(),any(),any()))
-      .thenReturn(Future.successful(Right(true)))
-    psc
-  }
-
-  trait TestHarness {
-    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
-  }
-
-  class TestAllowAccessAction(srn: Option[String],
-                              psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, config, errorHandler) with TestHarness {
-    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
-
-  }
-
-  class TestAllowAccessActionTaskList(srn: Option[String], psc: PensionsSchemeConnector = pensionsSchemeConnector) extends
-    AllowAccessActionTaskList(srn, psc, config, errorHandler)
-    with TestHarness {
-    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
-  }
-
-  class TestAllowAccessActionNoSuspendedCheck(srn: Option[String], psc: PensionsSchemeConnector = pensionsSchemeConnector) extends
-    AllowAccessActionNoSuspendedCheck(srn, psc, config, errorHandler) with TestHarness {
-    def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
-  }
-
-  private val generateTestHarnessForAllowAccessMain: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessAction(_, _)
-  private val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
-  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness =
-    new TestAllowAccessActionNoSuspendedCheck(_, _)
-
-  private val srn = Some("S123")
-
-  private val suspendedUserAnswers = UserAnswers(
-    Json.obj(
-      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = true, isDeceased = false))
-    )
-  )
-
-  private val deceasedUserAnswers = UserAnswers(
-    Json.obj(
-      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = false, isDeceased = true))
-    )
-  )
-
-  private val notSuspendedUserAnswers = UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = false, isDeceased = false)))
-
-  private def assertEqual(futureResult: Future[Option[Result]], expectedResult: => Option[String]): Unit = {
-    whenReady(futureResult) {
-      case result@Some(_) =>
-        result.map {
-          _.header.status
-        } mustBe Some(SEE_OTHER)
-        result.flatMap {
-          _.header.headers.get(LOCATION)
-        } mustBe expectedResult
-      case result => result mustBe expectedResult
-
-    }
-  }
-
 }
