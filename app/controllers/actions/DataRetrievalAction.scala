@@ -19,7 +19,8 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
-import identifiers.{IsPsaSuspendedId, SchemeSrnId, SchemeStatusId}
+import identifiers.PsaMinimalFlagsId._
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -69,7 +70,7 @@ class DataRetrievalImpl(
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            addSuspensionFlagAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
+            addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
           case _ => Future.successful(None)
         }
         createOptionalRequest(optJs, viewOnly = false)
@@ -92,19 +93,19 @@ class DataRetrievalImpl(
     if (refresh) {
       schemeDetailsConnector
         .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-        .flatMap(ua => addSuspensionFlagAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
         .map(Some(_))
     } else {
       viewConnector.fetch(request.externalId)
     }
 
-  private def addSuspensionFlagAndUpdateRepository[A](srn: String,
+  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
                                                       psaId: String,
                                                       upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.isPsaSuspended(psaId).flatMap { isSuspended =>
-      val updatedUserAnswers = UserAnswers(jsValue).set(IsPsaSuspendedId)(isSuspended).flatMap(
+    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+      val updatedUserAnswers = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
       upsertUserAnswers(updatedUserAnswers.json)
     }

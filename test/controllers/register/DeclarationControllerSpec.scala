@@ -24,7 +24,7 @@ import helpers.DataCompletionHelper
 import identifiers.HaveAnyTrusteesId
 import identifiers.register.DeclarationDormantId
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import models.{MinimalPSA, NormalMode}
+import models.{MinimalPSA, NormalMode, PSAMinimalFlags}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -254,7 +254,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private val fakeMinimalPsaConnector = new MinimalPsaConnector {
-    override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = Future.successful(true)
+    override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
+      Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false))
 
     override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = true, Some("psa name"), None))
