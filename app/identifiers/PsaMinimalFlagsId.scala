@@ -16,7 +16,11 @@
 
 package identifiers
 
-case object IsPsaSuspendedId extends TypedIdentifier[Boolean] {
-  override def toString: String = "isPsaSuspended"
+import models.PSAMinimalFlags
+import play.api.libs.json.{Json, OFormat}
 
+case object PsaMinimalFlagsId extends TypedIdentifier[PSAMinimalFlags] {
+  override def toString: String = "minimalFlags"
+
+  implicit val formats: OFormat[PSAMinimalFlags] = Json.format[PSAMinimalFlags]
 }

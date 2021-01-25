@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.any
@@ -31,8 +32,13 @@ import scala.concurrent.Future
 
 class FakeAllowAccessAction(srn: Option[String],
                             pensionsSchemeConnector: PensionsSchemeConnector,
-                            errorHandler: FrontendErrorHandler) extends AllowAccessAction(srn, pensionsSchemeConnector, errorHandler) {
+                            errorHandler: FrontendErrorHandler) extends
+  AllowAccessAction(srn, pensionsSchemeConnector, FakeAllowAccessAction.getMockConfig, errorHandler) {
   override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
+}
+
+object FakeAllowAccessAction extends MockitoSugar {
+  def getMockConfig:FrontendAppConfig = mock[FrontendAppConfig]
 }
 
 case class FakeAllowAccessProvider(srn: Option[String] = None,
