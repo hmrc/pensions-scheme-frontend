@@ -28,7 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -76,7 +76,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       fakeCountryOptions,
       allowChangeHelper,
       FakeUserAnswersService,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

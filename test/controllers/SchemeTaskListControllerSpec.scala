@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import services.FeatureToggleService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
@@ -114,7 +114,7 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view,
       fakeHsTaskListHelperRegistration,
       fakeHsTaskListHelperVariation,

@@ -24,7 +24,7 @@ import models.{Index, Mode, NormalMode, UpdateMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.UserAnswers
 import views.html.register.whatYouWillNeedIndividualDetails
 
@@ -40,7 +40,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

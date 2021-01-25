@@ -32,7 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.FeatureToggleService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
 import org.mockito.Matchers._
@@ -71,7 +71,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       dataRetrievalAction,
       new DataRequiredActionImpl(),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view,
       featureToggleService
     )

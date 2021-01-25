@@ -29,7 +29,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -60,7 +60,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil, enableSubmission: Boolean = false) =

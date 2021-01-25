@@ -26,7 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
@@ -62,7 +62,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
       new DataRequiredActionImpl,
       formProvider,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString

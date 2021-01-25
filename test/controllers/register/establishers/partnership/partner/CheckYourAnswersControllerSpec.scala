@@ -29,7 +29,7 @@ import models.person.PersonName
 import models.{Index, _}
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -56,7 +56,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       new FakeNavigator(desiredRoute),
       countryOptions,
       allowChangeHelper,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

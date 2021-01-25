@@ -29,7 +29,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -78,7 +78,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

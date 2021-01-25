@@ -26,7 +26,7 @@ import models.address.Address
 import models.{NormalMode, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -177,7 +177,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      fakeCountryOptions, allowChangeHelper, stubMessagesControllerComponents(), view)
+      fakeCountryOptions, allowChangeHelper, controllerComponents, view)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(

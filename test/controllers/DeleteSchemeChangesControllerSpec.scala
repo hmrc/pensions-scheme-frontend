@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.deleteSchemeChanges
 
 import scala.concurrent.Future
@@ -57,7 +57,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
       FakeAuthAction,
       getEmptyData,
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

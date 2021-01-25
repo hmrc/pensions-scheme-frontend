@@ -31,7 +31,7 @@ import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 

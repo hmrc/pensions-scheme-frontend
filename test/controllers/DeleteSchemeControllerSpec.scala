@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.deleteScheme
 
 import scala.concurrent.Future
@@ -45,7 +45,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData): DeleteSchemeController =
     new DeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
-      dataRetrievalAction, formProvider, stubMessagesControllerComponents(), view)
+      dataRetrievalAction, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName)(fakeRequest, messages).toString
 

@@ -22,7 +22,7 @@ import models.register._
 import models.{BankAccountDetails, CheckMode, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -55,7 +55,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

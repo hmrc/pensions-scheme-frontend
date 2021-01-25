@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.schemeName
 
@@ -74,7 +74,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       formProvider,
       nameMatchingFactory,
       mockPensionAdministratorConnector,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

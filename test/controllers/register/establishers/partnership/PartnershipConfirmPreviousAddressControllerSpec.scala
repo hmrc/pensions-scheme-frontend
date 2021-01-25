@@ -28,7 +28,7 @@ import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
@@ -78,7 +78,7 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       dataRetrievalAction,
       new DataRequiredActionImpl,
       countryOptions,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 
