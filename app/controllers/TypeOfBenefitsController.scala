@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
@@ -30,7 +29,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import services.FeatureToggleService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.AboutBenefitsAndInsurance
 import utils.{Enumerable, UserAnswers}
@@ -40,10 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         dataCacheConnector: UserAnswersCacheConnector,
+                                         userAnswersService: UserAnswersService,
                                          @AboutBenefitsAndInsurance navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
+                                         allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: TypeOfBenefitsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
@@ -52,21 +52,22 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Enumerable.Implicits with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
-    implicit request =>
-      SchemeNameId.retrieve.right.map { schemeName =>
-        val preparedForm = request.userAnswers.get(TypeOfBenefitsId) match {
-          case None => form(schemeName)
-          case Some(value) => form(schemeName).fill(value)
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        SchemeNameId.retrieve.right.map { schemeName =>
+          val preparedForm = request.userAnswers.get(TypeOfBenefitsId) match {
+            case None => form(schemeName)
+            case Some(value) => form(schemeName).fill(value)
+          }
+          Future.successful(Ok(view(preparedForm, postCall(mode, srn), existingSchemeName)))
         }
-        Future.successful(Ok(view(preparedForm, postCall(mode, srn), existingSchemeName)))
-      }
-  }
+    }
 
   private def form(schemeName: String)(implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
   private def postCall: (Mode, Option[String]) => Call = routes.TypeOfBenefitsController.onSubmit
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.right.map { schemeName =>
 
@@ -74,9 +75,9 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, postCall(mode, srn), existingSchemeName))),
           value =>
-            dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).flatMap(cacheMap =>
+            userAnswersService.save(mode, srn, TypeOfBenefitsId, value).flatMap(cacheMap =>
               featureToggleService.get(TCMP).map {
-                case Enabled(_) => Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap)))
+                case Enabled(_) => Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap), srn))
                 case _ => Redirect(toggleOffNavigation(mode, srn))
               }
             )
@@ -87,7 +88,7 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
 
   private def toggleOffNavigation(mode: Mode, srn: Option[String]): Call = mode match {
     case NormalMode => controllers.routes.BenefitsSecuredByInsuranceController.onPageLoad(mode, srn)
-    case CheckMode => controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn)
+    case CheckMode => controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, srn)
     case _ => controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
   }

@@ -18,13 +18,16 @@ package controllers
 
 import controllers.actions._
 import identifiers._
+
 import javax.inject.Inject
 import models.AuthEntity.PSP
+import models.FeatureToggleName.TCMP
 import models.Mode._
 import models.requests.DataRequest
 import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -42,7 +45,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
                                                                requireData: DataRequiredAction,
                                                                implicit val countryOptions: CountryOptions,
                                                                val controllerComponents: MessagesControllerComponents,
-                                                               val view: checkYourAnswers
+                                                               val view: checkYourAnswers,
+                                                               featureToggleService: FeatureToggleService
                                                               )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
@@ -50,42 +54,45 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(vm(mode, srn))))
+        vm(mode, srn).map(vm => Ok(view(vm)))
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
     (authenticate(PSP) andThen getPspData(srn) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+        vm(UpdateMode, Some(srn)).map(vm => Ok(view(vm)))
     }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
-    implicit val userAnswers: UserAnswers = request.userAnswers
-    val benefitsAndInsuranceSection = AnswerSection(
-      None,
-      InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
-        OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
-        TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
-        MoneyPurchaseBenefitsId.row(routes.MoneyPurchaseBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
-        BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
-        InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url, mode) ++
-        InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
-        InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
-    )
+  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Future[CYAViewModel] = {
+    featureToggleService.get(TCMP).map { toggle =>
+      implicit val tcmpToggle: Boolean = toggle.isEnabled
+      implicit val userAnswers: UserAnswers = request.userAnswers
+      val benefitsAndInsuranceSection = AnswerSection(
+        None,
+        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+          TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          MoneyPurchaseBenefitsId.row(routes.MoneyPurchaseBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
+      )
 
-    val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
-      Message("messages__benefitsAndInsuranceDetailsFor", name)
+      val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
+        Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-    CYAViewModel(
-      answerSections = Seq(benefitsAndInsuranceSection),
-      href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
-      schemeName = existingSchemeName,
-      returnOverview = false,
-      hideEditLinks = request.viewOnly,
-      srn = srn,
-      hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
-      title = heading(Message("messages__theScheme")),
-      h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
-    )
+      CYAViewModel(
+        answerSections = Seq(benefitsAndInsuranceSection),
+        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        schemeName = existingSchemeName,
+        returnOverview = false,
+        hideEditLinks = request.viewOnly,
+        srn = srn,
+        hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
+        title = heading(Message("messages__theScheme")),
+        h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
+      )
+    }
   }
 }

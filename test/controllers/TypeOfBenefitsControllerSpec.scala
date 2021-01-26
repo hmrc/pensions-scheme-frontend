@@ -16,9 +16,7 @@
 
 package controllers
 
-
-import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
@@ -26,17 +24,17 @@ import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
 import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
-import services.FeatureToggleService
+import services.{FakeUserAnswersService, FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -60,7 +58,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
-    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+    cache: UserAnswersService = FakeUserAnswersService
   ): TypeOfBenefitsController =
     new TypeOfBenefitsController(
       frontendAppConfig,
@@ -69,6 +67,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       navigator,
       authAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
       stubMessagesControllerComponents(),
@@ -83,7 +82,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
                                                                              authAction: AuthAction): Action[AnyContent] =
     controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
-  private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
+  private def saveAction: UserAnswersService => Action[AnyContent] = cache =>
     controller(cache = cache).onSubmit(NormalMode, None)
 
   "Type of benefits Controller" when {
@@ -106,7 +105,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       postRequest
     )
 
-    behave like controllerThatSavesUserAnswers(
+    behave like controllerThatSavesUserAnswersWithService(
       saveAction,
       postRequest,
       TypeOfBenefitsId,

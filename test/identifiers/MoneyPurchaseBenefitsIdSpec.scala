@@ -34,19 +34,18 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
     AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(messages("messages__moneyPurchaseBenefits__opt2")), false,
       Some(Link("site.change",onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name)))))
   )
-  private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(Message("messages__moneyPurchaseBenefits__opt2")), false)
-  )
+
+  private val addRow = Seq(AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name), Seq("site.not_entered"), answerIsMessageKey = true,
+    Some(Link("site.add", onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name))))))
+
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
     _.set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.CashBalance))).asOpt.get
 
   "cya" when {
-
-
-
     "in normal mode" must {
 
       "return answers rows with change links" in {
+        implicit val tcmpToggle: Boolean = false
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         MoneyPurchaseBenefitsId.row(onwardUrl, NormalMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
@@ -55,10 +54,29 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
 
     "in update mode " must {
 
-      "return answers rows without links" in {
+      "return answers rows with links if question is answered" in {
+        implicit val tcmpToggle: Boolean = false
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
+        MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
+      }
+
+      "return answers rows with add link if question is unanswered and toggle is on" in {
+        implicit val tcmpToggle: Boolean = true
+        val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
+          _.set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchaseDefinedMix)).asOpt.get
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(addRow)
+      }
+
+      "return empty answers row if question is unanswered and toggle is off" in {
+        implicit val tcmpToggle: Boolean = false
+        val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
+          _.set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchaseDefinedMix)).asOpt.get
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
+        implicit val userAnswers: UserAnswers = request.userAnswers
+        MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(Nil)
       }
     }
 

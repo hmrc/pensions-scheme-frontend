@@ -16,19 +16,20 @@
 
 package identifiers
 
+import models.TypeOfBenefits.{MoneyPurchase, MoneyPurchaseDefinedMix}
 import models.{Link, MoneyPurchaseBenefits}
 import play.api.i18n.Messages
 import play.api.libs.json.Reads
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers
 import viewmodels.{AnswerRow, Message}
 
-case object MoneyPurchaseBenefitsId extends TypedIdentifier[Seq[MoneyPurchaseBenefits]] {
+case object MoneyPurchaseBenefitsId extends TypedIdentifier[Seq[MoneyPurchaseBenefits]] with Enumerable.Implicits {
   self =>
   override def toString: String = "moneyPurchaseBenefits"
 
   implicit def cya(implicit userAnswers: UserAnswers, messages: Messages,
-                   rds: Reads[MoneyPurchaseBenefits]): CheckYourAnswers[self.type] = {
+                   rds: Reads[MoneyPurchaseBenefits], tcmpToggle: Boolean): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
 
       val label: Message = Message("messages__moneyPurchaseBenefits__cya", userAnswers.get(SchemeNameId).getOrElse(""))
@@ -47,7 +48,12 @@ case object MoneyPurchaseBenefitsId extends TypedIdentifier[Seq[MoneyPurchaseBen
           Some(Link("site.change", changeUrl, hiddenLabel)))
 
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        moneyPurchaseBenefitsCYARow(id, userAnswers, None)
+        (userAnswers.get(id), userAnswers.get(TypeOfBenefitsId)) match {
+          case (Some(_), _) => row(id)(changeUrl, userAnswers)
+          case (_, Some(MoneyPurchase)|Some(MoneyPurchaseDefinedMix)) if tcmpToggle => Seq(AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true,
+            Some(Link("site.add", changeUrl, hiddenLabel))))
+          case _ => Seq.empty[AnswerRow]
+        }
     }
   }
 }

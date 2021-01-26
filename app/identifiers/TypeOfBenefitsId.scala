@@ -57,7 +57,7 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
         Some(Link("site.change", changeUrl, hiddenLabel)))
 
       override def updateRow(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        typeOfBenefitsCYARow(id, userAnswers, None)
+        row(id)(changeUrl, userAnswers)
     }
   }
 }
