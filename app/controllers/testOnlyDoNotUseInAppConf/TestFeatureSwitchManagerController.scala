@@ -32,16 +32,18 @@ class TestFeatureSwitchManagerController @Inject()(
                                                     adminFeatureSwitchConnector: PensionAdministratorFeatureSwitchConnectorImpl,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     val view: testFeatureSwitchManagerSuccess
-                                                  )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController {
+                                                  )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController {
+
+  private val logger  = Logger(classOf[TestFeatureSwitchManagerController])
 
   def toggleOn(featureSwitch: String): Action[AnyContent] = Action.async {
     implicit request =>
       val frontEndToggledOn = fs.change(featureSwitch, newValue = true)
       if (frontEndToggledOn) {
-        Logger.debug(s"[Pensions-Scheme-frontend][ToggleOnSuccess] - $featureSwitch")
+        logger.debug(s"[Pensions-Scheme-frontend][ToggleOnSuccess] - $featureSwitch")
       } else {
-        Logger.debug(s"[Pensions-Scheme-frontend][ToggleOnFailed] - $featureSwitch")
+        logger.debug(s"[Pensions-Scheme-frontend][ToggleOnFailed] - $featureSwitch")
       }
       for {
         _ <- schemeFeatureSwitchConnector.toggleOn(featureSwitch)
@@ -58,9 +60,9 @@ class TestFeatureSwitchManagerController @Inject()(
     implicit request =>
       val frontEndToggledOff = fs.change(featureSwitch, newValue = false)
       if (frontEndToggledOff) {
-        Logger.debug(s"[Pensions-Scheme-frontend][ToggleOffSuccess] - $featureSwitch")
+        logger.debug(s"[Pensions-Scheme-frontend][ToggleOffSuccess] - $featureSwitch")
       } else {
-        Logger.debug(s"[Pensions-Scheme-frontend][ToggleOffFailed] - $featureSwitch")
+        logger.debug(s"[Pensions-Scheme-frontend][ToggleOffFailed] - $featureSwitch")
       }
       for {
         _ <- schemeFeatureSwitchConnector.toggleOff(featureSwitch)
