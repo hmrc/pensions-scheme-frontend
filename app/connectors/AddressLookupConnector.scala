@@ -29,7 +29,10 @@ import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends AddressLookupConnector {
+class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+  extends AddressLookupConnector {
+
+  private val logger  = Logger(classOf[AddressLookupConnectorImpl])
 
   override def addressLookupByPostCode(postCode: String)
                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
@@ -53,7 +56,7 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 
   private def logExceptions: PartialFunction[Throwable, Future[Seq[TolerantAddress]]] = {
     case t: Throwable =>
-      Logger.error("Exception in AddressLookup", t)
+      logger.error("Exception in AddressLookup", t)
       Future.failed(t)
   }
 }
