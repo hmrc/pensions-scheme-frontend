@@ -31,21 +31,20 @@ import scala.util.Failure
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
+                      (implicit hc: HeaderCarrier,ec: ExecutionContext): Future[UserAnswers]
 
   def getPspSchemeDetails(pspId: String, srn: String)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
 @Singleton
-class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
-  extends SchemeDetailsConnector
-    with HttpResponseHelper {
+class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
+  SchemeDetailsConnector with HttpResponseHelper {
 
-  private val logger  = Logger(classOf[SchemeDetailsConnectorImpl])
-
-  override def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)
-                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
+  override def getSchemeDetails(psaId: String,
+                       schemeIdType: String,
+                       idNumber: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[UserAnswers] = {
 
     val url = config.schemeDetailsUrl
     val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType, "idNumber" -> idNumber, "PSAId" -> psaId)
@@ -58,12 +57,12 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
         case _ => handleErrorResponse("GET", url)(response)
       }
     } andThen {
-      case Failure(t: Throwable) => logger.warn("Unable to get scheme details", t)
+      case Failure(t: Throwable) => Logger.warn("Unable to get scheme details", t)
     }
   }
 
-  override def getPspSchemeDetails(pspId: String, srn: String)
-                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
+  override def getPspSchemeDetails(pspId: String, srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[UserAnswers] = {
 
     val url = config.pspSchemeDetailsUrl
     val schemeHc = hc.withExtraHeaders("srn" -> srn, "pspId" -> pspId)
@@ -74,7 +73,7 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
         case _ => handleErrorResponse("GET", url)(response)
       }
     } andThen {
-      case Failure(t: Throwable) => logger.warn("Unable to psp get scheme details", t)
+      case Failure(t: Throwable) => Logger.warn("Unable to psp get scheme details", t)
     }
   }
 }

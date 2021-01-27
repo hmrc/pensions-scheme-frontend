@@ -50,8 +50,6 @@ class EmailConnectorImpl @Inject()(
                                     crypto: ApplicationCrypto
                                   ) extends EmailConnector {
 
-  private val logger  = Logger(classOf[EmailConnectorImpl])
-
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
@@ -67,15 +65,15 @@ class EmailConnectorImpl @Inject()(
 
     val jsonData = Json.toJson(sendEmailReq)
 
-    logger.debug(s"Data to email: $jsonData for email address $emailAddress")
+    Logger.debug(s"Data to email: $jsonData for email address $emailAddress")
 
     http.POST[JsValue, HttpResponse](postUrl, jsonData).map { response =>
       response.status match {
         case ACCEPTED =>
-          logger.info("Email sent successfully.")
+          Logger.info("Email sent successfully.")
           EmailSent
         case status =>
-          logger.warn(s"Email not sent. Failure with response status $status")
+          Logger.warn(s"Email not sent. Failure with response status $status")
           EmailNotSent
       }
     } recoverWith logExceptions
@@ -89,7 +87,7 @@ class EmailConnectorImpl @Inject()(
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
     case t: Throwable =>
-      logger.warn("Unable to connect to Email Service", t)
+      Logger.warn("Unable to connect to Email Service", t)
       Future.successful(EmailNotSent)
   }
 }

@@ -38,10 +38,8 @@ trait Navigator {
       .getOrElse(defaultPage(id, mode))
   }
 
-  private val logger  = Logger(classOf[Navigator])
-
   private def defaultPage(id: Identifier, mode: Mode): Call = {
-    logger.warn(s"No navigation defined for id $id in mode $mode")
+    Logger.warn(s"No navigation defined for id $id in mode $mode")
     controllers.routes.IndexController.onPageLoad()
   }
 
@@ -64,10 +62,7 @@ trait Navigator {
 
 }
 
-abstract class AbstractNavigator
-  extends Navigator {
-
-  private val logger  = Logger(classOf[AbstractNavigator])
+abstract class AbstractNavigator extends Navigator {
 
   override final def nextPageOptional(id: Identifier,
                                       mode: Mode,
@@ -77,32 +72,33 @@ abstract class AbstractNavigator
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier): Option[Call] = {
 
-    val navigateTo = mode match {
-      case NormalMode => routeMap(NavigateFrom(id, userAnswers))
-      case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
-      case UpdateMode => updateRouteMap(NavigateFrom(id, userAnswers), srn)
-      case CheckUpdateMode => checkUpdateRouteMap(NavigateFrom(id, userAnswers), srn)
+    val navigateTo = {
+      mode match {
+        case NormalMode => routeMap(NavigateFrom(id, userAnswers))
+        case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
+        case UpdateMode => updateRouteMap(NavigateFrom(id, userAnswers), srn)
+        case CheckUpdateMode => checkUpdateRouteMap(NavigateFrom(id, userAnswers), srn)
+      }
     }
 
     navigateTo.map(to => saveAndContinue(to, ex.externalId))
   }
 
-  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)
-                                   (implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
+  private[this] def saveAndContinue(navigation: NavigateTo,
+                                    externalID: String)(implicit ec: ExecutionContext,
+                                                        hc: HeaderCarrier): Call = {
     if (navigation.save) {
       dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
-        case Failure(t: Throwable) => logger.warn("Error saving user's current page", t)
+        case Failure(t: Throwable) => Logger.warn("Error saving user's current page", t)
       }
     }
     navigation.page
   }
 
-  protected def navigateOrSessionExpired[A](answers: UserAnswers, id: => TypedIdentifier[A], destination: A => Call)
-                                           (implicit reads: Reads[A]): Option[NavigateTo] =
-    NavigateTo
-      .dontSave(
-        answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_))
-      )
+  protected def navigateOrSessionExpired[A](answers: UserAnswers,
+                                            id: => TypedIdentifier[A],
+                                            destination: A => Call)(implicit reads: Reads[A]): Option[NavigateTo] =
+    NavigateTo.dontSave(answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_)))
 
   protected def dataCacheConnector: UserAnswersCacheConnector
 
@@ -135,4 +131,5 @@ abstract class AbstractNavigator
       NavigateTo.dontSave(routeMapping(identifier))
     else
       None
+
 }

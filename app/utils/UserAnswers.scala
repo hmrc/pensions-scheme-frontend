@@ -45,12 +45,9 @@ import scala.annotation.tailrec
 import scala.concurrent.Future
 
 //scalastyle:off number.of.methods
-final case class UserAnswers(json: JsValue = Json.obj())
-  extends Enumerable.Implicits
-    with DataCompletionEstablishers
-    with DataCompletionTrustees {
-
-  private val logger  = Logger(classOf[UserAnswers])
+final case class UserAnswers(json: JsValue = Json.obj()) extends Enumerable.Implicits
+  with DataCompletionEstablishers
+  with DataCompletionTrustees {
 
   def prettyPrint: String = Json.prettyPrint(json)
 
@@ -249,7 +246,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       case JsSuccess(trustees, _) =>
         trustees
       case JsError(errors) =>
-        logger.warn(s"Invalid json while reading all the trustees for addTrustees: $errors")
+        Logger.warn(s"Invalid json while reading all the trustees for addTrustees: $errors")
         Nil
     }
   }
@@ -289,7 +286,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       case JsSuccess(establishers, _) =>
         establishers
       case JsError(errors) =>
-        logger.warn(s"Invalid json while reading all the establishers for addEstablisher: $errors")
+        Logger.warn(s"Invalid json while reading all the establishers for addEstablisher: $errors")
         Nil
     }
   }
@@ -370,7 +367,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }.flatten
 
     if (allErrors.nonEmpty) { // If any of JSON is invalid then log warning but return the valid ones
-      logger.warn("Errors in JSON: " + allErrors)
+      Logger.warn("Errors in JSON: " + allErrors)
     }
 
     JsSuccess(jsResults.collect {
@@ -385,7 +382,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       .set(id)(value)
       .fold(
         errors => {
-          logger.error("Unable to set user answer", JsResultException(errors))
+          Logger.error("Unable to set user answer", JsResultException(errors))
           Future.successful(InternalServerError)
         },
         userAnswers => fn(userAnswers)
@@ -474,7 +471,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     json.validate[Seq[String]](readPspEstablishers) match {
       case JsSuccess(establishers, _) => establishers
       case JsError(errors) =>
-        logger.warn(s"Invalid json while reading establishers from psp scheme details: $errors")
+        Logger.warn(s"Invalid json while reading establishers from psp scheme details: $errors")
         Nil
     }
 
@@ -482,7 +479,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
 
     private def readsIndividual: Reads[String] = (
       (JsPath \ "establisherDetails" \ "firstName").read[String] and
-        (JsPath \ "establisherDetails" \ "lastName").read[String]) ((firstName, lastName) => s"$firstName $lastName")
+      (JsPath \ "establisherDetails" \ "lastName").read[String])((firstName, lastName) => s"$firstName $lastName")
 
     private def readsCompany: Reads[String] = (JsPath \ "companyDetails" \ "companyName").read[String]
 
@@ -513,7 +510,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       case JsSuccess(trustees, _) =>
         trustees
       case JsError(errors) =>
-        logger.warn(s"Invalid json while reading trustees from psp scheme details: $errors")
+        Logger.warn(s"Invalid json while reading trustees from psp scheme details: $errors")
         Nil
     }
 
