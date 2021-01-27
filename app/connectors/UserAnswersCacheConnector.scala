@@ -33,8 +33,9 @@ trait UserAnswersCacheConnector {
                                        wrts: Format[A],
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier
-                                      ): Future[UserAnswers] =
+                                      ): Future[UserAnswers] = {
     save(request.externalId, id, value).map(UserAnswers)
+  }
 
   def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                       (implicit
@@ -44,17 +45,22 @@ trait UserAnswersCacheConnector {
                                       ): Future[JsValue]
 
   def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
-                                     (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
+                                     (implicit
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+                                     ): Future[JsValue]
 
-  def fetch(cacheId: String)
-           (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]]
+  def fetch(cacheId: String)(implicit
+                             ec: ExecutionContext,
+                             hc: HeaderCarrier
+  ): Future[Option[JsValue]]
 
-  def lastUpdated(cacheId: String)
-                 (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]]
+  def lastUpdated(cacheId: String)(implicit
+                                   ec: ExecutionContext,
+                                   hc: HeaderCarrier
+  ): Future[Option[JsValue]]
 
-  def upsert(cacheId: String, value: JsValue)
-            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
+  def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
 
-  def removeAll(cacheId: String)
-               (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result]
+  def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result]
 }

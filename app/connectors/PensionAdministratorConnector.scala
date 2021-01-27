@@ -38,10 +38,8 @@ trait PensionAdministratorConnector {
 }
 
 @Singleton
-class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
-  extends PensionAdministratorConnector {
-
-  private val logger  = Logger(classOf[PensionAdministratorConnectorImpl])
+class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
+  PensionAdministratorConnector {
 
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
@@ -57,7 +55,7 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
   }
 
   private def logExceptions(token: String): PartialFunction[Try[String], Unit] = {
-    case Failure(t: Throwable) => logger.error(s"Unable to retrieve $token for PSA", t)
+    case Failure(t: Throwable) => Logger.error(s"Unable to retrieve $token for PSA", t)
   }
 
   def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {

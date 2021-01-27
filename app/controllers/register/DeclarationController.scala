@@ -24,6 +24,7 @@ import controllers.register.routes.DeclarationController
 import identifiers.SchemeTypeId
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
+import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
@@ -41,7 +42,6 @@ import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationController @Inject()(
@@ -58,13 +58,8 @@ class DeclarationController @Inject()(
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        val view: declaration
-                                     )(implicit val executionContext: ExecutionContext)
-  extends FrontendBaseController
-    with Retrievals
-    with I18nSupport
-    with Enumerable.Implicits {
-
-  private val logger  = Logger(classOf[DeclarationController])
+                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
@@ -93,14 +88,9 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            view(
-              isCompany = isEstCompany,
-              isDormant = isDeclarationDormant,
-              showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-              hasWorkingKnowledge = hasWorkingKnowledge,
-              schemeName = existingSchemeName,
-              href = href
-            )
+            view(isEstCompany, isDormant = isDeclarationDormant,
+              request.userAnswers.get(SchemeTypeId).contains(MasterTrust), hasWorkingKnowledge, existingSchemeName,
+              href)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -144,17 +134,12 @@ class DeclarationController @Inject()(
   }
 
 
-  private def sendEmail(srn: String, psaId: PsaId)
-                       (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    logger.debug("Fetch email from API")
+  private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    Logger.debug("Fetch email from API")
 
     minimalPsaConnector.getMinimalPsaDetails(psaId.id) flatMap { minimalPsa =>
-      emailConnector.sendEmail(
-        emailAddress = minimalPsa.email,
-        templateName = appConfig.emailTemplateId,
-        params = Map("srn" -> formatSrnForEmail(srn), "psaName" -> minimalPsa.name),
-        psaId = psaId
-      )
+      emailConnector.sendEmail(minimalPsa.email, appConfig.emailTemplateId,
+        Map("srn" -> formatSrnForEmail(srn), "psaName" -> minimalPsa.name), psaId)
     } recoverWith {
       case _: Throwable => Future.successful(EmailNotSent)
     }

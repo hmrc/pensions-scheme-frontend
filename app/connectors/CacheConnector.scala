@@ -46,10 +46,7 @@ import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CacheConnector
-  extends UserAnswersCacheConnector {
-
-  private val logger  = Logger(classOf[CacheConnector])
+trait CacheConnector extends UserAnswersCacheConnector {
 
   val config: FrontendAppConfig
   val http: WSClient
@@ -59,18 +56,19 @@ trait CacheConnector
                                                 fmt: Format[A],
                                                 ec: ExecutionContext,
                                                 hc: HeaderCarrier
-                                               ): Future[JsValue] =
+                                               ): Future[JsValue] = {
     modify(cacheId, _.set(id)(value))
+  }
 
-  override def upsert(cacheId: String, value: JsValue)
-                     (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier)
+  : Future[JsValue] =
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
   private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
                                 (implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
-                                ): Future[JsValue] =
+                                ): Future[JsValue] = {
     fetch(cacheId).flatMap {
       json =>
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {
@@ -90,12 +88,12 @@ trait CacheConnector
             Future.failed(JsResultException(errors))
         }
     }
+  }
 
-  override def fetch(id: String)
-                    (implicit
-                     ec: ExecutionContext,
-                     hc: HeaderCarrier
-                    ): Future[Option[JsValue]] =
+  override def fetch(id: String)(implicit
+                                 ec: ExecutionContext,
+                                 hc: HeaderCarrier
+  ): Future[Option[JsValue]] = {
 
     http.url(url(id))
       .withHttpHeaders(hc.headers: _*)
@@ -111,25 +109,26 @@ trait CacheConnector
               Future.failed(new HttpException(response.body, response.status))
           }
       }
+  }
 
   override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                               (implicit
                                                ec: ExecutionContext,
                                                hc: HeaderCarrier
-                                              ): Future[JsValue] =
+                                              ): Future[JsValue] = {
     modify(cacheId, _.remove(id))
+  }
 
-  override def removeAll(id: String)
-                        (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+  override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     http.url(url(id))
       .withHttpHeaders(hc.headers: _*)
       .delete().map(_ => Ok)
+  }
 
-  override def lastUpdated(id: String)
-                          (implicit
-                           ec: ExecutionContext,
-                           hc: HeaderCarrier
-                          ): Future[Option[JsValue]] =
+  override def lastUpdated(id: String)(implicit
+                                       ec: ExecutionContext,
+                                       hc: HeaderCarrier
+  ): Future[Option[JsValue]] = {
 
     http.url(lastUpdatedUrl(id))
       .withHttpHeaders(hc.headers: _*)
@@ -139,14 +138,13 @@ trait CacheConnector
           case NOT_FOUND =>
             Future.successful(None)
           case OK =>
-            logger.debug(
-              s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}"
-            )
+            Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}")
             Future.successful(Some(Json.parse(response.body)))
           case _ =>
             Future.failed(new HttpException(response.body, response.status))
         }
     }
+  }
 
   protected def url(id: String): String
 

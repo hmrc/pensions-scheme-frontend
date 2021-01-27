@@ -46,12 +46,8 @@ class AddTrusteeController @Inject()(
                                       formProvider: AddTrusteeFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: addTrustee
-                                    )(implicit val executionContext: ExecutionContext)
-  extends FrontendBaseController
-    with I18nSupport
-    with Retrievals {
-
-  private val logger = Logger(classOf[AddTrusteeController])
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -62,31 +58,31 @@ class AddTrusteeController @Inject()(
         Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
-      implicit request =>
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+    andThen requireData).async {
+    implicit request =>
 
-        val trustees = request.userAnswers.allTrusteesAfterDelete
+      val trustees = request.userAnswers.allTrusteesAfterDelete
 
-        if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
-          Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
-        else {
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) => {
-              Future.successful(BadRequest(
-                view(formWithErrors, mode, trustees, existingSchemeName, srn)))
-            },
-            value =>
-              request.userAnswers.set(AddTrusteeId)(value).fold(
-                errors => {
-                  logger.error("Unable to set user answer", JsResultException(errors))
-                  Future.successful(InternalServerError)
-                },
-                userAnswers =>
-                  Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers, srn)))
-              )
-          )
-        }
-    }
+      if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
+        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
+      else {
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) => {
+            Future.successful(BadRequest(
+              view(formWithErrors, mode, trustees, existingSchemeName, srn)))
+          },
+          value =>
+            request.userAnswers.set(AddTrusteeId)(value).fold(
+              errors => {
+                Logger.error("Unable to set user answer", JsResultException(errors))
+                Future.successful(InternalServerError)
+              },
+              userAnswers =>
+                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers, srn)))
+            )
+        )
+      }
+  }
 
 }

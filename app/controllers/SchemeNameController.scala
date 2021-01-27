@@ -20,7 +20,9 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
+import javax.inject.Inject
 import models.Mode
+import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
@@ -32,40 +34,34 @@ import utils._
 import utils.annotations.BeforeYouStart
 import views.html.schemeName
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeNameController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      dataCacheConnector: UserAnswersCacheConnector,
-                                      @BeforeYouStart navigator: Navigator,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      formProvider: SchemeNameFormProvider,
-                                      nameMatchingFactory: NameMatchingFactory,
-                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: schemeName
-                                    )(implicit val executionContext: ExecutionContext)
-  extends FrontendBaseController
-    with I18nSupport
-    with Retrievals {
-
-  private val logger  = Logger(classOf[SchemeNameController])
+class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
+                                     dataCacheConnector: UserAnswersCacheConnector,
+                                     @BeforeYouStart navigator: Navigator,
+                                     authenticate: AuthAction,
+                                     getData: DataRetrievalAction,
+                                     formProvider: SchemeNameFormProvider,
+                                     nameMatchingFactory: NameMatchingFactory,
+                                     pensionAdministratorConnector: PensionAdministratorConnector,
+                                     val controllerComponents: MessagesControllerComponents,
+                                     val view: schemeName
+                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse("")))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
@@ -73,7 +69,7 @@ class SchemeNameController @Inject()(
                 BadRequest(view(form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match", psaName
-                ), mode, existingSchemeName.getOrElse("")))
+                ), mode, existingSchemeNameOrEmptyString))
               }
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
@@ -81,10 +77,15 @@ class SchemeNameController @Inject()(
               }
             } recoverWith {
               case e: NotFoundException =>
-                logger.error(e.message)
+                Logger.error(e.message)
                 Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
           }
       )
   }
+
+  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
+    existingSchemeName.getOrElse("")
+
+
 }
