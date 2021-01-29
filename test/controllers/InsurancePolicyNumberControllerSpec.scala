@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import base.SpecBase.controllerComponents
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
@@ -28,7 +29,6 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insurancePolicyNumber
 
@@ -100,7 +100,7 @@ object InsurancePolicyNumberControllerSpec {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
   }

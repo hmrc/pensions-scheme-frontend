@@ -18,12 +18,11 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import models.MinimalPSA
+import models.{MinimalPSA, PSAMinimalFlags}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HttpClient, _}
 import utils.HttpResponseHelper
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,17 +31,24 @@ import scala.util.Failure
 @ImplementedBy(classOf[MinimalPsaConnectorImpl])
 trait MinimalPsaConnector {
 
-  def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean]
+  def getMinimalFlags(psaId: String)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
 
-  def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
+  def getMinimalPsaDetails(psaId: String)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
 
-  def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
+  def getPsaNameFromPsaID(psaId: String)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
 }
 
-class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends MinimalPsaConnector with
-  HttpResponseHelper {
+class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+  extends MinimalPsaConnector
+    with HttpResponseHelper {
 
-  override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
+  private val logger  = Logger(classOf[MinimalPsaConnectorImpl])
+
+  override def getMinimalPsaDetails(psaId: String)
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
     val psaHc = hc.withExtraHeaders("psaId" -> psaId)
 
     http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
@@ -57,11 +63,12 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
         case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
       }
     } andThen {
-      case Failure(t: Throwable) => Logger.warn("Unable to invite PSA to administer scheme", t)
+      case Failure(t: Throwable) => logger.warn("Unable to invite PSA to administer scheme", t)
     }
   }
 
-  override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
+  override def getPsaNameFromPsaID(psaId: String)
+                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
     getMinimalPsaDetails(psaId).map { minimalDetails =>
       (minimalDetails.individualDetails, minimalDetails.organisationName) match {
         case (Some(individual), None) => Some(individual.fullName)
@@ -71,17 +78,20 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
     }
   }
 
-  override def isPsaSuspended(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  override def getMinimalFlags(psaId: String)
+                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] = {
     val psaHc = hc.withExtraHeaders("psaId" -> psaId)
 
     http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
       response.status match {
         case OK =>
-          (response.json \ "isPsaSuspended").as[Boolean]
+          val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]
+          val isDeceased = (response.json \ "deceasedFlag").as[Boolean]
+          PSAMinimalFlags(isSuspended, isDeceased)
         case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
       }
     } andThen {
-      case Failure(t: Throwable) => Logger.warn("Unable to get PSA minimal details", t)
+      case Failure(t: Throwable) => logger.warn("Unable to get PSA minimal details", t)
     }
   }
 

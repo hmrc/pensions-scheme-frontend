@@ -26,7 +26,7 @@ import models._
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -264,7 +264,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

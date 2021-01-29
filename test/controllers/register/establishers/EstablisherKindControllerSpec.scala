@@ -27,7 +27,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.register.establishers.establisherKind
 
@@ -56,7 +56,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, stubMessagesControllerComponents(), view)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, None, firstIndex, None,
     postCall(NormalMode, firstIndex, None))(fakeRequest, messages).toString

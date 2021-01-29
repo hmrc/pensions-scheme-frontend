@@ -25,7 +25,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -51,8 +51,10 @@ trait PensionSchemeVarianceLockConnector {
 }
 
 @Singleton
-class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
-  PensionSchemeVarianceLockConnector {
+class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+  extends PensionSchemeVarianceLockConnector {
+
+  private val logger  = Logger(classOf[PensionSchemeVarianceLockConnectorImpl])
 
   override def lock(psaId: String, srn: String)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock] = {
@@ -146,7 +148,7 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   }
 
   private def logExceptions[I](msg: String): PartialFunction[Try[I], Unit] = {
-    case Failure(t: Throwable) => Logger.error(msg, t)
+    case Failure(t: Throwable) => logger.error(msg, t)
   }
 
   override def releaseLock(psaId: String, srn: String)

@@ -27,7 +27,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
 
@@ -46,7 +46,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view)
 
   val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)

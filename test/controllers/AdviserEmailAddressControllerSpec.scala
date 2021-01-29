@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.adviserEmailAddress
 
@@ -67,7 +67,7 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
       new DataRequiredActionImpl(),
       formProvider,
       cache,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

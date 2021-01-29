@@ -32,9 +32,10 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, FeatureToggleService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
@@ -70,7 +71,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view,
       featureToggleService
     )

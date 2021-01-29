@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRetrievalAction, FakeAuthAction}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 
 class ContinueRegistrationControllerSpec extends ControllerSpecBase {
@@ -42,7 +42,7 @@ class ContinueRegistrationControllerSpec extends ControllerSpecBase {
 
   def controller(data: DataRetrievalAction): ContinueRegistrationController =
     new ContinueRegistrationController(FakeAuthAction, data, fakeNavigator,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
 }

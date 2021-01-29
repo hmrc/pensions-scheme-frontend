@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.{FeatureToggleService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.AboutBenefitsAndInsurance
 import utils.{Enumerable, UserAnswers}
 import views.html.typeOfBenefits

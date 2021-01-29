@@ -22,7 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.whatYouWillNeedMembers
 
 class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -35,7 +35,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

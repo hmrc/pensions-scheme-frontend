@@ -21,7 +21,7 @@ import controllers.actions._
 import models.NormalMode
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
@@ -36,7 +36,7 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

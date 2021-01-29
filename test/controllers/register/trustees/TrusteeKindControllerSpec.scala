@@ -27,7 +27,7 @@ import play.api.libs.json.{JsString, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.register.trustees.trusteeKind
 
@@ -45,7 +45,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeKindController =
     new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view)
 
   val submitUrl: Call = controllers.register.trustees.routes.TrusteeKindController.onSubmit(NormalMode, index, None)

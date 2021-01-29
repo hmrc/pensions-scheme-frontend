@@ -26,7 +26,7 @@ import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,6 +50,8 @@ class EmailConnectorImpl @Inject()(
                                     crypto: ApplicationCrypto
                                   ) extends EmailConnector {
 
+  private val logger  = Logger(classOf[EmailConnectorImpl])
+
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
@@ -65,15 +67,15 @@ class EmailConnectorImpl @Inject()(
 
     val jsonData = Json.toJson(sendEmailReq)
 
-    Logger.debug(s"Data to email: $jsonData for email address $emailAddress")
+    logger.debug(s"Data to email: $jsonData for email address $emailAddress")
 
     http.POST[JsValue, HttpResponse](postUrl, jsonData).map { response =>
       response.status match {
         case ACCEPTED =>
-          Logger.info("Email sent successfully.")
+          logger.info("Email sent successfully.")
           EmailSent
         case status =>
-          Logger.warn(s"Email not sent. Failure with response status $status")
+          logger.warn(s"Email not sent. Failure with response status $status")
           EmailNotSent
       }
     } recoverWith logExceptions
@@ -87,7 +89,7 @@ class EmailConnectorImpl @Inject()(
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
     case t: Throwable =>
-      Logger.warn("Unable to connect to Email Service", t)
+      logger.warn("Unable to connect to Email Service", t)
       Future.successful(EmailNotSent)
   }
 }

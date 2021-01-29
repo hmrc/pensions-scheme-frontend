@@ -31,7 +31,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -66,7 +66,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       new DataRequiredActionImpl,
       fakeAuditService,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =

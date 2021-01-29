@@ -27,7 +27,7 @@ import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -183,7 +183,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
       allowChangeHelper,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

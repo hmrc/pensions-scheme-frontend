@@ -27,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.beforeYouStart
 
 import scala.concurrent.Future
@@ -45,7 +45,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
       messagesApi,
       FakeAuthAction,
       pensionAdministratorConnector,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

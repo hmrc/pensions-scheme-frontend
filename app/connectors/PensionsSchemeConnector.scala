@@ -25,7 +25,7 @@ import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 trait PensionsSchemeConnector {
 
   def registerScheme(answers: UserAnswers, psaId: String)
-                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]]
+                    (implicit hc: HeaderCarrier,
+                     ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]]
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse]
@@ -45,11 +46,14 @@ trait PensionsSchemeConnector {
 }
 
 @Singleton
-class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends
-  PensionsSchemeConnector {
+class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+  extends PensionsSchemeConnector {
+
+  private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
   def registerScheme(answers: UserAnswers, psaId: String)
-                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
+                    (implicit hc: HeaderCarrier,
+                     ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
 
     val url = config.registerSchemeUrl
 
@@ -63,7 +67,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
             case JsError(errors) => throw JsResultException(errors)
           }
         case _ =>
-          Logger.error("Unable to register Scheme")
+          logger.error("Unable to register Scheme")
           Left(response)
       }
     }
@@ -95,7 +99,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
             case JsError(errors) => throw JsResultException(errors)
           }
         case _ =>
-          Logger.error(response.body)
+          logger.error(response.body)
           Left(response)
       }
     }

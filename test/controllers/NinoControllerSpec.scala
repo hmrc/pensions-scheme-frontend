@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -84,7 +84,7 @@ class NinoControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

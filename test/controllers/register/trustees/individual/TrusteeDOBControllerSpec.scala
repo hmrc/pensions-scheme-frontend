@@ -30,7 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
@@ -55,7 +55,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view)
 
   private val postCall = routes.TrusteeDOBController.onSubmit _

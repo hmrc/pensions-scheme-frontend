@@ -27,7 +27,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.otherPartners
 
@@ -67,7 +67,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
   val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit(NormalMode, index, None)

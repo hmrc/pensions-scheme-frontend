@@ -33,7 +33,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -96,7 +96,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       new DataRequiredActionImpl,
       formProvider,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   def viewAsString(form: Form[_] = form): String =

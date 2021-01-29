@@ -80,8 +80,6 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case _ => None
     }
 
-
-
   private def benefitsSecuredEditRoutes(userAnswers: UserAnswers,
                                         mode: Mode,
                                         srn: Option[String] = None): Option[NavigateTo] = {

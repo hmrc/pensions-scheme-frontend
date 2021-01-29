@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package filters
+package models
 
-import com.google.inject.Inject
-import play.api.http.DefaultHttpFilters
-import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
+import play.api.libs.json.{Json, OFormat}
 
-class Filters @Inject()(
-                         sessionIdFilter: SessionIdFilter,
-                         frontendFilters: FrontendFilters
-                       ) extends DefaultHttpFilters(frontendFilters.filters :+ sessionIdFilter: _*)
+case class PSAMinimalFlags(isSuspended:Boolean, isDeceased:Boolean)
+
+object PSAMinimalFlags {
+  implicit val formats: OFormat[PSAMinimalFlags] = Json.format[PSAMinimalFlags]
+}

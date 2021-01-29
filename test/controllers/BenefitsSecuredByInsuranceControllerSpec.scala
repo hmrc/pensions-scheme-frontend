@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
@@ -62,7 +62,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl(),
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

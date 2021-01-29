@@ -32,7 +32,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.register.schemeSuccess
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -70,7 +70,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       fakePensionAdminstratorConnector,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

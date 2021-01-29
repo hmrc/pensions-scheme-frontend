@@ -22,7 +22,7 @@ import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 
 class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -37,7 +37,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       view,
-      stubMessagesControllerComponents()
+      controllerComponents
     )
 
   lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, None, index=Index(0))

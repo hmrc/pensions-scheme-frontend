@@ -20,48 +20,52 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
-import javax.inject.Inject
 import models.Mode
-import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils._
 import utils.annotations.BeforeYouStart
 import views.html.schemeName
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
-                                     dataCacheConnector: UserAnswersCacheConnector,
-                                     @BeforeYouStart navigator: Navigator,
-                                     authenticate: AuthAction,
-                                     getData: DataRetrievalAction,
-                                     formProvider: SchemeNameFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory,
-                                     pensionAdministratorConnector: PensionAdministratorConnector,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     val view: schemeName
-                                    )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-  with I18nSupport with Retrievals {
+class SchemeNameController @Inject()(
+                                      override val messagesApi: MessagesApi,
+                                      dataCacheConnector: UserAnswersCacheConnector,
+                                      @BeforeYouStart navigator: Navigator,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      formProvider: SchemeNameFormProvider,
+                                      nameMatchingFactory: NameMatchingFactory,
+                                      pensionAdministratorConnector: PensionAdministratorConnector,
+                                      val controllerComponents: MessagesControllerComponents,
+                                      val view: schemeName
+                                    )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+    with I18nSupport
+    with Retrievals {
+
+  private val logger  = Logger(classOf[SchemeNameController])
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
+      Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse("")))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
@@ -69,7 +73,7 @@ class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
                 BadRequest(view(form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match", psaName
-                ), mode, existingSchemeNameOrEmptyString))
+                ), mode, existingSchemeName.getOrElse("")))
               }
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
@@ -77,15 +81,10 @@ class SchemeNameController @Inject()(override val messagesApi: MessagesApi,
               }
             } recoverWith {
               case e: NotFoundException =>
-                Logger.error(e.message)
+                logger.error(e.message)
                 Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
           }
       )
   }
-
-  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
-    existingSchemeName.getOrElse("")
-
-
 }

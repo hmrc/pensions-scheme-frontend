@@ -28,7 +28,6 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import services.FeatureToggleService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -113,7 +112,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view,
       featureToggleService
     )

@@ -24,7 +24,7 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.SchemeNameId
 import identifiers.register.SubmissionReferenceNumberId
-import models.LastUpdated
+import models.{LastUpdated, PSAMinimalFlags}
 import models.requests.OptionalDataRequest
 import play.api.Logger
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
@@ -37,14 +37,21 @@ import viewmodels.Message
 import scala.concurrent.{ExecutionContext, Future}
 
 class UrlsPartialService @Inject()(
-                                  appConfig: FrontendAppConfig,
-                                  dataCacheConnector: UserAnswersCacheConnector,
-                                  pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
-                                  updateConnector: UpdateSchemeCacheConnector,
-                                  minimalPsaConnector: MinimalPsaConnector
+                                    appConfig: FrontendAppConfig,
+                                    dataCacheConnector: UserAnswersCacheConnector,
+                                    pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
+                                    updateConnector: UpdateSchemeCacheConnector,
+                                    minimalPsaConnector: MinimalPsaConnector
                                   ) {
 
-  def schemeLinks(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+  private val logger  = Logger(classOf[UrlsPartialService])
+
+  def schemeLinks(psaId: String)
+                 (
+                   implicit request: OptionalDataRequest[AnyContent],
+                   hc: HeaderCarrier,
+                   ec: ExecutionContext
+                 ): Future[Seq[OverviewLink]] =
     for {
       subscription <- subscriptionLinks
       variations <- variationsLinks(psaId)
@@ -52,26 +59,46 @@ class UrlsPartialService @Inject()(
       subscription ++ variations
     }
 
-  private def subscriptionLinks(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =
+  private def subscriptionLinks(
+                                 implicit request: OptionalDataRequest[AnyContent],
+                                 hc: HeaderCarrier,
+                                 ec: ExecutionContext
+                               ): Future[Seq[OverviewLink]] =
 
     request.userAnswers match {
 
       case None => Future.successful(Seq(
-        OverviewLink("register-new-scheme", appConfig.canBeRegisteredUrl,
-          Message("messages__schemeOverview__scheme_subscription"))
+        OverviewLink(
+          id = "register-new-scheme",
+          url = appConfig.canBeRegisteredUrl,
+          linkText = Message("messages__schemeOverview__scheme_subscription")
+        )
       ))
 
       case Some(ua) =>
         ua.get(SchemeNameId) match {
           case Some(schemeName) =>
-            lastUpdatedAndDeleteDate(request.externalId)
-              .map(date =>
+            lastUpdatedAndDeleteDate(request.externalId) map {
+              date =>
                 Seq(
-                  OverviewLink("continue-registration", appConfig.canBeRegisteredUrl,
-                    Message("messages__schemeOverview__scheme_subscription_continue", schemeName, createFormattedDate(date, appConfig.daysDataSaved))),
-                  OverviewLink("delete-registration", appConfig.deleteSubscriptionUrl,
-                    Message("messages__schemeOverview__scheme_subscription_delete", schemeName))))
-          case _ => Future.successful(Seq.empty[OverviewLink])
+                  OverviewLink(
+                    id = "continue-registration",
+                    url = appConfig.canBeRegisteredUrl,
+                    linkText = Message(
+                      "messages__schemeOverview__scheme_subscription_continue",
+                      schemeName,
+                      createFormattedDate(date, appConfig.daysDataSaved)
+                    )
+                  ),
+                  OverviewLink(
+                    id = "delete-registration",
+                    url = appConfig.deleteSubscriptionUrl,
+                    linkText = Message("messages__schemeOverview__scheme_subscription_delete", schemeName)
+                  )
+                )
+            }
+          case _ =>
+            Future.successful(Seq.empty[OverviewLink])
         }
     }
 
@@ -83,49 +110,65 @@ class UrlsPartialService @Inject()(
           case Some(data) => variationsDeleteDate(schemeVariance.srn).map { dateOfDeletion =>
             val schemeName = (data \ "schemeName").as[String]
             Seq(
-              OverviewLink("continue-variation", appConfig.viewUrl.format(schemeVariance.srn),
-                Message("messages__schemeOverview__scheme_variations_continue", schemeName, dateOfDeletion)),
-              OverviewLink("delete-variation", appConfig.deleteVariationsUrl.format(schemeVariance.srn),
-                Message("messages__schemeOverview__scheme_variations_delete", schemeName)))
+              OverviewLink(
+                id = "continue-variation",
+                url = appConfig.viewUrl.format(schemeVariance.srn),
+                linkText = Message("messages__schemeOverview__scheme_variations_continue", schemeName, dateOfDeletion)
+              ),
+              OverviewLink(
+                id = "delete-variation",
+                url = appConfig.deleteVariationsUrl.format(schemeVariance.srn),
+                linkText = Message("messages__schemeOverview__scheme_variations_delete", schemeName)
+              )
+            )
           }
-          case None => Future.successful(Seq.empty[OverviewLink])
+          case None =>
+            Future.successful(Seq.empty[OverviewLink])
         }
-      case None => Future.successful(Seq.empty[OverviewLink])
+      case None =>
+        Future.successful(Seq.empty[OverviewLink])
     }
 
-  def checkIfSchemeCanBeRegistered(psaId: String)(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  def checkIfSchemeCanBeRegistered(psaId: String)
+                                  (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
-      isPsaSuspended <- minimalPsaConnector.isPsaSuspended(psaId)
-      result <- retrieveResult(request.userAnswers, isPsaSuspended)
+      minimalFlags <- minimalPsaConnector.getMinimalFlags(psaId)
+      result <- retrieveResult(request.userAnswers, minimalFlags)
     } yield result
 
-
-  //LINK WITH PSA SUSPENSION HELPER METHODS
-  private def retrieveResult(schemeDetailsCache: Option[UserAnswers], isPsaSuspended: Boolean
-                            )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  private def retrieveResult(schemeDetailsCache: Option[UserAnswers], minimalFlags: PSAMinimalFlags)
+                            (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     schemeDetailsCache match {
-      case None => Future.successful(redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended))
+      case None => Future.successful(redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags))
       case Some(ua) => ua.get(SchemeNameId) match {
-        case Some(_) => Future.successful(redirectBasedOnPsaSuspension(appConfig.continueUrl, isPsaSuspended))
-        case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, isPsaSuspended)
+        case Some(_) => Future.successful(redirectBasedOnMinimalFlags(appConfig.continueUrl, minimalFlags))
+        case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, minimalFlags)
       }
     }
 
-  private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, isPsaSuspended: Boolean
-                                                   )(implicit request: OptionalDataRequest[AnyContent],
+  private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, minimalFlags: PSAMinimalFlags)
+                                                   (implicit request: OptionalDataRequest[AnyContent],
                                                      hc: HeaderCarrier,
                                                      ec: ExecutionContext): Future[Result] =
 
     ua.get(SubmissionReferenceNumberId).fold {
-      Logger.warn("Page load failed since both scheme name and srn number were not found in scheme registration mongo collection")
+      logger.warn("Page load failed since both scheme name and srn number were not found in scheme registration mongo collection")
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }{ _ => dataCacheConnector.removeAll(request.externalId).map { _ =>
-        Logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
-        redirectBasedOnPsaSuspension(appConfig.registerUrl, isPsaSuspended)
-      }}
+    } { _ =>
+      dataCacheConnector.removeAll(request.externalId).map { _ =>
+        logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
+        redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags)
+      }
+    }
 
-  private def redirectBasedOnPsaSuspension(redirectUrl: String, isPsaSuspended: Boolean): Result =
-    if (isPsaSuspended) Redirect(appConfig.cannotStartRegUrl) else Redirect(redirectUrl)
+  private def redirectBasedOnMinimalFlags(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
+    Redirect(
+      minimalFlags match {
+        case PSAMinimalFlags(true, _) => appConfig.cannotStartRegUrl
+        case PSAMinimalFlags(_, true) => appConfig.youMustContactHMRCUrl
+        case _ => redirectUrl
+      }
+    )
 
   //DATE FORMATIING HELPER METHODS
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
@@ -135,7 +178,7 @@ class UrlsPartialService @Inject()(
 
   private def currentTimestamp: LastUpdated = LastUpdated(System.currentTimeMillis)
 
-  private def parseDateElseCurrent(dateOpt: Option[JsValue]): LastUpdated = {
+  private def parseDateElseCurrent(dateOpt: Option[JsValue]): LastUpdated =
     dateOpt.map(ts =>
       LastUpdated(
         ts.validate[Long] match {
@@ -144,14 +187,15 @@ class UrlsPartialService @Inject()(
         }
       )
     ).getOrElse(currentTimestamp)
-  }
 
-  private def lastUpdatedAndDeleteDate(externalId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LastUpdated] =
+  private def lastUpdatedAndDeleteDate(externalId: String)
+                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LastUpdated] =
     dataCacheConnector.lastUpdated(externalId).map { dateOpt =>
       parseDateElseCurrent(dateOpt)
     }
 
-  private def variationsDeleteDate(srn: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
+  private def variationsDeleteDate(srn: String)
+                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     updateConnector.lastUpdated(srn).map { dateOpt =>
       s"${createFormattedDate(parseDateElseCurrent(dateOpt), appConfig.daysDataSaved)}"
     }

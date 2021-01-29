@@ -33,7 +33,7 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
@@ -180,7 +180,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

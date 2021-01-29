@@ -28,7 +28,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -66,7 +66,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeAuditService,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 

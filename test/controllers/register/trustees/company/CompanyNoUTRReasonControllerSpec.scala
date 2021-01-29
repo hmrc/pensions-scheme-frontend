@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
@@ -97,7 +97,7 @@ object CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
-      stubMessagesControllerComponents(),
+      controllerComponents,
       view
     )
 
