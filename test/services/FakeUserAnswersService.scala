@@ -52,6 +52,15 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     Future.successful(Json.obj())
   }
 
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A, changeId: TypedIdentifier[Boolean])
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
+                                                request: DataRequest[AnyContent]): Future[JsValue] =
+  {
+    data += (id.toString -> Json.toJson(value))
+    data += ("userAnswer" -> request.userAnswers.set(id)(value).asOpt.value.json)
+    Future.successful(Json.obj())
+  }
+
 
   override def setExistingAddress(mode: Mode, id: TypedIdentifier[Address], userAnswers: UserAnswers): UserAnswers = {
     userAnswers.get(id).fold(userAnswers) {

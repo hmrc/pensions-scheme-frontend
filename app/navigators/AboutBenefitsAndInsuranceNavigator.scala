@@ -48,10 +48,14 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
     }
   }
 
-  private def typesOfBenefitsRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def typesOfBenefitsRoutes(userAnswers: UserAnswers, mode: Mode = NormalMode, srn: Option[String] = None): Option[NavigateTo] = {
     userAnswers.get(TypeOfBenefitsId) match {
-      case Some(Defined) => NavigateTo.dontSave(BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None))
-      case _ => NavigateTo.dontSave(MoneyPurchaseBenefitsController.onPageLoad(NormalMode, None))
+      case Some(Defined) => mode match {
+        case NormalMode => NavigateTo.dontSave(BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None))
+        case CheckMode => checkYourAnswers(NormalMode, srn)
+        case _ => anyMoreChanges(srn)
+      }
+      case _ => NavigateTo.dontSave(MoneyPurchaseBenefitsController.onPageLoad(mode, srn))
     }
   }
 
@@ -67,7 +71,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
     from.id match {
       case InvestmentRegulatedSchemeId => checkYourAnswers(NormalMode)
       case OccupationalPensionSchemeId => checkYourAnswers(NormalMode)
-      case TypeOfBenefitsId => typesOfBenefitsEditRoutes(from.userAnswers, CheckMode)
+      case TypeOfBenefitsId => typesOfBenefitsRoutes(from.userAnswers, CheckMode)
       case MoneyPurchaseBenefitsId => checkYourAnswers(NormalMode)
       case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckMode)
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(NormalMode, None))
@@ -75,13 +79,6 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
       case InsurerConfirmAddressId => checkYourAnswers(NormalMode)
       case _ => None
     }
-
-  private def typesOfBenefitsEditRoutes(userAnswers: UserAnswers, mode: Mode, srn: Option[String] = None): Option[NavigateTo] = {
-    userAnswers.get(TypeOfBenefitsId) match {
-      case Some(Defined) => if (mode == CheckMode) checkYourAnswers(NormalMode, srn) else anyMoreChanges(srn)
-      case _ => NavigateTo.dontSave(MoneyPurchaseBenefitsController.onPageLoad(mode, None))
-    }
-  }
 
   private def benefitsSecuredEditRoutes(userAnswers: UserAnswers,
                                         mode: Mode,
@@ -110,6 +107,8 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = {
     from.id match {
+      case TypeOfBenefitsId => typesOfBenefitsRoutes(from.userAnswers, CheckUpdateMode, srn)
+      case MoneyPurchaseBenefitsId => anyMoreChanges(srn)
       case BenefitsSecuredByInsuranceId => benefitsSecuredEditRoutes(from.userAnswers, CheckUpdateMode, srn)
       case InsuranceCompanyNameId => NavigateTo.dontSave(InsurancePolicyNumberController.onPageLoad(UpdateMode, srn))
       case InsurancePolicyNumberId => anyMoreChanges(srn)

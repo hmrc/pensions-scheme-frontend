@@ -34,9 +34,7 @@ class TypeOfBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
     AnswerRow(Message("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true,
       Some(Link("site.change",onwardUrl, Some(Message("messages__visuallyhidden__type_of_benefits_change", name)))))
   )
-  private val answerRowsWithNoChangeLinks = Seq(
-    AnswerRow(Message("messages__type_of_benefits_cya_label", name),Seq("messages__type_of_benefits__opt2"), true)
-  )
+
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
     _.set(TypeOfBenefitsId)(TypeOfBenefits.Defined)).asOpt.get
 
@@ -58,7 +56,7 @@ class TypeOfBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
       "return answers rows without links" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
-        TypeOfBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithNoChangeLinks)
+        TypeOfBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
       }
     }
 

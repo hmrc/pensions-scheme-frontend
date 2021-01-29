@@ -29,14 +29,14 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
-import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
+import utils.annotations.AboutBenefitsAndInsurance
 import views.html.moneyPurchaseBenefits
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MoneyPurchaseBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                @InsuranceService userAnswersService: UserAnswersService,
+                                                userAnswersService: UserAnswersService,
                                                 @AboutBenefitsAndInsurance navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
@@ -65,7 +65,6 @@ class MoneyPurchaseBenefitsController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
-      println(s"\n\n  >>>>>>>>>>>>>. ${request.request.body} ")
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
