@@ -24,8 +24,7 @@ import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +37,7 @@ trait PensionsSchemeConnector {
                      ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]]
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse]
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]]
 
   def checkForAssociation(psaId: String, srn: String)
                          (implicit headerCarrier: HeaderCarrier,
@@ -74,11 +73,17 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
   }
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]] = {
 
     val url = config.updateSchemeDetailsUrl
-
-    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr))
+    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr)).map { response =>
+      response.status match {
+        case OK => Right(())
+        case _ =>
+          logger.error("Unable to update Scheme")
+          Left(response)
+      }
+    }
   }
 
   def checkForAssociation(psaId: String, srn: String)
