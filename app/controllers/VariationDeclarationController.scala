@@ -66,22 +66,26 @@ class VariationDeclarationController @Inject()(
     requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-      srn.flatMap { srnId =>
-        request.userAnswers.get(PstrId).map {
-          pstr =>
-            val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
-            for {
-              _ <- pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua).map(_.status == OK)
-              _ <- updateSchemeCacheConnector.removeAll(srnId)
-              _ <- viewConnector.removeAll(request.externalId)
-              _ <- lockConnector.releaseLock(psaId.id, srnId)
-            } yield {
-              Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
-            }
-        }
-      }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-
+      (srn, request.userAnswers.get(PstrId)) match {
+        case (Some(srnId), Some(pstr)) =>
+          val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
+          pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
+            case Right(_) =>
+              for {
+                _ <- updateSchemeCacheConnector.removeAll(srnId)
+                _ <- viewConnector.removeAll(request.externalId)
+                _ <- lockConnector.releaseLock(psaId.id, srnId)
+              } yield {
+                Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
+              }
+            case Left(_) =>
+              sessionExpiredPage
+          }
+        case _ => sessionExpiredPage
+      }
   }
+
+  private def sessionExpiredPage = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
 }

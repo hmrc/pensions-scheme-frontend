@@ -27,8 +27,6 @@ import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HttpResponse
-
 import utils.FakeNavigator
 import views.html.variationDeclaration
 
@@ -87,7 +85,7 @@ class VariationDeclarationControllerSpec extends ControllerSpecBase with Mockito
 
     "redirect to the next page on clicking agree and continue" in {
       when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(HttpResponse(OK, "")))
+        .thenReturn(Future.successful(Right(())))
       when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
         .thenReturn(Future.successful(Ok))
       when(viewConnector.removeAll(any())(any(), any()))

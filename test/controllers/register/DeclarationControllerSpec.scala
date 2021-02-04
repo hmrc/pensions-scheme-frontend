@@ -35,7 +35,6 @@ import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
@@ -238,7 +237,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     }
 
     override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = ???
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]] = ???
 
     override def checkForAssociation(psaId: String, srn: String)
                                     (implicit headerCarrier: HeaderCarrier,
