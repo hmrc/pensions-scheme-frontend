@@ -7,6 +7,13 @@ $(document).ready(function() {
         }
     });
 
+    window.GOVUK.timeoutDialog({
+        timeout: 900,
+        countdown: 120,
+        keepAliveUrl: location.href,
+        signOutUrl: "/register-pension-scheme/logout"
+    });
+
     // =====================================================
     // Initialise show-hide-content
     // Toggles additional content based on radio/checkbox input state
@@ -37,10 +44,15 @@ $(document).ready(function() {
     });
 
     if(document.querySelectorAll('select').length > 0){
-        openregisterLocationPicker({
+        accessibleAutocomplete({
+            element: document.querySelector('select'),
+            id: 'country',
+            source: '/register-pension-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+        })
+
+        accessibleAutocomplete.enhanceSelectElement({
             defaultValue: '',
-            selectElement: document.querySelector('select'),
-            url: '/register-pension-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+            selectElement: document.querySelector('select')
         })
 
         // temporary fix for IE not registering clicks on the text of the results list for the country autocomplete
