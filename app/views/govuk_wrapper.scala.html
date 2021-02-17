@@ -18,42 +18,42 @@
 @import views.html.layouts.GovUkTemplate
 
 @this(
-    appConfig: config.FrontendAppConfig,
-    header_nav: HeaderNav,
-    head: Head,
-    footer: Footer,
-    serviceInfo: ServiceInfo,
-    main_content_header: MainContentHeader,
-    footer_links: FooterLinks,
-    main_content: MainContent,
-    reportAProblemLink: ReportAProblemLink,
-    govuk_template: GovUkTemplate
+        appConfig: config.FrontendAppConfig,
+        header_nav: HeaderNav,
+        head: HeadWithTrackingConsent,
+        footer: Footer,
+        serviceInfo: ServiceInfo,
+        main_content_header: MainContentHeader,
+        footer_links: FooterLinks,
+        main_content: MainContent,
+        reportAProblemLink: ReportAProblemLink,
+        govuk_template: GovUkTemplate
 )
 
-@(appConfig: config.FrontendAppConfig,
-  title: String,
-  mainClass: Option[String] = None,
-  mainDataAttributes: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  sidebar: Html = HtmlFormat.empty,
-  contentHeader: Option[Html] = None,
-  mainContent: Html = HtmlFormat.empty,
-  serviceInfoContent: Html = HtmlFormat.empty,
-  scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(
+        appConfig: config.FrontendAppConfig,
+        title: String,
+        mainClass: Option[String] = None,
+        mainDataAttributes: Option[Html] = None,
+        bodyClasses: Option[String] = None,
+        sidebar: Html = HtmlFormat.empty,
+        contentHeader: Option[Html] = None,
+        mainContent: Html = HtmlFormat.empty,
+        serviceInfoContent: Html = HtmlFormat.empty,
+        scriptElem: Option[Html] = None
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
 
 @headTag = {
     @head(
-      linkElem = None,
-      headScripts = None)
+        linkElem = None,
+        headScripts = None
+    )
     <meta name="format-detection" content="telephone=no" />
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/pensionsschemefrontend-app.css")' />
     <script src='@routes.Assets.versioned("javascripts/autocomplete/location-autocomplete.min.js")'> </script>
-    @if(appConfig.googleTagManagerIdAvailable) {
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);            })(window,document,'script','dataLayer','@appConfig.googleTagManagerId');        </script>
-    }
-
-
-
 }
 
 @headerNavLinks = {
@@ -62,46 +62,45 @@
 
 @insideHeader = {
     @header_nav(
-      navTitle = Some(messages("site.service_name")),
-      navTitleLink = None,
-      showBetaLink = false,
-      navLinks = Some(headerNavLinks))
-
-    @if(appConfig.googleTagManagerIdAvailable) {
-        <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id=@appConfig.googleTagManagerId" height="0" width="0" style="display:none;visibility:hidden">
-            </iframe>
-        </noscript>
-    }
+        navTitle = Some(messages("site.service_name")),
+        navTitleLink = None,
+        showBetaLink = false,
+        navLinks = Some(headerNavLinks)
+    )
 }
 
 @afterHeader = {}
 
 @bodyEnd = {
     @footer(
-      analyticsToken = None,
-      analyticsHost = "",
-      ssoUrl = None,
-      scriptElem = scriptElem,
-      gaCalls = None,
-      allowQueryStringInAnalytics = true)
-      <script src='@routes.Assets.versioned("javascripts/pensionsschemefrontend-app.min.js")'> </script>
-      <!--[if gt IE 8]><!-->
-      <script src='@routes.Assets.versioned("javascripts/autocomplete/location-autocomplete.min.js")'> </script>
-      <!--<![endif]-->
+        analyticsToken = None,
+        analyticsHost = "",
+        ssoUrl = None,
+        scriptElem = scriptElem,
+        gaCalls = None,
+        allowQueryStringInAnalytics = true
+    )
+    <script src='@routes.Assets.versioned("javascripts/pensionsschemefrontend-app.min.js")'> </script>
+        <!--[if gt IE 8]><!-->
+    <script src='@routes.Assets.versioned("javascripts/autocomplete/location-autocomplete.min.js")'> </script>
+        <!--<![endif]-->
 }
 
 @footerTop = {}
+
 @footerLinks = {}
 
-@phaseBanner = {@components.phase_banner(appConfig)}
+@phaseBanner = {
+    @components.phase_banner(appConfig)
+}
 
 @serviceInformation = {
     @serviceInfo(
-      betaBanner = phaseBanner,
-      includeGridWrapper = false,
-      serviceInfoContent = Some(serviceInfoContent),
-      includeHMRCBranding = false)
+        betaBanner = phaseBanner,
+        includeGridWrapper = false,
+        serviceInfoContent = Some(serviceInfoContent),
+        includeHMRCBranding = false
+    )
 }
 
 @mainContentHeader = {
@@ -118,17 +117,20 @@
     }
 }
 
-@getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
+@getHelpForm = @{
+    reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
+}
 
 @content = {
     @main_content(
-      article = mainContent,
-      mainClass = mainClass,
-      mainDataAttributes = mainDataAttributes,
-      mainContentHeader = mainContentHeader,
-      serviceInfo = serviceInformation,
-      getHelpForm = getHelpForm,
-      sidebar = sidebar)
+        article = mainContent,
+        mainClass = mainClass,
+        mainDataAttributes = mainDataAttributes,
+        mainContentHeader = mainContentHeader,
+        serviceInfo = serviceInformation,
+        getHelpForm = getHelpForm,
+        sidebar = sidebar
+    )
 }
 
 @govuk_template(Some(title), bodyClasses)(headTag, bodyEnd, insideHeader, afterHeader, footerTop, Some(footer_links()), true)(content)
