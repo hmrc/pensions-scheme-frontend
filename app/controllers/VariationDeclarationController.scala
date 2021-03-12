@@ -16,14 +16,18 @@
 
 package controllers
 
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
+import audit.{AuditService, TcmpAuditEvent}
+import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
-import identifiers.{PstrId, SchemeNameId, VariationDeclarationId}
+import identifiers.{MoneyPurchaseBenefitsId, PstrId, SchemeNameId, VariationDeclarationId}
+import models.requests.DataRequest
+
 import javax.inject.Inject
-import models.UpdateMode
+import models.{MoneyPurchaseBenefits, UpdateMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,47 +49,84 @@ class VariationDeclarationController @Inject()(
                                                 updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                                 viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                                 val controllerComponents: MessagesControllerComponents,
-                                                val view: variationDeclaration
-                                              )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController
-  with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                val view: variationDeclaration,
+                                                auditService: AuditService,
+                                                schemeDetailsConnector: SchemeDetailsConnector
+                                              )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+    with Retrievals
+    with I18nSupport
+    with Enumerable.Implicits {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
-    allowAccess(srn) andThen requireData).async {
-    implicit request =>
-      val href = VariationDeclarationController.onClickAgree(srn)
-      srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))) { actualSrn =>
-        updateSchemeCacheConnector.fetch(actualSrn).map {
-          case Some(_) => Ok(view(request.userAnswers.get(SchemeNameId), srn, href))
-          case _ => Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+  def onPageLoad(srn: Option[String]): Action[AnyContent] =
+    (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
+      implicit request =>
+        srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))) {
+          actualSrn =>
+            updateSchemeCacheConnector.fetch(actualSrn).map {
+              case Some(_) =>
+                Ok(view(request.userAnswers.get(SchemeNameId), srn, VariationDeclarationController.onClickAgree(srn)))
+              case _ =>
+                Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+            }
         }
-      }
-  }
+    }
 
-  def onClickAgree(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
-    requireData).async {
-    implicit request =>
-      val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-      (srn, request.userAnswers.get(PstrId)) match {
-        case (Some(srnId), Some(pstr)) =>
-          val ua = request.userAnswers.set(VariationDeclarationId)(value = true).asOpt.getOrElse(request.userAnswers)
-          pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
-            case Right(_) =>
-              for {
-                _ <- updateSchemeCacheConnector.removeAll(srnId)
-                _ <- viewConnector.removeAll(request.externalId)
-                _ <- lockConnector.releaseLock(psaId.id, srnId)
-              } yield {
-                Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
-              }
-            case Left(_) =>
-              sessionExpiredPage
-          }
-        case _ => sessionExpiredPage
-      }
-  }
+  def onClickAgree(srn: Option[String]): Action[AnyContent] =
+    (authenticate() andThen getData(UpdateMode, srn) andThen requireData).async {
+      implicit request =>
+        val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
+        (srn, request.userAnswers.get(PstrId)) match {
+          case (Some(srnId), Some(pstr)) =>
+            val ua =
+              request
+                .userAnswers
+                .set(VariationDeclarationId)(value = true)
+                .asOpt
+                .getOrElse(request.userAnswers)
 
-  private def sessionExpiredPage = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
+              case Right(_) =>
+                for {
+                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr)
+                  tcmpFrom = schemeDetails.get(MoneyPurchaseBenefitsId)
+                  tcmpTo = ua.get(MoneyPurchaseBenefitsId)
+                  _ <- Future.successful(auditTcmp(psaId.id, schemeDetails.get(MoneyPurchaseBenefitsId), ua.get(MoneyPurchaseBenefitsId)))
+                  _ <- updateSchemeCacheConnector.removeAll(srnId)
+                  _ <- viewConnector.removeAll(request.externalId)
+                  _ <- lockConnector.releaseLock(psaId.id, srnId)
+                } yield {
+                  Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
+                }
+              case Left(_) =>
+                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            }
+          case _ =>
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        }
+    }
+
+  private def auditTcmp(
+                         psaId: String,
+                         fromTcmp: Option[Seq[MoneyPurchaseBenefits]],
+                         toTcmp: Option[Seq[MoneyPurchaseBenefits]]
+                       )(
+                         implicit request: DataRequest[AnyContent]
+                       ): Unit = {
+    (fromTcmp, toTcmp) match {
+      case (Some(from), Some(to)) =>
+        if (from.sortWith(_.toString < _.toString) == to.sortWith(_.toString < _.toString)) ()
+        else auditService.sendExtendedEvent(
+          TcmpAuditEvent(
+            psaId = psaId,
+            from = Json.toJson(from.map(_.toString)),
+            to = Json.toJson(to.map(_.toString))
+          )
+        )
+      case _ => ()
+    }
+  }
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
+
 }

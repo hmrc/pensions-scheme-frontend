@@ -16,16 +16,19 @@
 
 package audit
 
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, JsValue, Json}
 
-trait AuditEvent {
-  def auditType: String
+case class TcmpAuditEvent(
+                           psaId: String,
+                           from: JsValue,
+                           to: JsValue
+                         ) extends ExtendedAuditEvent {
 
-  def details: Map[String, String]
-}
+  override def auditType: String = "TaxationCollectiveMoneyPurchaseAuditEvent"
 
-trait ExtendedAuditEvent {
-  def auditType: String
-
-  def details: JsObject
+  override def details: JsObject = Json.obj(
+    "pensionSchemeAdministratorId" -> psaId,
+    "from" -> from,
+    "to" -> to
+  )
 }

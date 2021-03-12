@@ -42,7 +42,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[moneyPurchaseBenefits]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): MoneyPurchaseBenefitsController =
-    new MoneyPurchaseBenefitsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
+    new MoneyPurchaseBenefitsController(messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, None), None)(fakeRequest, messages).toString
