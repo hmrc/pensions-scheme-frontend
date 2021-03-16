@@ -17,17 +17,14 @@
 package controllers
 
 import audit.{AuditService, TcmpAuditEvent}
-import connectors.{PensionSchemeVarianceLockConnector, PensionsSchemeConnector, SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector}
+import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
-import identifiers.{MoneyPurchaseBenefitsId, PstrId, SchemeNameId, VariationDeclarationId}
+import identifiers._
 import models.requests.DataRequest
-
-import javax.inject.Inject
-import models.{MoneyPurchaseBenefits, UpdateMode}
+import models.{MoneyPurchaseBenefits, TypeOfBenefits, UpdateMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +32,7 @@ import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
 import views.html.variationDeclaration
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class VariationDeclarationController @Inject()(
@@ -99,8 +97,9 @@ class VariationDeclarationController @Inject()(
                   )
                   _ <- auditTcmp(
                     psaId = psaId.id,
-                    originalTcmp = schemeDetails.get(MoneyPurchaseBenefitsId),
-                    updatedTcmp = ua.get(MoneyPurchaseBenefitsId)
+                    originalTypeOfBenefits = schemeDetails.get(TypeOfBenefitsId),
+                    moneyPurchaseBenefits = ua.get(MoneyPurchaseBenefitsId),
+                    ua = ua
                   )
                   _ <- updateSchemeCacheConnector.removeAll(srnId)
                   _ <- viewConnector.removeAll(request.externalId)
@@ -116,26 +115,53 @@ class VariationDeclarationController @Inject()(
 
   private def auditTcmp(
                          psaId: String,
-                         originalTcmp: Option[Seq[MoneyPurchaseBenefits]],
-                         updatedTcmp: Option[Seq[MoneyPurchaseBenefits]]
+                         originalTypeOfBenefits: Option[TypeOfBenefits],
+                         moneyPurchaseBenefits: Option[Seq[MoneyPurchaseBenefits]],
+                         ua: UserAnswers
                        )(
                          implicit request: DataRequest[AnyContent]
                        ): Future[Unit] =
     Future.successful(
-      (originalTcmp, updatedTcmp) match {
-        case (Some(original), Some(updated)) =>
-          def sort[A](seq: Seq[A]): Seq[A] = seq.sortWith(_.toString < _.toString)
-          if (sort(original) == sort(updated)) ()
-          else auditService.sendExtendedEvent(
-            TcmpAuditEvent(
-              psaId = psaId,
-              from = Json.toJson(original.map(_.toString)),
-              to = Json.toJson(updated.map(_.toString))
+      (originalTypeOfBenefits, ua.get(TypeOfBenefitsId)) match {
+        case (Some(originalBenefits), Some(updatedBenefits)) =>
+          if (updatedBenefits != originalBenefits && updatedBenefits != TypeOfBenefits.Defined)
+            auditService.sendExtendedEvent(
+              TcmpAuditEvent(
+                psaId = psaId,
+                tcmp = tcmpAuditValue(updatedBenefits, moneyPurchaseBenefits),
+                payload = ua.json
+              )
             )
-          )
+          else ()
         case _ => ()
       }
     )
 
+  private def tcmpAuditValue(
+                              typeOfBenefits: TypeOfBenefits,
+                              moneyPurchaseBenefit: Option[Seq[MoneyPurchaseBenefits]]
+                            ): String =
+    typeOfBenefits match {
+      case TypeOfBenefits.MoneyPurchase | TypeOfBenefits.MoneyPurchaseDefinedMix =>
+        moneyPurchaseBenefit match {
+          case Some(mpb) =>
+            mpb match {
+              case Seq(MoneyPurchaseBenefits.Collective) => "01"
+              case Seq(MoneyPurchaseBenefits.CashBalance) => "02"
+              case Seq(MoneyPurchaseBenefits.Other) => "03"
+              case Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.CashBalance) |
+                   Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other) |
+                   Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Other) => "04"
+              case Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Other) => "05"
+              case _ => "TCMP not defined"
+            }
+          case _ =>
+            "No MoneyPurchaseBenefits returned"
+        }
+      case _ =>
+        TypeOfBenefits.Defined.toString
+    }
+
   case object MissingPsaId extends Exception("Psa ID missing in request")
+
 }

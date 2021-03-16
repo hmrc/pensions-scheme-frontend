@@ -116,8 +116,8 @@ POST        /:mode/occupational-pension-scheme                       controllers
 
 GET         /type-of-benefits                                        controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 POST        /type-of-benefits                                        controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /change/type-of-benefits                                  controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
-POST        /change/type-of-benefits                                  controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET         /change/type-of-benefits                                 controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST        /change/type-of-benefits                                 controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
 GET         /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onPageLoad(mode: Mode, srn: Option[String])
 POST        /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: Option[String])
 
@@ -223,10 +223,10 @@ GET         /cannot-make-changes/:srn                                controllers
 GET         /urls-partial                                            controllers.UrlsPartialController.retrieveUrlsPartial
 GET         /can-scheme-be-registered                                controllers.UrlsPartialController.checkIfSchemeCanBeRegistered
 
-GET         /discard                                                controllers.DeleteSchemeController.onPageLoad
-POST        /discard                                                controllers.DeleteSchemeController.onSubmit
+GET         /discard                                                 controllers.DeleteSchemeController.onPageLoad
+POST        /discard                                                 controllers.DeleteSchemeController.onSubmit
 
-GET         /delete-changes/:srn                                    controllers.DeleteSchemeChangesController.onPageLoad(srn: String)
-POST        /delete-changes/:srn                                    controllers.DeleteSchemeChangesController.onSubmit(srn: String)
+GET         /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onPageLoad(srn: String)
+POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: String)
 
-GET         /cannot-start-registration                              controllers.CannotStartRegistrationController.onPageLoad
+GET         /cannot-start-registration                               controllers.CannotStartRegistrationController.onPageLoad

@@ -16,7 +16,6 @@
 
 package audit
 
-import models.MoneyPurchaseBenefits
 import org.scalatest.{FlatSpec, Matchers}
 import play.api.libs.json.Json
 
@@ -24,14 +23,21 @@ class TcmpAuditEventSpec
   extends FlatSpec
     with Matchers {
 
-  "TcmpAuditEvent" should "only audit if there are changes" in {
-    val a = Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other)
+  "TcmpAuditEvent" should "serialise audit event correctly" in {
 
-    val b = Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.Collective)
+    val auditEvent: TcmpAuditEvent = TcmpAuditEvent(
+      psaId = "A0000000",
+      tcmp = "01",
+      payload = Json.obj("some" -> "payload")
+    )
 
-    println(s"\n\n\n\n${a.sortWith(_.toString < _.toString)}\n\n\n\n")
-    println(s"\n\n\n\n${Json.toJson(a.map(_.toString))}\n\n\n\n")
+    auditEvent.auditType shouldBe "TaxationCollectiveMoneyPurchaseAuditEvent"
 
-    a.sortWith(_.toString < _.toString) == b.sortWith(_.toString < _.toString) shouldBe true
+    auditEvent.details shouldBe Json.obj(
+      "pensionSchemeAdministratorId" -> "A0000000",
+      "taxationCollectiveMoneyPurchaseType" -> "01",
+      "payload" -> Json.parse("""{"some":"payload"}""".stripMargin)
+
+    )
   }
 }
