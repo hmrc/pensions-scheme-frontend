@@ -65,7 +65,11 @@ class VariationDeclarationController @Inject()(
           actualSrn =>
             updateSchemeCacheConnector.fetch(actualSrn).map {
               case Some(_) =>
-                Ok(view(request.userAnswers.get(SchemeNameId), srn, VariationDeclarationController.onClickAgree(srn)))
+                Ok(view(
+                  schemeName = request.userAnswers.get(SchemeNameId),
+                  srn = srn,
+                  href = VariationDeclarationController.onClickAgree(srn)
+                ))
               case _ =>
                 Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
             }
@@ -88,16 +92,20 @@ class VariationDeclarationController @Inject()(
             pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
               case Right(_) =>
                 for {
-                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr)
-                  tcmpFrom = schemeDetails.get(MoneyPurchaseBenefitsId)
-                  tcmpTo = ua.get(MoneyPurchaseBenefitsId)
-                  _ <- Future.successful(auditTcmp(psaId.id, schemeDetails.get(MoneyPurchaseBenefitsId), ua.get(MoneyPurchaseBenefitsId)))
+                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(
+                    psaId = psaId.id,
+                    schemeIdType = "pstr",
+                    idNumber = pstr
+                  )
+                  _ <- auditTcmp(
+                    psaId = psaId.id,
+                    originalTcmp = schemeDetails.get(MoneyPurchaseBenefitsId),
+                    updatedTcmp = ua.get(MoneyPurchaseBenefitsId)
+                  )
                   _ <- updateSchemeCacheConnector.removeAll(srnId)
                   _ <- viewConnector.removeAll(request.externalId)
                   _ <- lockConnector.releaseLock(psaId.id, srnId)
-                } yield {
-                  Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
-                }
+                } yield Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
               case Left(_) =>
                 Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
@@ -108,25 +116,26 @@ class VariationDeclarationController @Inject()(
 
   private def auditTcmp(
                          psaId: String,
-                         fromTcmp: Option[Seq[MoneyPurchaseBenefits]],
-                         toTcmp: Option[Seq[MoneyPurchaseBenefits]]
+                         originalTcmp: Option[Seq[MoneyPurchaseBenefits]],
+                         updatedTcmp: Option[Seq[MoneyPurchaseBenefits]]
                        )(
                          implicit request: DataRequest[AnyContent]
-                       ): Unit = {
-    (fromTcmp, toTcmp) match {
-      case (Some(from), Some(to)) =>
-        if (from.sortWith(_.toString < _.toString) == to.sortWith(_.toString < _.toString)) ()
-        else auditService.sendExtendedEvent(
-          TcmpAuditEvent(
-            psaId = psaId,
-            from = Json.toJson(from.map(_.toString)),
-            to = Json.toJson(to.map(_.toString))
+                       ): Future[Unit] =
+    Future.successful(
+      (originalTcmp, updatedTcmp) match {
+        case (Some(original), Some(updated)) =>
+          def sort[A](seq: Seq[A]): Seq[A] = seq.sortWith(_.toString < _.toString)
+          if (sort(original) == sort(updated)) ()
+          else auditService.sendExtendedEvent(
+            TcmpAuditEvent(
+              psaId = psaId,
+              from = Json.toJson(original.map(_.toString)),
+              to = Json.toJson(updated.map(_.toString))
+            )
           )
-        )
-      case _ => ()
-    }
-  }
+        case _ => ()
+      }
+    )
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
-
 }

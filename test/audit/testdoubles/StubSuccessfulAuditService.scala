@@ -31,21 +31,27 @@ class StubSuccessfulAuditService extends AuditService {
                                          (implicit rh: RequestHeader, ec: ExecutionContext): Unit =
     events += event
 
-  override def sendExtendedEvent[T <: ExtendedAuditEvent](event: T)
+  override def sendExtendedEvent[T <: ExtendedAuditEvent](extendedEvent: T)
                                                          (implicit rh: RequestHeader, ec: ExecutionContext): Unit =
-    extendedEvents += event
+    extendedEvents += extendedEvent
 
   def verifySent[T <: AuditEvent](event: T): Boolean =
     events.contains(event)
 
-  def verifyExtendedSent[T <: ExtendedAuditEvent](event: T): Boolean =
-    extendedEvents.contains(event)
+  def verifyExtendedSent[T <: ExtendedAuditEvent](extendedEvent: T): Boolean =
+    extendedEvents.contains(extendedEvent)
 
-  def verifyNothingSent(): Boolean = events.isEmpty
+  def verifyNothingSent(): Boolean =
+    events.isEmpty && extendedEvents.isEmpty
 
-  def reset(): Unit =
+  def reset(): Unit = {
     events.clear()
+    extendedEvents.clear()
+  }
 
   def lastEvent: Option[AuditEvent] =
     events.lastOption
+
+  def lastExtendedEvent: Option[ExtendedAuditEvent] =
+    extendedEvents.lastOption
 }
