@@ -58,6 +58,6 @@ object TcmpAuditEvent {
             "No MoneyPurchaseBenefits returned"
         }
       case _ =>
-        TypeOfBenefits.Defined.toString
+        s"No TCMP - Type Of Benefit = ${TypeOfBenefits.Defined.toString}"
     }
 }

@@ -187,6 +187,6 @@ class TcmpAuditEventSpec
         None,
       typeOfBenefits =
         TypeOfBenefits.Defined
-    ) shouldBe TypeOfBenefits.Defined.toString
+    ) shouldBe s"No TCMP - Type Of Benefit = ${TypeOfBenefits.Defined.toString}"
   }
 }
