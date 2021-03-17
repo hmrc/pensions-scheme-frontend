@@ -128,7 +128,7 @@ class VariationDeclarationController @Inject()(
             auditService.sendExtendedEvent(
               TcmpAuditEvent(
                 psaId = psaId,
-                tcmp = tcmpAuditValue(updatedBenefits, moneyPurchaseBenefits),
+                tcmp = TcmpAuditEvent.tcmpAuditValue(updatedBenefits, moneyPurchaseBenefits),
                 payload = ua.json
               )
             )
@@ -136,31 +136,6 @@ class VariationDeclarationController @Inject()(
         case _ => ()
       }
     )
-
-  private def tcmpAuditValue(
-                              typeOfBenefits: TypeOfBenefits,
-                              moneyPurchaseBenefit: Option[Seq[MoneyPurchaseBenefits]]
-                            ): String =
-    typeOfBenefits match {
-      case TypeOfBenefits.MoneyPurchase | TypeOfBenefits.MoneyPurchaseDefinedMix =>
-        moneyPurchaseBenefit match {
-          case Some(mpb) =>
-            mpb match {
-              case Seq(MoneyPurchaseBenefits.Collective) => "01"
-              case Seq(MoneyPurchaseBenefits.CashBalance) => "02"
-              case Seq(MoneyPurchaseBenefits.Other) => "03"
-              case Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.CashBalance) |
-                   Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other) |
-                   Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Other) => "04"
-              case Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Other) => "05"
-              case _ => "TCMP not defined"
-            }
-          case _ =>
-            "No MoneyPurchaseBenefits returned"
-        }
-      case _ =>
-        TypeOfBenefits.Defined.toString
-    }
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
 
