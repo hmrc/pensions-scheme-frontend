@@ -21,7 +21,7 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
-import models.UpdateMode
+import models.{TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +48,8 @@ class VariationDeclarationController @Inject()(
                                                 viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: variationDeclaration,
-                                                auditService: AuditService
+                                                auditService: AuditService,
+                                                schemeDetailsConnector: SchemeDetailsConnector
                                               )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -89,7 +90,8 @@ class VariationDeclarationController @Inject()(
             pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
               case Right(_) =>
                 for {
-                  _ <- auditTcmp(psaId.id, ua)
+                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr)
+                  _ <- auditTcmp(psaId.id, schemeDetails.get(TypeOfBenefitsId), ua)
                   _ <- updateSchemeCacheConnector.removeAll(srnId)
                   _ <- viewConnector.removeAll(request.externalId)
                   _ <- lockConnector.releaseLock(psaId.id, srnId)
@@ -102,13 +104,19 @@ class VariationDeclarationController @Inject()(
         }
     }
 
-  private def auditTcmp(psaId: String, ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[Unit] =
+  private def auditTcmp(
+                         psaId: String,
+                         originalTypeOfBenefits: Option[TypeOfBenefits],
+                         ua: UserAnswers
+                       )(
+                         implicit request: DataRequest[AnyContent]
+                       ): Future[Unit] =
     Future.successful(
-      (ua.get(TypeOfBenefitsId), ua.get(TcmpChangedId)) match {
-        case (Some(updatedBenefits), Some(true)) =>
+      (originalTypeOfBenefits, ua.get(TypeOfBenefitsId), ua.get(TcmpChangedId)) match {
+        case (Some(originalBenefits), Some(updatedBenefits), Some(tcmpChanged)) if updatedBenefits != originalBenefits || tcmpChanged =>
             auditService.sendExtendedEvent(
               TcmpAuditEvent(psaId, TcmpAuditEvent.tcmpAuditValue(updatedBenefits, ua.get(MoneyPurchaseBenefitsId)), ua.json))
-        case _ => ()
+        case x => ()
       }
     )
 
