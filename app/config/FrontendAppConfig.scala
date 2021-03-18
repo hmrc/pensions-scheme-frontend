@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
+import models.ReportTechnicalIssue
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment, Mode}
@@ -94,7 +95,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   val reportAProblemNonJSUrl: String = getConfigString("contact-frontend.report-problem-url.non-js")
   val betaFeedbackUrl: String = getConfigString("contact-frontend.beta-feedback-url.authenticated")
   val betaFeedbackUnauthenticatedUrl: String = getConfigString("contact-frontend.beta-feedback-url.unauthenticated")
-
+  val reportTechnicalIssues = ReportTechnicalIssue(serviceId = "PODS", baseUrl = Some(contactHost))
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))

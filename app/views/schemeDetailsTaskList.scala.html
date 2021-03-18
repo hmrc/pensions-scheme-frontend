@@ -239,13 +239,14 @@
     </div>
 
     <hr aria-hidden="true">
-    <a id="save-and-return" class="task-name"
-       href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
-        @if(taskSections.srn.isDefined){
-            @messages("messages__complete__returnToSchemeSummary")
-        }else{
-            @messages("messages__complete__saveAndReturnToManagePensionSchemes")
-        }
-    </a>
-
+    <p>
+        <a id="save-and-return" class="task-name"
+           href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
+            @if(taskSections.srn.isDefined){
+                @messages("messages__complete__returnToSchemeSummary")
+            }else{
+                @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+            }
+        </a>
+    </p>
 }
