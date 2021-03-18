@@ -70,8 +70,11 @@ class MoneyPurchaseBenefitsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
         value =>
-          userAnswersService.save(mode, srn, MoneyPurchaseBenefitsId, value, TcmpChangedId).map {
-            userAnswers =>
+          (if(request.userAnswers.get(MoneyPurchaseBenefitsId).isDefined)
+            userAnswersService.save(mode, srn, MoneyPurchaseBenefitsId, value)
+           else
+            userAnswersService.save(mode, srn, MoneyPurchaseBenefitsId, value, TcmpChangedId)
+          ).map { userAnswers =>
               Redirect(navigator.nextPage(MoneyPurchaseBenefitsId, mode, UserAnswers(userAnswers), srn))
           }
       )

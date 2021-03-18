@@ -19,7 +19,7 @@ package controllers
 import audit.{AuditService, TcmpAuditEvent}
 import connectors._
 import controllers.actions._
-import identifiers.{PstrId, SchemeNameId}
+import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
@@ -31,7 +31,6 @@ import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
-import utils.UserAnswers
 import views.html.variationDeclaration
 
 import scala.concurrent.Future
@@ -64,7 +63,6 @@ class VariationDeclarationControllerSpec
   private val updateSchemeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   private val schemeDetailsReadOnlyCacheConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
   private val auditService: AuditService = mock[AuditService]
-  private val schemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
 
   private val view = injector.instanceOf[variationDeclaration]
 
@@ -74,8 +72,7 @@ class VariationDeclarationControllerSpec
       lockConnector,
       updateSchemeCacheConnector,
       schemeDetailsReadOnlyCacheConnector,
-      auditService,
-      schemeDetailsConnector
+      auditService
     )
   }
 
@@ -125,8 +122,6 @@ class VariationDeclarationControllerSpec
         .thenReturn(Future.successful(Ok))
       when(lockConnector.releaseLock(any(), any())(any(), any()))
         .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj())))
 
       val app = applicationBuilder(
         dataRetrievalAction = validData(),
@@ -135,8 +130,7 @@ class VariationDeclarationControllerSpec
           bind[PensionsSchemeConnector].toInstance(pensionsSchemeConnector),
           bind[SchemeDetailsReadOnlyCacheConnector].toInstance(schemeDetailsReadOnlyCacheConnector),
           bind[PensionSchemeVarianceLockConnector].toInstance(lockConnector),
-          bind[AuditService].toInstance(auditService),
-          bind[SchemeDetailsConnector].toInstance(schemeDetailsConnector)
+          bind[AuditService].toInstance(auditService)
         )
       ).build()
 
@@ -158,14 +152,13 @@ class VariationDeclarationControllerSpec
         .thenReturn(Future.successful(Ok))
       when(lockConnector.releaseLock(any(), any())(any(), any()))
         .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj("benefits" -> "opt2"))))
 
       val app = applicationBuilder(
         dataRetrievalAction = validData(
           extraData = Json.obj(
             "moneyPurchaseBenefits" -> Json.arr("opt1"),
-            "benefits" -> "opt1"
+            "benefits" -> "opt1",
+            TcmpChangedId.toString -> true
           )
         ),
         extraModules = Seq(
@@ -173,8 +166,7 @@ class VariationDeclarationControllerSpec
           bind[PensionsSchemeConnector].toInstance(pensionsSchemeConnector),
           bind[SchemeDetailsReadOnlyCacheConnector].toInstance(schemeDetailsReadOnlyCacheConnector),
           bind[PensionSchemeVarianceLockConnector].toInstance(lockConnector),
-          bind[AuditService].toInstance(auditService),
-          bind[SchemeDetailsConnector].toInstance(schemeDetailsConnector)
+          bind[AuditService].toInstance(auditService)
         )
       ).build()
 
@@ -192,6 +184,7 @@ class VariationDeclarationControllerSpec
           "benefits" -> "opt1",
           SchemeNameId.toString -> schemeName,
           PstrId.toString -> "pstr",
+          "isTcmpChanged" -> true,
           "declaration" -> true
         )
       )
@@ -205,7 +198,7 @@ class VariationDeclarationControllerSpec
       }
     }
 
-    "redirect to the next page on clicking agree and continue and NOT audit updated TCMP when TypeOfBenefit.Defined selected" in {
+    "redirect to the next page on clicking agree and continue and NOT audit updated TCMP when TCMPChangedId is not true" in {
       when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(())))
       when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
@@ -214,11 +207,6 @@ class VariationDeclarationControllerSpec
         .thenReturn(Future.successful(Ok))
       when(lockConnector.releaseLock(any(), any())(any(), any()))
         .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj(
-          "moneyPurchaseBenefits" -> Json.arr("opt2"),
-          "benefits" -> "opt1"
-        ))))
 
       val app = applicationBuilder(
         dataRetrievalAction = validData(
@@ -231,8 +219,7 @@ class VariationDeclarationControllerSpec
           bind[PensionsSchemeConnector].toInstance(pensionsSchemeConnector),
           bind[SchemeDetailsReadOnlyCacheConnector].toInstance(schemeDetailsReadOnlyCacheConnector),
           bind[PensionSchemeVarianceLockConnector].toInstance(lockConnector),
-          bind[AuditService].toInstance(auditService),
-          bind[SchemeDetailsConnector].toInstance(schemeDetailsConnector)
+          bind[AuditService].toInstance(auditService)
         )
       ).build()
 

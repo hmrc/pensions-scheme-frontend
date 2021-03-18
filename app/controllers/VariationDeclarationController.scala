@@ -21,8 +21,8 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
+import models.UpdateMode
 import models.requests.DataRequest
-import models.{MoneyPurchaseBenefits, TypeOfBenefits, UpdateMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,8 +48,7 @@ class VariationDeclarationController @Inject()(
                                                 viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: variationDeclaration,
-                                                auditService: AuditService,
-                                                schemeDetailsConnector: SchemeDetailsConnector
+                                                auditService: AuditService
                                               )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -90,17 +89,7 @@ class VariationDeclarationController @Inject()(
             pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
               case Right(_) =>
                 for {
-                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(
-                    psaId = psaId.id,
-                    schemeIdType = "pstr",
-                    idNumber = pstr
-                  )
-                  _ <- auditTcmp(
-                    psaId = psaId.id,
-                    originalTypeOfBenefits = schemeDetails.get(TypeOfBenefitsId),
-                    moneyPurchaseBenefits = ua.get(MoneyPurchaseBenefitsId),
-                    ua = ua
-                  )
+                  _ <- auditTcmp(psaId.id, ua)
                   _ <- updateSchemeCacheConnector.removeAll(srnId)
                   _ <- viewConnector.removeAll(request.externalId)
                   _ <- lockConnector.releaseLock(psaId.id, srnId)
@@ -113,26 +102,12 @@ class VariationDeclarationController @Inject()(
         }
     }
 
-  private def auditTcmp(
-                         psaId: String,
-                         originalTypeOfBenefits: Option[TypeOfBenefits],
-                         moneyPurchaseBenefits: Option[Seq[MoneyPurchaseBenefits]],
-                         ua: UserAnswers
-                       )(
-                         implicit request: DataRequest[AnyContent]
-                       ): Future[Unit] =
+  private def auditTcmp(psaId: String, ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[Unit] =
     Future.successful(
-      (originalTypeOfBenefits, ua.get(TypeOfBenefitsId)) match {
-        case (Some(originalBenefits), Some(updatedBenefits)) =>
-          if (updatedBenefits != originalBenefits && updatedBenefits != TypeOfBenefits.Defined)
+      (ua.get(TypeOfBenefitsId), ua.get(TcmpChangedId)) match {
+        case (Some(updatedBenefits), Some(true)) =>
             auditService.sendExtendedEvent(
-              TcmpAuditEvent(
-                psaId = psaId,
-                tcmp = TcmpAuditEvent.tcmpAuditValue(updatedBenefits, moneyPurchaseBenefits),
-                payload = ua.json
-              )
-            )
-          else ()
+              TcmpAuditEvent(psaId, TcmpAuditEvent.tcmpAuditValue(updatedBenefits, ua.get(MoneyPurchaseBenefitsId)), ua.json))
         case _ => ()
       }
     )
