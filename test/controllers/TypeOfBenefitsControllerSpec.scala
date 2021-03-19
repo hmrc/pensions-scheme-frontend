@@ -62,7 +62,6 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     cache: UserAnswersService = FakeUserAnswersService
   ): TypeOfBenefitsController =
     new TypeOfBenefitsController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

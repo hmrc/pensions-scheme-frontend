@@ -26,7 +26,7 @@ import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
-import play.api.mvc.{AnyContentAsEmpty, Call, MessagesControllerComponents}
+import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
@@ -64,12 +64,15 @@ trait SpecBase
     bind[DataRetrievalAction].toInstance(dataRetrievalAction)
   )
 
-  def applicationBuilder(dataRetrievalAction: DataRetrievalAction,
-                         onwardRoute: Call = controllers.routes.IndexController.onPageLoad()): GuiceApplicationBuilder =
+  def applicationBuilder(
+                          dataRetrievalAction: DataRetrievalAction,
+                          extraModules: Seq[GuiceableModule] = Seq.empty
+                        ): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
-        modules(dataRetrievalAction): _*
+        extraModules ++ modules(dataRetrievalAction): _*
       )
+  }
 }
 
 object SpecBase extends SpecBase

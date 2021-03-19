@@ -16,12 +16,18 @@
 
 package controllers
 
+import audit.{AddressAction, AddressEvent, AuditService}
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
 import models.NormalMode
-import models.address.TolerantAddress
+import models.address.{Address, TolerantAddress}
 import navigators.Navigator
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{reset, times, verify}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -34,12 +40,21 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-class AdviserAddressListControllerSpec extends ControllerSpecBase {
+class AdviserAddressListControllerSpec
+  extends ControllerSpecBase
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
   import AdviserAddressListControllerSpec._
 
-
   private val view = injector.instanceOf[addressList]
+  private val auditService: AuditService = mock[AuditService]
+
+  override def beforeEach(): Unit = {
+    reset(
+      auditService
+    )
+  }
 
   "Adviser Address List Controller" must {
 
@@ -108,6 +123,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].to(FakeUserAnswersService),
           bind[DataRetrievalAction].to(retrievalAction),
+          bind[AuditService].to(auditService),
           bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
         )
       ) {
@@ -115,8 +131,24 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
           val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val argCaptor = ArgumentCaptor.forClass(classOf[AddressEvent])
+
+          val auditEvent = AddressEvent(
+            externalId = "id",
+            action = AddressAction.Lookup,
+            context = "Adviser Address: the Adviser",
+            address = Address(
+              addressLine1 = "Address 1 Line 1",
+              addressLine2 = "Address 1 Line 2",
+              addressLine3 = Some("Address 1 Line 3"),
+              addressLine4 = Some("Address 1 Line 4"),
+              postcode = Some("A1 1PC"), country = "GB")
+          )
+
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
+          verify(auditService, times(1)).sendEvent(argCaptor.capture())(any(), any())
+          argCaptor.getValue mustBe auditEvent
       }
     }
 
@@ -158,7 +190,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase {
   }
 }
 
-object AdviserAddressListControllerSpec extends ControllerSpecBase {
+object AdviserAddressListControllerSpec {
 
   lazy val onwardRoute: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
   private val adviserName = "the Adviser"

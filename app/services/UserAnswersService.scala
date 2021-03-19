@@ -17,26 +17,18 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector,
-  UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId,
-  CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId,
-  PreviousAddressId => EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId =>
-EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId,
-  CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId,
-  TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId,
-  PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
-import javax.inject.{Inject, Singleton}
+import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId, CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId, TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
+import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
 import models.address.Address
 import models.requests.DataRequest
 import models.{Mode, _}
@@ -45,6 +37,7 @@ import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersService {
@@ -100,9 +93,9 @@ trait UserAnswersService {
     }
 
   private def lockAndCall(srn: Option[String], f: String => Future[JsValue])(implicit
-                                                                     ec: ExecutionContext,
-                                                                     hc: HeaderCarrier,
-                                                                     request: DataRequest[AnyContent]
+                                                                             ec: ExecutionContext,
+                                                                             hc: HeaderCarrier,
+                                                                             request: DataRequest[AnyContent]
   ): Future[JsValue] = (srn, request.psaId) match {
     case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
       case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
@@ -170,7 +163,9 @@ trait UserAnswersService {
   protected def appConfig: FrontendAppConfig
 
   case object MissingSrnNumber extends Exception
+
   case object MissingPsaId extends Exception("Psa ID missing in request")
+
 }
 
 @Singleton

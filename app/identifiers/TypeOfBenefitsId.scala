@@ -29,7 +29,11 @@ case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] with Enumer
 
   override def cleanup(value: Option[TypeOfBenefits], userAnswers: UserAnswers): JsResult[UserAnswers] =
     value match {
-      case Some(Defined) => userAnswers.remove(MoneyPurchaseBenefitsId)
+      case Some(Defined) =>
+        if(userAnswers.get(MoneyPurchaseBenefitsId).isDefined)
+          userAnswers.set(TcmpChangedId)(true).flatMap(_.remove(MoneyPurchaseBenefitsId))
+        else
+          super.cleanup(value, userAnswers)
       case _ => super.cleanup(value, userAnswers)
     }
 

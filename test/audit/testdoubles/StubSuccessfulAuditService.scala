@@ -16,7 +16,7 @@
 
 package audit.testdoubles
 
-import audit.{AuditEvent, AuditService}
+import audit.{AuditEvent, AuditService, ExtendedAuditEvent}
 import play.api.mvc.RequestHeader
 
 import scala.collection.mutable
@@ -25,19 +25,33 @@ import scala.concurrent.ExecutionContext
 class StubSuccessfulAuditService extends AuditService {
 
   private val events: mutable.ListBuffer[AuditEvent] = mutable.ListBuffer()
+  private val extendedEvents: mutable.ListBuffer[ExtendedAuditEvent] = mutable.ListBuffer()
 
   override def sendEvent[T <: AuditEvent](event: T)
-                                         (implicit rh: RequestHeader, ec: ExecutionContext): Unit = {
-
+                                         (implicit rh: RequestHeader, ec: ExecutionContext): Unit =
     events += event
-  }
 
-  def verifySent[T <: AuditEvent](event: T): Boolean = events.contains(event)
+  override def sendExtendedEvent[T <: ExtendedAuditEvent](extendedEvent: T)
+                                                         (implicit rh: RequestHeader, ec: ExecutionContext): Unit =
+    extendedEvents += extendedEvent
 
-  def verifyNothingSent(): Boolean = events.isEmpty
+  def verifySent[T <: AuditEvent](event: T): Boolean =
+    events.contains(event)
+
+  def verifyExtendedSent[T <: ExtendedAuditEvent](extendedEvent: T): Boolean =
+    extendedEvents.contains(extendedEvent)
+
+  def verifyNothingSent(): Boolean =
+    events.isEmpty && extendedEvents.isEmpty
 
   def reset(): Unit = {
     events.clear()
+    extendedEvents.clear()
   }
 
+  def lastEvent: Option[AuditEvent] =
+    events.lastOption
+
+  def lastExtendedEvent: Option[ExtendedAuditEvent] =
+    extendedEvents.lastOption
 }

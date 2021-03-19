@@ -255,12 +255,6 @@ messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme 
 messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
 messages__occupational_pension_scheme__h1 = Is {0} an occupational pension scheme?
 
-#Duplicated these messages with the new keys, it can be deleted once the Benefits page is deleted from register routes
-messages__benefits__title = How does the scheme provide benefits?
-messages__benefits__opt1 = Money Purchase benefits only (defined contribution)
-messages__benefits__opt2 = Defined Benefits only
-messages__benefits__opt3 = Mixture of money purchase benefits and defined benefits
-
 messages__benefits_insurance__title = Benefits secured by a contract of insurance or annuity
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
