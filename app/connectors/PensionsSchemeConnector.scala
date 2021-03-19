@@ -23,9 +23,8 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utils.UserAnswers
+import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,7 +45,7 @@ trait PensionsSchemeConnector {
 
 @Singleton
 class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
-  extends PensionsSchemeConnector {
+  extends PensionsSchemeConnector with HttpResponseHelper {
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
@@ -66,8 +65,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
             case JsError(errors) => throw JsResultException(errors)
           }
         case _ =>
-          logger.error("Unable to register Scheme")
-          Left(response)
+          handleErrorResponse("POST", url)(response)
       }
     }
   }
@@ -80,8 +78,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
       response.status match {
         case OK => Right(())
         case _ =>
-          logger.error("Unable to update Scheme")
-          Left(response)
+          handleErrorResponse("POST", url)(response)
       }
     }
   }
