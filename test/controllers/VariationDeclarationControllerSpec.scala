@@ -207,48 +207,6 @@ class VariationDeclarationControllerSpec
       }
     }
 
-    "redirect to the next page on clicking agree and continue and NOT audit updated TCMP when TCMPChangedId is not true" in {
-      when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(())))
-      when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
-        .thenReturn(Future.successful(Ok))
-      when(schemeDetailsReadOnlyCacheConnector.removeAll(any())(any(), any()))
-        .thenReturn(Future.successful(Ok))
-      when(lockConnector.releaseLock(any(), any())(any(), any()))
-        .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj(
-          "moneyPurchaseBenefits" -> Json.arr("opt2"),
-          "benefits" -> "opt1"
-        ))))
-
-      val app = applicationBuilder(
-        dataRetrievalAction = validData(
-          extraData = Json.obj(
-            "benefits" -> "opt2"
-          )
-        ),
-        extraModules = Seq(
-          bind[UpdateSchemeCacheConnector].toInstance(updateSchemeCacheConnector),
-          bind[PensionsSchemeConnector].toInstance(pensionsSchemeConnector),
-          bind[SchemeDetailsReadOnlyCacheConnector].toInstance(schemeDetailsReadOnlyCacheConnector),
-          bind[PensionSchemeVarianceLockConnector].toInstance(lockConnector),
-          bind[AuditService].toInstance(auditService),
-          bind[SchemeDetailsConnector].toInstance(schemeDetailsConnector)
-        )
-      ).build()
-
-      val controller = app.injector.instanceOf[VariationDeclarationController]
-
-      val result = controller.onClickAgree(srn)(fakeRequest)
-
-      whenReady(result) {
-        response =>
-          response.header.status mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-          verify(auditService, times(0)).sendExtendedEvent(any())(any(), any())
-      }
-    }
   }
 }
 
