@@ -206,7 +206,6 @@ class VariationDeclarationControllerSpec
           argCaptor.getValue mustBe auditEvent
       }
     }
-
   }
 }
 

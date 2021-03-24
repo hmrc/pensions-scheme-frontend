@@ -55,23 +55,43 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   }
 
-  it should "return left CREATED if the response status is not 200 OK" in {
+  it should "return exception for a 400 response" in {
 
     server.stubFor(
       post(urlEqualTo(registerSchemeUrl))
         .willReturn(
           aResponse()
-            .withStatus(Status.CREATED)
+            .withStatus(Status.BAD_REQUEST)
             .withHeader("Content-Type", "application/json")
-            .withBody(validResponse)
+            .withBody(invalidPayloadResponse)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
-      response.left.get.status shouldBe CREATED
+    recoverToSucceededIf[BadRequestException] {
+      connector.registerScheme(userAnswers, "test-psa-id")
+    }
+
+  }
+
+  it should "return exception for a 500 response" in {
+
+    server.stubFor(
+      post(urlEqualTo(registerSchemeUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(Status.INTERNAL_SERVER_ERROR)
+            .withHeader("Content-Type", "application/json")
+            .withBody(invalidPayloadResponse)
+        )
     )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    recoverToSucceededIf[UpstreamErrorResponse] {
+      connector.registerScheme(userAnswers, "test-psa-id")
+    }
 
   }
 
@@ -115,26 +135,6 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
   }
 
-  it should "return left BAD_REQUEST response for a 400 response" in {
-
-    server.stubFor(
-      post(urlEqualTo(registerSchemeUrl))
-        .willReturn(
-          aResponse()
-            .withStatus(Status.BAD_REQUEST)
-            .withHeader("Content-Type", "application/json")
-            .withBody(invalidPayloadResponse)
-        )
-    )
-
-    val connector = injector.instanceOf[PensionsSchemeConnector]
-
-    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
-      response.left.get.status shouldBe BAD_REQUEST
-    )
-
-  }
-
   "updateSchemeDetails" should "return without exceptions for a valid request/response" in {
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
@@ -155,37 +155,45 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     }
   }
 
+  it should "return exception for a 400 response" in {
 
-  it should "return left NOT_FOUND where not found response is received" in {
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
         .willReturn(
-          aResponse.withStatus(NOT_FOUND)
+          aResponse()
+            .withStatus(Status.BAD_REQUEST)
+            .withHeader("Content-Type", "application/json")
+            .withBody(invalidPayloadResponse)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.updateSchemeDetails(psaId, pstr, userAnswers).map(response =>
-      response.left.get.status shouldBe NOT_FOUND
-    )
+    recoverToSucceededIf[BadRequestException] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
+
   }
 
-  it should "return INTERNAL_SERVER_ERROR where 500 response is received" in {
+  it should "return exception for a 500 response" in {
+
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
         .willReturn(
-          aResponse.withStatus(INTERNAL_SERVER_ERROR)
+          aResponse()
+            .withStatus(Status.INTERNAL_SERVER_ERROR)
+            .withHeader("Content-Type", "application/json")
+            .withBody(invalidPayloadResponse)
         )
     )
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.updateSchemeDetails(psaId, pstr, userAnswers).map(response =>
-      response.left.get.status shouldBe INTERNAL_SERVER_ERROR
-    )
-  }
+    recoverToSucceededIf[UpstreamErrorResponse] {
+      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+    }
 
+  }
 
   "checkForAssociation" should "return without exceptions for a valid request/response" in {
     implicit val request = FakeRequest("GET", "/")
