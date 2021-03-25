@@ -35,8 +35,10 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
     ".schemesOverview"))
 
   lazy val administratorOrPractitionerUrl: String = loadConfig("urls.manage-pensions-frontend.administratorOrPractitioner")
-  lazy val cannotAccessPageAsAdministratorUrl: String = loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsAdministrator")
-  lazy val cannotAccessPageAsPractitionerUrl: String = loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsPractitioner")
+  def cannotAccessPageAsAdministratorUrl(continueUrl:String): String =
+    loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsAdministrator").format(continueUrl)
+  def cannotAccessPageAsPractitionerUrl(continueUrl:String): String =
+    loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsPractitioner").format(continueUrl)
 
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")
   lazy val youMustContactHMRCUrl: String = loadConfig("urls.manage-pensions-frontend.youMustContactHMRC")

@@ -27,6 +27,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc._
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -197,15 +198,18 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         )
         val controller = new Harness(authAction, authEntity = Some(PSP))
 
-        val result = controller.onPageLoad()(fakeRequest)
+        val result = controller.onPageLoad()(AuthActionSpec.fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl)
+        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl(AuthActionSpec.fakeRequest.uri))
       }
     }
   }
 }
 
 object AuthActionSpec extends SpecBase with BeforeAndAfterEach {
+
+  override def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/test-url")
+
   private def fakeAuthConnector(stubbedRetrievalResult: Future[_]) = new AuthConnector {
 
     def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
