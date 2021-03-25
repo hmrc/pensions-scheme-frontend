@@ -103,5 +103,5 @@ class AuthActionImpl @Inject()(authConnector: AuthConnector,
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction {
-  def apply(authEntity: Option[AuthEntity] = Some(PSA)): Auth
+  def apply(authEntity: Option[AuthEntity] = None): Auth
 }
