@@ -26,8 +26,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -198,17 +198,48 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         )
         val controller = new Harness(authAction, authEntity = Some(PSP))
 
-        val result = controller.onPageLoad()(AuthActionSpec.fakeRequest)
+        val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl(AuthActionSpec.fakeRequest.uri))
+        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl(fakeRequest.uri))
+      }
+
+      "redirect to cannot access as practitioner when trying to access PSA page when chosen to act as a PSP" in {
+        val optionUAJson = UserAnswers()
+          .set(AdministratorOrPractitionerId)(AdministratorOrPractitioner.Practitioner).asOpt.map(_.json)
+        when(mockSessionDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
+        val authAction = new AuthActionImpl(
+          authConnector = fakeAuthConnector(authRetrievals(bothEnrolments)),
+          config = frontendAppConfig,
+          mockSessionDataCacheConnector,
+          parser = app.injector.instanceOf[BodyParsers.Default]
+        )
+        val controller = new Harness(authAction, authEntity = Some(PSA))
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsPractitionerUrl(fakeRequest.uri))
+      }
+
+      "redirect to administrator or practitioner page when trying to access PSA page when not chosen a role" in {
+        val optionUAJson = Some(Json.obj())
+        when(mockSessionDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
+        val authAction = new AuthActionImpl(
+          authConnector = fakeAuthConnector(authRetrievals(bothEnrolments)),
+          config = frontendAppConfig,
+          mockSessionDataCacheConnector,
+          parser = app.injector.instanceOf[BodyParsers.Default]
+        )
+        val controller = new Harness(authAction, authEntity = Some(PSA))
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.administratorOrPractitionerUrl)
       }
     }
   }
 }
 
 object AuthActionSpec extends SpecBase with BeforeAndAfterEach {
-
-  override def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/test-url")
 
   private def fakeAuthConnector(stubbedRetrievalResult: Future[_]) = new AuthConnector {
 
