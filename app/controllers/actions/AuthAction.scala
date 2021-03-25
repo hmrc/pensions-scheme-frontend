@@ -94,6 +94,7 @@ trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFu
 case class IdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationException(msg)
 
 class AuthActionImpl @Inject()(authConnector: AuthConnector,
+
                                config: FrontendAppConfig,
                                val parser: BodyParsers.Default)
                               (implicit ec: ExecutionContext) extends AuthAction {

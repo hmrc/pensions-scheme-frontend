@@ -17,14 +17,21 @@
 package controllers.actions
 
 import base.SpecBase
+import connectors.UserAnswersCacheConnector
 import controllers.routes
-import models.AuthEntity
+import identifiers.AdministratorOrPractitionerId
+import models.AuthEntity.PSA
+import models.{AdministratorOrPractitioner, AuthEntity}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc._
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +44,7 @@ class AuthActionSpec extends SpecBase {
 
     "the user has valid credentials" must {
       "return OK" in {
-        val authAction = new AuthActionImpl(fakeAuthConnector(authRetrievals), frontendAppConfig, parser)
+        val authAction = new AuthActionImpl(fakeAuthConnector(authRetrievals()), frontendAppConfig, parser)
         val controller = new Harness(authAction, authEntity = None)
 
         val result = controller.onPageLoad()(fakeRequest)
@@ -46,7 +53,7 @@ class AuthActionSpec extends SpecBase {
     }
 
     "the user hasn't enrolled in PODS" must {
-      "redirect the user to pension administrator frontend" in {
+      "redirect the user to You need to register page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(emptyAuthRetrievals), frontendAppConfig, parser)
         val controller = new Harness(authAction, authEntity = None)
 
@@ -136,6 +143,25 @@ class AuthActionSpec extends SpecBase {
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
       }
     }
+
+
+    "the user has enrolled in PODS as both a PSA AND a PSP" must {
+      "have access to PSA page when he has chosen to act as a PSA" in {
+        val optionUAJson = UserAnswers()
+          .set(AdministratorOrPractitionerId)(AdministratorOrPractitioner.Administrator).asOpt.map(_.json)
+        when(mockUserAnswersCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
+        val authAction = new AuthActionImpl(
+          authConnector = fakeAuthConnector(authRetrievals(Set(enrolmentPSA, enrolmentPSP))),
+     //     mockUserAnswersCacheConnector,
+          config = frontendAppConfig,
+          parser = app.injector.instanceOf[BodyParsers.Default]
+        )
+        val controller = new Harness(authAction, authEntity = Some(PSA))
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+      }
+    }
   }
 }
 
@@ -148,9 +174,10 @@ object AuthActionSpec extends SpecBase {
     }
   }
 
-  private def authRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set(
-    Enrolment("HMRC-PODS-ORG", Seq(EnrolmentIdentifier("PSAID", "A2100000")), "", None)
-  ))))
+//  private def authRetrievals(enrolments: Set[Enrolment] = Set()): Future[Some[String] ~ Enrolments ~ Some[AffinityGroup.Individual.type]] =
+//    Future.successful(new ~(new ~(Some("id"), Enrolments(enrolments)), Some(AffinityGroup.Individual)))
+  private def authRetrievals(enrolments: Set[Enrolment] =   Set(Enrolment("HMRC-PODS-ORG", Seq(EnrolmentIdentifier("PSAID", "A2100000")), "", None))) =
+  Future.successful(new ~(Some("id"), Enrolments(enrolments)))
   private def emptyAuthRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set())))
   private def erroneousRetrievals = Future.successful(new ~(None, Enrolments(Set())))
 
@@ -161,5 +188,21 @@ object AuthActionSpec extends SpecBase {
   }
 
   private val parser = app.injector.instanceOf[BodyParsers.Default]
+
+  private val enrolmentPSP = Enrolment(
+    key = "HMRC-PODSPP-ORG",
+    identifiers = Seq(EnrolmentIdentifier(key = "PSPID", value = "20000000")),
+    state = "",
+    delegatedAuthRule = None
+  )
+
+  private  val enrolmentPSA = Enrolment(
+    key = "HMRC-PODS-ORG",
+    identifiers = Seq(EnrolmentIdentifier(key = "PSAID", value = "A0000000")),
+    state = "",
+    delegatedAuthRule = None
+  )
+
+  private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
 }
