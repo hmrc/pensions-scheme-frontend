@@ -18,6 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import controllers.routes
+import models.AuthEntity
 import play.api.mvc._
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
@@ -35,9 +36,9 @@ class AuthActionSpec extends SpecBase {
   "Auth Action" when {
 
     "the user has valid credentials" must {
-      "redirect the user to pension administrator frontend" in {
+      "return OK" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(authRetrievals), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe OK
@@ -47,7 +48,7 @@ class AuthActionSpec extends SpecBase {
     "the user hasn't enrolled in PODS" must {
       "redirect the user to pension administrator frontend" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(emptyAuthRetrievals), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
@@ -58,7 +59,7 @@ class AuthActionSpec extends SpecBase {
     "erroneous retrievals are obtained" must {
       "redirect the user to unauthorised controller" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(erroneousRetrievals), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
@@ -69,7 +70,7 @@ class AuthActionSpec extends SpecBase {
     "the user hasn't logged in" must {
       "redirect the user to log in " in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new MissingBearerToken)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -79,7 +80,7 @@ class AuthActionSpec extends SpecBase {
     "the user's session has expired" must {
       "redirect the user to log in " in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new BearerTokenExpired)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get must startWith(frontendAppConfig.loginUrl)
@@ -89,7 +90,7 @@ class AuthActionSpec extends SpecBase {
     "the user doesn't have sufficient enrolments" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new InsufficientEnrolments)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -99,7 +100,7 @@ class AuthActionSpec extends SpecBase {
     "the user doesn't have sufficient confidence level" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new InsufficientConfidenceLevel)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -109,7 +110,7 @@ class AuthActionSpec extends SpecBase {
     "the user used an unaccepted auth provider" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new UnsupportedAuthProvider)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -119,7 +120,7 @@ class AuthActionSpec extends SpecBase {
     "the user has an unsupported affinity group" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new UnsupportedAffinityGroup)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -129,7 +130,7 @@ class AuthActionSpec extends SpecBase {
     "the user has an unsupported credential role" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new UnsupportedCredentialRole)), frontendAppConfig, parser)
-        val controller = new Harness(authAction)
+        val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -153,8 +154,10 @@ object AuthActionSpec extends SpecBase {
   private def emptyAuthRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set())))
   private def erroneousRetrievals = Future.successful(new ~(None, Enrolments(Set())))
 
-  class Harness(authAction: AuthAction, val controllerComponents: MessagesControllerComponents = controllerComponents) extends BaseController {
-    def onPageLoad(): Action[AnyContent] = authAction.apply(authEntity = None) { _ => Ok }
+  class Harness(authAction: AuthAction,
+                val controllerComponents: MessagesControllerComponents = controllerComponents,
+                authEntity: Option[AuthEntity] = None) extends BaseController {
+    def onPageLoad(): Action[AnyContent] = authAction.apply(authEntity = authEntity) { _ => Ok }
   }
 
   private val parser = app.injector.instanceOf[BodyParsers.Default]
