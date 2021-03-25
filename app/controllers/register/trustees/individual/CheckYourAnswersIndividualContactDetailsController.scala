@@ -69,7 +69,7 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
-          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewTrustee,

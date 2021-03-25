@@ -89,7 +89,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
 object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val index = Index(0)
   private val srn = Some("S123")
@@ -141,9 +141,9 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
             _.set(EstablisherNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
   private def allAddLinksVariations: Seq[AnswerSection] =

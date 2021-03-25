@@ -348,7 +348,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
 
-  private def taskList(mode: Mode): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
+  private def taskList(mode: Mode): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, None)
 
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value

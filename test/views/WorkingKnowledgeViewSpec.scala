@@ -61,6 +61,6 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
   }
 
   "Working Knowledge  view in check mode" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
   }
 }

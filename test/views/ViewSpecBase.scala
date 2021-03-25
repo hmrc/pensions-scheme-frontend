@@ -28,9 +28,9 @@ import play.twirl.api.{Html, HtmlFormat}
 trait ViewSpecBase extends SpecBase {
   type View = () => HtmlFormat.Appendable
 
-  def getReturnLink : String = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
+  def getReturnLink : String = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
 
-  def getReturnLinkWithSrn : String = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, Some("srn")).url
+  def getReturnLinkWithSrn : String = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, Some("srn")).url
 
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
     elements =>

@@ -34,7 +34,7 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
   protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
-        case Some(true) => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+        case Some(true) => NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
         case Some(false) =>
           if (from.userAnswers.areVariationChangesCompleted)
             NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))

@@ -82,7 +82,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
 
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,
-          href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).forall(identity),

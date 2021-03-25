@@ -82,7 +82,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  private def postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val schemeInfo = UserAnswers().schemeName(schemeName = "Test Scheme").dataRetrievalAction
 

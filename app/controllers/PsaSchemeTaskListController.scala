@@ -37,7 +37,7 @@ import views.html.schemeDetailsTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
+class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,

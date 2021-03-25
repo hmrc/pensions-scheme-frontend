@@ -114,7 +114,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   with ControllerAllowChangeBehaviour with OptionValues {
 
   def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)

@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.routes.SchemeTaskListController
+import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.CompanyConfirmPreviousAddressId
 import models.Mode.checkMode
 import models._
@@ -86,7 +86,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
 object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -116,9 +116,9 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__address__cya", companyName),

@@ -43,7 +43,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(

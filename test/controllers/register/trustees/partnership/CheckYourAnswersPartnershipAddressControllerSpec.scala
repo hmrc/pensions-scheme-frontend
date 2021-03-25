@@ -79,7 +79,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
 
 object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index                                       = Index(0)
@@ -113,10 +113,10 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private def postUrlUpdateMode: Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__addressFor", partnershipName),

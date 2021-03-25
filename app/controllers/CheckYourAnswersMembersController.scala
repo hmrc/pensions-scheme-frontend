@@ -70,7 +70,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
 
     CYAViewModel(
       answerSections = Seq(membersSection),
-      href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+      href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
       schemeName = existingSchemeName,
       returnOverview = false,
       hideEditLinks = request.viewOnly,

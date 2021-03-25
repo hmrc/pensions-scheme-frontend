@@ -41,7 +41,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     if (userAnswers.isBeforeYouStartCompleted(NormalMode))
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None))
+      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
     else
       NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 

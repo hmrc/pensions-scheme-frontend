@@ -36,6 +36,6 @@ class CannotMakeChangesViewSpec extends ViewBehaviours {
       val doc = asDocument(createView()())
       assertContainsText(doc, messages("messages__cannot_Make_Changes__p1",schemeName))
     }
-    behave like pageWithReturnLink(createView(), controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+    behave like pageWithReturnLink(createView(), controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 }

@@ -187,7 +187,7 @@ class AllowAccessActionSpec
       val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
-      assertEqual(futureResult, Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
     }
   }
 
@@ -238,7 +238,7 @@ class AllowAccessActionSpec
       val futureResult = generateTestHarnessForAllowAccessNoSuspendedCheck(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
-      assertEqual(futureResult, Some(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
     }
   }
 

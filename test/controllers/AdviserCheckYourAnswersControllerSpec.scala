@@ -67,7 +67,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   lazy val adviserNameRoute: String = controllers.routes.AdviserNameController.onPageLoad(CheckMode).url
   lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url
   lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url
-  lazy val postUrl: Call = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  lazy val postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   val adviserName = "Xyx"
   val adviserEmail = "x@x.c"

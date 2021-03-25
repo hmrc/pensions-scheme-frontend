@@ -43,7 +43,7 @@ class SchemeVariationsSuccessViewSpec extends ViewBehaviours {
       Jsoup.parse(createView().toString()) must haveLinkOnClick("window.print();return false;", "print-this-page-link")
     }
 
-    behave like pageWithReturnLink(createView, controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+    behave like pageWithReturnLink(createView, controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 
 }

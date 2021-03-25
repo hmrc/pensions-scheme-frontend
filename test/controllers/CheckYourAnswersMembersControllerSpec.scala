@@ -57,7 +57,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]

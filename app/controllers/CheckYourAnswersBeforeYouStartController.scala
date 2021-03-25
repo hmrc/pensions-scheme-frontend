@@ -76,7 +76,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
 
     CYAViewModel(
       answerSections = Seq(beforeYouStart),
-      href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+      href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
       schemeName = existingSchemeName,
       returnOverview = !userAnswers.isBeforeYouStartCompleted(mode),
       hideEditLinks = request.viewOnly,

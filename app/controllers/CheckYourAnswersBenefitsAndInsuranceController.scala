@@ -84,7 +84,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
 
       CYAViewModel(
         answerSections = Seq(benefitsAndInsuranceSection),
-        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,

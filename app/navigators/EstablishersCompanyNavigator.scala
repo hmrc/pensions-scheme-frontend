@@ -109,7 +109,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         addDirectors(mode, index, from.userAnswers, srn)
       case OtherDirectorsId(index) =>
         if (mode == CheckMode || mode == NormalMode) {
-          NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
+          NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(mode, srn))
         } else {
           NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
         }
@@ -164,7 +164,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyEmailId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaContactDetails)
       case IsCompanyDormantId(index) => exitMiniJourney(index, mode, srn, from.userAnswers, cyaCompanyDetails)
       case OtherDirectorsId(index) =>
-        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(journeyMode(mode), srn))
+        NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(journeyMode(mode), srn))
       case HasBeenTradingCompanyId(index) => confirmHasBeenTrading(index, mode, srn)(from.userAnswers)
       case _ => None
     }
@@ -234,7 +234,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             } else {
               if (mode == CheckMode || mode == NormalMode) {
-                SchemeTaskListController.onPageLoad(mode, srn)
+                PsaSchemeTaskListController.onPageLoad(mode, srn)
               } else {
                 AnyMoreChangesController.onPageLoad(srn)
               }

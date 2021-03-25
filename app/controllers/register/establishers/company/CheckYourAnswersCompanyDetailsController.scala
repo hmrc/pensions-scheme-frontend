@@ -84,7 +84,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
 
         val vm = CYAViewModel(
           answerSections = companyDetails,
-          href = SchemeTaskListController.onPageLoad(mode, srn),
+          href = PsaSchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).forall(identity),

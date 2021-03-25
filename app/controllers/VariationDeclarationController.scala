@@ -69,7 +69,7 @@ class VariationDeclarationController @Inject()(
                   href = VariationDeclarationController.onClickAgree(srn)
                 ))
               case _ =>
-                Redirect(controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn))
+                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
             }
         }
     }

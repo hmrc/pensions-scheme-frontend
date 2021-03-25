@@ -57,7 +57,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url
+      redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
     }
 
     "return OK and don't save the DeclarationDormant " when {

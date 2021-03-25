@@ -106,8 +106,8 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   private val srn = Some(srnValue)
   private val schemeName = "test scheme"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
-    new SchemeTaskListController(
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =
+    new PsaSchemeTaskListController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,

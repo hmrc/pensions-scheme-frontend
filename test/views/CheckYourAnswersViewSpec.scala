@@ -88,12 +88,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
     behave like pageWithoutReturnChangeLink(createView(hideEditLinks = true, hideSaveAndContinueButton = true))
 
-    behave like pageWithReturnLink(createView(hideSaveAndContinueButton = false), controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
+    behave like pageWithReturnLink(createView(hideSaveAndContinueButton = false), controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
 
     behave like pageWithReturnLink(createView(returnOverview = true, hideSaveAndContinueButton = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     behave like pageWithReturnLink(createView(returnOverview = false, UpdateMode, hideEditLinks = false, srn, hideSaveAndContinueButton = true),
-      controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+      controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url)
 
     behave like pageWithoutSubmitButton(createView(hideEditLinks = true, hideSaveAndContinueButton = true))
 
