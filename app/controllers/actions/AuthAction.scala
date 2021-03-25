@@ -20,7 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
 import controllers.routes
 import models.AuthEntity
-import models.AuthEntity.PSA
+import models.AuthEntity.{PSA, PSP}
 import models.requests.AuthenticatedRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthImpl(override val authConnector: AuthConnector,
                          config: FrontendAppConfig,
                          val parser: BodyParsers.Default,
-                        authEntity: AuthEntity)
+                        authEntity: Option[AuthEntity])
                               (implicit val executionContext: ExecutionContext) extends Auth with
   AuthorisedFunctions {
 
@@ -69,12 +69,13 @@ class AuthImpl(override val authConnector: AuthConnector,
   }
 
   private def createAuthRequest[A](id: String, enrolments: Enrolments, request: Request[A],
-                                   block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    if(authEntity == PSA) {
-      block(AuthenticatedRequest(request, id, Some(PsaId(getPsaId(enrolments))), None))
-    } else {
-      block(AuthenticatedRequest(request, id, None, Some(PspId(getPspId(enrolments)))))
+                                   block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    authEntity match {
+      case Some(PSA) => block(AuthenticatedRequest(request, id, Some(PsaId(getPsaId(enrolments))), None))
+      case Some(PSP) => block(AuthenticatedRequest(request, id, None, Some(PspId(getPspId(enrolments)))))
+      case _ => block(AuthenticatedRequest(request, id, Some(PsaId(getPsaId(enrolments))), None))
     }
+  }
 
   private def getPsaId(enrolments: Enrolments): String =
     enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value)
@@ -97,10 +98,10 @@ class AuthActionImpl @Inject()(authConnector: AuthConnector,
                                val parser: BodyParsers.Default)
                               (implicit ec: ExecutionContext) extends AuthAction {
 
-  override def apply(authEntity: AuthEntity): Auth = new AuthImpl(authConnector, config, parser, authEntity)
+  override def apply(authEntity: Option[AuthEntity]): Auth = new AuthImpl(authConnector, config, parser, authEntity)
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction {
-  def apply(authEntity: AuthEntity = PSA): Auth
+  def apply(authEntity: Option[AuthEntity] = Some(PSA)): Auth
 }

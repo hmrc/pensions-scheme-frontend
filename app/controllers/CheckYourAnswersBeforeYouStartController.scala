@@ -54,7 +54,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
     }
 
     def pspOnPageLoad(srn: String): Action[AnyContent] =
-      (authenticate(PSP) andThen getPspData(srn) andThen requireData).async {
+      (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
         implicit request =>
           Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
       }

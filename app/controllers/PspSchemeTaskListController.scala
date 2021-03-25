@@ -37,7 +37,7 @@ class PspSchemeTaskListController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(PSP) andThen getData(srn)) {
+  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)) {
     implicit request =>
       request.userAnswers match {
         case Some(ua) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn)))
