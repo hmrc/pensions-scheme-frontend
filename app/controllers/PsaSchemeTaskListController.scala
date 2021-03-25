@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import views.html.schemeDetailsTaskList
+import views.html.psaTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +43,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         val view: schemeDetailsTaskList,
+                                         val view: psaTaskList,
                                          hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                          hsTaskListHelperVariations: HsTaskListHelperVariations,
                                          featureToggleService: FeatureToggleService

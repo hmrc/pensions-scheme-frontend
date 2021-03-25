@@ -22,11 +22,11 @@ import models.{EntitySpoke, NormalMode, TaskListLink}
 import play.twirl.api.HtmlFormat
 import viewmodels._
 import views.behaviours.ViewBehaviours
-import views.html.schemeDetailsTaskList
+import views.html.psaTaskList
 
-class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
+class PsaTaskListViewSpec extends ViewBehaviours {
 
-  import SchemeDetailsTaskListViewSpec._
+  import PsaTaskListViewSpec._
 
   private def simpleSection(linkId: String, linkUrl: String, linkText: String, statusId: String,
                             notStarted: SchemeDetailsTaskList, inProgress: SchemeDetailsTaskList, completed: SchemeDetailsTaskList) {
@@ -456,7 +456,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     }
   }
 
-  val view: schemeDetailsTaskList = app.injector.instanceOf[schemeDetailsTaskList]
+  val view: psaTaskList = app.injector.instanceOf[psaTaskList]
 
   private def createView(schemeDetailsList: SchemeDetailsTaskList = schemeDetailsTaskListData()): () => HtmlFormat.Appendable = () =>
     view(schemeDetailsList)(fakeRequest, messages)
@@ -464,7 +464,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
 }
 
-object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
+object PsaTaskListViewSpec extends ViewSpecBase {
   private lazy val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text")
   private lazy val aboutMembersLinkText = Message("messages__schemeTaskList__about_members_link_text")
   private lazy val aboutBenefitsAndInsuranceLinkText = Message("messages__schemeTaskList__about_benefits_and_insurance_link_text")

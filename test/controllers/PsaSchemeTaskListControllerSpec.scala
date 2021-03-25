@@ -31,13 +31,13 @@ import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.schemeDetailsTaskList
+import views.html.psaTaskList
 
 import scala.concurrent.Future
 
-class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
-  import SchemeTaskListControllerSpec._
+  import PsaSchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
@@ -96,8 +96,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
   }
 }
 
-object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
-  private val view = injector.instanceOf[schemeDetailsTaskList]
+object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
+  private val view = injector.instanceOf[psaTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
