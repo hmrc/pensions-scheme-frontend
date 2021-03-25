@@ -18,6 +18,7 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
+import connectors.SessionDataCacheConnector
 import controllers.routes
 import models.AuthEntity
 import models.AuthEntity.{PSA, PSP}
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthImpl(override val authConnector: AuthConnector,
                          config: FrontendAppConfig,
+                         sessionDataCacheConnector: SessionDataCacheConnector,
                          val parser: BodyParsers.Default,
                         authEntity: Option[AuthEntity])
                               (implicit val executionContext: ExecutionContext) extends Auth with
@@ -94,12 +96,12 @@ trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFu
 case class IdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationException(msg)
 
 class AuthActionImpl @Inject()(authConnector: AuthConnector,
-
                                config: FrontendAppConfig,
+                               sessionDataCacheConnector: SessionDataCacheConnector,
                                val parser: BodyParsers.Default)
                               (implicit ec: ExecutionContext) extends AuthAction {
 
-  override def apply(authEntity: Option[AuthEntity]): Auth = new AuthImpl(authConnector, config, parser, authEntity)
+  override def apply(authEntity: Option[AuthEntity]): Auth = new AuthImpl(authConnector, config, sessionDataCacheConnector, parser, authEntity)
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
