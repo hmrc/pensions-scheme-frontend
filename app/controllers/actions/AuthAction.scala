@@ -93,8 +93,6 @@ class AuthImpl(override val authConnector: AuthConnector,
         case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))
         case Some(aop) =>
           (aop, authEntity) match {
-            case (Administrator, Some(PSA)) => block(AuthenticatedRequest(request, id, psaId, None))
-            case (Practitioner, Some(PSP)) =>  block(AuthenticatedRequest(request, id, None, pspId))
             case (Administrator, Some(PSP)) =>
               Future.successful(
                 Redirect(Call("GET", config.cannotAccessPageAsAdministratorUrl(request.uri)))
