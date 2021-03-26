@@ -154,6 +154,39 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "the user has enrolled in PODS as both a PSA AND a PSP" must {
+
+      "have access to page with no auth entity when he has chosen to act as a PSA" in {
+        val optionUAJson = UserAnswers()
+          .set(AdministratorOrPractitionerId)(AdministratorOrPractitioner.Administrator).asOpt.map(_.json)
+        when(mockSessionDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
+        val authAction = new AuthActionImpl(
+          authConnector = fakeAuthConnector(authRetrievals(bothEnrolments)),
+          config = frontendAppConfig,
+          mockSessionDataCacheConnector,
+          parser = app.injector.instanceOf[BodyParsers.Default]
+        )
+        val controller = new Harness(authAction, authEntity = None)
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+      }
+
+      "have access to page with no auth entity when he has chosen to act as a PSP" in {
+        val optionUAJson = UserAnswers()
+          .set(AdministratorOrPractitionerId)(AdministratorOrPractitioner.Practitioner).asOpt.map(_.json)
+        when(mockSessionDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
+        val authAction = new AuthActionImpl(
+          authConnector = fakeAuthConnector(authRetrievals(bothEnrolments)),
+          config = frontendAppConfig,
+          mockSessionDataCacheConnector,
+          parser = app.injector.instanceOf[BodyParsers.Default]
+        )
+        val controller = new Harness(authAction, authEntity = None)
+
+        val result = controller.onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+      }
+
       "have access to PSA page when he has chosen to act as a PSA" in {
         val optionUAJson = UserAnswers()
           .set(AdministratorOrPractitionerId)(AdministratorOrPractitioner.Administrator).asOpt.map(_.json)
