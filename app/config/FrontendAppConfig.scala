@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environment: Environment,
                                   servicesConfig: ServicesConfig) {
+  def friendlyUrl(uri:String):String = loadConfig("host") + uri
 
   lazy val contactHost: String = baseUrl("contact-frontend")
   def featureToggleUrl(toggle:String) : String =
