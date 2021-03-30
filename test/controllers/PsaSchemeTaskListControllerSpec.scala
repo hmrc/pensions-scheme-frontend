@@ -53,7 +53,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe view(schemeDetailsTL)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe view(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
       }
     }
 

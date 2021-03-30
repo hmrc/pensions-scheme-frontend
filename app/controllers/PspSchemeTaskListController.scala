@@ -17,14 +17,15 @@
 package controllers
 
 import controllers.actions._
-import javax.inject.Inject
+import identifiers.SchemeNameId
 import models.AuthEntity.PSP
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.hstasklisthelper.HsTaskListHelperPsp
 import views.html.pspTaskList
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PspSchemeTaskListController @Inject()(
@@ -37,11 +38,18 @@ class PspSchemeTaskListController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
+  private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)) {
     implicit request =>
+
       request.userAnswers match {
-        case Some(ua) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn)))
-        case _ => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        case Some(ua) =>
+          ua.get(SchemeNameId) match {
+            case Some(schemeName) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn), schemeName))
+            case _ => sessionExpired
+          }
+        case _ => sessionExpired
       }
   }
 }
