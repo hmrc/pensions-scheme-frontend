@@ -18,23 +18,25 @@ package viewmodels
 
 import models.EntitySpoke
 
-case class SchemeDetailsTaskList(h1: String,
-                                 srn: Option[String],
-                                 beforeYouStart: SchemeDetailsTaskListEntitySection,
-                                 about: SchemeDetailsTaskListEntitySection,
-                                 workingKnowledge: Option[SchemeDetailsTaskListEntitySection],
-                                 addEstablisherHeader: Option[SchemeDetailsTaskListEntitySection],
-                                 establishers: Seq[SchemeDetailsTaskListEntitySection],
-                                 addTrusteeHeader: Option[SchemeDetailsTaskListEntitySection],
-                                 trustees: Seq[SchemeDetailsTaskListEntitySection],
-                                 declaration: Option[SchemeDetailsTaskListEntitySection],
-                                 isAllSectionsComplete: Option[Boolean]
+case class SchemeDetailsTaskList(
+                                  h1: String,
+                                  srn: Option[String],
+                                  beforeYouStart: SchemeDetailsTaskListEntitySection,
+                                  about: SchemeDetailsTaskListEntitySection,
+                                  workingKnowledge: Option[SchemeDetailsTaskListEntitySection],
+                                  addEstablisherHeader: Option[SchemeDetailsTaskListEntitySection],
+                                  establishers: Seq[SchemeDetailsTaskListEntitySection],
+                                  addTrusteeHeader: Option[SchemeDetailsTaskListEntitySection],
+                                  trustees: Seq[SchemeDetailsTaskListEntitySection],
+                                  declaration: Option[SchemeDetailsTaskListEntitySection],
+                                  isAllSectionsComplete: Option[Boolean]
                                 )
 
-case class SchemeDetailsTaskListEntitySection(isCompleted: Option[Boolean],
-                                              entities: Seq[EntitySpoke],
-                                              header: Option[Message],
-                                              p1: Message*
+case class SchemeDetailsTaskListEntitySection(
+                                               isCompleted: Option[Boolean],
+                                               entities: Seq[EntitySpoke],
+                                               header: Option[Message],
+                                               p1: Message*
                                              )
 
 

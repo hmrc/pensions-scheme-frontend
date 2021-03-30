@@ -50,7 +50,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     with DataCompletionEstablishers
     with DataCompletionTrustees {
 
-  private val logger  = Logger(classOf[UserAnswers])
+  private val logger = Logger(classOf[UserAnswers])
 
   def prettyPrint: String = Json.prettyPrint(json)
 
@@ -392,8 +392,9 @@ final case class UserAnswers(json: JsValue = Json.obj())
       )
   }
 
-  def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data])
-  : JsResult[UserAnswers] = {
+  def set[I <: TypedIdentifier.PathDependent](id: I)
+                                             (value: id.Data)
+                                             (implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
     val jsValue = Json.toJson(value)
     val oldValue = json
     val jsResultSetValue = JsLens.fromPath(id.path).set(jsValue, json)
@@ -461,14 +462,20 @@ final case class UserAnswers(json: JsValue = Json.obj())
     case _ => false
   }
 
-  def areVariationChangesCompleted: Boolean =
-    isInsuranceCompleted && isAllTrusteesCompleted &&
-      allEstablishersCompleted(UpdateMode)
-
-  protected def schemeType: Option[String] = json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
-    case JsSuccess(scheme, _) => Some(scheme.value)
-    case JsError(_) => None
+  def areVariationChangesCompleted: Boolean = {
+    List(
+      Some(isInsuranceCompleted),
+      Some(isAllTrusteesCompleted),
+      isTypeOfBenefitsCompleted,
+      Some(allEstablishersCompleted(UpdateMode))
+    ).flatten.forall(_ == true)
   }
+
+  protected def schemeType: Option[String] =
+    json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+      case JsSuccess(scheme, _) => Some(scheme.value)
+      case JsError(_) => None
+    }
 
   def pspEstablishers: Seq[String] =
     json.validate[Seq[String]](readPspEstablishers) match {

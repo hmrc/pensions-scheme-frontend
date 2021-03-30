@@ -46,7 +46,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
       spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId)
-.getOrElse(""), None),
+        .getOrElse(""), None),
       Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
@@ -55,11 +55,11 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
                                           mode: Mode,
                                           srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers,
-mode, srn, viewOnly = false), None))
+      mode, srn, viewOnly = false), None))
   }
 
   private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
-: Option[SchemeDetailsTaskListEntitySection] = {
+  : Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes => Some(
@@ -73,7 +73,7 @@ mode, srn, viewOnly = false), None))
         Some(
           SchemeDetailsTaskListEntitySection(None,
             spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get
-(SchemeNameId).getOrElse(""), None),
+            (SchemeNameId).getOrElse(""), None),
             None
           )
         )
