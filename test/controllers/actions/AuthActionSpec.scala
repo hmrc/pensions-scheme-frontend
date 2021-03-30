@@ -233,7 +233,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl(frontendAppConfig.friendlyUrl(fakeRequest.uri)))
+        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsAdministratorUrl(frontendAppConfig.localFriendlyUrl(fakeRequest.uri)))
       }
 
       "redirect to cannot access as practitioner when trying to access PSA page when chosen to act as a PSP" in {
@@ -250,7 +250,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsPractitionerUrl(frontendAppConfig.friendlyUrl(fakeRequest.uri)))
+        redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsPractitionerUrl(frontendAppConfig.localFriendlyUrl(fakeRequest.uri)))
       }
 
       "redirect to administrator or practitioner page when trying to access PSA page when not chosen a role" in {

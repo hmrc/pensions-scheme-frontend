@@ -41,7 +41,7 @@ trait SpecBase
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/test-url/")
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/foo")
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
