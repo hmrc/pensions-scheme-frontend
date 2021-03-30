@@ -243,7 +243,7 @@
         <a id="save-and-return" class="task-name"
            href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
             @if(taskSections.srn.isDefined){
-                @messages("messages__complete__returnToSchemeDetailsPsp", schemeName)
+                @messages("messages__complete__returnToSchemeOverview", schemeName)
             }else{
                 @messages("messages__complete__saveAndReturnToManagePensionSchemes")
             }

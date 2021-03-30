@@ -97,7 +97,7 @@ class PsaTaskListViewSpec extends ViewBehaviours {
       val view = createView(schemeDetailsTaskListData(Some("srn")))
       view must haveLinkWithText(
         url = frontendAppConfig.managePensionsSchemeSummaryUrl.format("srn"),
-        linkText = messages("messages__complete__returnToSchemeDetailsPsp", schemeName),
+        linkText = messages("messages__complete__returnToSchemeOverview", schemeName),
         linkId = "save-and-return"
       )
     }
