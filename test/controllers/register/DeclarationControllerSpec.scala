@@ -16,21 +16,24 @@
 
 package controllers.register
 
+import audit.{AuditService, TcmpAuditEvent}
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
-import identifiers.HaveAnyTrusteesId
-import identifiers.register.DeclarationDormantId
+import identifiers.register.{DeclarationDormantId, DeclarationId}
+import identifiers._
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import models.{MinimalPSA, NormalMode, PSAMinimalFlags}
+import models._
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
@@ -41,7 +44,11 @@ import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
+class DeclarationControllerSpec
+  extends ControllerSpecBase
+    with MockitoSugar
+    with ScalaFutures
+    with BeforeAndAfterEach {
 
   import DeclarationControllerSpec._
 
@@ -101,10 +108,42 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     }
 
     "redirect to the next page on clicking agree and continue" in {
+      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(UserAnswers(Json.obj())))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to the next page on clicking agree and continue and audit TCMP" in {
+      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(UserAnswers(Json.obj("benefits" -> "opt2"))))
+
+      val result = controller(tcmpAuditDataUa.dataRetrievalAction).onClickAgree()(fakeRequest)
+
+      val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
+
+      val auditEvent = TcmpAuditEvent(
+        psaId = "A0000000",
+        tcmp = "01",
+        payload = Json.obj(
+          "moneyPurchaseBenefits" -> Json.arr("opt1"),
+          "benefits" -> "opt1",
+          SchemeNameId.toString -> "schemeName",
+          "isTcmpChanged" -> true,
+          "declaration" -> true
+        ) ++ tcmpAuditDataUa.json.as[JsObject],
+        auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
+      )
+
+      whenReady(result) {
+        response =>
+          response.header.status mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
+          verify(mockAuditService, times(1)).sendExtendedEvent(argCaptor.capture())(any(), any())
+          argCaptor.getValue mustBe auditEvent
+      }
     }
 
     "send an email on clicking agree and continue" which {
@@ -114,6 +153,9 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
+
+        when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(UserAnswers(Json.obj())))
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
 
@@ -158,15 +200,26 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val psaId = PsaId("A0000000")
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
+  private val mockAuditService = mock[AuditService]
+  private val mockSchemeDetailsConnector = mock[SchemeDetailsConnector]
 
   private val view = injector.instanceOf[declaration]
 
-  private def uaWithBasicData: UserAnswers = setCompleteBeforeYouStart(isComplete = true,
-    setCompleteMembers(isComplete = true,
-      setCompleteBank(isComplete = true,
-        setCompleteBenefits(isComplete = true,
-          setCompleteEstIndividual(0, UserAnswers())))))
-    .set(HaveAnyTrusteesId)(false).asOpt.value
+  private def uaWithBasicData: UserAnswers =
+    setCompleteBeforeYouStart(
+      isComplete = true,
+      setCompleteMembers(
+        isComplete = true,
+        setCompleteBank(
+          isComplete = true,
+          setCompleteBenefits(
+            isComplete = true,
+            setCompleteEstIndividual(0, UserAnswers())
+          )
+        )
+      )
+    )
+      .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector
@@ -184,7 +237,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       fakeMinimalPsaConnector,
       controllerComponents,
       mockHsTaskListHelperRegistration,
-      view
+      view,
+      mockAuditService,
+      mockSchemeDetailsConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
@@ -212,11 +267,38 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .dataRetrievalAction
   }
 
-  private val nonDormantCompany =
+  private val tcmpAuditDataUa: UserAnswers =
     setCompleteWorkingKnowledge(
-      isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
-      .set(identifiers.DeclarationDutiesId)(false).asOpt
-      .value.establisherCompanyDormant(1, DeclarationDormant.No).dataRetrievalAction
+      isComplete = true,
+      ua = setCompleteEstCompany(1, uaWithBasicData)
+    )
+      .set(identifiers.DeclarationDutiesId)(false)
+      .asOpt
+      .value
+      .establisherCompanyDormant(1, DeclarationDormant.No)
+      .set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.Collective))
+      .asOpt
+      .value
+      .set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchase)
+      .asOpt
+      .value
+      .set(TcmpChangedId)(true)
+      .asOpt
+      .value
+      .set(DeclarationId)(true)
+      .asOpt
+      .value
+
+  private val nonDormantCompany: DataRetrievalAction =
+    setCompleteWorkingKnowledge(
+      isComplete = true,
+      ua = setCompleteEstCompany(1, uaWithBasicData)
+    )
+      .set(identifiers.DeclarationDutiesId)(false)
+      .asOpt
+      .value
+      .establisherCompanyDormant(1, DeclarationDormant.No)
+      .dataRetrievalAction
 
   private val dormantCompany: DataRetrievalAction = {
     setCompleteWorkingKnowledge(

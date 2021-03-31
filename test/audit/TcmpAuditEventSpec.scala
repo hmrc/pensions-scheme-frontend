@@ -29,7 +29,8 @@ class TcmpAuditEventSpec
     val auditEvent: TcmpAuditEvent = TcmpAuditEvent(
       psaId = "A0000000",
       tcmp = "01",
-      payload = Json.obj("some" -> "payload")
+      payload = Json.obj("some" -> "payload"),
+      auditType = "TaxationCollectiveMoneyPurchaseAuditEvent"
     )
 
     auditEvent.auditType shouldBe "TaxationCollectiveMoneyPurchaseAuditEvent"
