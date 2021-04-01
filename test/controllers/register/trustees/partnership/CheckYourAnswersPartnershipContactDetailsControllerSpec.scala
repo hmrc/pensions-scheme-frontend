@@ -45,7 +45,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     trusteePartnershipEmail(index, email = "test@test.com").trusteePartnershipPhone(index, phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None,

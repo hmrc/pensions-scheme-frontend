@@ -55,7 +55,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
 
       val vm = CYAViewModel(
         answerSections = Seq(bankAccountSection),
-        href = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,

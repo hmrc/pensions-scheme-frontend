@@ -71,7 +71,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
 
         val vm = CYAViewModel(
           answerSections = Seq(contactDetails),
-          href = SchemeTaskListController.onPageLoad(mode, srn),
+          href = PsaSchemeTaskListController.onPageLoad(mode, srn),
           schemeName = existingSchemeName,
           returnOverview = false,
           hideEditLinks = request.viewOnly || notNewEstablisher,

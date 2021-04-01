@@ -33,6 +33,6 @@ class StillNeedDetailsViewSpec extends ViewBehaviours {
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__stillNeedDetails__heading"), "_p1", "_p2")
 
 
-    behave like pageWithReturnLink(createView(), controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn).url)
+    behave like pageWithReturnLink(createView(), controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url)
   }
 }

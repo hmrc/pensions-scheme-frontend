@@ -27,7 +27,7 @@ import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import scala.concurrent.{ExecutionContext, Future}
 
 object FakeUnAuthorisedAction extends AuthAction {
-  def apply(authEntity: AuthEntity = PSA): Auth = {
+  def apply(authEntity: Option[AuthEntity] = Some(PSA)): Auth = {
     new Auth {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))

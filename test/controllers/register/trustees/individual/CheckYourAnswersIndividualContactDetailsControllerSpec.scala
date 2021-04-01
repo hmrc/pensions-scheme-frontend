@@ -40,7 +40,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value

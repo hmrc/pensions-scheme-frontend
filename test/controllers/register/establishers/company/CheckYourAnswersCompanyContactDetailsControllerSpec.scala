@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.routes.SchemeTaskListController
+import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
 import models._
@@ -45,7 +45,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    SchemeTaskListController.onPageLoad(mode, srn)
+    PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers

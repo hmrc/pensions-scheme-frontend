@@ -54,7 +54,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
     }
 
     def pspOnPageLoad(srn: String): Action[AnyContent] =
-      (authenticate(PSP) andThen getPspData(srn) andThen requireData).async {
+      (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
         implicit request =>
           Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
       }
@@ -76,7 +76,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
 
     CYAViewModel(
       answerSections = Seq(beforeYouStart),
-      href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+      href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
       schemeName = existingSchemeName,
       returnOverview = !userAnswers.isBeforeYouStartCompleted(mode),
       hideEditLinks = request.viewOnly,

@@ -1339,10 +1339,9 @@ messages__schemeTaskList__inProgress = In progress
 
 messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
 messages__complete__returnToManagePensionSchemes = Return to managing pension schemes
-messages__complete__returnToSchemeSummary = Return to scheme summary
+messages__complete__returnToSchemeOverview = Return to {0} overview
 
 messages__schemeTaskList__companyDetails = Company details
-
 
 messages__scheme_type__title = What type of scheme is this?
 messages__scheme_type__heading = What type of scheme is {0}?

@@ -71,7 +71,7 @@ class DeclarationController @Inject()(
       if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
         showPage(Ok.apply)
       } else {
-        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)))
+        Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
       }
   }
 

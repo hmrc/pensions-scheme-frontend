@@ -58,7 +58,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(PSP) andThen getPspData(srn) andThen requireData).async {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
       implicit request =>
         vm(UpdateMode, Some(srn)).map(vm => Ok(view(vm)))
     }
@@ -84,7 +84,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
 
       CYAViewModel(
         answerSections = Seq(benefitsAndInsuranceSection),
-        href = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,

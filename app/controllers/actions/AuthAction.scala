@@ -18,9 +18,12 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
+import connectors.SessionDataCacheConnector
 import controllers.routes
+import identifiers.AdministratorOrPractitionerId
+import models.AdministratorOrPractitioner.{Administrator, Practitioner}
 import models.AuthEntity
-import models.AuthEntity.PSA
+import models.AuthEntity.{PSA, PSP}
 import models.requests.AuthenticatedRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -30,13 +33,15 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthImpl(override val authConnector: AuthConnector,
                          config: FrontendAppConfig,
+                         sessionDataCacheConnector: SessionDataCacheConnector,
                          val parser: BodyParsers.Default,
-                        authEntity: AuthEntity)
+                        authEntity: Option[AuthEntity])
                               (implicit val executionContext: ExecutionContext) extends Auth with
   AuthorisedFunctions {
 
@@ -69,20 +74,38 @@ class AuthImpl(override val authConnector: AuthConnector,
   }
 
   private def createAuthRequest[A](id: String, enrolments: Enrolments, request: Request[A],
-                                   block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    if(authEntity == PSA) {
-      block(AuthenticatedRequest(request, id, Some(PsaId(getPsaId(enrolments))), None))
-    } else {
-      block(AuthenticatedRequest(request, id, None, Some(PspId(getPspId(enrolments)))))
+                                   block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    (enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(p=>PsaId(p.value)),
+      enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(p=>PspId(p.value))) match {
+      case (psaId@Some(_), pspId@Some(_)) => handleWhereBothEnrolments(id, request, psaId, pspId, block)
+      case (None, pspId@Some(_)) => block(AuthenticatedRequest(request, id, None, pspId))
+      case (psaId@Some(_), None) => block(AuthenticatedRequest(request, id, psaId, None))
+      case _ => Future.successful(Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad()))
     }
+  }
 
-  private def getPsaId(enrolments: Enrolments): String =
-    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value)
-      .getOrElse(throw new IdNotFound)
-
-  private def getPspId(enrolments: Enrolments): String =
-    enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(_.value)
-      .getOrElse(throw IdNotFound("PspIdNotFound"))
+  private def handleWhereBothEnrolments[A](id: String, request: Request[A],
+                                           psaId:Option[PsaId], pspId: Option[PspId],
+                     block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    sessionDataCacheConnector.fetch(id).flatMap { optionJsValue =>
+      optionJsValue.map(UserAnswers).flatMap(_.get(AdministratorOrPractitionerId)) match {
+        case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))
+        case Some(aop) =>
+          (aop, authEntity) match {
+            case (Administrator, Some(PSP)) =>
+              Future.successful(
+                Redirect(Call("GET", config.cannotAccessPageAsAdministratorUrl(config.localFriendlyUrl(request.uri))))
+              )
+            case (Practitioner, Some(PSA)) =>
+              Future.successful(
+                Redirect(Call("GET", config.cannotAccessPageAsPractitionerUrl(config.localFriendlyUrl(request.uri))))
+              )
+            case _ => block(AuthenticatedRequest(request, id, psaId, pspId))
+          }
+      }
+    }
+  }
 
 }
 
@@ -94,13 +117,14 @@ case class IdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationExcept
 
 class AuthActionImpl @Inject()(authConnector: AuthConnector,
                                config: FrontendAppConfig,
+                               sessionDataCacheConnector: SessionDataCacheConnector,
                                val parser: BodyParsers.Default)
                               (implicit ec: ExecutionContext) extends AuthAction {
 
-  override def apply(authEntity: AuthEntity): Auth = new AuthImpl(authConnector, config, parser, authEntity)
+  override def apply(authEntity: Option[AuthEntity]): Auth = new AuthImpl(authConnector, config, sessionDataCacheConnector, parser, authEntity)
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction {
-  def apply(authEntity: AuthEntity = PSA): Auth
+  def apply(authEntity: Option[AuthEntity] = None): Auth
 }

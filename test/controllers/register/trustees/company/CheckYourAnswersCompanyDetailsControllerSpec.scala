@@ -107,7 +107,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
 object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -173,9 +173,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
 
   private def companyDetailsAddLinksValues: Seq[AnswerSection] =

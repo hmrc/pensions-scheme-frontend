@@ -35,7 +35,7 @@ class VariationsNavigatorSpec
   private val srnValue = "S123"
   private val srn      = Some(srnValue)
 
-  private def variationsTaskList = controllers.routes.SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
   private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
   private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(srn)
 

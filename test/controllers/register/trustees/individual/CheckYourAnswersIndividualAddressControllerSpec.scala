@@ -83,7 +83,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
 
 object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
@@ -109,7 +109,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),

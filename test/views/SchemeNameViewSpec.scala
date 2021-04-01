@@ -50,6 +50,6 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
   }
 
   "SchemeName view in check mode" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None).url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
   }
 }

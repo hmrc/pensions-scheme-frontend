@@ -41,7 +41,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers, mode, srn)
       case MoreThanTenTrusteesId =>
-        redirectToAnyMoreChanges(SchemeTaskListController.onPageLoad(mode, srn), mode, srn)
+        redirectToAnyMoreChanges(PsaSchemeTaskListController.onPageLoad(mode, srn), mode, srn)
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
@@ -67,7 +67,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
           NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, None))
         }
       case Some(false) =>
-        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(NormalMode, None))
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
@@ -79,7 +79,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        NavigateTo.dontSave(SchemeTaskListController.onPageLoad(mode, srn))
+        NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
         NavigateTo.dontSave(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
       case None if trusteesLengthCompare >= 0 =>

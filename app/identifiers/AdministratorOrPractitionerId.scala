@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package models.requests
+package identifiers
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain.{PsaId, PspId}
+import models.AdministratorOrPractitioner
 
-trait IdentifiedRequest {
-  def externalId: String
+object AdministratorOrPractitionerId extends TypedIdentifier[AdministratorOrPractitioner] {
+  override def toString: String = "administratorOrPractitioner"
 }
-
-case class AuthenticatedRequest[A](request: Request[A], externalId: String, psaId: Option[PsaId], pspId: Option[PspId] = None)
-  extends WrappedRequest[A](request) with IdentifiedRequest

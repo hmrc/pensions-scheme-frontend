@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.routes.SchemeTaskListController
+import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company._
 import models.Mode.checkMode
 import models.register.DeclarationDormant
@@ -109,7 +109,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
 object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.SchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -169,9 +169,9 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
 
   private val fullAnswers = fullAnswersYes.set(IsCompanyDormantId(0))(DeclarationDormant.No).asOpt.value
 
-  def postUrl: Call = SchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
-  def postUrlUpdateMode: Call = SchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
   private def companyDetailsAddLinksValues: Seq[AnswerSection] =
     Seq(AnswerSection(

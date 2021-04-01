@@ -192,7 +192,7 @@ object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn)
 
   private def taskListPage(mode: Mode,  srn: Option[String]): Call =
-    controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def partnerNamePage(mode: Mode, srn: Option[String], partnerIndex: Int): Call =
     controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)

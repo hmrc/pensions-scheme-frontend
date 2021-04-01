@@ -29,7 +29,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(taskSections: PspTaskList)(implicit request: Request[_], messages: Messages)
+@(taskSections: PspTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {
@@ -133,8 +133,8 @@
     <hr aria-hidden="true">
     <p>
     <a id="save-and-return" class="task-name"
-       href="@appConfig.managePensionsSchemeSummaryUrl.format(taskSections.srn)">
-       @messages("messages__complete__returnToSchemeSummary")
+       href="@appConfig.managePensionsSchemeDetailsPspUrl.format(taskSections.srn)">
+       @messages("messages__complete__returnToSchemeOverview", schemeName)
     </a>
     </p>
 

@@ -128,7 +128,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def trusteeKind(index: Int, mode: Mode, srn: Option[String]) =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)
 
-  private def taskList(mode: Mode, srn: Option[String]) = controllers.routes.SchemeTaskListController.onPageLoad(mode, srn)
+  private def taskList(mode: Mode, srn: Option[String]) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   implicit class TrusteeUserAnswersOps(answers: UserAnswers) {
 

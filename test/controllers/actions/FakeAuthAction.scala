@@ -27,13 +27,13 @@ import uk.gov.hmrc.domain.{PsaId, PspId}
 import scala.concurrent.{ExecutionContext, Future}
 
 object FakeAuthAction extends AuthAction {
-  override def apply(authEntity: AuthEntity = PSA): Auth = new FakeAuth(authEntity)
+  override def apply(authEntity: Option[AuthEntity] = Some(PSA)): Auth = new FakeAuth(authEntity)
   val externalId: String = "id"
 }
 
-class FakeAuth(authEntity: AuthEntity) extends Auth {
+class FakeAuth(authEntity: Option[AuthEntity]) extends Auth {
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id", Some(PsaId("A0000000")), Some(PspId("00000000")), authEntity))
+    block(AuthenticatedRequest(request, "id", Some(PsaId("A0000000")), Some(PspId("00000000"))))
 
   val parser: BodyParser[AnyContent] = controllerComponents.parsers.defaultBodyParser
 

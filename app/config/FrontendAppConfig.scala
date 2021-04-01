@@ -27,13 +27,22 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environment: Environment,
                                   servicesConfig: ServicesConfig) {
+  def localFriendlyUrl(uri:String):String = loadConfig("host") + uri
 
   lazy val contactHost: String = baseUrl("contact-frontend")
   def featureToggleUrl(toggle:String) : String =
     s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.featureToggle").format(toggle)}"
   lazy val managePensionsSchemeOverviewUrl: Call = Call("GET", loadConfig("urls.manage-pensions-frontend" +
     ".schemesOverview"))
+
+  lazy val administratorOrPractitionerUrl: String = loadConfig("urls.manage-pensions-frontend.administratorOrPractitioner")
+  def cannotAccessPageAsAdministratorUrl(continueUrl:String): String =
+    loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsAdministrator").format(continueUrl)
+  def cannotAccessPageAsPractitionerUrl(continueUrl:String): String =
+    loadConfig("urls.manage-pensions-frontend.cannotAccessPageAsPractitioner").format(continueUrl)
+
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")
+  lazy val managePensionsSchemeDetailsPspUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummaryPsp")
   lazy val youMustContactHMRCUrl: String = loadConfig("urls.manage-pensions-frontend.youMustContactHMRC")
   lazy val managePensionsYourPensionSchemesUrl: String = loadConfig("urls.manage-pensions-frontend.yourPensionSchemes")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")

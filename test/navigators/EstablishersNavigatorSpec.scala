@@ -62,7 +62,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
           row(EstablisherKindId(0))(EstablisherKind.Company, companyDetails(UpdateMode)),
           row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(UpdateMode)),
           row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(UpdateMode)),
-          
+
           rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(None))
         )
       behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
@@ -86,5 +86,5 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
 
-  private def taskList(mode: Mode) = controllers.routes.SchemeTaskListController.onPageLoad(mode, None)
+  private def taskList(mode: Mode) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, None)
 }

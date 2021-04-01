@@ -92,7 +92,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
-  private def postUrl(mode: Mode) = routes.SchemeTaskListController.onPageLoad(mode, None)
+  private def postUrl(mode: Mode) = routes.PsaSchemeTaskListController.onPageLoad(mode, None)
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).

@@ -31,13 +31,13 @@ import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.schemeDetailsTaskList
+import views.html.psaTaskList
 
 import scala.concurrent.Future
 
-class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
-  import SchemeTaskListControllerSpec._
+  import PsaSchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
@@ -53,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe view(schemeDetailsTL)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe view(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
       }
     }
 
@@ -96,8 +96,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfte
   }
 }
 
-object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
-  private val view = injector.instanceOf[schemeDetailsTaskList]
+object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
+  private val view = injector.instanceOf[psaTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
@@ -106,8 +106,8 @@ object SchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar
   private val srn = Some(srnValue)
   private val schemeName = "test scheme"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
-    new SchemeTaskListController(
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =
+    new PsaSchemeTaskListController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,

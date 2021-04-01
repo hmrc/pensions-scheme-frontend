@@ -55,7 +55,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
                                    srn: Option[String]): Option[NavigateTo] = {
     value match {
       case Some(false) =>
-        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad(mode, srn))
+        NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
         NavigateTo.dontSave(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode,
           answers.establishersCount, srn))
