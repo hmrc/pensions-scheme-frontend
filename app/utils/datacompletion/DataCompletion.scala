@@ -89,27 +89,41 @@ trait DataCompletion {
       case _ => Some(false)
     }
 
+  def isTypeOfBenefitsCompleted: Option[Boolean] =
+    get(TypeOfBenefitsId) match {
+      case Some(Defined) =>
+        Some(true)
+      case None =>
+        None
+      case _ =>
+        Some(get(MoneyPurchaseBenefitsId).isDefined)
+    }
+
   def isBenefitsAndInsuranceCompleted: Option[Boolean] = {
 
-    val isBenefitsSecuredByContractCompleted: Option[Boolean] = get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => isComplete(Seq(
-        isAnswerComplete(InsuranceCompanyNameId), isAnswerComplete(InsurancePolicyNumberId), isAnswerComplete
-        (InsurerConfirmAddressId)))
-      case Some(false) => Some(true)
-      case _ => None
-    }
+    val isBenefitsSecuredByContractCompleted: Option[Boolean] =
+      get(BenefitsSecuredByInsuranceId) match {
+        case Some(true) =>
+          isComplete(
+            Seq(
+              isAnswerComplete(InsuranceCompanyNameId),
+              isAnswerComplete(InsurancePolicyNumberId),
+              isAnswerComplete
+              (InsurerConfirmAddressId)
+            )
+          )
+        case Some(false) => Some(true)
+        case _ => None
+      }
 
-    val isTypeOfBenefitsCompleted: Option[Boolean] = (get(TcmpToggleId), get(TypeOfBenefitsId)) match {
-      case (Some(true), Some(MoneyPurchaseDefinedMix)|Some(MoneyPurchase)) => isAnswerComplete(MoneyPurchaseBenefitsId)
-      case (_, None) => None
-      case _ => Some(true)
-    }
-
-    isComplete(Seq(
-      isAnswerComplete(InvestmentRegulatedSchemeId),
-      isAnswerComplete(OccupationalPensionSchemeId),
-      isTypeOfBenefitsCompleted,
-      isBenefitsSecuredByContractCompleted))
+    isComplete(
+      Seq(
+        isAnswerComplete(InvestmentRegulatedSchemeId),
+        isAnswerComplete(OccupationalPensionSchemeId),
+        isTypeOfBenefitsCompleted,
+        isBenefitsSecuredByContractCompleted
+      )
+    )
   }
 
   def isWorkingKnowledgeCompleted: Option[Boolean] = get(DeclarationDutiesId) match {

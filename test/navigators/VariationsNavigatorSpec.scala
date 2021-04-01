@@ -19,36 +19,19 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.UpdateMode
+import models.{TypeOfBenefits, UpdateMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 
-class VariationsNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class VariationsNavigatorSpec
+  extends SpecBase
+    with NavigatorBehaviour
+    with OptionValues
+    with Enumerable.Implicits {
 
-  import VariationsNavigatorSpec._
-
-  val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
-
-  "RegisterNavigator" when {
-
-    "in UpdateMode" must {
-      def navigation: TableFor3[Identifier, UserAnswers, Call] =
-        Table(
-          ("Id", "UserAnswers", "Next Page"),
-          row(AnyMoreChangesId)(true, variationsTaskList),
-          row(AnyMoreChangesId)(false, declaration, ua = Some(complete)),
-          row(AnyMoreChangesId)(false, stillChanges)
-        )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
-    }
-  }
-}
-
-object VariationsNavigatorSpec extends SpecBase with OptionValues {
   private val srnValue = "S123"
   private val srn      = Some(srnValue)
 
@@ -63,4 +46,26 @@ object VariationsNavigatorSpec extends SpecBase with OptionValues {
     .set(InsuranceDetailsChangedId)(true)
     .asOpt
     .value
+    .set(TypeOfBenefitsId)(TypeOfBenefits.Defined)
+    .asOpt
+    .value
+
+  val navigator: Navigator =
+    applicationBuilder(
+      dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))
+    ).build().injector.instanceOf[Navigator]
+
+  "RegisterNavigator" when {
+
+    "in UpdateMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(AnyMoreChangesId)(true, variationsTaskList),
+          row(AnyMoreChangesId)(false, declaration, ua = Some(complete)),
+          row(AnyMoreChangesId)(false, stillChanges)
+        )
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
+    }
+  }
 }

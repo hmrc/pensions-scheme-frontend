@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.play.views.html.layouts._
 @import views.html.layouts.GovUkTemplate
+@import views.html.helper.CSPNonce
 @import views.html.hmrcReportTechnicalIssue
 
 @this(
@@ -50,7 +51,8 @@
 @headTag = {
     @head(
         linkElem = None,
-        headScripts = None
+        headScripts = None,
+        nonce = CSPNonce.get
     )
     <meta name="format-detection" content="telephone=no" />
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/pensionsschemefrontend-app.css")' />

@@ -17,15 +17,14 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
 import models.UpdateMode
 import utils.Enumerable
 
-class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                    config: FrontendAppConfig
-                                   ) extends AbstractNavigator with Enumerable.Implicits {
+class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator
+    with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = None
 

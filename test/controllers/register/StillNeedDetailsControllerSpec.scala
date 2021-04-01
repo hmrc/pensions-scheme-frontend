@@ -35,7 +35,7 @@ class StillNeedDetailsControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[stillNeedDetails]
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): StillNeedDetailsController =
-    new StillNeedDetailsController(frontendAppConfig, messagesApi,
+    new StillNeedDetailsController(messagesApi,
       FakeAuthAction, dataRetrievalAction, controllerComponents, view)
 
   def viewAsString(): String = view(Some(srn), Some(schemeName))(fakeRequest, messages).toString
