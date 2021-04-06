@@ -110,17 +110,25 @@ class VariationDeclarationController @Inject()(
                          ua: UserAnswers
                        )(
                          implicit request: DataRequest[AnyContent]
-                       ): Future[Unit] = {
+                       ): Future[Unit] =
     Future.successful(
       (originalTypeOfBenefits, ua.get(TypeOfBenefitsId), ua.get(TcmpChangedId)) match {
         case (Some(originalBenefits), Some(updatedBenefits), tcmpChanged)
           if updatedBenefits != originalBenefits || tcmpChanged.contains(true) =>
-            auditService.sendExtendedEvent(
-              TcmpAuditEvent(psaId, TcmpAuditEvent.tcmpAuditValue(updatedBenefits, ua.get(MoneyPurchaseBenefitsId)), ua.json))
+          auditService.sendExtendedEvent(
+            TcmpAuditEvent(
+              psaId = psaId,
+              tcmp = TcmpAuditEvent.tcmpAuditValue(
+                typeOfBenefits = updatedBenefits,
+                moneyPurchaseBenefit = ua.get(MoneyPurchaseBenefitsId)
+              ),
+              payload = ua.json,
+              auditType = "TaxationCollectiveMoneyPurchaseAuditEvent"
+            )
+          )
         case _ => ()
       }
     )
-  }
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
 

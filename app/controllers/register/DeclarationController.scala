@@ -16,19 +16,20 @@
 
 package controllers.register
 
+import audit.{AuditService, TcmpAuditEvent}
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.routes.DeclarationController
-import identifiers.SchemeTypeId
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import models.NormalMode
+import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,14 +58,15 @@ class DeclarationController @Inject()(
                                        minimalPsaConnector: MinimalPsaConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
-                                       val view: declaration
+                                       val view: declaration,
+                                       auditService: AuditService
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
     with I18nSupport
     with Enumerable.Implicits {
 
-  private val logger  = Logger(classOf[DeclarationController])
+  private val logger = Logger(classOf[DeclarationController])
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
@@ -137,6 +139,7 @@ class DeclarationController @Inject()(
           for {
             cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
             _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
+            _ <- auditTcmp(psaId.id, request.userAnswers)
           } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
         case Left(_) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -168,5 +171,26 @@ class DeclarationController @Inject()(
   }
 
   case object MissingPsaId extends Exception("Psa ID missing in request")
+
+  private def auditTcmp(psaId: String, ua: UserAnswers)
+                       (implicit request: DataRequest[AnyContent]): Future[Unit] =
+    Future.successful(
+      ua.get(TypeOfBenefitsId) match {
+        case Some(typeOfBenefits)
+          if !typeOfBenefits.equals(TypeOfBenefits.Defined) =>
+          auditService.sendExtendedEvent(
+            TcmpAuditEvent(
+              psaId = psaId,
+              tcmp = TcmpAuditEvent.tcmpAuditValue(
+                typeOfBenefits = typeOfBenefits,
+                moneyPurchaseBenefit = ua.get(MoneyPurchaseBenefitsId)
+              ),
+              payload = ua.json,
+              auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
+            )
+          )
+        case _ => ()
+      }
+    )
 
 }

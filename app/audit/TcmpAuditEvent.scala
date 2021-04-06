@@ -22,10 +22,9 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 case class TcmpAuditEvent(
                            psaId: String,
                            tcmp: String,
-                           payload: JsValue
+                           payload: JsValue,
+                           auditType: String
                          ) extends ExtendedAuditEvent {
-
-  override def auditType: String = "TaxationCollectiveMoneyPurchaseAuditEvent"
 
   override def details: JsObject = Json.obj(
     "pensionSchemeAdministratorId" -> psaId,

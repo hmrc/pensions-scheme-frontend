@@ -195,7 +195,8 @@ class VariationDeclarationControllerSpec
           PstrId.toString -> "pstr",
           "isTcmpChanged" -> true,
           "declaration" -> true
-        )
+        ),
+        auditType = "TaxationCollectiveMoneyPurchaseAuditEvent"
       )
 
       whenReady(result) {
