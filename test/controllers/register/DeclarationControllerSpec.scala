@@ -22,10 +22,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
-import identifiers.register.{DeclarationDormantId, DeclarationId}
 import identifiers._
-import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
+import identifiers.register.{DeclarationDormantId, DeclarationId}
 import models._
+import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
@@ -108,8 +108,6 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue" in {
-      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj())))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -117,8 +115,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
-      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(UserAnswers(Json.obj("benefits" -> "opt2"))))
+      reset(mockAuditService)
 
       val result = controller(tcmpAuditDataUa.dataRetrievalAction).onClickAgree()(fakeRequest)
 
@@ -131,7 +128,6 @@ class DeclarationControllerSpec
           "moneyPurchaseBenefits" -> Json.arr("opt1"),
           "benefits" -> "opt1",
           SchemeNameId.toString -> "schemeName",
-          "isTcmpChanged" -> true,
           "declaration" -> true
         ) ++ tcmpAuditDataUa.json.as[JsObject],
         auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
@@ -153,9 +149,6 @@ class DeclarationControllerSpec
 
         when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
-
-        when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(UserAnswers(Json.obj())))
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
 
@@ -201,7 +194,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
-  private val mockSchemeDetailsConnector = mock[SchemeDetailsConnector]
 
   private val view = injector.instanceOf[declaration]
 
@@ -238,8 +230,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       controllerComponents,
       mockHsTaskListHelperRegistration,
       view,
-      mockAuditService,
-      mockSchemeDetailsConnector
+      mockAuditService
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
@@ -280,9 +271,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .asOpt
       .value
       .set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchase)
-      .asOpt
-      .value
-      .set(TcmpChangedId)(true)
       .asOpt
       .value
       .set(DeclarationId)(true)
