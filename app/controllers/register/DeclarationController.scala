@@ -25,11 +25,11 @@ import controllers.register.routes.DeclarationController
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
-import models.NormalMode
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -138,8 +138,8 @@ class DeclarationController @Inject()(
         case Right(submissionResponse) =>
           for {
             cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-            _        <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
-            _        <- auditTcmp(psaId.id, request.userAnswers)
+            _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
+            _ <- auditTcmp(psaId.id, request.userAnswers)
           } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
         case Left(_) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -176,7 +176,8 @@ class DeclarationController @Inject()(
                        (implicit request: DataRequest[AnyContent]): Future[Unit] =
     Future.successful(
       ua.get(TypeOfBenefitsId) match {
-        case Some(typeOfBenefits) =>
+        case Some(typeOfBenefits)
+          if !typeOfBenefits.equals(TypeOfBenefits.Defined) =>
           auditService.sendExtendedEvent(
             TcmpAuditEvent(
               psaId = psaId,

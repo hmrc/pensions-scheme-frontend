@@ -117,7 +117,7 @@ class DeclarationControllerSpec
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
       reset(mockAuditService)
 
-      val result = controller(tcmpAuditDataUa.dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
 
       val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
 
@@ -129,7 +129,7 @@ class DeclarationControllerSpec
           "benefits" -> "opt1",
           SchemeNameId.toString -> "schemeName",
           "declaration" -> true
-        ) ++ tcmpAuditDataUa.json.as[JsObject],
+        ) ++ tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).json.as[JsObject],
         auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
       )
 
@@ -139,6 +139,19 @@ class DeclarationControllerSpec
           redirectLocation(result) mustBe Some(onwardRoute.url)
           verify(mockAuditService, times(1)).sendExtendedEvent(argCaptor.capture())(any(), any())
           argCaptor.getValue mustBe auditEvent
+      }
+    }
+
+    "redirect to the next page on clicking agree and continue and not audit TCMP when TypeOfBenefit is Defined" in {
+      reset(mockAuditService)
+
+      val result = controller(tcmpAuditDataUa(TypeOfBenefits.Defined).dataRetrievalAction).onClickAgree()(fakeRequest)
+
+      whenReady(result) {
+        response =>
+          response.header.status mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
+          verify(mockAuditService, times(0)).sendExtendedEvent(any())(any(), any())
       }
     }
 
@@ -258,7 +271,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .dataRetrievalAction
   }
 
-  private val tcmpAuditDataUa: UserAnswers =
+  private def tcmpAuditDataUa(typeOfBenefit: TypeOfBenefits): UserAnswers =
     setCompleteWorkingKnowledge(
       isComplete = true,
       ua = setCompleteEstCompany(1, uaWithBasicData)
@@ -270,7 +283,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.Collective))
       .asOpt
       .value
-      .set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchase)
+      .set(TypeOfBenefitsId)(typeOfBenefit)
       .asOpt
       .value
       .set(DeclarationId)(true)
