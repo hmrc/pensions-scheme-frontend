@@ -1850,6 +1850,10 @@ messages__what_is_rac_dac__title = Retirement annuity contracts (RACs) and Defer
 messages__what_is_rac_dac__h1 = Retirement annuity contracts (RACs) and Deferred annuity contracts (DACs)
 messages__what_is_rac_dac__p1 = Because all RAC/DACs had tax approval before 5 April 2006, they are already treated as registered pension schemes. As a pension scheme administrator you only need to declare that you are acting for them.
 messages__what_is_rac_dac__h2 = What are RAC/DACs?
+messages__what_is_rac_dac__rac_h3 = Retirement annuity contract (RAC)
+messages__what_is_rac_dac__rac_p = A type of pension scheme that was available to the self-employed, or workers not offered a workplace pension before July 1988.
+messages__what_is_rac_dac__dac_h3 = Deferred annuity contract (DAC)
+messages__what_is_rac_dac__dac_p = A contract with an insurance company that promises to pay the owner a regular income, or a lump sum, at some future date.
 
 
 

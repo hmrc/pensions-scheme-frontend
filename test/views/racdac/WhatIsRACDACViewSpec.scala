@@ -31,7 +31,7 @@ class WhatIsRACDACViewSpec extends ViewBehaviours {
   "WhatIsRACDAC view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_p1", "_p2", "_item_1", "_item_2")
+      "_p1", "_h2", "_rac_h3", "_rac_p", "_dac_h3" , "_dac_p")
 
     behave like pageWithSubmitButton(createView)
 
