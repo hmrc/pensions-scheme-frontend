@@ -62,7 +62,7 @@ class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar wi
 //        val result = controller().onSubmit()(fakeRequest)
 //
 //        status(result) mustBe SEE_OTHER
-//        redirectLocation(result) mustBe Some(controllers.routes.UKBankAccountController.onPageLoad(NormalMode).url)
+//        redirectLocation(result) mustBe Some(controllers.racdac.routes.RACDACNameController.onPageLoad().url)
 //      }
 //    }
   }
