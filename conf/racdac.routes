@@ -1,0 +1,4 @@
+# routes for rac/dac
+
+GET         /what-is-rac-dac                         controllers.racdac.WhatIsRACDACController.onPageLoad()
+POST         /what-is-rac-dac                        controllers.racdac.WhatIsRACDACController.onSubmit()

@@ -1,6 +1,7 @@
 # microservice specific routes
 ->          /establisher                                             establishers.Routes
 ->          /trustee                                                 trustees.Routes
+->          /rac-dac                                                 racdac.Routes
 
 GET         /                                                        controllers.BeforeYouStartController.onPageLoad()
 
