@@ -41,7 +41,8 @@ class UrlsPartialService @Inject()(
                                     dataCacheConnector: UserAnswersCacheConnector,
                                     pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
                                     updateConnector: UpdateSchemeCacheConnector,
-                                    minimalPsaConnector: MinimalPsaConnector
+                                    minimalPsaConnector: MinimalPsaConnector,
+                                    featureToggleService: FeatureToggleService
                                   ) {
 
   private val logger  = Logger(classOf[UrlsPartialService])

@@ -16,11 +16,10 @@
 
 package services
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZoneOffset}
-
 import base.SpecBase
 import connectors.{UserAnswersCacheConnector, _}
+import models.FeatureToggle.Disabled
+import models.FeatureToggleName.RACDAC
 import models._
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -38,6 +37,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 import viewmodels.Message
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
 class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
@@ -51,9 +52,11 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
   def service: UrlsPartialService =
     new UrlsPartialService(frontendAppConfig, dataCacheConnector,
-      lockConnector, updateConnector, minimalPsaConnector)
+      lockConnector, updateConnector, minimalPsaConnector, mockFeatureToggleService)
 
   override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Disabled(RACDAC)))
     when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
     when(dataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(schemeNameJsonOption)))
@@ -182,7 +185,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 }
 
 object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
-
+  private val mockFeatureToggleService: FeatureToggleService = mock[FeatureToggleService]
   val psaName: String = "John Doe"
   val schemeName = "Test Scheme Name"
   val timestamp: Long = System.currentTimeMillis
