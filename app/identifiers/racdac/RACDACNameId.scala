@@ -17,7 +17,9 @@
 package identifiers.racdac
 
 import identifiers.TypedIdentifier
+import play.api.libs.json.JsPath
 
 case object RACDACNameId extends TypedIdentifier[String] {
-  override def toString: String = "RACDACName"
+  override def path: JsPath = JsPath \ "racdac" \ RACDACNameId.toString
+  override def toString: String = "name"
 }
