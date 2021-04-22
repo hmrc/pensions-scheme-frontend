@@ -1846,5 +1846,12 @@ messages__moneyPurchaseBenefits__error = Select what type of money purchase bene
 messages__moneyPurchaseBenefits__cya = What type of money purchase benefits does {0} provide?
 messages__moneyPurchaseBenefits__cya_hidden = type of money purchase benefits {0} has
 
+messages__what_is_rac_dac__title = Retirement annuity contracts (RACs) and Deferred annuity contracts (DACs)
+messages__what_is_rac_dac__h1 = Retirement annuity contracts (RACs) and Deferred annuity contracts (DACs)
+messages__what_is_rac_dac__p1 = Because all RAC/DACs had tax approval before 5 April 2006, they are already treated as registered pension schemes. As a pension scheme administrator you only need to declare that you are acting for them.
+messages__what_is_rac_dac__h2 = What are RAC/DACs?
+
+
+
 
 
