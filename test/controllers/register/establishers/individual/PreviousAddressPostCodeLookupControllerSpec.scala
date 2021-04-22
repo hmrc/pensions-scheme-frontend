@@ -95,7 +95,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       val invalidPostCode = "invalid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", invalidPostCode))
 
-      val boundForm = form.bindFromRequest()(postRequest)
+      val boundForm = form.bind(Map("postcode" -> invalidPostCode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))

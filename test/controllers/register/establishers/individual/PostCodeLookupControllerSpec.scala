@@ -19,6 +19,7 @@ package controllers.register.establishers.individual
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.establishers.individual.routes.{AddressController, PostCodeLookupController}
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.{Index, NormalMode}
@@ -30,7 +31,6 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
-
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -55,29 +55,29 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
     new PostCodeLookupController(
-      frontendAppConfig,
-      messagesApi,
-      FakeUserAnswersService,
-      fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      formProvider,
-      view,
-      controllerComponents
+      appConfig = frontendAppConfig,
+      messagesApi = messagesApi,
+      userAnswersService = FakeUserAnswersService,
+      addressLookupConnector = fakeAddressLookupConnector,
+      navigator = new FakeNavigator(desiredRoute = onwardRoute),
+      authenticate = FakeAuthAction,
+      getData = dataRetrievalAction,
+      allowAccess = FakeAllowAccessProvider(),
+      requireData = new DataRequiredActionImpl,
+      formProvider = formProvider,
+      view = view,
+      controllerComponents = controllerComponents
     )
 
   def viewAsString(form: Form[_] = form): String =
     view(
       form,
       PostcodeLookupViewModel(
-        routes.PostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
-        routes.AddressController.onPageLoad(NormalMode, firstIndex, None),
-        Message("messages__establisher_individual_address__heading", Message("messages__theIndividual")),
-        Message("messages__establisher_individual_address__heading", establisherName),
-        Some(establisherName)
+        postCall = PostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
+        manualInputCall = AddressController.onPageLoad(NormalMode, firstIndex, None),
+        title = Message("messages__establisher_individual_address__heading", Message("messages__theIndividual")),
+        heading = Message("messages__establisher_individual_address__heading", establisherName),
+        subHeading = Some(establisherName)
       ),
       None
     )(fakeRequest, messages).toString
@@ -95,7 +95,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val invalidPostCode = "invalid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", invalidPostCode))
 
-      val boundForm = form.bindFromRequest()(postRequest)
+      val boundForm = form.bind(Map("postcode" -> invalidPostCode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))
