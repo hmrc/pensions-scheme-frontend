@@ -49,14 +49,15 @@ import scala.concurrent.{ExecutionContext, Future}
 trait CacheConnector
   extends UserAnswersCacheConnector {
 
-  private val logger  = Logger(classOf[CacheConnector])
+  import CacheConnector._
+
+  private val logger = Logger(classOf[CacheConnector])
 
   val config: FrontendAppConfig
   val http: WSClient
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
-                                               (implicit
-                                                fmt: Format[A],
+                                               (implicit fmt: Format[A],
                                                 ec: ExecutionContext,
                                                 hc: HeaderCarrier
                                                ): Future[JsValue] =
@@ -67,38 +68,35 @@ trait CacheConnector
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
   private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
-                                (implicit
-                                 ec: ExecutionContext,
-                                 hc: HeaderCarrier
-                                ): Future[JsValue] =
+                                (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     fetch(cacheId).flatMap {
       json =>
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
-            http.url(url(cacheId))
-              .withHttpHeaders(hc.withExtraHeaders(("content-type", "application/json")).headers: _*)
-              .post(PlainText(Json.stringify(updatedJson)).value).flatMap {
-              response =>
-                response.status match {
-                  case OK =>
-                    Future.successful(updatedJson)
-                  case _ =>
-                    Future.failed(new HttpException(response.body, response.status))
-                }
-            }
+            http
+              .url(url(cacheId))
+              .withHttpHeaders(headers(hc): _*)
+              .post(PlainText(Json.stringify(updatedJson)).value)
+              .flatMap {
+                response =>
+                  response.status match {
+                    case OK =>
+                      Future.successful(updatedJson)
+                    case _ =>
+                      Future.failed(new HttpException(response.body, response.status))
+                  }
+              }
           case JsError(errors) =>
             Future.failed(JsResultException(errors))
         }
     }
 
   override def fetch(id: String)
-                    (implicit
-                     ec: ExecutionContext,
-                     hc: HeaderCarrier
-                    ): Future[Option[JsValue]] =
+                    (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
 
-    http.url(url(id))
-      .withHttpHeaders(hc.headers: _*)
+    http
+      .url(url(id))
+      .withHttpHeaders(headers(hc): _*)
       .get()
       .flatMap {
         response =>
@@ -113,17 +111,16 @@ trait CacheConnector
       }
 
   override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
-                                              (implicit
-                                               ec: ExecutionContext,
-                                               hc: HeaderCarrier
-                                              ): Future[JsValue] =
+                                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     modify(cacheId, _.remove(id))
 
   override def removeAll(id: String)
                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
-    http.url(url(id))
-      .withHttpHeaders(hc.headers: _*)
-      .delete().map(_ => Ok)
+    http
+      .url(url(id))
+      .withHttpHeaders(headers(hc): _*)
+      .delete()
+      .map(_ => Ok)
 
   override def lastUpdated(id: String)
                           (implicit
@@ -131,24 +128,36 @@ trait CacheConnector
                            hc: HeaderCarrier
                           ): Future[Option[JsValue]] =
 
-    http.url(lastUpdatedUrl(id))
-      .withHttpHeaders(hc.headers: _*)
-      .get().flatMap {
-      response =>
-        response.status match {
-          case NOT_FOUND =>
-            Future.successful(None)
-          case OK =>
-            logger.debug(
-              s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}"
-            )
-            Future.successful(Some(Json.parse(response.body)))
-          case _ =>
-            Future.failed(new HttpException(response.body, response.status))
-        }
-    }
+    http
+      .url(lastUpdatedUrl(id))
+      .withHttpHeaders(headers(hc): _*)
+      .get()
+      .flatMap {
+        response =>
+          response.status match {
+            case NOT_FOUND =>
+              Future.successful(None)
+            case OK =>
+              logger.debug(
+                s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}"
+              )
+              Future.successful(Some(Json.parse(response.body)))
+            case _ =>
+              Future.failed(new HttpException(response.body, response.status))
+          }
+      }
 
   protected def url(id: String): String
 
   protected def lastUpdatedUrl(id: String): String
+}
+
+object CacheConnector {
+  val names: HeaderCarrier => Seq[String] = hc =>
+    Seq(hc.names.authorisation, hc.names.xRequestId, hc.names.xSessionId)
+
+  val headers: HeaderCarrier => Seq[(String, String)] =
+    hc => hc.headers(names(hc)) ++ hc.withExtraHeaders(
+      ("content-type", "application/json")
+    ).extraHeaders
 }

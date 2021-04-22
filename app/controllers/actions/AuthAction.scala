@@ -32,7 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +47,7 @@ class AuthImpl(override val authConnector: AuthConnector,
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromHeadersAndSession(request.headers, Some(request.session))
+      .fromRequestAndSession(request, request.session)
 
     authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
@@ -87,7 +87,7 @@ class AuthImpl(override val authConnector: AuthConnector,
   private def handleWhereBothEnrolments[A](id: String, request: Request[A],
                                            psaId:Option[PsaId], pspId: Option[PspId],
                      block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionDataCacheConnector.fetch(id).flatMap { optionJsValue =>
       optionJsValue.map(UserAnswers).flatMap(_.get(AdministratorOrPractitionerId)) match {
         case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))

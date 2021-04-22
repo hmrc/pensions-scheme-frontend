@@ -18,6 +18,7 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.CacheConnector.headers
 import play.api.libs.ws.WSClient
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
@@ -29,10 +30,13 @@ class TestOnlyCacheConnector @Inject()(
                                         config: FrontendAppConfig,
                                         http: WSClient
                                       ) {
+
   def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
-    http.url(url(collectionName))
-      .withHttpHeaders(hc.headers: _*)
-      .delete().map(_ => Ok)
+    http
+      .url(url(collectionName))
+      .withHttpHeaders(headers(hc): _*)
+      .delete()
+      .map(_ => Ok)
   }
 
   protected def url(collectionName: String) = s"${config.pensionsSchemeUrl}/test-only/$collectionName"
