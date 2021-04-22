@@ -23,12 +23,12 @@ import identifiers.racdac.RACDACNameId
 import models.Mode
 import navigators.Navigator
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils._
-import utils.annotations.BeforeYouStart
+import utils.UserAnswers
 import views.html.racdac.racDACName
 
 import javax.inject.Inject
@@ -37,11 +37,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class RACDACNameController @Inject()(
                                       override val messagesApi: MessagesApi,
                                       dataCacheConnector: UserAnswersCacheConnector,
-                                      @BeforeYouStart navigator: Navigator,
+                                      navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       formProvider: RACDACNameFormProvider,
-                                      nameMatchingFactory: NameMatchingFactory,
                                       pensionAdministratorConnector: PensionAdministratorConnector,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: racDACName
@@ -66,29 +65,16 @@ class RACDACNameController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-//      form.bindFromRequest().fold(
-//        (formWithErrors: Form[_]) =>
-//          Future.successful(BadRequest(view(formWithErrors, mode, existingRACDACName.getOrElse("")))),
-//        value =>
-//          nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
-//            if (nameMatching.isMatch) {
-//              pensionAdministratorConnector.getPSAName.map { psaName =>
-//                BadRequest(view(form.withError(
-//                  "racDACName",
-//                  "messages__error__scheme_name_psa_name_match", psaName
-//                ), mode, existingRACDACName.getOrElse("")))
-//              }
-//            } else {
-//              dataCacheConnector.save(request.externalId, RACDACNameId, value).map { cacheMap =>
-//                Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap)))
-//              }
-//            } recoverWith {
-//              case e: NotFoundException =>
-//                logger.error(e.message)
-//                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-//            }
-//          }
-//      )
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) => {
+          pensionAdministratorConnector.getPSAName.map { psaName =>
+            BadRequest(view(formWithErrors, mode, psaName))
+          }
+        },
+          value =>
+            dataCacheConnector.save(request.externalId, RACDACNameId, value).map {
+              cacheMap => Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap)))
+            }
+      )
   }
 }

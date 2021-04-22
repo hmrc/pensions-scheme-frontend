@@ -29,15 +29,13 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import utils.FakeNavigator
 import views.html.racdac.racDACName
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
   val formProvider = new RACDACNameFormProvider()
   val form: Form[String] = formProvider()
@@ -46,25 +44,9 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
   val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(pensionAdministratorConnector) {
-    override def nameMatching(schemeName: String)
-                             (implicit ec: ExecutionContext,
-                              hc: HeaderCarrier): Future[NameMatching] = {
-      Future.successful(NameMatching("value 1", "My PSA"))
-    }
-  }
-
-  object FakeNameMatchingFactoryWithMatch extends NameMatchingFactory(pensionAdministratorConnector) {
-    override def nameMatching(schemeName: String)
-                             (implicit ec: ExecutionContext,
-                              hc: HeaderCarrier): Future[NameMatching] = {
-      Future.successful(NameMatching("My PSA", "My PSA"))
-    }
-  }
-
   private val view = injector.instanceOf[racDACName]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory:NameMatchingFactory = FakeNameMatchingFactory): RACDACNameController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): RACDACNameController =
     new RACDACNameController(
       messagesApi,
       FakeUserAnswersCacheConnector,
@@ -72,17 +54,17 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
-      nameMatchingFactory,
       mockPensionAdministratorConnector,
       controllerComponents,
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName)(fakeRequest, messages).toString
 
   "RACDACName Controller" must {
 
     "return OK and the correct view for a GET" in {
+      when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
@@ -90,6 +72,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
+      when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
       val validData = Json.obj(RACDACNameId.toString -> "value 1")
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
@@ -99,7 +82,8 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"))
+      when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACName", "value 1"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -109,26 +93,11 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "return a Bad Request and errors" when {
       "invalid data is submitted" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACName", ""))
+        val boundForm = form.bind(Map("racDACName" -> ""))
 
         val result = controller().onSubmit(NormalMode)(postRequest)
-
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe viewAsString(boundForm)
-      }
-
-      "scheme name matches psa name" in {
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "My PSA"))
-        val boundForm = form
-          .withError(
-            "schemeName",
-            "messages__error__scheme_name_psa_name_match", psaName
-          )
-
-        when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-
-        val result = controller(nameMatchingFactory = FakeNameMatchingFactoryWithMatch).onSubmit(NormalMode)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

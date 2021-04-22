@@ -14,42 +14,42 @@
  * limitations under the License.
  */
 
-package views
+package views.racdac
 
-import forms.register.SchemeNameFormProvider
+import forms.racdac.RACDACNameFormProvider
 import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.schemeName
+import views.html.racdac.racDACName
 
-class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
-  private val scheme = "A scheme"
-  val messageKeyPrefix = "scheme_name"
+class RACDACNameViewSpec extends QuestionViewBehaviours[String] {
+  private val psaName = "A PSA"
+  val messageKeyPrefix = "racdac_name"
 
-  override val form = new SchemeNameFormProvider()()
+  override val form = new RACDACNameFormProvider()()
 
-  val view: schemeName = app.injector.instanceOf[schemeName]
+  val view: racDACName = app.injector.instanceOf[racDACName]
 
-  def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, scheme)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, psaName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    view(form, NormalMode, scheme)(fakeRequest, messages)
+    view(form, NormalMode, psaName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    view(form, CheckMode, scheme)(fakeRequest, messages)
+    view(form, CheckMode, psaName)(fakeRequest, messages)
 
-  "SchemeName view" must {
+  "RACDACName view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.routes.SchemeNameController.onSubmit(NormalMode).url,
-      "schemeName")
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.racdac.routes.RACDACNameController.onSubmit().url,
+      "racDACName")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
-  "SchemeName view in check mode" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
-  }
+//  "RACDACName view in check mode" must {
+//    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
+//  }
 }

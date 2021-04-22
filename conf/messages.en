@@ -1855,6 +1855,8 @@ messages__what_is_rac_dac__rac_p = A type of pension scheme that was available t
 messages__what_is_rac_dac__dac_h3 = Deferred annuity contract (DAC)
 messages__what_is_rac_dac__dac_p = A contract with an insurance company that promises to pay the owner a regular income, or a lump sum, at some future date.
 
+messages__racdac_name__heading = What is the name of the RAC/DAC?
+messages__racdac_name__title = What is the name of the RAC/DAC?
 
 
 
