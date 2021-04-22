@@ -22,8 +22,6 @@ import identifiers.{SchemeNameId, TcmpToggleId}
 import models.AuthEntity.PSA
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
-
-import javax.inject.Inject
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,6 +33,7 @@ import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.psaTaskList
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
