@@ -22,7 +22,6 @@ import forms.racdac.RACDACNameFormProvider
 import identifiers.racdac.RACDACNameId
 import models.Mode
 import navigators.Navigator
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,8 +47,6 @@ class RACDACNameController @Inject()(
   extends FrontendBaseController
     with I18nSupport
     with Retrievals {
-
-  private val logger  = Logger(classOf[RACDACNameController])
 
   private val form = formProvider()
 

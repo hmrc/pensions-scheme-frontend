@@ -1858,6 +1858,8 @@ messages__what_is_rac_dac__dac_p = A contract with an insurance company that pro
 messages__racdac_name__heading = What is the name of the RAC/DAC?
 messages__racdac_name__title = What is the name of the RAC/DAC?
 
+messages__error__racdac_name = Enter the name of the RAC/DAC
+
 
 
 
