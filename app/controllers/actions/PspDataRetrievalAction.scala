@@ -23,7 +23,7 @@ import identifiers.SchemeSrnId
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,18 +31,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                      schemeDetailsConnector: SchemeDetailsConnector,
                                      srn: String
-                                       )(implicit val executionContext: ExecutionContext) extends PspDataRetrieval {
+                                    )(implicit val executionContext: ExecutionContext) extends PspDataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     viewConnector.fetch(request.externalId).flatMap {
       case None =>
-          val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
-          schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
-            val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
-            OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true)
-          }
+        val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
+        schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
+          val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
+          OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true)
+        }
 
       case Some(data) =>
         Future.successful(OptionalDataRequest(
@@ -55,9 +55,9 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
 trait PspDataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]
 
 class PspDataRetrievalActionImpl @Inject()(
-                                        viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                        schemeDetailsConnector: SchemeDetailsConnector
-                                       )(implicit ec: ExecutionContext) extends PspDataRetrievalAction {
+                                            viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                            schemeDetailsConnector: SchemeDetailsConnector
+                                          )(implicit ec: ExecutionContext) extends PspDataRetrievalAction {
   override def apply(srn: String): PspDataRetrieval = {
     new PspDataRetrievalImpl(viewConnector, schemeDetailsConnector, srn)
   }

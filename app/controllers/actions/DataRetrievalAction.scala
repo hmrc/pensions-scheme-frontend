@@ -26,7 +26,7 @@ import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,8 +44,7 @@ class DataRetrievalImpl(
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers,
-      Some(request.session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     mode match {
       case NormalMode | CheckMode =>
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
@@ -127,8 +126,8 @@ class DataRetrievalImpl(
     }
   }
 
-  private def getRequestWithNoLock[A](srn: String, refresh: Boolean, psaId: String)(implicit request: AuthenticatedRequest[A], hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
+  private def getRequestWithNoLock[A](srn: String, refresh: Boolean, psaId: String)
+                                     (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(answersJsValue) =>
         val ua: UserAnswers = UserAnswers(answersJsValue)

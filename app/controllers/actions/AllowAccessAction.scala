@@ -28,7 +28,7 @@ import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,8 +44,7 @@ abstract class AllowAccessAction(srn: Option[String],
                           destinationForNoUserAnswersAndSRN: => Option[Result],
                           checkForSuspended: Boolean
                          ): Future[Option[Result]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request
-      .session))
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val optionUA = request.userAnswers
 
