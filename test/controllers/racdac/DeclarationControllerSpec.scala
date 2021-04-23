@@ -16,29 +16,22 @@
 
 package controllers.racdac
 
-import audit.{AuditService, TcmpAuditEvent}
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
 import identifiers._
-import identifiers.register.{DeclarationDormantId, DeclarationId}
-import models._
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Call, RequestHeader}
 import play.api.test.Helpers._
-import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
 
@@ -53,51 +46,10 @@ class DeclarationControllerSpec
   import DeclarationControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(mockHsTaskListHelperRegistration)
-    when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
     when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
   }
 
-  "Declaration Controller" must {
-
-    "redirect to task list page when user answers are not complete" in {
-      when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(false)
-      val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
-    }
-
-    "return OK and don't save the DeclarationDormant " when {
-
-      "the establisher is an individual" in {
-        val result = controller(individualEst).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
-        FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
-      }
-    }
-
-    "return OK, the correct view and save the DeclarationDormant" when {
-
-      "the establisher is a dormant company" in {
-        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
-      }
-
-      "the establisher is non dormant company" in {
-        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
-      }
-    }
-
+  "onPageLoad" must {
     "return OK and the correct view " when {
       "master trust and all the answers is complete" in {
 
@@ -107,74 +59,15 @@ class DeclarationControllerSpec
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
       }
     }
+  }
+
+  "onClickAgree" must {
 
     "redirect to the next page on clicking agree and continue" in {
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "redirect to the next page on clicking agree and continue and audit TCMP" in {
-      reset(mockAuditService)
-
-      val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
-
-      val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
-
-      val auditEvent = TcmpAuditEvent(
-        psaId = "A0000000",
-        tcmp = "01",
-        payload = Json.obj(
-          "moneyPurchaseBenefits" -> Json.arr("opt1"),
-          "benefits" -> "opt1",
-          SchemeNameId.toString -> "schemeName",
-          "declaration" -> true
-        ) ++ tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).json.as[JsObject],
-        auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
-      )
-
-      whenReady(result) {
-        response =>
-          response.header.status mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-          verify(mockAuditService, times(1)).sendExtendedEvent(argCaptor.capture())(any(), any())
-          argCaptor.getValue mustBe auditEvent
-      }
-    }
-
-    "redirect to the next page on clicking agree and continue and not audit TCMP when TypeOfBenefit is Defined" in {
-      reset(mockAuditService)
-
-      val result = controller(tcmpAuditDataUa(TypeOfBenefits.Defined).dataRetrievalAction).onClickAgree()(fakeRequest)
-
-      whenReady(result) {
-        response =>
-          response.header.status mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-          verify(mockAuditService, times(0)).sendExtendedEvent(any())(any(), any())
-      }
-    }
-
-    "send an email on clicking agree and continue" which {
-      "fetches from Get PSA Minimal Details" in {
-
-        reset(mockEmailConnector)
-
-        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
-          .thenReturn(Future.successful(EmailSent))
-
-        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
-
-          verify(mockEmailConnector, times(1)).sendEmail(
-            eqTo("test@test.com"),
-            eqTo("pods_scheme_register"),
-            eqTo(Map("srn" -> "S12345 67890", "psaName" -> "psa name")),
-            eqTo(psaId)
-          )(any(), any())
-
-        }
-      }
     }
 
     "redirect to Session Expired" when {
@@ -204,11 +97,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
-  val psaId = PsaId("A0000000")
-
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
-  private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
-  private val mockAuditService = mock[AuditService]
   private val psaName = "A PSA"
   private val view = injector.instanceOf[declaration]
 
@@ -228,11 +117,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     )
       .set(HaveAnyTrusteesId)(false).asOpt.value
 
-  private def controller(dataRetrievalAction: DataRetrievalAction,
-                         fakeEmailConnector: EmailConnector = fakeEmailConnector
-                        ): DeclarationController =
+  private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(onwardRoute),
@@ -241,12 +127,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       fakePensionsSchemeConnector,
       mockPensionAdministratorConnector,
-      fakeEmailConnector,
-      fakeMinimalPsaConnector,
       controllerComponents,
-      mockHsTaskListHelperRegistration,
-      view,
-      mockAuditService
+      view
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
@@ -256,38 +138,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       href
     )(fakeRequest, messages).toString
 
-  private def individualEst: DataRetrievalAction = {
-    setCompleteWorkingKnowledge(isComplete = true, uaWithBasicData)
-      .set(identifiers.DeclarationDutiesId)(false).asOpt
-      .value
-      .dataRetrievalAction
-  }
-
   private def dataWithMasterTrust: DataRetrievalAction = {
     setCompleteWorkingKnowledge(isComplete = true, uaWithBasicData)
       .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value.schemeType(SchemeType.MasterTrust).set(HaveAnyTrusteesId)(false).asOpt.value
       .dataRetrievalAction
   }
-
-  private def tcmpAuditDataUa(typeOfBenefit: TypeOfBenefits): UserAnswers =
-    setCompleteWorkingKnowledge(
-      isComplete = true,
-      ua = setCompleteEstCompany(1, uaWithBasicData)
-    )
-      .set(identifiers.DeclarationDutiesId)(false)
-      .asOpt
-      .value
-      .establisherCompanyDormant(1, DeclarationDormant.No)
-      .set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.Collective))
-      .asOpt
-      .value
-      .set(TypeOfBenefitsId)(typeOfBenefit)
-      .asOpt
-      .value
-      .set(DeclarationId)(true)
-      .asOpt
-      .value
 
   private val nonDormantCompany: DataRetrievalAction =
     setCompleteWorkingKnowledge(
@@ -299,15 +155,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .value
       .establisherCompanyDormant(1, DeclarationDormant.No)
       .dataRetrievalAction
-
-  private val dormantCompany: DataRetrievalAction = {
-    setCompleteWorkingKnowledge(
-      isComplete = true, setCompleteEstCompany(1, uaWithBasicData))
-      .set(identifiers.DeclarationDutiesId)(false).asOpt
-      .value.establisherCompanyDormant(1, DeclarationDormant.Yes).dataRetrievalAction
-  }
-
-  private val mockEmailConnector = mock[EmailConnector]
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 
@@ -324,24 +171,5 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     override def checkForAssociation(psaId: String, srn: String)
                                     (implicit headerCarrier: HeaderCarrier,
                                      ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = ???
-  }
-
-  private val fakeEmailConnector = new EmailConnector {
-    override def sendEmail
-    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
-      Future.successful(EmailSent)
-    }
-  }
-
-  private val fakeMinimalPsaConnector = new MinimalPsaConnector {
-    override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
-      Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false))
-
-    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
-      Future.successful(MinimalPSA("test@test.com", isPsaSuspended = true, Some("psa name"), None))
-
-    override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
-      Future.successful(Some("psa name"))
   }
 }

@@ -22,7 +22,7 @@ import views.behaviours.ViewBehaviours
 import views.html.racdac.declaration
 
 class DeclarationViewSpec extends ViewBehaviours {
-  private val messageKeyPrefix = "declaration"
+  private val messageKeyPrefix = "declaration_racdac"
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   private val view: declaration = app.injector.instanceOf[declaration]
   private val returnLink = frontendAppConfig.managePensionsSchemeOverviewUrl.url
@@ -37,9 +37,9 @@ class DeclarationViewSpec extends ViewBehaviours {
       createView(),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
-      "_racdac_statement1",
-      "_racdac_statement2",
-      "_racdac_statement3"
+      "_statement1",
+      "_statement2",
+      "_statement3"
     )
 
     "have a return link" in {
@@ -54,8 +54,8 @@ class DeclarationViewSpec extends ViewBehaviours {
       createView(hasWorkingKnowledge = true),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
-      "_racdac_statement1",
-      "_racdac_statement2",
-      "_racdac_statement3")
+      "_statement1",
+      "_statement2",
+      "_statement3")
   }
 }
