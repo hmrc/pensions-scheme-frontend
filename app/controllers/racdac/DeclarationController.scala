@@ -16,34 +16,29 @@
 
 package controllers.racdac
 
-import audit.AuditService
-import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.routes.DeclarationController
-import identifiers.register._
+import identifiers.racdac._
 import models.NormalMode
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DeclarationController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: UserAnswersCacheConnector,
-                                       @Register navigator: Navigator,
+                                       navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       pensionsSchemeConnector: PensionsSchemeConnector,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: declaration
@@ -66,18 +61,10 @@ class DeclarationController @Inject()(
 
   def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-      (for {
+      for {
         cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-        eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id)
-      } yield eitherSubmissionResponse).flatMap {
-        case Right(submissionResponse) =>
-          for {
-            cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-          } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-        case Left(_) =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      }
+      } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+
   }
   case object MissingPsaId extends Exception("Psa ID missing in request")
 

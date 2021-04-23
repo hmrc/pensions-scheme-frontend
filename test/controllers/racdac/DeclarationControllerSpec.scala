@@ -29,13 +29,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.mvc.{Call, RequestHeader}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class DeclarationControllerSpec
   extends ControllerSpecBase
@@ -62,33 +61,13 @@ class DeclarationControllerSpec
   }
 
   "onClickAgree" must {
-
     "redirect to the next page on clicking agree and continue" in {
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
-
-    "redirect to Session Expired" when {
-      "no existing data is found" when {
-        "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-        "POST" in {
-          val result = controller(dontGetAnyData).onClickAgree()(fakeRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-      }
-    }
-
   }
-
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
@@ -125,7 +104,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      fakePensionsSchemeConnector,
       mockPensionAdministratorConnector,
       controllerComponents,
       view
@@ -157,19 +135,4 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .dataRetrievalAction
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
-
-  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
-    override def registerScheme
-    (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
-      Future.successful(Right(validSchemeSubmissionResponse))
-    }
-
-    override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]] = ???
-
-    override def checkForAssociation(psaId: String, srn: String)
-                                    (implicit headerCarrier: HeaderCarrier,
-                                     ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = ???
-  }
 }
