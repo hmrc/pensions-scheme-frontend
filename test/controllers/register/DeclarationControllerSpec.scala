@@ -280,7 +280,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .asOpt
       .value
       .establisherCompanyDormant(1, DeclarationDormant.No)
-      .set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.Collective))
+      .set(MoneyPurchaseBenefitsId)(MoneyPurchaseBenefits.Collective)
       .asOpt
       .value
       .set(TypeOfBenefitsId)(typeOfBenefit)

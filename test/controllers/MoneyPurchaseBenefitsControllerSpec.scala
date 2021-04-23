@@ -35,7 +35,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
-  val form: Form[Seq[MoneyPurchaseBenefits]] = formProvider()
+  val form: Form[MoneyPurchaseBenefits] = formProvider()
   val schemeName = "Test Scheme Name"
   val postCall: (Mode, Option[String]) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
 
@@ -63,7 +63,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(Seq(Collective)))
+      contentAsString(result) mustBe viewAsString(form.fill(Collective))
     }
 
     "redirect to the next page when valid data is submitted" in {

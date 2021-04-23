@@ -49,30 +49,49 @@ class MoneyPurchaseBenefitsController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  val postCall: (Mode, Option[String]) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
+  val postCall: (Mode, Option[String]) => Call =
+    routes.MoneyPurchaseBenefitsController.onSubmit
 
-  private def form: Form[Seq[MoneyPurchaseBenefits]] = formProvider()
+  private def form: Form[MoneyPurchaseBenefits] = formProvider()
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val preparedForm = request.userAnswers.get(MoneyPurchaseBenefitsId) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(view(preparedForm, mode, existingSchemeName, postCall(mode, srn), srn)))
+        Future.successful(Ok(
+          view(
+            form = request.userAnswers.get(MoneyPurchaseBenefitsId).fold(form)(form.fill),
+            mode = mode,
+            schemeName = existingSchemeName,
+            postCall = postCall(mode, srn),
+            srn = srn
+          )
+        ))
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
-        value =>
-            userAnswersService.save(mode, srn, MoneyPurchaseBenefitsId, value, TcmpChangedId).map { userAnswers =>
+      implicit request =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(
+              view(
+                form = formWithErrors,
+                mode = mode,
+                schemeName = existingSchemeName,
+                postCall = postCall(mode, srn),
+                srn = srn
+              )
+            )),
+          value =>
+            userAnswersService.save(
+              mode = mode,
+              srn = srn,
+              id = MoneyPurchaseBenefitsId,
+              value = value,
+              changeId = TcmpChangedId
+            ) map { userAnswers =>
               Redirect(navigator.nextPage(MoneyPurchaseBenefitsId, mode, UserAnswers(userAnswers), srn))
-          }
-      )
-  }
+            }
+        )
+    }
 }

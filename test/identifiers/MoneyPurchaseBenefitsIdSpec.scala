@@ -39,7 +39,7 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
     Some(Link("site.add", onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name))))))
 
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
-    _.set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.CashBalance))).asOpt.get
+    _.set(MoneyPurchaseBenefitsId)(MoneyPurchaseBenefits.CashBalance)).asOpt.get
 
   "cya" when {
     "in normal mode" must {

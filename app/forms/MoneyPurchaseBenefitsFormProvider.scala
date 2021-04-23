@@ -19,12 +19,14 @@ package forms
 import forms.mappings.Mappings
 import models.MoneyPurchaseBenefits
 import play.api.data.Form
-import play.api.data.Forms.seq
 
 import javax.inject.Inject
-class MoneyPurchaseBenefitsFormProvider @Inject() extends Mappings {
 
-  val errorKey: String = "messages__moneyPurchaseBenefits__error"
-  def apply(): Form[Seq[MoneyPurchaseBenefits]] =
-    Form("value" -> seq(enumerable[MoneyPurchaseBenefits](errorKey)).verifying(nonEmptySeq(errorKey)))
+class MoneyPurchaseBenefitsFormProvider @Inject()
+  extends Mappings {
+
+  def apply(): Form[MoneyPurchaseBenefits] =
+    Form(
+      "value" -> enumerable[MoneyPurchaseBenefits]("messages__moneyPurchaseBenefits__error")
+    )
 }
