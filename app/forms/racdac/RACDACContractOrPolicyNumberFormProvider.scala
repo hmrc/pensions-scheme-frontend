@@ -21,12 +21,11 @@ import javax.inject.Inject
 import play.api.data.Form
 
 class RACDACContractOrPolicyNumberFormProvider @Inject() extends Mappings with Constraints {
-  val schemeNameMaxLength = 160
+  private val maxLength = 50
 
   def apply(): Form[String] = Form(
     "racDACContractOrPolicyNumber" -> text("messages__error__racdac_contract_or_policy_number").
       verifying(firstError(
-        maxLength(schemeNameMaxLength, "messages__error__racdac_contract_or_policy_number_length"),
-        safeText("messages__error__racdac_contract_or_policy_number_invalid")))
+        maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length")))
   )
 }

@@ -19,25 +19,17 @@ package forms.racdac
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import play.api.data.FormError
-import wolfendale.scalacheck.regexp.RegexpGen
 
 class RACDACContractOrPolicyNumberFormProviderSpec extends StringFieldBehaviours with Constraints {
   val validData: Map[String, String] = Map(
     "racDACContractOrPolicyNumber" -> "racDAC Number 1")
-  val validMaxLength = 160
+  val validMaxLength = 50
   val form = new RACDACContractOrPolicyNumberFormProvider()()
 
   ".racDACContractOrPolicyNumber" must {
     val fieldName = "racDACContractOrPolicyNumber"
     val lengthKey = "messages__error__racdac_contract_or_policy_number_length"
     val requiredKey = "messages__error__racdac_contract_or_policy_number"
-    val invalidKey = "messages__error__racdac_contract_or_policy_number_invalid"
-
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      RegexpGen.from(regexSafeText)
-    )
 
     behave like fieldWithMaxLength(
       form,
@@ -50,13 +42,6 @@ class RACDACContractOrPolicyNumberFormProviderSpec extends StringFieldBehaviours
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like fieldWithRegex(
-      form,
-      fieldName,
-      "{name}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }
 }

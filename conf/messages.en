@@ -1869,7 +1869,6 @@ messages__racdac_contract_or_policy_number__title = What is 's contract or polic
 
 messages__error__racdac_contract_or_policy_number = Enter the policy or contract number for
 messages__error__racdac_contract_or_policy_number_length = The contract or policy number cannot be more than 50 characters
-messages__error__racdac_contract_or_policy_number_invalid = The contract or policy number contains invalid characters
 
 messages__declaration_racdac__title = Declaration
 messages__declaration_racdac__heading = Declaration
