@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.{UserAnswersCacheConnector, _}
-import models.FeatureToggle.Disabled
+import models.FeatureToggle.{Disabled, Enabled}
 import models.FeatureToggleName.RACDAC
 import models._
 import models.requests.OptionalDataRequest
@@ -80,6 +80,13 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
         whenReady(service.schemeLinks(psaId)) { result =>
           result mustBe subscriptionLinks ++ variationLinks
+        }
+
+      }
+      "when racdac switched on all possible links are displayed" in {
+        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
+        whenReady(service.schemeLinks(psaId)) { result =>
+          result mustBe subscriptionLinksRACDAC ++ variationLinks
         }
 
       }
@@ -211,6 +218,15 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
     Message("messages__schemeOverview__scheme_subscription_continue", schemeName, deleteDate)),
     OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
       Message("messages__schemeOverview__scheme_subscription_delete", schemeName)))
+
+  private val subscriptionLinksRACDAC = Seq(
+      OverviewLink("continue-registration",frontendAppConfig.canBeRegisteredUrl,
+        Message("messages__schemeOverview__scheme_subscription_continue", schemeName, deleteDate)),
+      OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
+        Message("messages__schemeOverview__scheme_subscription_delete", schemeName)),
+      OverviewLink("declare-racdac", frontendAppConfig.declareAsRACDACUrl,
+        Message("messages__schemeOverview__declare_racdac"))
+    )
 
   private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn),
     Message("messages__schemeOverview__scheme_variations_continue", schemeName, deleteDate)),

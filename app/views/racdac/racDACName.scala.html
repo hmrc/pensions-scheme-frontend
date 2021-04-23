@@ -33,7 +33,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__racdac_name__title"))) {
 
-    @formHelper(action = RACDACNameController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = RACDACNameController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

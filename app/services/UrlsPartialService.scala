@@ -18,12 +18,12 @@ package services
 
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
-
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.SchemeNameId
 import identifiers.register.SubmissionReferenceNumberId
+import models.FeatureToggleName.RACDAC
 import models.{LastUpdated, PSAMinimalFlags}
 import models.requests.OptionalDataRequest
 import play.api.Logger
@@ -56,8 +56,20 @@ class UrlsPartialService @Inject()(
     for {
       subscription <- subscriptionLinks
       variations <- variationsLinks(psaId)
+      toggleValue <- featureToggleService.get(RACDAC)
     } yield {
-      subscription ++ variations
+      val racdac = if (toggleValue.isEnabled) {
+        Seq(
+          OverviewLink(
+            id = "declare-racdac",
+            url = appConfig.declareAsRACDACUrl,
+            linkText = Message("messages__schemeOverview__declare_racdac")
+          )
+        )
+      } else {
+        Nil
+      }
+      subscription ++ racdac ++ variations
     }
 
   private def subscriptionLinks(

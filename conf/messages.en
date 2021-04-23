@@ -1836,6 +1836,8 @@ messages__schemeOverview__scheme_subscription_delete = Delete details already en
 messages__schemeOverview__scheme_variations_continue = Finish making changes to {0} by {1}
 messages__schemeOverview__scheme_variations_delete = Delete changes already entered for {0}
 
+messages__schemeOverview__declare_racdac = Declare as scheme administrator for a RAC/DAC
+
 messages__moneyPurchaseBenefits__title = What type of money purchase benefits does the scheme provide?
 messages__moneyPurchaseBenefits__h1 = What type of money purchase benefits does {0} provide?
 messages__moneyPurchaseBenefits__hint = Select all that apply.
@@ -1875,3 +1877,5 @@ messages__declaration_racdac__declare = By continuing you declare that:
 messages__declaration_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
 messages__declaration_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
 messages__declaration_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
+
+

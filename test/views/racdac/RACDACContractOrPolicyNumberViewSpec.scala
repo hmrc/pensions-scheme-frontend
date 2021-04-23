@@ -43,7 +43,7 @@ class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.racdac.routes.RACDACNameController.onSubmit().url,
+    behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.racdac.routes.RACDACNameController.onSubmit(NormalMode).url,
       "racDACContractOrPolicyNumber")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)

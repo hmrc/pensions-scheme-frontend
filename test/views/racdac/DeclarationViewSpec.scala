@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package views.register
+package views.racdac
 
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.declaration
+import views.html.racdac.declaration
 
 class DeclarationViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "declaration"
@@ -28,10 +28,7 @@ class DeclarationViewSpec extends ViewBehaviours {
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val view: declaration = app.injector.instanceOf[declaration]
   def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable =
-    () => view(isCompany = true,
-    isDormant = false,
-    showMasterTrustDeclaration = true,
-    hasWorkingKnowledge = hasWorkingKnowledge, None, href)(fakeRequest, messages)
+    () => view("PSA", href)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 

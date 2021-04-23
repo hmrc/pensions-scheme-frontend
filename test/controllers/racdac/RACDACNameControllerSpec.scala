@@ -73,7 +73,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val validData = Json.obj(RACDACNameId.toString -> "value 1")
+      val validData = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> "value 1"))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

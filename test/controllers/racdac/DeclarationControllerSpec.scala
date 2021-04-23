@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.racdac
 
 import audit.{AuditService, TcmpAuditEvent}
 import connectors.{FakeUserAnswersCacheConnector, _}
@@ -40,7 +40,7 @@ import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
-import views.html.register.declaration
+import views.html.racdac.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -205,6 +205,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
   val psaId = PsaId("A0000000")
 
+  private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
 
@@ -238,6 +239,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       dataRetrievalAction,
       new DataRequiredActionImpl,
       fakePensionsSchemeConnector,
+      mockPensionAdministratorConnector,
       fakeEmailConnector,
       fakeMinimalPsaConnector,
       controllerComponents,
@@ -249,11 +251,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     view(
-      isCompany,
-      isDormant,
-      showMasterTrustDeclaration,
-      hasWorkingKnowledge,
-      Some("Test Scheme"),
+      "Test PSA",
       href
     )(fakeRequest, messages).toString
 

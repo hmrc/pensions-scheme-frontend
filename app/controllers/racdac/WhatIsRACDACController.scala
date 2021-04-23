@@ -46,6 +46,6 @@ class WhatIsRACDACController @Inject()(override val messagesApi: MessagesApi,
   }
 
   def onSubmit: Action[AnyContent] = authenticate() {
-      Redirect(controllers.racdac.routes.RACDACNameController.onPageLoad())
+      Redirect(controllers.racdac.routes.RACDACNameController.onPageLoad(NormalMode))
   }
 }

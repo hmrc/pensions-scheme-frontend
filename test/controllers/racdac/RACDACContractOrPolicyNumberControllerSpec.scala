@@ -73,7 +73,7 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val validData = Json.obj(RACDACContractOrPolicyNumberId.toString -> "value 1")
+      val validData =Json.obj("racdac" -> Json.obj(RACDACContractOrPolicyNumberId.toString -> "value 1"))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

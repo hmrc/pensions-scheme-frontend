@@ -19,8 +19,8 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import identifiers.racdac.RACDACNameId
-import models.NormalMode
+import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import models.{CheckMode, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -39,21 +39,25 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(RACDACNameId)(someStringValue, contractOrPolicyNumberPage)
+          row(RACDACNameId)(someStringValue, contractOrPolicyNumberPage),
+          row(RACDACContractOrPolicyNumberId)(someStringValue, cyaPage)
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
     }
 
-//    "in CheckMode" must {
-//      def navigation: TableFor3[Identifier, UserAnswers, Call] =
-//        Table(
-//          ("Id", "UserAnswers", "Next Page")
-//        )
-//      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
-//    }
+    "in CheckMode" must {
+      def navigation: TableFor3[Identifier, UserAnswers, Call] =
+        Table(
+          ("Id", "UserAnswers", "Next Page"),
+          row(RACDACNameId)(someStringValue, cyaPage),
+          row(RACDACContractOrPolicyNumberId)(someStringValue, cyaPage)
+        )
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    }
   }
 }
 
 object RACDACNavigatorSpec {
   private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad()
+  private val cyaPage: Call      = controllers.racdac.routes.CheckYourAnswersController.onPageLoad()
 }
