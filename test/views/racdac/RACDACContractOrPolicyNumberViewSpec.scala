@@ -42,15 +42,11 @@ class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String
 
   "RACDACContractOrPolicyNumber view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPageWithDynamicTitleAndHeader(createView, messageKeyPrefix, schemeName)
 
     behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.racdac.routes.RACDACNameController.onSubmit(NormalMode).url,
       "racDACContractOrPolicyNumber")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
-
-//  "RACDACName view in check mode" must {
-//    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
-//  }
 }
