@@ -6,3 +6,4 @@ GET         /name                                    controllers.racdac.RACDACNa
 POST        /name                                    controllers.racdac.RACDACNameController.onSubmit(mode: Mode = NormalMode)
 GET         /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /declaration                             controllers.racdac.DeclarationController.onPageLoad()

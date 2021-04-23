@@ -1868,3 +1868,10 @@ messages__racdac_contract_or_policy_number__title = What is 's contract or polic
 messages__error__racdac_contract_or_policy_number = Enter the policy or contract number for
 messages__error__racdac_contract_or_policy_number_length = The contract or policy number cannot be more than 50 characters
 messages__error__racdac_contract_or_policy_number_invalid = The contract or policy number contains invalid characters
+
+messages__declaration_racdac__title = Declaration
+messages__declaration_racdac__heading = Declaration
+messages__declaration_racdac__declare = By continuing you declare that:
+messages__declaration_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
+messages__declaration_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
+messages__declaration_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
