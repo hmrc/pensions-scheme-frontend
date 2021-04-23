@@ -62,7 +62,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val racdacInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
-      RACDACNameId.toString -> "Test RACDAC Name"
+      "racdac" -> Json.obj(RACDACNameId.toString -> "Test RACDAC Name")
     ))
   )
 
