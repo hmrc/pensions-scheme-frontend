@@ -10,4 +10,7 @@ POST        /change/name                             controllers.racdac.RACDACNa
 GET         /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode)
 GET         /declaration                             controllers.racdac.DeclarationController.onPageLoad()
+GET         /on-click-agree                          controllers.racdac.DeclarationController.onClickAgree()
 GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad()
+GET         /confirmation                            controllers.racdac.SchemeSuccessController.onPageLoad()
+POST        /confirmation                            controllers.racdac.SchemeSuccessController.onSubmit()

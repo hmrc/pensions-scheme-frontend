@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{DeclarationId, RACDACContractOrPolicyNumberId, RACDACNameId}
 
 class RACDACNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                 frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
@@ -27,6 +27,7 @@ class RACDACNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnecto
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad())
     case RACDACContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad())
+    case DeclarationId => NavigateTo.dontSave(controllers.racdac.routes.SchemeSuccessController.onPageLoad())
     case _ => None
   }
 

@@ -19,7 +19,7 @@ package controllers.racdac
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
-import controllers.register.routes.DeclarationController
+import controllers.racdac.routes.DeclarationController
 import identifiers.racdac._
 import models.NormalMode
 import navigators.Navigator
