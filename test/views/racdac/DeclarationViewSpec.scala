@@ -23,12 +23,13 @@ import views.html.racdac.declaration
 
 class DeclarationViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "declaration"
-
-  val schemeName = "Test Scheme Name"
   private val href = controllers.register.routes.DeclarationController.onClickAgree()
-  val view: declaration = app.injector.instanceOf[declaration]
-  def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable =
+  private val view: declaration = app.injector.instanceOf[declaration]
+  private val returnLink = frontendAppConfig.managePensionsSchemeOverviewUrl.url
+  private def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = {
     () => view("PSA", href)(fakeRequest, messages)
+
+  }
 
   "Declaration view where no working knowledge" must {
 
@@ -36,12 +37,14 @@ class DeclarationViewSpec extends ViewBehaviours {
       createView(),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
-      "_statement8_no_working_knowledge",
-      "_statement9")
+      "_racdac_statement1",
+      "_racdac_statement2",
+      "_racdac_statement3"
+    )
 
     "have a return link" in {
       Jsoup.parse(createView()().toString).select("a[id=return-link]") must
-        haveLink(getReturnLink)
+        haveLink(returnLink)
     }
   }
 
@@ -51,7 +54,8 @@ class DeclarationViewSpec extends ViewBehaviours {
       createView(hasWorkingKnowledge = true),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
-      "_statement8_working_knowledge",
-      "_statement9")
+      "_racdac_statement1",
+      "_racdac_statement2",
+      "_racdac_statement3")
   }
 }

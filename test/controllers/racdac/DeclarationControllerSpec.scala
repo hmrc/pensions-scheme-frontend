@@ -55,6 +55,7 @@ class DeclarationControllerSpec
   override protected def beforeEach(): Unit = {
     reset(mockHsTaskListHelperRegistration)
     when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
+    when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
   }
 
   "Declaration Controller" must {
@@ -208,7 +209,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
-
+  private val psaName = "A PSA"
   private val view = injector.instanceOf[declaration]
 
   private def uaWithBasicData: UserAnswers =
@@ -251,7 +252,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     view(
-      "Test PSA",
+      psaName,
       href
     )(fakeRequest, messages).toString
 

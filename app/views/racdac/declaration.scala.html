@@ -42,14 +42,14 @@
         <ol class="list list-bullet">
 
             <li>
-                @messages("messages__declaration_racdac__statement1")
+                @messages("messages__declaration__racdac_statement1")
             </li>
             <li>
-                @messages("messages__declaration_racdac__statement2")
+                @messages("messages__declaration__racdac_statement2")
             </li>
 
             <li>
-                @messages("messages__declaration_racdac__statement3")
+                @messages("messages__declaration__racdac_statement3")
             </li>
 
         </ol>
@@ -57,5 +57,5 @@
 
     @components.button_link("site.agree_and_continue", href.url, "submit")
 
-@components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 }
