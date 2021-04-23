@@ -27,35 +27,29 @@
     formHelper: FormWithCSRF
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
+@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
 @main_template(
-    title = messages("messages__complete_racdac__title")) {
+    title = messages("messages__complete_racdac__title",schemeName)) {
 
     <div class="govuk-box-highlight">
-        @components.heading(messages("messages__complete_racdac__heading"), "heading-xlarge")
+        @components.heading(messages("messages__complete_racdac__heading",schemeName), "heading-xlarge")
     </div>
+    <p>@messages("messages__complete_racdac__email")
+        <span class="bold">@email</span>.
+    </p>
+    <h2 class="heading-large">@messages("messages__complete_racdac__what_happens_next")</h2>
 
-    <div id="hintText" class="panel panel-border-wide">
-        <p class="bold">@messages("messages__complete__copy_1")</p>
-        <p>@Html(Message("messages__complete__copy_2", yourSchemesLink))</p>
-    </div>
+    <p>@Html(Message("messages__complete_racdac__statement1", yourSchemesLink))</p>
 
-    <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
-
-
-    <p>@messages("messages__complete__copy_3")</p>
-    <p>@messages("messages__complete__copy_4")</p>
-    <p>@messages("messages__complete__copy_5")</p>
-
+    <h2 class="heading-large">@messages("messages__complete_racdac__save_or_print")</h2>
 
     <p>
         <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
     </p>
-
 
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__finish")

@@ -16,9 +16,11 @@
 
 package controllers.racdac
 
-import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
+import connectors.UserAnswersCacheConnector
+import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers._
@@ -29,10 +31,10 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 import views.html.racdac.schemeSuccess
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
@@ -41,20 +43,15 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   ).build()
 
   private lazy val onwardRoute = frontendAppConfig.managePensionsSchemeOverviewUrl
+  private val email = "email@a.com"
+  private val schemeName = "schemeName"
 
   val submissionReferenceNumber = "XX123456789132"
 
   private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
-  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
-    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
-
-    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
-  }
-
-  val validData: JsObject = Json.obj(
-    SubmissionReferenceNumberId.toString -> SchemeSubmissionResponse(submissionReferenceNumber)
-  )
+  private val mockPensionAdminstratorConnector = mock[PensionAdministratorConnector]
+  val validData: JsObject = UserAnswers().set(RACDACNameId)(schemeName).asOpt.get.json.as[JsObject]
   private val view = injector.instanceOf[schemeSuccess]
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
@@ -67,11 +64,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       controllerComponents,
+      mockPensionAdminstratorConnector,
       view
     )
 
   def viewAsString(): String =
-    view()(fakeRequest, messages).toString
+    view(email,schemeName)(fakeRequest, messages).toString
 
   appRunning()
 
@@ -79,6 +77,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "return OK and the correct view for a GET" in {
       when(fakeUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(mockPensionAdminstratorConnector.getPSAEmail(any(),any())).thenReturn(Future.successful(email))
 
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
