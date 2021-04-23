@@ -25,19 +25,20 @@ import views.html.racdac.racDACContractOrPolicyNumber
 
 class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String] {
   private val psaName = "A PSA"
+  private val schemeName = "scheme"
   val messageKeyPrefix = "racdac_contract_or_policy_number"
 
   override val form = new RACDACContractOrPolicyNumberFormProvider()()
 
   val view: racDACContractOrPolicyNumber = app.injector.instanceOf[racDACContractOrPolicyNumber]
 
-  def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, psaName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, psaName, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    view(form, NormalMode, psaName)(fakeRequest, messages)
+    view(form, NormalMode, psaName, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    view(form, CheckMode, psaName)(fakeRequest, messages)
+    view(form, CheckMode, psaName, schemeName)(fakeRequest, messages)
 
   "RACDACContractOrPolicyNumber view" must {
 

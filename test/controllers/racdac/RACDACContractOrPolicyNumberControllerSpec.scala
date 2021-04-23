@@ -21,6 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.racdac.RACDACContractOrPolicyNumberFormProvider
+import identifiers.SchemeNameId
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.NormalMode
 import org.mockito.Matchers.any
@@ -29,7 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.racDACContractOrPolicyNumber
 
 import scala.concurrent.Future
@@ -46,20 +47,28 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
 
   private val view = injector.instanceOf[racDACContractOrPolicyNumber]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): RACDACContractOrPolicyNumberController =
+  private val racdacName = "racdac scheme"
+  private val uaWithRACDACName = UserAnswers().set(RACDACNameId)(racdacName).asOpt.get
+
+  private def getMandatorySchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(uaWithRACDACName.json)
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): RACDACContractOrPolicyNumberController =
     new RACDACContractOrPolicyNumberController(
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl(),
       formProvider,
       mockPensionAdministratorConnector,
       controllerComponents,
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName, racdacName)(fakeRequest, messages).toString
 
   "RACDACContractOrPolicyNumber Controller" must {
 
@@ -73,7 +82,10 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val validData =Json.obj("racdac" -> Json.obj(RACDACContractOrPolicyNumberId.toString -> "value 1"))
+      val validData =Json.obj("racdac" -> Json.obj(
+        RACDACNameId.toString -> racdacName,
+        RACDACContractOrPolicyNumberId.toString -> "value 1")
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

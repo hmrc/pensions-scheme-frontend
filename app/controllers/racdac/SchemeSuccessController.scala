@@ -16,22 +16,17 @@
 
 package controllers.racdac
 
-import java.time.LocalDate
 import config.FrontendAppConfig
-import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.SchemeTypeId
-import identifiers.register.SubmissionReferenceNumberId
-
-import javax.inject.Inject
-import models.register.SchemeType.MasterTrust
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.racdac.schemeSuccess
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,

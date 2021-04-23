@@ -18,17 +18,18 @@ package controllers.racdac
 
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
-import forms.racdac.{RACDACContractOrPolicyNumberFormProvider, RACDACNameFormProvider}
+import forms.racdac.RACDACContractOrPolicyNumberFormProvider
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.Mode
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
-import views.html.racdac.{racDACContractOrPolicyNumber, racDACName}
+import views.html.racdac.racDACContractOrPolicyNumber
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,6 +40,7 @@ class RACDACContractOrPolicyNumberController @Inject()(
                                       navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
+                                      requireData: DataRequiredAction,
                                       formProvider: RACDACContractOrPolicyNumberFormProvider,
                                       pensionAdministratorConnector: PensionAdministratorConnector,
                                       val controllerComponents: MessagesControllerComponents,
@@ -50,22 +52,25 @@ class RACDACContractOrPolicyNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request => {
-      val preparedForm = request.userAnswers.flatMap(_.get(RACDACContractOrPolicyNumberId)).fold(form)(v => form.fill(v))
-      pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(view(preparedForm, mode, psaName)))
+      val preparedForm = request.userAnswers.get(RACDACContractOrPolicyNumberId).fold(form)(v => form.fill(v))
+      withRACDACName{ racdacName =>
+          pensionAdministratorConnector.getPSAName.map { psaName =>
+            Ok(view(preparedForm, mode, psaName, racdacName))
+          }
       }
     }
-
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          pensionAdministratorConnector.getPSAName.map { psaName =>
-            BadRequest(view(formWithErrors, mode, psaName))
+          withRACDACName { racdacName =>
+            pensionAdministratorConnector.getPSAName.map { psaName =>
+              BadRequest(view(formWithErrors, mode, psaName, racdacName))
+            }
           }
         },
           value =>
@@ -73,5 +78,12 @@ class RACDACContractOrPolicyNumberController @Inject()(
               cacheMap => Redirect(navigator.nextPage(RACDACContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
             }
       )
+  }
+
+  private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]):Future[Result] = {
+    request.userAnswers.get(RACDACNameId) match {
+      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case Some(racdacName) => func(racdacName)
+    }
   }
 }

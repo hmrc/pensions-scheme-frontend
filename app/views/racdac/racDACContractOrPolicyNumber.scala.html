@@ -28,7 +28,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, psaName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = titleWithErrors(form, messages("messages__racdac_contract_or_policy_number__title"))) {
@@ -41,7 +41,7 @@
 
         @components.input_text(
             field = form("racDACContractOrPolicyNumber"),
-            label = messages("messages__racdac_contract_or_policy_number__heading"),
+            label = messages("messages__racdac_contract_or_policy_number__heading", schemeName),
             labelClass = Some("visually-hidden"),
             headingIsLegend = true
         )

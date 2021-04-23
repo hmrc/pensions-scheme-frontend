@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.register
+package views.racdac
 
 import java.time.LocalDate
 import org.jsoup.Jsoup

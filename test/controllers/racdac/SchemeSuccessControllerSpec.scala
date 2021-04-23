@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
-
-import java.time.LocalDate
+package controllers.racdac
 
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
@@ -32,8 +30,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-
-import views.html.register.schemeSuccess
+import views.html.racdac.schemeSuccess
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -69,18 +66,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      fakePensionAdminstratorConnector,
       controllerComponents,
       view
     )
 
   def viewAsString(): String =
-    view(
-      LocalDate.now(),
-      submissionReferenceNumber,
-      showMasterTrustContent = false,
-      "email@test.com"
-    )(fakeRequest, messages).toString
+    view()(fakeRequest, messages).toString
 
   appRunning()
 
