@@ -23,6 +23,7 @@ import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeCountryOptions
@@ -31,7 +32,7 @@ import views.html.racdac.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   import CheckYourAnswersControllerSpec._
 
@@ -49,11 +50,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   }
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
+  private val psaName = "psa"
   private val racDACName = "Test RACDAC Name"
   private val racDACContractNo = "Test RACDAC Contract No"
   private val view = injector.instanceOf[checkYourAnswers]
-  private val mockPensionAdministratorConnector= mock[PensionAdministratorConnector]
+  private val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -117,7 +119,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     h1 = Message("checkYourAnswers.hs.title")
   )
 
-  private def viewAsString(): String = view(vm)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(vm, psaName)(fakeRequest, messages).toString
 
 }
 
