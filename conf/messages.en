@@ -1833,6 +1833,8 @@ messages__deleteSchemeChanges__error__required = Select yes if you want to delet
 messages__schemeOverview__scheme_subscription = Apply to register a new pension scheme
 messages__schemeOverview__scheme_subscription_continue = Finish adding scheme details for {0} by {1}
 messages__schemeOverview__scheme_subscription_delete = Delete details already entered for {0}
+messages__schemeOverview__scheme_subscription_delete_both = {0} and {1}
+
 messages__schemeOverview__scheme_variations_continue = Finish making changes to {0} by {1}
 messages__schemeOverview__scheme_variations_delete = Delete changes already entered for {0}
 

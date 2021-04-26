@@ -22,11 +22,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.SchemeNameId
+import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
 import models.FeatureToggleName.RACDAC
 import models.{LastUpdated, PSAMinimalFlags}
 import models.requests.OptionalDataRequest
 import play.api.Logger
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
@@ -37,13 +39,14 @@ import viewmodels.Message
 import scala.concurrent.{ExecutionContext, Future}
 
 class UrlsPartialService @Inject()(
+                                    override val messagesApi: MessagesApi,
                                     appConfig: FrontendAppConfig,
                                     dataCacheConnector: UserAnswersCacheConnector,
                                     pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
                                     updateConnector: UpdateSchemeCacheConnector,
                                     minimalPsaConnector: MinimalPsaConnector,
                                     featureToggleService: FeatureToggleService
-                                  ) {
+                                  ) extends I18nSupport {
 
   private val logger  = Logger(classOf[UrlsPartialService])
 
@@ -52,15 +55,14 @@ class UrlsPartialService @Inject()(
                    implicit request: OptionalDataRequest[AnyContent],
                    hc: HeaderCarrier,
                    ec: ExecutionContext
-                 ): Future[Seq[OverviewLink]] =
+                 ): Future[Seq[OverviewLink]] = {
     for {
       subscription <- subscriptionLinks
       variations <- variationsLinks(psaId)
-
     } yield {
-
       subscription ++ variations
     }
+  }
 
   private def racDACLink(
                           implicit request: OptionalDataRequest[AnyContent],
@@ -89,7 +91,7 @@ class UrlsPartialService @Inject()(
                                ): Future[Seq[OverviewLink]] = {
     racDACLink.flatMap { racDACLink =>
       request.userAnswers.flatMap(_.get(SchemeNameId)) match {
-        case Some(schemeName) =>
+        case optionNonRACDACSchemeName@Some(schemeName) =>
           lastUpdatedAndDeleteDate(request.externalId) map { date =>
               val continueRegistrationLink = Seq(OverviewLink(
                   id = "continue-registration",
@@ -103,7 +105,10 @@ class UrlsPartialService @Inject()(
               val deleteRegistrationLink = Seq(OverviewLink(
                   id = "delete-registration",
                   url = appConfig.deleteSubscriptionUrl,
-                  linkText = Message("messages__schemeOverview__scheme_subscription_delete", schemeName)
+                  linkText = Message(
+                    "messages__schemeOverview__scheme_subscription_delete",
+                    contentForDeleteLink(request.userAnswers.flatMap(_.get(RACDACNameId)), optionNonRACDACSchemeName)
+                  )
                 )
               )
               continueRegistrationLink ++ racDACLink ++ deleteRegistrationLink
@@ -117,6 +122,21 @@ class UrlsPartialService @Inject()(
         )
       }
     }
+  }
+
+  private def contentForDeleteLink(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String])(
+    implicit request: OptionalDataRequest[AnyContent],
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ):String = {
+    (racDACSchemeName, nonRACDACSchemeName) match {
+      case (Some(racDAC), Some(nonRACDAC)) =>
+        Messages("messages__schemeOverview__scheme_subscription_delete_both", racDAC, nonRACDAC)
+      case (Some(sn), None) => sn
+      case (None, Some(sn)) => sn
+      case _ => ""
+    }
+
   }
 
   private def variationsLinks(psaId: String)
