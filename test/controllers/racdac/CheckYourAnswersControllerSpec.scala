@@ -44,7 +44,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase {
-
+  private val racDACName = "Test RACDAC Name"
+  private val racDACContractNo = "Test RACDAC Contract No"
   private val view = injector.instanceOf[checkYourAnswers]
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersController =
     new CheckYourAnswersController(
@@ -63,8 +64,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private val racdacInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
       "racdac" -> Json.obj(
-        RACDACNameId.toString -> "Test RACDAC Name",
-        RACDACContractOrPolicyNumberId.toString -> "Test RACDAC Contract No"
+        RACDACNameId.toString -> racDACName,
+        RACDACContractOrPolicyNumberId.toString -> racDACContractNo
       )
     ))
   )
@@ -75,7 +76,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     Seq(
       AnswerRow(
         messages("messages__racdac_name__title"),
-        Seq("Test RACDAC Name"),
+        Seq(racDACName),
         answerIsMessageKey = false,
         Some(Link("site.change", controllers.racdac.routes.RACDACNameController.onPageLoad(CheckMode).url,
           Some(messages("messages__racdac_name__title"))))
@@ -87,11 +88,11 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     None,
     Seq(
       AnswerRow(
-        messages("messages__racdac_contract_or_policy_number__title"),
-        Seq("Test RACDAC Contract No"),
+        messages("messages__racdac_contract_or_policy_number__title", racDACName),
+        Seq(racDACContractNo),
         answerIsMessageKey = false,
         Some(Link("site.change", controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url,
-          Some(messages("messages__racdac_contract_or_policy_number__title"))))
+          Some(messages("messages__racdac_contract_or_policy_number__title", racDACName))))
       )
     )
   )

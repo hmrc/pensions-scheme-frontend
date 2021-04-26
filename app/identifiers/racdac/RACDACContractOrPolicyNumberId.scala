@@ -28,9 +28,11 @@ case object RACDACContractOrPolicyNumberId extends TypedIdentifier[String] {
   override def path: JsPath = JsPath \ "racdac" \ RACDACContractOrPolicyNumberId.toString
   override def toString: String = "contractOrPolicyNumberId"
   implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers)
-  : CheckYourAnswers[self.type] =
+  : CheckYourAnswers[self.type] = {
+    val racDACName = userAnswers.get(RACDACNameId).getOrElse("")
     StringCYA[self.type](
-      label = Some(Message("messages__racdac_contract_or_policy_number__title")),
-      hiddenLabel = Some(Message("messages__racdac_contract_or_policy_number__title"))
+      label = Some(Message("messages__racdac_contract_or_policy_number__title", racDACName)),
+      hiddenLabel = Some(Message("messages__racdac_contract_or_policy_number__title", racDACName))
     )()
+  }
 }
