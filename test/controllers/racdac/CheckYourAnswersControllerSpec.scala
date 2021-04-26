@@ -16,15 +16,20 @@
 
 package controllers.racdac
 
+import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link}
+import org.mockito.Matchers.any
+import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
-import views.html.checkYourAnswers
+import views.html.racdac.checkYourAnswers
+
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
@@ -34,6 +39,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
+        when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
         val result = controller(racdacInfo).onPageLoad(fakeRequest)
 
         status(result) mustBe OK
@@ -47,6 +53,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private val racDACName = "Test RACDAC Name"
   private val racDACContractNo = "Test RACDAC Contract No"
   private val view = injector.instanceOf[checkYourAnswers]
+  private val mockPensionAdministratorConnector= mock[PensionAdministratorConnector]
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -56,6 +63,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
+      mockPensionAdministratorConnector,
       view
     )
 

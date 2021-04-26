@@ -17,6 +17,7 @@
 package controllers.racdac
 
 import config.FrontendAppConfig
+import connectors.PensionAdministratorConnector
 import controllers.actions._
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.CheckMode
@@ -27,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
-import views.html.checkYourAnswers
+import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,6 +40,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                       requireData: DataRequiredAction,
                                                       implicit val countryOptions: CountryOptions,
                                                       val controllerComponents: MessagesControllerComponents,
+                                                      val pensionAdministratorConnector: PensionAdministratorConnector,
                                                       val view: checkYourAnswers
                                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
@@ -70,7 +72,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         title = Message("checkYourAnswers.hs.title"),
         h1 = Message("checkYourAnswers.hs.title")
       )
-
-      Future.successful(Ok(view(vm)))
+      pensionAdministratorConnector.getPSAName.map { psaName =>
+       Ok(view(vm,psaName))
+      }
   }
 }
