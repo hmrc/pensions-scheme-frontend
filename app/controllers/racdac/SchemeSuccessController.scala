@@ -17,16 +17,18 @@
 package controllers.racdac
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.racdac.RACDACNameId
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.racdac.schemeSuccess
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -35,6 +37,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         val controllerComponents: MessagesControllerComponents,
+                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                         val view: schemeSuccess
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
@@ -42,11 +45,22 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
 
+      withRACDACName{ racdacName =>
+        pensionAdministratorConnector.getPSAEmail.flatMap { email =>
           cacheConnector.removeAll(request.externalId).map { _ =>
-            Ok(view())
+            Ok(view(email,racdacName))
           }
+        }
+      }
+
 
   }
 
+  private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]):Future[Result] = {
+    request.userAnswers.get(RACDACNameId) match {
+      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case Some(racdacName) => func(racdacName)
+    }
+  }
   def onSubmit: Action[AnyContent] = authenticate() { Redirect(appConfig.managePensionsSchemeOverviewUrl) }
 }

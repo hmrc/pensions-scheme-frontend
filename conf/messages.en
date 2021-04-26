@@ -1877,9 +1877,15 @@ messages__declaration_racdac__statement1 = you understand that as the scheme adm
 messages__declaration_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
 messages__declaration_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
 
-messages__complete_racdac__title = You have declared as a scheme administrator for
-messages__complete_racdac__heading = You have declared as scheme administrator for
+messages__complete_racdac__title = You have declared as a scheme administrator for {0}
+messages__complete_racdac__heading = You have declared as scheme administrator for {0}
 messages__complete_racdac__declare = By continuing you declare that:
 messages__complete_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
 messages__complete_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
 messages__complete_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
+
+messages__complete_racdac__what_happens_next = What happens next
+messages__complete_racdac__statement1 = The RAC/DAC will be added to your list of schemes in the {0}. You can view details of the RAC/DAC there, including its Pension Scheme Tax Reference (PSTR).
+messages__complete_racdac__save_or_print = Save or print
+messages__complete_racdac__copy_2_link = Managing Pension Schemes online service
+messages__complete_racdac__email = We have sent a confirmation email to
