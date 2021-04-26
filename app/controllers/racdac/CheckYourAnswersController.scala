@@ -47,6 +47,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
+      val schemeName = request.userAnswers.get(RACDACNameId)
 
       val racdacNameSection = AnswerSection(
         None,
@@ -61,7 +62,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val vm = CYAViewModel(
         answerSections = Seq(racdacNameSection, racdacContractNoSection),
         href = controllers.racdac.routes.DeclarationController.onPageLoad(),
-        schemeName = None,
+        schemeName = schemeName,
         returnOverview = true,
         hideEditLinks = request.viewOnly,
         srn = None,

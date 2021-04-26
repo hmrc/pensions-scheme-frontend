@@ -30,6 +30,13 @@
 
 @(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
+@returnToLink = @{
+    (vm.returnOverview, vm.srn, vm.schemeName) match {
+        case (true,None, Some(name)) => components.return_link(messages("messages__psaSchemeDetails__return_link", name), None, Some(appConfig.managePensionsSchemeOverviewUrl), None)
+        case (true,Some(_), _) => components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
+        case _ => components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, None, vm.srn)
+    }
+}
 @main_template(
     title = vm.title.resolve.capitalize
 ) {
@@ -52,9 +59,5 @@
         @components.button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    @if(vm.returnOverview){
-        @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
-    } else {
-        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, None, vm.srn)
-    }
+@returnToLink
 }
