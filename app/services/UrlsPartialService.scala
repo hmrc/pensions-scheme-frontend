@@ -151,29 +151,20 @@ class UrlsPartialService @Inject()(
     } yield result
 
   private def retrieveResult(schemeDetailsCache: Option[UserAnswers], minimalFlags: PSAMinimalFlags)
-                            (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    schemeDetailsCache match {
-      case None => Future.successful(redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags))
-      case Some(ua) => ua.get(SchemeNameId) match {
-        case Some(_) => Future.successful(redirectBasedOnMinimalFlags(appConfig.continueUrl, minimalFlags))
-        case _ => deleteDataIfSrnNumberFoundAndRedirect(ua, minimalFlags)
-      }
-    }
+                            (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-  private def deleteDataIfSrnNumberFoundAndRedirect(ua: UserAnswers, minimalFlags: PSAMinimalFlags)
-                                                   (implicit request: OptionalDataRequest[AnyContent],
-                                                     hc: HeaderCarrier,
-                                                     ec: ExecutionContext): Future[Result] =
+    val schemeName = schemeDetailsCache.flatMap(_.get(SchemeNameId))
+    val submissionRefNo = schemeDetailsCache.flatMap(_.get(SubmissionReferenceNumberId))
 
-    ua.get(SubmissionReferenceNumberId).fold {
-      logger.warn("Page load failed since both scheme name and srn number were not found in scheme registration mongo collection")
-      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    } { _ =>
-      dataCacheConnector.removeAll(request.externalId).map { _ =>
-        logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
-        redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags)
-      }
+    (schemeName, submissionRefNo) match {
+      case (Some(_), _) => Future.successful(redirectBasedOnMinimalFlags(appConfig.continueUrl, minimalFlags))
+      case (None, None) => Future.successful(redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags))
+      case (None, Some(_)) => dataCacheConnector.removeAll(request.externalId).map { _ =>
+          logger.warn("Data cleared as scheme name is missing and srn number was found in mongo collection")
+          redirectBasedOnMinimalFlags(appConfig.registerUrl, minimalFlags)
+        }
     }
+  }
 
   private def redirectBasedOnMinimalFlags(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
     Redirect(
