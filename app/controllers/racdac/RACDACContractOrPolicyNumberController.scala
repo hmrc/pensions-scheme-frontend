@@ -50,12 +50,11 @@ class RACDACContractOrPolicyNumberController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  private val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request => {
-      val preparedForm = request.userAnswers.get(RACDACContractOrPolicyNumberId).fold(form)(v => form.fill(v))
       withRACDACName{ racdacName =>
+        val form = formProvider(racdacName)
+        val preparedForm = request.userAnswers.get(RACDACContractOrPolicyNumberId).fold(form)(v => form.fill(v))
           pensionAdministratorConnector.getPSAName.map { psaName =>
             Ok(view(preparedForm, mode, psaName, racdacName))
           }
@@ -65,19 +64,20 @@ class RACDACContractOrPolicyNumberController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          withRACDACName { racdacName =>
+      withRACDACName { racdacName =>
+        val form = formProvider(racdacName)
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) => {
             pensionAdministratorConnector.getPSAName.map { psaName =>
               BadRequest(view(formWithErrors, mode, psaName, racdacName))
             }
-          }
-        },
+          },
           value =>
             dataCacheConnector.save(request.externalId, RACDACContractOrPolicyNumberId, value).map {
               cacheMap => Redirect(navigator.nextPage(RACDACContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
             }
-      )
+        )
+      }
   }
 
   private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]):Future[Result] = {

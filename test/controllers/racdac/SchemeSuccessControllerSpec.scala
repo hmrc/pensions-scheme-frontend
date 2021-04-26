@@ -16,19 +16,16 @@
 
 package controllers.racdac
 
-import connectors.UserAnswersCacheConnector
-import connectors.PensionAdministratorConnector
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.racdac.RACDACNameId
-import identifiers.register.SubmissionReferenceNumberId
-import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import utils.UserAnswers

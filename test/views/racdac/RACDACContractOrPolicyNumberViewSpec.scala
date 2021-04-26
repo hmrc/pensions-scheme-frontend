@@ -27,8 +27,10 @@ class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String
   private val psaName = "A PSA"
   private val schemeName = "scheme"
   val messageKeyPrefix = "racdac_contract_or_policy_number"
+  private val racDACName = "RAC DAC NAME"
 
-  override val form = new RACDACContractOrPolicyNumberFormProvider()()
+  private val formProvider = new RACDACContractOrPolicyNumberFormProvider()
+  override val form = formProvider(racDACName)
 
   val view: racDACContractOrPolicyNumber = app.injector.instanceOf[racDACContractOrPolicyNumber]
 

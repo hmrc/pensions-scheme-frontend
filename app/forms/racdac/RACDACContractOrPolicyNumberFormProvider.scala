@@ -17,14 +17,16 @@
 package forms.racdac
 
 import forms.mappings.{Constraints, Mappings}
+
 import javax.inject.Inject
 import play.api.data.Form
+import play.api.i18n.Messages
 
-class RACDACContractOrPolicyNumberFormProvider @Inject() extends Mappings with Constraints {
+class RACDACContractOrPolicyNumberFormProvider extends Mappings with Constraints {
   private val maxLength = 50
 
-  def apply(): Form[String] = Form(
-    "racDACContractOrPolicyNumber" -> text("messages__error__racdac_contract_or_policy_number").
+  def apply(name: String)(implicit messages: Messages): Form[String] = Form(
+    "racDACContractOrPolicyNumber" -> text(messages("messages__error__racdac_contract_or_policy_number", name)).
       verifying(firstError(
         maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length")))
   )

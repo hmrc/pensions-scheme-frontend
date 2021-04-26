@@ -38,7 +38,6 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val psaName = "Mr Maxwell"
   val formProvider = new RACDACContractOrPolicyNumberFormProvider()
-  val form: Form[String] = formProvider()
 
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
@@ -47,6 +46,8 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
   private val view = injector.instanceOf[racDACContractOrPolicyNumber]
 
   private val racdacName = "racdac scheme"
+  val form: Form[String] = formProvider(racdacName)
+
   private val uaWithRACDACName = UserAnswers().set(RACDACNameId)(racdacName).asOpt.get
 
   private def getMandatorySchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(

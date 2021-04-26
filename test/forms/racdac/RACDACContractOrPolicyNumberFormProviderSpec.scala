@@ -16,15 +16,18 @@
 
 package forms.racdac
 
+import base.SpecBase
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import play.api.data.FormError
 
-class RACDACContractOrPolicyNumberFormProviderSpec extends StringFieldBehaviours with Constraints {
+class RACDACContractOrPolicyNumberFormProviderSpec extends StringFieldBehaviours with Constraints with SpecBase {
+  private val racDACName = "RAC dac name"
   val validData: Map[String, String] = Map(
     "racDACContractOrPolicyNumber" -> "racDAC Number 1")
   val validMaxLength = 50
-  val form = new RACDACContractOrPolicyNumberFormProvider()()
+  val formProvider = new RACDACContractOrPolicyNumberFormProvider
+  private val form = formProvider(racDACName)
 
   ".racDACContractOrPolicyNumber" must {
     val fieldName = "racDACContractOrPolicyNumber"
