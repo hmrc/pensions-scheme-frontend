@@ -82,21 +82,6 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def schemeNewSubscriptionLinks(
-                                         implicit request: OptionalDataRequest[AnyContent],
-                                         hc: HeaderCarrier,
-                                         ec: ExecutionContext
-                                       ):Future[Seq[OverviewLink]] =
-    racDACLink.map {rdl =>
-      Seq(
-        OverviewLink(
-          id = "register-new-scheme",
-          url = appConfig.canBeRegisteredUrl,
-          linkText = Message("messages__schemeOverview__scheme_subscription")
-        )
-      ) ++ rdl
-    }
-
   private def subscriptionLinks(
                                  implicit request: OptionalDataRequest[AnyContent],
                                  hc: HeaderCarrier,
@@ -105,10 +90,8 @@ class UrlsPartialService @Inject()(
     racDACLink.flatMap { racDACLink =>
       request.userAnswers.flatMap(_.get(SchemeNameId)) match {
         case Some(schemeName) =>
-          lastUpdatedAndDeleteDate(request.externalId) map {
-            date =>
-              val continueRegistrationLink = Seq(
-                OverviewLink(
+          lastUpdatedAndDeleteDate(request.externalId) map { date =>
+              val continueRegistrationLink = Seq(OverviewLink(
                   id = "continue-registration",
                   url = appConfig.canBeRegisteredUrl,
                   linkText = Message(
@@ -117,17 +100,21 @@ class UrlsPartialService @Inject()(
                     createFormattedDate(date, appConfig.daysDataSaved)
                   )
                 ))
-              val deleteRegistrationLink = Seq(
-                OverviewLink(
+              val deleteRegistrationLink = Seq(OverviewLink(
                   id = "delete-registration",
                   url = appConfig.deleteSubscriptionUrl,
                   linkText = Message("messages__schemeOverview__scheme_subscription_delete", schemeName)
                 )
               )
               continueRegistrationLink ++ racDACLink ++ deleteRegistrationLink
-
           }
-        case None => schemeNewSubscriptionLinks
+        case None => Future.successful(
+          Seq(OverviewLink(
+              id = "register-new-scheme",
+              url = appConfig.canBeRegisteredUrl,
+              linkText = Message("messages__schemeOverview__scheme_subscription")
+            )) ++ racDACLink
+        )
       }
     }
   }
