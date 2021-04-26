@@ -32,7 +32,7 @@ case object RACDACContractOrPolicyNumberId extends TypedIdentifier[String] {
     val racDACName = userAnswers.get(RACDACNameId).getOrElse("")
     StringCYA[self.type](
       label = Some(Message("messages__racdac_contract_or_policy_number__title", racDACName)),
-      hiddenLabel = Some(Message("messages__racdac_contract_or_policy_number__title", racDACName))
+      hiddenLabel = Some(Message("messages__visuallyhidden__racdac_contract_or_policy_number", racDACName))
     )()
   }
 }

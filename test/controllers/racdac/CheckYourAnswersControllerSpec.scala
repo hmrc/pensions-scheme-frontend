@@ -79,7 +79,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq(racDACName),
         answerIsMessageKey = false,
         Some(Link("site.change", controllers.racdac.routes.RACDACNameController.onPageLoad(CheckMode).url,
-          Some(messages("messages__racdac_name__title"))))
+          Some(messages("messages__visuallyhidden__racdac_name"))))
       )
     )
   )
@@ -92,7 +92,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq(racDACContractNo),
         answerIsMessageKey = false,
         Some(Link("site.change", controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url,
-          Some(messages("messages__racdac_contract_or_policy_number__title", racDACName))))
+          Some(messages("messages__visuallyhidden__racdac_contract_or_policy_number", racDACName))))
       )
     )
   )

@@ -31,6 +31,6 @@ case object RACDACNameId extends TypedIdentifier[String] {
   : CheckYourAnswers[self.type] =
     StringCYA[self.type](
       label = Some(Message("messages__racdac_name__title")),
-      hiddenLabel = Some(Message("messages__racdac_name__title"))
+      hiddenLabel = Some(Message("messages__visuallyhidden__racdac_name"))
     )()
 }
