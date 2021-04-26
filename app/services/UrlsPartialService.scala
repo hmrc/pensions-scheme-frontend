@@ -56,9 +56,19 @@ class UrlsPartialService @Inject()(
     for {
       subscription <- subscriptionLinks
       variations <- variationsLinks(psaId)
-      toggleValue <- featureToggleService.get(RACDAC)
+
     } yield {
-      val racdac = if (toggleValue.isEnabled) {
+
+      subscription ++ variations
+    }
+
+  private def racDACLink(
+                          implicit request: OptionalDataRequest[AnyContent],
+                          hc: HeaderCarrier,
+                          ec: ExecutionContext
+                        ):Future[Seq[OverviewLink]] = {
+    featureToggleService.get(RACDAC).map { toggleValue =>
+      if (toggleValue.isEnabled) {
         Seq(
           OverviewLink(
             id = "declare-racdac",
@@ -69,52 +79,58 @@ class UrlsPartialService @Inject()(
       } else {
         Nil
       }
-      subscription ++ racdac ++ variations
     }
+  }
 
-  private def schemeNewSubscriptionLink:Future[Seq[OverviewLink]] = Future.successful(Seq(
-    OverviewLink(
-      id = "register-new-scheme",
-      url = appConfig.canBeRegisteredUrl,
-      linkText = Message("messages__schemeOverview__scheme_subscription")
-    )
-  ))
+  private def schemeNewSubscriptionLinks(
+                                         implicit request: OptionalDataRequest[AnyContent],
+                                         hc: HeaderCarrier,
+                                         ec: ExecutionContext
+                                       ):Future[Seq[OverviewLink]] =
+    racDACLink.map {rdl =>
+      Seq(
+        OverviewLink(
+          id = "register-new-scheme",
+          url = appConfig.canBeRegisteredUrl,
+          linkText = Message("messages__schemeOverview__scheme_subscription")
+        )
+      ) ++ rdl
+    }
 
   private def subscriptionLinks(
                                  implicit request: OptionalDataRequest[AnyContent],
                                  hc: HeaderCarrier,
                                  ec: ExecutionContext
-                               ): Future[Seq[OverviewLink]] =
-
-    request.userAnswers match {
-
-      case None => schemeNewSubscriptionLink
-      case Some(ua) =>
-        ua.get(SchemeNameId) match {
-          case Some(schemeName) =>
-            lastUpdatedAndDeleteDate(request.externalId) map {
-              date =>
-                Seq(
-                  OverviewLink(
-                    id = "continue-registration",
-                    url = appConfig.canBeRegisteredUrl,
-                    linkText = Message(
-                      "messages__schemeOverview__scheme_subscription_continue",
-                      schemeName,
-                      createFormattedDate(date, appConfig.daysDataSaved)
-                    )
-                  ),
-                  OverviewLink(
-                    id = "delete-registration",
-                    url = appConfig.deleteSubscriptionUrl,
-                    linkText = Message("messages__schemeOverview__scheme_subscription_delete", schemeName)
+                               ): Future[Seq[OverviewLink]] = {
+    racDACLink.flatMap { racDACLink =>
+      request.userAnswers.flatMap(_.get(SchemeNameId)) match {
+        case Some(schemeName) =>
+          lastUpdatedAndDeleteDate(request.externalId) map {
+            date =>
+              val continueRegistrationLink = Seq(
+                OverviewLink(
+                  id = "continue-registration",
+                  url = appConfig.canBeRegisteredUrl,
+                  linkText = Message(
+                    "messages__schemeOverview__scheme_subscription_continue",
+                    schemeName,
+                    createFormattedDate(date, appConfig.daysDataSaved)
                   )
+                ))
+              val deleteRegistrationLink = Seq(
+                OverviewLink(
+                  id = "delete-registration",
+                  url = appConfig.deleteSubscriptionUrl,
+                  linkText = Message("messages__schemeOverview__scheme_subscription_delete", schemeName)
                 )
-            }
-          case _ =>
-            schemeNewSubscriptionLink
-        }
+              )
+              continueRegistrationLink ++ racDACLink ++ deleteRegistrationLink
+
+          }
+        case None => schemeNewSubscriptionLinks
+      }
     }
+  }
 
   private def variationsLinks(psaId: String)
                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[OverviewLink]] =

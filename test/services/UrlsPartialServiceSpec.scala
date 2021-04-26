@@ -222,10 +222,11 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   private val subscriptionLinksRACDAC = Seq(
       OverviewLink("continue-registration",frontendAppConfig.canBeRegisteredUrl,
         Message("messages__schemeOverview__scheme_subscription_continue", schemeName, deleteDate)),
+    OverviewLink("declare-racdac", frontendAppConfig.declareAsRACDACUrl,
+      Message("messages__schemeOverview__declare_racdac")),
       OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
-        Message("messages__schemeOverview__scheme_subscription_delete", schemeName)),
-      OverviewLink("declare-racdac", frontendAppConfig.declareAsRACDACUrl,
-        Message("messages__schemeOverview__declare_racdac"))
+        Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
+
     )
 
   private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn),
