@@ -18,8 +18,19 @@ package identifiers.racdac
 
 import identifiers.TypedIdentifier
 import play.api.libs.json.JsPath
+import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import viewmodels.Message
 
 case object RACDACContractOrPolicyNumberId extends TypedIdentifier[String] {
+  self =>
   override def path: JsPath = JsPath \ "racdac" \ RACDACContractOrPolicyNumberId.toString
   override def toString: String = "contractOrPolicyNumberId"
+  implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers)
+  : CheckYourAnswers[self.type] =
+    StringCYA[self.type](
+      label = Some(Message("messages__racdac_contract_or_policy_number__title")),
+      hiddenLabel = Some(Message("messages__racdac_contract_or_policy_number__title"))
+    )()
 }

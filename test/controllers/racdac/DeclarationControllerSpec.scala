@@ -68,7 +68,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new DeclarationFormProvider()
-  private val form = formProvider()
   private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val psaName = "A PSA"

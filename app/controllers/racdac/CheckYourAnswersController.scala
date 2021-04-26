@@ -18,11 +18,8 @@ package controllers.racdac
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers._
-import identifiers.racdac.RACDACNameId
-
-import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -32,6 +29,7 @@ import utils.{CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
@@ -50,16 +48,21 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers: UserAnswers = request.userAnswers
 
-      val racdacSection = AnswerSection(
+      val racdacNameSection = AnswerSection(
         None,
         RACDACNameId.row(controllers.racdac.routes.RACDACNameController.onPageLoad(CheckMode).url)
       )
 
+      val racdacContractNoSection = AnswerSection(
+        None,
+        RACDACContractOrPolicyNumberId.row(controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url)
+      )
+
       val vm = CYAViewModel(
-        answerSections = Seq(racdacSection),
+        answerSections = Seq(racdacNameSection, racdacContractNoSection),
         href = controllers.racdac.routes.DeclarationController.onPageLoad(),
         schemeName = None,
-        returnOverview = false,
+        returnOverview = true,
         hideEditLinks = request.viewOnly,
         srn = None,
         hideSaveAndContinueButton = request.viewOnly,

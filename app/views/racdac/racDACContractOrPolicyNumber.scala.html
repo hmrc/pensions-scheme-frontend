@@ -33,7 +33,7 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__racdac_contract_or_policy_number__title", schemeName))) {
 
-    @formHelper(action = RACDACContractOrPolicyNumberController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = RACDACContractOrPolicyNumberController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

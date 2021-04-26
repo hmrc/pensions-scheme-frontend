@@ -21,7 +21,6 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.racdac.RACDACContractOrPolicyNumberFormProvider
-import identifiers.SchemeNameId
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.NormalMode
 import org.mockito.Matchers.any

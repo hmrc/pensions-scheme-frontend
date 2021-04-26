@@ -18,8 +18,8 @@ package controllers.racdac
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.racdac.RACDACNameId
-import models.{CheckMode, Link, NormalMode}
+import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import models.{CheckMode, Link}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeCountryOptions
@@ -62,12 +62,15 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val racdacInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
-      "racdac" -> Json.obj(RACDACNameId.toString -> "Test RACDAC Name")
+      "racdac" -> Json.obj(
+        RACDACNameId.toString -> "Test RACDAC Name",
+        RACDACContractOrPolicyNumberId.toString -> "Test RACDAC Contract No"
+      )
     ))
   )
 
 
-  private val racdacSection = AnswerSection(
+  private val racdacSectionName = AnswerSection(
     None,
     Seq(
       AnswerRow(
@@ -80,11 +83,24 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     )
   )
 
+  private val racdacSectionContractNo = AnswerSection(
+    None,
+    Seq(
+      AnswerRow(
+        messages("messages__racdac_contract_or_policy_number__title"),
+        Seq("Test RACDAC Contract No"),
+        answerIsMessageKey = false,
+        Some(Link("site.change", controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url,
+          Some(messages("messages__racdac_contract_or_policy_number__title"))))
+      )
+    )
+  )
+
   val vm = CYAViewModel(
-    answerSections = Seq(racdacSection),
+    answerSections = Seq(racdacSectionName, racdacSectionContractNo),
     href = postUrl,
     schemeName = None,
-    returnOverview = false,
+    returnOverview = true,
     hideEditLinks = false,
     srn = None,
     hideSaveAndContinueButton = false,
