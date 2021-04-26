@@ -44,7 +44,7 @@ class RACDACContractOrPolicyNumberFormProviderSpec extends StringFieldBehaviours
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, messages(requiredKey, racDACName))
     )
   }
 }
