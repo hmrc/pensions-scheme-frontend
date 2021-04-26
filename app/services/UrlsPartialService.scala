@@ -72,6 +72,14 @@ class UrlsPartialService @Inject()(
       subscription ++ racdac ++ variations
     }
 
+  private def schemeNewSubscriptionLink:Future[Seq[OverviewLink]] = Future.successful(Seq(
+    OverviewLink(
+      id = "register-new-scheme",
+      url = appConfig.canBeRegisteredUrl,
+      linkText = Message("messages__schemeOverview__scheme_subscription")
+    )
+  ))
+
   private def subscriptionLinks(
                                  implicit request: OptionalDataRequest[AnyContent],
                                  hc: HeaderCarrier,
@@ -80,14 +88,7 @@ class UrlsPartialService @Inject()(
 
     request.userAnswers match {
 
-      case None => Future.successful(Seq(
-        OverviewLink(
-          id = "register-new-scheme",
-          url = appConfig.canBeRegisteredUrl,
-          linkText = Message("messages__schemeOverview__scheme_subscription")
-        )
-      ))
-
+      case None => schemeNewSubscriptionLink
       case Some(ua) =>
         ua.get(SchemeNameId) match {
           case Some(schemeName) =>
@@ -111,7 +112,7 @@ class UrlsPartialService @Inject()(
                 )
             }
           case _ =>
-            Future.successful(Seq.empty[OverviewLink])
+            schemeNewSubscriptionLink
         }
     }
 
