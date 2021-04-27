@@ -48,8 +48,4 @@ class RACDACNameViewSpec extends QuestionViewBehaviours[String] {
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
-
-//  "RACDACName view in check mode" must {
-//    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
-//  }
 }
