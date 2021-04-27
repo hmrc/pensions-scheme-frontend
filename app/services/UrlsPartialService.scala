@@ -22,6 +22,7 @@ import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, Upda
 import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
+import models.FeatureToggle.Enabled
 import models.FeatureToggleName.RACDAC
 import models.requests.OptionalDataRequest
 import models.{LastUpdated, PSAMinimalFlags}
@@ -67,8 +68,8 @@ class UrlsPartialService @Inject()(
   private def racDACSchemeLink(implicit hc: HeaderCarrier,
                           ec: ExecutionContext
                         ):Future[Seq[OverviewLink]] = {
-    featureToggleService.get(RACDAC).map { toggleValue =>
-      if (toggleValue.isEnabled) {
+    featureToggleService.get(RACDAC).map {
+      case Enabled(_) =>
         Seq(
           OverviewLink(
             id = "declare-racdac",
@@ -76,10 +77,9 @@ class UrlsPartialService @Inject()(
             linkText = Message("messages__schemeOverview__declare_racdac")
           )
         )
-      } else {
+      case _ =>
         Nil
       }
-    }
   }
 
   def nonRACDACSchemeLink(
