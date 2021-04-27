@@ -16,8 +16,6 @@
 
 package services
 
-import java.sql.Timestamp
-import java.time.format.DateTimeFormatter
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
@@ -25,8 +23,8 @@ import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
 import models.FeatureToggleName.RACDAC
-import models.{LastUpdated, PSAMinimalFlags}
 import models.requests.OptionalDataRequest
+import models.{LastUpdated, PSAMinimalFlags}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
@@ -36,6 +34,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 import viewmodels.Message
 
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 
 class UrlsPartialService @Inject()(
@@ -64,7 +64,7 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def racDACLink(
+  private def racDACSchemeLink(
                           implicit request: OptionalDataRequest[AnyContent],
                           hc: HeaderCarrier,
                           ec: ExecutionContext
@@ -84,43 +84,72 @@ class UrlsPartialService @Inject()(
     }
   }
 
+  def nonRACDACSchemeLink(
+           implicit request: OptionalDataRequest[AnyContent],
+           hc: HeaderCarrier,
+           ec: ExecutionContext
+         ):Future[Seq[OverviewLink]] = {
+    val nonRACDACSchemeName = request.userAnswers.flatMap(_.get(SchemeNameId))
+    nonRACDACSchemeName match {
+      case Some(schemeName) =>
+        lastUpdatedAndDeleteDate(request.externalId) map { date =>
+          val continueRegistrationLink = Seq(OverviewLink(
+            id = "continue-registration",
+            url = appConfig.canBeRegisteredUrl,
+            linkText = Message(
+              "messages__schemeOverview__scheme_subscription_continue",
+              schemeName,
+              createFormattedDate(date, appConfig.daysDataSaved)
+            )
+          ))
+          continueRegistrationLink
+        }
+      case _ =>
+        Future.successful(
+          Seq(OverviewLink(
+            id = "register-new-scheme",
+            url = appConfig.canBeRegisteredUrl,
+            linkText = Message("messages__schemeOverview__scheme_subscription")
+          ))
+        )
+    }
+  }
+
+  private def deleteSchemeLink(
+                   implicit request: OptionalDataRequest[AnyContent],
+                   hc: HeaderCarrier,
+                   ec: ExecutionContext
+                 ):Future[Seq[OverviewLink]] = {
+    val nonRACDACSchemeName = request.userAnswers.flatMap(_.get(SchemeNameId))
+    val racDACSchemeName = request.userAnswers.flatMap(_.get(RACDACNameId))
+    featureToggleService.get(RACDAC).map { toggleValue =>
+      val includeDeleteLink = (toggleValue.isEnabled && racDACSchemeName.isDefined) || nonRACDACSchemeName.isDefined
+      if (includeDeleteLink) {
+        Seq(OverviewLink(
+          id = "delete-registration",
+          url = appConfig.deleteSubscriptionUrl,
+          linkText = Message(
+            "messages__schemeOverview__scheme_subscription_delete",
+            contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName)
+          )
+        ))
+      } else {
+        Nil
+      }
+    }
+  }
+
   private def subscriptionLinks(
                                  implicit request: OptionalDataRequest[AnyContent],
                                  hc: HeaderCarrier,
                                  ec: ExecutionContext
                                ): Future[Seq[OverviewLink]] = {
-    racDACLink.flatMap { racDACLink =>
-      request.userAnswers.flatMap(_.get(SchemeNameId)) match {
-        case optionNonRACDACSchemeName@Some(schemeName) =>
-          lastUpdatedAndDeleteDate(request.externalId) map { date =>
-              val continueRegistrationLink = Seq(OverviewLink(
-                  id = "continue-registration",
-                  url = appConfig.canBeRegisteredUrl,
-                  linkText = Message(
-                    "messages__schemeOverview__scheme_subscription_continue",
-                    schemeName,
-                    createFormattedDate(date, appConfig.daysDataSaved)
-                  )
-                ))
-              val deleteRegistrationLink = Seq(OverviewLink(
-                  id = "delete-registration",
-                  url = appConfig.deleteSubscriptionUrl,
-                  linkText = Message(
-                    "messages__schemeOverview__scheme_subscription_delete",
-                    contentForDeleteLink(request.userAnswers.flatMap(_.get(RACDACNameId)), optionNonRACDACSchemeName)
-                  )
-                )
-              )
-              continueRegistrationLink ++ racDACLink ++ deleteRegistrationLink
-          }
-        case None => Future.successful(
-          Seq(OverviewLink(
-              id = "register-new-scheme",
-              url = appConfig.canBeRegisteredUrl,
-              linkText = Message("messages__schemeOverview__scheme_subscription")
-            )) ++ racDACLink
-        )
-      }
+    for {
+      rdsl <- racDACSchemeLink
+      nrdsl <- nonRACDACSchemeLink
+      dsl <- deleteSchemeLink
+    } yield {
+      nrdsl ++ rdsl ++ dsl
     }
   }
 
@@ -136,7 +165,6 @@ class UrlsPartialService @Inject()(
       case (None, Some(sn)) => sn
       case _ => ""
     }
-
   }
 
   private def variationsLinks(psaId: String)

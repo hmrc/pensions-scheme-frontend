@@ -51,7 +51,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeNameJsonOption)), Some(PsaId("A0000000")))
 
   def service: UrlsPartialService =
-    new UrlsPartialService(frontendAppConfig, dataCacheConnector,
+    new UrlsPartialService(messagesApi, frontendAppConfig, dataCacheConnector,
       lockConnector, updateConnector, minimalPsaConnector, mockFeatureToggleService)
 
   override def beforeEach(): Unit = {
@@ -226,7 +226,6 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
       Message("messages__schemeOverview__declare_racdac")),
       OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
         Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
-
     )
 
   private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn),

@@ -20,13 +20,18 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
+import identifiers.SchemeNameId
+import identifiers.racdac.RACDACNameId
+
 import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.UserAnswers
 import views.html.deleteScheme
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,21 +77,51 @@ class DeleteSchemeController @Inject()(
       }
   }
 
+  private def contentForDeleteLink(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String])(
+    implicit request: OptionalDataRequest[AnyContent],
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ):String = {
+    (racDACSchemeName, nonRACDACSchemeName) match {
+      case (Some(racDAC), Some(nonRACDAC)) =>
+        Messages("messages__schemeOverview__scheme_subscription_delete_both", racDAC, nonRACDAC)
+      case (Some(sn), None) => sn
+      case (None, Some(sn)) => sn
+      case _ => ""
+    }
+  }
+
   private def getSchemeName(f: (String, String) => Future[Result])
                            (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
 
     dataCacheConnector.fetch(request.externalId).flatMap {
       case None => Future.successful(overviewPage)
       case Some(data) =>
-        (data \ "schemeName").validate[String] match {
-          case JsSuccess(schemeName, _) =>
-            request.psaId.map { psaId =>
-              minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
-                f(schemeName, psaName)
-              }.getOrElse(sessionExpired))
-            }.getOrElse(sessionExpired)
-          case JsError(_) => sessionExpired
-        }
+
+        val ua = UserAnswers(data)
+        val nonRACDACSchemeName = ua.get(SchemeNameId)
+        val racDACSchemeName = ua.get(RACDACNameId)
+
+        request.psaId.map { psaId =>
+          minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+            f(contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName), psaName)
+          }.getOrElse(sessionExpired))
+        }.getOrElse(sessionExpired)
+
+
+//        (data \ "schemeName").validate[String] match {
+//          case JsSuccess(schemeName, _) =>
+//            request.psaId.map { psaId =>
+//              minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+//                f(schemeName, psaName)
+//              }.getOrElse(sessionExpired))
+//            }.getOrElse(sessionExpired)
+//          case JsError(_) =>
+//
+//
+//
+//            sessionExpired
+//        }
     }
   }
 }

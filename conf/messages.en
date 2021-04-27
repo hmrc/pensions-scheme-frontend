@@ -849,10 +849,6 @@ messages__schemesOverview__delete__link = Delete this scheme and start a new reg
 messages__schemesOverview__UR__text = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
 messages__schemesOverview__UR__link = Let us know if you would like to help improve this service.
 
-messages__deleteScheme__title = Are you sure you want to delete this scheme?
-messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
-messages__deleteScheme__error__required = Select yes if you want to cancel your registration
-
 messages__confirmDeleteEstablisher__title = Are you sure you want to delete this establisher?
 messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
 messages__confirmDeleteEstablisher__companyHint = This will delete any directors you have added.
@@ -1819,8 +1815,8 @@ messages__cannotStartRegistration__p1 = A scheme registration cannot be started 
 messages__cannotStartRegistration__p2 = You need to phone Pension Scheme Services on 0300 123 1079.
 messages__cannotStartRegistration__returnToOverview__link = Return to manage and register pension schemes
 
-messages__deleteScheme__title = Are you sure you want to delete the details already entered for this scheme?
-messages__deleteScheme__heading = Are you sure you want to delete the details already entered for {0}’s scheme?
+messages__deleteScheme__title = Are you sure you want to delete the details already entered?
+messages__deleteScheme__heading = Are you sure you want to delete the details already entered for {0}?
 messages__deleteScheme__hint = This will remove all of the details entered so far for this scheme.
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
@@ -1868,7 +1864,7 @@ messages__error__racdac_name_length = The RAC/DAC name cannot be more than 160 c
 messages__error__racdac_name_invalid = The RAC/DAC name contains invalid characters
 
 messages__racdac_contract_or_policy_number__heading = What is {0}’s contract or policy number?
-messages__racdac_contract_or_policy_number__title = What is {0}’s contract or policy number?
+messages__racdac_contract_or_policy_number__title = What is the RAC/DAC’s contract or policy number?
 messages__visuallyhidden__racdac_contract_or_policy_number = {0}’s contract or policy number
 
 messages__error__racdac_contract_or_policy_number = Enter the policy or contract number for {0}
@@ -1881,7 +1877,7 @@ messages__declaration_racdac__statement1 = you understand that as the scheme adm
 messages__declaration_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
 messages__declaration_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
 
-messages__complete_racdac__title = You have declared as a scheme administrator for {0}
+messages__complete_racdac__title = You have declared as scheme administrator for the RAC/DAC
 messages__complete_racdac__heading = You have declared as scheme administrator for {0}
 messages__complete_racdac__declare = By continuing you declare that:
 messages__complete_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
