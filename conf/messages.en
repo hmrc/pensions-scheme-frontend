@@ -1818,6 +1818,7 @@ messages__cannotStartRegistration__returnToOverview__link = Return to manage and
 messages__deleteScheme__title = Are you sure you want to delete the details already entered?
 messages__deleteScheme__heading = Are you sure you want to delete the details already entered for {0}?
 messages__deleteScheme__hint = This will remove all of the details entered so far for this scheme.
+messages__deleteScheme__hint_both = This will remove all of the details entered so far for both of these schemes.
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
 messages__deleteSchemeChanges__title = Are you sure you want to delete the changes you have made to the scheme’s details?

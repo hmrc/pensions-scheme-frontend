@@ -79,6 +79,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
+      FakeAllowAccessProvider(),
       mockPensionAdministratorConnector,
       controllerComponents,
       view

@@ -53,6 +53,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       formProvider,
       mockPensionAdministratorConnector,
       controllerComponents,

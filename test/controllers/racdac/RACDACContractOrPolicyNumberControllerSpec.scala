@@ -62,6 +62,7 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
+      FakeAllowAccessProvider(),
       formProvider,
       mockPensionAdministratorConnector,
       controllerComponents,

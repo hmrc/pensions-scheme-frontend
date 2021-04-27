@@ -52,17 +52,17 @@ class DeleteSchemeController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      getSchemeName { (schemeName, psaName) =>
-              Future.successful(Ok(view(form, schemeName, psaName)))
+      getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
+              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey)))
       }
   }
 
   def onSubmit: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      getSchemeName { (schemeName, psaName) =>
+      getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName))),
+            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {
               _ =>
@@ -85,7 +85,14 @@ class DeleteSchemeController @Inject()(
     }
   }
 
-  private def getSchemeName(f: (String, String) => Future[Result])
+  private def hintTextMessageKey(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String]):String = {
+    (racDACSchemeName, nonRACDACSchemeName) match {
+      case (Some(_), Some(_)) => "messages__deleteScheme__hint_both"
+      case _ => "messages__deleteScheme__hint"
+    }
+  }
+
+  private def getSchemeInfo(f: (String, String, String) => Future[Result])
                            (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
 
     dataCacheConnector.fetch(request.externalId).flatMap {
@@ -98,7 +105,8 @@ class DeleteSchemeController @Inject()(
 
         request.psaId.map { psaId =>
           minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
-            f(contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName), psaName)
+            f(contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName), psaName,
+              hintTextMessageKey(racDACSchemeName, nonRACDACSchemeName))
           }.getOrElse(sessionExpired))
         }.getOrElse(sessionExpired)
     }

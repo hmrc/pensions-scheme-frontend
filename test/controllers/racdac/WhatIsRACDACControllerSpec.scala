@@ -39,6 +39,7 @@ class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       pensionAdministratorConnector,
       dataRetrievalAction,
+      FakeAllowAccessProvider(),
       controllerComponents,
       view
     )

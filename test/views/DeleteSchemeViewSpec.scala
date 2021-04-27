@@ -28,14 +28,16 @@ class DeleteSchemeViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "deleteScheme"
   val schemeName = "Test Scheme Name"
   val psaName = "Test Psa Name"
+  private val hintTextMessageKey = "messages__deleteScheme__hint"
 
   val form = new DeleteSchemeFormProvider()()
 
   private val deleteSchemeView = injector.instanceOf[deleteScheme]
 
-  def createView: () => HtmlFormat.Appendable = () => deleteSchemeView(form, schemeName, psaName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => deleteSchemeView(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => deleteSchemeView(form, schemeName, psaName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => deleteSchemeView(form,
+    schemeName, psaName, hintTextMessageKey)(fakeRequest, messages)
 
   "DeleteScheme view" must {
     behave like normalPageWithTitle(createView, messageKeyPrefix, Message("messages__deleteScheme__title"),

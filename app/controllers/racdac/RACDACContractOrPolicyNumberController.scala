@@ -41,6 +41,7 @@ class RACDACContractOrPolicyNumberController @Inject()(
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      allowAccess: AllowAccessActionProvider,
                                       formProvider: RACDACContractOrPolicyNumberFormProvider,
                                       pensionAdministratorConnector: PensionAdministratorConnector,
                                       val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class RACDACContractOrPolicyNumberController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request => {
       withRACDACName{ racdacName =>
         val form = formProvider(racdacName)
@@ -62,7 +63,7 @@ class RACDACContractOrPolicyNumberController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         val form = formProvider(racdacName)

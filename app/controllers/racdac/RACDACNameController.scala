@@ -39,6 +39,7 @@ class RACDACNameController @Inject()(
                                       navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
+                                      allowAccess: AllowAccessActionProvider,
                                       formProvider: RACDACNameFormProvider,
                                       pensionAdministratorConnector: PensionAdministratorConnector,
                                       val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class RACDACNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
     implicit request => {
       val preparedForm = request.userAnswers.flatMap(_.get(RACDACNameId)).fold(form)(v => form.fill(v))
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
@@ -60,7 +61,7 @@ class RACDACNameController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {

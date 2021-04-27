@@ -38,6 +38,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
+                                                      allowAccess: AllowAccessActionProvider,
                                                       implicit val countryOptions: CountryOptions,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       val pensionAdministratorConnector: PensionAdministratorConnector,
@@ -45,7 +46,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers

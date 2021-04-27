@@ -39,6 +39,7 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       allowAccess: AllowAccessActionProvider,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: declaration
@@ -48,7 +49,7 @@ class DeclarationController @Inject()(
     with I18nSupport
     with Enumerable.Implicits {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.map { psaName =>
         Ok(
@@ -59,7 +60,7 @@ class DeclarationController @Inject()(
       }
   }
 
-  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       for {
         cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)

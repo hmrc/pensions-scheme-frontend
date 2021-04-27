@@ -28,7 +28,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(form: Form[_], schemeName: String, psaName : String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
 title = titleWithErrors(form, messages("messages__deleteScheme__title")),
@@ -47,7 +47,7 @@ title = titleWithErrors(form, messages("messages__deleteScheme__title")),
             field = form("value"),
             label = messages("messages__deleteScheme__heading", schemeName),
             labelClass = Some("visually-hidden"),
-            paragraphText = Some(Messages("messages__deleteScheme__hint")),
+            paragraphText = Some(Messages(hintTextMessageKey)),
             headingIsLegend = true
         )
         </div>

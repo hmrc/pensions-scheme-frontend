@@ -18,7 +18,7 @@ package controllers.racdac
 
 import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.actions._
 import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link}
 import org.mockito.Matchers.any
@@ -63,6 +63,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
+      FakeAllowAccessProvider(),
       new FakeCountryOptions,
       controllerComponents,
       mockPensionAdministratorConnector,

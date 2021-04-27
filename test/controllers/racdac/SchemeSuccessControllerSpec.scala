@@ -60,6 +60,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
+      FakeAllowAccessProvider(),
       controllerComponents,
       mockPensionAdminstratorConnector,
       view
