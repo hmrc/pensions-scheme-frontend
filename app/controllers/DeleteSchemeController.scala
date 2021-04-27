@@ -22,18 +22,16 @@ import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
-
-import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import views.html.deleteScheme
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeleteSchemeController @Inject()(
@@ -107,21 +105,6 @@ class DeleteSchemeController @Inject()(
             f(contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName), psaName)
           }.getOrElse(sessionExpired))
         }.getOrElse(sessionExpired)
-
-
-//        (data \ "schemeName").validate[String] match {
-//          case JsSuccess(schemeName, _) =>
-//            request.psaId.map { psaId =>
-//              minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
-//                f(schemeName, psaName)
-//              }.getOrElse(sessionExpired))
-//            }.getOrElse(sessionExpired)
-//          case JsError(_) =>
-//
-//
-//
-//            sessionExpired
-//        }
     }
   }
 }
