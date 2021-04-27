@@ -118,8 +118,8 @@ class VariationDeclarationController @Inject()(
         ua.get(TcmpChangedId),
         ua.get(MoneyPurchaseBenefitsId)
       ) match {
-        case (Some(originalBenefits), Some(updatedBenefits), tcmpChanged, Some(tcmp))
-          if updatedBenefits != originalBenefits || tcmpChanged.contains(true) =>
+        case (Some(originalBenefits), Some(updatedBenefits), Some(tcmpChanged), Some(tcmp))
+          if updatedBenefits != originalBenefits || tcmpChanged =>
           auditService.sendExtendedEvent(
             TcmpAuditEvent(
               psaId = psaId,

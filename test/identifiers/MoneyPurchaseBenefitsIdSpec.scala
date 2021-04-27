@@ -31,7 +31,7 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
   val onwardUrl = "onwardUrl"
   val name = "schemeName"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(messages("messages__moneyPurchaseBenefits__opt2")), false,
+    AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(messages("messages__moneyPurchaseBenefits__02")), false,
       Some(Link("site.change",onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name)))))
   )
 

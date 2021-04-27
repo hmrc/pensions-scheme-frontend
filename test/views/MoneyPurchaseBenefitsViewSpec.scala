@@ -49,7 +49,7 @@ class MoneyPurchaseBenefitsViewSpec extends ViewBehaviours {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for ((option, i) <- MoneyPurchaseBenefits.options.zipWithIndex) {
-          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
+          assertContainsRadioButton(doc, s"value-$i", s"$i", option.value, isChecked = false)
         }
       }
     }
@@ -58,7 +58,7 @@ class MoneyPurchaseBenefitsViewSpec extends ViewBehaviours {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
+          assertContainsRadioButton(doc, s"value-$i", s"$i", option.value, isChecked = false)
 
         }
       }

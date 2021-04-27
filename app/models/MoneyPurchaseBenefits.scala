@@ -23,11 +23,11 @@ sealed trait MoneyPurchaseBenefits
 
 object MoneyPurchaseBenefits extends Enumerable.Implicits {
 
-  case object Collective extends WithName("opt1") with MoneyPurchaseBenefits
-  case object CashBalance extends WithName("opt2") with MoneyPurchaseBenefits
-  case object Other extends WithName("opt3") with MoneyPurchaseBenefits
-  case object MixtureCollectiveAndCashBalanceAndOrOther extends WithName("opt4") with MoneyPurchaseBenefits
-  case object MixtureCashBalanceAndOther extends WithName("opt5") with MoneyPurchaseBenefits
+  case object Collective extends WithName("01") with MoneyPurchaseBenefits
+  case object CashBalance extends WithName("02") with MoneyPurchaseBenefits
+  case object Other extends WithName("03") with MoneyPurchaseBenefits
+  case object MixtureCollectiveAndCashBalanceAndOrOther extends WithName("04") with MoneyPurchaseBenefits
+  case object MixtureCashBalanceAndOther extends WithName("05") with MoneyPurchaseBenefits
 
   def values: Seq[MoneyPurchaseBenefits] =
     Seq(

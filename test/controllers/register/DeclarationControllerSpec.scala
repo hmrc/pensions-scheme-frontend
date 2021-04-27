@@ -125,7 +125,7 @@ class DeclarationControllerSpec
         psaId = "A0000000",
         tcmp = "01",
         payload = Json.obj(
-          "moneyPurchaseBenefits" -> Json.arr("opt1"),
+          "moneyPurchaseBenefits" -> "01",
           "benefits" -> "opt1",
           SchemeNameId.toString -> "schemeName",
           "declaration" -> true

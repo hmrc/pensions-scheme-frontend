@@ -49,7 +49,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
 
   private val validData = Json.obj(
     SchemeNameId.toString -> schemeName,
-    MoneyPurchaseBenefitsId.toString -> Json.arr(MoneyPurchaseBenefits.Collective.toString)
+    MoneyPurchaseBenefitsId.toString -> MoneyPurchaseBenefits.Collective.toString
   )
 
   "MoneyPurchaseBenefits Controller" must {
@@ -67,7 +67,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value[1]", MoneyPurchaseBenefits.values.head.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", MoneyPurchaseBenefits.values.head.toString))
       val result = controller().onSubmit(NormalMode, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

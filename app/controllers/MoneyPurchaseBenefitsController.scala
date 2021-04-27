@@ -19,10 +19,12 @@ package controllers
 import controllers.actions._
 import forms.MoneyPurchaseBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, TcmpChangedId}
+import models.requests.DataRequest
 import models.{Mode, MoneyPurchaseBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -54,12 +56,38 @@ class MoneyPurchaseBenefitsController @Inject()(
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()
 
+  private def convertTcmpArrToStr(implicit request: DataRequest[AnyContent]): Form[MoneyPurchaseBenefits] =
+    (request.userAnswers.json \ "moneyPurchaseBenefits").validate[Seq[MoneyPurchaseBenefits]] match {
+      case JsSuccess(mpb, _) =>
+        mpb match {
+          case Seq(MoneyPurchaseBenefits.Collective) =>
+            form.fill(MoneyPurchaseBenefits.Collective)
+          case Seq(MoneyPurchaseBenefits.Other) =>
+            form.fill(MoneyPurchaseBenefits.Other)
+          case Seq(MoneyPurchaseBenefits.CashBalance) =>
+            form.fill(MoneyPurchaseBenefits.CashBalance)
+          case Seq(MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
+            form.fill(MoneyPurchaseBenefits.MixtureCashBalanceAndOther)
+          case Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
+            form.fill(MoneyPurchaseBenefits.MixtureCollectiveAndCashBalanceAndOrOther)
+          case _ =>
+            form
+        }
+      case JsError(_) =>
+        (request.userAnswers.json \ "moneyPurchaseBenefits").validate[MoneyPurchaseBenefits] match {
+          case JsSuccess(mpb, _) =>
+            form.fill(mpb)
+          case JsError(_) =>
+            form
+        }
+    }
+
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(
           view(
-            form = request.userAnswers.get(MoneyPurchaseBenefitsId).fold(form)(form.fill),
+            form = convertTcmpArrToStr,
             mode = mode,
             schemeName = existingSchemeName,
             postCall = postCall(mode, srn),

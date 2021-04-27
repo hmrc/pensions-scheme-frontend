@@ -16,30 +16,28 @@
 
 package forms
 
-import forms.behaviours.CheckboxBehaviour
+import forms.behaviours.FormBehaviours
 import models.MoneyPurchaseBenefits
-import play.api.data.FormError
 
-class MoneyPurchaseBenefitsFormProviderSpec extends CheckboxBehaviour {
+class MoneyPurchaseBenefitsFormProviderSpec extends FormBehaviours {
+
+  val validData: Map[String, String] =
+    Map("value" -> "01")
 
   val form = new MoneyPurchaseBenefitsFormProvider()()
 
-  ".value" must {
+  "MoneyPurchaseBenefits Form" must {
 
-    val fieldName = "value"
-    val requiredKey = "messages__moneyPurchaseBenefits__error"
+    behave like questionForm[MoneyPurchaseBenefits](MoneyPurchaseBenefits.Collective)
 
-    behave like checkboxField[MoneyPurchaseBenefits](
-      form,
-      fieldName,
-      validValues  = MoneyPurchaseBenefits.values,
-      invalidError = FormError(s"$fieldName[0]", "error.invalid")
-    )
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__moneyPurchaseBenefits__error")
+      checkForError(form, emptyForm, expectedError)
+    }
 
-    behave like mandatoryCheckboxField(
-      form,
-      fieldName,
-      requiredKey
-    )
+    "fail to bind when value is invalid" in {
+      val expectedError = error("value", "error.invalid")
+      checkForError(form, Map("value" -> "invalid"), expectedError)
+    }
   }
 }
