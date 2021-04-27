@@ -19,7 +19,6 @@ package controllers.racdac
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.DeclarationFormProvider
 import helpers.DataCompletionHelper
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -67,7 +66,6 @@ class DeclarationControllerSpec
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val formProvider = new DeclarationFormProvider()
   private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val psaName = "A PSA"

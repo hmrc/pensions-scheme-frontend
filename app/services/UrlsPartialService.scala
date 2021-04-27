@@ -64,9 +64,7 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def racDACSchemeLink(
-                          implicit request: OptionalDataRequest[AnyContent],
-                          hc: HeaderCarrier,
+  private def racDACSchemeLink(implicit hc: HeaderCarrier,
                           ec: ExecutionContext
                         ):Future[Seq[OverviewLink]] = {
     featureToggleService.get(RACDAC).map { toggleValue =>
@@ -154,9 +152,7 @@ class UrlsPartialService @Inject()(
   }
 
   private def contentForDeleteLink(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String])(
-    implicit request: OptionalDataRequest[AnyContent],
-    hc: HeaderCarrier,
-    ec: ExecutionContext
+    implicit request: OptionalDataRequest[AnyContent]
   ):String = {
     (racDACSchemeName, nonRACDACSchemeName) match {
       case (Some(racDAC), Some(nonRACDAC)) =>

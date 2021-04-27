@@ -17,8 +17,6 @@
 package forms.racdac
 
 import forms.mappings.{Constraints, Mappings}
-
-import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
 

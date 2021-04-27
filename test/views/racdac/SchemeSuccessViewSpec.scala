@@ -16,7 +16,6 @@
 
 package views.racdac
 
-import java.time.LocalDate
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -26,12 +25,10 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   private val messageKeyPrefix = "complete_racdac"
 
-  private val submissionReferenceNumber = "XX123456789132"
   private val email = "email@email.com"
   private val schemeName = "schemeName"
 
   private val checkStatusLink = frontendAppConfig.managePensionsYourPensionSchemesUrl
-  private val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
   val view: schemeSuccess = app.injector.instanceOf[schemeSuccess]
   def createView: () => HtmlFormat.Appendable = () =>
     view(

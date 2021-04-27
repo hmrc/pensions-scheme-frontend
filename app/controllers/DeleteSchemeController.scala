@@ -26,7 +26,6 @@ import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import views.html.deleteScheme
@@ -76,10 +75,7 @@ class DeleteSchemeController @Inject()(
   }
 
   private def contentForDeleteLink(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String])(
-    implicit request: OptionalDataRequest[AnyContent],
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ):String = {
+    implicit request: OptionalDataRequest[AnyContent]):String = {
     (racDACSchemeName, nonRACDACSchemeName) match {
       case (Some(racDAC), Some(nonRACDAC)) =>
         Messages("messages__schemeOverview__scheme_subscription_delete_both", racDAC, nonRACDAC)

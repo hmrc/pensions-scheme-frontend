@@ -31,7 +31,7 @@ import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
