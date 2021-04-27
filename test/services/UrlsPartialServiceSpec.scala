@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.{UserAnswersCacheConnector, _}
+import identifiers.racdac.RACDACNameId
 import models.FeatureToggle.{Disabled, Enabled}
 import models.FeatureToggleName.RACDAC
 import models._
@@ -74,24 +75,56 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
   }
 
   "schemeLinks" must {
-
     "return the relevant links" when {
-      "when all possible links are displayed" in {
-
+      "racdac switched off then all possible links are displayed but not RAC/DAC link" in {
         whenReady(service.schemeLinks(psaId)) { result =>
           result mustBe subscriptionLinks ++ variationLinks
         }
-
       }
-      "when racdac switched on all possible links are displayed" in {
+
+      "racdac switched on and only non-RAC/DAC scheme in progress then continue register scheme and " +
+        "declare RAC/DAC links are displayed including delete scheme link" in {
         when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
         whenReady(service.schemeLinks(psaId)) { result =>
           result mustBe subscriptionLinksRACDAC ++ variationLinks
         }
-
       }
 
-      "when there is no ongoing subscription" in {
+      "racdac switched on and only RAC/DAC scheme in progress then register new scheme and " +
+        "declare RAC/DAC links are displayed including delete scheme link" in {
+        implicit val request: OptionalDataRequest[AnyContent] =
+          OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeNameRACDACJsonOption)), Some(PsaId("A0000000")))
+        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
+
+        val subscriptionLinksRACDAC = registerLink ++ Seq(
+          OverviewLink("declare-racdac", frontendAppConfig.declareAsRACDACUrl,
+            Message("messages__schemeOverview__declare_racdac")),
+          OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
+            Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
+        )
+
+        whenReady(service.schemeLinks(psaId)) { result =>
+          result mustBe subscriptionLinksRACDAC ++ variationLinks
+        }
+      }
+
+      "racdac switched on but no schemes in progress then register new scheme and " +
+        "declare RAC/DAC links are displayed but not delete scheme link" in {
+        implicit val request: OptionalDataRequest[AnyContent] =
+          OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
+        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
+
+        val subscriptionLinksRACDAC = registerLink ++ Seq(
+          OverviewLink("declare-racdac", frontendAppConfig.declareAsRACDACUrl,
+            Message("messages__schemeOverview__declare_racdac"))
+        )
+
+        whenReady(service.schemeLinks(psaId)) { result =>
+          result mustBe subscriptionLinksRACDAC ++ variationLinks
+        }
+      }
+
+      "there is no ongoing subscription" in {
         implicit val request: OptionalDataRequest[AnyContent] =
           OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
         when(lockConnector.getLockByPsa(any())(any(), any())).thenReturn(Future.successful(None))
@@ -100,9 +133,8 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         }
       }
 
-      "when there is no lock for any scheme" in {
+      "there is no lock for any scheme" in {
         when(lockConnector.getLockByPsa(eqTo(psaId))(any(), any())).thenReturn(Future.successful(None))
-
         whenReady(service.schemeLinks(psaId)) {
           _ mustBe subscriptionLinks
         }
@@ -206,6 +238,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val youMustContactHMRCUrl: String = frontendAppConfig.youMustContactHMRCUrl
 
   val schemeNameJsonOption: JsObject = Json.obj("schemeName" -> schemeName)
+  val schemeNameRACDACJsonOption: JsObject = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> schemeName))
   val schemeSrnNumberOnlyData: JsObject =
     Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> srn))
 
