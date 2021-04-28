@@ -28,7 +28,7 @@ import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, JsString}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -106,6 +106,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     "redirect to the next page for a POST and verify that the mongo db has values removed" in {
+      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future(JsString("")))
+
       val result = controller().onSubmit(fakeRequest)
 
       status(result) mustBe SEE_OTHER

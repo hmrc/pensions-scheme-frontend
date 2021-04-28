@@ -20,11 +20,13 @@ import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.racdac.RACDACNameId
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.UserAnswers
 import views.html.racdac.schemeSuccess
 
 import javax.inject.Inject
@@ -65,14 +67,15 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
       withRACDACName{ racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>
-          cacheConnector.removeAll(request.externalId).map { _ =>
-            Ok(view(email,racdacName))
+          val result: JsResult[UserAnswers] = request.userAnswers.remove(RACDACNameId).flatMap(_. remove(ContractOrPolicyNumberId))
+            val x: JsResult[Future[JsValue]] = result.map(ua => cacheConnector.upsert(request.externalId, ua.json))
+               x match {
+                 case JsSuccess(value, _) => value.map(_ => Ok(view(email,racdacName)))
+                 case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+           }
           }
         }
       }
-
-
-  }
 
   def onSubmit: Action[AnyContent] = authenticate() { Redirect(appConfig.managePensionsSchemeOverviewUrl) }
 
