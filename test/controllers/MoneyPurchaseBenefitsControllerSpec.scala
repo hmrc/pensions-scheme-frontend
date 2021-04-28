@@ -35,7 +35,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
-  val form: Form[Seq[MoneyPurchaseBenefits]] = formProvider()
+  val form: Form[MoneyPurchaseBenefits] = formProvider()
   val schemeName = "Test Scheme Name"
   val postCall: (Mode, Option[String]) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
 
@@ -49,7 +49,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
 
   private val validData = Json.obj(
     SchemeNameId.toString -> schemeName,
-    MoneyPurchaseBenefitsId.toString -> Json.arr(MoneyPurchaseBenefits.Collective.toString)
+    MoneyPurchaseBenefitsId.toString -> MoneyPurchaseBenefits.Collective.toString
   )
 
   "MoneyPurchaseBenefits Controller" must {
@@ -63,11 +63,11 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(Seq(Collective)))
+      contentAsString(result) mustBe viewAsString(form.fill(Collective))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value[1]", MoneyPurchaseBenefits.values.head.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", MoneyPurchaseBenefits.values.head.toString))
       val result = controller().onSubmit(NormalMode, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

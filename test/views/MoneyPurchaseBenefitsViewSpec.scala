@@ -42,24 +42,43 @@ class MoneyPurchaseBenefitsViewSpec extends ViewBehaviours {
 
   "MoneyPurchaseBenefits view" when {
     "rendered" must {
-      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1",schemeName))
+      behave like normalPage(
+        view = createView(),
+        messageKeyPrefix = messageKeyPrefix,
+        pageHeader = messages(s"messages__${messageKeyPrefix}__h1", schemeName)
+      )
 
-      behave like pageWithReturnLink(createView(), getReturnLink)
+      behave like pageWithReturnLink(
+        view = createView(),
+        url = getReturnLink
+      )
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for ((option, i) <- MoneyPurchaseBenefits.options.zipWithIndex) {
-          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
+        MoneyPurchaseBenefits.options.map {
+          option =>
+            assertContainsRadioButton(
+              doc = doc,
+              id = s"value-${option.value}",
+              name = "value",
+              value = option.value,
+              isChecked = false
+            )
         }
       }
     }
 
-    for ((option, i) <- MoneyPurchaseBenefits.options.zipWithIndex) {
+    for ((option, _) <- MoneyPurchaseBenefits.options.zipWithIndex) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value_$i", s"value[$i]", option.value, isChecked = false)
-
+          assertContainsRadioButton(
+            doc = doc,
+            id = s"value-${option.value}",
+            name = "value",
+            value = option.value,
+            isChecked = true
+          )
         }
       }
     }
