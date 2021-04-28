@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
@@ -48,8 +48,9 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       withRACDACName { racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>
-          // TODO: Remove declaration:true
-          request.userAnswers.remove(RACDACNameId).flatMap(_.remove(ContractOrPolicyNumberId)) match {
+          request.userAnswers.remove(RACDACNameId)
+            .flatMap(_.remove(ContractOrPolicyNumberId))
+            .flatMap(_.remove(DeclarationId)) match {
             case JsSuccess(value, _) =>
               cacheConnector.upsert(request.externalId, value.json)
                 .map(_ => Ok(view(email, racdacName)))

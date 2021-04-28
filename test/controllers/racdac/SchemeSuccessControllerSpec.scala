@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
-import identifiers.racdac.RACDACNameId
+import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -52,7 +52,10 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val schemeDataForNormalScheme: JsObject =
     UserAnswers()
       .set(SchemeNameId)(nonRacDACSchemeName).asOpt.get
-      .set(RACDACNameId)(racDACSchemeName).asOpt.get.json.as[JsObject]
+      .set(RACDACNameId)(racDACSchemeName).asOpt.get
+      .set(ContractOrPolicyNumberId)("dummy contract no").asOpt.get
+      .set(DeclarationId)(true).asOpt.get
+      .json.as[JsObject]
 
 
   private val view = injector.instanceOf[schemeSuccess]
@@ -92,6 +95,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
       val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
       actualUserAnswers.get(RACDACNameId) mustBe None
+      actualUserAnswers.get(ContractOrPolicyNumberId) mustBe None
+      actualUserAnswers.get(DeclarationId) mustBe None
       actualUserAnswers.get(SchemeNameId) mustBe Some(nonRacDACSchemeName)
     }
 
