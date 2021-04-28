@@ -23,10 +23,9 @@ import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue}
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.UserAnswers
 import views.html.racdac.schemeSuccess
 
 import javax.inject.Inject
@@ -45,41 +44,25 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-//  private def removeAllOf[I <: TypedIdentifier.PathDependent](ids: List[I], userAnswers: UserAnswers): UserAnswers = {
-//
-//    @tailrec
-//    def removeRec[II <: TypedIdentifier.PathDependent](localIds: List[II], result: JsResult[UserAnswers]): JsResult[UserAnswers] = {
-//      result match {
-//        case JsSuccess(_, _) =>
-//          localIds match {
-//            case Nil => result
-//            case id :: tail => removeRec(tail, result.flatMap(_.remove(id)))
-//          }
-//        case failure => failure
-//      }
-//    }
-//
-//    removeRec(ids, JsSuccess(this))
-//  }
-
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
-
-      withRACDACName{ racdacName =>
+      withRACDACName { racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>
-          val result: JsResult[UserAnswers] = request.userAnswers.remove(RACDACNameId).flatMap(_. remove(ContractOrPolicyNumberId))
-            val x: JsResult[Future[JsValue]] = result.map(ua => cacheConnector.upsert(request.externalId, ua.json))
-               x match {
-                 case JsSuccess(value, _) => value.map(_ => Ok(view(email,racdacName)))
-                 case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-           }
+          request.userAnswers.remove(RACDACNameId).flatMap(_.remove(ContractOrPolicyNumberId)) match {
+            case JsSuccess(value, _) =>
+              cacheConnector.upsert(request.externalId, value.json)
+                .map(_ => Ok(view(email, racdacName)))
+            case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
         }
       }
+  }
 
-  def onSubmit: Action[AnyContent] = authenticate() { Redirect(appConfig.managePensionsSchemeOverviewUrl) }
+  def onSubmit: Action[AnyContent] = authenticate() {
+    Redirect(appConfig.managePensionsSchemeOverviewUrl)
+  }
 
-  private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]):Future[Result] = {
+  private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.get(RACDACNameId) match {
       case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       case Some(racdacName) => func(racdacName)

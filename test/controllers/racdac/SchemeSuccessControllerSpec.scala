@@ -25,8 +25,7 @@ import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
-import play.api.mvc.Results._
+import play.api.libs.json.{JsNull, JsObject}
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.racdac.schemeSuccess
@@ -45,7 +44,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   val submissionReferenceNumber = "XX123456789132"
 
-  private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
+  private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val mockPensionAdminstratorConnector = mock[PensionAdministratorConnector]
   val validData: JsObject = UserAnswers().set(RACDACNameId)(schemeName).asOpt.get.json.as[JsObject]
@@ -56,7 +55,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
-      fakeUserAnswersCacheConnector,
+      mockUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -74,13 +73,13 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   "SchemeSuccess Controller" must {
 
     "return OK and the correct view for a GET" in {
-      when(fakeUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
       when(mockPensionAdminstratorConnector.getPSAEmail(any(),any())).thenReturn(Future.successful(email))
 
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-      verify(fakeUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
+      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), any())(any(), any())
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
