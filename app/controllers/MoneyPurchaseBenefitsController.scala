@@ -24,7 +24,7 @@ import models.{Mode, MoneyPurchaseBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -56,31 +56,39 @@ class MoneyPurchaseBenefitsController @Inject()(
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()
 
-  private def convertTcmpArrToStr(implicit request: DataRequest[AnyContent]): Form[MoneyPurchaseBenefits] =
-    (request.userAnswers.json \ "moneyPurchaseBenefits").validate[Seq[MoneyPurchaseBenefits]] match {
-      case JsSuccess(mpb, _) =>
-        mpb match {
-          case Seq(MoneyPurchaseBenefits.Collective) =>
-            form.fill(MoneyPurchaseBenefits.Collective)
-          case Seq(MoneyPurchaseBenefits.Other) =>
-            form.fill(MoneyPurchaseBenefits.Other)
-          case Seq(MoneyPurchaseBenefits.CashBalance) =>
-            form.fill(MoneyPurchaseBenefits.CashBalance)
-          case Seq(MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
-            form.fill(MoneyPurchaseBenefits.MixtureCashBalanceAndOther)
-          case Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
-            form.fill(MoneyPurchaseBenefits.MixtureCollectiveAndCashBalanceAndOrOther)
-          case _ =>
-            form
-        }
-      case JsError(_) =>
-        (request.userAnswers.json \ "moneyPurchaseBenefits").validate[MoneyPurchaseBenefits] match {
+  private def convertTcmpArrToStr(implicit request: DataRequest[AnyContent]): Form[MoneyPurchaseBenefits] = {
+    request.userAnswers.get(MoneyPurchaseBenefitsId) match {
+      case Some(_) =>
+        (request.userAnswers.json \ "moneyPurchaseBenefits").validate[Seq[MoneyPurchaseBenefits]] match {
           case JsSuccess(mpb, _) =>
-            form.fill(mpb)
-          case JsError(_) =>
-            form
+            mpb match {
+              case Seq(MoneyPurchaseBenefits.Collective) =>
+                form.fill(MoneyPurchaseBenefits.Collective)
+              case Seq(MoneyPurchaseBenefits.Other) =>
+                form.fill(MoneyPurchaseBenefits.Other)
+              case Seq(MoneyPurchaseBenefits.CashBalance) =>
+                form.fill(MoneyPurchaseBenefits.CashBalance)
+              case Seq(MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
+                form.fill(MoneyPurchaseBenefits.MixtureCashBalanceAndOther)
+              case Seq(MoneyPurchaseBenefits.Collective, MoneyPurchaseBenefits.Other, MoneyPurchaseBenefits.CashBalance) =>
+                form.fill(MoneyPurchaseBenefits.MixtureCollectiveAndCashBalanceAndOrOther)
+              case _ =>
+                throw MoneyPurchaseBenefitsUnrecognisedException
+            }
+          case JsError(err1) =>
+            (request.userAnswers.json \ "moneyPurchaseBenefits").validate[MoneyPurchaseBenefits] match {
+              case JsSuccess(mpb, _) =>
+                form.fill(mpb)
+              case JsError(err2) =>
+                throw JsResultException(err1 ++ err2)
+            }
         }
+      case _ =>
+        form
     }
+  }
+
+  object MoneyPurchaseBenefitsUnrecognisedException extends Exception("Money purchase benefit not recognised")
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
