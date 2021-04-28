@@ -43,6 +43,23 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
+//  private def removeAllOf[I <: TypedIdentifier.PathDependent](ids: List[I], userAnswers: UserAnswers): UserAnswers = {
+//
+//    @tailrec
+//    def removeRec[II <: TypedIdentifier.PathDependent](localIds: List[II], result: JsResult[UserAnswers]): JsResult[UserAnswers] = {
+//      result match {
+//        case JsSuccess(_, _) =>
+//          localIds match {
+//            case Nil => result
+//            case id :: tail => removeRec(tail, result.flatMap(_.remove(id)))
+//          }
+//        case failure => failure
+//      }
+//    }
+//
+//    removeRec(ids, JsSuccess(this))
+//  }
+
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
 
