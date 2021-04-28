@@ -24,7 +24,7 @@ class RACDACNameFormProvider @Inject() extends Mappings with Constraints {
   private val maxLength = 160
 
   def apply(): Form[String] = Form(
-    "racDACName" -> text("messages__error__racdac_name").
+    "value" -> text("messages__error__racdac_name").
       verifying(firstError(
         maxLength(maxLength, "messages__error__racdac_name_length"),
         safeText("messages__error__racdac_name_invalid")))

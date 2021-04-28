@@ -84,7 +84,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "redirect to the next page when valid data is submitted" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACName", "value 1"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "value 1"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -95,8 +95,8 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     "return a Bad Request and errors" when {
       "invalid data is submitted" in {
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACName", ""))
-        val boundForm = form.bind(Map("racDACName" -> ""))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+        val boundForm = form.bind(Map("value" -> ""))
 
         val result = controller().onSubmit(NormalMode)(postRequest)
 

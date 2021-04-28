@@ -23,12 +23,12 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 class RACDACNameFormProviderSpec extends StringFieldBehaviours with Constraints {
   val validData: Map[String, String] = Map(
-    "racDACName" -> "racDAC Name 1")
+    "value" -> "racDAC Name 1")
   val validMaxLength = 160
   val form = new RACDACNameFormProvider()()
 
   ".racDACName" must {
-    val fieldName = "racDACName"
+    val fieldName = "value"
     val lengthKey = "messages__error__racdac_name_length"
     val requiredKey = "messages__error__racdac_name"
     val invalidKey = "messages__error__racdac_name_invalid"
