@@ -19,13 +19,15 @@ package controllers.racdac
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsNull, JsObject}
+import play.api.libs.json.{JsNull, JsObject, JsValue}
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.racdac.schemeSuccess
@@ -40,18 +42,23 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private lazy val onwardRoute = frontendAppConfig.managePensionsSchemeOverviewUrl
   private val email = "email@a.com"
-  private val schemeName = "schemeName"
-
-  val submissionReferenceNumber = "XX123456789132"
+  private val nonRacDACSchemeName = "schemeName 2"
+  private val racDACSchemeName = "schemeName"
 
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val mockPensionAdminstratorConnector = mock[PensionAdministratorConnector]
-  val validData: JsObject = UserAnswers().set(RACDACNameId)(schemeName).asOpt.get.json.as[JsObject]
+
+  private val schemeDataForNormalScheme: JsObject =
+    UserAnswers()
+      .set(SchemeNameId)(nonRacDACSchemeName).asOpt.get
+      .set(RACDACNameId)(racDACSchemeName).asOpt.get.json.as[JsObject]
+
+
   private val view = injector.instanceOf[schemeSuccess]
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
-                         new FakeDataRetrievalAction(Some(validData))): SchemeSuccessController =
+                         new FakeDataRetrievalAction(Some(schemeDataForNormalScheme))): SchemeSuccessController =
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
@@ -66,7 +73,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     )
 
   def viewAsString(): String =
-    view(email,schemeName)(fakeRequest, messages).toString
+    view(email, racDACSchemeName)(fakeRequest, messages).toString
 
   appRunning()
 
@@ -79,7 +86,13 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), any())(any(), any())
+
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsValue])
+
+      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+      val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
+      actualUserAnswers.get(RACDACNameId) mustBe None
+      actualUserAnswers.get(SchemeNameId) mustBe Some(nonRacDACSchemeName)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
