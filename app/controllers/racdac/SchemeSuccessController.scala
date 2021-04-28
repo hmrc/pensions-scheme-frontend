@@ -48,6 +48,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       withRACDACName { racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>
+          // TODO: Remove declaration:true
           request.userAnswers.remove(RACDACNameId).flatMap(_.remove(ContractOrPolicyNumberId)) match {
             case JsSuccess(value, _) =>
               cacheConnector.upsert(request.externalId, value.json)
