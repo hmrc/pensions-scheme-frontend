@@ -20,11 +20,11 @@ import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class RACDACContractOrPolicyNumberFormProvider extends Mappings with Constraints {
+class ContractOrPolicyNumberFormProvider extends Mappings with Constraints {
   private val maxLength = 50
 
   def apply(name: String)(implicit messages: Messages): Form[String] = Form(
-    "racDACContractOrPolicyNumber" -> text(messages("messages__error__racdac_contract_or_policy_number", name)).
+    "value" -> text(messages("messages__error__racdac_contract_or_policy_number", name)).
       verifying(firstError(
         maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length")))
   )

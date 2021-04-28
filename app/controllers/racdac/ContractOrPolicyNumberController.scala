@@ -18,8 +18,8 @@ package controllers.racdac
 
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
-import forms.racdac.RACDACContractOrPolicyNumberFormProvider
-import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import forms.racdac.ContractOrPolicyNumberFormProvider
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.Mode
 import models.requests.DataRequest
 import navigators.Navigator
@@ -29,23 +29,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
-import views.html.racdac.racDACContractOrPolicyNumber
+import views.html.racdac.contractOrPolicyNumber
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RACDACContractOrPolicyNumberController @Inject()(
-                                      override val messagesApi: MessagesApi,
-                                      dataCacheConnector: UserAnswersCacheConnector,
-                                      navigator: Navigator,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction,
-                                      allowAccess: AllowAccessActionProvider,
-                                      formProvider: RACDACContractOrPolicyNumberFormProvider,
-                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                      val controllerComponents: MessagesControllerComponents,
-                                      val view: racDACContractOrPolicyNumber
+class ContractOrPolicyNumberController @Inject()(
+                                                  override val messagesApi: MessagesApi,
+                                                  dataCacheConnector: UserAnswersCacheConnector,
+                                                  navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  allowAccess: AllowAccessActionProvider,
+                                                  formProvider: ContractOrPolicyNumberFormProvider,
+                                                  pensionAdministratorConnector: PensionAdministratorConnector,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  val view: contractOrPolicyNumber
                                     )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport
@@ -55,7 +55,7 @@ class RACDACContractOrPolicyNumberController @Inject()(
     implicit request => {
       withRACDACName{ racdacName =>
         val form = formProvider(racdacName)
-        val preparedForm = request.userAnswers.get(RACDACContractOrPolicyNumberId).fold(form)(v => form.fill(v))
+        val preparedForm = request.userAnswers.get(ContractOrPolicyNumberId).fold(form)(v => form.fill(v))
           pensionAdministratorConnector.getPSAName.map { psaName =>
             Ok(view(preparedForm, mode, psaName, racdacName))
           }
@@ -74,8 +74,8 @@ class RACDACContractOrPolicyNumberController @Inject()(
             }
           },
           value =>
-            dataCacheConnector.save(request.externalId, RACDACContractOrPolicyNumberId, value).map {
-              cacheMap => Redirect(navigator.nextPage(RACDACContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
+            dataCacheConnector.save(request.externalId, ContractOrPolicyNumberId, value).map {
+              cacheMap => Redirect(navigator.nextPage(ContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
             }
         )
       }

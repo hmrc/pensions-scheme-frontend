@@ -19,7 +19,7 @@ package controllers.racdac
 import config.FrontendAppConfig
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -59,7 +59,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val racdacContractNoSection = AnswerSection(
         None,
-        RACDACContractOrPolicyNumberId.row(controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url)
+        ContractOrPolicyNumberId.row(controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(CheckMode).url)
       )
 
       val vm = CYAViewModel(

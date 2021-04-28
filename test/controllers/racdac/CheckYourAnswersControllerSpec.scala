@@ -19,7 +19,7 @@ package controllers.racdac
 import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -76,7 +76,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     Some(Json.obj(
       "racdac" -> Json.obj(
         RACDACNameId.toString -> racDACName,
-        RACDACContractOrPolicyNumberId.toString -> racDACContractNo
+        ContractOrPolicyNumberId.toString -> racDACContractNo
       )
     ))
   )
@@ -102,7 +102,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
         messages("messages__racdac_contract_or_policy_number__title", racDACName),
         Seq(racDACContractNo),
         answerIsMessageKey = false,
-        Some(Link("site.change", controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(CheckMode).url,
           Some(messages("messages__visuallyhidden__racdac_contract_or_policy_number", racDACName))))
       )
     )

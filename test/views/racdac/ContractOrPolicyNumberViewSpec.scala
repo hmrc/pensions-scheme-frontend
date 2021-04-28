@@ -16,23 +16,23 @@
 
 package views.racdac
 
-import forms.racdac.RACDACContractOrPolicyNumberFormProvider
+import forms.racdac.ContractOrPolicyNumberFormProvider
 import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.racdac.racDACContractOrPolicyNumber
+import views.html.racdac.contractOrPolicyNumber
 
-class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String] {
+class ContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String] {
   private val psaName = "A PSA"
   private val schemeName = "scheme"
   val messageKeyPrefix = "racdac_contract_or_policy_number"
   private val racDACName = "RAC DAC NAME"
 
-  private val formProvider = new RACDACContractOrPolicyNumberFormProvider()
+  private val formProvider = new ContractOrPolicyNumberFormProvider()
   override val form = formProvider(racDACName)
 
-  val view: racDACContractOrPolicyNumber = app.injector.instanceOf[racDACContractOrPolicyNumber]
+  val view: contractOrPolicyNumber = app.injector.instanceOf[contractOrPolicyNumber]
 
   def createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, psaName, schemeName)(fakeRequest, messages)
 
@@ -42,12 +42,12 @@ class RACDACContractOrPolicyNumberViewSpec extends QuestionViewBehaviours[String
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
     view(form, CheckMode, psaName, schemeName)(fakeRequest, messages)
 
-  "RACDACContractOrPolicyNumber view" must {
+  "ContractOrPolicyNumber view" must {
 
     behave like normalPageWithDynamicTitleAndHeader(createView, messageKeyPrefix, schemeName)
 
     behave like pageWithErrorOutsideLabel(createViewUsingForm, messageKeyPrefix, controllers.racdac.routes.RACDACNameController.onSubmit(NormalMode).url,
-      "racDACContractOrPolicyNumber")
+      "value")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }

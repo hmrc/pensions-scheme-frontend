@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import identifiers.racdac.{DeclarationId, RACDACContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{DeclarationId, ContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -40,7 +40,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
         Table(
           ("Id", "UserAnswers", "Next Page"),
           row(RACDACNameId)(someStringValue, contractOrPolicyNumberPage),
-          row(RACDACContractOrPolicyNumberId)(someStringValue, cyaPage),
+          row(ContractOrPolicyNumberId)(someStringValue, cyaPage),
           row(DeclarationId)(true, successPage)
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
@@ -51,7 +51,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
         Table(
           ("Id", "UserAnswers", "Next Page"),
           row(RACDACNameId)(someStringValue, cyaPage),
-          row(RACDACContractOrPolicyNumberId)(someStringValue, cyaPage)
+          row(ContractOrPolicyNumberId)(someStringValue, cyaPage)
         )
       behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
     }
@@ -59,7 +59,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
 }
 
 object RACDACNavigatorSpec {
-  private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.RACDACContractOrPolicyNumberController.onPageLoad(NormalMode)
+  private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode)
   private val cyaPage: Call      = controllers.racdac.routes.CheckYourAnswersController.onPageLoad()
   private val successPage: Call      = controllers.racdac.routes.SchemeSuccessController.onPageLoad()
 }

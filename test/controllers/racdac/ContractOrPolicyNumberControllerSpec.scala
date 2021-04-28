@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.racdac.RACDACContractOrPolicyNumberFormProvider
-import identifiers.racdac.{RACDACContractOrPolicyNumberId, RACDACNameId}
+import forms.racdac.ContractOrPolicyNumberFormProvider
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.NormalMode
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -30,20 +30,20 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
-import views.html.racdac.racDACContractOrPolicyNumber
+import views.html.racdac.contractOrPolicyNumber
 
 import scala.concurrent.Future
 
-class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with MockitoSugar {
+class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val psaName = "Mr Maxwell"
-  val formProvider = new RACDACContractOrPolicyNumberFormProvider()
+  val formProvider = new ContractOrPolicyNumberFormProvider()
 
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
   val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
 
-  private val view = injector.instanceOf[racDACContractOrPolicyNumber]
+  private val view = injector.instanceOf[contractOrPolicyNumber]
 
   private val racdacName = "racdac scheme"
   val form: Form[String] = formProvider(racdacName)
@@ -54,8 +54,8 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
     Some(uaWithRACDACName.json)
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): RACDACContractOrPolicyNumberController =
-    new RACDACContractOrPolicyNumberController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): ContractOrPolicyNumberController =
+    new ContractOrPolicyNumberController(
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -71,7 +71,7 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
 
   private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName, racdacName)(fakeRequest, messages).toString
 
-  "RACDACContractOrPolicyNumber Controller" must {
+  "ContractOrPolicyNumber Controller" must {
 
     "return OK and the correct view for a GET" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
@@ -85,7 +85,7 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
       val validData =Json.obj("racdac" -> Json.obj(
         RACDACNameId.toString -> racdacName,
-        RACDACContractOrPolicyNumberId.toString -> "value 1")
+        ContractOrPolicyNumberId.toString -> "value 1")
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
@@ -96,7 +96,7 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
 
     "redirect to the next page when valid data is submitted" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACContractOrPolicyNumber", "value 1"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "value 1"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -107,8 +107,8 @@ class RACDACContractOrPolicyNumberControllerSpec extends ControllerSpecBase with
     "return a Bad Request and errors" when {
       "invalid data is submitted" in {
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("racDACContractOrPolicyNumber", ""))
-        val boundForm = form.bind(Map("racDACContractOrPolicyNumber" -> ""))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+        val boundForm = form.bind(Map("value" -> ""))
 
         val result = controller().onSubmit(NormalMode)(postRequest)
 

@@ -23,10 +23,10 @@ import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.Message
 
-case object RACDACContractOrPolicyNumberId extends TypedIdentifier[String] {
+case object ContractOrPolicyNumberId extends TypedIdentifier[String] {
   self =>
-  override def path: JsPath = JsPath \ "racdac" \ RACDACContractOrPolicyNumberId.toString
-  override def toString: String = "contractOrPolicyNumberId"
+  override def path: JsPath = JsPath \ "racdac" \ ContractOrPolicyNumberId.toString
+  override def toString: String = "contractOrPolicyNumber"
   implicit def cya(implicit countryOptions: CountryOptions, userAnswers: UserAnswers)
   : CheckYourAnswers[self.type] = {
     val racDACName = userAnswers.get(RACDACNameId).getOrElse("")

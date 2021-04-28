@@ -8,10 +8,10 @@ POST        /name                                    controllers.racdac.RACDACNa
 GET         /change/name                             controllers.racdac.RACDACNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /change/name                             controllers.racdac.RACDACNameController.onSubmit(mode: Mode = CheckMode)
 
-GET         /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /number                                  controllers.racdac.RACDACContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /change/number                           controllers.racdac.RACDACContractOrPolicyNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/number                           controllers.racdac.RACDACContractOrPolicyNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /number                                  controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode)
+POST        /number                                  controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode)
+GET         /change/number                           controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = CheckMode)
+POST        /change/number                           controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET         /declaration                             controllers.racdac.DeclarationController.onPageLoad()
 GET         /on-click-agree                          controllers.racdac.DeclarationController.onClickAgree()

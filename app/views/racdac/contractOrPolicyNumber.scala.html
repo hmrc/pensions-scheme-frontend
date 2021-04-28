@@ -33,14 +33,14 @@
 @main_template(
     title = titleWithErrors(form, messages("messages__racdac_contract_or_policy_number__title", schemeName))) {
 
-    @formHelper(action = RACDACContractOrPolicyNumberController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = ContractOrPolicyNumberController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
         @components.input_text(
-            field = form("racDACContractOrPolicyNumber"),
+            field = form("value"),
             label = messages("messages__racdac_contract_or_policy_number__heading", schemeName),
             labelClass = Some("visually-hidden"),
             headingIsLegend = true
