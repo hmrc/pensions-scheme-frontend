@@ -55,11 +55,11 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
           val newUserAnswers: JsResult[UserAnswers] = {
             request.userAnswers.get(RACDACNameId) match {
               case Some(racDacName) =>
-                val contractOrPolicyNumberOption = request.userAnswers.get(ContractOrPolicyNumberId)
-                val updateUA = UserAnswers().set(RACDACNameId)(racDacName)
-                if (contractOrPolicyNumberOption.isDefined)
+                val contractOrPolicyNumberOption: Option[String] = request.userAnswers.get(ContractOrPolicyNumberId)
+                  val updateUA: JsResult[UserAnswers] = UserAnswers().set(RACDACNameId)(racDacName)
+                if (contractOrPolicyNumberOption.isDefined) {
                   updateUA.flatMap(_.set(ContractOrPolicyNumberId)(contractOrPolicyNumberOption.get))
-                else updateUA
+                } else updateUA
               case None => JsSuccess(UserAnswers())
             }
           }
