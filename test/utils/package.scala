@@ -46,7 +46,7 @@ package object utils {
       answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
     }
 
-    def moneyPurchaseBenefits(benefits: Seq[MoneyPurchaseBenefits]): UserAnswers = {
+    def moneyPurchaseBenefits(benefits: MoneyPurchaseBenefits): UserAnswers = {
       answers.set(identifiers.MoneyPurchaseBenefitsId)(benefits).asOpt.value
     }
 
