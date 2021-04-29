@@ -129,7 +129,7 @@ trait DataCompletionHelper extends OptionValues {
     if (isComplete) {
       ua.occupationalPensionScheme(isOccupational = true).
         investmentRegulated(isInvestmentRegulated = true).typeOfBenefits(TypeOfBenefits.MoneyPurchase).
-        moneyPurchaseBenefits(Seq(MoneyPurchaseBenefits.Collective)).benefitsSecuredByInsurance(isInsured = false)
+        moneyPurchaseBenefits(MoneyPurchaseBenefits.Collective).benefitsSecuredByInsurance(isInsured = false)
     } else {
       ua.occupationalPensionScheme(isOccupational = true)
         .investmentRegulated(isInvestmentRegulated = true)

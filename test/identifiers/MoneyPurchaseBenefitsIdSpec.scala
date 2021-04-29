@@ -31,7 +31,7 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
   val onwardUrl = "onwardUrl"
   val name = "schemeName"
   private val answerRowsWithChangeLinks = Seq(
-    AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(messages("messages__moneyPurchaseBenefits__opt2")), false,
+    AnswerRow(Message("messages__moneyPurchaseBenefits__cya", name),Seq(messages("messages__moneyPurchaseBenefits__02")), false,
       Some(Link("site.change",onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name)))))
   )
 
@@ -39,7 +39,7 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
     Some(Link("site.add", onwardUrl, Some(Message("messages__moneyPurchaseBenefits__cya_hidden", name))))))
 
   val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
-    _.set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.CashBalance))).asOpt.get
+    _.set(MoneyPurchaseBenefitsId)(MoneyPurchaseBenefits.CashBalance)).asOpt.get
 
   "cya" when {
     "in normal mode" must {

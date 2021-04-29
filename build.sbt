@@ -57,10 +57,7 @@ lazy val root = (project in file("."))
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
   .settings(resolvers ++= Seq(
-    Resolver.bintrayRepo("hmrc", "releases"),
-    Resolver.jcenterRepo,
-    Resolver.bintrayRepo("emueller", "maven"),
-    Resolver.bintrayRepo("wolfendale", "maven")
+    Resolver.jcenterRepo
   )
   )
   .settings(

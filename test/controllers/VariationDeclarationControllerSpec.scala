@@ -164,7 +164,7 @@ class VariationDeclarationControllerSpec
       val app = applicationBuilder(
         dataRetrievalAction = validData(
           extraData = Json.obj(
-            "moneyPurchaseBenefits" -> Json.arr("opt1"),
+            "moneyPurchaseBenefits" -> "01",
             "benefits" -> "opt1",
             TcmpChangedId.toString -> true
           )
@@ -189,7 +189,7 @@ class VariationDeclarationControllerSpec
         psaId = "A0000000",
         tcmp = "01",
         payload = Json.obj(
-          "moneyPurchaseBenefits" -> Json.arr("opt1"),
+          "moneyPurchaseBenefits" -> "01",
           "benefits" -> "opt1",
           SchemeNameId.toString -> schemeName,
           PstrId.toString -> "pstr",
