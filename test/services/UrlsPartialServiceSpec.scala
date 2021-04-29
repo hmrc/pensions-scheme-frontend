@@ -98,7 +98,6 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
         val subscriptionLinksRACDAC: Seq[OverviewLink] = registerLink ++ Seq(
           OverviewLink("continue-declare-racdac", frontendAppConfig.declareAsRACDACUrl,
-            //change
             Message("messages__schemeOverview__declare_racdac_continue", schemeName, deleteDate)),
           OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
             Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
