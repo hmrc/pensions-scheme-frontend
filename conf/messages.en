@@ -1836,6 +1836,7 @@ messages__schemeOverview__scheme_variations_continue = Finish making changes to 
 messages__schemeOverview__scheme_variations_delete = Delete changes already entered for {0}
 
 messages__schemeOverview__declare_racdac = Declare as scheme administrator for a RAC/DAC
+messages__schemeOverview__declare_racdac_continue = Finish declaring as scheme administrator for {0} by {1}
 
 messages__moneyPurchaseBenefits__title = What type of money purchase benefits does the scheme provide?
 messages__moneyPurchaseBenefits__h1 = What type of money purchase benefits does {0} provide?

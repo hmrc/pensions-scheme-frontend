@@ -65,20 +65,38 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def racDACSchemeLink(implicit hc: HeaderCarrier,
+  private def racDACSchemeLink(implicit request: OptionalDataRequest[AnyContent],
+                               hc: HeaderCarrier,
                           ec: ExecutionContext
                         ):Future[Seq[OverviewLink]] = {
-    featureToggleService.get(RACDAC).map {
+    featureToggleService.get(RACDAC).flatMap {
       case Enabled(_) =>
-        Seq(
-          OverviewLink(
-            id = "declare-racdac",
-            url = appConfig.declareAsRACDACUrl,
-            linkText = Message("messages__schemeOverview__declare_racdac")
-          )
-        )
+        val racDACSchemeName = request.userAnswers.flatMap(_.get(RACDACNameId))
+        racDACSchemeName match {
+          case Some(racDacName) =>
+            lastUpdatedAndDeleteDate(request.externalId) map { date =>
+              val continueRegistrationLink = Seq(OverviewLink(
+                id = "continue-declare-racdac",
+                url = appConfig.declareAsRACDACUrl,
+                linkText = Message(
+                  "messages__schemeOverview__declare_racdac_continue",
+                  racDacName,
+                  createFormattedDate(date, appConfig.daysDataSaved)
+                )
+              ))
+              continueRegistrationLink
+            }
+          case _ =>
+            Future.successful(
+              Seq(OverviewLink(
+                id = "declare-racdac",
+                url = appConfig.declareAsRACDACUrl,
+                linkText = Message("messages__schemeOverview__declare_racdac")
+              ))
+            )
+        }
       case _ =>
-        Nil
+        Future(Nil)
       }
   }
 
