@@ -112,44 +112,44 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   "SchemeSuccess Controller" must {
 
-//    "return OK and the correct view for a GET when there are no RAC/DAC answers" in {
-//      reset(mockUserAnswersCacheConnector)
-//      when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
-//      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
-//
-//
-//      val result = controller(Some(schemeDataForNormalScheme())).onPageLoad(fakeRequest)
-//      status(result) mustBe OK
-//      contentAsString(result) mustBe viewAsString()
-//      verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
-//
-//      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsValue])
-//
-//      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
-//      val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
-//      actualUserAnswers.get(RACDACNameId).isDefined mustBe false
-//      actualUserAnswers.get(ContractOrPolicyNumberId).isDefined mustBe false
-//      actualUserAnswers.get(SchemeNameId).isDefined mustBe false
-//    }
+    "return OK and the correct view for a GET when there are no RAC/DAC answers" in {
+      reset(mockUserAnswersCacheConnector)
+      when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
-//  "return OK and the correct view for a GET when RACDACNameId exists only" in {
-//      reset(mockUserAnswersCacheConnector)
-//      when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
-//      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
-//
-//      val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName)))).onPageLoad(fakeRequest)
-//      status(result) mustBe OK
-//      contentAsString(result) mustBe viewAsString()
-//      verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
-//
-//      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsValue])
-//
-//      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
-//      val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
-//      actualUserAnswers.get(RACDACNameId).isDefined mustBe true
-//      actualUserAnswers.get(ContractOrPolicyNumberId).isDefined mustBe false
-//      actualUserAnswers.get(SchemeNameId).isDefined mustBe false
-//    }
+
+      val result = controller(Some(schemeDataForNormalScheme())).onPageLoad(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+      verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
+
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsValue])
+
+      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+      val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
+      actualUserAnswers.get(RACDACNameId).isDefined mustBe false
+      actualUserAnswers.get(ContractOrPolicyNumberId).isDefined mustBe false
+      actualUserAnswers.get(SchemeNameId).isDefined mustBe false
+    }
+
+  "return OK and the correct view for a GET when RACDACNameId exists only" in {
+      reset(mockUserAnswersCacheConnector)
+      when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
+
+      val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName)))).onPageLoad(fakeRequest)
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+      verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
+
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsValue])
+
+      verify(mockUserAnswersCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+      val actualUserAnswers = UserAnswers(jsonCaptor.getValue)
+      actualUserAnswers.get(RACDACNameId).isDefined mustBe true
+      actualUserAnswers.get(ContractOrPolicyNumberId).isDefined mustBe false
+      actualUserAnswers.get(SchemeNameId).isDefined mustBe false
+    }
 
   "return OK and the correct view for a GET when both RAC/DAC answers exist" in {
     reset(mockUserAnswersCacheConnector)
@@ -176,20 +176,20 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       actualUserAnswers.get(SchemeNameId).isDefined mustBe false
     }
 
-//    "redirect to Session Expired for a GET if no existing data is found" in {
-//      val result = controller(None).onPageLoad(fakeRequest)
-//
-//      status(result) mustBe SEE_OTHER
-//      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-//    }
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(None).onPageLoad(fakeRequest)
 
-//    "redirect to the next page for a POST" in {
-//      val result = controller(None).onSubmit(fakeRequest)
-//
-//      status(result) mustBe SEE_OTHER
-//      redirectLocation(result) mustBe Some(onwardRoute.url)
-//
-//    }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to the next page for a POST" in {
+      val result = controller(None).onSubmit(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+
+    }
   }
 
 }
