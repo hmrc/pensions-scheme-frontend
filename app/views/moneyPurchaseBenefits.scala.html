@@ -24,43 +24,32 @@
 @import models.MoneyPurchaseBenefits
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+main_template: main_template,
+formHelper: FormWithCSRF
 )
 
-@(
-        form: Form[_],
-        mode: Mode,
-        schemeName: Option[String],
-        postCall: Call,
-        srn: Option[String]
-)(
-        implicit request: Request[_],
-        messages: Messages
-)
+@(form: Form[_], mode: Mode, schemeName: Option[String], postCall: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))
-) {
+    title = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
-
         <div class="form-group @if(form.hasErrors){form-group--error}">
             @schemeName.map { sn =>
 
-                @components.input_radio(
+                @components.checkbox(
                     field = form("value"),
                     legend = messages("messages__moneyPurchaseBenefits__h1", sn),
-                    inputs = MoneyPurchaseBenefits.options,
-                    headingIsLegend = true
+                    headingIsLegend = true,
+                    hint = Some(messages("messages__moneyPurchaseBenefits__hint")),
+                    inputs = MoneyPurchaseBenefits.options
                 )
             }
         </div>
-
         @components.submit_button()
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)

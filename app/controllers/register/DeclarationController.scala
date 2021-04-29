@@ -175,15 +175,16 @@ class DeclarationController @Inject()(
   private def auditTcmp(psaId: String, ua: UserAnswers)
                        (implicit request: DataRequest[AnyContent]): Future[Unit] =
     Future.successful(
-      (
-        ua.get(TypeOfBenefitsId),
-        ua.get(MoneyPurchaseBenefitsId)
-      ) match {
-        case (Some(typeOfBenefits), Some(tcmp)) if !typeOfBenefits.equals(TypeOfBenefits.Defined) =>
+      ua.get(TypeOfBenefitsId) match {
+        case Some(typeOfBenefits)
+          if !typeOfBenefits.equals(TypeOfBenefits.Defined) =>
           auditService.sendExtendedEvent(
             TcmpAuditEvent(
               psaId = psaId,
-              tcmp = tcmp.toString,
+              tcmp = TcmpAuditEvent.tcmpAuditValue(
+                typeOfBenefits = typeOfBenefits,
+                moneyPurchaseBenefit = ua.get(MoneyPurchaseBenefitsId)
+              ),
               payload = ua.json,
               auditType = "TaxationCollectiveMoneyPurchaseSubscriptionAuditEvent"
             )
