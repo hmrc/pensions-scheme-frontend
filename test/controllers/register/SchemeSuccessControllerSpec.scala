@@ -16,12 +16,11 @@
 
 package controllers.register
 
-import java.time.LocalDate
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
-import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import org.mockito.ArgumentCaptor
@@ -30,13 +29,14 @@ import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
+import play.api.libs.json.{JsNull, JsValue}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 import views.html.register.schemeSuccess
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
@@ -84,9 +84,9 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val view = injector.instanceOf[schemeSuccess]
 
-  private def controller(data:UserAnswers): SchemeSuccessController = {
+  private def controller(data:Option[UserAnswers]): SchemeSuccessController = {
     val dataRetrievalAction: DataRetrievalAction =
-      new FakeDataRetrievalAction(Some(data.json))
+      new FakeDataRetrievalAction(data.map(_.json))
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
@@ -118,7 +118,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
 
-      val result = controller(schemeDataForNormalScheme()).onPageLoad(fakeRequest)
+      val result = controller(Some(schemeDataForNormalScheme())).onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -137,7 +137,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
-      val result = controller(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName))).onPageLoad(fakeRequest)
+      val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName)))).onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -157,8 +157,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
 
-    val result = controller(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName),
-      racDACContract = Some(racDACContractNo))).onPageLoad(fakeRequest)
+    val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName),
+      racDACContract = Some(racDACContractNo)))).onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -171,16 +171,16 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       actualUserAnswers.get(ContractOrPolicyNumberId).isDefined mustBe true
       actualUserAnswers.get(SchemeNameId).isDefined mustBe false
     }
-//
+
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(schemeDataForNormalScheme()).onPageLoad(fakeRequest)
+      val result = controller(None).onPageLoad(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page for a POST" in {
-      val result = controller().onSubmit(fakeRequest)
+      val result = controller(None).onSubmit(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
