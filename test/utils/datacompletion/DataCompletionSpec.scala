@@ -448,7 +448,7 @@ class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues wi
   "isBenefitsAndInsuranceCompleted" must {
     "return true when all the answers are completed with benefits secured by insurance" in {
       val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).
-        typeOfBenefits(TypeOfBenefits.MoneyPurchase).moneyPurchaseBenefits(MoneyPurchaseBenefits.CashBalance)
+        typeOfBenefits(TypeOfBenefits.MoneyPurchase).moneyPurchaseBenefits(Seq(MoneyPurchaseBenefits.CashBalance, MoneyPurchaseBenefits.Collective))
         .benefitsSecuredByInsurance(true).insuranceCompanyName("test name").
         insurancePolicyNumber("112").insurerConfirmAddress(Address("a", "b", None, None, None, "GB"))
       answers.isBenefitsAndInsuranceCompleted.value mustBe true

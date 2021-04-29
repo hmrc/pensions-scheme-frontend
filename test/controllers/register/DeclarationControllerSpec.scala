@@ -125,7 +125,7 @@ class DeclarationControllerSpec
         psaId = "A0000000",
         tcmp = "01",
         payload = Json.obj(
-          "moneyPurchaseBenefits" -> "01",
+          "moneyPurchaseBenefits" -> Json.arr("opt1"),
           "benefits" -> "opt1",
           SchemeNameId.toString -> "schemeName",
           "declaration" -> true
@@ -280,7 +280,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .asOpt
       .value
       .establisherCompanyDormant(1, DeclarationDormant.No)
-      .set(MoneyPurchaseBenefitsId)(MoneyPurchaseBenefits.Collective)
+      .set(MoneyPurchaseBenefitsId)(Seq(MoneyPurchaseBenefits.Collective))
       .asOpt
       .value
       .set(TypeOfBenefitsId)(typeOfBenefit)
