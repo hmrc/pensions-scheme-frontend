@@ -28,17 +28,13 @@
 )(implicit messages: Messages)
 
 @ariaDescribedBy = @{
-    val errorId = if (field.hasErrors) Seq(s"error-message-${field.id}-input") else Seq.empty
-    val hintId = if (hint.nonEmpty) Seq(s"${field.id}-radio-hint") else Seq.empty
-    (hintId ++ errorId).mkString(" ")
-}
-
-@fsClass = {
-    @if(fieldsetClass.nonEmpty){class=@fieldsetClass.get}
+val errorId = if (field.hasErrors) Seq(s"error-message-${field.id}-input") else Seq.empty
+val hintId = if (hint.nonEmpty) Seq(s"${field.id}-radio-hint") else Seq.empty
+(hintId ++ errorId).mkString(" ")
 }
 
 <div class="form-group @if(field.hasErrors){form-field--error}">
-    <fieldset @fsClass id="@{field.id}" @if(field.hasErrors || hint.nonEmpty){aria-describedby="@ariaDescribedBy"}>
+    <fieldset class="@fieldsetClass" id="@{field.id}" @if(field.hasErrors || hint.nonEmpty){aria-describedby="@ariaDescribedBy"}>
         <legend>
             @if(headingIsLegend){
                 <h1 class="heading-xlarge">@legend</h1>

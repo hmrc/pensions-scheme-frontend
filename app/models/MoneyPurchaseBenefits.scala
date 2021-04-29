@@ -16,36 +16,21 @@
 
 package models
 
-import utils.{Enumerable, InputOption, WithName}
+import utils.{Enumerable, WithName}
+import viewmodels.Checkbox
 
 
 sealed trait MoneyPurchaseBenefits
 
 object MoneyPurchaseBenefits extends Enumerable.Implicits {
 
-  case object Collective extends WithName("01") with MoneyPurchaseBenefits
-  case object CashBalance extends WithName("02") with MoneyPurchaseBenefits
-  case object Other extends WithName("03") with MoneyPurchaseBenefits
-  case object MixtureCollectiveAndCashBalanceAndOrOther extends WithName("04") with MoneyPurchaseBenefits
-  case object MixtureCashBalanceAndOther extends WithName("05") with MoneyPurchaseBenefits
+  case object Collective extends WithName("opt1") with MoneyPurchaseBenefits
+  case object CashBalance extends WithName("opt2") with MoneyPurchaseBenefits
+  case object Other extends WithName("opt3") with MoneyPurchaseBenefits
 
-  def values: Seq[MoneyPurchaseBenefits] =
-    Seq(
-      Collective,
-      CashBalance,
-      Other,
-      MixtureCollectiveAndCashBalanceAndOrOther,
-      MixtureCashBalanceAndOther
-    )
+  def values: Seq[MoneyPurchaseBenefits] = Seq(Collective, CashBalance, Other)
 
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(
-        value = value.toString,
-        label = s"messages__moneyPurchaseBenefits__${value.toString}"
-      )
-  }
+  val options: Seq[Checkbox] = values.map { value => Checkbox("messages__moneyPurchaseBenefits__", value.toString) }
 
-  implicit val enumerable: Enumerable[MoneyPurchaseBenefits] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  implicit val enumerable: Enumerable[MoneyPurchaseBenefits] = Enumerable(values.map(v => v.toString -> v): _*)
 }

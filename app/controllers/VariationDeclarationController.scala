@@ -112,18 +112,16 @@ class VariationDeclarationController @Inject()(
                          implicit request: DataRequest[AnyContent]
                        ): Future[Unit] =
     Future.successful(
-      (
-        originalTypeOfBenefits,
-        ua.get(TypeOfBenefitsId),
-        ua.get(TcmpChangedId),
-        ua.get(MoneyPurchaseBenefitsId)
-      ) match {
-        case (Some(originalBenefits), Some(updatedBenefits), Some(tcmpChanged), Some(tcmp))
-          if updatedBenefits != originalBenefits || tcmpChanged =>
+      (originalTypeOfBenefits, ua.get(TypeOfBenefitsId), ua.get(TcmpChangedId)) match {
+        case (Some(originalBenefits), Some(updatedBenefits), tcmpChanged)
+          if updatedBenefits != originalBenefits || tcmpChanged.contains(true) =>
           auditService.sendExtendedEvent(
             TcmpAuditEvent(
               psaId = psaId,
-              tcmp = tcmp.toString,
+              tcmp = TcmpAuditEvent.tcmpAuditValue(
+                typeOfBenefits = updatedBenefits,
+                moneyPurchaseBenefit = ua.get(MoneyPurchaseBenefitsId)
+              ),
               payload = ua.json,
               auditType = "TaxationCollectiveMoneyPurchaseAuditEvent"
             )
