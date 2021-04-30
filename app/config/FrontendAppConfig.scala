@@ -96,6 +96,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val deleteVariationsUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteVariations")
   lazy val cannotStartRegUrl: String = runModeConfiguration.underlying.getString("urls.partials.cannotStartReg")
   lazy val canBeRegisteredUrl: String = runModeConfiguration.underlying.getString("urls.partials.canBeRegistered")
+  lazy val declareAsRACDACUrl: String = runModeConfiguration.underlying.getString("urls.partials.declareAsRACDAC")
 
   //FEATURES
   lazy val languageTranslationEnabled: Boolean = runModeConfiguration.getOptional[Boolean]("features" +

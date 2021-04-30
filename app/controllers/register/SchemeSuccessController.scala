@@ -16,21 +16,23 @@
 
 package controllers.register
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeTypeId
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
-import javax.inject.Inject
 import models.register.SchemeType.MasterTrust
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsResult, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.UserAnswers
 import views.html.register.schemeSuccess
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
@@ -50,19 +52,36 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
         SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
+          val newUserAnswers: JsResult[UserAnswers] = {
+            request.userAnswers.get(RACDACNameId) match {
+              case Some(racDacName) =>
+                val contractOrPolicyNumberOption: Option[String] = request.userAnswers.get(ContractOrPolicyNumberId)
+                  val updateUA: JsResult[UserAnswers] = UserAnswers().set(RACDACNameId)(racDacName)
+                if (contractOrPolicyNumberOption.isDefined) {
+                  updateUA.flatMap(_.set(ContractOrPolicyNumberId)(contractOrPolicyNumberOption.get))
+                } else updateUA
+              case None => JsSuccess(UserAnswers())
+            }
+          }
           cacheConnector.removeAll(request.externalId).flatMap { _ =>
-            Future.successful(Ok(
-              view(
-                LocalDate.now(),
-                submissionReferenceNumber.schemeReferenceNumber,
-                request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-                email
-              )
-            ))
+            newUserAnswers match {
+              case JsSuccess(value, _) =>
+                cacheConnector.upsert(request.externalId, value.json)
+                  .map(_ => Ok(view(
+                    LocalDate.now(),
+                    submissionReferenceNumber.schemeReferenceNumber,
+                    request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
+                    email
+                  )))
+              case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            }
           }
         }
       }
   }
 
-  def onSubmit: Action[AnyContent] = authenticate() { Redirect(appConfig.managePensionsSchemeOverviewUrl) }
+
+  def onSubmit: Action[AnyContent] = authenticate() {
+    Redirect(appConfig.managePensionsSchemeOverviewUrl)
+  }
 }

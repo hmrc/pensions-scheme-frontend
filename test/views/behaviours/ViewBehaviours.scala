@@ -164,6 +164,17 @@ trait ViewBehaviours extends ViewSpecBase {
     )
   }
 
+  def normalPageWithDynamicTitleAndHeader(view: () => HtmlFormat.Appendable,
+                                 messageKeyPrefix: String,
+                                 msgArgs: String*): Unit = {
+    normalPageWithTitle(
+      view,
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__title", msgArgs: _*),
+      messages(s"messages__${messageKeyPrefix}__heading", msgArgs: _*)
+    )
+  }
+
   def pageWithBackLink(view: () => HtmlFormat.Appendable): Unit = {
 
     "behave like a page with a back link" must {

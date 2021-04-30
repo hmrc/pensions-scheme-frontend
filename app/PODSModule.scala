@@ -64,6 +64,7 @@ class PODSModule extends AbstractModule {
     navigators.addBinding().to(classOf[PartnerNavigator])
     navigators.addBinding().to(classOf[VariationsNavigator])
     navigators.addBinding().to(classOf[WorkingKnowledgeNavigator])
+    navigators.addBinding().to(classOf[RACDACNavigator])
 
     bind(classOf[Navigator]).to(classOf[CompoundNavigator])
 

@@ -1,0 +1,62 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import controllers.register.establishers.individual.routes._
+@import models.Index
+@import play.api.mvc.Call
+@import uk.gov.hmrc.play.views.html._
+@import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
+@import models.{NormalMode, Mode}
+@import viewmodels.CYAViewModel
+
+@this(
+    main_template: main_template,
+    appConfig: FrontendAppConfig
+)
+
+@(vm:CYAViewModel,psaName: String)(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = vm.title.resolve.capitalize
+) {
+    @components.back_link()
+
+    @components.heading(
+            headingKey =  vm.h1.resolve
+    )
+
+    @for((section, i) <- vm.answerSections.zipWithIndex){
+        @{
+            section match {
+                case a: AnswerSection => components.answer_section(a, i.toString, vm.hideEditLinks)
+                case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, vm.hideEditLinks)
+            }
+        }
+    }
+
+    @if(!vm.hideSaveAndContinueButton) {
+        @components.button_link("site.save_and_continue", vm.href.url, "submit")
+    }
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <p class="govuk-margin-top-5">
+                <a id="return-link" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__psaSchemeDetails__return_link", psaName)</a>
+            </p>
+        </div>
+    </div>
+}

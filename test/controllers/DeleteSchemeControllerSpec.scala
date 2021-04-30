@@ -38,6 +38,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val form: Form[Boolean] = formProvider()
   val schemeName = "Test Scheme Name"
   val psaName = "Test Psa Name"
+  private val hintTextMessageKey = "messages__deleteScheme__hint"
   val fakeCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
   val minimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
 
@@ -47,7 +48,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
     new DeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
       dataRetrievalAction, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)

@@ -849,10 +849,6 @@ messages__schemesOverview__delete__link = Delete this scheme and start a new reg
 messages__schemesOverview__UR__text = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
 messages__schemesOverview__UR__link = Let us know if you would like to help improve this service.
 
-messages__deleteScheme__title = Are you sure you want to delete this scheme?
-messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
-messages__deleteScheme__error__required = Select yes if you want to cancel your registration
-
 messages__confirmDeleteEstablisher__title = Are you sure you want to delete this establisher?
 messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
 messages__confirmDeleteEstablisher__companyHint = This will delete any directors you have added.
@@ -1819,9 +1815,10 @@ messages__cannotStartRegistration__p1 = A scheme registration cannot be started 
 messages__cannotStartRegistration__p2 = You need to phone Pension Scheme Services on 0300 123 1079.
 messages__cannotStartRegistration__returnToOverview__link = Return to manage and register pension schemes
 
-messages__deleteScheme__title = Are you sure you want to delete the details already entered for this scheme?
-messages__deleteScheme__heading = Are you sure you want to delete the details already entered for {0}’s scheme?
+messages__deleteScheme__title = Are you sure you want to delete the details already entered?
+messages__deleteScheme__heading = Are you sure you want to delete the details already entered for {0}?
 messages__deleteScheme__hint = This will remove all of the details entered so far for this scheme.
+messages__deleteScheme__hint_both = This will remove all of the details entered so far for both of these schemes.
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
 messages__deleteSchemeChanges__title = Are you sure you want to delete the changes you have made to the scheme’s details?
@@ -1833,8 +1830,13 @@ messages__deleteSchemeChanges__error__required = Select yes if you want to delet
 messages__schemeOverview__scheme_subscription = Apply to register a new pension scheme
 messages__schemeOverview__scheme_subscription_continue = Finish adding scheme details for {0} by {1}
 messages__schemeOverview__scheme_subscription_delete = Delete details already entered for {0}
+messages__schemeOverview__scheme_subscription_delete_both = {0} and {1}
+
 messages__schemeOverview__scheme_variations_continue = Finish making changes to {0} by {1}
 messages__schemeOverview__scheme_variations_delete = Delete changes already entered for {0}
+
+messages__schemeOverview__declare_racdac = Declare as scheme administrator for a RAC/DAC
+messages__schemeOverview__declare_racdac_continue = Finish declaring as scheme administrator for {0} by {1}
 
 messages__moneyPurchaseBenefits__title = What type of money purchase benefits does the scheme provide?
 messages__moneyPurchaseBenefits__h1 = What type of money purchase benefits does {0} provide?
@@ -1846,5 +1848,46 @@ messages__moneyPurchaseBenefits__error = Select what type of money purchase bene
 messages__moneyPurchaseBenefits__cya = What type of money purchase benefits does {0} provide?
 messages__moneyPurchaseBenefits__cya_hidden = type of money purchase benefits {0} has
 
+messages__what_is_rac_dac__title = Retirement annuity contracts (RACs) and Deferred annuity contracts (DACs)
+messages__what_is_rac_dac__h1 = Retirement annuity contracts (RACs) and Deferred annuity contracts (DACs)
+messages__what_is_rac_dac__p1 = Because all RAC/DACs had tax approval before 5 April 2006, they are already treated as registered pension schemes. As a pension scheme administrator you only need to declare that you are acting for them.
+messages__what_is_rac_dac__h2 = What are RAC/DACs?
+messages__what_is_rac_dac__rac_h3 = Retirement annuity contract (RAC)
+messages__what_is_rac_dac__rac_p = A type of pension scheme that was available to the self-employed, or workers not offered a workplace pension before July 1988.
+messages__what_is_rac_dac__dac_h3 = Deferred annuity contract (DAC)
+messages__what_is_rac_dac__dac_p = A contract with an insurance company that promises to pay the owner a regular income, or a lump sum, at some future date.
 
+messages__racdac_name__heading = What is the name of the RAC/DAC?
+messages__racdac_name__title = What is the name of the RAC/DAC?
+messages__visuallyhidden__racdac_name = the name of the RAC/DAC
 
+messages__error__racdac_name = Enter the name of the RAC/DAC
+messages__error__racdac_name_length = The RAC/DAC name cannot be more than 160 characters
+messages__error__racdac_name_invalid = The RAC/DAC name contains invalid characters
+
+messages__racdac_contract_or_policy_number__heading = What is {0}’s contract or policy number?
+messages__racdac_contract_or_policy_number__title = What is the RAC/DAC’s contract or policy number?
+messages__visuallyhidden__racdac_contract_or_policy_number = {0}’s contract or policy number
+
+messages__error__racdac_contract_or_policy_number = Enter the policy or contract number for {0}
+messages__error__racdac_contract_or_policy_number_length = The contract or policy number cannot be more than 50 characters
+
+messages__declaration_racdac__title = Declaration
+messages__declaration_racdac__heading = Declaration
+messages__declaration_racdac__declare = By continuing you declare that:
+messages__declaration_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
+messages__declaration_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
+messages__declaration_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
+
+messages__complete_racdac__title = You have declared as scheme administrator for the RAC/DAC
+messages__complete_racdac__heading = You have declared as scheme administrator for {0}
+messages__complete_racdac__declare = By continuing you declare that:
+messages__complete_racdac__statement1 = you understand that as the scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by the Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom, or another EU member state or non-member EEA state
+messages__complete_racdac__statement2 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. You understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
+messages__complete_racdac__statement3 = you understand that you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made in any information you provide and that false statements may also lead to prosecution.
+
+messages__complete_racdac__what_happens_next = What happens next
+messages__complete_racdac__statement1 = The RAC/DAC will be added to your list of schemes in the {0}. You can view details of the RAC/DAC there, including its Pension Scheme Tax Reference (PSTR).
+messages__complete_racdac__save_or_print = Save or print
+messages__complete_racdac__copy_2_link = Managing Pension Schemes online service
+messages__complete_racdac__email = We have sent a confirmation email to

@@ -20,15 +20,17 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
-import javax.inject.Inject
+import identifiers.SchemeNameId
+import identifiers.racdac.RACDACNameId
 import models.requests.OptionalDataRequest
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.UserAnswers
 import views.html.deleteScheme
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeleteSchemeController @Inject()(
@@ -50,17 +52,17 @@ class DeleteSchemeController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      getSchemeName { (schemeName, psaName) =>
-              Future.successful(Ok(view(form, schemeName, psaName)))
+      getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
+              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey)))
       }
   }
 
   def onSubmit: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      getSchemeName { (schemeName, psaName) =>
+      getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName))),
+            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {
               _ =>
@@ -72,21 +74,41 @@ class DeleteSchemeController @Inject()(
       }
   }
 
-  private def getSchemeName(f: (String, String) => Future[Result])
+  private def contentForDeleteLink(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String])(
+    implicit request: OptionalDataRequest[AnyContent]):String = {
+    (racDACSchemeName, nonRACDACSchemeName) match {
+      case (Some(racDAC), Some(nonRACDAC)) =>
+        Messages("messages__schemeOverview__scheme_subscription_delete_both", racDAC, nonRACDAC)
+      case (Some(sn), None) => sn
+      case (None, Some(sn)) => sn
+      case _ => ""
+    }
+  }
+
+  private def hintTextMessageKey(racDACSchemeName:Option[String], nonRACDACSchemeName:Option[String]):String = {
+    (racDACSchemeName, nonRACDACSchemeName) match {
+      case (Some(_), Some(_)) => "messages__deleteScheme__hint_both"
+      case _ => "messages__deleteScheme__hint"
+    }
+  }
+
+  private def getSchemeInfo(f: (String, String, String) => Future[Result])
                            (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
 
     dataCacheConnector.fetch(request.externalId).flatMap {
       case None => Future.successful(overviewPage)
       case Some(data) =>
-        (data \ "schemeName").validate[String] match {
-          case JsSuccess(schemeName, _) =>
-            request.psaId.map { psaId =>
-              minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
-                f(schemeName, psaName)
-              }.getOrElse(sessionExpired))
-            }.getOrElse(sessionExpired)
-          case JsError(_) => sessionExpired
-        }
+
+        val ua = UserAnswers(data)
+        val nonRACDACSchemeName = ua.get(SchemeNameId)
+        val racDACSchemeName = ua.get(RACDACNameId)
+
+        request.psaId.map { psaId =>
+          minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+            f(contentForDeleteLink(racDACSchemeName, nonRACDACSchemeName), psaName,
+              hintTextMessageKey(racDACSchemeName, nonRACDACSchemeName))
+          }.getOrElse(sessionExpired))
+        }.getOrElse(sessionExpired)
     }
   }
 }
