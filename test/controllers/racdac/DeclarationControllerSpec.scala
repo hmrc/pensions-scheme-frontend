@@ -21,10 +21,11 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
 import identifiers.racdac.DeclarationId
+import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
+import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
@@ -58,15 +59,17 @@ class DeclarationControllerSpec
 
   "onClickAgree" must {
     "redirect to the next page on clicking agree and continue" in {
-      val uaCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
-      when(mockPensionsSchemeConnector.registerScheme(uaCaptor.capture(), Matchers.eq(psaId))(any(), any()))
+      val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
+      when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
         .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
       verify(mockPensionsSchemeConnector, times(1)).registerScheme(any(), any())(any(), any())
-      uaCaptor.getValue.get(DeclarationId) mustBe Some(true)
+      uaCaptorForRegisterScheme.getValue.get(DeclarationId) mustBe Some(true)
+      FakeUserAnswersCacheConnector.verify(DeclarationId, true)
+      FakeUserAnswersCacheConnector.verify(SubmissionReferenceNumberId, schemeSubmissionResponse)
     }
   }
 }
@@ -78,7 +81,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockPensionsSchemeConnector = mock[PensionsSchemeConnector]
   private val psaName = "A PSA"
-  private val psaId = "A2000000"
+  //private val psaId = "A0000000"
   private val view = injector.instanceOf[declaration]
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")

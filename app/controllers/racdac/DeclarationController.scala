@@ -21,16 +21,18 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.racdac.routes.DeclarationController
 import identifiers.racdac._
+import identifiers.register.SubmissionReferenceNumberId
 import models.NormalMode
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Enumerable, UserAnswers}
+import utils.Enumerable
 import views.html.racdac.declaration
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -63,12 +65,19 @@ class DeclarationController @Inject()(
 
   def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
-      for {
-        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-      } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+      val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
+      val ua = request.userAnswers.setOrException(DeclarationId)(true)
 
+      pensionsSchemeConnector.registerScheme(ua, psaId.id).flatMap {
+        case Right(submissionResponse) =>
+          dataCacheConnector.upsert(
+            request.externalId,
+            ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
+          ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
+        case Left(_) =>
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
   }
+
   case object MissingPsaId extends Exception("Psa ID missing in request")
-
-
 }

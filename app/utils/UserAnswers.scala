@@ -407,6 +407,15 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }
   }
 
+  def setOrException[I <: TypedIdentifier.PathDependent](id: I)
+                                             (value: id.Data)
+                                             (implicit writes: Writes[id.Data]): UserAnswers = {
+    set(id)(value) match {
+      case JsSuccess(ua, _) => ua
+      case JsError(errors) => throw new RuntimeException("Unable to store value in user answers: " + errors)
+    }
+  }
+
   def isUserAnswerUpdated: Boolean =
     List(
       get[Boolean](InsuranceDetailsChangedId),
