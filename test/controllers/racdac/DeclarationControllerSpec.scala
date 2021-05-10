@@ -68,8 +68,8 @@ class DeclarationControllerSpec
       redirectLocation(result) mustBe Some(onwardRoute.url)
       verify(mockPensionsSchemeConnector, times(1)).registerScheme(any(), any())(any(), any())
       uaCaptorForRegisterScheme.getValue.get(DeclarationId) mustBe Some(true)
-      FakeUserAnswersCacheConnector.verify(DeclarationId, true)
-      FakeUserAnswersCacheConnector.verify(SubmissionReferenceNumberId, schemeSubmissionResponse)
+      FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
+      FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
     }
   }
 }

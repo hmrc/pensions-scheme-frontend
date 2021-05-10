@@ -22,6 +22,7 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UserAnswers
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,6 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
+  private val upsertData: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
@@ -43,6 +45,7 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
 
   override def upsert(cacheId: String, value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
+    upsertData += ("upserted" -> value)
     Future.successful(value)
   }
 
@@ -73,6 +76,10 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
 
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
     data should contain(id.toString -> Json.toJson(value))
+  }
+
+  def verifyUpsert[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
+    upsertData.get("upserted").flatMap(UserAnswers(_).get(id)) should contain(value)
   }
 
   def verifyNot(id: TypedIdentifier[_]): Unit = {
