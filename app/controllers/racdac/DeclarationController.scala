@@ -41,6 +41,7 @@ class DeclarationController @Inject()(
                                        requireData: DataRequiredAction,
                                        allowAccess: AllowAccessActionProvider,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
+                                       pensionsSchemeConnector: PensionsSchemeConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: declaration
                                      )(implicit val executionContext: ExecutionContext)
