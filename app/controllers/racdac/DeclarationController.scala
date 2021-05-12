@@ -67,8 +67,10 @@ class DeclarationController @Inject()( override val messagesApi: MessagesApi,
   def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       withRACDACName { schemeName =>
+        val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         for {
           cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+          _ <- sendEmail(psaId, schemeName)
         } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
       }
   }

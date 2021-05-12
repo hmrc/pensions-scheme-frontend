@@ -21,6 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
 import identifiers.racdac.RACDACNameId
+import models.MinimalPSA
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -55,18 +57,27 @@ class DeclarationControllerSpec
   }
 
   "onClickAgree" must {
-    "redirect to the next page on clicking agree and continue" in {
+    "redirect to the next page on clicking agree and continue and send email with correct template id" in {
+      when(mockEmailConnector.sendEmail(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(EmailSent))
+      when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
+
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      verify(mockEmailConnector, times(1))
+        .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
+          Matchers.eq(emailParams), any())(any(), any())
     }
   }
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  private val schemeName = "scheme"
+  private val minimalPsa = MinimalPSA(email = "a@a.c", isPsaSuspended = false, organisationName = Some("org"), individualDetails = None)
+  private val emailParams = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName)
   private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockEmailConnector = mock[EmailConnector]
@@ -95,8 +106,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       psaName,
       href
     )(fakeRequest, messages).toString
-
-  private val schemeName = "scheme"
 
   private def dataRetrievalAction: DataRetrievalAction = {
     UserAnswers()
