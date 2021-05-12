@@ -64,11 +64,5 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
     Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 
-  private def withRACDACName(func: String => Future[Result])
-                            (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(RACDACNameId) match {
-      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      case Some(racdacName) => func(racdacName)
-    }
-  }
+
 }

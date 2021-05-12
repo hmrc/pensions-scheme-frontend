@@ -20,6 +20,7 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
+import identifiers.racdac.RACDACNameId
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -68,6 +69,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
+  private val mockEmailConnector = mock[EmailConnector]
+  private val mockMinimalPsaConnector = mock[MinimalPsaConnector]
   private val psaName = "A PSA"
   private val view = injector.instanceOf[declaration]
 
@@ -81,6 +84,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       FakeAllowAccessProvider(),
       mockPensionAdministratorConnector,
+      mockEmailConnector,
+      mockMinimalPsaConnector,
       controllerComponents,
       view
     )
@@ -91,7 +96,11 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       href
     )(fakeRequest, messages).toString
 
+  private val schemeName = "scheme"
+
   private def dataRetrievalAction: DataRetrievalAction = {
-    UserAnswers().dataRetrievalAction
+    UserAnswers()
+      .set(RACDACNameId)(schemeName).asOpt.get
+      .dataRetrievalAction
   }
 }
