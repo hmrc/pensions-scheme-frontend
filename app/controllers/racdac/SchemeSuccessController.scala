@@ -21,10 +21,9 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
-import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.racdac.schemeSuccess
 
