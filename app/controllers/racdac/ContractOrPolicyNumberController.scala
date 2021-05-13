@@ -19,20 +19,19 @@ package controllers.racdac
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.racdac.ContractOrPolicyNumberFormProvider
-import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.ContractOrPolicyNumberId
 import models.Mode
-import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import views.html.racdac.contractOrPolicyNumber
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ContractOrPolicyNumberController @Inject()(
                                                   override val messagesApi: MessagesApi,
@@ -49,7 +48,9 @@ class ContractOrPolicyNumberController @Inject()(
                                     )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport
-    with Retrievals {
+    with Retrievals
+    with controllers.Retrievals
+{
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request => {
@@ -79,12 +80,5 @@ class ContractOrPolicyNumberController @Inject()(
             }
         )
       }
-  }
-
-  private def withRACDACName(func: String => Future[Result])(implicit request: DataRequest[AnyContent]):Future[Result] = {
-    request.userAnswers.get(RACDACNameId) match {
-      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      case Some(racdacName) => func(racdacName)
-    }
   }
 }
