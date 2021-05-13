@@ -131,8 +131,12 @@ class DeclarationController @Inject()(
   def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
+      val updatedUA = request.userAnswers.remove(identifiers.racdac.DeclarationId).asOpt
+        .getOrElse(request.userAnswers)
+        .setOrException(DeclarationId)(true)
+
       (for {
-        cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+        cacheMap <- dataCacheConnector.upsert(request.externalId, updatedUA.json)
         eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id)
       } yield eitherSubmissionResponse).flatMap {
         case Right(submissionResponse) =>

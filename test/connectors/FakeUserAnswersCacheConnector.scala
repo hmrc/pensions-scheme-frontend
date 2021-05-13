@@ -82,6 +82,8 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     upsertData.get("upserted").flatMap(UserAnswers(_).get(id)) should contain(value)
   }
 
+  def getUpsertedData:Option[JsValue] = upsertData.get("upserted")
+
   def verifyNot(id: TypedIdentifier[_]): Unit = {
     data should not contain key(id.toString)
   }
