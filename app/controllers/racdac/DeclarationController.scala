@@ -66,7 +66,9 @@ class DeclarationController @Inject()(
   def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-      val ua = request.userAnswers.setOrException(DeclarationId)(true)
+      val ua = request.userAnswers
+        .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
+        .setOrException(DeclarationId)(true)
 
       pensionsSchemeConnector.registerScheme(ua, psaId.id).flatMap {
         case Right(submissionResponse) =>
