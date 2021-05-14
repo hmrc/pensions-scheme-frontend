@@ -16,6 +16,7 @@
 
 package controllers
 
+import identifiers.racdac.RACDACNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
@@ -31,6 +32,14 @@ import scala.concurrent.Future
 import scala.language.implicitConversions
 
 trait Retrievals {
+
+  def withRACDACName(func: String => Future[Result])
+                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.get(RACDACNameId) match {
+      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case Some(racdacName) => func(racdacName)
+    }
+  }
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
