@@ -24,9 +24,9 @@ import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.MinimalPSA
 import models.register.SchemeSubmissionResponse
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
@@ -94,7 +94,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockMinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockPensionsSchemeConnector = mock[PensionsSchemeConnector]
   private val psaName = "A PSA"
-  //private val psaId = "A0000000"
   private val view = injector.instanceOf[declaration]
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
