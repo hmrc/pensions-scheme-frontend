@@ -107,11 +107,14 @@ class DeclarationControllerSpec
       }
     }
 
-    "redirect to the next page on clicking agree and continue" in {
+    "redirect to the next page on clicking agree and continue and ensure racdac declaration ID removed and register declaration ID present" in {
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      val upsertedUA = UserAnswers(FakeUserAnswersCacheConnector.getUpsertedData.get)
+      upsertedUA.get(racdac.DeclarationId) mustBe None
+      upsertedUA.get(DeclarationId) mustBe Some(true)
     }
 
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
@@ -298,6 +301,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
       .value
+      .setOrException(racdac.DeclarationId)(true)
       .establisherCompanyDormant(1, DeclarationDormant.No)
       .dataRetrievalAction
 

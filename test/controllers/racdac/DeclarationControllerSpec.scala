@@ -20,11 +20,13 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
-import identifiers.racdac.RACDACNameId
+import identifiers.racdac.{DeclarationId, RACDACNameId}
+import identifiers.register.SubmissionReferenceNumberId
 import models.MinimalPSA
-import org.mockito.Matchers
+import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
@@ -57,7 +59,10 @@ class DeclarationControllerSpec
   }
 
   "onClickAgree" must {
-    "redirect to the next page on clicking agree and continue and send email with correct template id" in {
+    "redirect to the next page on clicking agree and continue" in {
+      val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
+      when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
@@ -66,9 +71,14 @@ class DeclarationControllerSpec
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      verify(mockPensionsSchemeConnector, times(1)).registerScheme(any(), any())(any(), any())
+      uaCaptorForRegisterScheme.getValue.get(DeclarationId) mustBe Some(true)
+      FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
+      FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
         .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
           Matchers.eq(emailParams), any())(any(), any())
+
     }
   }
 }
@@ -82,8 +92,11 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockEmailConnector = mock[EmailConnector]
   private val mockMinimalPsaConnector = mock[MinimalPsaConnector]
+  private val mockPensionsSchemeConnector = mock[PensionsSchemeConnector]
   private val psaName = "A PSA"
   private val view = injector.instanceOf[declaration]
+
+  private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
 
   private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(
@@ -95,6 +108,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       FakeAllowAccessProvider(),
       mockPensionAdministratorConnector,
+      mockPensionsSchemeConnector,
       mockEmailConnector,
       mockMinimalPsaConnector,
       controllerComponents,

@@ -21,12 +21,13 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.racdac.routes.DeclarationController
 import identifiers.racdac._
+import identifiers.register.SubmissionReferenceNumberId
 import models.NormalMode
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
@@ -35,7 +36,8 @@ import views.html.racdac.declaration
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationController @Inject()( override val messagesApi: MessagesApi,
+class DeclarationController @Inject()(
+                                       override val messagesApi: MessagesApi,
                                        dataCacheConnector: UserAnswersCacheConnector,
                                        navigator: Navigator,
                                        authenticate: AuthAction,
@@ -43,6 +45,7 @@ class DeclarationController @Inject()( override val messagesApi: MessagesApi,
                                        requireData: DataRequiredAction,
                                        allowAccess: AllowAccessActionProvider,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
+                                       pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        minimalPsaConnector: MinimalPsaConnector,
                                        val controllerComponents: MessagesControllerComponents,
@@ -52,7 +55,9 @@ class DeclarationController @Inject()( override val messagesApi: MessagesApi,
     with Retrievals
     with I18nSupport
     with Enumerable.Implicits {
+
   private val logger = Logger(classOf[DeclarationController])
+
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.map { psaName =>
@@ -70,12 +75,29 @@ class DeclarationController @Inject()( override val messagesApi: MessagesApi,
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         for {
           cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-          _ <- sendEmail(psaId, schemeName)
-        } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+          _ <- register(psaId, schemeName)
+        } yield {
+          Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        }
       }
   }
 
-  case object MissingPsaId extends Exception("Psa ID missing in request")
+  private def register(psaId: PsaId, schemeName: String)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+    val ua = request.userAnswers
+      .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
+      .setOrException(DeclarationId)(true)
+    pensionsSchemeConnector.registerScheme(ua, psaId.id).flatMap {
+      case Right(submissionResponse) =>
+        sendEmail(psaId, schemeName).flatMap { _ =>
+          dataCacheConnector.upsert(
+            request.externalId,
+            ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
+          ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
+        }
+      case Left(_) =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
+  }
 
   private def sendEmail(psaId: PsaId, schemeName: String)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
@@ -93,4 +115,5 @@ class DeclarationController @Inject()( override val messagesApi: MessagesApi,
     }
   }
 
+  case object MissingPsaId extends Exception("Psa ID missing in request")
 }
