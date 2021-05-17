@@ -56,7 +56,6 @@ class EmailConnectorImpl @Inject()(
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
-
     val sendEmailReq = SendEmailRequest(
       to = List(emailAddress),
       templateId = templateName,
