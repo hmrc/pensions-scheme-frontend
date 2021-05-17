@@ -23,7 +23,7 @@ case class RACDACSubmissionEmailEvent(
                          emailAddress: String
                        ) extends AuditEvent {
 
-  override def auditType: String = "RACDACSubmissionEmailEvent"
+  override def auditType: String = "RACDACSubmissionEmail"
 
   override def details: Map[String, String] =
     Map(
