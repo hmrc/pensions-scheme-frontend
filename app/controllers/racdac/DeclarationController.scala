@@ -108,7 +108,7 @@ class DeclarationController @Inject()(
 
   private def callbackUrl(psaId: PsaId): String = {
     val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
-    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
+    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response-racdac/$encryptedPsa"
   }
 
   private def sendEmail(psaId: PsaId, schemeName: String)
