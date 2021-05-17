@@ -17,6 +17,7 @@
 package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
+import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -25,9 +26,9 @@ import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.MinimalPSA
 import models.register.SchemeSubmissionResponse
-import org.mockito.{ArgumentCaptor, Matchers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
@@ -65,7 +66,7 @@ class DeclarationControllerSpec
       val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
       when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
         .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
-      when(mockEmailConnector.sendEmail(any(), any(), any(), any())(any(), any()))
+      when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
       doNothing().when(mockAuditService).sendEvent(any())(any(), any())
@@ -80,7 +81,7 @@ class DeclarationControllerSpec
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
         .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
-          Matchers.eq(emailParams), any())(any(), any())
+          Matchers.eq(emailParams), any(), any())(any(), any())
       val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
       verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
 
@@ -102,6 +103,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val psaName = "A PSA"
   private val psaId = PsaId("A0000000")
   private val view = injector.instanceOf[declaration]
+  private val mockAppConfig = mock[FrontendAppConfig]
+
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
 
@@ -120,6 +123,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockMinimalPsaConnector,
       mockAuditService,
       controllerComponents,
+      crypto,
+      mockAppConfig,
       view
     )
 

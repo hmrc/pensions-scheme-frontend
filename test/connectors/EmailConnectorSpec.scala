@@ -42,7 +42,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId, callbackUrl).map(response =>
       response shouldBe expectedResponse
     )
 
@@ -59,7 +59,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId, callbackUrl).map(response =>
       response shouldBe notSentResponse
     )
   }
@@ -75,7 +75,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId, callbackUrl).map(response =>
       response shouldBe notSentResponse
     )
   }
@@ -89,6 +89,7 @@ object EmailConnectorSpec extends OptionValues {
   private val emailUrl = "/hmrc/email"
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  private val callbackUrl: String = "callbackurl"
 
   val invalidEmailString = "test@test1.com"
   val validEmailString = "test@mail.com"

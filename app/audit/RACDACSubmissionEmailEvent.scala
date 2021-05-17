@@ -27,7 +27,7 @@ case class RACDACSubmissionEmailEvent(
 
   override def details: Map[String, String] =
     Map(
-      "psaId" -> psaId.toString(),
+      "psaId" -> psaId.id,
       "emailAddress" -> emailAddress
     )
 }

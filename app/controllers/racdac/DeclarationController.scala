@@ -17,6 +17,7 @@
 package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
+import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
@@ -29,6 +30,7 @@ import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
@@ -51,6 +53,8 @@ class DeclarationController @Inject()(
                                        minimalPsaConnector: MinimalPsaConnector,
                                        auditService: AuditService,
                                        val controllerComponents: MessagesControllerComponents,
+                                       crypto: ApplicationCrypto,
+                                       config: FrontendAppConfig,
                                        val view: declaration
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
@@ -102,6 +106,11 @@ class DeclarationController @Inject()(
     }
   }
 
+  private def callbackUrl(psaId: PsaId): String = {
+    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
+  }
+
   private def sendEmail(psaId: PsaId, schemeName: String)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
@@ -111,7 +120,8 @@ class DeclarationController @Inject()(
         emailAddress = minimalPsa.email,
         templateName = "pods_racdac_scheme_register",
         params = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName),
-        psaId = psaId
+        psaId = psaId,
+        callbackUrl(psaId)
       ).map { status =>
           auditService.sendEvent(RACDACSubmissionEmailEvent(psaId,minimalPsa.email))
           status

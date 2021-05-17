@@ -163,7 +163,7 @@ class DeclarationControllerSpec
 
         reset(mockEmailConnector)
 
-        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any(),any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
@@ -172,7 +172,7 @@ class DeclarationControllerSpec
             eqTo("test@test.com"),
             eqTo("pods_scheme_register"),
             eqTo(Map("srn" -> "S12345 67890", "psaName" -> "psa name")),
-            eqTo(psaId)
+            eqTo(psaId),any()
           )(any(), any())
 
         }
@@ -245,6 +245,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       fakeMinimalPsaConnector,
       controllerComponents,
       mockHsTaskListHelperRegistration,
+      crypto,
       view,
       mockAuditService
     )
@@ -333,7 +334,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
-    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId,callbackUrl: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
       Future.successful(EmailSent)
     }
