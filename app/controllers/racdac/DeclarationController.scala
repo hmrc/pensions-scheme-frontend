@@ -16,6 +16,7 @@
 
 package controllers.racdac
 
+import audit.{AuditService, RACDACSubmissionEmailEvent}
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
@@ -48,6 +49,7 @@ class DeclarationController @Inject()(
                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                        emailConnector: EmailConnector,
                                        minimalPsaConnector: MinimalPsaConnector,
+                                       auditService: AuditService,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: declaration
                                      )(implicit val executionContext: ExecutionContext)
@@ -92,6 +94,7 @@ class DeclarationController @Inject()(
           dataCacheConnector.upsert(
             request.externalId,
             ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
+
           ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
         }
       case Left(_) =>
@@ -109,7 +112,10 @@ class DeclarationController @Inject()(
         templateName = "pods_racdac_scheme_register",
         params = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName),
         psaId = psaId
-      )
+      ).map { status =>
+          auditService.sendEvent(RACDACSubmissionEmailEvent(psaId,minimalPsa.email))
+          status
+        }
     } recoverWith {
       case _: Throwable => Future.successful(EmailNotSent)
     }
