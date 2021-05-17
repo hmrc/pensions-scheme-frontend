@@ -235,7 +235,7 @@ object HsTaskListHelperVariationsSpec extends SpecBase with MustMatchers with Op
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__scheme_info_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(UpdateMode).url), Some(false)))
+    controllers.routes.SchemeNameController.onPageLoad(UpdateMode, srn).url), Some(false)))
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__scheme_information_link_text"))
 
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)

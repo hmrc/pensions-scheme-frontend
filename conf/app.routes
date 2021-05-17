@@ -3,14 +3,14 @@
 ->          /trustee                                                 trustees.Routes
 ->          /rac-dac                                                 racdac.Routes
 
-GET         /                                                        controllers.BeforeYouStartController.onPageLoad()
+GET         /                                                        controllers.BeforeYouStartController.onPageLoad(srn: Option[String])
 
 
 GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: String)
 
-GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
+GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad(srn: Option[String])
 
 GET         /index                                                   controllers.IndexController.onPageLoad
 
@@ -51,9 +51,9 @@ POST        /:mode/having-pensions-working-knowledge                 controllers
 GET         /what-you-will-need-for-working-knowledge                controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST        /what-you-will-need-for-working-knowledge                controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
 
-GET         /scheme-name                                             controllers.SchemeNameController.onPageLoad(mode: Mode = NormalMode)
+GET         /scheme-name                                             controllers.SchemeNameController.onPageLoad(mode: Mode = NormalMode, srn: Option[String])
 POST        /scheme-name                                             controllers.SchemeNameController.onSubmit(mode: Mode = NormalMode)
-GET         /:mode/scheme-name                                       controllers.SchemeNameController.onPageLoad(mode: Mode)
+GET         /:mode/scheme-name                                       controllers.SchemeNameController.onPageLoad(mode: Mode, srn: Option[String])
 POST        /:mode/scheme-name                                       controllers.SchemeNameController.onSubmit(mode: Mode)
 
 GET         /scheme-type                                             controllers.SchemeTypeController.onPageLoad(mode: Mode = NormalMode)

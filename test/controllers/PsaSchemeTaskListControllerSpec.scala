@@ -124,7 +124,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
+    controllers.routes.SchemeNameController.onPageLoad(NormalMode, srn).url), Some(false)))
   private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))

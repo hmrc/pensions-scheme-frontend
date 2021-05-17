@@ -466,6 +466,7 @@ class PsaTaskListViewSpec extends ViewBehaviours {
 
 object PsaTaskListViewSpec extends ViewSpecBase {
   private val schemeName = "tempscheme name"
+  private val srn = Some("test-srn")
   private lazy val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text")
   private lazy val aboutMembersLinkText = Message("messages__schemeTaskList__about_members_link_text")
   private lazy val aboutBenefitsAndInsuranceLinkText = Message("messages__schemeTaskList__about_benefits_and_insurance_link_text")
@@ -487,7 +488,7 @@ object PsaTaskListViewSpec extends ViewSpecBase {
   private def beforeYouStartSection(isCompleted: Option[Boolean] = Some(false)): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None, Seq(
       EntitySpoke(TaskListLink(beforeYouStartLinkText,
-        controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), isCompleted
+        controllers.routes.SchemeNameController.onPageLoad(NormalMode, srn).url), isCompleted
       )), Some("h3"))
   }
 

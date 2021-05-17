@@ -39,6 +39,7 @@ class SchemeNameController @Inject()(
                                       override val messagesApi: MessagesApi,
                                       dataCacheConnector: UserAnswersCacheConnector,
                                       @BeforeYouStart navigator: Navigator,
+                                      allowAccess: AllowAccessActionProvider,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       formProvider: SchemeNameFormProvider,
@@ -55,7 +56,7 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))

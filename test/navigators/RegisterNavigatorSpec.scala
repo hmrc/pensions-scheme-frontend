@@ -71,7 +71,7 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
-  private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
+  private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad(Some("test-srn"))
 
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
 

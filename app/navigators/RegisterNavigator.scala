@@ -43,7 +43,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     if (userAnswers.isBeforeYouStartCompleted(NormalMode))
       NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
     else
-      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
+      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad(None))
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {

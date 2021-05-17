@@ -85,6 +85,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   private def postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private val schemeInfo = UserAnswers().schemeName(schemeName = "Test Scheme").dataRetrievalAction
+  private val srn = Some("123")
 
   private val schemeInfoWithCompleteFlag = UserAnswers().schemeName(schemeName = "Test Scheme").
     schemeType(SchemeType.SingleTrust).establishedCountry(country = "GB").
@@ -97,7 +98,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode, None).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       )))
 
@@ -108,7 +109,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       ),
       AnswerRow(
