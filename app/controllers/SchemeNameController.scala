@@ -56,7 +56,7 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))

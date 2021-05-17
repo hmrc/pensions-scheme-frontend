@@ -39,7 +39,6 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
-  private val srn = Some("123")
   val formProvider = new SchemeNameFormProvider()
   val form: Form[String] = formProvider()
 
@@ -85,7 +84,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   "SchemeName Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -95,7 +94,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       val validData = Json.obj(SchemeNameId.toString -> "value 1")
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, srn)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill("value 1"))
     }

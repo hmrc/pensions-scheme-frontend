@@ -97,7 +97,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode, None).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       )))
 
@@ -108,7 +108,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode, None).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       ),
       AnswerRow(

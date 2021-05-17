@@ -64,7 +64,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
 
     val beforeYouStart = AnswerSection(
       None,
-      SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode, srn).url, mode) ++
+      SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url, mode) ++
         SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
         HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
         EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++

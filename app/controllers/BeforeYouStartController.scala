@@ -28,16 +28,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BeforeYouStartController @Inject()(override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
+                                         allowAccess: AllowAccessActionProvider,
+                                         getData: DataRetrievalAction,
                                          pensionAdministratorConnector: PensionAdministratorConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: beforeYouStart
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = authenticate().async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(view(psaName, srn)))
+        Future.successful(Ok(view(psaName)))
       }
   }
 }

@@ -51,7 +51,7 @@ class SpokeCreationServiceSpec
       "display the spoke with link to scheme name page with in progress status if the spoke is in progress" in {
         val userAnswers = userAnswersWithSchemeName
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
-          controllers.routes.SchemeNameController.onPageLoad(NormalMode, None).url), Some(false)))
+          controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
 
         val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
         result mustBe expectedSpoke
@@ -72,7 +72,7 @@ class SpokeCreationServiceSpec
       "display the spoke with link to scheme name page with in progress status if the spoke is in progress" in {
         val userAnswers = userAnswersWithSchemeName
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__scheme_info_link_text", schemeName),
-          controllers.routes.SchemeNameController.onPageLoad(UpdateMode, srn).url), Some(false)))
+          controllers.routes.SchemeNameController.onPageLoad(UpdateMode).url), Some(false)))
 
         val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, UpdateMode, srn, schemeName, None)
         result mustBe expectedSpoke

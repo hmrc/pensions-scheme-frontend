@@ -244,7 +244,6 @@ class HsTaskListHelperRegistrationSpec extends WordSpec with MustMatchers with M
 object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {
 
   private val schemeName = "scheme"
-  private val srn = Some("test-srn")
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
@@ -256,7 +255,7 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
   private val wkWynPage = controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url
 
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(NormalMode, srn).url), Some(false)))
+    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
 
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
   private val testCompanyEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test company link"),

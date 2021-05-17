@@ -34,17 +34,18 @@ import scala.concurrent.Future
 
 class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
   val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
-  def onwardRoute: Call = controllers.routes.SchemeNameController.onPageLoad(NormalMode, srn)
+  def onwardRoute: Call = controllers.routes.SchemeNameController.onPageLoad(NormalMode)
 
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
   private val psaName = "Psa Name"
-  private val srn = Some("test-srn")
   private val view = injector.instanceOf[beforeYouStart]
 
-  def controller(): BeforeYouStartController =
+  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData): BeforeYouStartController =
     new BeforeYouStartController(
       messagesApi,
       FakeAuthAction,
+      FakeAllowAccessProvider(),
+      dataRetrievalAction,
       pensionAdministratorConnector,
       controllerComponents,
       view
@@ -52,7 +53,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   val encryptedPsaId: String = applicationCrypto.QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
-  def viewAsString(): String = view(psaName, srn)(fakeRequest, messages).toString
+  def viewAsString(): String = view(psaName)(fakeRequest, messages).toString
 
   "BeforeYouStart Controller" when {
 
@@ -60,7 +61,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
       "return OK and the correct view" in {
 
         when(pensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val result = controller().onPageLoad(srn)(fakeRequest)
+        val result = controller().onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
