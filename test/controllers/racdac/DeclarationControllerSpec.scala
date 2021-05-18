@@ -16,6 +16,8 @@
 
 package controllers.racdac
 
+import audit.{AuditService, RACDACSubmissionEmailEvent}
+import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -32,6 +34,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
 
@@ -63,9 +66,10 @@ class DeclarationControllerSpec
       val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
       when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
         .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
-      when(mockEmailConnector.sendEmail(any(), any(), any(), any())(any(), any()))
+      when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
+      doNothing().when(mockAuditService).sendEvent(any())(any(), any())
 
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
@@ -77,7 +81,9 @@ class DeclarationControllerSpec
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
         .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
-          Matchers.eq(emailParams), any())(any(), any())
+          Matchers.eq(emailParams), any(), any())(any(), any())
+      val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
+      verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
 
     }
   }
@@ -91,10 +97,14 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockEmailConnector = mock[EmailConnector]
+  private val mockAuditService = mock[AuditService]
   private val mockMinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockPensionsSchemeConnector = mock[PensionsSchemeConnector]
   private val psaName = "A PSA"
+  private val psaId = PsaId("A0000000")
   private val view = injector.instanceOf[declaration]
+  private val mockAppConfig = mock[FrontendAppConfig]
+
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
 
@@ -111,7 +121,10 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockPensionsSchemeConnector,
       mockEmailConnector,
       mockMinimalPsaConnector,
+      mockAuditService,
       controllerComponents,
+      crypto,
+      mockAppConfig,
       view
     )
 
