@@ -98,7 +98,6 @@ class DeclarationController @Inject()(
           dataCacheConnector.upsert(
             request.externalId,
             ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
-
           ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
         }
       case Left(_) =>
