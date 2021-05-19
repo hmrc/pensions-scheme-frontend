@@ -35,6 +35,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -59,6 +60,7 @@ class DeclarationController @Inject()(
                                        minimalPsaConnector: MinimalPsaConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
+                                       crypto: ApplicationCrypto,
                                        val view: declaration,
                                        auditService: AuditService
                                      )(implicit val executionContext: ExecutionContext)
@@ -168,6 +170,11 @@ class DeclarationController @Inject()(
       }
   }
 
+  private def callbackUrl(psaId: PsaId): String = {
+    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+    s"${appConfig.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
+  }
+
 
   private def sendEmail(srn: String, psaId: PsaId)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
@@ -178,7 +185,8 @@ class DeclarationController @Inject()(
         emailAddress = minimalPsa.email,
         templateName = appConfig.emailTemplateId,
         params = Map("srn" -> formatSrnForEmail(srn), "psaName" -> minimalPsa.name),
-        psaId = psaId
+        psaId = psaId,
+        callbackUrl(psaId)
       )
     } recoverWith {
       case _: Throwable => Future.successful(EmailNotSent)

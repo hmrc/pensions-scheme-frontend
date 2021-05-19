@@ -22,11 +22,9 @@ import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,29 +37,28 @@ case object EmailNotSent extends EmailStatus
 
 @ImplementedBy(classOf[EmailConnectorImpl])
 trait EmailConnector {
-  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psaId: PsaId)
+  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psaId: PsaId, callbackUrl: String)
                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
 }
 
 @Singleton
 class EmailConnectorImpl @Inject()(
                                     http: HttpClient,
-                                    config: FrontendAppConfig,
-                                    crypto: ApplicationCrypto
+                                    config: FrontendAppConfig
                                   ) extends EmailConnector {
 
   private val logger  = Logger(classOf[EmailConnectorImpl])
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
-  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
+  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId, callbackUrl: String)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
     val sendEmailReq = SendEmailRequest(
       to = List(emailAddress),
       templateId = templateName,
       parameters = params,
       force = config.emailSendForce,
-      eventUrl = callbackUrl(psa)
+      eventUrl = callbackUrl
     )
 
     val jsonData = Json.toJson(sendEmailReq)
@@ -80,11 +77,6 @@ class EmailConnectorImpl @Inject()(
     } recoverWith logExceptions
   }
 
-  def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
-
-    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
-  }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
     case t: Throwable =>
