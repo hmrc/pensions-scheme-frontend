@@ -36,6 +36,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
@@ -68,12 +69,30 @@ class DeclarationController @Inject()(
 
   private val logger = Logger(classOf[DeclarationController])
 
+  private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier):Future[Option[Result]] = {
+    request.psaId match {
+      case None => Future.successful(None)
+      case Some(psaId) =>
+        minimalPsaConnector.getMinimalFlags(psaId.id).map { mf =>
+          if (mf.isDeceased) {
+            Some(Redirect(appConfig.youMustContactHMRCUrl))
+          } else {
+            None
+          }
+        }
+    }
+  }
+
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
-        showPage(Ok.apply)
-      } else {
-        Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
+      redirects.flatMap {
+        case Some(result) => Future.successful(result)
+        case _ =>
+        if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
+          showPage(Ok.apply)
+        } else {
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
+        }
       }
   }
 
