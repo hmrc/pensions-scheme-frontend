@@ -43,11 +43,24 @@ class DataRetrievalImpl(
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
+
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     mode match {
       case NormalMode | CheckMode =>
-        createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
+        dataConnector.fetch(request.externalId).flatMap {
+          case None => getUserAnswersWithMinimalFlags(request.psaId.map(_.id).get).flatMap {
+            ua =>
+              dataConnector.upsert(request.externalId, ua.json).map { _=>
+                OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, false)
+              }
+          }
+          case Some(data) =>
+            Future.successful(
+            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, false)
+          )
+        }
+
       case UpdateMode | CheckUpdateMode =>
         (srn, request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
@@ -97,6 +110,13 @@ class DataRetrievalImpl(
     } else {
       viewConnector.fetch(request.externalId)
     }
+
+  private def getUserAnswersWithMinimalFlags[A](psaId: String)
+                     (implicit hc: HeaderCarrier): Future[UserAnswers] = {
+    minimalPsaConnector.getMinimalFlags(psaId).map { minimalFlags =>
+      UserAnswers().setOrException(PsaMinimalFlagsId)(minimalFlags)
+    }
+  }
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
