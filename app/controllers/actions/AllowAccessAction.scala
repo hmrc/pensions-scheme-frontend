@@ -51,9 +51,9 @@ abstract class AllowAccessAction(srn: Option[String],
     val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
 
     (optionUA, optionPsaMinimalFlagsId, srn) match {
-      case (Some(_), Some(PSAMinimalFlags(true, false)), _) if checkForSuspended =>
+      case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
         Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-      case (Some(_), Some(PSAMinimalFlags(_, true)), _) =>
+      case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>
         Future.successful(Some(Redirect(config.youMustContactHMRCUrl)))
       case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
       case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {

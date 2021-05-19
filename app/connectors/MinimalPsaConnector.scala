@@ -87,7 +87,8 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
         case OK =>
           val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]
           val isDeceased = (response.json \ "deceasedFlag").as[Boolean]
-          PSAMinimalFlags(isSuspended, isDeceased)
+          val rlsFlag = (response.json \ "rlsFlag").as[Boolean]
+          PSAMinimalFlags(isSuspended, isDeceased, rlsFlag)
         case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
       }
     } andThen {

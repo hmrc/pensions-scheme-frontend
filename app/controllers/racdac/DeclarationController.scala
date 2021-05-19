@@ -23,19 +23,19 @@ import controllers.actions._
 import controllers.racdac.routes.DeclarationController
 import identifiers.racdac._
 import identifiers.register.SubmissionReferenceNumberId
-import models.NormalMode
+import models.{NormalMode, PSAMinimalFlags}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationController @Inject()(
@@ -65,12 +65,10 @@ class DeclarationController @Inject()(
     request.psaId match {
       case None => Future.successful(None)
       case Some(psaId) =>
-        minimalPsaConnector.getMinimalFlags(psaId.id).map { mf =>
-          if (mf.isDeceased) {
-            Some(Redirect(appConfig.youMustContactHMRCUrl))
-          } else {
-            None
-          }
+        minimalPsaConnector.getMinimalFlags(psaId.id).map {
+          case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
+          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
+          case _ => None
         }
     }
   }

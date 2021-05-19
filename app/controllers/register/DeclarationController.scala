@@ -29,11 +29,11 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{NormalMode, TypeOfBenefits}
+import models.{NormalMode, PSAMinimalFlags, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,8 +42,8 @@ import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationController @Inject()(
@@ -69,19 +69,18 @@ class DeclarationController @Inject()(
 
   private val logger = Logger(classOf[DeclarationController])
 
-  private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier):Future[Option[Result]] = {
+  private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Option[Result]] = {
     request.psaId match {
       case None => Future.successful(None)
       case Some(psaId) =>
-        minimalPsaConnector.getMinimalFlags(psaId.id).map { mf =>
-          if (mf.isDeceased) {
-            Some(Redirect(appConfig.youMustContactHMRCUrl))
-          } else {
-            None
-          }
+        minimalPsaConnector.getMinimalFlags(psaId.id).map {
+          case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
+          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
+          case _ => None
         }
     }
   }
+
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>

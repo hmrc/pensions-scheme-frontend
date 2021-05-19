@@ -74,6 +74,13 @@ class DeclarationControllerSpec
       redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
     }
 
+    "redirect to you must update your address page when rls flag is true" in {
+      val result = controller(dataRetrievalAction = individualEst, rlsFlag = true).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
+    }
+
     "return OK and don't save the DeclarationDormant " when {
 
       "the establisher is an individual" in {
@@ -238,7 +245,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,
-                         isSuspended:Boolean = true, isDeceased:Boolean = false
+                         isSuspended:Boolean = true, isDeceased:Boolean = false, rlsFlag:Boolean = false
                         ): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -250,7 +257,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
-      fakeMinimalPsaConnector(isSuspended, isDeceased),
+      fakeMinimalPsaConnector(isSuspended, isDeceased, rlsFlag),
       controllerComponents,
       mockHsTaskListHelperRegistration,
       view,
@@ -347,9 +354,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     }
   }
 
-  private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean) = new MinimalPsaConnector {
+  private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
     override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
-      Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased))
+      Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
 
     override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
