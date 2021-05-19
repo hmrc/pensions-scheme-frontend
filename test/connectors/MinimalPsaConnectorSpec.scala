@@ -55,6 +55,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     connector.getMinimalFlags(psaId).map { minimalFlags =>
       minimalFlags.isSuspended shouldBe true
       minimalFlags.isDeceased shouldBe true
+      minimalFlags.rlsFlag shouldBe true
     }
 
   }
@@ -143,6 +144,7 @@ object MinimalPsaConnectorSpec extends OptionValues {
         "email" -> email,
         "isPsaSuspended" -> true,
         "deceasedFlag" -> true,
+        "rlsFlag" -> true,
         "organisationName" -> "test ltd"
       )
     )
