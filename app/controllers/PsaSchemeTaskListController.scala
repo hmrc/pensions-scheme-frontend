@@ -20,12 +20,14 @@ import config.FrontendAppConfig
 import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.{SchemeNameId, TcmpToggleId}
+import javax.inject.Inject
 import models.AuthEntity.PSA
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
+import models.requests.OptionalDataRequest
 import models.{Mode, PSAMinimalFlags}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.FeatureToggleService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -33,8 +35,6 @@ import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.psaTaskList
-import javax.inject.Inject
-import models.requests.{DataRequest, OptionalDataRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
