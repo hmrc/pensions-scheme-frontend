@@ -68,7 +68,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     andThen allowAccess(srn)).async {
     implicit request =>
       redirects.flatMap {
-        case Some(result) => result
+        case Some(result) => Future.successful(result)
         case _ =>
         (srn, request.userAnswers, request.userAnswers.flatMap(_.get(SchemeNameId))) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
