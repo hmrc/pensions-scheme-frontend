@@ -78,8 +78,8 @@ class AuthImpl(override val authConnector: AuthConnector,
     (enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(p=>PsaId(p.value)),
       enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(p=>PspId(p.value))) match {
       case (psaId@Some(_), pspId@Some(_)) => handleWhereBothEnrolments(id, request, psaId, pspId, block)
-      case (None, pspId@Some(_)) => block(AuthenticatedRequest(request, id, None, pspId))
-      case (psaId@Some(_), None) => block(AuthenticatedRequest(request, id, psaId, None))
+      case (None, pspId@Some(_)) => block(AuthenticatedRequest(request, id, None, pspId, Practitioner))
+      case (psaId@Some(_), None) => block(AuthenticatedRequest(request, id, psaId, None, Administrator))
       case _ => Future.successful(Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad()))
     }
   }
@@ -101,7 +101,7 @@ class AuthImpl(override val authConnector: AuthConnector,
               Future.successful(
                 Redirect(Call("GET", config.cannotAccessPageAsPractitionerUrl(config.localFriendlyUrl(request.uri))))
               )
-            case _ => block(AuthenticatedRequest(request, id, psaId, pspId))
+            case _ => block(AuthenticatedRequest(request, id, psaId, pspId, aop))
           }
       }
     }

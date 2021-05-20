@@ -18,12 +18,14 @@ package controllers
 
 import controllers.actions._
 import identifiers.{DeclarationDutiesId, _}
+import models.AdministratorOrPractitioner.Practitioner
+
 import javax.inject.Inject
 import models.AuthEntity.PSP
 import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils._
 import utils.annotations.NoSuspendedCheck
@@ -74,6 +76,11 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
     val heading = (titleOrHeading: Message) =>
       if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
+    val returnToTaskListCall:Option[Call] = (request.role, srn) match {
+      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case _ => None
+    }
+
     CYAViewModel(
       answerSections = Seq(beforeYouStart),
       href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
@@ -84,7 +91,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
       hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
       title = heading(Message("messages__informationFor_title")),
       h1 = heading(Message("messages__informationFor_heading",
-        existingSchemeName.getOrElse(Message("messages__theScheme"))))
+        existingSchemeName.getOrElse(Message("messages__theScheme")))),
+      anotherReturn = returnToTaskListCall
     )
   }
 }

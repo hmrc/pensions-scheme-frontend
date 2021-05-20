@@ -53,7 +53,14 @@ class DataRetrievalImpl(
           case (Some(extractedSrn), Some(psaId)) =>
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
-          case _ => Future(OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId))
+          case _ => Future(OptionalDataRequest(
+            request = request.request,
+            externalId = request.externalId,
+            userAnswers = None,
+            psaId = request.psaId,
+            pspId = request.pspId,
+            role = request.role
+          ))
         }
     }
   }
@@ -82,8 +89,24 @@ class DataRetrievalImpl(
   private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
                                       (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
-      case None => OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId, viewOnly)
-      case Some(data) => OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly)
+      case None => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = None,
+        psaId = request.psaId,
+        pspId = request.pspId,
+        viewOnly = viewOnly,
+        role = request.role
+      )
+      case Some(data) => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = Some(UserAnswers(data)),
+        psaId = request.psaId,
+        pspId = request.pspId,
+        viewOnly = viewOnly,
+        role = request.role
+      )
     }
 
   private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
@@ -117,12 +140,37 @@ class DataRetrievalImpl(
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
           case Some(foundSrn) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true)
+            OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = Some(UserAnswers(data)),
+              psaId = request.psaId,
+              pspId = request.pspId,
+              viewOnly = true,
+              role = request.role
+            )
+
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId, viewOnly = true)
+            OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = None,
+              psaId = request.psaId,
+              pspId = request.pspId,
+              viewOnly = true,
+              role = request.role
+            )
         }
       case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId, viewOnly = true)
+        OptionalDataRequest(
+          request = request.request,
+          externalId = request.externalId,
+          userAnswers = None,
+          psaId = request.psaId,
+          pspId = request.pspId,
+          viewOnly = true,
+          role = request.role
+        )
     }
   }
 
@@ -133,14 +181,46 @@ class DataRetrievalImpl(
         val ua: UserAnswers = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = status != "Open")
+            OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = Some(ua),
+              psaId = request.psaId,
+              pspId = request.pspId,
+              viewOnly = status != "Open",
+              role = request.role
+            )
           case (Some(_), _) =>
-            OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId, viewOnly = true)
+            OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = None,
+              psaId = request.psaId,
+              pspId = request.pspId,
+              viewOnly = true,
+              role = request.role
+            )
           case _ =>
-            OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = true)
+            OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = Some(ua),
+              psaId = request.psaId,
+              pspId = request.pspId,
+              viewOnly = true,
+              role = request.role
+            )
         }
       case None =>
-        OptionalDataRequest(request.request, request.externalId, None, request.psaId, request.pspId, viewOnly = true)
+        OptionalDataRequest(
+          request = request.request,
+          externalId = request.externalId,
+          userAnswers = None,
+          psaId = request.psaId,
+          pspId = request.pspId,
+          viewOnly = true,
+          role = request.role
+        )
     }
   }
 

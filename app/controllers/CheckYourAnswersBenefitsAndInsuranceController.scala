@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import identifiers._
+import models.AdministratorOrPractitioner.Practitioner
 
 import javax.inject.Inject
 import models.AuthEntity.PSP
@@ -26,7 +27,7 @@ import models.Mode._
 import models.requests.DataRequest
 import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
@@ -82,6 +83,11 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
       val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
         Message("messages__benefitsAndInsuranceDetailsFor", name)
 
+      val returnToTaskListCall:Option[Call] = (request.role, srn) match {
+        case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+        case _ => None
+      }
+
       CYAViewModel(
         answerSections = Seq(benefitsAndInsuranceSection),
         href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
@@ -91,7 +97,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
         srn = srn,
         hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
         title = heading(Message("messages__theScheme")),
-        h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
+        h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme"))),
+        anotherReturn = returnToTaskListCall
       )
     }
   }
