@@ -17,6 +17,7 @@
 package models.requests
 
 import models.AdministratorOrPractitioner
+import models.AdministratorOrPractitioner.Administrator
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 
@@ -29,6 +30,6 @@ case class AuthenticatedRequest[A](
                                     externalId: String,
                                     psaId: Option[PsaId],
                                     pspId: Option[PspId] = None,
-                                    administratorOrPractitioner:AdministratorOrPractitioner
+                                    administratorOrPractitioner:AdministratorOrPractitioner = Administrator
                                   )
   extends WrappedRequest[A](request) with IdentifiedRequest

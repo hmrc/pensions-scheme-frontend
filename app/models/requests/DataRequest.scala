@@ -17,6 +17,7 @@
 package models.requests
 
 import models.AdministratorOrPractitioner
+import models.AdministratorOrPractitioner.Administrator
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import utils.UserAnswers
@@ -28,7 +29,7 @@ case class OptionalDataRequest[A](
                                    psaId: Option[PsaId],
                                    pspId: Option[PspId] = None,
                                    viewOnly: Boolean = false,
-                                   administratorOrPractitioner:AdministratorOrPractitioner
+                                   administratorOrPractitioner:AdministratorOrPractitioner = Administrator
                                  )
 
   extends WrappedRequest[A](request) with IdentifiedRequest
@@ -40,6 +41,6 @@ case class DataRequest[A](
                            psaId: Option[PsaId],
                            pspId: Option[PspId] = None,
                            viewOnly: Boolean = false,
-                           administratorOrPractitioner:AdministratorOrPractitioner
+                           administratorOrPractitioner:AdministratorOrPractitioner = Administrator
                          )
   extends WrappedRequest[A](request) with IdentifiedRequest
