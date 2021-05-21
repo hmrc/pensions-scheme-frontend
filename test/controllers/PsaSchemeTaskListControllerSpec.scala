@@ -19,6 +19,7 @@ package controllers
 import base.JsonFileReader
 import controllers.actions._
 import identifiers.SchemeNameId
+import identifiers.racdac.IsRacDacId
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
 import models._
@@ -91,6 +92,16 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
+    }
+
+    "isRacDac is set to true" must {
+      "return REDIRECT to rac dac cya page" in {
+        val userAnswers = UserAnswers().set(SchemeNameId)("").flatMap(_.set(IsRacDacId)(true)).asOpt.value
+        val result = controller(userAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn).url)
       }
     }
   }

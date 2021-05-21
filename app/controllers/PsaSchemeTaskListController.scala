@@ -18,11 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import identifiers.racdac.IsRacDacId
 import identifiers.{SchemeNameId, TcmpToggleId}
 import models.AuthEntity.PSA
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
-import models.Mode
+import models.{Mode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FeatureToggleService
@@ -52,17 +53,27 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
-      (srn, request.userAnswers, request.userAnswers.flatMap(_.get(SchemeNameId))) match {
-        case (None, Some(userAnswers), Some(schemeName)) =>
-          userAnswersWithTcmpToggle(userAnswers).flatMap { ua =>
-            Future.successful(Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn), schemeName)))
+      val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
+      val isRacDacOpt: Option[Boolean] = request.userAnswers.flatMap(_.get(IsRacDacId))
+
+      (srn, request.userAnswers, schemeNameOpt, isRacDacOpt) match {
+
+        case (_, Some(_), Some(_), Some(true)) =>
+          Future.successful(Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn)))
+
+        case (None, Some(userAnswers), Some(schemeName), _) =>
+          userAnswersWithTcmpToggle(userAnswers).map { ua =>
+            Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn), schemeName))
           }
-        case (Some(_), Some(userAnswers), Some(schemeName)) =>
-          userAnswersWithTcmpToggle(userAnswers).flatMap { ua =>
-            Future.successful(Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn), schemeName)))
+
+        case (Some(_), Some(userAnswers), Some(schemeName), _) =>
+          userAnswersWithTcmpToggle(userAnswers).map { ua =>
+            Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn), schemeName))
           }
-        case (Some(_), _, _) =>
+
+        case (Some(_), _, _, _) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }

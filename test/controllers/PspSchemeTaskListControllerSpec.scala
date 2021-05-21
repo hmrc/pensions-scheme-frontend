@@ -18,13 +18,15 @@ package controllers
 
 import base.JsonFileReader
 import controllers.actions._
+import identifiers.SchemeNameId
+import identifiers.racdac.IsRacDacId
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-
+import utils.UserAnswers
 import utils.hstasklisthelper.HsTaskListHelperPsp
 import viewmodels._
 import views.html.pspTaskList
@@ -55,6 +57,14 @@ class PspSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+  }
+
+  "return REDIRECT to racdac cya page when there isRacDac is set to true in user answers" in {
+    val userAnswers = UserAnswers().set(SchemeNameId)("").flatMap(_.set(IsRacDacId)(true)).asOpt.value
+    val result = controller(new FakePspDataRetrievalAction(Some(userAnswers.json))).onPageLoad(srn)(fakeRequest)
+
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.pspOnPageLoad(srn).url)
   }
 }
 

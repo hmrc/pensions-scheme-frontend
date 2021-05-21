@@ -19,7 +19,8 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.{SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
-import identifiers.SchemeSrnId
+import identifiers.{SchemeNameId, SchemeSrnId}
+import identifiers.racdac.{IsRacDacId, RACDACNameId}
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,8 +41,7 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
       case None =>
         val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
         schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
-          val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
-          OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true)
+          OptionalDataRequest(request.request, request.externalId, Some(additionalUserAnswers(ua)), request.psaId, request.pspId, viewOnly = true)
         }
 
       case Some(data) =>
@@ -49,6 +49,14 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
           request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true))
     }
   }
+
+  private def additionalUserAnswers(ua: UserAnswers): UserAnswers =
+    (ua.get(IsRacDacId), ua.get(RACDACNameId)) match {
+      case (Some(true), None) =>
+        val schemeName: String = ua.get(SchemeNameId).getOrElse(throw MissingSchemeNameException)
+        ua.set(SchemeSrnId)(srn).flatMap(_.set(RACDACNameId)(schemeName)).asOpt.getOrElse(ua)
+      case _ => ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
+    }
 }
 
 @ImplementedBy(classOf[PspDataRetrievalImpl])

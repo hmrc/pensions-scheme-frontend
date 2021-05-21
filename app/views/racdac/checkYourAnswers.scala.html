@@ -28,7 +28,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(vm:CYAViewModel,psaName: String)(implicit request: Request[_], messages: Messages)
+@(vm:CYAViewModel, returnToName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = vm.title.resolve.capitalize
@@ -55,7 +55,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <p class="govuk-margin-top-5">
-                <a id="return-link" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__psaSchemeDetails__return_link", psaName)</a>
+                    <a id="return-psa-link" href="@returnUrl">@messages("messages__psaSchemeDetails__return_link", returnToName)</a>
             </p>
         </div>
     </div>

@@ -27,14 +27,14 @@ class RACDACNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnecto
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode))
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad())
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
     case DeclarationId => NavigateTo.dontSave(controllers.racdac.routes.SchemeSuccessController.onPageLoad())
     case _ => None
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad())
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad())
+    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
     case _ => None
   }
 

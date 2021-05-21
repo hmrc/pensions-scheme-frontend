@@ -19,9 +19,11 @@ package config
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
 import models.ReportTechnicalIssue
+import models.requests.DataRequest
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment, Mode}
+import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -88,6 +90,15 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
     runModeConfiguration
       .underlying.getString("urls.updateSchemeDetails")
   }"
+
+  def schemeDashboardUrl(request: DataRequest[_]): String = schemeDashboardUrl(request.psaId, request.pspId)
+
+  def schemeDashboardUrl(psaId: Option[PsaId], pspId: Option[PspId]): String =
+    (psaId, pspId) match {
+      case (Some(_), None) => managePensionsSchemeSummaryUrl
+      case (None, Some(_)) => managePensionsSchemeDetailsPspUrl
+      case _ => managePensionsSchemeSummaryUrl
+    }
 
   lazy val registerUrl: String = runModeConfiguration.underlying.getString("urls.partials.registerScheme")
   lazy val continueUrl = s"${loadConfig("urls.partials.continueSchemeRegistration")}"
