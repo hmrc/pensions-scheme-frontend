@@ -84,7 +84,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val answersFromDES = UserAnswers().set(SchemeStatusId)(statusOpen).asOpt.value
 
   private val answersFromDESWithSuspensionFlag = answersFromDES
-    .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false)).asOpt.value
+    .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
 
   private def userAnswersDummy(status: String, srn: String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
     .set(SchemeSrnId)(srn).asOpt.value
@@ -93,7 +93,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     reset(dataCacheConnector, viewCacheConnector, updateCacheConnector,
       lockRepoConnector, schemeDetailsConnector, minimalPsaConnector)
     when(minimalPsaConnector.getMinimalFlags(any())(any(), any()))
-      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
     when(updateCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))
     when(viewCacheConnector.upsert(any(), any())(any(), any()))
@@ -351,7 +351,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val differentSrn = "different-srn"
       val answersFromDES = userAnswersDummy(statusOpen, srn = differentSrn)
       val answersFromDESWithSuspensionFlag = answersFromDES
-        .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false)).asOpt.value
+        .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
       val uaInsertedIntoViewCache = answersFromDESWithSuspensionFlag.set(UKBankAccountId)(true).asOpt.value
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
 

@@ -59,7 +59,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Disabled(RACDAC)))
     when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+      .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
     when(dataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(schemeNameJsonOption)))
     when(dataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
     when(dataCacheConnector.lastUpdated(any())(any(), any()))
@@ -156,7 +156,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to the cannot start registration page if called when psa is suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false, rlsFlag = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -166,7 +166,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to the cannot start registration page if called when psa is dead" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -176,7 +176,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to the register scheme page if called when psa is not suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
       implicit val request: OptionalDataRequest[AnyContent] =
         OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
 
@@ -188,7 +188,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to continue register a scheme page if called when psa is not suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -198,7 +198,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
     "redirect to cannot start registration page if called when psa is suspended" in {
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false, rlsFlag = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 
@@ -211,7 +211,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         OptionalDataRequest(FakeRequest("", ""), "id", Some(UserAnswers(schemeSrnNumberOnlyData)), Some(PsaId("A0000000")))
       when(dataCacheConnector.removeAll(eqTo("id"))(any(), any())).thenReturn(Future(Ok))
       when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
-        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
 
       val result = service.checkIfSchemeCanBeRegistered(psaId)
 

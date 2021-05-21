@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class PSAMinimalFlags(isSuspended:Boolean, isDeceased:Boolean)
+case class PSAMinimalFlags(isSuspended:Boolean, isDeceased:Boolean, rlsFlag:Boolean)
 
 object PSAMinimalFlags {
   implicit val formats: OFormat[PSAMinimalFlags] = Json.format[PSAMinimalFlags]

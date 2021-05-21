@@ -69,6 +69,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAllowAccessProvider(),
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,

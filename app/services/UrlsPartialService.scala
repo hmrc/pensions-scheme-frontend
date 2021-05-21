@@ -234,8 +234,8 @@ class UrlsPartialService @Inject()(
   private def redirectBasedOnMinimalFlags(redirectUrl: String, minimalFlags: PSAMinimalFlags): Result =
     Redirect(
       minimalFlags match {
-        case PSAMinimalFlags(true, _) => appConfig.cannotStartRegUrl
-        case PSAMinimalFlags(_, true) => appConfig.youMustContactHMRCUrl
+        case PSAMinimalFlags(true, _, _) => appConfig.cannotStartRegUrl
+        case PSAMinimalFlags(_, true, _) => appConfig.youMustContactHMRCUrl
         case _ => redirectUrl
       }
     )

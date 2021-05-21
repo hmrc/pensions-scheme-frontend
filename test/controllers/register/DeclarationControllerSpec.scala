@@ -67,6 +67,20 @@ class DeclarationControllerSpec
       redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
     }
 
+    "redirect to you must contact HMRC page when deceased flag is true" in {
+      val result = controller(dataRetrievalAction = individualEst, isDeceased = true).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
+    }
+
+    "redirect to you must update your address page when rls flag is true" in {
+      val result = controller(dataRetrievalAction = individualEst, rlsFlag = true).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
+    }
+
     "return OK and don't save the DeclarationDormant " when {
 
       "the establisher is an individual" in {
@@ -230,7 +244,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
-                         fakeEmailConnector: EmailConnector = fakeEmailConnector
+                         fakeEmailConnector: EmailConnector = fakeEmailConnector,
+                         isSuspended:Boolean = true, isDeceased:Boolean = false, rlsFlag:Boolean = false
                         ): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -242,7 +257,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       new DataRequiredActionImpl,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
-      fakeMinimalPsaConnector,
+      fakeMinimalPsaConnector(isSuspended, isDeceased, rlsFlag),
       controllerComponents,
       mockHsTaskListHelperRegistration,
       crypto,
@@ -340,12 +355,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     }
   }
 
-  private val fakeMinimalPsaConnector = new MinimalPsaConnector {
+  private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
     override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
-      Future.successful(PSAMinimalFlags(isSuspended = true, isDeceased = false))
+      Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
 
     override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
-      Future.successful(MinimalPSA("test@test.com", isPsaSuspended = true, Some("psa name"), None))
+      Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
 
     override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
       Future.successful(Some("psa name"))

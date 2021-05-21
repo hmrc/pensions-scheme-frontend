@@ -40,10 +40,12 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
   private val psaName = "Psa Name"
   private val view = injector.instanceOf[beforeYouStart]
 
-  def controller(): BeforeYouStartController =
+  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData): BeforeYouStartController =
     new BeforeYouStartController(
       messagesApi,
       FakeAuthAction,
+      FakeAllowAccessProvider(),
+      dataRetrievalAction,
       pensionAdministratorConnector,
       controllerComponents,
       view
@@ -59,7 +61,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
       "return OK and the correct view" in {
 
         when(pensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val result = controller().onPageLoad(fakeRequest)
+        val result = controller().onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

@@ -136,18 +136,18 @@ class AllowAccessActionSpec
 
   private val suspendedUserAnswers = UserAnswers(
     Json.obj(
-      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = true, isDeceased = false))
+      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = true, isDeceased = false, rlsFlag = false))
     )
   )
 
   private val deceasedUserAnswers = UserAnswers(
     Json.obj(
-      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = false, isDeceased = true))
+      PsaMinimalFlagsId.toString -> Json.toJson(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false))
     )
   )
 
   private val notSuspendedUserAnswers =
-    UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = false, isDeceased = false)))
+    UserAnswers(Json.obj(PsaMinimalFlagsId.toString -> PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
 
   private def assertEqual(
                            futureResult: Future[Option[Result]],
