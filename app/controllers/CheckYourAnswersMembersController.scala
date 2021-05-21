@@ -69,7 +69,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
     val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
       Message("messages__membershipDetailsFor", name)
 
-    val returnToTaskListCall:Option[Call] = (request.role, srn) match {
+    val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
       case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }

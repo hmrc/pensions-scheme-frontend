@@ -21,10 +21,25 @@ import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import utils.UserAnswers
 
-case class OptionalDataRequest[A](request: Request[A], externalId: String, userAnswers: Option[UserAnswers],
-                                  psaId: Option[PsaId], pspId: Option[PspId] = None, viewOnly: Boolean = false, role:AdministratorOrPractitioner)
+case class OptionalDataRequest[A](
+                                   request: Request[A],
+                                   externalId: String,
+                                   userAnswers: Option[UserAnswers],
+                                   psaId: Option[PsaId],
+                                   pspId: Option[PspId] = None,
+                                   viewOnly: Boolean = false,
+                                   administratorOrPractitioner:AdministratorOrPractitioner
+                                 )
+
   extends WrappedRequest[A](request) with IdentifiedRequest
 
-case class DataRequest[A](request: Request[A], externalId: String, userAnswers: UserAnswers, psaId: Option[PsaId],
-                          pspId: Option[PspId] = None, viewOnly: Boolean = false, role:AdministratorOrPractitioner)
+case class DataRequest[A](
+                           request: Request[A],
+                           externalId: String,
+                           userAnswers: UserAnswers,
+                           psaId: Option[PsaId],
+                           pspId: Option[PspId] = None,
+                           viewOnly: Boolean = false,
+                           administratorOrPractitioner:AdministratorOrPractitioner
+                         )
   extends WrappedRequest[A](request) with IdentifiedRequest

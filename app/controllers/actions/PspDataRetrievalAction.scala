@@ -41,12 +41,12 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
         val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
         schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
           val userAnswers = ua.set(SchemeSrnId)(srn).asOpt.getOrElse(ua)
-          OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true, request.role)
+          OptionalDataRequest(request.request, request.externalId, Some(userAnswers), request.psaId, request.pspId, viewOnly = true, request.administratorOrPractitioner)
         }
 
       case Some(data) =>
         Future.successful(OptionalDataRequest(
-          request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true, request.role))
+          request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true, request.administratorOrPractitioner))
     }
   }
 }

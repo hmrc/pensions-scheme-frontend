@@ -59,7 +59,7 @@ class DataRetrievalImpl(
             userAnswers = None,
             psaId = request.psaId,
             pspId = request.pspId,
-            role = request.role
+            administratorOrPractitioner = request.administratorOrPractitioner
           ))
         }
     }
@@ -96,7 +96,7 @@ class DataRetrievalImpl(
         psaId = request.psaId,
         pspId = request.pspId,
         viewOnly = viewOnly,
-        role = request.role
+        administratorOrPractitioner = request.administratorOrPractitioner
       )
       case Some(data) => OptionalDataRequest(
         request = request.request,
@@ -105,7 +105,7 @@ class DataRetrievalImpl(
         psaId = request.psaId,
         pspId = request.pspId,
         viewOnly = viewOnly,
-        role = request.role
+        administratorOrPractitioner = request.administratorOrPractitioner
       )
     }
 
@@ -147,7 +147,7 @@ class DataRetrievalImpl(
               psaId = request.psaId,
               pspId = request.pspId,
               viewOnly = true,
-              role = request.role
+              administratorOrPractitioner = request.administratorOrPractitioner
             )
 
           case _ =>
@@ -158,7 +158,7 @@ class DataRetrievalImpl(
               psaId = request.psaId,
               pspId = request.pspId,
               viewOnly = true,
-              role = request.role
+              administratorOrPractitioner = request.administratorOrPractitioner
             )
         }
       case None =>
@@ -169,7 +169,7 @@ class DataRetrievalImpl(
           psaId = request.psaId,
           pspId = request.pspId,
           viewOnly = true,
-          role = request.role
+          administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
   }
@@ -188,7 +188,7 @@ class DataRetrievalImpl(
               psaId = request.psaId,
               pspId = request.pspId,
               viewOnly = status != "Open",
-              role = request.role
+              administratorOrPractitioner = request.administratorOrPractitioner
             )
           case (Some(_), _) =>
             OptionalDataRequest(
@@ -198,7 +198,7 @@ class DataRetrievalImpl(
               psaId = request.psaId,
               pspId = request.pspId,
               viewOnly = true,
-              role = request.role
+              administratorOrPractitioner = request.administratorOrPractitioner
             )
           case _ =>
             OptionalDataRequest(
@@ -208,7 +208,7 @@ class DataRetrievalImpl(
               psaId = request.psaId,
               pspId = request.pspId,
               viewOnly = true,
-              role = request.role
+              administratorOrPractitioner = request.administratorOrPractitioner
             )
         }
       case None =>
@@ -219,7 +219,7 @@ class DataRetrievalImpl(
           psaId = request.psaId,
           pspId = request.pspId,
           viewOnly = true,
-          role = request.role
+          administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
   }

@@ -142,7 +142,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
       }
     }
 
-    "the user has an unsupported credential role" must {
+    "the user has an unsupported credential administratorOrPractitioner" must {
       "redirect the user to the unauthorised page" in {
         val authAction = new AuthActionImpl(fakeAuthConnector(Future.failed(new UnsupportedCredentialRole)),
           frontendAppConfig, mockSessionDataCacheConnector, parser)
@@ -253,7 +253,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         redirectLocation(result) mustBe Some(frontendAppConfig.cannotAccessPageAsPractitionerUrl(frontendAppConfig.localFriendlyUrl(fakeRequest.uri)))
       }
 
-      "redirect to administrator or practitioner page when trying to access PSA page when not chosen a role" in {
+      "redirect to administrator or practitioner page when trying to access PSA page when not chosen a administratorOrPractitioner" in {
         val optionUAJson = Some(Json.obj())
         when(mockSessionDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(optionUAJson))
         val authAction = new AuthActionImpl(
