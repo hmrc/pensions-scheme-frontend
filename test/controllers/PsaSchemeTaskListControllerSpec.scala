@@ -17,6 +17,7 @@
 package controllers
 
 import base.JsonFileReader
+import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
@@ -43,6 +44,8 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
     when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(TCMP)))
+    when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
   }
 
   "SchemeTaskList Controller" when {
@@ -55,6 +58,32 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
         status(result) mustBe OK
         contentAsString(result) mustBe view(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
+      }
+    }
+
+    "srn is None and there is user answers but deceasedFlag is true" must {
+      "redirect to contact HMRC page" in {
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+          .thenReturn(Future.successful(PSAMinimalFlags(false, true, false)))
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
+          .onPageLoad(NormalMode, None)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
+      }
+    }
+
+    "srn is None and there is user answers but rlsFlag is true" must {
+      "redirect to update your contact address page" in {
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+          .thenReturn(Future.successful(PSAMinimalFlags(false, false, true)))
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
+          .onPageLoad(NormalMode, None)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
       }
     }
 
@@ -112,6 +141,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
+  private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
 
   private val srnValue = "S1000000456"
   private val srn = Some(srnValue)
@@ -123,6 +153,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
+      mockMinimalPsaConnector,
       FakeAllowAccessProvider(),
       controllerComponents,
       view,

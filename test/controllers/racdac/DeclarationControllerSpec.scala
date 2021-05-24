@@ -24,7 +24,7 @@ import controllers.actions._
 import helpers.DataCompletionHelper
 import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
-import models.MinimalPSA
+import models.{MinimalPSA, PSAMinimalFlags}
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
@@ -54,10 +54,29 @@ class DeclarationControllerSpec
 
   "onPageLoad" must {
     "return OK and the correct view " in {
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
         val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to you must contact HMRC page when deceased flag is true" in {
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false)))
+      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
+    }
+    "redirect to you must update your address page when rls flag is true" in {
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+        .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = true)))
+      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
     }
   }
 
@@ -110,6 +129,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(
+      frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(onwardRoute),

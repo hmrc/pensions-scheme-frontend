@@ -17,15 +17,17 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import identifiers.{SchemeNameId, TcmpToggleId}
 import models.AuthEntity.PSA
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
-import models.{Mode, UpdateMode}
+import models.requests.OptionalDataRequest
+import models.{Mode, PSAMinimalFlags, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import services.FeatureToggleService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -41,6 +43,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
+                                         minimalPsaConnector: MinimalPsaConnector,
                                          @TaskList allowAccess: AllowAccessActionProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: psaTaskList,
@@ -50,32 +53,49 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
+  private def redirects(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier):Future[Option[Result]] = {
+    request.psaId match {
+      case None => Future.successful(None)
+      case Some(psaId) =>
+        minimalPsaConnector.getMinimalFlags(psaId.id).map {
+          case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
+          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
+          case _ => None
+        }
+    }
+  }
+
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
-      val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
-      val isRacDacOpt: Option[Boolean] = request.userAnswers.flatMap(_.get(IsRacDacId))
 
-      (srn, request.userAnswers, schemeNameOpt, isRacDacOpt) match {
-
-        case (_, Some(_), Some(_), Some(true)) =>
-          Future.successful(Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn)))
-
-        case (None, Some(userAnswers), Some(schemeName), _) =>
-          userAnswersWithTcmpToggle(userAnswers).map { ua =>
-            Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn), schemeName))
-          }
-
-        case (Some(_), Some(userAnswers), Some(schemeName), _) =>
-          userAnswersWithTcmpToggle(userAnswers).map { ua =>
-            Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn), schemeName))
-          }
-
-        case (Some(_), _, _, _) =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-
+      redirects.flatMap {
+        case Some(result) => Future.successful(result)
         case _ =>
-          Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
+          val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
+          val isRacDacOpt: Option[Boolean] = request.userAnswers.flatMap(_.get(IsRacDacId))
+
+          (srn, request.userAnswers, schemeNameOpt, isRacDacOpt) match {
+
+            case (_, Some(_), Some(_), Some(true)) =>
+              Future.successful(Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn)))
+
+            case (None, Some(userAnswers), Some(schemeName), _) =>
+              userAnswersWithTcmpToggle(userAnswers).map { ua =>
+                Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn), schemeName))
+              }
+
+            case (Some(_), Some(userAnswers), Some(schemeName), _) =>
+              userAnswersWithTcmpToggle(userAnswers).map { ua =>
+                Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn), schemeName))
+              }
+
+            case (Some(_), _, _, _) =>
+              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+
+            case _ =>
+              Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
+          }
       }
   }
 

@@ -51,3 +51,6 @@ Example PSA ID: A2100005
 |-----------------|-----------------------------------------------------------------------|
 |Journey tests    |https://github.com/hmrc/pods-journey-tests       |
 |Prototype        |https://pods-prototype.herokuapp.com/page-list/page-list-scheme                    |
+
+## Note on terminology
+The terms scheme reference number and submission reference number (SRN) are interchangeable within the PODS codebase; some downstream APIs use scheme reference number, some use submission reference number, probably because of oversight on part of the technical teams who developed these APIs. This detail means the same thing, the reference number that was returned from ETMP when the scheme details were submitted.
