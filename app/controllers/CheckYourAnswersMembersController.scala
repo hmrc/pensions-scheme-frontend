@@ -18,12 +18,12 @@ package controllers
 
 import controllers.actions._
 import identifiers.{CurrentMembersId, FutureMembersId}
-import javax.inject.Inject
+import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -31,6 +31,7 @@ import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersMembersController @Inject()(override val messagesApi: MessagesApi,
@@ -68,6 +69,11 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
     val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
       Message("messages__membershipDetailsFor", name)
 
+    val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
+      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case _ => None
+    }
+
     CYAViewModel(
       answerSections = Seq(membersSection),
       href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
@@ -77,7 +83,8 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
       srn = srn,
       hideSaveAndContinueButton = mode == UpdateMode || mode == CheckUpdateMode,
       title = heading(Message("messages__theScheme")),
-      h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme")))
+      h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme"))),
+      anotherReturn = returnToTaskListCall
     )
   }
 
