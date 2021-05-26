@@ -55,6 +55,6 @@
     @if(vm.returnOverview){
         @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
     } else {
-        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, None, vm.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
     }
 }
