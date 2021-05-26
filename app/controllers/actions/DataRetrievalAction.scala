@@ -20,7 +20,8 @@ package controllers.actions
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
-import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
+import identifiers.racdac.{IsRacDacId, RACDACNameId}
+import identifiers.{PsaMinimalFlagsId, SchemeNameId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -70,8 +71,7 @@ class DataRetrievalImpl(
                                         psaId: String,
                                         refresh: Boolean)
                                        (implicit request: AuthenticatedRequest[A],
-                                        hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
-
+                                        hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     (refresh, optionLock) match {
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
@@ -84,7 +84,6 @@ class DataRetrievalImpl(
       case (_, Some(_)) => getRequestWithLock(srn, refresh, psaId)
       case _ => getRequestWithNoLock(srn, refresh, psaId)
     }
-  }
 
   private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
                                       (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
@@ -127,15 +126,22 @@ class DataRetrievalImpl(
                                                       upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
-      val updatedUserAnswers = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
+      val ua = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
-      upsertUserAnswers(updatedUserAnswers.json)
+      upsertUserAnswers(storeSchemeNameAsRacDacName(ua).json)
     }
   }
 
+  private def storeSchemeNameAsRacDacName(ua: UserAnswers): UserAnswers =
+    (ua.get(IsRacDacId), ua.get(RACDACNameId)) match {
+      case (Some(true), None) =>
+        val schemeName: String = ua.get(SchemeNameId).getOrElse(throw MissingSchemeNameException)
+        ua.set(RACDACNameId)(schemeName).asOpt.getOrElse(ua)
+      case _ => ua
+    }
+
   private def getRequestWithLock[A](srn: String, refresh: Boolean, psaId: String)
-                                   (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier)
-  : Future[OptionalDataRequest[A]] = {
+                                   (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
@@ -172,24 +178,17 @@ class DataRetrievalImpl(
           administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
-  }
 
   private def getRequestWithNoLock[A](srn: String, refresh: Boolean, psaId: String)
-                                     (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] = {
+                                     (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(answersJsValue) =>
         val ua: UserAnswers = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            OptionalDataRequest(
-              request = request.request,
-              externalId = request.externalId,
-              userAnswers = Some(ua),
-              psaId = request.psaId,
-              pspId = request.pspId,
-              viewOnly = status != "Open",
-              administratorOrPractitioner = request.administratorOrPractitioner
-            )
+            val viewOnlyStatus = if(ua.get(IsRacDacId).contains(true)) true else status != "Open"
+            OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = viewOnlyStatus,
+              request.administratorOrPractitioner)
           case (Some(_), _) =>
             OptionalDataRequest(
               request = request.request,
@@ -222,9 +221,10 @@ class DataRetrievalImpl(
           administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
-  }
 
 }
+
+case object MissingSchemeNameException extends Exception
 
 @ImplementedBy(classOf[DataRetrievalImpl])
 trait DataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]

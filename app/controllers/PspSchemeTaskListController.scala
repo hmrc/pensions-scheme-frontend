@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import identifiers.SchemeNameId
+import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSP
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -45,8 +46,9 @@ class PspSchemeTaskListController @Inject()(
 
       request.userAnswers match {
         case Some(ua) =>
-          ua.get(SchemeNameId) match {
-            case Some(schemeName) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn), schemeName))
+          (ua.get(IsRacDacId), ua.get(SchemeNameId)) match {
+            case (Some(true), Some(_)) => Redirect(controllers.racdac.routes.CheckYourAnswersController.pspOnPageLoad(srn))
+            case (_, Some(schemeName)) => Ok(view(hsTaskListHelperPsp.taskList(ua, srn), schemeName))
             case _ => sessionExpired
           }
         case _ => sessionExpired
