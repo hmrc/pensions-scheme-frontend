@@ -31,7 +31,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
                                   servicesConfig: ServicesConfig) {
   def localFriendlyUrl(uri:String):String = loadConfig("host") + uri
 
-  lazy val contactHost: String = baseUrl("contact-frontend")
   def featureToggleUrl(toggle:String) : String =
     s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.featureToggle").format(toggle)}"
   lazy val managePensionsSchemeOverviewUrl: Call = Call("GET", loadConfig("urls.manage-pensions-frontend" +
@@ -114,11 +113,9 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   //FEATURES
   lazy val languageTranslationEnabled: Boolean = runModeConfiguration.getOptional[Boolean]("features" +
     ".welsh-translation").getOrElse(true)
-  val reportAProblemPartialUrl: String = getConfigString("contact-frontend.report-problem-url.with-js")
   val reportAProblemNonJSUrl: String = getConfigString("contact-frontend.report-problem-url.non-js")
-  val betaFeedbackUrl: String = getConfigString("contact-frontend.beta-feedback-url.authenticated")
   val betaFeedbackUnauthenticatedUrl: String = getConfigString("contact-frontend.beta-feedback-url.unauthenticated")
-  val reportTechnicalIssues = ReportTechnicalIssue(serviceId = "PODS", baseUrl = Some(contactHost))
+  val reportTechnicalIssues = ReportTechnicalIssue(serviceId = "PODS", baseUrl = Some(reportAProblemNonJSUrl))
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
@@ -130,13 +127,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   private def loadConfig(key: String): String = runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception
   (s"Missing configuration key: $key"))
 
-  private def baseUrl(serviceName: String): String = {
-    val protocol = runModeConfiguration.getOptional[String](s"microservice.services.$serviceName.protocol")
-      .getOrElse("http")
-    val host = runModeConfiguration.get[String](s"microservice.services.$serviceName.host")
-    val port = runModeConfiguration.get[String](s"microservice.services.$serviceName.port")
-    s"$protocol://$host:$port"
-  }
 
   private def getConfigString(key: String) = servicesConfig.getConfString(key, throw new Exception(s"Could not find " +
     s"config '$key'"))
