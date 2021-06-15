@@ -59,20 +59,12 @@ class MoneyPurchaseBenefitsIdSpec extends SpecBase with Enumerable.Implicits {
         MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(answerRowsWithChangeLinks)
       }
 
-      "return answers rows with add link if question is unanswered and toggle is on" in {
+      "return answers rows with add link if question is unanswered" in {
         val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
           _.set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchaseDefinedMix)).asOpt.get
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
         implicit val userAnswers: UserAnswers = request.userAnswers
         MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(addRow)
-      }
-
-      "return empty answers row if question is unanswered and toggle is off" in {
-        val answers: UserAnswers = UserAnswers().set(SchemeNameId)(name).flatMap(
-          _.set(TypeOfBenefitsId)(TypeOfBenefits.MoneyPurchaseDefinedMix)).asOpt.get
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
-        implicit val userAnswers: UserAnswers = request.userAnswers
-        MoneyPurchaseBenefitsId.row(onwardUrl, UpdateMode)(request,implicitly) must equal(Nil)
       }
     }
 
