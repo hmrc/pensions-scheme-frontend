@@ -17,32 +17,19 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import models.FeatureToggle.Disabled
-import models.FeatureToggleName.TCMP
 import models.Mode._
 import models._
 import models.address.Address
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-import scala.concurrent.Future
-
 class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase with OptionValues with BeforeAndAfterEach {
 
   import CheckYourAnswersBenefitsAndInsuranceControllerSpec._
-
-  override def beforeEach(): Unit = {
-    reset(featureToggleService)
-    when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Disabled(TCMP)))
-    super.beforeEach()
-  }
 
   "CheckYourAnswersBenefitsAndInsurance Controller" when {
 
@@ -88,7 +75,6 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 }
 
 object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
@@ -113,8 +99,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view,
-      featureToggleService
+      view
     )
 
   private def benefitsAndInsuranceSection(mode : Mode) = AnswerSection(

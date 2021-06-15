@@ -34,8 +34,7 @@ case object MoneyPurchaseBenefitsId
   implicit def cya(
                     implicit userAnswers: UserAnswers,
                     rds: Reads[MoneyPurchaseBenefits],
-                    messages: Messages,
-                    tcmpToggle: Boolean
+                    messages: Messages
                   ): CheckYourAnswers[self.type] = {
     new CheckYourAnswers[self.type] {
 
@@ -72,7 +71,7 @@ case object MoneyPurchaseBenefitsId
         (userAnswers.get(id), userAnswers.get(TypeOfBenefitsId)) match {
           case (Some(_), _) =>
             row(id)(changeUrl, userAnswers)
-          case (_, Some(MoneyPurchase) | Some(MoneyPurchaseDefinedMix)) if tcmpToggle =>
+          case (_, Some(MoneyPurchase) | Some(MoneyPurchaseDefinedMix)) =>
             Seq(AnswerRow(
               label = label,
               answer = Seq("site.not_entered"),
