@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
-import identifiers.{SchemeNameId, TypeOfBenefitsId}
+import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
 import models.FeatureToggle.Enabled
 import models.FeatureToggleName.TCMP
 import models.{CheckMode, Mode, NormalMode, TypeOfBenefits}
@@ -89,7 +89,11 @@ class TypeOfBenefitsController @Inject()(
                   schemeName = existingSchemeName
                 ))),
               value =>
-                userAnswersService.save(mode, srn, TypeOfBenefitsId, value).flatMap(cacheMap =>
+                (if(value == TypeOfBenefits.Defined && request.userAnswers.get(MoneyPurchaseBenefitsId).isDefined)
+                  userAnswersService.save(mode, srn, TypeOfBenefitsId, value, TcmpChangedId)
+                else
+                  userAnswersService.save(mode, srn, TypeOfBenefitsId, value)
+                ).flatMap(cacheMap =>
                   featureToggleService.get(TCMP).map {
                     case Enabled(_) =>
                       Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap), srn))
