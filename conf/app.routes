@@ -231,3 +231,5 @@ GET         /delete-changes/:srn                                     controllers
 POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: String)
 
 GET         /cannot-start-registration                               controllers.CannotStartRegistrationController.onPageLoad
+
+GET         /your-action-was-not-processed                           controllers.YourActionWasNotProcessedController.onPageLoad()
