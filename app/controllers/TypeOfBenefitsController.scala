@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
-import identifiers.{SchemeNameId, TypeOfBenefitsId}
+import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
 import models.{Mode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
@@ -86,7 +86,11 @@ class TypeOfBenefitsController @Inject()(
                   schemeName = existingSchemeName
                 ))),
               value =>
-                userAnswersService.save(mode, srn, TypeOfBenefitsId, value).map(cacheMap =>
+                (if(value == TypeOfBenefits.Defined && request.userAnswers.get(MoneyPurchaseBenefitsId).isDefined)
+                  userAnswersService.save(mode, srn, TypeOfBenefitsId, value, TcmpChangedId)
+                else
+                  userAnswersService.save(mode, srn, TypeOfBenefitsId, value)
+                ).map(cacheMap =>
                    Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap), srn))
                 )
 
