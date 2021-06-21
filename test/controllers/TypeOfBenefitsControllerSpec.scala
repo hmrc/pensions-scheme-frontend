@@ -20,24 +20,16 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
-import models.FeatureToggle.Enabled
-import models.FeatureToggleName.TCMP
 import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
-import services.{FakeUserAnswersService, FeatureToggleService, UserAnswersService}
+import services.{FakeUserAnswersService, UserAnswersService}
 import utils.{FakeNavigator, UserAnswers}
 import views.html.typeOfBenefits
-import org.mockito.Matchers._
-import org.mockito.Mockito._
-
-import scala.concurrent.Future
 
 class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours with MockitoSugar {
 
@@ -49,7 +41,6 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
   private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, None)
-  private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
 
 
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
@@ -71,8 +62,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,
-      view,
-      featureToggleService
+      view
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
@@ -86,7 +76,6 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     controller(cache = cache).onSubmit(NormalMode, None)
 
   "Type of benefits Controller" when {
-    when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(TCMP)))
 
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction,

@@ -19,14 +19,12 @@ package controllers
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
-import models.FeatureToggle.Enabled
-import models.FeatureToggleName.TCMP
-import models.{CheckMode, Mode, NormalMode, TypeOfBenefits}
+import models.{Mode, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.AboutBenefitsAndInsurance
 import utils.{Enumerable, UserAnswers}
@@ -45,8 +43,7 @@ class TypeOfBenefitsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: TypeOfBenefitsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
-                                          val view: typeOfBenefits,
-                                          featureToggleService: FeatureToggleService
+                                          val view: typeOfBenefits
                                         )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport
@@ -93,27 +90,11 @@ class TypeOfBenefitsController @Inject()(
                   userAnswersService.save(mode, srn, TypeOfBenefitsId, value, TcmpChangedId)
                 else
                   userAnswersService.save(mode, srn, TypeOfBenefitsId, value)
-                ).flatMap(cacheMap =>
-                  featureToggleService.get(TCMP).map {
-                    case Enabled(_) =>
-                      Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap), srn))
-                    case _ =>
-                      Redirect(toggleOffNavigation(mode, srn))
-                  }
+                ).map(cacheMap =>
+                   Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap), srn))
                 )
 
             )
         }
-    }
-
-  private def toggleOffNavigation(mode: Mode, srn: Option[String]): Call =
-    mode match {
-      case NormalMode =>
-        controllers.routes.BenefitsSecuredByInsuranceController.onPageLoad(mode, srn)
-      case CheckMode =>
-        controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, srn)
-      case _ =>
-        controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-
     }
 }
