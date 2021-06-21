@@ -26,6 +26,9 @@ GET         /logout                                                  controllers
 
 GET         /you-need-to-register                                    controllers.YouNeedToRegisterController.onPageLoad()
 
+GET         /your-action-was-not-processed                          controllers.YourActionWasNotProcessedController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /your-action-was-not-processed/:srn                      controllers.YourActionWasNotProcessedController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
+
 GET         /continue-registration                                   controllers.ContinueRegistrationController.continue()
 
 GET         /what-you-will-need-members                              controllers.WhatYouWillNeedMembersController.onPageLoad
@@ -231,5 +234,3 @@ GET         /delete-changes/:srn                                     controllers
 POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: String)
 
 GET         /cannot-start-registration                               controllers.CannotStartRegistrationController.onPageLoad
-
-GET         /your-action-was-not-processed                           controllers.YourActionWasNotProcessedController.onPageLoad()

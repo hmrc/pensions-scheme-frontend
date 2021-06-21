@@ -1901,3 +1901,9 @@ messages__complete_racdac__statement1 = The RAC/DAC will be added to your list o
 messages__complete_racdac__save_or_print = Save or print
 messages__complete_racdac__copy_2_link = Managing Pension Schemes online service
 messages__complete_racdac__email = We have sent a confirmation email to
+
+yourActionWasNotProcessed.title = Sorry, your action was not processed
+yourActionWasNotProcessed.heading = Sorry, your action was not processed
+yourActionWasNotProcessed.guidance.p1 = Try again later.
+yourActionWasNotProcessed.guidance.p2 = Any information entered will have been saved from the last ‘save and continue’.
+yourActionWasNotProcessed.guidance.p3 = If the problem persists you can tell us about it using the link below.

@@ -16,10 +16,10 @@
 
 package controllers
 
-import controllers.actions.{AuthAction, DataRetrievalAction}
+import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PsaDetailsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.yourActionWasNotProcessed
 
@@ -31,23 +31,16 @@ class YourActionWasNotProcessedController @Inject()(
                                                      val controllerComponents: MessagesControllerComponents,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
-                                                     view: yourActionWasNotProcessed,
-                                                     psaDetailsService: PsaDetailsService
+                                                     requireData: DataRequiredAction,
+                                                     view: yourActionWasNotProcessed
                                                    )(implicit val executionContext: ExecutionContext)
-  extends FrontendBaseController
-    with I18nSupport {
+  extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] =
-    (authenticate andThen getData).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn)).async {
       implicit request =>
-        request.user.alreadyEnrolledPsaId.map {
-          psaId =>
-            psaDetailsService.retrievePsaDataAndGenerateViewModel(psaId).map {
-              psaDetails =>
-                Ok(view(psaDetails))
-            }
-        }.getOrElse(
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        )
+        println("\n\n in action controler"+existingSchemeName)
+        Future.successful(Ok(view(existingSchemeName, mode, srn)))
     }
+
 }

@@ -84,7 +84,7 @@ class DeclarationControllerSpec
     "redirect to the next page on clicking agree and continue" in {
       val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
       when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
+        .thenReturn(Future.successful(schemeSubmissionResponse))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))

@@ -27,6 +27,8 @@ import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.{Enumerable, UserAnswers}
@@ -87,17 +89,19 @@ class VariationDeclarationController @Inject()(
                 .asOpt
                 .getOrElse(request.userAnswers)
 
-            pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap {
-              case Right(_) =>
-                for {
-                  schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr)
-                  _ <- auditTcmp(psaId.id, schemeDetails.get(TypeOfBenefitsId), ua)
-                  _ <- updateSchemeCacheConnector.removeAll(srnId)
-                  _ <- viewConnector.removeAll(request.externalId)
-                  _ <- lockConnector.releaseLock(psaId.id, srnId)
-                } yield Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
-              case Left(_) =>
-                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap { _ =>
+              for {
+                _ <- pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua)
+                schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr)
+                _ <- auditTcmp(psaId.id, schemeDetails.get(TypeOfBenefitsId), ua)
+                _ <- updateSchemeCacheConnector.removeAll(srnId)
+                _ <- viewConnector.removeAll(request.externalId)
+                _ <- lockConnector.releaseLock(psaId.id, srnId)
+              } yield Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
+            } recoverWith {
+              case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
+                Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(UpdateMode, srn)))
+              case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
           case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

@@ -37,15 +37,16 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Res
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HttpErrorFunctions._
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -157,15 +158,16 @@ class DeclarationController @Inject()(
 
       (for {
         cacheMap <- dataCacheConnector.upsert(request.externalId, updatedUA.json)
-        eitherSubmissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id)
-      } yield eitherSubmissionResponse).flatMap {
-        case Right(submissionResponse) =>
-          for {
-            cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-            _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
-            _ <- auditTcmp(psaId.id, request.userAnswers)
-          } yield Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-        case Left(_) =>
+        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id)
+        _ <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+        _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
+        _ <- auditTcmp(psaId.id, request.userAnswers)
+      } yield {
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+      })recoverWith {
+        case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
+        case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
   }

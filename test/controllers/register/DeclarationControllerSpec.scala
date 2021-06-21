@@ -335,12 +335,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
     (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
-      Future.successful(Right(validSchemeSubmissionResponse))
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
     }
 
     override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]] = ???
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
 
     override def checkForAssociation(psaId: String, srn: String)
                                     (implicit headerCarrier: HeaderCarrier,

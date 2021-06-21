@@ -32,7 +32,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
@@ -110,16 +111,16 @@ class DeclarationController @Inject()(
     val ua = request.userAnswers
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
-    pensionsSchemeConnector.registerScheme(ua, psaId.id).flatMap {
-      case Right(submissionResponse) =>
-        sendEmail(psaId, schemeName).flatMap { _ =>
-          dataCacheConnector.upsert(
-            request.externalId,
-            ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
-          ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
-        }
-      case Left(_) =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    (for {
+      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id)
+      _ <- sendEmail(psaId, schemeName)
+      _ <- dataCacheConnector.upsert(request.externalId, ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json)
+    } yield {
+      Redirect(navigator.nextPage(DeclarationId, NormalMode, ua))
+    }) recoverWith {
+      case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
+        Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
+      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 
