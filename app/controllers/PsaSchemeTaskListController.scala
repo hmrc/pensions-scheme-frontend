@@ -19,19 +19,15 @@ package controllers
 import config.FrontendAppConfig
 import connectors.MinimalPsaConnector
 import controllers.actions._
+import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
-import identifiers.{SchemeNameId, TcmpToggleId}
 import models.AuthEntity.PSA
-import models.FeatureToggle.Enabled
-import models.FeatureToggleName.TCMP
 import models.requests.OptionalDataRequest
 import models.{Mode, PSAMinimalFlags, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.FeatureToggleService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.UserAnswers
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.psaTaskList
@@ -48,8 +44,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: psaTaskList,
                                          hsTaskListHelperRegistration: HsTaskListHelperRegistration,
-                                         hsTaskListHelperVariations: HsTaskListHelperVariations,
-                                         featureToggleService: FeatureToggleService
+                                         hsTaskListHelperVariations: HsTaskListHelperVariations
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -69,8 +64,8 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
     andThen allowAccess(srn)).async {
     implicit request =>
 
-      redirects.flatMap {
-        case Some(result) => Future.successful(result)
+      redirects.map {
+        case Some(result) => result
         case _ =>
           val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
           val isRacDacOpt: Option[Boolean] = request.userAnswers.flatMap(_.get(IsRacDacId))
@@ -78,31 +73,20 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           (srn, request.userAnswers, schemeNameOpt, isRacDacOpt) match {
 
             case (_, Some(_), Some(_), Some(true)) =>
-              Future.successful(Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn)))
+              Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn))
 
             case (None, Some(userAnswers), Some(schemeName), _) =>
-              userAnswersWithTcmpToggle(userAnswers).map { ua =>
-                Ok(view(hsTaskListHelperRegistration.taskList(ua, None, srn), schemeName))
-              }
+              Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName))
 
             case (Some(_), Some(userAnswers), Some(schemeName), _) =>
-              userAnswersWithTcmpToggle(userAnswers).map { ua =>
-                Ok(view(hsTaskListHelperVariations.taskList(ua, Some(request.viewOnly), srn), schemeName))
-              }
+              Ok(view(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
 
             case (Some(_), _, _, _) =>
-              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+              Redirect(controllers.routes.SessionExpiredController.onPageLoad())
 
             case _ =>
-              Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
+              Redirect(appConfig.managePensionsSchemeOverviewUrl)
           }
       }
-  }
-
-  def userAnswersWithTcmpToggle(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] = {
-    featureToggleService.get(TCMP).map {
-      case Enabled(_) => userAnswers.set(TcmpToggleId)(true).get
-      case _ => userAnswers
-    }
   }
 }

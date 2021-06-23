@@ -21,15 +21,12 @@ import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
-import models.FeatureToggle.Enabled
-import models.FeatureToggleName.TCMP
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
@@ -43,7 +40,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
-    when(featureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(TCMP)))
     when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
   }
@@ -140,7 +136,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val view = injector.instanceOf[psaTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
-  private val featureToggleService: FeatureToggleService = mock[FeatureToggleService]
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
 
   private val srnValue = "S1000000456"
@@ -158,8 +153,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       controllerComponents,
       view,
       fakeHsTaskListHelperRegistration,
-      fakeHsTaskListHelperVariation,
-      featureToggleService
+      fakeHsTaskListHelperVariation
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")

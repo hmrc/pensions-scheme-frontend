@@ -19,24 +19,21 @@ package controllers
 import controllers.actions._
 import identifiers._
 import models.AdministratorOrPractitioner.Practitioner
-
-import javax.inject.Inject
 import models.AuthEntity.PSP
-import models.FeatureToggleName.TCMP
 import models.Mode._
 import models.requests.DataRequest
 import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
@@ -46,27 +43,25 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
                                                                requireData: DataRequiredAction,
                                                                implicit val countryOptions: CountryOptions,
                                                                val controllerComponents: MessagesControllerComponents,
-                                                               val view: checkYourAnswers,
-                                                               featureToggleService: FeatureToggleService
+                                                               val view: checkYourAnswers
                                                               )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
-        vm(mode, srn).map(vm => Ok(view(vm)))
+        Ok(view(vm(mode, srn)))
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData) {
       implicit request =>
-        vm(UpdateMode, Some(srn)).map(vm => Ok(view(vm)))
+        Ok(view(vm(UpdateMode, Some(srn))))
     }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): Future[CYAViewModel] = {
-    featureToggleService.get(TCMP).map { toggle =>
-      implicit val tcmpToggle: Boolean = toggle.isEnabled
+  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+
       implicit val userAnswers: UserAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
@@ -100,6 +95,6 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
         h1 = heading(existingSchemeName.getOrElse(Message("messages__theScheme"))),
         anotherReturn = returnToTaskListCall
       )
-    }
+
   }
 }
