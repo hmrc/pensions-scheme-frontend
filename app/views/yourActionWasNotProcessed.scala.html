@@ -26,24 +26,24 @@
 @(schemeName: Option[String], mode: Mode, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("yourActionWasNotProcessed.title")
+    title = messages("messages__yourActionWasNotProcessed__title")
     ) {
 
     @components.back_link()
 
-    <h1 class="heading-xlarge">@messages("yourActionWasNotProcessed.heading")</h1>
+    <h1 class="heading-xlarge">@messages("messages__yourActionWasNotProcessed__heading")</h1>
 
-    <p>@messages("yourActionWasNotProcessed.guidance.p1")</p>
+    <p>@messages("messages__yourActionWasNotProcessed__p1")</p>
 
-    <p>@messages("yourActionWasNotProcessed.guidance.p2")</p>
+    <p>@messages("messages__yourActionWasNotProcessed__p2")</p>
 
-    <p>@messages("yourActionWasNotProcessed.guidance.p3")</p>
+    <p>@messages("messages__yourActionWasNotProcessed__p3")</p>
 
     @schemeName.map{ name =>
             @components.button_link(
                     messages("site.return_to", name),
                     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn).url,
-                    "return"
+                    "redirect-to-tasklist"
                 )
     }
 

@@ -111,6 +111,7 @@ class DeclarationController @Inject()(
     val ua = request.userAnswers
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
+    println("\n\n1...")
     (for {
       submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id)
       _ <- sendEmail(psaId, schemeName)
@@ -118,9 +119,14 @@ class DeclarationController @Inject()(
     } yield {
       Redirect(navigator.nextPage(DeclarationId, NormalMode, ua))
     }) recoverWith {
-      case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-        Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>{
+        println("\n\n\n44..")
+        Future.successful(Redirect(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad()))
+      }
+      case _ => {
+        println("\n\n\n 2...")
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
     }
   }
 

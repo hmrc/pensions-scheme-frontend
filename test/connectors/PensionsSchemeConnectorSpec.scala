@@ -50,7 +50,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.registerScheme(userAnswers, "test-psa-id").map(response =>
-      response shouldBe Right(schemeSubmissionResponse)
+      response shouldBe schemeSubmissionResponse
     )
 
   }

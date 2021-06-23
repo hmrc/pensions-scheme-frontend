@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.racdac
 
+import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import models.Mode
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,10 +37,12 @@ class YourActionWasNotProcessedController @Inject()(
                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] =
+    (authenticate() andThen getData(NormalMode, None) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(existingSchemeName, mode, srn)))
+        withRACDACName { schemeName =>
+          Future.successful(Ok(view(Some(schemeName), NormalMode, None)))
+        }
     }
 
 }

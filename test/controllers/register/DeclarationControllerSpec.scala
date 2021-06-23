@@ -33,11 +33,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Call, RequestHeader}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
@@ -122,6 +124,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue and ensure racdac declaration ID removed and register declaration ID present" in {
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -131,9 +134,31 @@ class DeclarationControllerSpec
       upsertedUA.get(DeclarationId) mustBe Some(true)
     }
 
-    "redirect to the next page on clicking agree and continue and audit TCMP" in {
-      reset(mockAuditService)
+    "redirect to your action was not processed page when backend returns 5XX" in {
+      reset(mockPensionSchemeConnector)
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+        UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
+          Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
+      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None).url)
+    }
+
+    "redirect to session timeout page when backend returns any other error than 5XX" in {
+      reset(mockPensionSchemeConnector)
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+        UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
+          Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
+      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to the next page on clicking agree and continue and audit TCMP" in {
+      reset(mockAuditService, mockPensionSchemeConnector)
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
 
       val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
@@ -224,6 +249,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
+  private val mockPensionSchemeConnector = mock[PensionsSchemeConnector]
 
   private val view = injector.instanceOf[declaration]
 
@@ -255,7 +281,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      fakePensionsSchemeConnector,
+      mockPensionSchemeConnector,
       fakeEmailConnector,
       fakeMinimalPsaConnector(isSuspended, isDeceased, rlsFlag),
       controllerComponents,
@@ -331,21 +357,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockEmailConnector = mock[EmailConnector]
 
   private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
-
-  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
-    override def registerScheme
-    (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
-      Future.successful(validSchemeSubmissionResponse)
-    }
-
-    override def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = ???
-
-    override def checkForAssociation(psaId: String, srn: String)
-                                    (implicit headerCarrier: HeaderCarrier,
-                                     ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = ???
-  }
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
