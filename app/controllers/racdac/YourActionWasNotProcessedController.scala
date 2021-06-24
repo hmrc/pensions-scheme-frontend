@@ -37,12 +37,14 @@ class YourActionWasNotProcessedController @Inject()(
                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] = {
     (authenticate() andThen getData(NormalMode, None) andThen requireData).async {
       implicit request =>
         withRACDACName { schemeName =>
-          Future.successful(Ok(view(Some(schemeName), NormalMode, None)))
+          val returnUrl = controllers.racdac.routes.WhatIsRACDACController.onPageLoad().url
+          Future.successful(Ok(view(Some(schemeName), returnUrl)))
         }
     }
+  }
 
 }

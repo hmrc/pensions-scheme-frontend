@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.racdac
 
+import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.SchemeNameId
-import models.NormalMode
+import identifiers.racdac.RACDACNameId
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.yourActionWasNotProcessed
@@ -26,20 +26,20 @@ import views.html.yourActionWasNotProcessed
 class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[yourActionWasNotProcessed]
-  private val schemeName = "test scheme"
-  private val data = UserAnswers().set(SchemeNameId)(schemeName).asOpt.get.dataRetrievalAction
+  private val racDacName = "test scheme"
+  private val data = UserAnswers().set(RACDACNameId)(racDacName).asOpt.get.dataRetrievalAction
 
   private def controller: YourActionWasNotProcessedController = new YourActionWasNotProcessedController(
     messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, view)
 
-  private val redirectUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
+  private val redirectUrl = controllers.racdac.routes.WhatIsRACDACController.onPageLoad().url
 
-  private def viewAsString() = view(Some(schemeName), redirectUrl)(fakeRequest, messages).toString
+  private def viewAsString() = view(Some(racDacName), redirectUrl)(fakeRequest, messages).toString
 
   "YourActionWasNotProcessed Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller.onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()

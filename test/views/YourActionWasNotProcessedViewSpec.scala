@@ -17,7 +17,6 @@
 package views
 
 import base.SpecBase
-import models.NormalMode
 import org.jsoup.Jsoup
 import views.behaviours.ViewBehaviours
 import views.html.yourActionWasNotProcessed
@@ -27,16 +26,17 @@ class YourActionWasNotProcessedViewSpec extends ViewBehaviours with SpecBase {
   private val schemeName = "test scheme"
   private val messageKeyPrefix = "yourActionWasNotProcessed"
   private val view: yourActionWasNotProcessed = app.injector.instanceOf[yourActionWasNotProcessed]
+  private val testUrl = "/dummyUrl"
 
-  private def createView = () => view(Some(schemeName), NormalMode, None)(fakeRequest, messages)
+  private def createView = () => view(Some(schemeName), testUrl)(fakeRequest, messages)
 
   "YourActionWasNotProcessed view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"),
       expectedGuidanceKeys = "_p1", "_p2", "_p3")
 
     "have button to redirect to task list page" in {
-      Jsoup.parse(createView().toString()).select("a[id=redirect-to-tasklist]") must
-        haveLink(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
+      Jsoup.parse(createView().toString()).select("a[id=return]") must
+        haveLink(testUrl)
     }
   }
 }

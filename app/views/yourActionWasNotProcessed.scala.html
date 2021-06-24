@@ -23,7 +23,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(schemeName: Option[String], mode: Mode, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], returnUrl: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__yourActionWasNotProcessed__title")
@@ -42,8 +42,8 @@
     @schemeName.map{ name =>
             @components.button_link(
                     messages("site.return_to", name),
-                    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn).url,
-                    "redirect-to-tasklist"
+                    returnUrl,
+                    "return"
                 )
     }
 

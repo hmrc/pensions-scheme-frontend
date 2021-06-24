@@ -24,8 +24,8 @@ import controllers.actions._
 import helpers.DataCompletionHelper
 import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
-import models.{MinimalPSA, NormalMode, PSAMinimalFlags}
 import models.register.SchemeSubmissionResponse
+import models.{MinimalPSA, PSAMinimalFlags}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, Matchers}
@@ -118,7 +118,7 @@ class DeclarationControllerSpec
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None).url)
+      redirectLocation(result) mustBe Some(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad().url)
     }
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
