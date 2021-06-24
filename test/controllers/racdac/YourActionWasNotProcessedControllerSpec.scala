@@ -30,9 +30,9 @@ class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
   private val data = UserAnswers().set(RACDACNameId)(racDacName).asOpt.get.dataRetrievalAction
 
   private def controller: YourActionWasNotProcessedController = new YourActionWasNotProcessedController(
-    messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, view)
+    messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, frontendAppConfig, view)
 
-  private val redirectUrl = controllers.racdac.routes.WhatIsRACDACController.onPageLoad().url
+  private val redirectUrl = frontendAppConfig.managePensionsSchemeOverviewUrl.url
 
   private def viewAsString() = view(Some(racDacName), redirectUrl)(fakeRequest, messages).toString
 

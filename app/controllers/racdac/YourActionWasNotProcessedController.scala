@@ -16,6 +16,7 @@
 
 package controllers.racdac
 
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import models.NormalMode
@@ -33,6 +34,7 @@ class YourActionWasNotProcessedController @Inject()(
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
+                                                     appConfig: FrontendAppConfig,
                                                      view: yourActionWasNotProcessed
                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
@@ -41,7 +43,7 @@ class YourActionWasNotProcessedController @Inject()(
     (authenticate() andThen getData(NormalMode, None) andThen requireData).async {
       implicit request =>
         withRACDACName { schemeName =>
-          val returnUrl = controllers.racdac.routes.WhatIsRACDACController.onPageLoad().url
+          val returnUrl = appConfig.managePensionsSchemeOverviewUrl.url
           Future.successful(Ok(view(Some(schemeName), returnUrl)))
         }
     }
