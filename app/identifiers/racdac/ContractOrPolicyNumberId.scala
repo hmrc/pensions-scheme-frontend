@@ -23,7 +23,7 @@ import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import viewmodels.Message
 
-case object app/controllers/actions/DataRequiredAction.scalaContractOrPolicyNumberId extends TypedIdentifier[String] {
+case object ContractOrPolicyNumberId extends TypedIdentifier[String] {
   self =>
   override def path: JsPath = JsPath \ "racdac" \ ContractOrPolicyNumberId.toString
   override def toString: String = "contractOrPolicyNumber"
