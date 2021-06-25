@@ -32,7 +32,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
@@ -66,13 +67,13 @@ class DeclarationController @Inject()(
 
   private val logger = Logger(classOf[DeclarationController])
 
-  private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier):Future[Option[Result]] = {
+  private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Option[Result]] = {
     request.psaId match {
       case None => Future.successful(None)
       case Some(psaId) =>
         minimalPsaConnector.getMinimalFlags(psaId.id).map {
           case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
-          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
+          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET", appConfig.psaUpdateContactDetailsUrl)))
           case _ => None
         }
     }
@@ -97,29 +98,30 @@ class DeclarationController @Inject()(
     implicit request =>
       withRACDACName { schemeName =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-        for {
+        (for {
           cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
           _ <- register(psaId, schemeName)
         } yield {
           Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        }) recoverWith {
+          case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
+            Future.successful(Redirect(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad()))
+          case _ =>
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
       }
   }
 
-  private def register(psaId: PsaId, schemeName: String)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+  private def register(psaId: PsaId, schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val ua = request.userAnswers
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
-    pensionsSchemeConnector.registerScheme(ua, psaId.id).flatMap {
-      case Right(submissionResponse) =>
-        sendEmail(psaId, schemeName).flatMap { _ =>
-          dataCacheConnector.upsert(
-            request.externalId,
-            ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json
-          ).map(_ => Redirect(navigator.nextPage(DeclarationId, NormalMode, ua)))
-        }
-      case Left(_) =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    for {
+      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id)
+      _ <- sendEmail(psaId, schemeName)
+      _ <- dataCacheConnector.upsert(request.externalId, ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json)
+    } yield {
+      Redirect(navigator.nextPage(DeclarationId, NormalMode, ua))
     }
   }
 
@@ -131,7 +133,6 @@ class DeclarationController @Inject()(
   private def sendEmail(psaId: PsaId, schemeName: String)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
-
     minimalPsaConnector.getMinimalPsaDetails(psaId.id) flatMap { minimalPsa =>
       emailConnector.sendEmail(
         emailAddress = minimalPsa.email,
@@ -140,9 +141,9 @@ class DeclarationController @Inject()(
         psaId = psaId,
         callbackUrl(psaId)
       ).map { status =>
-          auditService.sendEvent(RACDACSubmissionEmailEvent(psaId,minimalPsa.email))
-          status
-        }
+        auditService.sendEvent(RACDACSubmissionEmailEvent(psaId, minimalPsa.email))
+        status
+      }
     } recoverWith {
       case _: Throwable => Future.successful(EmailNotSent)
     }

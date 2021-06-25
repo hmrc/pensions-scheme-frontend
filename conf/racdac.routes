@@ -22,3 +22,6 @@ GET         /check-your-answers/:srn                 controllers.racdac.CheckYou
 
 GET         /confirmation                            controllers.racdac.SchemeSuccessController.onPageLoad()
 POST        /confirmation                            controllers.racdac.SchemeSuccessController.onSubmit()
+
+GET         /your-action-was-not-processed           controllers.racdac.YourActionWasNotProcessedController.onPageLoad()
+

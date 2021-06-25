@@ -33,10 +33,10 @@ trait PensionsSchemeConnector {
 
   def registerScheme(answers: UserAnswers, psaId: String)
                     (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]]
+                     ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]]
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
   def checkForAssociation(psaId: String, srn: String)
                          (implicit headerCarrier: HeaderCarrier,
@@ -51,7 +51,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
 
   def registerScheme(answers: UserAnswers, psaId: String)
                     (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[Either[HttpResponse, SchemeSubmissionResponse]] = {
+                     ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
     val url = config.registerSchemeUrl
 
@@ -61,7 +61,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
           val json = Json.parse(response.body)
 
           json.validate[SchemeSubmissionResponse] match {
-            case JsSuccess(value, _) => Right(value)
+            case JsSuccess(value, _) => value
             case JsError(errors) => throw JsResultException(errors)
           }
         case _ =>
@@ -71,7 +71,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
   }
 
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[HttpResponse, Unit]] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
     val url = config.updateSchemeDetailsUrl
     http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr)).map { response =>

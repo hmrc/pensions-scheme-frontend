@@ -24,17 +24,20 @@ import controllers.actions._
 import helpers.DataCompletionHelper
 import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
-import models.{MinimalPSA, PSAMinimalFlags}
 import models.register.SchemeSubmissionResponse
+import models.{MinimalPSA, PSAMinimalFlags}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
 
@@ -84,7 +87,7 @@ class DeclarationControllerSpec
     "redirect to the next page on clicking agree and continue" in {
       val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
       when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(schemeSubmissionResponse)))
+        .thenReturn(Future.successful(schemeSubmissionResponse))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
@@ -105,6 +108,29 @@ class DeclarationControllerSpec
       verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
 
     }
+
+    "redirect to your action was not processed page when backend returns 5XX" in {
+      reset(mockPensionsSchemeConnector)
+      when(mockPensionsSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+        UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
+          Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
+
+      val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad().url)
+    }
+
+    "redirect to session timeout page when backend returns any other error than 5XX" in {
+      reset(mockPensionsSchemeConnector)
+      when(mockPensionsSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+        UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
+          Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
+      val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
   }
 }
 
@@ -123,7 +149,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val psaId = PsaId("A0000000")
   private val view = injector.instanceOf[declaration]
   private val mockAppConfig = mock[FrontendAppConfig]
-
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
 

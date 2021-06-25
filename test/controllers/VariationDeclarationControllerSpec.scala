@@ -118,7 +118,7 @@ class VariationDeclarationControllerSpec
 
     "redirect to the next page on clicking agree and continue and NOT audit TCMP as no change made" in {
       when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(())))
+        .thenReturn(Future.successful(()))
       when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
         .thenReturn(Future.successful(Ok))
       when(schemeDetailsReadOnlyCacheConnector.removeAll(any())(any(), any()))
@@ -151,7 +151,7 @@ class VariationDeclarationControllerSpec
 
     "redirect to the next page on clicking agree and continue and audit updated TCMP" in {
       when(pensionsSchemeConnector.updateSchemeDetails(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(())))
+        .thenReturn(Future.successful(()))
       when(updateSchemeCacheConnector.removeAll(any())(any(), any()))
         .thenReturn(Future.successful(Ok))
       when(schemeDetailsReadOnlyCacheConnector.removeAll(any())(any(), any()))
