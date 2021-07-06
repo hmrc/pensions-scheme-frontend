@@ -48,7 +48,7 @@ trait VatBehaviours extends FormSpec with Generators with ScalaCheckPropertyChec
         }
       }
 
-      Seq("AB1234567890", "987654328765", "CDCDCDOPOPOP", "AB03047853030D").foreach { vat =>
+      Seq("AB1234567890", "CDCDCDOPOPOP", "GB HA12 345 6 78 9 0", "GB 12 345 HA6 78 9").foreach { vat =>
         s"fail to bind when VAT $vat is longer than expected" in {
           val result = testForm.bind(Map("vat" -> vat))
           result.errors mustBe Seq(FormError("vat", vatLengthKey, Seq(VatMapping.maxVatLength)))
@@ -61,18 +61,14 @@ trait VatBehaviours extends FormSpec with Generators with ScalaCheckPropertyChec
           actual mustBe "123456789"
         }
 
-        "convert to uppercase" in {
-          val actual = vatRegistrationNumberTransform("ab12345678")
-          actual mustBe "AB12345678"
-        }
-
-        "remove leading GB" in {
+        "remove leading GB and 2 alpha characters" in {
           val gb = Table(
             "vat",
             "GB123456789",
             "Gb123456789",
             "gB123456789",
-            "gb123456789"
+            "gb123456789",
+            "GBHA123456789"
           )
 
           forAll(gb) { vat =>
