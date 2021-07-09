@@ -35,6 +35,15 @@ trait Transforms {
     value.replaceAll(" ", "")
   }
 
+  protected def stripUtr(value: String): String = {
+    val v = value.replaceAll("""[a-zA-Z\s]""", "")
+    val regexLongUtr = """^[\d]{13}$"""
+    v match {
+      case _ if v.matches(regexLongUtr) => v.substring(3)
+      case _ => v
+    }
+  }
+
   protected def noTransform(value: String): String = {
     value
   }

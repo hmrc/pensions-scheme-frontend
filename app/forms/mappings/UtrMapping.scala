@@ -21,13 +21,13 @@ import play.api.data.Mapping
 trait UtrMapping extends Mappings with Transforms {
 
   val reasonMaxLength = 160
-  val utrMaxLength = 10
+  val utrMaxLength = 14
 
   def utrMapping(requiredKey: String = "messages__utr__error_required",
                  maxLengthKey: String = "messages__utr__error_maxLength",
                  invalidKey: String = "messages__utr__error_invalid"
                 ): Mapping[String] = text(requiredKey)
-    .transform(strip, noTransform)
-    .verifying(firstError(exactLength(utrMaxLength, maxLengthKey),
+    .transform(stripUtr, noTransform)
+    .verifying(firstError(maxLength(utrMaxLength, maxLengthKey),
       regexp(regexUtr, invalidKey)))
 }

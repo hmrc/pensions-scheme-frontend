@@ -28,7 +28,7 @@ trait Constraints {
   val regexPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
-  val regexUtr = """^\d{10}$"""
+  val regexUtr = """^[kK]{0,1}[0-9]{10,13}[kK]{0,1}$"""
   val regexName = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
   val regexPersonOrOrganisationName =   """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,107}"""
   val regexUserResearch = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,160}$"""
