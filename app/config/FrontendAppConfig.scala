@@ -105,6 +105,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val continueUrl = s"${loadConfig("urls.partials.continueSchemeRegistration")}"
   lazy val viewUrl: String = runModeConfiguration.underlying.getString("urls.partials.viewSchemeDetails")
   lazy val deleteSubscriptionUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteSubscription")
+  lazy val deleteSubscriptionRacdacUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteSubscriptionRacdac")
   lazy val deleteVariationsUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteVariations")
   lazy val cannotStartRegUrl: String = runModeConfiguration.underlying.getString("urls.partials.cannotStartReg")
   lazy val canBeRegisteredUrl: String = runModeConfiguration.underlying.getString("urls.partials.canBeRegistered")

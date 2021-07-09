@@ -227,8 +227,11 @@ GET         /cannot-make-changes/:srn                                controllers
 GET         /urls-partial                                            controllers.UrlsPartialController.retrieveUrlsPartial
 GET         /can-scheme-be-registered                                controllers.UrlsPartialController.checkIfSchemeCanBeRegistered
 
-GET         /discard                                                 controllers.DeleteSchemeController.onPageLoad
-POST        /discard                                                 controllers.DeleteSchemeController.onSubmit
+GET         /discard-scheme                                          controllers.DeleteSchemeController.onPageLoad
+POST        /discard-scheme                                          controllers.DeleteSchemeController.onSubmit
+
+GET         /discard-racdac                                          controllers.RacdacDeleteSchemeController.onPageLoad
+POST        /discard-racdac                                          controllers.RacdacDeleteSchemeController.onSubmit
 
 GET         /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onPageLoad(srn: String)
 POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: String)

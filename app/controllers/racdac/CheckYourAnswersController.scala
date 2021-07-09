@@ -27,6 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.Racdac
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
+                                           @Racdac getData: DataRetrievalAction,
                                            getPspData: PspDataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            allowAccess: AllowAccessActionProvider,

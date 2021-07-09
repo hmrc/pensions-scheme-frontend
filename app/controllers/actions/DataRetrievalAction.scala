@@ -29,6 +29,7 @@ import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
+import utils.annotations.Racdac
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -221,8 +222,43 @@ class DataRetrievalImpl(
           administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
-
 }
+
+class RacdacDataRetrievalImpl(
+                         @Racdac dataConnector: UserAnswersCacheConnector
+                       )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+
+  override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+        createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
+
+    }
+
+
+  private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
+                                      (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+    f.map {
+      case None => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = None,
+        psaId = request.psaId,
+        pspId = request.pspId,
+        viewOnly = viewOnly,
+        administratorOrPractitioner = request.administratorOrPractitioner
+      )
+      case Some(data) => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = Some(UserAnswers(data)),
+        psaId = request.psaId,
+        pspId = request.pspId,
+        viewOnly = viewOnly,
+        administratorOrPractitioner = request.administratorOrPractitioner
+      )
+    }
+}
+
 
 case object MissingSchemeNameException extends Exception
 
@@ -249,9 +285,14 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
   }
 }
 
-@ImplementedBy(classOf[DataRetrievalActionImpl])
-trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: Option[String] = None, refreshData: Boolean = false): DataRetrieval
+class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswersCacheConnector
+                                       )(implicit ec: ExecutionContext) extends DataRetrievalAction {
+  override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
+    new RacdacDataRetrievalImpl(dataConnector)
+  }
 }
 
 
+trait DataRetrievalAction {
+  def apply(mode: Mode = NormalMode, srn: Option[String] = None, refreshData: Boolean = false): DataRetrieval
+}
