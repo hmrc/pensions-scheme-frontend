@@ -98,6 +98,8 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
+//TODO DELETE METHOD?
+
 //  protected def maxMinLength(maxMin: Range, errorKey: String): Constraint[String] =
 //    Constraint {
 //      case str if maxMin.contains(str.length) =>

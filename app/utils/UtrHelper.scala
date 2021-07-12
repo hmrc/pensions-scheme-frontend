@@ -26,28 +26,26 @@ import models.ReferenceValue
 object UtrHelper {
 
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
-    filter(
-      userAnswers,
-      Seq(
-        CompanyEnterUTRId(0),
-        PartnershipEnterUTRId(0),
-        DirectorEnterUTRId(0,0),
-        TrusteeUTRId(0)
-      )
-    )
-  }
-
-  private def filter(userAnswers: UserAnswers, ids: Seq[TypedIdentifier[ReferenceValue]]): UserAnswers = {
-    ids.foldLeft[UserAnswers](userAnswers) {
-      (ua,id) =>
-        ua.get(id) match {
-          case None => ua
-          case Some(v) =>
-            val validUtr = strip(v.value)
-            UserAnswers(ua.json).setOrException(id)(ReferenceValue(validUtr))
-        }
+    (0 to 9).foldLeft(userAnswers) {
+      (ua, index) =>
+        filterUserAnswers(
+          filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index)
+        )
     }
   }
+
+//  PartnershipEnterUTRId(index)
+//                            DirectorEnterUTRId(0, index),
+//              TrusteeUTRId(index)
+
+  private def filterUserAnswers(userAnswers: UserAnswers, id: TypedIdentifier[ReferenceValue]): UserAnswers = {
+      userAnswers.get(id) match {
+          case None => userAnswers
+          case Some(v) =>
+            val validUtr = strip(v.value)
+            UserAnswers(userAnswers.json).setOrException(id)(ReferenceValue(validUtr))
+        }
+    }
 
   private def strip(utr: String): String = {
     val r = utr.replaceAll("""[a-zA-Z\s]""", "")
@@ -57,7 +55,4 @@ object UtrHelper {
       case _ => r
     }
   }
-
-
-
 }
