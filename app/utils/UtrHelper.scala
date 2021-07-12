@@ -19,28 +19,31 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.CompanyEnterUTRId
 import identifiers.register.establishers.company.director.DirectorEnterUTRId
-import identifiers.register.trustees.individual.TrusteeUTRId
-import identifiers.register.trustees.partnership.PartnershipEnterUTRId
+import identifiers.register.establishers.partnership.PartnershipEnterUTRId
+import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
 import models.ReferenceValue
+import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 
 object UtrHelper {
 
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
     (0 to 9).foldLeft(userAnswers) {
       (ua, index) =>
-        filterUserAnswers(
-          filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index)
-        )
+        val uaUpdate =
+          filterUserAnswers(filterUserAnswers(filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index)),TrusteeCompanyUTRId(index))
+        (0 to 9).foldLeft(uaUpdate) {
+          (ua, directorOrPartnerIndex) =>
+            filterUserAnswers(filterUserAnswers(ua, DirectorEnterUTRId(index, directorOrPartnerIndex)), PartnerEnterUTRId(index, directorOrPartnerIndex))
+        }
     }
   }
 
-//  PartnershipEnterUTRId(index)
-//                            DirectorEnterUTRId(0, index),
-//              TrusteeUTRId(index)
+
 
   private def filterUserAnswers(userAnswers: UserAnswers, id: TypedIdentifier[ReferenceValue]): UserAnswers = {
       userAnswers.get(id) match {
-          case None => userAnswers
+          case None =>
+            userAnswers
           case Some(v) =>
             val validUtr = strip(v.value)
             UserAnswers(userAnswers.json).setOrException(id)(ReferenceValue(validUtr))
