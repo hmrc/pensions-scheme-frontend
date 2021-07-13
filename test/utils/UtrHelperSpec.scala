@@ -28,7 +28,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 
 class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
-  "UtrHelper" must {
+  "countEstablishers" must {
     "return correct number of establishers" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Company)
