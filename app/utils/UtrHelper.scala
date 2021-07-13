@@ -41,7 +41,7 @@ object UtrHelper extends Enumerable.Implicits{
   }
 
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
-    (0 to 9).foldLeft(userAnswers) {
+    (0 until countEstablishers(userAnswers)).foldLeft(userAnswers) {
       (ua, index) =>
         val uaUpdate =
           filterUserAnswers(filterUserAnswers(filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index)),TrusteeCompanyUTRId(index))
