@@ -39,6 +39,18 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     }
   }
 
+  "countDirectors" must {
+    "return correct number of Directors" in {
+      val ua = UserAnswers()
+        .setOrException(EstablisherKindId(0))(Company)
+        .setOrException(DirectorEnterUTRId(0, 0))(ReferenceValue("1234567890"))
+        .setOrException(DirectorEnterUTRId(0, 1))(ReferenceValue("0987654321"))
+        .setOrException(DirectorEnterUTRId(0, 2))(ReferenceValue("k1234567890988"))
+
+      UtrHelper.countDirectors(ua, 0) mustBe 3
+    }
+  }
+
     "stripUtr for company" must {
       "do nothing if valid 10 digit UTR submitted" in {
         val ua = UserAnswers()

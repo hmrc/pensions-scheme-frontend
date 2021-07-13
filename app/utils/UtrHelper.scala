@@ -19,6 +19,7 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
+import identifiers.register.establishers.company.director.DirectorEnterUTRId
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
 import models.ReferenceValue
 import models.register.establishers.EstablisherKind
@@ -38,15 +39,29 @@ object UtrHelper extends Enumerable.Implicits{
     count(0)
   }
 
+  def countDirectors(userAnswers: UserAnswers, establisherNo: Int): Int = {
+    @tailrec
+    def count(i: Int): Int = {
+      userAnswers.get(DirectorEnterUTRId(establisherNo, i)) match {
+        case None => i
+        case Some(_) => count(i + 1)
+      }
+    }
+    count(0)
+  }
+
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
     val allIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
       (ids, index) =>
         val establisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
-          case Some(EstablisherKind.Company) => Some(CompanyEnterUTRId(index))
-          case Some(EstablisherKind.Partnership) => Some(PartnershipEnterUTRId(index))
-          case _ => None
+          case Some(EstablisherKind.Company) =>
+            Seq(CompanyEnterUTRId(index))
+          case Some(EstablisherKind.Partnership) =>
+            Seq(PartnershipEnterUTRId(index))
+          case _ =>
+            Nil
         }
-        establisherUTRId.fold(ids)(ids ++ Seq(_))
+        establisherUTRId.fold[Seq[TypedIdentifier[ReferenceValue]]](ids)(ids ++ _)
     }
 
 
