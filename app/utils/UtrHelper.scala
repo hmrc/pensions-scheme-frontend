@@ -19,11 +19,9 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
-import identifiers.register.establishers.company.director.DirectorEnterUTRId
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
-import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
-import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 import models.ReferenceValue
+import models.register.establishers.EstablisherKind
 
 import scala.annotation.tailrec
 
@@ -41,28 +39,44 @@ object UtrHelper extends Enumerable.Implicits{
   }
 
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
-    (0 until countEstablishers(userAnswers)).foldLeft(userAnswers) {
-      (ua, index) =>
-        val uaUpdate =
-          filterUserAnswers(filterUserAnswers(filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index)),TrusteeCompanyUTRId(index))
-        (0 to 9).foldLeft(uaUpdate) {
-          (ua, directorOrPartnerIndex) =>
-            filterUserAnswers(filterUserAnswers(ua, DirectorEnterUTRId(index, directorOrPartnerIndex)), PartnerEnterUTRId(index, directorOrPartnerIndex))
+    val allIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
+      (ids, index) =>
+        val establisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
+          case Some(EstablisherKind.Company) => Some(CompanyEnterUTRId(index))
+          case Some(EstablisherKind.Partnership) => Some(PartnershipEnterUTRId(index))
+          case _ => None
+        }
+        establisherUTRId.fold(ids)(ids ++ Seq(_))
+    }
+
+
+    filter(userAnswers, allIds)
+  }
+
+//
+//  def stripUtr(userAnswers: UserAnswers): UserAnswers = {
+//    (0 until countEstablishers(userAnswers)).foldLeft(userAnswers) {
+//      (ua, index) =>
+//        val uaUpdate =
+//          filterUserAnswers(filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index))
+//        (0 to 9).foldLeft(uaUpdate) {
+//          (ua, directorOrPartnerIndex) =>
+//            filterUserAnswers(filterUserAnswers(ua, DirectorEnterUTRId(index, directorOrPartnerIndex)), PartnerEnterUTRId(index, directorOrPartnerIndex))
+//        }
+//    }
+//  }
+
+  private def filter(userAnswers: UserAnswers, ids: Seq[TypedIdentifier[ReferenceValue]]): UserAnswers = {
+    ids.foldLeft[UserAnswers](userAnswers) {
+      (ua,id) =>
+        ua.get(id) match {
+          case None => ua
+          case Some(v) =>
+            val validUtr = strip(v.value)
+            UserAnswers(ua.json).setOrException(id)(ReferenceValue(validUtr))
         }
     }
   }
-
-
-
-  private def filterUserAnswers(userAnswers: UserAnswers, id: TypedIdentifier[ReferenceValue]): UserAnswers = {
-      userAnswers.get(id) match {
-          case None =>
-            userAnswers
-          case Some(v) =>
-            val validUtr = strip(v.value)
-            UserAnswers(userAnswers.json).setOrException(id)(ReferenceValue(validUtr))
-        }
-    }
 
   private def strip(utr: String): String = {
     val r = utr.replaceAll("""[a-zA-Z\s]""", "")
