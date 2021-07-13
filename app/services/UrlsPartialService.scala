@@ -246,9 +246,7 @@ class UrlsPartialService @Inject()(
   private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
     new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
 
-  private def currentTimestamp: LastUpdated = LastUpdated(System.currentTimeMillis)
-
-  private def parseDateElseCurrent(dateOpt: Option[JsValue]): LastUpdated =
+  private def parseDateElseException(dateOpt: Option[JsValue]): LastUpdated =
     dateOpt.map(ts =>
       LastUpdated(
         ts.validate[Long] match {
@@ -256,18 +254,18 @@ class UrlsPartialService @Inject()(
           case JsError(errors) => throw JsResultException(errors)
         }
       )
-    ).getOrElse(currentTimestamp)
+    ).getOrElse(throw new RuntimeException("No last updated date found"))
 
   private def lastUpdatedAndDeleteDate(externalId: String)
                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[LastUpdated] =
     dataCacheConnector.lastUpdated(externalId).map { dateOpt =>
-      parseDateElseCurrent(dateOpt)
+      parseDateElseException(dateOpt)
     }
 
   private def variationsDeleteDate(srn: String)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     updateConnector.lastUpdated(srn).map { dateOpt =>
-      s"${createFormattedDate(parseDateElseCurrent(dateOpt), appConfig.daysDataSaved)}"
+      s"${createFormattedDate(parseDateElseException(dateOpt), appConfig.daysDataSaved)}"
     }
 
 }
