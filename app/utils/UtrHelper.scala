@@ -21,8 +21,13 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
 import identifiers.register.establishers.company.director.DirectorEnterUTRId
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
+import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
+import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
+import identifiers.register.trustees.partnership.{PartnershipEnterUTRId => TrusteePartnershipUTRId}
+import identifiers.register.trustees.TrusteeKindId
 import models.ReferenceValue
 import models.register.establishers.EstablisherKind
+import models.register.trustees.TrusteeKind
 
 import scala.annotation.tailrec
 
@@ -32,6 +37,17 @@ object UtrHelper extends Enumerable.Implicits{
     @tailrec
     def count(i:Int):Int = {
       userAnswers.get(EstablisherKindId(i)) match {
+        case None => i
+        case Some(_) => count(i + 1)
+      }
+    }
+    count(0)
+  }
+
+  private[utils] def countTrustees(userAnswers: UserAnswers):Int = {
+    @tailrec
+    def count(i:Int):Int = {
+      userAnswers.get(TrusteeKindId(i)) match {
         case None => i
         case Some(_) => count(i + 1)
       }
@@ -50,6 +66,17 @@ object UtrHelper extends Enumerable.Implicits{
     count(0)
   }
 
+  private[utils] def countPartners(userAnswers: UserAnswers, establisherNo: Int): Int = {
+    @tailrec
+    def count(i: Int): Int = {
+      userAnswers.get(PartnerEnterUTRId(establisherNo, i)) match {
+        case None => i
+        case Some(_) => count(i + 1)
+      }
+    }
+    count(0)
+  }
+
   private def getDirectorIds(userAnswers: UserAnswers, establisherNo: Int): Seq[TypedIdentifier[ReferenceValue]] ={
     (0 until countDirectors(userAnswers, establisherNo)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
       (ids, index) =>
@@ -61,20 +88,43 @@ object UtrHelper extends Enumerable.Implicits{
     }
   }
 
-  def stripUtr(userAnswers: UserAnswers): UserAnswers = {
-    val allIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
+  private def getPartnerIds(userAnswers: UserAnswers, establisherNo: Int): Seq[TypedIdentifier[ReferenceValue]] = {
+    (0 until countPartners(userAnswers, establisherNo)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
+      (ids, index) =>
+        val seqPartnerUTRId = userAnswers.get(PartnerEnterUTRId(establisherNo, index)) match {
+          case Some(_) => Seq(PartnerEnterUTRId(establisherNo, index))
+          case _ => Nil
+        }
+        ids ++ seqPartnerUTRId
+    }
+  }
+
+    def stripUtr(userAnswers: UserAnswers): UserAnswers = {
+    val allEstablisherIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
       (ids, index) =>
         val seqEstablisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
           case Some(EstablisherKind.Company) =>
             Seq(CompanyEnterUTRId(index)) ++ getDirectorIds(userAnswers, index)
           case Some(EstablisherKind.Partnership) =>
-            Seq(PartnershipEnterUTRId(index))
+            Seq(PartnershipEnterUTRId(index)) ++ getPartnerIds(userAnswers, index)
           case _ =>
             Nil
         }
         ids ++ seqEstablisherUTRId
     }
-    filter(userAnswers, allIds)
+      val allTrusteeIds = (0 until countTrustees(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
+        (ids, index) =>
+          val seqTrusteeUTRId = userAnswers.get(TrusteeKindId(index)) match {
+            case Some(TrusteeKind.Company) =>
+              Seq(TrusteeCompanyUTRId(index))
+            case Some(TrusteeKind.Partnership) =>
+              Seq(TrusteePartnershipUTRId(index))
+            case _ =>
+              Nil
+          }
+          ids ++ seqTrusteeUTRId
+      }
+    filter(userAnswers, allTrusteeIds ++ allEstablisherIds)
   }
 
 //

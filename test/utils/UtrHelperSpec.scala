@@ -21,9 +21,11 @@ import identifiers.register.establishers.company.CompanyEnterUTRId
 import identifiers.register.establishers.company.director.DirectorEnterUTRId
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
 import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
-import identifiers.register.trustees.individual.TrusteeUTRId
+import identifiers.register.trustees.TrusteeKindId
+import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 import models.ReferenceValue
 import models.register.establishers.EstablisherKind._
+import models.register.trustees.TrusteeKind
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 
 class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
@@ -48,6 +50,18 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
         .setOrException(DirectorEnterUTRId(0, 2))(ReferenceValue("k1234567890988"))
 
       UtrHelper.countDirectors(ua, 0) mustBe 3
+    }
+  }
+
+  "countPartners" must {
+    "return correct number of Partners" in {
+      val ua = UserAnswers()
+        .setOrException(EstablisherKindId(0))(Partnership)
+        .setOrException(PartnerEnterUTRId(0, 0))(ReferenceValue("1234567890"))
+        .setOrException(PartnerEnterUTRId(0, 1))(ReferenceValue("0987654321"))
+        .setOrException(PartnerEnterUTRId(0, 2))(ReferenceValue("k1234567890988"))
+
+      UtrHelper.countPartners(ua, 0) mustBe 3
     }
   }
 
@@ -173,25 +187,31 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
 
   "stripUtr for Trustees" must {
     "do nothing if valid 10 digit UTR submitted" in {
-      val ua = UserAnswers().setOrException(TrusteeUTRId(0))(ReferenceValue("1234567890"))
+      val ua = UserAnswers()
+        .setOrException(TrusteeKindId(0))(TrusteeKind.Company)
+        .setOrException(TrusteeCompanyUTRId(0))(ReferenceValue("1234567890"))
       val result = UtrHelper.stripUtr(ua)
 
-      result.get(TrusteeUTRId(0)) mustBe Some(ReferenceValue("1234567890"))
+      result.get(TrusteeCompanyUTRId(0)) mustBe Some(ReferenceValue("1234567890"))
     }
     "remove any letters and first 3 digits when 13 digit UTR is submitted" in {
-      val ua = UserAnswers().setOrException(TrusteeUTRId(0))(ReferenceValue("k1234567890123"))
+      val ua = UserAnswers()
+        .setOrException(TrusteeKindId(0))(TrusteeKind.Company)
+        .setOrException(TrusteeCompanyUTRId(0))(ReferenceValue("k1234567890123"))
       val result = UtrHelper.stripUtr(ua)
 
-      result.get(TrusteeUTRId(0)) mustBe Some(ReferenceValue("4567890123"))
+      result.get(TrusteeCompanyUTRId(0)) mustBe Some(ReferenceValue("4567890123"))
     }
     "remove any letters and first 3 digits when 13 digit UTR is submitted for second Trustee" in {
       val ua = UserAnswers()
-        .setOrException(TrusteeUTRId(0))(ReferenceValue("k1234567890123"))
-        .setOrException(TrusteeUTRId(1))(ReferenceValue("k1234567890321"))
+        .setOrException(TrusteeKindId(0))(TrusteeKind.Company)
+        .setOrException(TrusteeCompanyUTRId(0))(ReferenceValue("k1234567890123"))
+        .setOrException(TrusteeKindId(1))(TrusteeKind.Company)
+        .setOrException(TrusteeCompanyUTRId(1))(ReferenceValue("k1234567890321"))
       val result = UtrHelper.stripUtr(ua)
 
-      result.get(TrusteeUTRId(0)) mustBe Some(ReferenceValue("4567890123"))
-      result.get(TrusteeUTRId(1)) mustBe Some(ReferenceValue("4567890321"))
+      result.get(TrusteeCompanyUTRId(0)) mustBe Some(ReferenceValue("4567890123"))
+      result.get(TrusteeCompanyUTRId(1)) mustBe Some(ReferenceValue("4567890321"))
     }
   }
 
