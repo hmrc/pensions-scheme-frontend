@@ -17,14 +17,28 @@
 package utils
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
 import identifiers.register.establishers.company.director.DirectorEnterUTRId
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
 import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
-import models.ReferenceValue
 import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
+import models.ReferenceValue
 
-object UtrHelper {
+import scala.annotation.tailrec
+
+object UtrHelper extends Enumerable.Implicits{
+
+  def countEstablishers(userAnswers: UserAnswers):Int = {
+    @tailrec
+    def count(i:Int):Int = {
+      userAnswers.get(EstablisherKindId(i)) match {
+        case None => i
+        case Some(_) => count(i + 1)
+      }
+    }
+    count(0)
+  }
 
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
     (0 to 9).foldLeft(userAnswers) {
