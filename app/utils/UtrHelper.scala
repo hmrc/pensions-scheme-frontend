@@ -28,7 +28,7 @@ import scala.annotation.tailrec
 
 object UtrHelper extends Enumerable.Implicits{
 
-  def countEstablishers(userAnswers: UserAnswers):Int = {
+  private[utils] def countEstablishers(userAnswers: UserAnswers):Int = {
     @tailrec
     def count(i:Int):Int = {
       userAnswers.get(EstablisherKindId(i)) match {
@@ -39,7 +39,7 @@ object UtrHelper extends Enumerable.Implicits{
     count(0)
   }
 
-  def countDirectors(userAnswers: UserAnswers, establisherNo: Int): Int = {
+  private[utils] def countDirectors(userAnswers: UserAnswers, establisherNo: Int): Int = {
     @tailrec
     def count(i: Int): Int = {
       userAnswers.get(DirectorEnterUTRId(establisherNo, i)) match {
@@ -50,12 +50,23 @@ object UtrHelper extends Enumerable.Implicits{
     count(0)
   }
 
+  private def getDirectorIds(userAnswers: UserAnswers, establisherNo: Int): Seq[TypedIdentifier[ReferenceValue]] ={
+    (0 until countDirectors(userAnswers, establisherNo)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
+      (ids, index) =>
+          val seqDirectorUTRId = userAnswers.get(DirectorEnterUTRId(establisherNo, index)) match {
+            case Some(_) => Seq(DirectorEnterUTRId(establisherNo, index))
+            case _ => Nil
+          }
+        ids ++ seqDirectorUTRId
+    }
+  }
+
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
     val allIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
       (ids, index) =>
         val seqEstablisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
           case Some(EstablisherKind.Company) =>
-            Seq(CompanyEnterUTRId(index))
+            Seq(CompanyEnterUTRId(index)) ++ getDirectorIds(userAnswers, index)
           case Some(EstablisherKind.Partnership) =>
             Seq(PartnershipEnterUTRId(index))
           case _ =>
@@ -63,8 +74,6 @@ object UtrHelper extends Enumerable.Implicits{
         }
         ids ++ seqEstablisherUTRId
     }
-
-
     filter(userAnswers, allIds)
   }
 
