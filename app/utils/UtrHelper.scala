@@ -53,7 +53,7 @@ object UtrHelper extends Enumerable.Implicits{
   def stripUtr(userAnswers: UserAnswers): UserAnswers = {
     val allIds = (0 until countEstablishers(userAnswers)).foldLeft[Seq[TypedIdentifier[ReferenceValue]]](Nil) {
       (ids, index) =>
-        val establisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
+        val seqEstablisherUTRId = userAnswers.get(EstablisherKindId(index)) match {
           case Some(EstablisherKind.Company) =>
             Seq(CompanyEnterUTRId(index))
           case Some(EstablisherKind.Partnership) =>
@@ -61,7 +61,7 @@ object UtrHelper extends Enumerable.Implicits{
           case _ =>
             Nil
         }
-        establisherUTRId.fold[Seq[TypedIdentifier[ReferenceValue]]](ids)(ids ++ _)
+        ids ++ seqEstablisherUTRId
     }
 
 
