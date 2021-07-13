@@ -25,6 +25,7 @@ import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
 import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 import identifiers.register.trustees.partnership.{PartnershipEnterUTRId => TrusteePartnershipUTRId}
 import identifiers.register.trustees.TrusteeKindId
+import identifiers.register.trustees.individual.{TrusteeUTRId => TrusteeIndividualUTRId}
 import models.ReferenceValue
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
@@ -119,6 +120,8 @@ object UtrHelper extends Enumerable.Implicits{
               Seq(TrusteeCompanyUTRId(index))
             case Some(TrusteeKind.Partnership) =>
               Seq(TrusteePartnershipUTRId(index))
+            case Some(TrusteeKind.Individual) =>
+              Seq(TrusteeIndividualUTRId(index))
             case _ =>
               Nil
           }
