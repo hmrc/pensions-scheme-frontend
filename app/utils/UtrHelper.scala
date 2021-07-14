@@ -130,19 +130,6 @@ object UtrHelper extends Enumerable.Implicits{
     filter(userAnswers, allTrusteeIds ++ allEstablisherIds)
   }
 
-//
-//  def stripUtr(userAnswers: UserAnswers): UserAnswers = {
-//    (0 until countEstablishers(userAnswers)).foldLeft(userAnswers) {
-//      (ua, index) =>
-//        val uaUpdate =
-//          filterUserAnswers(filterUserAnswers(ua, CompanyEnterUTRId(index)), PartnershipEnterUTRId(index))
-//        (0 to 9).foldLeft(uaUpdate) {
-//          (ua, directorOrPartnerIndex) =>
-//            filterUserAnswers(filterUserAnswers(ua, DirectorEnterUTRId(index, directorOrPartnerIndex)), PartnerEnterUTRId(index, directorOrPartnerIndex))
-//        }
-//    }
-//  }
-
   private def filter(userAnswers: UserAnswers, ids: Seq[TypedIdentifier[ReferenceValue]]): UserAnswers = {
     ids.foldLeft[UserAnswers](userAnswers) {
       (ua,id) =>
@@ -150,7 +137,7 @@ object UtrHelper extends Enumerable.Implicits{
           case None => ua
           case Some(v) =>
             val validUtr = strip(v.value)
-            UserAnswers(ua.json).setOrException(id)(ReferenceValue(validUtr))
+            UserAnswers(ua.json).setOrException(id)(ReferenceValue(validUtr, v.isEditable))
         }
     }
   }
