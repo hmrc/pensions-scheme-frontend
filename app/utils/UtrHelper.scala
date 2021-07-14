@@ -19,13 +19,13 @@ package utils
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
-import identifiers.register.establishers.company.director.DirectorEnterUTRId
+import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
-import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
-import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
-import identifiers.register.trustees.partnership.{PartnershipEnterUTRId => TrusteePartnershipUTRId}
+import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
 import identifiers.register.trustees.TrusteeKindId
+import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 import identifiers.register.trustees.individual.{TrusteeUTRId => TrusteeIndividualUTRId}
+import identifiers.register.trustees.partnership.{PartnershipEnterUTRId => TrusteePartnershipUTRId}
 import models.ReferenceValue
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
@@ -59,7 +59,7 @@ object UtrHelper extends Enumerable.Implicits{
   private[utils] def countDirectors(userAnswers: UserAnswers, establisherNo: Int): Int = {
     @tailrec
     def count(i: Int): Int = {
-      userAnswers.get(DirectorEnterUTRId(establisherNo, i)) match {
+      userAnswers.get(DirectorNameId(establisherNo, i)) match {
         case None => i
         case Some(_) => count(i + 1)
       }
@@ -70,7 +70,7 @@ object UtrHelper extends Enumerable.Implicits{
   private[utils] def countPartners(userAnswers: UserAnswers, establisherNo: Int): Int = {
     @tailrec
     def count(i: Int): Int = {
-      userAnswers.get(PartnerEnterUTRId(establisherNo, i)) match {
+      userAnswers.get(PartnerNameId(establisherNo, i)) match {
         case None => i
         case Some(_) => count(i + 1)
       }

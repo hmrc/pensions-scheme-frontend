@@ -18,13 +18,14 @@ package utils
 
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyEnterUTRId
-import identifiers.register.establishers.company.director.DirectorEnterUTRId
+import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
 import identifiers.register.establishers.partnership.PartnershipEnterUTRId
-import identifiers.register.establishers.partnership.partner.PartnerEnterUTRId
+import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyEnterUTRId => TrusteeCompanyUTRId}
 import identifiers.register.trustees.individual.TrusteeUTRId
 import models.ReferenceValue
+import models.person.PersonName
 import models.register.establishers.EstablisherKind._
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.Individual
@@ -47,10 +48,9 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "return correct number of Directors" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Company)
-        .setOrException(DirectorEnterUTRId(0, 0))(ReferenceValue("1234567890"))
-        .setOrException(DirectorEnterUTRId(0, 1))(ReferenceValue("0987654321"))
-        .setOrException(DirectorEnterUTRId(0, 2))(ReferenceValue("k1234567890988"))
-
+        .setOrException(DirectorNameId(0, 0))(PersonName("", ""))
+        .setOrException(DirectorNameId(0, 1))(PersonName("", ""))
+        .setOrException(DirectorNameId(0, 2))(PersonName("", ""))
       UtrHelper.countDirectors(ua, 0) mustBe 3
     }
   }
@@ -59,10 +59,9 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "return correct number of Partners" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Partnership)
-        .setOrException(PartnerEnterUTRId(0, 0))(ReferenceValue("1234567890"))
-        .setOrException(PartnerEnterUTRId(0, 1))(ReferenceValue("0987654321"))
-        .setOrException(PartnerEnterUTRId(0, 2))(ReferenceValue("k1234567890988"))
-
+        .setOrException(PartnerNameId(0, 0))(PersonName("", ""))
+        .setOrException(PartnerNameId(0, 1))(PersonName("", ""))
+        .setOrException(PartnerNameId(0, 2))(PersonName("", ""))
       UtrHelper.countPartners(ua, 0) mustBe 3
     }
   }
@@ -164,6 +163,7 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "do nothing if valid 10 digit UTR submitted" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Company)
+        .setOrException(DirectorNameId(0, 0))(PersonName("", ""))
         .setOrException(DirectorEnterUTRId(0, 0))(ReferenceValue("1234567890"))
       val result = UtrHelper.stripUtr(ua)
 
@@ -172,6 +172,7 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "remove any letters and first 3 digits when 13 digit UTR is submitted" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Company)
+        .setOrException(DirectorNameId(0, 0))(PersonName("", ""))
         .setOrException(DirectorEnterUTRId(0, 0))(ReferenceValue("k1234567890123"))
       val result = UtrHelper.stripUtr(ua)
 
@@ -180,7 +181,9 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "remove any letters and first 3 digits when 13 digit UTR is submitted for second Director" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Company)
+        .setOrException(DirectorNameId(0, 0))(PersonName("", ""))
         .setOrException(DirectorEnterUTRId(0, 0))(ReferenceValue("k1234567890123"))
+        .setOrException(DirectorNameId(0, 1))(PersonName("", ""))
         .setOrException(DirectorEnterUTRId(0,1))(ReferenceValue("k1234567890321"))
       val result = UtrHelper.stripUtr(ua)
 
@@ -193,6 +196,7 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "do nothing if valid 10 digit UTR submitted" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Partnership)
+        .setOrException(PartnerNameId(0, 0))(PersonName("", ""))
         .setOrException(PartnerEnterUTRId(0, 0))(ReferenceValue("1234567890"))
       val result = UtrHelper.stripUtr(ua)
 
@@ -201,6 +205,7 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "remove any letters and first 3 digits when 13 digit UTR is submitted" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Partnership)
+        .setOrException(PartnerNameId(0, 0))(PersonName("", ""))
         .setOrException(PartnerEnterUTRId(0, 0))(ReferenceValue("k1234567890123"))
       val result = UtrHelper.stripUtr(ua)
 
@@ -209,7 +214,9 @@ class UtrHelperSpec extends WordSpec with MustMatchers with OptionValues with En
     "remove any letters and first 3 digits when 13 digit UTR is submitted for second Partner" in {
       val ua = UserAnswers()
         .setOrException(EstablisherKindId(0))(Partnership)
+        .setOrException(PartnerNameId(0, 0))(PersonName("", ""))
         .setOrException(PartnerEnterUTRId(0, 0))(ReferenceValue("k1234567890123"))
+        .setOrException(PartnerNameId(0, 1))(PersonName("", ""))
         .setOrException(PartnerEnterUTRId(0,1))(ReferenceValue("k1234567890321"))
       val result = UtrHelper.stripUtr(ua)
 
