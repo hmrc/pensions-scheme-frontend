@@ -40,9 +40,9 @@ class UTRFormProviderSpec extends UtrBehaviour {
     )
 
     "remove spaces for valid value" in {
-      val actual = testForm.bind(Map(fieldName -> "  123 456 7890 "))
+      val actual = testForm.bind(Map(fieldName -> "K  123 456 7890 "))
       actual.errors.isEmpty mustBe true
-      actual.value mustBe Some(ReferenceValue("1234567890"))
+      actual.value mustBe Some(ReferenceValue("K1234567890"))
     }
 
   }
