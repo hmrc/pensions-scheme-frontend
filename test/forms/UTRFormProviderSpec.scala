@@ -23,7 +23,6 @@ import play.api.data.Form
 class UTRFormProviderSpec extends UtrBehaviour {
 
   private val requiredKey = "messages__utr__error_required"
-  private val maxLengthKey = "messages__utr__error_maxLength"
   private val invalidKey = "messages__utr__error_invalid"
 
   private val fieldName: String = "utr"
@@ -35,14 +34,31 @@ class UTRFormProviderSpec extends UtrBehaviour {
       testForm: Form[ReferenceValue],
       fieldName = fieldName,
       requiredKey: String,
-      maxLengthKey: String,
       invalidKey: String
     )
 
-    "remove spaces for valid value" in {
+    "remove spaces for valid value with 10 digits and starting with K" in {
       val actual = testForm.bind(Map(fieldName -> "K  123 456 7890 "))
       actual.errors.isEmpty mustBe true
       actual.value mustBe Some(ReferenceValue("K1234567890"))
+    }
+
+    "remove spaces for valid value with 10 digits and ending with K" in {
+      val actual = testForm.bind(Map(fieldName -> "  123 456 7890 K "))
+      actual.errors.isEmpty mustBe true
+      actual.value mustBe Some(ReferenceValue("1234567890K"))
+    }
+
+    "remove spaces for valid value with 13 digits and starting with K" in {
+      val actual = testForm.bind(Map(fieldName -> "K  123 456 7890 1 2 3 "))
+      actual.errors.isEmpty mustBe true
+      actual.value mustBe Some(ReferenceValue("K1234567890123"))
+    }
+
+    "remove spaces for valid value with 13 digits and ending with K" in {
+      val actual = testForm.bind(Map(fieldName -> "  123 456 7890 1 2 3 K "))
+      actual.errors.isEmpty mustBe true
+      actual.value mustBe Some(ReferenceValue("1234567890123K"))
     }
 
   }
