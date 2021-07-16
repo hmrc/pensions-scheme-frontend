@@ -31,7 +31,6 @@ messages__common__edit = Edit
 messages__common__continue = Continue
 messages__common__utr = Unique Taxpayer Reference number
 messages__common__utr_hint = A UTR is issued by HMRC when you register your business or for Self assessment.
-messages__common__utr_hint_format = A UTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
 messages__common__email = Email address
 messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
@@ -551,7 +550,6 @@ messages__director_sautr = Unique Taxpayer Reference number
 messages__director_no_sautr = Tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference number
 messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
-messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
@@ -939,7 +937,6 @@ messages__hint__no_utr_partnership = Tell us why the partnership does not have a
 messages__error__has_utr_partnership=Select whether the partnership has a UTR
 messages__error__utr=Enter a UTR
 messages__error__utr_no_utr=Enter a reason for not having a UTR
-messages__error__utr_invalid=Enter a UTR using only 10 numbers
 messages__error__no_utr_length=Enter a reason for not having a UTR using 160 characters or less
 
 messages__partnership__checkYourAnswers__partnership_details = Partnership details
@@ -984,7 +981,6 @@ messages__partner_has_sautr__title = Does the partner have a Self Assessment Uni
 messages__partner_sautr = Unique Taxpayer Reference number
 messages__partner_no_sautr = Tell us why the partner does not have a Self Assessment Unique Taxpayer Reference number
 messages__partnership__sautr_hint_what = This is issued by HMRC for Self Assessment.
-messages__partner_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
 messages__error__has_sautr_partner = Select yes if the partner has a Unique Taxpayer Reference number
 messages__error__no_sautr_partner = Tell us why the partner does not have a Unique Taxpayer Reference number
 
@@ -1696,10 +1692,10 @@ messages__enterPAYE__error_invalid = Enter {0}’s employer PAYE reference in th
 messages__enterPAYE__error_length = Enter {0}’s employer PAYE reference using 16 characters or less
 messages__enterPAYE__error_required = Enter an employer PAYE reference
 
-messages__utr__error_required = Enter a Unique Taxpayer Reference (UTR)
-messages__utr__error_invalid = Enter a Unique Taxpayer Reference (UTR) in the correct format
-messages__companyUtr__guidance1 = If the UTR is 13 numbers, only enter the last 10.
-messages__companyUtr__guidance2 = If there is a letter ‘K’ at the end of the number, do not enter it.
+messages__utr__error_required = Enter the Unique Taxpayer Reference (UTR)
+messages__utr__error_invalid = Enter the Unique Taxpayer Reference (UTR) in the correct format
+messages__companyUtr__guidance1 = This is a 10-digit or 13-digit number. It may also start or end with the letter ‘k’.
+messages__companyUtr__guidance2 = You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages_utr__hint = For example, 12345 67890
 messages__utr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
 
