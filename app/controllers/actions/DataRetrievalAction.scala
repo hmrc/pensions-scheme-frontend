@@ -20,8 +20,8 @@ package controllers.actions
 import com.google.inject.{ImplementedBy, Inject}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
-import identifiers.racdac.{IsRacDacId, RACDACNameId}
-import identifiers.{PsaMinimalFlagsId, SchemeNameId, SchemeSrnId, SchemeStatusId}
+import identifiers.racdac.IsRacDacId
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -77,7 +77,7 @@ class DataRetrievalImpl(
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
+            addMinimalFlagsAndUpdateRepository(srn, ua, psaId).map(Some(_))
           case _ => Future.successful(None)
         }
         createOptionalRequest(optJs, viewOnly = false)
@@ -115,7 +115,7 @@ class DataRetrievalImpl(
     if (refresh) {
       schemeDetailsConnector
         .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId))
         .map(Some(_))
     } else {
       viewConnector.fetch(request.externalId)
@@ -123,23 +123,15 @@ class DataRetrievalImpl(
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
-                                                      psaId: String,
-                                                      upsertUserAnswers: JsValue => Future[JsValue])
+                                                      psaId: String)
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
-      val ua = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
-        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
-      upsertUserAnswers(storeSchemeNameAsRacDacName(ua).json)
+    minimalPsaConnector.getMinimalFlags(psaId).map { minimalFlags =>
+      UserAnswers(jsValue)
+        .set(PsaMinimalFlagsId)(minimalFlags)
+        .flatMap(
+        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue)).json
     }
   }
-
-  private def storeSchemeNameAsRacDacName(ua: UserAnswers): UserAnswers =
-    (ua.get(IsRacDacId), ua.get(RACDACNameId)) match {
-      case (Some(true), None) =>
-        val schemeName: String = ua.get(SchemeNameId).getOrElse(throw MissingSchemeNameException)
-        ua.set(RACDACNameId)(schemeName).asOpt.getOrElse(ua)
-      case _ => ua
-    }
 
   private def getRequestWithLock[A](srn: String, refresh: Boolean, psaId: String)
                                    (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
@@ -225,26 +217,47 @@ class DataRetrievalImpl(
 }
 
 class RacdacDataRetrievalImpl(
-                         @Racdac dataConnector: UserAnswersCacheConnector
-                       )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                         @Racdac dataConnector: UserAnswersCacheConnector,
+                         mode: Mode,
+                         minimalPsaConnector: MinimalPsaConnector,
+                         schemeDetailsConnector: SchemeDetailsConnector,
+                         srn: Option[String],
+                         refreshData: Boolean)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
-
+    mode match {
+      case NormalMode | CheckMode =>
+        getOrCreateOptionalRequest(srn.getOrElse(""), request.psaId.getOrElse("").asInstanceOf[String], refreshData)(request, hc)
+      case UpdateMode | CheckUpdateMode =>
+        (srn, request.psaId) match {
+          case (Some(extractedSrn), Some(psaId)) =>
+            getOrCreateOptionalRequest(extractedSrn, psaId.id, refreshData)(request, hc)
+          case _ => Future(OptionalDataRequest(
+            request = request.request,
+            externalId = request.externalId,
+            userAnswers = None,
+            psaId = request.psaId,
+            pspId = request.pspId,
+            administratorOrPractitioner = request.administratorOrPractitioner
+          ))
+        }
     }
 
+  }
 
-  private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
-                                      (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
-    f.map {
+  private def getOrCreateOptionalRequest[A](srn: String,
+                                       psaId: String,
+                                       refresh: Boolean)
+                                      (implicit request: AuthenticatedRequest[A],
+                                       hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
+    refreshBasedJsFetch(refresh, srn, psaId).map {
       case None => OptionalDataRequest(
         request = request.request,
         externalId = request.externalId,
         userAnswers = None,
         psaId = request.psaId,
         pspId = request.pspId,
-        viewOnly = viewOnly,
         administratorOrPractitioner = request.administratorOrPractitioner
       )
       case Some(data) => OptionalDataRequest(
@@ -253,9 +266,30 @@ class RacdacDataRetrievalImpl(
         userAnswers = Some(UserAnswers(data)),
         psaId = request.psaId,
         pspId = request.pspId,
-        viewOnly = viewOnly,
         administratorOrPractitioner = request.administratorOrPractitioner
       )
+    }
+
+  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
+                                                    jsValue: JsValue,
+                                                    psaId: String)
+                                                   (implicit hc: HeaderCarrier): Future[JsValue] = {
+    minimalPsaConnector.getMinimalFlags(psaId).map { minimalFlags =>
+      UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
+        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue)).json
+    }
+  }
+
+  private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
+                                    (implicit request: AuthenticatedRequest[A],
+                                     hc: HeaderCarrier): Future[Option[JsValue]] =
+    if (refresh) {
+      schemeDetailsConnector
+        .getSchemeDetails(psaId, schemeIdType = "srn", srn)
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId))
+        .map(Some(_))
+    } else {
+      dataConnector.fetch(request.externalId)
     }
 }
 
@@ -285,10 +319,11 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
   }
 }
 
-class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswersCacheConnector
-                                       )(implicit ec: ExecutionContext) extends DataRetrievalAction {
+class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswersCacheConnector,
+                                              minimalPsaConnector: MinimalPsaConnector,
+                                              schemeDetailsConnector: SchemeDetailsConnector)(implicit ec: ExecutionContext) extends DataRetrievalAction {
   override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
-    new RacdacDataRetrievalImpl(dataConnector)
+    new RacdacDataRetrievalImpl(dataConnector, mode, minimalPsaConnector, schemeDetailsConnector, srn: Option[String],refreshData: Boolean)
   }
 }
 
