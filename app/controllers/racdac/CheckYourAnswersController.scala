@@ -19,18 +19,18 @@ package controllers.racdac
 import config.FrontendAppConfig
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{RACDACNameId, ContractOrPolicyNumberId}
 import models.AuthEntity.PSP
 import models.requests.DataRequest
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import models.{Mode, UpdateMode, CheckMode, NormalMode}
+import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, UserAnswers}
-import viewmodels.{AnswerSection, CYAViewModel, Message}
+import utils.{UserAnswers, CountryOptions, Enumerable}
+import viewmodels.{AnswerSection, Message, CYAViewModel}
 import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
@@ -53,20 +53,19 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val returnLinkDetails: Future[(String, String)] =
-          if (mode == UpdateMode) {
+        val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
+          case (UpdateMode, Some(srnNo)) =>
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srn), schemeName))
-          } else {
+            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo), schemeName))
+          case _ =>
             pensionAdministratorConnector.getPSAName.map { psaName =>
               (appConfig.managePensionsSchemeOverviewUrl.url, psaName)
             }
-          }
+        }
 
         returnLinkDetails.map { case (returnUrl, returnName) =>
           Ok(view(vm(mode), returnName, returnUrl))
         }
-
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
