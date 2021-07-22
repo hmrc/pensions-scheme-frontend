@@ -226,13 +226,13 @@ class RacdacDataRetrievalImpl(
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    mode match {
-      case NormalMode | CheckMode =>
-        getOrCreateOptionalRequest(srn.getOrElse(""), request.psaId.getOrElse("").asInstanceOf[String], refreshData)(request, hc)
-      case UpdateMode | CheckUpdateMode =>
+    (mode, request.psaId)  match {
+      case (NormalMode | CheckMode, Some(value)) =>
+        getOrCreateOptionalRequest(srn, value.id, refreshData)(request, hc)
+      case (UpdateMode | CheckUpdateMode, _) =>
         (srn, request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
-            getOrCreateOptionalRequest(extractedSrn, psaId.id, refreshData)(request, hc)
+            getOrCreateOptionalRequest(srn, psaId.id, refreshData)(request, hc)
           case _ => Future(OptionalDataRequest(
             request = request.request,
             externalId = request.externalId,
@@ -246,7 +246,7 @@ class RacdacDataRetrievalImpl(
 
   }
 
-  private def getOrCreateOptionalRequest[A](srn: String,
+  private def getOrCreateOptionalRequest[A](srn: Option[String],
                                        psaId: String,
                                        refresh: Boolean)
                                       (implicit request: AuthenticatedRequest[A],
@@ -280,17 +280,19 @@ class RacdacDataRetrievalImpl(
     }
   }
 
-  private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
+  private def refreshBasedJsFetch[A](refresh: Boolean, srn: Option[String], psaId: String)
                                     (implicit request: AuthenticatedRequest[A],
-                                     hc: HeaderCarrier): Future[Option[JsValue]] =
-    if (refresh) {
-      schemeDetailsConnector
-        .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId))
-        .map(Some(_))
-    } else {
-      dataConnector.fetch(request.externalId)
+                                     hc: HeaderCarrier): Future[Option[JsValue]] = {
+     (refresh, srn) match{
+       case (true, Some(value)) =>
+       schemeDetailsConnector
+         .getSchemeDetails(psaId, schemeIdType = "srn", value)
+         .flatMap(ua => addMinimalFlagsAndUpdateRepository(value, ua.json, psaId))
+         .map(Some(_))
+       case _ =>
+         dataConnector.fetch(request.externalId)
     }
+  }
 }
 
 
