@@ -232,7 +232,7 @@ class RacdacDataRetrievalImpl(
       case (NormalMode | CheckMode, _) => throw MissingPsaIdException
       case (UpdateMode | CheckUpdateMode, _) =>
         (srn, request.psaId) match {
-          case (Some(extractedSrn), Some(psaId)) =>
+          case (Some(_), Some(psaId)) =>
             getOrCreateOptionalRequest(srn, psaId.id, refreshData)(request, hc)
           case _ => Future(OptionalDataRequest(
             request = request.request,
@@ -259,7 +259,8 @@ class RacdacDataRetrievalImpl(
         userAnswers = None,
         psaId = request.psaId,
         pspId = request.pspId,
-        administratorOrPractitioner = request.administratorOrPractitioner
+        administratorOrPractitioner = request.administratorOrPractitioner,
+        viewOnly = true
       )
       case Some(data) => OptionalDataRequest(
         request = request.request,
@@ -267,7 +268,8 @@ class RacdacDataRetrievalImpl(
         userAnswers = Some(UserAnswers(data)),
         psaId = request.psaId,
         pspId = request.pspId,
-        administratorOrPractitioner = request.administratorOrPractitioner
+        administratorOrPractitioner = request.administratorOrPractitioner,
+        viewOnly = true
       )
     }
 

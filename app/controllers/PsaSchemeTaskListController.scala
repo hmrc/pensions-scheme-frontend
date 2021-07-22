@@ -61,7 +61,6 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
               schemeDetailsConnector.getSchemeDetails(psaId.id, "srn", srnNo).map { ua =>
                 ua.get(IsRacDacId) match {
                   case Some(true) =>
-                    println("\n>>>HERE")
                     Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(mode, srn))
                   case _ =>
                     Redirect(controllers.routes.PsaNormalSchemeTaskListController.onPageLoad(mode,srn))
