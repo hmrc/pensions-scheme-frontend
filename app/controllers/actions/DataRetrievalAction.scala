@@ -77,7 +77,7 @@ class DataRetrievalImpl(
       case (true, Some(VarianceLock)) =>
         val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            addMinimalFlagsAndUpdateRepository(srn, ua, psaId).map(Some(_))
+            addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
           case _ => Future.successful(None)
         }
         createOptionalRequest(optJs, viewOnly = false)
@@ -115,7 +115,7 @@ class DataRetrievalImpl(
     if (refresh) {
       schemeDetailsConnector
         .getSchemeDetails(psaId, schemeIdType = "srn", srn)
-        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId))
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
         .map(Some(_))
     } else {
       viewConnector.fetch(request.externalId)
@@ -123,13 +123,15 @@ class DataRetrievalImpl(
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                       jsValue: JsValue,
-                                                      psaId: String)
+                                                      psaId: String,
+                                                      upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.getMinimalFlags(psaId).map { minimalFlags =>
-      UserAnswers(jsValue)
+    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+      val ua = UserAnswers(jsValue)
         .set(PsaMinimalFlagsId)(minimalFlags)
         .flatMap(
-        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue)).json
+        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
+      upsertUserAnswers(ua.json)
     }
   }
 

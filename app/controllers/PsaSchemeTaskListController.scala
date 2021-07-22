@@ -20,8 +20,8 @@ import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
-import models.{Mode, UpdateMode, PSAMinimalFlags}
-import play.api.i18n.{MessagesApi, I18nSupport}
+import models.{Mode, PSAMinimalFlags}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
