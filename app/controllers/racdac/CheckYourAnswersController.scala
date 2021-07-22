@@ -65,6 +65,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             "schemeName":"Benefits Scheme","schemeStatus":"Open","schemeSrnId":"S2400000119","srn":"S2400000119",
             "racdac":{"contractOrPolicyNumber":"12345AD"}})
 
+should be (and is in master) :-
+
+          >>>UA = UserAnswers({"pspDetails":[],"racdacScheme":true,"registrationStartDate":"2021-04-25",
+          "minimalFlags":{"isSuspended":false,"isDeceased":false,"rlsFlag":false},"pstr":"24000119IN",
+          "psaDetails":[{"relationshipDate":"1977-03-22","id":"A2100007","organisationOrPartnershipName":"Acme Ltd"}],
+          "schemeName":"Benefits Scheme","schemeStatus":"Open","schemeSrnId":"S2400000119","srn":"S2400000119",
+          "racdac":{"name":"Benefits Scheme","contractOrPolicyNumber":"12345AD"}})
+
+
              */
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
             Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srn), schemeName))
