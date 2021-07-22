@@ -51,12 +51,21 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
 
         val returnLinkDetails: Future[(String, String)] =
           if (mode == UpdateMode) {
+            println( "\n>>>UA = " + request.userAnswers)
+            /*
+            >>>UA = UserAnswers({"pspDetails":[],"racdacScheme":true,"registrationStartDate":"2021-04-25",
+            "minimalFlags":{"isSuspended":false,"isDeceased":false,"rlsFlag":false},"pstr":"24000119IN",
+            "psaDetails":[{"relationshipDate":"1977-03-22","id":"A2100007","organisationOrPartnershipName":"Acme Ltd"}],
+            "schemeName":"Benefits Scheme","schemeStatus":"Open","schemeSrnId":"S2400000119","srn":"S2400000119",
+            "racdac":{"contractOrPolicyNumber":"12345AD"}})
+
+             */
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
             Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srn), schemeName))
           } else {

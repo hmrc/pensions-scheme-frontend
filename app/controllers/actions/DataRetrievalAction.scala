@@ -17,11 +17,11 @@
 package controllers.actions
 
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.{Inject, ImplementedBy}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
 import identifiers.racdac.IsRacDacId
-import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
+import identifiers.{SchemeStatusId, PsaMinimalFlagsId, SchemeSrnId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -229,6 +229,7 @@ class RacdacDataRetrievalImpl(
     (mode, request.psaId)  match {
       case (NormalMode | CheckMode, Some(value)) =>
         getOrCreateOptionalRequest(srn, value.id, refreshData)(request, hc)
+      case (NormalMode | CheckMode, _) => throw MissingPsaIdException
       case (UpdateMode | CheckUpdateMode, _) =>
         (srn, request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
@@ -297,6 +298,7 @@ class RacdacDataRetrievalImpl(
 
 
 case object MissingSchemeNameException extends Exception
+case object MissingPsaIdException extends Exception
 
 @ImplementedBy(classOf[DataRetrievalImpl])
 trait DataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]

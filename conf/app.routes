@@ -8,14 +8,11 @@ GET         /                                                        controllers
 
 GET         /scheme-detail                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /scheme-detail/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
-GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: String)
 
-GET         /rac-dac-details                                          controllers.PsaRacdacSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /rac-dac-details/:srn                                     controllers.PsaRacdacSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
+GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: String)
 
 GET         /scheme-details                                          controllers.PsaNormalSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /scheme-details/:srn                                     controllers.PsaNormalSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
-
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 
