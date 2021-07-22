@@ -69,9 +69,8 @@ class PsaRacdacSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         case Some(result) => result
         case _ =>
           val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
-          val isRacDacOpt: Option[Boolean] = request.userAnswers.flatMap(_.get(IsRacDacId))
 
-          (srn, request.userAnswers, schemeNameOpt, isRacDacOpt) match {
+          (srn, request.userAnswers, schemeNameOpt) match {
 
             case (_, Some(_), Some(_), Some(true)) =>
               Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn))
