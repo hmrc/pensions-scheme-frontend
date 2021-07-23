@@ -36,7 +36,10 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
   }
 
-  "SchemeTaskList Controller" when {
+  "PSASchemeTaskList Controller" must {
+    "work" in {
+      controller.onPageLoad(UpdateMode, srn)
+    }
 
   }
 }
@@ -45,7 +48,9 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
 
-  def controller: PsaSchemeTaskListController =
+  private val srn = Some("srn")
+
+  private def controller: PsaSchemeTaskListController =
     new PsaSchemeTaskListController(
       frontendAppConfig,
       mockSchemeDetailsConnector,
