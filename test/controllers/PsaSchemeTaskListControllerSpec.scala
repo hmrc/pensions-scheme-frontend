@@ -17,7 +17,9 @@
 package controllers
 
 import base.JsonFileReader
+import connectors.EmailConnectorSpec.psaId
 import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
+import controllers.PsaNormalSchemeTaskListControllerSpec.controller
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models._
@@ -25,7 +27,10 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status, _}
+import services.FakeUserAnswersService.appConfig
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 
 import scala.concurrent.Future
@@ -52,6 +57,32 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
     }
 
   }
+  "PsaMinimalFlag has isDeceased flag as True and rlsFlag as false" must {
+    "return REDIRECT to youMustContactHMRCUrl" in {
+      val psaMinimalFlags = PSAMinimalFlags(any(), true, false)
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
+        .thenReturn(Future.successful(psaMinimalFlags))
+      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(Call("GET", appConfig.youMustContactHMRCUrl))
+    }
+  }
+
+  "PsaMinimalFlag has isDeceased flag as True and rlsFlag as false" must {
+    "return REDIRECT to youMustContactHMRCUrl" in {
+      val psaMinimalFlags = PSAMinimalFlags(any(), false, true)
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
+        .thenReturn(Future.successful(psaMinimalFlags))
+      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(Call("GET", appConfig.youMustContactHMRCUrl))
+    }
+  }
+
+
+    }
+
+
 }
 
 object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
