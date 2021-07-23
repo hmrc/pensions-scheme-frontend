@@ -20,7 +20,6 @@ import base.JsonFileReader
 import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.SchemeNameId
-import identifiers.racdac.IsRacDacId
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
@@ -54,32 +53,6 @@ class PsaNormalSchemeTaskListControllerSpec extends ControllerSpecBase with Befo
 
         status(result) mustBe OK
         contentAsString(result) mustBe view(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
-      }
-    }
-
-    "srn is None and there is user answers but deceasedFlag is true" must {
-      "redirect to contact HMRC page" in {
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
-        when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
-          .thenReturn(Future.successful(PSAMinimalFlags(false, true, false)))
-        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
-      }
-    }
-
-    "srn is None and there is user answers but rlsFlag is true" must {
-      "redirect to update your contact address page" in {
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
-        when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
-          .thenReturn(Future.successful(PSAMinimalFlags(false, false, true)))
-        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, None)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
       }
     }
 
@@ -117,16 +90,6 @@ class PsaNormalSchemeTaskListControllerSpec extends ControllerSpecBase with Befo
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-      }
-    }
-
-    "isRacDac is set to true" must {
-      "return REDIRECT to rac dac cya page" in {
-        val userAnswers = UserAnswers().set(SchemeNameId)("").flatMap(_.set(IsRacDacId)(true)).asOpt.value
-        val result = controller(userAnswers.dataRetrievalAction).onPageLoad(UpdateMode, srn)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn).url)
       }
     }
   }
