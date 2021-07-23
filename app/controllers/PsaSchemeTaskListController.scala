@@ -32,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             schemeDetailsConnector: SchemeDetailsConnector,
-  minimalPsaConnector: MinimalPsaConnector,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         val controllerComponents: MessagesControllerComponents
+                                            minimalPsaConnector: MinimalPsaConnector,
+                                            override val messagesApi: MessagesApi,
+                                            authenticate: AuthAction,
+                                            val controllerComponents: MessagesControllerComponents
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
