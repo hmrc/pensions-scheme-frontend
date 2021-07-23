@@ -19,11 +19,14 @@ package controllers
 import base.JsonFileReader
 import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
 import controllers.actions._
+import identifiers.racdac.IsRacDacId
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.test.Helpers.{redirectLocation, status, _}
+import utils.UserAnswers
 
 import scala.concurrent.Future
 
@@ -38,7 +41,14 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
   "PSASchemeTaskList Controller" must {
     "work" in {
-      controller.onPageLoad(UpdateMode, srn)
+      val userAnswers = UserAnswers().setOrException(IsRacDacId)(true)
+      when(mockSchemeDetailsConnector.getSchemeDetails(any(),any(), any())(any(),any()))
+        .thenReturn(Future.successful(userAnswers))
+      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn).url)
+
+
     }
 
   }
