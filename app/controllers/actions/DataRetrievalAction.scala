@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-
 import com.google.inject.{Inject, ImplementedBy}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
@@ -237,6 +236,7 @@ class RacdacDataRetrievalImpl(
     (mode, request.psaId)  match {
       case (NormalMode | CheckMode, Some(value)) =>
         getOrCreateOptionalRequest(srn, value.id, refreshData)(request, hc)
+      case (NormalMode | CheckMode, _) => throw MissingPsaIdException
       case (UpdateMode | CheckUpdateMode,_) =>
         (srn, request.psaId) match {
           case (Some(_), Some(psaId)) =>
