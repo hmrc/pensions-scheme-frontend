@@ -25,7 +25,6 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status, _}
 import services.FakeUserAnswersService.appConfig
 import utils.UserAnswers
@@ -56,23 +55,23 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
   }
   "PsaMinimalFlag has isDeceased flag as True and rlsFlag as false" must {
     "return REDIRECT to youMustContactHMRCUrl" in {
-      val psaMinimalFlags = PSAMinimalFlags(any(), true, false)
+      val psaMinimalFlags = PSAMinimalFlags(false, true, false)
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(Call("GET", appConfig.youMustContactHMRCUrl))
+      redirectLocation(result) mustBe Some(appConfig.youMustContactHMRCUrl)
     }
   }
 
   "PsaMinimalFlag has isDeceased flag as false and rlsFlag as true" must {
     "return REDIRECT to psaUpdateContactDetailsUrl" in {
-      val psaMinimalFlags = PSAMinimalFlags(any(), false, true)
+      val psaMinimalFlags = PSAMinimalFlags(true, false, true)
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(Call("GET", appConfig.psaUpdateContactDetailsUrl))
+      redirectLocation(result) mustBe Some(appConfig.psaUpdateContactDetailsUrl)
     }
   }
 
