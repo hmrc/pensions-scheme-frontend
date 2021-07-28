@@ -30,7 +30,6 @@ trait UtrBehaviour extends FormSpec with UtrMapping with ScalaCheckPropertyCheck
   def formWithUniqueTaxReference[A](testForm: Form[A],
                                     fieldName: String,
                                     requiredKey: String,
-                                    maxLengthKey: String,
                                     invalidKey: String): Unit = {
 
     "behave like form with UTR" must {
@@ -47,10 +46,18 @@ trait UtrBehaviour extends FormSpec with UtrMapping with ScalaCheckPropertyCheck
         FormError("utr", requiredKey)
       )
 
-      Seq("1234", "12345678909").foreach { utr =>
-        s"not bind numbers $utr with more/less than 10 digits" in {
+      Seq("1234", "123456789012345").foreach { utr =>
+        s"not bind numbers $utr with less than 10 or more than 15 digits" in {
           val result = testForm.bind(Map(fieldName -> utr)).apply(fieldName)
-          result.errors mustEqual Seq(FormError("utr", maxLengthKey, Seq(10)))
+          result.errors mustEqual Seq(FormError("utr", invalidKey, Seq(regexUtr)))
+        }
+      }
+
+      (11 to 12).foreach { utrLength =>
+        val utr = "1" * utrLength
+        s"not bind numbers $utr with $utrLength digits" in {
+          val result = testForm.bind(Map(fieldName -> utr)).apply(fieldName)
+          result.errors mustEqual Seq(FormError("utr", invalidKey, Seq(regexUtr)))
         }
       }
 
