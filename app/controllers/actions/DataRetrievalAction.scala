@@ -230,12 +230,12 @@ class RacdacDataRetrievalImpl(
     mode  match {
 
       case NormalMode | CheckMode if request.psaId.isEmpty => throw MissingPsaIdException
-      case NormalMode | CheckMode => getOrCreateOptionalRequest(dataConnector.fetch)(request)
+      case NormalMode | CheckMode => getOrCreateOptionalRequest(dataConnector.fetch, viewOnly = false)(request)
 
       case UpdateMode | CheckUpdateMode =>
         (srnOpt, request.psaId) match {
           case (Some(srn), Some(psaId)) =>
-            getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc))(request)
+            getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc), viewOnly = true)(request)
           case _ => Future(OptionalDataRequest(
             request = request.request,
             externalId = request.externalId,
@@ -248,7 +248,7 @@ class RacdacDataRetrievalImpl(
     }
   }
 
-  private def getOrCreateOptionalRequest[A](modeBasedDataFetch: String => Future[Option[JsValue]])
+  private def getOrCreateOptionalRequest[A](modeBasedDataFetch: String => Future[Option[JsValue]], viewOnly: Boolean)
                                            (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     modeBasedDataFetch(request.externalId).map {
       case None => OptionalDataRequest(
@@ -258,7 +258,7 @@ class RacdacDataRetrievalImpl(
         psaId = request.psaId,
         pspId = request.pspId,
         administratorOrPractitioner = request.administratorOrPractitioner,
-        viewOnly = true
+        viewOnly = viewOnly
       )
       case Some(data) => OptionalDataRequest(
         request = request.request,
@@ -267,7 +267,7 @@ class RacdacDataRetrievalImpl(
         psaId = request.psaId,
         pspId = request.pspId,
         administratorOrPractitioner = request.administratorOrPractitioner,
-        viewOnly = true
+        viewOnly = viewOnly
       )
     }
 
