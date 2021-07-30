@@ -6,13 +6,13 @@
 GET         /                                                        controllers.BeforeYouStartController.onPageLoad()
 
 
-GET         /scheme-detail                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /scheme-detail/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
+GET         /scheme-detail                                          controllers.TaskListRedirectController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /scheme-detail/:srn                                     controllers.TaskListRedirectController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 
 GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: String)
 
-GET         /scheme-details                                          controllers.PsaNormalSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /scheme-details/:srn                                     controllers.PsaNormalSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
+GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 

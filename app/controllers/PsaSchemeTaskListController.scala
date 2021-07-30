@@ -15,60 +15,50 @@
  */
 
 package controllers
+
 import config.FrontendAppConfig
-import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
 import controllers.actions._
-import identifiers.racdac.IsRacDacId
+import identifiers.SchemeNameId
 import models.AuthEntity.PSA
-import models.{Mode, PSAMinimalFlags}
+import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.TaskList
+import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import views.html.psaTaskList
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
-                                            schemeDetailsConnector: SchemeDetailsConnector,
-                                            minimalPsaConnector: MinimalPsaConnector,
                                             override val messagesApi: MessagesApi,
                                             authenticate: AuthAction,
-                                            val controllerComponents: MessagesControllerComponents
+                                            getData: DataRetrievalAction,
+                                            @TaskList allowAccess: AllowAccessActionProvider,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            val view: psaTaskList,
+                                            hsTaskListHelperRegistration: HsTaskListHelperRegistration,
+                                            hsTaskListHelperVariations: HsTaskListHelperVariations
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
+    andThen allowAccess(srn)).apply {
+    implicit request =>
+      val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
+      (srn, request.userAnswers, schemeNameOpt) match {
+        case (None, Some(userAnswers), Some(schemeName)) =>
+          Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName))
 
-  private def redirects(psaId:Option[PsaId])(implicit executionContext: ExecutionContext, hc: HeaderCarrier):Future[Option[Result]] = {
-    psaId match {
-      case Some(psaId) =>
-        minimalPsaConnector.getMinimalFlags(psaId.id).map {
-          case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
-          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
-          case _ => None
-        }
-      case _ => Future.successful(None)
-    }
-  }
+        case (Some(_), Some(userAnswers), Some(schemeName)) =>
+          Ok(view(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = authenticate(Some(PSA)).async { implicit request =>
-    (request.psaId, srn) match {
-      case (Some(psaId), Some(srnNo)) =>
-          redirects(request.psaId).flatMap {
-            case Some(result) => Future.successful(result)
-            case _ =>
-              schemeDetailsConnector.getSchemeDetails(psaId.id, "srn", srnNo).map { ua =>
-                ua.get(IsRacDacId) match {
-                  case Some(true) =>
-                    Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(mode, srn))
-                  case _ =>
-                    Redirect(controllers.routes.PsaNormalSchemeTaskListController.onPageLoad(mode,srn))
-                }
-            }
-          }
-      case _ =>
-        Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
+        case (Some(_), _, _) =>
+          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+
+        case _ =>
+          Redirect(appConfig.managePensionsSchemeOverviewUrl)
+      }
   }
 }
