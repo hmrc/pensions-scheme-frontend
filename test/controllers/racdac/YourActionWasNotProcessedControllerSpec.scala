@@ -32,7 +32,7 @@ class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
   private def controller: YourActionWasNotProcessedController = new YourActionWasNotProcessedController(
     messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, frontendAppConfig, view)
 
-  private val redirectUrl = frontendAppConfig.managePensionsSchemeOverviewUrl.url
+  private val redirectUrl = frontendAppConfig.managePensionsSchemeOverviewUrl
 
   private def viewAsString() = view(Some(racDacName), redirectUrl)(fakeRequest, messages).toString
 

@@ -39,7 +39,7 @@ class YourActionWasNotProcessedController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = {
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        val returnUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn).url
+        val returnUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
         Future.successful(Ok(view(existingSchemeName, returnUrl)))
     }
   }
