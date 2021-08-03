@@ -47,6 +47,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")
   lazy val managePensionsSchemeDetailsPspUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummaryPsp")
   lazy val youMustContactHMRCUrl: String = loadConfig("urls.manage-pensions-frontend.youMustContactHMRC")
+  lazy val delimitedPsaUrl: String = loadConfig("urls.manage-pensions-frontend.delimitedPsa")
   lazy val managePensionsYourPensionSchemesUrl: String = loadConfig("urls.manage-pensions-frontend.yourPensionSchemes")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val googleTagManagerIdAvailable: Boolean = runModeConfiguration.underlying.getBoolean(s"google-tag-manager" +
