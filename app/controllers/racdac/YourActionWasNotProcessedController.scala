@@ -43,7 +43,7 @@ class YourActionWasNotProcessedController @Inject()(
     (authenticate() andThen getData(NormalMode, None) andThen requireData).async {
       implicit request =>
         withRACDACName { schemeName =>
-          val returnUrl = appConfig.managePensionsSchemeOverviewUrl.url
+          val returnUrl = appConfig.managePensionsSchemeOverviewUrl
           Future.successful(Ok(view(Some(schemeName), returnUrl)))
         }
     }

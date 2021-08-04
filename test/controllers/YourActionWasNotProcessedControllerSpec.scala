@@ -32,7 +32,7 @@ class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
   private def controller: YourActionWasNotProcessedController = new YourActionWasNotProcessedController(
     messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, view)
 
-  private val redirectUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
+  private val redirectUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private def viewAsString() = view(Some(schemeName), redirectUrl)(fakeRequest, messages).toString
 
