@@ -86,7 +86,12 @@ trait AddressListController extends FrontendBaseController with Retrievals with 
                   Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
               }
             } else {
-              Future.successful(Redirect(viewModel.manualInputCall))
+              val answers = userAnswersService
+                .setExistingAddress(mode, dataId, UserAnswers(userAnswersJson))
+                .set(navigatorId)(address).asOpt.getOrElse(request.userAnswers)
+              userAnswersService.upsert(mode, viewModel.srn, answers.json).map { _ =>
+                Redirect(viewModel.manualInputCall)
+              }
             }
           }
       }
