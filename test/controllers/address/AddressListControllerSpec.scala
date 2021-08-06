@@ -137,7 +137,7 @@ class AddressListControllerSpec extends SpecBase with OptionValues {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe Some(addresses.head.toAddress)
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe addresses.head.toAddress
 
         FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
 

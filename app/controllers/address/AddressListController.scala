@@ -70,19 +70,23 @@ trait AddressListController extends FrontendBaseController with Retrievals with 
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
-        val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
+        val address = viewModel.addresses(addressIndex).copy(countryOpt = Some("GB"))
         removePostCodeLookupAddress(mode, viewModel.srn, postCodeLookupIdForCleanup)
           .flatMap { userAnswersJson =>
-            val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress,
-              request.userAnswers.get(dataId), Some(address), context)
-            val answers = userAnswersService
-              .setExistingAddress(mode, dataId, UserAnswers(userAnswersJson))
-              .set(dataId)(address.toAddress).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
+            if (address.toAddress.nonEmpty) {
+              val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address.toAddress.get,
+                request.userAnswers.get(dataId), Some(address), context)
+              val answers = userAnswersService
+                .setExistingAddress(mode, dataId, UserAnswers(userAnswersJson))
+                .set(dataId)(address.toAddress.get).flatMap(_.set(navigatorId)(address)).asOpt.getOrElse(request.userAnswers)
 
-            userAnswersService.upsert(mode, viewModel.srn, answers.json).map {
-              json =>
-                auditEvent.foreach(auditService.sendEvent(_))
-                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
+              userAnswersService.upsert(mode, viewModel.srn, answers.json).map {
+                json =>
+                  auditEvent.foreach(auditService.sendEvent(_))
+                  Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json), viewModel.srn))
+              }
+            } else {
+              Future.successful(Redirect(viewModel.manualInputCall))
             }
           }
       }

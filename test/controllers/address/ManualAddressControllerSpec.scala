@@ -206,7 +206,7 @@ class ManualAddressControllerSpec extends SpecBase with MustMatchers with Mockit
             val formProvider = app.injector.instanceOf[AddressFormProvider]
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
             val controller = app.injector.instanceOf[TestController]
-            val form = formProvider().fill(testAddress.toAddress)
+            val form = formProvider().fill(testAddress.toPrepopAddress)
 
             val result = controller.onPageLoad(viewModel, userAnswers)
 
