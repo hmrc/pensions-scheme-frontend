@@ -23,7 +23,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(schemeName: Option[String], returnUrl: String)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], returnUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__yourActionWasNotProcessed__title")
@@ -40,10 +40,10 @@
     <p>@messages("messages__yourActionWasNotProcessed__p3")</p>
 
     @schemeName.map{ name =>
-            @components.button_link(
+            @components.return_link(
                     messages("site.return_to", name),
-                    returnUrl,
-                    "return"
+                    None,
+                    Some(returnUrl)
                 )
     }
 
