@@ -23,6 +23,7 @@ import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.Racdac
 import views.html.yourActionWasNotProcessed
 
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class YourActionWasNotProcessedController @Inject()(
                                                      override val messagesApi: MessagesApi,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
+                                                     @Racdac getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      appConfig: FrontendAppConfig,
                                                      view: yourActionWasNotProcessed

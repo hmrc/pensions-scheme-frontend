@@ -18,13 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UrlsPartialService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.urlsPartial
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
@@ -36,9 +36,11 @@ class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def retrieveUrlsPartial: Action[AnyContent] = (authenticate() andThen getData()).async {
+
     implicit request =>
       request.psaId.map { psaId =>
-        urlsPartialService.schemeLinks(psaId.id).map(links => Ok(urlsPartial(links)))
+        urlsPartialService.schemeLinks(psaId.id).map{links =>
+          Ok(urlsPartial(links))}
       }.getOrElse(throw PsaIdMissingException)
   }
 

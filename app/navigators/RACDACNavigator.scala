@@ -17,13 +17,12 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.racdac.{DeclarationId, ContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import models.NormalMode
+import utils.annotations.Racdac
 
-class RACDACNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
+class RACDACNavigator @Inject()(@Racdac val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode))
