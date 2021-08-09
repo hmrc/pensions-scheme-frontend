@@ -16,7 +16,7 @@
 
 package controllers
 import config.FrontendAppConfig
-import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
+import connectors.{DelimitedAdminException, MinimalPsaConnector, SchemeDetailsConnector}
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
@@ -47,6 +47,9 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
           case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
           case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET", appConfig.psaUpdateContactDetailsUrl)))
           case _ => None
+        } recoverWith {
+          case _: DelimitedAdminException =>
+            Future.successful(Some(Redirect(Call("GET", appConfig.delimitedPsaUrl))))
         }
     }
   }
