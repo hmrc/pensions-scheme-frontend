@@ -37,3 +37,4 @@ tmp
 bin
 
 !app/modules
+.bsp
