@@ -25,6 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.Racdac
 import views.html.racdac.schemeSuccess
 
 import javax.inject.Inject
@@ -32,9 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        cacheConnector: UserAnswersCacheConnector,
+                                        @Racdac cacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
+                                        @Racdac getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         allowAccess: AllowAccessActionProvider,
                                         val controllerComponents: MessagesControllerComponents,

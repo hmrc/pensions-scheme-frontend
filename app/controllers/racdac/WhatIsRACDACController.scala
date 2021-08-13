@@ -25,6 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.Racdac
 import views.html.racdac.whatIsRACDAC
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatIsRACDACController @Inject()(override val messagesApi: MessagesApi,
                                                      authenticate: AuthAction,
                                                      pensionAdministratorConnector: PensionAdministratorConnector,
-                                                     getData: DataRetrievalAction,
+                                                     @Racdac getData: DataRetrievalAction,
                                                      allowAccess: AllowAccessActionProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      val view: whatIsRACDAC

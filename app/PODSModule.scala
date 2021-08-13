@@ -16,20 +16,15 @@
 
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
-import connectors.{SubscriptionCacheConnector, UserAnswersCacheConnector}
+import connectors.{RacdacSubscriptionCacheConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
-import navigators.establishers.individual.{EstablishersIndividualAddressNavigator,
-  EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator}
+import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator}
 import navigators.establishers.partnership.partner.PartnerNavigator
-import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator,
-  EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
-import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator,
-  TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
-import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator,
-  TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
-import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl,
-  UserAnswersServiceInsuranceImpl}
+import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
+import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
+import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator, TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
+import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
 import utils.annotations._
 import utils.{AllowChangeHelper, AllowChangeHelperImpl}
 
@@ -78,6 +73,17 @@ class PODSModule extends AbstractModule {
 
     bind(classOf[UserAnswersCacheConnector])
       .to(classOf[SubscriptionCacheConnector])
+
+    bind(classOf[UserAnswersCacheConnector])
+      .annotatedWith(classOf[Racdac])
+      .to(classOf[RacdacSubscriptionCacheConnector])
+
+    bind(classOf[DataRetrievalAction])
+      .annotatedWith(classOf[Racdac])
+      .to(classOf[RacdacDataRetrievalActionImpl])
+
+    bind(classOf[DataRetrievalAction])
+      .to(classOf[DataRetrievalActionImpl])
 
     bind(classOf[UserAnswersService])
       .to(classOf[UserAnswersServiceEstablishersAndTrusteesImpl])

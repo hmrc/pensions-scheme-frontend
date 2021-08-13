@@ -60,12 +60,15 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
             case JsError(errors) => throw JsResultException(errors)
           }
 
+        case FORBIDDEN if response.body.contains(delimitedErrorMsg) => throw new DelimitedAdminException
         case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
       }
     } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to invite PSA to administer scheme", t)
     }
   }
+
+  val delimitedErrorMsg: String = "DELIMITED_PSAID"
 
   override def getPsaNameFromPsaID(psaId: String)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
@@ -97,3 +100,6 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
   }
 
 }
+
+class DelimitedAdminException extends
+  Exception("The administrator has already de-registered. The minimal details API has returned a DELIMITED PSA response")

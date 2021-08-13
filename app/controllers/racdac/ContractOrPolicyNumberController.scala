@@ -28,6 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.Racdac
 import views.html.racdac.contractOrPolicyNumber
 
 import javax.inject.Inject
@@ -35,10 +36,10 @@ import scala.concurrent.ExecutionContext
 
 class ContractOrPolicyNumberController @Inject()(
                                                   override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: UserAnswersCacheConnector,
+                                                  @Racdac dataCacheConnector: UserAnswersCacheConnector,
                                                   navigator: Navigator,
                                                   authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
+                                                  @Racdac getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   allowAccess: AllowAccessActionProvider,
                                                   formProvider: ContractOrPolicyNumberFormProvider,

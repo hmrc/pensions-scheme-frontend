@@ -19,6 +19,7 @@ package controllers
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
+import identifiers.racdac.RACDACNameId
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -27,12 +28,12 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-
-import views.html.deleteScheme
+import utils.UserAnswers
+import views.html.deleteSchemeRacdac
 
 import scala.concurrent.Future
 
-class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach{
+class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach{
 
   val formProvider = new DeleteSchemeFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -42,10 +43,10 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val fakeCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
   val minimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
 
-  val view: deleteScheme = app.injector.instanceOf[deleteScheme]
+  val view: deleteSchemeRacdac = app.injector.instanceOf[deleteSchemeRacdac]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = dontGetAnyData): DeleteSchemeController =
-    new DeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = dataRetrievalAction): RacdacDeleteSchemeController =
+    new RacdacDeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
       dataRetrievalAction, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
@@ -55,6 +56,11 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
     when(minimalPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
     super.beforeEach()
   }
+  private def dataRetrievalAction: DataRetrievalAction = {
+    UserAnswers()
+      .set(RACDACNameId)(schemeName).asOpt.get
+      .dataRetrievalAction
+  }
 
   "DeleteScheme Controller" must {
 
@@ -62,7 +68,6 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
       when(fakeCacheConnector.fetch(eqTo("id"))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
         "schemeName" -> schemeName))))
       val result = controller().onPageLoad(fakeRequest)
-
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }

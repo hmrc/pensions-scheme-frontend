@@ -20,28 +20,28 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
-import identifiers.SchemeNameId
+import identifiers.racdac.RACDACNameId
 import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.UserAnswers
-import views.html.deleteScheme
+import utils.annotations.Racdac
+import views.html.deleteSchemeRacdac
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeleteSchemeController @Inject()(
+class RacdacDeleteSchemeController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        dataCacheConnector: UserAnswersCacheConnector,
+                                        @Racdac dataCacheConnector: UserAnswersCacheConnector,
                                         minimalPsaConnector: MinimalPsaConnector,
                                         authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
+                                        @Racdac getData: DataRetrievalAction,
                                         formProvider: DeleteSchemeFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
-                                        view: deleteScheme
+                                        view: deleteSchemeRacdac
                                       )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -73,22 +73,18 @@ class DeleteSchemeController @Inject()(
       }
   }
 
-
   private def getSchemeInfo(f: (String, String, String) => Future[Result])
                            (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
 
-    dataCacheConnector.fetch(request.externalId).flatMap {
-      case None => sessionExpired
-      case Some(data) =>
-        val ua = UserAnswers(data)
-        val schemeName = ua.get(SchemeNameId)
-        request.psaId.map { psaId =>
-          minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
-            f(schemeName.getOrElse("messages__thisScheme"), psaName,
-              "messages__deleteScheme__hint")
+    request.userAnswers.map { ua =>
+      val racDACSchemeName = ua.get(RACDACNameId)
+      request.psaId.map { psaId =>
+        minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+          f(racDACSchemeName.getOrElse("messages__thisScheme"), psaName,
+            "messages__deleteScheme__hint")
         }.getOrElse(sessionExpired))
       }.getOrElse(sessionExpired)
-    }
+    }.getOrElse(sessionExpired)
   }
 }
 

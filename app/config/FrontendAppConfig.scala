@@ -47,6 +47,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val managePensionsSchemeSummaryUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummary")
   lazy val managePensionsSchemeDetailsPspUrl: String = loadConfig("urls.manage-pensions-frontend.schemesSummaryPsp")
   lazy val youMustContactHMRCUrl: String = loadConfig("urls.manage-pensions-frontend.youMustContactHMRC")
+  lazy val delimitedPsaUrl: String = loadConfig("urls.manage-pensions-frontend.delimitedPsa")
   lazy val managePensionsYourPensionSchemesUrl: String = loadConfig("urls.manage-pensions-frontend.yourPensionSchemes")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val googleTagManagerIdAvailable: Boolean = runModeConfiguration.underlying.getBoolean(s"google-tag-manager" +
@@ -105,6 +106,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val continueUrl = s"${loadConfig("urls.partials.continueSchemeRegistration")}"
   lazy val viewUrl: String = runModeConfiguration.underlying.getString("urls.partials.viewSchemeDetails")
   lazy val deleteSubscriptionUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteSubscription")
+  lazy val deleteSubscriptionRacdacUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteSubscriptionRacdac")
   lazy val deleteVariationsUrl: String = runModeConfiguration.underlying.getString("urls.partials.deleteVariations")
   lazy val cannotStartRegUrl: String = runModeConfiguration.underlying.getString("urls.partials.cannotStartReg")
   lazy val canBeRegisteredUrl: String = runModeConfiguration.underlying.getString("urls.partials.canBeRegistered")

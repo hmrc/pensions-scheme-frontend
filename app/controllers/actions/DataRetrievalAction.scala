@@ -16,12 +16,11 @@
 
 package controllers.actions
 
-
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.{Inject, ImplementedBy}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
-import identifiers.racdac.{IsRacDacId, RACDACNameId}
-import identifiers.{PsaMinimalFlagsId, SchemeNameId, SchemeSrnId, SchemeStatusId}
+import identifiers.racdac.IsRacDacId
+import identifiers.{SchemeStatusId, PsaMinimalFlagsId, SchemeSrnId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
@@ -29,6 +28,7 @@ import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
+import utils.annotations.Racdac
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -126,19 +126,13 @@ class DataRetrievalImpl(
                                                       upsertUserAnswers: JsValue => Future[JsValue])
                                                      (implicit hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
-      val ua = UserAnswers(jsValue).set(PsaMinimalFlagsId)(minimalFlags).flatMap(
+      val ua = UserAnswers(jsValue)
+        .set(PsaMinimalFlagsId)(minimalFlags)
+        .flatMap(
         _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
-      upsertUserAnswers(storeSchemeNameAsRacDacName(ua).json)
+      upsertUserAnswers(ua.json)
     }
   }
-
-  private def storeSchemeNameAsRacDacName(ua: UserAnswers): UserAnswers =
-    (ua.get(IsRacDacId), ua.get(RACDACNameId)) match {
-      case (Some(true), None) =>
-        val schemeName: String = ua.get(SchemeNameId).getOrElse(throw MissingSchemeNameException)
-        ua.set(RACDACNameId)(schemeName).asOpt.getOrElse(ua)
-      case _ => ua
-    }
 
   private def getRequestWithLock[A](srn: String, refresh: Boolean, psaId: String)
                                    (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
@@ -221,10 +215,92 @@ class DataRetrievalImpl(
           administratorOrPractitioner = request.administratorOrPractitioner
         )
     }
-
 }
 
+class RacdacDataRetrievalImpl(
+                               mode: Mode,
+                               @Racdac dataConnector: UserAnswersCacheConnector,
+                               viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                               schemeDetailsConnector: SchemeDetailsConnector,
+                               minimalPsaConnector: MinimalPsaConnector,
+                         srnOpt: Option[String])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+
+  override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    mode  match {
+
+      case NormalMode | CheckMode if request.psaId.isEmpty => throw MissingPsaIdException
+      case NormalMode | CheckMode => getOrCreateOptionalRequest(dataConnector.fetch, viewOnly = false)(request)
+
+      case UpdateMode | CheckUpdateMode =>
+        (srnOpt, request.psaId) match {
+          case (Some(srn), Some(psaId)) =>
+            getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc), viewOnly = true)(request)
+          case _ => Future(OptionalDataRequest(
+            request = request.request,
+            externalId = request.externalId,
+            userAnswers = None,
+            psaId = request.psaId,
+            pspId = request.pspId,
+            administratorOrPractitioner = request.administratorOrPractitioner
+          ))
+        }
+    }
+  }
+
+  private def getOrCreateOptionalRequest[A](modeBasedDataFetch: String => Future[Option[JsValue]], viewOnly: Boolean)
+                                           (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
+    modeBasedDataFetch(request.externalId).map {
+      case None => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = None,
+        psaId = request.psaId,
+        pspId = request.pspId,
+        administratorOrPractitioner = request.administratorOrPractitioner,
+        viewOnly = viewOnly
+      )
+      case Some(data) => OptionalDataRequest(
+        request = request.request,
+        externalId = request.externalId,
+        userAnswers = Some(UserAnswers(data)),
+        psaId = request.psaId,
+        pspId = request.pspId,
+        administratorOrPractitioner = request.administratorOrPractitioner,
+        viewOnly = viewOnly
+      )
+    }
+
+  private def dataInUpdateMode[A](srn: String, psaId: String)
+                                    (implicit request: AuthenticatedRequest[A],
+                                     hc: HeaderCarrier): String => Future[Option[JsValue]] =
+    id =>
+     viewConnector.fetch(id) flatMap {
+       case None =>
+        schemeDetailsConnector
+         .getSchemeDetails(psaId, schemeIdType = "srn", srn)
+         .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
+
+       case Some(value) => Future.successful(Some(value))
+    }
+
+  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
+                                                    jsValue: JsValue,
+                                                    psaId: String,
+                                                    upsertUserAnswers: JsValue => Future[JsValue])
+                                                   (implicit hc: HeaderCarrier): Future[JsValue] = {
+    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+      val ua = UserAnswers(jsValue)
+        .set(PsaMinimalFlagsId)(minimalFlags)
+        .flatMap(_.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
+      upsertUserAnswers(ua.json)
+    }
+  }
+}
+
+
 case object MissingSchemeNameException extends Exception
+case object MissingPsaIdException extends Exception
 
 @ImplementedBy(classOf[DataRetrievalImpl])
 trait DataRetrieval extends ActionTransformer[AuthenticatedRequest, OptionalDataRequest]
@@ -249,9 +325,17 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
   }
 }
 
-@ImplementedBy(classOf[DataRetrievalActionImpl])
-trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: Option[String] = None, refreshData: Boolean = false): DataRetrieval
+class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswersCacheConnector,
+                                              viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                              schemeDetailsConnector: SchemeDetailsConnector,
+                                              minimalPsaConnector: MinimalPsaConnector)
+                                             (implicit ec: ExecutionContext) extends DataRetrievalAction {
+  override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
+    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: Option[String])
+  }
 }
 
 
+trait DataRetrievalAction {
+  def apply(mode: Mode = NormalMode, srn: Option[String] = None, refreshData: Boolean = false): DataRetrieval
+}

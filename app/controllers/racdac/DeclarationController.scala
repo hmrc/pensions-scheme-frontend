@@ -35,6 +35,7 @@ import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.Racdac
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
 
@@ -44,10 +45,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: UserAnswersCacheConnector,
+                                       @Racdac dataCacheConnector: UserAnswersCacheConnector,
                                        navigator: Navigator,
                                        authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
+                                       @Racdac getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        allowAccess: AllowAccessActionProvider,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
