@@ -16,22 +16,23 @@
 
 package connectors
 
-import com.google.inject.{ImplementedBy, Inject, Singleton}
+import com.google.inject.{Inject, Singleton, ImplementedBy}
 import config.FrontendAppConfig
+import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utils.{HttpResponseHelper, UserAnswers}
+import uk.gov.hmrc.http.{HttpClient, HttpResponse, HeaderCarrier}
+import utils.{UserAnswers, HttpResponseHelper}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String)
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
                     (implicit hc: HeaderCarrier,
                      ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
@@ -49,11 +50,11 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
-  def registerScheme(answers: UserAnswers, psaId: String)
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
                     (implicit hc: HeaderCarrier,
                      ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
-    val url = config.registerSchemeUrl
+    val url = config.registerSchemeUrl(schemeJourneyType)
 
     http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId)).map { response =>
       response.status match {

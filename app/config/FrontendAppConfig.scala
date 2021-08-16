@@ -19,10 +19,11 @@ package config
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
 import models.ReportTechnicalIssue
+import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Mode, Environment}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -59,8 +60,8 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val countdown: String = loadConfig("session._CountdownInSeconds")
   lazy val loginUrl: String = loadConfig("urls.login")
   lazy val serviceSignOut: String = loadConfig("urls.logout")
-  lazy val registerSchemeUrl: String = pensionsSchemeUrl +
-    runModeConfiguration.underlying.getString("urls.registerScheme")
+  def registerSchemeUrl(schemeJourneyType: SchemeJourneyType.Name): String = pensionsSchemeUrl +
+    runModeConfiguration.underlying.getString("urls.registerScheme").format(schemeJourneyType.toString)
   lazy val registerSchemeAdministratorUrl: String = loadConfig("urls.registerSchemeAdministrator")
   lazy val pensionAdministratorGovUkLink: String = runModeConfiguration.underlying.getString("urls" +
     ".pensionAdministratorGovUkLink")
