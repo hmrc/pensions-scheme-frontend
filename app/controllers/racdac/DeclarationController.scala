@@ -24,19 +24,20 @@ import controllers.actions._
 import controllers.racdac.routes.DeclarationController
 import identifiers.racdac._
 import identifiers.register.SubmissionReferenceNumberId
+import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
-import models.{NormalMode, PSAMinimalFlags}
+import models.{PSAMinimalFlags, NormalMode}
 import navigators.Navigator
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
-import utils.{Enumerable, UserAnswers}
+import utils.{UserAnswers, Enumerable}
 import views.html.racdac.declaration
 
 import javax.inject.Inject
@@ -118,7 +119,7 @@ class DeclarationController @Inject()(
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
     for {
-      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id)
+      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id, SchemeJourneyType.RAC_DAC_SCHEME)
       _ <- sendEmail(psaId, schemeName)
       _ <- dataCacheConnector.upsert(request.externalId, ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json)
     } yield {

@@ -18,11 +18,12 @@ package connectors
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
-import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
+import org.scalatest.{AsyncFlatSpec, OptionValues, Matchers}
 import play.api.http.Status
 import play.api.http.Status._
-import play.api.libs.json.{JsBoolean, JsResultException, Json}
+import play.api.libs.json.{JsResultException, Json, JsBoolean}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
@@ -49,7 +50,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.registerScheme(userAnswers, "test-psa-id").map(response =>
+    connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME).map(response =>
       response shouldBe schemeSubmissionResponse
     )
 
@@ -70,7 +71,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.registerScheme(userAnswers, "test-psa-id")
+      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -90,7 +91,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[UpstreamErrorResponse] {
-      connector.registerScheme(userAnswers, "test-psa-id")
+      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -110,7 +111,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsonParseException] {
-      connector.registerScheme(userAnswers, "test-psa-id")
+      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -130,7 +131,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsResultException] {
-      connector.registerScheme(userAnswers, "test-psa-id")
+      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
