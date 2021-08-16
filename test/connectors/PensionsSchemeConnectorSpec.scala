@@ -274,7 +274,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
 object PensionsSchemeConnectorSpec extends OptionValues {
 
-  private val registerSchemeUrl = "/pensions-scheme/register-scheme"
+  private val registerSchemeUrl = "/pensions-scheme/register-scheme/non-rac-dac"
 
   private val updateSchemeUrl = "/pensions-scheme/update-scheme"
   private val checkAssociationUrl = "/pensions-scheme/is-psa-associated"
