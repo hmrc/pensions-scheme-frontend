@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import audit.{AuditService, TcmpAuditEvent}
+import audit.{TcmpAuditEvent, AuditService}
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -25,7 +25,7 @@ import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.{DeclarationDormantId, DeclarationId}
 import models._
-import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
+import models.register.{SchemeType, SchemeSubmissionResponse, DeclarationDormant}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
@@ -39,9 +39,9 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{FakeNavigator, UserAnswers}
+import utils.{UserAnswers, FakeNavigator}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -124,7 +124,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue and ensure racdac declaration ID removed and register declaration ID present" in {
-      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
+      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -136,7 +136,7 @@ class DeclarationControllerSpec
 
     "redirect to your action was not processed page when backend returns 5XX" in {
       reset(mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
@@ -147,7 +147,7 @@ class DeclarationControllerSpec
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
       reset(mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
@@ -158,7 +158,7 @@ class DeclarationControllerSpec
 
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
       reset(mockAuditService, mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
+      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
 
       val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
