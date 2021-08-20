@@ -59,7 +59,7 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id) match {
       case None => request.userAnswers.get(selectedId) match {
-        case Some(value) => form.fill(value.toAddress)
+        case Some(value) => form.fill(value.toPrepopAddress)
         case None => form
       }
       case Some(value) => form.fill(value)

@@ -116,7 +116,7 @@ class AddressListControllerSpec extends SpecBase with OptionValues {
 
     }
 
-    "save the user answer on submission of valid data" in {
+    "save the user answer on submission of valid data when address  is complete" in {
 
       running(_.overrides()) { app =>
         val viewModel = addressListViewModel()
@@ -124,7 +124,40 @@ class AddressListControllerSpec extends SpecBase with OptionValues {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(postCall.url)
         FakeUserAnswersService.userAnswer.get(FakeSelectedAddressIdentifier).value mustBe viewModel.addresses.head
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier).value mustBe viewModel.addresses.head.toPrepopAddress
+      }
+
+    }
+
+    "save the user answer on submission of valid data when address is incomplete and redirect to manualInput page" in {
+
+      running(_.overrides()) { app =>
+        val viewModel = addressListViewModel(incompleteAddresses)
+        val controller = app.injector.instanceOf[TestController]
+        val result = controller.onSubmit(viewModel, 0, incompleteAddresses)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(manualInputCall.url)
+        FakeUserAnswersService.userAnswer.get(FakeSelectedAddressIdentifier).value mustBe viewModel.addresses.head
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe None
+      }
+
+    }
+
+    "shuffle the address lines and save fixed address when address is incomplete but fixable" in {
+
+      running(_.overrides()) { app =>
+        val viewModel = addressListViewModel(fixableAddress)
+        val controller = app.injector.instanceOf[TestController]
+        val result = controller.onSubmit(viewModel, 0, fixableAddress)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(postCall.url)
+
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier).value mustBe
+          Address("Address 2 Line 1", "Address 2 Line 4", None, None, Some("123"), "GB")
       }
 
     }
@@ -137,7 +170,7 @@ class AddressListControllerSpec extends SpecBase with OptionValues {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) mustBe SEE_OTHER
-        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe Some(addresses.head.toAddress)
+        FakeUserAnswersService.userAnswer.get(FakeAddressIdentifier) mustBe addresses.head.toAddress
 
         FakeUserAnswersService.verifyRemoved(fakeSeqTolerantAddressId)
 
@@ -207,10 +240,10 @@ object AddressListControllerSpec {
 
     }
 
-    def onSubmit(viewModel: AddressListViewModel, value: Int): Future[Result] = {
+    def onSubmit(viewModel: AddressListViewModel, value: Int, addressSeq: Seq[TolerantAddress] = addresses): Future[Result] = {
 
       val json = Json.obj(
-        fakeSeqTolerantAddressId.toString -> addresses
+        fakeSeqTolerantAddressId.toString -> addressSeq
       )
 
       val request = FakeRequest().withFormUrlEncodedBody("value" -> value.toString)
@@ -256,6 +289,25 @@ object AddressListControllerSpec {
       Some("Address 2 Line 4"),
       Some("123"),
       Some("FR")
+    )
+  )
+
+  private val incompleteAddresses = Seq(
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      None, None, None,
+      Some("A1 1PC"),
+      Some("GB")
+    ))
+
+  private val fixableAddress = Seq(
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      None,
+      None,
+      Some("Address 2 Line 4"),
+      Some("123"),
+      Some("GB")
     )
   )
 
