@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -29,9 +28,8 @@ import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils._
-import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
+import viewmodels.{AnswerSection, Message, CYAViewModel, AnswerRow}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
@@ -258,8 +256,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
   private val view = injector.instanceOf[checkYourAnswers]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersDetailsController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersDetailsController =
     new CheckYourAnswersDetailsController(
       frontendAppConfig,
       messagesApi,
