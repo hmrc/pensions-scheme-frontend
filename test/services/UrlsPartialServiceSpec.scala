@@ -17,18 +17,16 @@
 package services
 
 import base.SpecBase
-import connectors.{UserAnswersCacheConnector, _}
+import connectors._
 import identifiers.racdac.RACDACNameId
-import models.FeatureToggle.{Disabled, Enabled}
-import models.FeatureToggleName.RACDAC
 import models._
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{AsyncWordSpec, BeforeAndAfterEach, MustMatchers}
+import org.scalatest.{BeforeAndAfterEach, AsyncWordSpec, MustMatchers}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsNumber, JsObject, Json}
+import play.api.libs.json.{JsObject, JsNumber, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
@@ -53,11 +51,9 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
   def service: UrlsPartialService =
     new UrlsPartialService(messagesApi, frontendAppConfig, dataCacheConnector, racdacDataCacheConnector,
-      lockConnector, updateConnector, minimalPsaConnector, mockFeatureToggleService)
+      lockConnector, updateConnector, minimalPsaConnector)
 
   override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Disabled(RACDAC)))
     when(minimalPsaConnector.getMinimalFlags(eqTo(psaId))(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
     when(dataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(schemeNameJsonOption)))
@@ -80,34 +76,25 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 
   "schemeLinks" must {
     "return the relevant links" when {
-      "racdac switched off then all possible links are displayed but not RAC/DAC link" in {
-        whenReady(service.schemeLinks(psaId)) { result =>
-          result mustBe subscriptionLinks ++ variationLinks
-        }
-      }
-
-      "racdac switched on and only non-RAC/DAC scheme in progress then continue register scheme and " +
+      "only non-RAC/DAC scheme in progress then continue register scheme and " +
         "declare RAC/DAC links are displayed including delete scheme link" in {
         when(racdacDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(None))
-        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
         whenReady(service.schemeLinks(psaId)) { result =>
           result mustBe subscriptionLinksRACDAC ++ variationLinks
         }
       }
 
-      "racdac switched on and both RAC/DAC and normal scheme in progress then register new scheme and " +
+      "both RAC/DAC and normal scheme in progress then register new scheme and " +
         "continue RAC/DAC links are displayed including delete scheme link" in {
-        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
         whenReady(service.schemeLinks(psaId)) { result =>
           result mustBe subscriptionLinksBoth ++ variationLinks
         }
       }
 
-      "racdac switched on and only RAC/DAC scheme in progress then continue register scheme and " +
+      "only RAC/DAC scheme in progress then continue register scheme and " +
         "declare RAC/DAC links are displayed including delete scheme link" in {
         implicit val request: OptionalDataRequest[AnyContent] =
           OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
-        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
 
         val subscriptionLinksRACDAC: Seq[OverviewLink] = registerLink ++ Seq(
           OverviewLink("continue-declare-racdac", frontendAppConfig.declareAsRACDACUrl,
@@ -121,11 +108,10 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
         }
       }
 
-      "racdac switched on but no schemes in progress then register new scheme and " +
+      "No schemes in progress then register new scheme and " +
         "declare RAC/DAC links are displayed but not delete scheme link" in {
         implicit val request: OptionalDataRequest[AnyContent] =
           OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
-        when(mockFeatureToggleService.get(any())(any(), any())).thenReturn(Future.successful(Enabled(RACDAC)))
 
         when(racdacDataCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(None))
 
@@ -144,14 +130,14 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           OptionalDataRequest(FakeRequest("", ""), "id", None, Some(PsaId("A0000000")))
         when(lockConnector.getLockByPsa(any())(any(), any())).thenReturn(Future.successful(None))
         whenReady(service.schemeLinks(psaId)) { result =>
-          result mustBe registerLink
+          result mustBe registerLink ++ continueRacDacLinks
         }
       }
 
       "there is no lock for any scheme" in {
         when(lockConnector.getLockByPsa(eqTo(psaId))(any(), any())).thenReturn(Future.successful(None))
         whenReady(service.schemeLinks(psaId)) {
-          _ mustBe subscriptionLinks
+          _ mustBe subscriptionLinks ++ continueRacDacLinks
         }
       }
 
@@ -160,7 +146,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
           .thenReturn(Future.successful(None))
 
         whenReady(service.schemeLinks(psaId)) {
-          _ mustBe subscriptionLinks
+          _ mustBe subscriptionLinks ++ continueRacDacLinks
         }
       }
 
@@ -239,7 +225,6 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with Mockit
 }
 
 object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
-  private val mockFeatureToggleService: FeatureToggleService = mock[FeatureToggleService]
   val psaName: String = "John Doe"
   val schemeName = "Test Scheme Name"
   val timestamp: Long = System.currentTimeMillis
@@ -266,6 +251,13 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
     Message("messages__schemeOverview__scheme_subscription_continue", schemeName, deleteDate)),
     OverviewLink("delete-registration", frontendAppConfig.deleteSubscriptionUrl,
       Message("messages__schemeOverview__scheme_subscription_delete", schemeName)))
+
+  private val continueRacDacLinks = Seq(
+    OverviewLink("continue-declare-racdac", frontendAppConfig.declareAsRACDACUrl,
+      Message("messages__schemeOverview__declare_racdac_continue", schemeName, deleteDate)),
+    OverviewLink("delete-racdac-registration", frontendAppConfig.deleteSubscriptionRacdacUrl,
+      Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
+  )
 
   private val subscriptionLinksRACDAC = Seq(
      OverviewLink("continue-registration",frontendAppConfig.canBeRegisteredUrl,

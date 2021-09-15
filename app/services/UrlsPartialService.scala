@@ -18,17 +18,15 @@ package services
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UserAnswersCacheConnector, UpdateSchemeCacheConnector}
 import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
-import models.FeatureToggle.Enabled
-import models.FeatureToggleName.RACDAC
 import models.requests.OptionalDataRequest
 import models.{LastUpdated, PSAMinimalFlags}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
+import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.libs.json.{JsResultException, JsError, JsSuccess, JsValue}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,8 +45,7 @@ class UrlsPartialService @Inject()(
                                     @Racdac racdacDataCacheConnector: UserAnswersCacheConnector,
                                     pensionSchemeVarianceLockConnector: PensionSchemeVarianceLockConnector,
                                     updateConnector: UpdateSchemeCacheConnector,
-                                    minimalPsaConnector: MinimalPsaConnector,
-                                    featureToggleService: FeatureToggleService
+                                    minimalPsaConnector: MinimalPsaConnector
                                   ) extends I18nSupport {
 
   private val logger  = Logger(classOf[UrlsPartialService])
@@ -73,35 +70,29 @@ class UrlsPartialService @Inject()(
                         ):Future[Seq[OverviewLink]] = {
     racdacDataCacheConnector.fetch(request.externalId).flatMap {
       f =>
-        val racdacUserAnswers = f.map(UserAnswers)
-        featureToggleService.get(RACDAC).flatMap {
-          case Enabled(_) =>
-            val racDACSchemeName = racdacUserAnswers.flatMap(_.get(RACDACNameId))
-            racDACSchemeName match {
-              case Some(racDacName) =>
-                lastUpdatedAndDeleteDate(request.externalId, racdacDataCacheConnector.lastUpdated) map { date =>
-                  val continueRegistrationLink = Seq(OverviewLink(
-                    id = "continue-declare-racdac",
-                    url = appConfig.declareAsRACDACUrl,
-                    linkText = Message(
-                      "messages__schemeOverview__declare_racdac_continue",
-                      racDacName,
-                      createFormattedDate(date, appConfig.daysDataSaved)
-                    )
-                  ))
-                  continueRegistrationLink
-                }
-              case _ =>
-                Future.successful(
-                  Seq(OverviewLink(
-                    id = "declare-racdac",
-                    url = appConfig.declareAsRACDACUrl,
-                    linkText = Message("messages__schemeOverview__declare_racdac")
-                  ))
+        val racDACSchemeName = f.map(UserAnswers).flatMap(_.get(RACDACNameId))
+        racDACSchemeName match {
+          case Some(racDacName) =>
+            lastUpdatedAndDeleteDate(request.externalId, racdacDataCacheConnector.lastUpdated) map { date =>
+              val continueRegistrationLink = Seq(OverviewLink(
+                id = "continue-declare-racdac",
+                url = appConfig.declareAsRACDACUrl,
+                linkText = Message(
+                  "messages__schemeOverview__declare_racdac_continue",
+                  racDacName,
+                  createFormattedDate(date, appConfig.daysDataSaved)
                 )
+              ))
+              continueRegistrationLink
             }
           case _ =>
-            Future(Nil)
+            Future.successful(
+              Seq(OverviewLink(
+                id = "declare-racdac",
+                url = appConfig.declareAsRACDACUrl,
+                linkText = Message("messages__schemeOverview__declare_racdac")
+              ))
+            )
         }
     }
   }
@@ -137,13 +128,8 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def deleteSchemeLink(
-                   implicit request: OptionalDataRequest[AnyContent],
-                   hc: HeaderCarrier,
-                   ec: ExecutionContext
-                 ):Future[Seq[OverviewLink]] = {
+  private def deleteSchemeLink(implicit request: OptionalDataRequest[AnyContent]):Seq[OverviewLink] = {
     val nonRACDACSchemeName = request.userAnswers.flatMap(_.get(SchemeNameId))
-    featureToggleService.get(RACDAC).map { toggleValue =>
       val includeDeleteLink = nonRACDACSchemeName.isDefined
       if (includeDeleteLink) {
         Seq(OverviewLink(
@@ -157,7 +143,7 @@ class UrlsPartialService @Inject()(
       } else {
         Nil
       }
-    }
+
   }
 
   private def racDACDeleteSchemeLink(
@@ -165,13 +151,11 @@ class UrlsPartialService @Inject()(
                                 hc: HeaderCarrier,
                                 ec: ExecutionContext
                               ):Future[Seq[OverviewLink]] = {
-    racdacDataCacheConnector.fetch(request.externalId).flatMap{
+    racdacDataCacheConnector.fetch(request.externalId).map{
       f =>
         val userAnswers = f.map(UserAnswers)
         val racDACSchemeName = userAnswers.flatMap(_.get(RACDACNameId))
-        featureToggleService.get(RACDAC).map { toggleValue =>
-          val includeDeleteLink = (toggleValue.isEnabled && racDACSchemeName.isDefined)
-          if (includeDeleteLink) {
+          if (racDACSchemeName.isDefined) {
             Seq(OverviewLink(
               id = "delete-racdac-registration",
               url = appConfig.deleteSubscriptionRacdacUrl,
@@ -183,9 +167,7 @@ class UrlsPartialService @Inject()(
           } else {
             Nil
           }
-        }
     }
-
   }
 
   private def subscriptionLinks(
@@ -196,10 +178,9 @@ class UrlsPartialService @Inject()(
     for {
       rdsl <- racDACSchemeLink
       nrdsl <- nonRACDACSchemeLink
-      dsl <- deleteSchemeLink
       rddsl <- racDACDeleteSchemeLink
     } yield {
-      nrdsl ++ dsl ++ rdsl  ++ rddsl
+      nrdsl ++ deleteSchemeLink ++ rdsl  ++ rddsl
     }
   }
 

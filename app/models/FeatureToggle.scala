@@ -39,15 +39,10 @@ object FeatureToggleName {
     val asString = "collective-money-purchase"
   }
 
-  case object RACDAC extends FeatureToggleName {
-    val asString = "rac-dac"
-  }
-
   val toggles = Seq(TCMP)
 
   implicit val reads: Reads[FeatureToggleName] = Reads {
     case JsString(TCMP.asString) => JsSuccess(TCMP)
-    case JsString(RACDAC.asString) => JsSuccess(TCMP)
     case _ => JsError("Unrecognised feature toggle name")
   }
 
