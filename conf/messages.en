@@ -70,9 +70,9 @@ messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on
 messages__error__postcode = Enter a postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
-messages__error__postcode_invalid = Enter a real postcode
+messages__error__postcode_invalid = Enter a postcode in the correct format
 messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
-messages__error__postcode_no_results = No addresses have been found for the postcode {0}
+messages__error__postcode_no_results = Postcode cannot be found
 
 messages__error__trustees = trustee’s
 messages__error__director = director’s
