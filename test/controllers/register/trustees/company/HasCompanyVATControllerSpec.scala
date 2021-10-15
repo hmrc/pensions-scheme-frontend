@@ -22,7 +22,7 @@ import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.company.HasCompanyVATId
 import models.{Index, NormalMode}
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService

@@ -24,10 +24,10 @@ import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call

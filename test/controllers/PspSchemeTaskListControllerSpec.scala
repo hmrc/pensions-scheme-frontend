@@ -21,10 +21,10 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
 import models._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.HsTaskListHelperPsp

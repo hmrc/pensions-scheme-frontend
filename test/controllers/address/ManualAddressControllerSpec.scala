@@ -30,7 +30,7 @@ import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._

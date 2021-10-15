@@ -23,10 +23,10 @@ import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
 import models.{PSAMinimalFlags, UpdateMode}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.{Request, Result}

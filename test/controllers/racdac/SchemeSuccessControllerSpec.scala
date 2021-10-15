@@ -24,7 +24,7 @@ import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsNull, JsObject, JsValue}

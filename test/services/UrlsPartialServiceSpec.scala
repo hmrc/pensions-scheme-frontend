@@ -24,8 +24,9 @@ import models.requests.OptionalDataRequest
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterEach, AsyncWordSpec, MustMatchers}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, MustMatchers}
+import org.scalatest.wordspec.AsyncWordSpec
+import org.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsNumber, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
@@ -39,6 +40,7 @@ import viewmodels.Message
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
+import org.scalatest.wordspec.AsyncWordSpec
 
 class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 

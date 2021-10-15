@@ -22,7 +22,7 @@ import models.Mode
 import models.requests.DataRequest
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.Helpers._
 import utils.AllowChangeHelper

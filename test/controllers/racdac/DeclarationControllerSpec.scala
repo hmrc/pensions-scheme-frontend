@@ -26,12 +26,12 @@ import identifiers.racdac.{RACDACNameId, DeclarationId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import models.{PSAMinimalFlags, MinimalPSA}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._

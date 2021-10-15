@@ -22,10 +22,10 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.{MustMatchers, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 

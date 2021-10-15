@@ -20,10 +20,10 @@ import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
 import identifiers.{SchemeNameId, _}
 import models._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import utils.UserAnswers
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 

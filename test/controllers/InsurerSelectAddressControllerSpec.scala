@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import models.NormalMode
 import models.address.TolerantAddress
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call

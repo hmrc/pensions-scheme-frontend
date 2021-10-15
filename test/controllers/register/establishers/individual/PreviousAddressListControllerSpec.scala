@@ -25,7 +25,7 @@ import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

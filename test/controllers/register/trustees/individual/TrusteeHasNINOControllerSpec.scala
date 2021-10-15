@@ -23,9 +23,9 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call

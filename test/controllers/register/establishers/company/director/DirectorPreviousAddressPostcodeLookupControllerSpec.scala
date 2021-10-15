@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.Matchers
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call

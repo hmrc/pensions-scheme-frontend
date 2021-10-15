@@ -20,7 +20,7 @@ import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
 import models._
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import utils.UserAnswers
 import viewmodels.{Message, PspTaskList, SchemeDetailsTaskListEntitySection}
 

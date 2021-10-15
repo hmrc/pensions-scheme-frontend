@@ -22,6 +22,7 @@ import org.scalatest._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http._
 import utils.WireMockHelper
+import org.scalatest.wordspec.AsyncWordSpec
 
 class SessionDataCacheConnectorSpec
   extends AsyncWordSpec

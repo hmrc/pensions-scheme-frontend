@@ -19,10 +19,10 @@ package controllers.racdac
 import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import views.html.racdac.whatIsRACDAC

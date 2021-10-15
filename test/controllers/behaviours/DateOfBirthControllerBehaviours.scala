@@ -22,10 +22,10 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.JsObject
 import play.api.mvc._

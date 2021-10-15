@@ -18,7 +18,8 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import identifiers.TypedIdentifier
-import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
+import org.scalatest.{ MustMatchers, OptionValues}
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
