@@ -66,7 +66,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
             bind[AddressLookupConnector].toInstance(addressLookupConnector)
           ): _*)) {
           app =>
-            when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
+            when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
             val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
             val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
