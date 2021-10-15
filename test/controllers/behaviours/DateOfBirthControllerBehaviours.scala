@@ -22,10 +22,10 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
-import org.mockito.ArgumentArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.JsObject
 import play.api.mvc._
@@ -107,7 +107,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
 
       "redirect to Session Expired for a POST if no existing data is found" in {
@@ -115,7 +115,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
   }

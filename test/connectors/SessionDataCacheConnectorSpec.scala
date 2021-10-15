@@ -25,7 +25,7 @@ import utils.WireMockHelper
 
 class SessionDataCacheConnectorSpec
   extends AsyncWordSpec
-    with ArgumentMatchers
+    with MustMatchers
     with WireMockHelper {
 
   private implicit lazy val hc: HeaderCarrier = HeaderCarrier()

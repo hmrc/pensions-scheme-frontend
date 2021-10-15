@@ -45,7 +45,7 @@ object MappingsSpec {
 
 }
 
-class MappingsSpec extends WordSpec with ArgumentMatchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
+class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
 
   import MappingsSpec._
 

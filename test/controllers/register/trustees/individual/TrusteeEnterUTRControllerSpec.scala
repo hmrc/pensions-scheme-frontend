@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with ArgumentMatchers {
+class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import TrusteeEnterUTRControllerSpec._
 

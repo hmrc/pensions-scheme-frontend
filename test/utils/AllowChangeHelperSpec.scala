@@ -27,7 +27,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 
-class AllowChangeHelperSpec extends WordSpec with ArgumentMatchers with OptionValues with Enumerable.Implicits {
+class AllowChangeHelperSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   private val id = new TypedIdentifier[Boolean] {
     override def toString: String = "testId"

@@ -30,7 +30,7 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   import TrusteesIndividualDetailsNavigatorSpec._
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualDetailsNavigator]
@@ -115,7 +115,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with ArgumentMatch
 
 }
 
-object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val someDate =  LocalDate.now()
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value

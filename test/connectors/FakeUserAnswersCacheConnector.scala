@@ -27,7 +27,7 @@ import utils.UserAnswers
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with ArgumentMatchers {
+trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Matchers {
 
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val upsertData: mutable.HashMap[String, JsValue] = mutable.HashMap()

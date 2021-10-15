@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import utils.{UserAnswers, WireMockHelper}
 
-class SchemeDetailsConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
+class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   import SchemeDetailsConnectorSpec._
 

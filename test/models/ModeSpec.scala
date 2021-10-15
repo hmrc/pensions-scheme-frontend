@@ -18,7 +18,7 @@ package models
 
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 
-class ModeSpec extends WordSpecLike with ArgumentMatchers with OptionValues {
+class ModeSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "modePathBindable" must {
     val binder = Mode.modePathBindable

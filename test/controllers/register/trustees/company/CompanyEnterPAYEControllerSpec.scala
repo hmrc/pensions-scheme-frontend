@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with ArgumentMatchers {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterPAYEControllerSpec._
 

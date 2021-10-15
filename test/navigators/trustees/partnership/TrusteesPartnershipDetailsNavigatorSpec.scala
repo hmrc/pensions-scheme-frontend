@@ -32,7 +32,7 @@ import controllers.register.trustees.partnership.routes._
 import controllers.register.trustees.routes._
 import play.api.libs.json.Json
 
-class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
   import TrusteesPartnershipDetailsNavigatorSpec._
 

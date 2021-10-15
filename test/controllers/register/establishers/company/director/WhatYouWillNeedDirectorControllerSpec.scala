@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.register.establishers.company.director.routes.DirectorNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 

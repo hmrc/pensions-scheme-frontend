@@ -32,7 +32,7 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   import EstablishersIndividualDetailsNavigatorSpec._
 
   val navigator: Navigator = injector.instanceOf[EstablishersIndividualDetailsNavigator]
@@ -114,7 +114,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with ArgumentM
   }
 }
 
-object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value

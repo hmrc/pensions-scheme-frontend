@@ -17,9 +17,9 @@
 package audit
 
 import models.address.{Address, TolerantAddress}
-import org.mockito.ArgumentMatchers
-import org.scalatest.flatspec.AnyFlatSpec
-class AddressEventSpec extends AnyFlatSpec with ArgumentMatchers {
+import org.scalatest.{FlatSpec, Matchers}
+
+class AddressEventSpec extends FlatSpec with Matchers {
 
   import AddressEventSpec._
 

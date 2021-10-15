@@ -31,7 +31,7 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesCompanyNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour {
+class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
 

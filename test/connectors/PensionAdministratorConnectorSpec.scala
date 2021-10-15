@@ -23,7 +23,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class PensionAdministratorConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
+class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   implicit val hc = HeaderCarrier()
 

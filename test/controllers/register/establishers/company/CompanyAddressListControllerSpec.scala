@@ -105,7 +105,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         val result = controller.onPageLoad(NormalMode, None, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
 
@@ -134,7 +134,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         val result = controller.onSubmit(NormalMode, None, Index(0))(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
 

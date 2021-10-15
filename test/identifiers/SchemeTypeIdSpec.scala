@@ -21,7 +21,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class SchemeTypeIdSpec extends WordSpec with ArgumentMatchers with OptionValues with Enumerable.Implicits {
+class SchemeTypeIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   "cleanup" when {
     val answers = UserAnswers(Json.obj())

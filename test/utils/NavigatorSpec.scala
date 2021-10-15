@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class NavigatorSpec extends WordSpec with ArgumentMatchers {
+class NavigatorSpec extends WordSpec with MustMatchers {
 
   import NavigatorSpec._
 

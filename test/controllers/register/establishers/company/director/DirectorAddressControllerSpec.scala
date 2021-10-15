@@ -29,7 +29,7 @@ import models.{Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

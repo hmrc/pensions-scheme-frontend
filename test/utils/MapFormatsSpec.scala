@@ -19,7 +19,7 @@ package utils
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.{JsError, JsNumber, Json}
 
-class MapFormatsSpec extends WordSpec with ArgumentMatchers with MapFormats {
+class MapFormatsSpec extends WordSpec with MustMatchers with MapFormats {
 
   ".intMapWrites" must {
     "write correctly formatted JSON" in {

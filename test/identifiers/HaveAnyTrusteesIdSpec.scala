@@ -28,7 +28,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class HaveAnyTrusteesIdSpec extends WordSpec with ArgumentMatchers with OptionValues with Enumerable.Implicits {
+class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import HaveAnyTrusteesIdSpec._
 

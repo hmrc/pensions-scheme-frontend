@@ -31,7 +31,7 @@ import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, Message}
 
-class CheckYourAnswersSpec extends SpecBase with ArgumentMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
+class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
 

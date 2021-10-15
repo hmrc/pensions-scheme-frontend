@@ -30,7 +30,7 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
   import EstablisherPartnershipAddressNavigatorSpec._
 
@@ -115,7 +115,7 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with ArgumentM
 
 }
 
-object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val srn = Some("srn")
   private val newEstablisherUserAnswers: UserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value

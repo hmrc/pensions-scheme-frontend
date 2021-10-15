@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
-class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with ArgumentMatchers {
+class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyNoCRNReasonControllerSpec._
 

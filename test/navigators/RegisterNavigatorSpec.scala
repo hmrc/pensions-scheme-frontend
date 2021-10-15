@@ -29,7 +29,7 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off line.size.limit
-class RegisterNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour {
+class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
 

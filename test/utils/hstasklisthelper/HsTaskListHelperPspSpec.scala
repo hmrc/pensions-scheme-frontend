@@ -20,11 +20,11 @@ import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
 import models._
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import utils.UserAnswers
 import viewmodels.{Message, PspTaskList, SchemeDetailsTaskListEntitySection}
 
-class HsTaskListHelperPspSpec extends WordSpec with ArgumentMatchers with MockitoSugar {
+class HsTaskListHelperPspSpec extends WordSpec with MustMatchers with MockitoSugar {
 
   import HsTaskListHelperPspSpec._
 
@@ -102,7 +102,7 @@ class HsTaskListHelperPspSpec extends WordSpec with ArgumentMatchers with Mockit
   }
 }
 
-object HsTaskListHelperPspSpec extends SpecBase with ArgumentMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
+object HsTaskListHelperPspSpec extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
   private val schemeName = "Test Scheme Name"
   private val srn = "test-srn"
 

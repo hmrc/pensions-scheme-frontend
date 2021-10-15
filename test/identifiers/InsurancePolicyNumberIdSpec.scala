@@ -29,7 +29,7 @@ import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class InsurancePolicyNumberIdSpec extends SpecBase with ArgumentMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
+class InsurancePolicyNumberIdSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   "updateRow" when {
 

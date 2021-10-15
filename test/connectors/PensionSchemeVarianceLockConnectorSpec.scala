@@ -17,15 +17,14 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{VarianceLock, PsaLock, SchemeVariance}
-import org.mockito.ArgumentMatchers
-import org.scalatest.flatspec.AsyncFlatSpec
+import models.{PsaLock, SchemeVariance, VarianceLock}
+import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.http.Status
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HttpException, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
-class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
+class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 

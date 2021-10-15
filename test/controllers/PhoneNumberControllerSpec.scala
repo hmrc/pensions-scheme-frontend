@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -40,7 +40,7 @@ import views.html.phoneNumber
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PhoneNumberControllerSpec extends SpecBase with ArgumentMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class PhoneNumberControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import PhoneNumberControllerSpec._
 

@@ -40,7 +40,7 @@ import views.html.enterVATView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnterVATControllerSpec extends SpecBase with ArgumentMatchers with OptionValues with ScalaFutures {
+class EnterVATControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   import EnterVATControllerSpec._
 

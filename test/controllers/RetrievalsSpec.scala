@@ -143,7 +143,7 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
         val result = controller.retrieve(testIdentifier)(success)
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
 

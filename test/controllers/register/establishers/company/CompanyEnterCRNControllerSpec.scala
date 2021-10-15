@@ -32,7 +32,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
 
-class CompanyEnterCRNControllerSpec extends ControllerSpecBase with ArgumentMatchers {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import CompanyEnterCRNControllerSpec._
 

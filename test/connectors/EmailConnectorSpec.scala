@@ -23,7 +23,7 @@ import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class EmailConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
+class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   import EmailConnectorSpec._
 

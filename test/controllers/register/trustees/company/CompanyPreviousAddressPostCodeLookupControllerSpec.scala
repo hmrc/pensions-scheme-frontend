@@ -26,10 +26,10 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers
+import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -114,7 +114,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
 
         val validPostcode = "ZZ1 1ZZ"
 
-        when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(validPostcode))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(
             Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))))
           )

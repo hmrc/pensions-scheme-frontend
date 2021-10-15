@@ -16,14 +16,13 @@
 
 package audit
 
-import models.{TypeOfBenefits, MoneyPurchaseBenefits}
-import org.scalatest.flatspec.AnyFlatSpec
+import models.{MoneyPurchaseBenefits, TypeOfBenefits}
+import org.scalatest.{FlatSpec, Matchers}
 import play.api.libs.json.Json
-import org.scalatest.matchers.should.Matchers
 
 class TcmpAuditEventSpec
-  extends AnyFlatSpec
-    with ArgumentMatchers {
+  extends FlatSpec
+    with Matchers {
 
   "TcmpAuditEvent" should "serialise audit event correctly" in {
 

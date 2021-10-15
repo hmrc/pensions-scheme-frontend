@@ -25,10 +25,10 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers
+import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
@@ -66,7 +66,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
             bind[AddressLookupConnector].toInstance(addressLookupConnector)
           ): _*)) {
           app =>
-            when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
+            when(addressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Seq(address)))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
             val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
             val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)

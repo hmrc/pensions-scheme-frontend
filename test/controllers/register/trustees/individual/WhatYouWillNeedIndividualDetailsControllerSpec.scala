@@ -22,7 +22,7 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, Mode, NormalMode, UpdateMode}
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 
 import utils.UserAnswers

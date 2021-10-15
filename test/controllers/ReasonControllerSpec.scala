@@ -39,7 +39,7 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonControllerSpec extends SpecBase with ArgumentMatchers with OptionValues with ScalaFutures {
+class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
 
   import ReasonControllerSpec._
 

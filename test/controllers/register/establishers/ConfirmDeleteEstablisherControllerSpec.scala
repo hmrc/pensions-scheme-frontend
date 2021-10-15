@@ -102,14 +102,14 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(getEmptyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no cached data exists" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "delete the establisher individual on a POST" in {
@@ -190,7 +190,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 

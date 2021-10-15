@@ -21,9 +21,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link, NormalMode}
-import org.mockito.ArgumentArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeCountryOptions

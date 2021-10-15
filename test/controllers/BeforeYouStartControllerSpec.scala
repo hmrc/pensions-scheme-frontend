@@ -19,11 +19,11 @@ package controllers
 import connectors.PensionAdministratorConnector
 import controllers.actions._
 import models.NormalMode
-import org.mockito.ArgumentMatchers._
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}

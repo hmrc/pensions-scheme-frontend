@@ -26,12 +26,12 @@ import identifiers.racdac.{RACDACNameId, DeclarationId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import models.{PSAMinimalFlags, MinimalPSA}
-import org.mockito.ArgumentArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, Matchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -102,10 +102,10 @@ class DeclarationControllerSpec
       FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
-        .sendEmail(ArgumentMatchers.eq(minimalPsa.email), ArgumentMatchers.eq("pods_racdac_scheme_register"),
-          ArgumentMatchers.eq(emailParams), any(), any())(any(), any())
+        .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
+          Matchers.eq(emailParams), any(), any())(any(), any())
       val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
-      verify(mockAuditService,times(1)).sendEvent(ArgumentMatchers.eq(expectedAuditEvent))(any(),any())
+      verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
 
     }
 
@@ -129,7 +129,7 @@ class DeclarationControllerSpec
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 }

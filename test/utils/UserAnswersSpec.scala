@@ -38,7 +38,7 @@ import models.register.trustees.TrusteeKind
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
-class UserAnswersSpec extends WordSpec with ArgumentMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper with JsonFileReader {
+class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper with JsonFileReader {
 
   import UserAnswersSpec._
 

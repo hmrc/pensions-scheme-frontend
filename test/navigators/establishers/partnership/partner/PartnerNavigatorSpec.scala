@@ -34,7 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class PartnerNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
   import PartnerNavigatorSpec._
 
@@ -166,7 +166,7 @@ class PartnerNavigatorSpec extends SpecBase with ArgumentMatchers with Navigator
 }
 
 
-object PartnerNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val srn = Some("srn")
   private val johnDoe = PersonName("first", "last")

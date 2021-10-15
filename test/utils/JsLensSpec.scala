@@ -21,7 +21,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 
-class JsLensSpec extends WordSpec with ArgumentMatchers with ScalaCheckPropertyChecks with OptionValues {
+class JsLensSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
   val jsLeafGen: Gen[JsValue] = {
     Gen.frequency(

@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
 
-class PensionsSchemeConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
+class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   import PensionsSchemeConnectorSpec._
 

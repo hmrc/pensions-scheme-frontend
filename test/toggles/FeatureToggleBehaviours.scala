@@ -21,7 +21,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class FeatureToggleBehaviours extends WordSpec with ArgumentMatchers with GuiceOneAppPerTest {
+class FeatureToggleBehaviours extends WordSpec with Matchers with GuiceOneAppPerTest {
 
   private def configuration(name: String, on: Option[Boolean]): Boolean = {
 

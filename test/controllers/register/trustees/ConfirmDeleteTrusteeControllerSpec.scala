@@ -68,14 +68,14 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       val result = controller(getEmptyData).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no cached data exists" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "remove the trustee in a POST request for a company trustee" in {
@@ -129,7 +129,7 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, Company, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
   }

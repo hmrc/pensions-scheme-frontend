@@ -21,10 +21,10 @@ import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.SchemeNameId
 import models._
-import org.mockito.ArgumentArgumentMatchers.any
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
@@ -89,7 +89,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
   }

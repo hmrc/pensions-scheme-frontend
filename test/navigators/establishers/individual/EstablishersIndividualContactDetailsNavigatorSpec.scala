@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
 
   import EstablishersIndividualContactDetailsNavigatorSpec._
 
@@ -86,7 +86,7 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ar
 
 }
 
-object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val srn = Some("srn")

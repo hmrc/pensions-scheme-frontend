@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class DirectorEnterUTRControllerSpec extends ControllerSpecBase with ArgumentMatchers {
+class DirectorEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
 
   import DirectorEnterUTRControllerSpec._
 
