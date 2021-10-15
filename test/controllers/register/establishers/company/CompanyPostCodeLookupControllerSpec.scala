@@ -22,7 +22,7 @@ import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures

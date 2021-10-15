@@ -20,7 +20,7 @@ import connectors.PensionAdministratorConnector
 import controllers.actions._
 import org.mockito.ArgumentMatchers.any
 import models.NormalMode
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures

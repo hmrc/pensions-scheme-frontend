@@ -28,10 +28,9 @@ import models.register.SchemeSubmissionResponse
 import models.{PSAMinimalFlags, MinimalPSA}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Matchers}
+import org.mockito.{ArgumentCaptor, Matchers, MockitoSugar, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -102,10 +101,10 @@ class DeclarationControllerSpec
       FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
-        .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
-          Matchers.eq(emailParams), any(), any())(any(), any())
+        .sendEmail(ArgumentMatchers.eq(minimalPsa.email), ArgumentMatchers.eq("pods_racdac_scheme_register"),
+          ArgumentMatchers.eq(emailParams), any(), any())(any(), any())
       val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
-      verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
+      verify(mockAuditService,times(1)).sendEvent(ArgumentMatchers.eq(expectedAuditEvent))(any(),any())
 
     }
 

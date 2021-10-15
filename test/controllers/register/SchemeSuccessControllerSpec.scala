@@ -25,7 +25,7 @@ import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import play.api.Application

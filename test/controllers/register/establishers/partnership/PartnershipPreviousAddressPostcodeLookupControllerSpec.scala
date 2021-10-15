@@ -23,17 +23,14 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
-import org.mockito.Mockito._
+import models.{PartnershipDetails, Index, NormalMode}
 import org.mockito._
-import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
-
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -131,7 +128,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(testAnswer))(Matchers.any(), Matchers.any()))
+      when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(testAnswer))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(testAnswer))))
       val result = controller().onSubmit(NormalMode, index, None)(postRequest)
 

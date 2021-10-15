@@ -24,12 +24,10 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode, CompanyDetails}
 import navigators.Navigator
-import org.mockito.Matchers
-import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -116,7 +114,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
         val validPostcode = "ZZ1 1ZZ"
 
-        when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
+        when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(validPostcode))(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful
           (Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))))
           )

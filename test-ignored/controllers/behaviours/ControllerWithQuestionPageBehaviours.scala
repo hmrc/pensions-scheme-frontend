@@ -66,7 +66,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
         val result = onPageLoadAction(emptyData, FakeUnAuthorisedAction())(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedController.onPageLoad.url)
       }
     }
 

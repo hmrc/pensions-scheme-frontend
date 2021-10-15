@@ -25,7 +25,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.Matchers
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.MockitoSugar
