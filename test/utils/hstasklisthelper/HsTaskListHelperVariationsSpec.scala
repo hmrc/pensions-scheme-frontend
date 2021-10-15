@@ -21,14 +21,14 @@ import helpers.DataCompletionHelper
 import identifiers.{SchemeNameId, _}
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.{ OptionValues, WordSpec}
-import org.scalatest.matchers.must.Matchers
 import org.mockito.MockitoSugar
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.OptionValues
 import utils.UserAnswers
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 
-class HsTaskListHelperVariationsSpec extends WordSpec with Matchers with MockitoSugar {
+class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   import HsTaskListHelperVariationsSpec._
 
@@ -240,7 +240,7 @@ object HsTaskListHelperVariationsSpec extends SpecBase with Matchers with Option
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__scheme_information_link_text"))
 
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
-  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
   private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
 

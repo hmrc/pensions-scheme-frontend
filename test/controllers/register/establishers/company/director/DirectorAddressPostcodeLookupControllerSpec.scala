@@ -23,9 +23,7 @@ import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call

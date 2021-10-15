@@ -24,7 +24,6 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber

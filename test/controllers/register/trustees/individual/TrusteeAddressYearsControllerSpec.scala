@@ -26,7 +26,6 @@ import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel

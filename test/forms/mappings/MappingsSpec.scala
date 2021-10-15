@@ -17,16 +17,17 @@
 package forms.mappings
 
 import generators.Generators
-import java.time.LocalDate
-
 import org.scalacheck.Gen
-import org.scalatest.{ OptionValues, WordSpec}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import utils.Enumerable
 import wolfendale.scalacheck.regexp.RegexpGen
+
+import java.time.LocalDate
 
 object MappingsSpec {
 
@@ -46,7 +47,7 @@ object MappingsSpec {
 
 }
 
-class MappingsSpec extends WordSpec with Matchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
+class MappingsSpec extends AnyWordSpec with Matchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
 
   import MappingsSpec._
 

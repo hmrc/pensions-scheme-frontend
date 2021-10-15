@@ -22,9 +22,9 @@ import identifiers.Identifier
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
 import models.{Mode, NormalMode, UpdateMode}
-import org.scalatest.prop.TableFor3
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}

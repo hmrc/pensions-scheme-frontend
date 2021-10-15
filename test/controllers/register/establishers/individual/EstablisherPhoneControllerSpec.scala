@@ -22,8 +22,8 @@ import forms.PhoneFormProvider
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

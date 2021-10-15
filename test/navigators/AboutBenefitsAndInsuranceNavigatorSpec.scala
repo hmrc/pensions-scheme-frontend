@@ -20,8 +20,8 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.routes._
 import identifiers._
-import models.TypeOfBenefits._
 import models.MoneyPurchaseBenefits._
+import models.TypeOfBenefits._
 import models._
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3

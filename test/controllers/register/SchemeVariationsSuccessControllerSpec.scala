@@ -21,13 +21,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
-
 import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.Future

@@ -25,14 +25,12 @@ import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, Pa
 import models.person.PersonName
 import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName

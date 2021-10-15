@@ -23,13 +23,11 @@ import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.schemeName
 

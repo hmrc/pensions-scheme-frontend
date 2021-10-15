@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 

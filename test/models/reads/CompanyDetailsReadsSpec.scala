@@ -17,12 +17,13 @@
 package models.reads
 
 import models.CompanyDetails
-import org.scalatest.{ OptionValues, WordSpec}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 
 
-class CompanyDetailsReadsSpec extends WordSpec with Matchers with OptionValues {
+class CompanyDetailsReadsSpec extends AnyWordSpec with Matchers with OptionValues {
   "Company Details json" should {
 
     "map correctly to company details" when {

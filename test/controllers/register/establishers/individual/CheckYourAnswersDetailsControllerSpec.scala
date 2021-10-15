@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.individual
 
-import java.time.LocalDate
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -29,8 +28,10 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import utils._
-import viewmodels.{AnswerSection, Message, CYAViewModel, AnswerRow}
+import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import java.time.LocalDate
 
 class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 

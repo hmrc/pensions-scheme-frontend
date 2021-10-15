@@ -20,11 +20,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes.DirectorNameController
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.register.establishers.company.director.whatYouWillNeed
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {

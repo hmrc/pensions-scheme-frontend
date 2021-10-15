@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
 import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, Result}

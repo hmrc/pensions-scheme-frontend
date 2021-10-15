@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import audit.{TcmpAuditEvent, AuditService}
+import audit.{AuditService, TcmpAuditEvent}
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -25,13 +25,11 @@ import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.{DeclarationDormantId, DeclarationId}
 import models._
-import models.register.{SchemeType, SchemeSubmissionResponse, DeclarationDormant}
-import org.mockito.ArgumentCaptor
+import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -39,9 +37,9 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
-import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{UserAnswers, FakeNavigator}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -244,7 +242,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
-  private val href = controllers.register.routes.DeclarationController.onClickAgree()
+  private val href = controllers.register.routes.DeclarationController.onClickAgree
   val psaId = PsaId("A0000000")
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]

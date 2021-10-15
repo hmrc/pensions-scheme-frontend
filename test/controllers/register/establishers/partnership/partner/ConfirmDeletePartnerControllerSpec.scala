@@ -30,7 +30,6 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 

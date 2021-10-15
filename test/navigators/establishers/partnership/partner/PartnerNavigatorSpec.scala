@@ -27,12 +27,13 @@ import models.Mode.journeyMode
 import models._
 import models.person.PersonName
 import navigators.{Navigator, NavigatorBehaviour}
-import java.time.LocalDate
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
+
+import java.time.LocalDate
 
 class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 

@@ -23,7 +23,6 @@ import forms.DOBFormProvider
 import models.Mode
 import java.time.LocalDate
 import org.mockito.ArgumentArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form

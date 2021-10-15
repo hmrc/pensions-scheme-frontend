@@ -24,10 +24,10 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
-import models.{Index, NormalMode, CompanyDetails}
+import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.concurrent.ScalaFutures
 import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind

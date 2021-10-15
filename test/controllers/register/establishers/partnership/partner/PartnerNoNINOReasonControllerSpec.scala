@@ -25,7 +25,6 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason

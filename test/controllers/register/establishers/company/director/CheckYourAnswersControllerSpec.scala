@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.company.director
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -31,11 +29,12 @@ import models.requests.DataRequest
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils._
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 

@@ -24,14 +24,13 @@ import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

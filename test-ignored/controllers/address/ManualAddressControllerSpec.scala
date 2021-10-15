@@ -30,10 +30,10 @@ import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
 import org.mockito.ArgumentArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -104,7 +104,7 @@ object ManualAddressControllerSpec {
 
 }
 
-class ManualAddressControllerSpec extends WordSpec with ArgumentMatchers with MockitoSugar with ScalaFutures with OptionValues {
+class ManualAddressControllerSpec extends AnyWordSpec with ArgumentMatchers with MockitoSugar with ScalaFutures with OptionValues {
 
   import ManualAddressControllerSpec._
 

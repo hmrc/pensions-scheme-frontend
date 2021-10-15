@@ -22,13 +22,12 @@ import forms.PhoneFormProvider
 import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber

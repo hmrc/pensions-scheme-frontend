@@ -29,7 +29,6 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 

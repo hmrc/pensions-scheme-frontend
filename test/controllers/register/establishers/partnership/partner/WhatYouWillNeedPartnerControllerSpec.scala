@@ -20,11 +20,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes.PartnerNameController
 import models.{Index, NormalMode}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {

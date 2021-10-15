@@ -28,11 +28,10 @@ import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ OptionValues}
-import org.scalatest.matchers.must.Matchers
 import org.mockito.MockitoSugar
+import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._

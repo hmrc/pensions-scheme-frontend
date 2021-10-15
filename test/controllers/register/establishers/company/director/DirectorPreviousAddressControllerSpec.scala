@@ -27,9 +27,9 @@ import models.address.Address
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
+import org.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

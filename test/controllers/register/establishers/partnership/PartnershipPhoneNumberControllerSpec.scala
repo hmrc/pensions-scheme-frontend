@@ -20,8 +20,8 @@ import controllers.ControllerSpecBase
 import forms.PhoneFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

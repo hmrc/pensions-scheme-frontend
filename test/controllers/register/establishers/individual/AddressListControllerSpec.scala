@@ -29,7 +29,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel

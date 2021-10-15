@@ -19,12 +19,13 @@ package utils.datacompletion
 import base.JsonFileReader
 import helpers.DataCompletionHelper
 import models.NormalMode
-import org.scalatest.{ OptionValues, WordSpec}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+  import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.JsValue
 import utils.{Enumerable, UserAnswers}
 
-class DataCompletionEstablishersSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits {
+class DataCompletionEstablishersSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionEstablishersSpec._
 

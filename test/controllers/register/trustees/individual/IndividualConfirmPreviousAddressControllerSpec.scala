@@ -29,7 +29,6 @@ import play.api.libs.json.JsResult
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel

@@ -25,7 +25,7 @@ class DeclarationViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "declaration"
 
   val schemeName = "Test Scheme Name"
-  private val href = controllers.register.routes.DeclarationController.onClickAgree()
+  private val href = controllers.register.routes.DeclarationController.onClickAgree
   val view: declaration = app.injector.instanceOf[declaration]
   def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable =
     () => view(isCompany = true,

@@ -19,15 +19,12 @@ package controllers.register
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import org.mockito.ArgumentMatchers.any
 import identifiers.SchemeNameId
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentCaptor, MockitoSugar}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsNull, JsValue}

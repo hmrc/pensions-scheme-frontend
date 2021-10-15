@@ -25,10 +25,8 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json

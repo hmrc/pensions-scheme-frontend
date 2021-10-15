@@ -22,7 +22,6 @@ import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._

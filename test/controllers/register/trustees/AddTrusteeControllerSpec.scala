@@ -32,7 +32,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrustee
 

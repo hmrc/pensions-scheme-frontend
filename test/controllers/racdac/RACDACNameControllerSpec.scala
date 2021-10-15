@@ -24,7 +24,6 @@ import forms.racdac.RACDACNameFormProvider
 import identifiers.racdac.RACDACNameId
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json

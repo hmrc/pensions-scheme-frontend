@@ -22,7 +22,7 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import models.requests.DataRequest
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._

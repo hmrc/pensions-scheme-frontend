@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.partnership.partner
 
-import java.time.LocalDate
-
 import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
@@ -29,10 +27,11 @@ import models.person.PersonName
 import models.{Index, _}
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
-
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 

@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.{Index, NormalMode}
 import org.mockito._
-import play.api.data.{FormError, Form}
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService

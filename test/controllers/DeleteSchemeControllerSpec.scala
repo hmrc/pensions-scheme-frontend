@@ -20,14 +20,12 @@ import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-
 import views.html.deleteScheme
 
 import scala.concurrent.Future

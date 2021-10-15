@@ -21,7 +21,7 @@ import models.ReferenceValue
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, EnterVATViewModel}
+import viewmodels.{EnterVATViewModel, Message}
 import views.behaviours.QuestionViewBehaviours
 import views.html.enterVATView
 

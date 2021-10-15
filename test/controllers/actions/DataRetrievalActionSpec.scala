@@ -18,21 +18,19 @@ package controllers.actions
 
 import base.SpecBase
 import connectors._
+import identifiers.PsaMinimalFlagsId._
 import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId, UKBankAccountId}
 import matchers.JsonMatchers
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
 import play.api.libs.json.{JsNull, JsObject, Json}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
-import PsaMinimalFlagsId._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

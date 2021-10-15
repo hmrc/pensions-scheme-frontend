@@ -27,7 +27,6 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.otherPartners
 

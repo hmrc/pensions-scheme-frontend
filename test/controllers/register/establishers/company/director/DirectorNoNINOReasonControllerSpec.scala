@@ -24,7 +24,6 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason

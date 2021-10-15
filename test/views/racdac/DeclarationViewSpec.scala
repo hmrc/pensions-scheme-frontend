@@ -23,7 +23,7 @@ import views.html.racdac.declaration
 
 class DeclarationViewSpec extends ViewBehaviours {
   private val messageKeyPrefix = "declaration_racdac"
-  private val href = controllers.register.routes.DeclarationController.onClickAgree()
+  private val href = controllers.register.routes.DeclarationController.onClickAgree
   private val view: declaration = app.injector.instanceOf[declaration]
   private val returnLink = frontendAppConfig.managePensionsSchemeOverviewUrl.url
   private def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = {

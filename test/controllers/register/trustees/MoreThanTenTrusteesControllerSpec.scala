@@ -26,7 +26,6 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.trustees.moreThanTenTrustees
 

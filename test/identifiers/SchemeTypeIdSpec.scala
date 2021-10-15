@@ -17,12 +17,13 @@
 package identifiers
 
 import models.register.SchemeType
-import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class SchemeTypeIdSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits {
+class SchemeTypeIdSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   "cleanup" when {
     val answers = UserAnswers(Json.obj())

@@ -19,10 +19,10 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.AdministratorOrPractitioner
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.Json
 import uk.gov.hmrc.http._
 import utils.WireMockHelper
-import org.scalatest.wordspec.AsyncWordSpec
 
 class SessionDataCacheConnectorSpec
   extends AsyncWordSpec

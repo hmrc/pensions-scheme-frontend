@@ -17,20 +17,21 @@
 package navigators.establishers.individual
 
 import base.SpecBase
+import controllers.register.establishers.individual.routes._
+import controllers.register.establishers.routes._
 import generators.Generators
 import identifiers.Identifier
-import controllers.register.establishers.routes._
-import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
-import models._
 import models.Mode._
+import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import java.time.LocalDate
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
+
+import java.time.LocalDate
 
 class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   import EstablishersIndividualDetailsNavigatorSpec._

@@ -19,16 +19,16 @@ package utils
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import identifiers.{LastPageId, TypedIdentifier}
 import models.requests.IdentifiedRequest
-import models.{CheckMode, CheckUpdateMode, LastPage, NormalMode, UpdateMode}
+import models._
 import navigators.AbstractNavigator
-import org.scalatest.{ WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class NavigatorSpec extends WordSpec with Matchers {
+class NavigatorSpec extends AnyWordSpec with Matchers {
 
   import NavigatorSpec._
 

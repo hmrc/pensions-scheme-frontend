@@ -21,12 +21,11 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.company.HasCompanyVATId
 import models.{Index, NormalMode}
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, MockValidationHelper}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber

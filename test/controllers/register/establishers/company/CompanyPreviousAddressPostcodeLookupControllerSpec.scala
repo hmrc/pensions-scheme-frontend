@@ -24,16 +24,13 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
-import org.mockito.Mockito._
-import org.mockito._
-import org.mockito.MockitoSugar
+import org.mockito.{MockitoSugar, _}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
-
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel

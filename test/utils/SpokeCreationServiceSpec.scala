@@ -32,13 +32,14 @@ import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.register.{DeclarationDormant, SchemeType}
 import models.{EntitySpoke, Mode, NormalMode, _}
-import org.scalatest.{ OptionValues, WordSpec}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import utils.hstasklisthelper.SpokeCreationService
 import viewmodels.Message
 
 class SpokeCreationServiceSpec
-  extends WordSpec
+  extends AnyWordSpec
     with Matchers
     with OptionValues
     with DataCompletionHelper {
@@ -97,11 +98,11 @@ class SpokeCreationServiceSpec
         val userAnswers = userAnswersWithSchemeName
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_add", schemeName),
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), None),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName),
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), None),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName),
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), None)
+            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
@@ -113,11 +114,11 @@ class SpokeCreationServiceSpec
           ukBankAccount(ukBankAccount = true)
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), Some(false)),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), Some(false)),
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text", schemeName),
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), Some(false))
+            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), Some(false))
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
@@ -149,9 +150,9 @@ class SpokeCreationServiceSpec
         val userAnswers = userAnswersWithSchemeName
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), Some(false)),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName),
-            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), Some(false))
+            controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false))
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, UpdateMode, srn, schemeName, None)
@@ -163,7 +164,7 @@ class SpokeCreationServiceSpec
           ukBankAccount(ukBankAccount = true)
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
-            controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), Some(false)),
+            controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_view", schemeName),
             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(UpdateMode, srn).url), Some(false))
         )
@@ -195,7 +196,7 @@ class SpokeCreationServiceSpec
     "display the spoke with link to wyn page with status as blank if the spoke is uninitiated" in {
       val userAnswers = userAnswersWithSchemeName
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details_wk"),
-        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), None))
+        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), None))
 
       val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
       result mustBe expectedSpoke
@@ -204,7 +205,7 @@ class SpokeCreationServiceSpec
     "display the spoke with link to wyn page with in progress status if the spoke is in progress" in {
       val userAnswers = userAnswersWithSchemeName.adviserName(name = "test adviser")
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
-        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), Some(false)))
+        controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), Some(false)))
 
       val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
       result mustBe expectedSpoke

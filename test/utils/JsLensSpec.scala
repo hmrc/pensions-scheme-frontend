@@ -17,12 +17,13 @@
 package utils
 
 import org.scalacheck.Gen
-import org.scalatest.{ OptionValues, WordSpec}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 
-class JsLensSpec extends WordSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class JsLensSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   val jsLeafGen: Gen[JsValue] = {
     Gen.frequency(

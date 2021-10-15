@@ -27,7 +27,8 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.scalatest.{Matchers, OptionValues, WordSpec}
+import org.scalatest.{Matchers, OptionValues}
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -44,7 +45,7 @@ import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressListControllerSpec extends WordSpec with ArgumentMatchers with OptionValues {
+class AddressListControllerSpec extends AnyWordSpec with ArgumentMatchers with OptionValues {
 
   import AddressListControllerSpec._
 

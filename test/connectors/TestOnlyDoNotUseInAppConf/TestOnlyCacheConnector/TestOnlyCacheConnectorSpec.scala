@@ -18,7 +18,7 @@ package connectors.TestOnlyDoNotUseInAppConf.TestOnlyCacheConnector
 
 import com.github.tomakehurst.wiremock.client.WireMock.{delete, ok, urlEqualTo}
 import connectors.TestOnlyCacheConnector
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.mvc.Results._

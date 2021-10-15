@@ -22,7 +22,6 @@ import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 

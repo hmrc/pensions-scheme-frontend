@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{PartnershipDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito._
 import play.api.data.Form
 import play.api.libs.json._

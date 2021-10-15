@@ -27,11 +27,9 @@ import models._
 import models.address.Address
 import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.must.Matchers
-
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent

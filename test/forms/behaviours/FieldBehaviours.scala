@@ -16,9 +16,6 @@
 
 package forms.behaviours
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import forms.FormSpec
 import forms.mappings.Transforms
 import generators.Generators
@@ -26,6 +23,9 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators with Transforms with OptionValues {
 

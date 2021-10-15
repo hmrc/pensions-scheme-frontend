@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import identifiers.racdac.{DeclarationId, ContractOrPolicyNumberId, RACDACNameId}
+import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import models.{CheckMode, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json

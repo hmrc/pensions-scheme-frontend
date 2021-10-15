@@ -26,8 +26,8 @@ import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.concurrent.ScalaFutures
 import org.mockito.MockitoSugar
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json

@@ -24,12 +24,13 @@ import models._
 import models.address.Address
 import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class HaveAnyTrusteesIdSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits {
+class HaveAnyTrusteesIdSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   import HaveAnyTrusteesIdSpec._
 

@@ -18,7 +18,7 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.address.TolerantAddress
-import org.scalatest.{ RecoverMethods}
+import org.scalatest.RecoverMethods
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.test.Helpers._

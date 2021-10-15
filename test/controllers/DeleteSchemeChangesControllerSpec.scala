@@ -20,15 +20,13 @@ import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, Upda
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-
 import views.html.deleteSchemeChanges
 
 import scala.concurrent.Future

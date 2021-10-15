@@ -22,9 +22,9 @@ import identifiers.register._
 import identifiers.{Identifier, VariationDeclarationId}
 import models._
 import models.register.SchemeType
-import org.scalatest.prop.TableFor3
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -74,7 +74,7 @@ object RegisterNavigatorSpec extends OptionValues{
 
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
-  private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
+  private def declaration = controllers.register.routes.DeclarationController.onPageLoad
 
   private def taskList: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
   private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
