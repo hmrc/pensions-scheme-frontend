@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
+class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   import TrusteeEnterUTRControllerSpec._
 

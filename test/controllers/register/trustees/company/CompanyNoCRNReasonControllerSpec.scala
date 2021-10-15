@@ -21,7 +21,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.register.NoCompanyNumberFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
-class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyNoCRNReasonControllerSpec._
 

@@ -20,7 +20,8 @@ import generators.Generators
 import java.time.LocalDate
 
 import org.scalacheck.Gen
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms._
 import play.api.data.{Form, FormError}
@@ -45,7 +46,7 @@ object MappingsSpec {
 
 }
 
-class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
+class MappingsSpec extends WordSpec with Matchers with OptionValues with Mappings with ScalaCheckDrivenPropertyChecks with Generators {
 
   import MappingsSpec._
 

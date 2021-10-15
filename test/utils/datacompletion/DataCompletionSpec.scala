@@ -26,11 +26,12 @@ import identifiers.register.trustees.{company => tc}
 import models.address.Address
 import models.register.{SchemeType, SortCode}
 import models._
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.JsValue
 import utils.{Enumerable, UserAnswers}
 
-class DataCompletionSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class DataCompletionSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionSpec._
 

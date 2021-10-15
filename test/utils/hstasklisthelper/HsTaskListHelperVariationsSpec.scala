@@ -22,12 +22,13 @@ import identifiers.{SchemeNameId, _}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import org.mockito.MockitoSugar
 import utils.UserAnswers
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 
-class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with MockitoSugar {
+class HsTaskListHelperVariationsSpec extends WordSpec with Matchers with MockitoSugar {
 
   import HsTaskListHelperVariationsSpec._
 
@@ -228,7 +229,7 @@ class HsTaskListHelperVariationsSpec extends WordSpec with MustMatchers with Moc
   }
 }
 
-object HsTaskListHelperVariationsSpec extends SpecBase with MustMatchers with OptionValues with DataCompletionHelper with JsonFileReader {
+object HsTaskListHelperVariationsSpec extends SpecBase with Matchers with OptionValues with DataCompletionHelper with JsonFileReader {
   private val schemeName = "scheme"
   private val srn = Some("test-srn")
 
@@ -244,18 +245,18 @@ object HsTaskListHelperVariationsSpec extends SpecBase with MustMatchers with Op
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
 
   private val testCompanyEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test company link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
   private val testIndividualEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test individual link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
   private val testPartnershipEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
 
   private val testEstablishersEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test establisher link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
   private val testTrusteeEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test trustee link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
   private val testDeclarationEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test declaration link"),
-    controllers.routes.SessionExpiredController.onPageLoad().url), None))
+    controllers.routes.SessionExpiredController.onPageLoad.url), None))
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,

@@ -29,9 +29,10 @@ import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.{NormalMode, UpdateMode}
-import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
+import org.scalatest.{ OptionValues, WordSpecLike}
+import org.scalatest.matchers.must.Matchers
 
-class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
+class EntitySpec extends WordSpecLike with Matchers with OptionValues {
 
   "DirectorEntity" must {
     val directorEntity = DirectorEntity(

@@ -18,11 +18,12 @@ package identifiers.register.trustees
 
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.CompanyDetails
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class ConfirmDeleteTrusteeIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits  {
+class ConfirmDeleteTrusteeIdSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits  {
 
   "Cleanup" must {
 

@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterPAYEControllerSpec._
 

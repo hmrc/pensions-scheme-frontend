@@ -23,13 +23,14 @@ import identifiers.{Identifier, VariationDeclarationId}
 import models._
 import models.register.SchemeType
 import org.scalatest.prop.TableFor3
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off line.size.limit
-class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
 

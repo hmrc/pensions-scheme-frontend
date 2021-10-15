@@ -27,12 +27,12 @@ import models._
 import models.Mode._
 import navigators.{Navigator, NavigatorBehaviour}
 import java.time.LocalDate
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   import EstablishersIndividualDetailsNavigatorSpec._
 
   val navigator: Navigator = injector.instanceOf[EstablishersIndividualDetailsNavigator]
@@ -114,7 +114,7 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatch
   }
 }
 
-object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value

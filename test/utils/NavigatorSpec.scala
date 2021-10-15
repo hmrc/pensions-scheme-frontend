@@ -21,13 +21,14 @@ import identifiers.{LastPageId, TypedIdentifier}
 import models.requests.IdentifiedRequest
 import models.{CheckMode, CheckUpdateMode, LastPage, NormalMode, UpdateMode}
 import navigators.AbstractNavigator
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.{ WordSpec}
+import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class NavigatorSpec extends WordSpec with MustMatchers {
+class NavigatorSpec extends WordSpec with Matchers {
 
   import NavigatorSpec._
 

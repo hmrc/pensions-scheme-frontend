@@ -19,6 +19,7 @@ package controllers.register
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
+import org.mockito.ArgumentMatchers.any
 import identifiers.SchemeNameId
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
@@ -180,7 +181,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller(None).onPageLoad(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to the next page for a POST" in {

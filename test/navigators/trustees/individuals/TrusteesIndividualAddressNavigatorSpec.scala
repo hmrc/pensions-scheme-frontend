@@ -26,12 +26,12 @@ import identifiers.register.trustees.individual._
 import models.Mode._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class TrusteesIndividualAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 
   import TrusteesIndividualAddressNavigatorSpec._
 
@@ -111,7 +111,7 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers 
 
 }
 
-object TrusteesIndividualAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object TrusteesIndividualAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newTrusteeUserAnswers: UserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value

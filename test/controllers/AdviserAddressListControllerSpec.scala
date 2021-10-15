@@ -112,7 +112,7 @@ class AdviserAddressListControllerSpec
           val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 
@@ -166,7 +166,7 @@ class AdviserAddressListControllerSpec
           val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 

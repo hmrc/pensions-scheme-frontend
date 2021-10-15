@@ -27,7 +27,7 @@ import views.html.whatYouWillNeedBankDetails
 
 class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
   private val view = injector.instanceOf[whatYouWillNeedBankDetails]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBankDetailsController =

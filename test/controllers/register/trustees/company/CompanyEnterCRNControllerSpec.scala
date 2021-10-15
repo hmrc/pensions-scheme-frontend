@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import models.{CheckUpdateMode, Index, Mode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -33,7 +33,7 @@ import utils.FakeNavigator
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
 
-class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterCRNControllerSpec._
 

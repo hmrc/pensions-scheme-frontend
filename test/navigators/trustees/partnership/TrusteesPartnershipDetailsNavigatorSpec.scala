@@ -24,7 +24,8 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -32,7 +33,7 @@ import controllers.register.trustees.partnership.routes._
 import controllers.register.trustees.routes._
 import play.api.libs.json.Json
 
-class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 
   import TrusteesPartnershipDetailsNavigatorSpec._
 

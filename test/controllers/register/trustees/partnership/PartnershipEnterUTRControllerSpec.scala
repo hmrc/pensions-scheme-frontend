@@ -22,7 +22,7 @@ import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
 import models.{Index, NormalMode, PartnershipDetails, ReferenceValue}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -33,7 +33,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnershipEnterUTRControllerSpec._
 

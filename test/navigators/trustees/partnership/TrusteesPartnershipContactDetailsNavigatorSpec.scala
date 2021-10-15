@@ -25,16 +25,16 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
 
-class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
  import TrusteesPartnershipContactDetailsNavigatorSpec._
-  
+
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
@@ -86,7 +86,7 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with MustM
 
 }
 
-object TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val srn                   = Some("srn")

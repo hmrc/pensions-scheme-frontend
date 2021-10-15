@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
   private val psaName = "Psa Name"
   private val view = injector.instanceOf[whatIsRACDAC]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatIsRACDACController =

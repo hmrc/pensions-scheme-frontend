@@ -30,7 +30,8 @@ import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._

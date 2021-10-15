@@ -56,7 +56,7 @@ class PspSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
     val result = controller(new FakePspDataRetrievalAction(None)).onPageLoad(srn)(fakeRequest)
 
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 
   "return REDIRECT to racdac cya page when there isRacDac is set to true in user answers" in {

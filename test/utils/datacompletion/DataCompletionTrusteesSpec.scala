@@ -18,11 +18,12 @@ package utils.datacompletion
 
 import base.JsonFileReader
 import helpers.DataCompletionHelper
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.JsValue
 import utils.{Enumerable, UserAnswers}
 
-class DataCompletionTrusteesSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class DataCompletionTrusteesSpec extends WordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   import DataCompletionTrusteesSpec._
 
@@ -201,7 +202,7 @@ class DataCompletionTrusteesSpec extends WordSpec with MustMatchers with OptionV
 }
 
 object DataCompletionTrusteesSpec extends JsonFileReader with DataCompletionHelper  {
-  
+
   private val userAnswersCompleted: JsValue = readJsonFromFile("/payload.json")
   private val userAnswersInProgress: JsValue = readJsonFromFile("/payloadInProgress.json")
 

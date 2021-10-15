@@ -32,13 +32,14 @@ import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.register.{DeclarationDormant, SchemeType}
 import models.{EntitySpoke, Mode, NormalMode, _}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import utils.hstasklisthelper.SpokeCreationService
 import viewmodels.Message
 
 class SpokeCreationServiceSpec
   extends WordSpec
-    with MustMatchers
+    with Matchers
     with OptionValues
     with DataCompletionHelper {
 

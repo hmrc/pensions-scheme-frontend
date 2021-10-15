@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -30,7 +30,7 @@ import utils.FakeNavigator
 import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
-class PartnershipEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnershipEnterVATControllerSpec._
 

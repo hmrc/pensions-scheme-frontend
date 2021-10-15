@@ -22,7 +22,8 @@ import models._
 import models.address.Address
 import models.register.DeclarationDormant
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 import play.api.mvc.AnyContent
@@ -31,7 +32,7 @@ import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerRow, Message}
 
-class CheckYourAnswersSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
+class CheckYourAnswersSpec extends SpecBase with Matchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
 

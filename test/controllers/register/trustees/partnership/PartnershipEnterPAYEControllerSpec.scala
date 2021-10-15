@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnershipEnterPAYEControllerSpec._
 

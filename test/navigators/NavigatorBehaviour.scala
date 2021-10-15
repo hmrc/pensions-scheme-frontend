@@ -26,7 +26,8 @@ import models.requests.IdentifiedRequest
 import models.{Mode, NormalMode, ReferenceValue}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
 import org.scalatest.prop.{TableFor3, TableFor6}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{ OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Writes
 import play.api.mvc.Call
@@ -36,7 +37,7 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
-  this: WordSpec with MustMatchers =>
+  this: WordSpec with Matchers =>
 
   protected implicit val request: IdentifiedRequest = new IdentifiedRequest {
     override def externalId: String = "test-external-id"

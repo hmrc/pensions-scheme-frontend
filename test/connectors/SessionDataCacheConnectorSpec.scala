@@ -26,7 +26,7 @@ import org.scalatest.wordspec.AsyncWordSpec
 
 class SessionDataCacheConnectorSpec
   extends AsyncWordSpec
-    with MustMatchers
+    with Matchers
     with WireMockHelper {
 
   private implicit lazy val hc: HeaderCarrier = HeaderCarrier()

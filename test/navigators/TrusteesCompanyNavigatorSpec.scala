@@ -25,13 +25,13 @@ import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
 import models.Mode._
 import models._
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
 

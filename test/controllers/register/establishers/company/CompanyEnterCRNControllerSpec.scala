@@ -21,7 +21,7 @@ import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyEnterCRNId
 import models._
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -32,7 +32,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
 
-class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterCRNControllerSpec._
 
