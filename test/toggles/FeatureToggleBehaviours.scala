@@ -16,7 +16,8 @@
 
 package toggles
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.WordSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder

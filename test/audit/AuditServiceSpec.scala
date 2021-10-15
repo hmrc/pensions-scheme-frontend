@@ -17,7 +17,8 @@
 package audit
 
 import akka.stream.Materializer
-import org.scalatest.{AsyncFlatSpec, Inside, Matchers}
+import org.scalatest.{AsyncFlatSpec, Inside}
+import org.scalatest.matchers.should.Matchers
 import play.api.inject.{ApplicationLifecycle, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty

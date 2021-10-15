@@ -20,7 +20,8 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
-import org.scalatest.{AsyncFlatSpec, OptionValues, Matchers}
+import org.scalatest.{AsyncFlatSpec, OptionValues}
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsResultException, Json, JsBoolean}

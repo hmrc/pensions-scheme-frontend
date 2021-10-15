@@ -17,7 +17,8 @@
 package audit
 
 import models.{MoneyPurchaseBenefits, TypeOfBenefits}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.FlatSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 
 class TcmpAuditEventSpec

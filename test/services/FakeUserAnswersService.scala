@@ -22,7 +22,8 @@ import identifiers.TypedIdentifier
 import models.Mode
 import models.address.Address
 import models.requests.DataRequest
-import org.scalatest.{Matchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json._
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Result}

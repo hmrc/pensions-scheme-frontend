@@ -17,7 +17,8 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
+import org.scalatest.{AsyncFlatSpec, OptionValues}
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
