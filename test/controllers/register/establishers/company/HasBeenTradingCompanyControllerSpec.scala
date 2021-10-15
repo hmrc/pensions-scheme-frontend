@@ -31,7 +31,7 @@ import views.html.hasReferenceNumber
 
 class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new HasBeenTradingFormProvider()
   val form = formProvider("messages__hasBeenTradingCompany__error__required","test company name")
   val index = Index(0)

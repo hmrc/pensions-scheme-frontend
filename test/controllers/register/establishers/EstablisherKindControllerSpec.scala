@@ -35,7 +35,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   //scalastyle:off magic.number
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new EstablisherKindFormProvider()
   val form = formProvider()

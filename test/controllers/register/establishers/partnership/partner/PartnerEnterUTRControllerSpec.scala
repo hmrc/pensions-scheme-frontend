@@ -68,7 +68,7 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
   val firstIndex = Index(0)
   val srn = None
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn),

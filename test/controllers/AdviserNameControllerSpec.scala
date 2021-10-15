@@ -31,7 +31,7 @@ import views.html.adviserName
 
 class AdviserNameControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AdviserNameFormProvider()
   private val form = formProvider()

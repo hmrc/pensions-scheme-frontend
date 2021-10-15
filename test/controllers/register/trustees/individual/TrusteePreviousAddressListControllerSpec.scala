@@ -39,7 +39,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
 
   private val trusteeDetails = PersonName("Test", "Name")
   private val view = injector.instanceOf[addressList]
-  private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad
   private lazy val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val addresses = Seq(

@@ -33,7 +33,7 @@ import views.html.register.trustees.trusteeKind
 
 class TrusteeKindControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new TrusteeKindFormProvider()
   val form: Form[TrusteeKind] = formProvider()

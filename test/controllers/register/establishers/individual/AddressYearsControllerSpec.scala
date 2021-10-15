@@ -38,7 +38,7 @@ import views.html.address.addressYears
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddressYearsFormProvider()
   private val establisherName = "Test Name"

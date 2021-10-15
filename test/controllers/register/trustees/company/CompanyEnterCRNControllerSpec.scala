@@ -107,6 +107,6 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   val postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit _
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
 }

@@ -32,7 +32,7 @@ import views.html.moneyPurchaseBenefits
 
 class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
   val form: Form[MoneyPurchaseBenefits] = formProvider()

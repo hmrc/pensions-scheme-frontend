@@ -34,7 +34,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("messages__hasUtr__error__required", "test name")

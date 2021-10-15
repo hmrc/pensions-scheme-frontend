@@ -35,7 +35,7 @@ import views.html.phoneNumber
 
 class PartnerPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PhoneFormProvider()
   val form: Form[String] = formProvider()

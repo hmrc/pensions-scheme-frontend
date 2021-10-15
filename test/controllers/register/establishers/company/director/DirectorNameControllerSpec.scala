@@ -210,7 +210,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 }
 
 object DirectorNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__director")

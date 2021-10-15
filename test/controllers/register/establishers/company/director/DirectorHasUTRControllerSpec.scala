@@ -76,7 +76,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
 object DirectorHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", "test company name")

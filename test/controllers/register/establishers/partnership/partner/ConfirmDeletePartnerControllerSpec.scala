@@ -153,7 +153,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[confirmDeletePartner]
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeletePartnerController(

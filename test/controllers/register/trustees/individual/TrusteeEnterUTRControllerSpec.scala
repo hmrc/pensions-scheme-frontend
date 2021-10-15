@@ -82,7 +82,7 @@ object TrusteeEnterUTRControllerSpec extends TrusteeEnterUTRControllerSpec {
   val firstIndex: Index = Index(0)
   val srn: Option[String] = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: UTRViewModel = UTRViewModel(
     routes.TrusteeEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),

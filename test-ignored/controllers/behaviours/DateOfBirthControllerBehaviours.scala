@@ -43,7 +43,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   with CSRFRequest {
 
   val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   val formProvider: DOBFormProvider = new DOBFormProvider
   val form: Form[LocalDate] = formProvider()
   val day: Int = LocalDate.now().getDayOfMonth

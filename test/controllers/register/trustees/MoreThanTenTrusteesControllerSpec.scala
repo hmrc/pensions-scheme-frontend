@@ -32,7 +32,7 @@ import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   appRunning()
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new MoreThanTenTrusteesFormProvider()
   val form: Form[Boolean] = formProvider()

@@ -86,7 +86,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),

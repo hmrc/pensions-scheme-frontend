@@ -37,7 +37,7 @@ import views.html.address.addressYears
 
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddressYearsFormProvider()
   private val form = formProvider("messages__common_error__current_address_years")

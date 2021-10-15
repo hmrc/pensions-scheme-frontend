@@ -34,7 +34,7 @@ import views.html.hasReferenceNumber
 class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
   private val formProvider = new HasUTRFormProvider()

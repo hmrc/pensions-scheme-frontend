@@ -164,7 +164,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     "test-partnership-name"
   )
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
 
 
   private val view = injector.instanceOf[confirmDeleteTrustee]

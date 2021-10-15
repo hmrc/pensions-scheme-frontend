@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar {
   val fakeAuditService = new StubSuccessfulAuditService()
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq.empty)

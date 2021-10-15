@@ -116,7 +116,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trustee.fullName))
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val view = injector.instanceOf[addressYears]

@@ -33,7 +33,7 @@ import views.html.hasReferenceNumber
 class EstablisherHasUTRControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
   private val name = "Test Name"
-  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad
   private val formProvider = new HasUTRFormProvider()
   private val form         = formProvider("messages__hasUTR__error__required", name)
   private val index        = Index(0)

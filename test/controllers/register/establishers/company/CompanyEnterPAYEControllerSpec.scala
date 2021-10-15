@@ -71,7 +71,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec {
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
     routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),

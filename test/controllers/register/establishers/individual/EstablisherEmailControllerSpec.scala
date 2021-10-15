@@ -34,7 +34,7 @@ import views.html.emailAddress
 
 class EstablisherEmailControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new EmailFormProvider()
   private val form: Form[String] = formProvider()

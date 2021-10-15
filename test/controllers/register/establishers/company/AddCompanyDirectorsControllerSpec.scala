@@ -35,7 +35,7 @@ import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form         = formProvider()

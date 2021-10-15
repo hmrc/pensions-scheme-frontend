@@ -33,7 +33,7 @@ import views.html.hasReferenceNumber
 
 class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val formProvider = new HasPAYEFormProvider()
   private val form = formProvider("messages__partnershipHasPaye__error__required","test partnership name")
   private val index = Index(0)

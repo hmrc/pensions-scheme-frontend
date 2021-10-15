@@ -37,7 +37,7 @@ import views.html.address.confirmPreviousAddress
 
 class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val name: String = "John Doe"
 

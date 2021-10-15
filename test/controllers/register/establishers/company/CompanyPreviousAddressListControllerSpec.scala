@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   val fakeAuditService = new StubSuccessfulAuditService()
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0, 1))

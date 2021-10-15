@@ -69,7 +69,7 @@ object DirectorEnterUTRControllerSpec extends DirectorEnterUTRControllerSpec {
   val firstIndex = Index(0)
   val srn = None
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),

@@ -32,7 +32,7 @@ import views.html.reason
 class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new ReasonFormProvider()
   val name = "first last"

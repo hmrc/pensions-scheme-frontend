@@ -33,7 +33,7 @@ import views.html.phoneNumber
 
 class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PhoneFormProvider()
   val form: Form[String] = formProvider()

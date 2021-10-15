@@ -35,7 +35,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
   //scalastyle:off magic.number
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val schemeName = "Test Scheme Name"
 

@@ -38,7 +38,7 @@ import views.html.address.addressYears
 
 class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new AddressYearsFormProvider()
   val form = formProvider("")

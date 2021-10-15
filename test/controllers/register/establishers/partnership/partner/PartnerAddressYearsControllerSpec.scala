@@ -38,7 +38,7 @@ import views.html.address.addressYears
 
 class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddressYearsFormProvider()
   val partner = PersonName("first", "last")

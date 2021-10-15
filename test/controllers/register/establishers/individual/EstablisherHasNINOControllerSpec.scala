@@ -32,7 +32,7 @@ import views.html.hasReferenceNumber
 class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName   = None
   private val name = "Test Name"
-  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call  = controllers.routes.IndexController.onPageLoad
   private val formProvider = new HasUTRFormProvider()
   private val form         = formProvider("messages__genericHasNino__error__required", name)
   private val index        = Index(0)

@@ -43,7 +43,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
   private val formProvider = new ReasonFormProvider()
   private val form = formProvider("messages__reason__error_utrRequired", "Test Name")
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,

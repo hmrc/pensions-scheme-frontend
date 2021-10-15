@@ -36,7 +36,7 @@ import views.html.address.addressList
 
 class InsurerSelectAddressControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"

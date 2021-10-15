@@ -84,7 +84,7 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 }
 
 object PartnerDOBControllerSpec extends MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()

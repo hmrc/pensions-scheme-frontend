@@ -148,7 +148,7 @@ object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSuga
 
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 }
 
 

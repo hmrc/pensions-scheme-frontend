@@ -36,7 +36,7 @@ import views.html.schemeName
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
   val formProvider = new SchemeNameFormProvider()

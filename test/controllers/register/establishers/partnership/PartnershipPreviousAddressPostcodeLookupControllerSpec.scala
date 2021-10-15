@@ -43,7 +43,7 @@ import scala.concurrent.Future
 
 class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()

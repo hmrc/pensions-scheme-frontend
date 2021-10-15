@@ -38,7 +38,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   appRunning()
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddPartnersFormProvider()
   private val form = formProvider()

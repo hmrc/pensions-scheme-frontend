@@ -34,7 +34,7 @@ import views.html.register.establishers.isDormant
 
 class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new IsDormantFormProvider()
   val form = formProvider()

@@ -83,7 +83,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 }
 
 private object TrusteeDOBControllerSpec extends MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()

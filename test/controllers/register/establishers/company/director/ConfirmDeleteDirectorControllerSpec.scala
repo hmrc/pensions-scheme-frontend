@@ -146,7 +146,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   val directorDeleted: PersonName = directorDetails.copy(isDeleted = true)
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new ConfirmDeleteDirectorFormProvider()
   private val form         = formProvider.apply(directorName)

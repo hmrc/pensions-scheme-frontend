@@ -30,7 +30,7 @@ import views.html.anyMoreChanges
 
 class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private val schemeName = Some("Test Scheme Name")
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
   def date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))

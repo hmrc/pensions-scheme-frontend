@@ -127,7 +127,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   private val view = injector.instanceOf[checkYourAnswers]
   val viewAsString: String = view(vm)(fakeRequest, messages).toString
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  psaName: JsValue = psaName

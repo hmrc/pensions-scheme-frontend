@@ -32,7 +32,7 @@ import views.html.hasReferenceNumber
 
 class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new HasCRNFormProvider()
   val form = formProvider("messages__hasCompanyNumber__error__required","test company name")
   val index = Index(0)

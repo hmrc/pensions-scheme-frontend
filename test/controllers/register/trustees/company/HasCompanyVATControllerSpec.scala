@@ -35,7 +35,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   with OptionValues with MockValidationHelper {
 
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("messages__hasCompanyVat__error__required","test company name")
   private val index = Index(0)

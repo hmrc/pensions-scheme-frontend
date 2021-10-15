@@ -120,7 +120,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val schemeName = None
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", "test trustee name")

@@ -123,7 +123,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
 object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddEstablisherFormProvider()
   private val form = formProvider(Seq.empty)

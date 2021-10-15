@@ -95,7 +95,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Sca
 
 object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val firstIndex: Index = Index(0)
   val formProvider = new PostCodeLookupFormProvider()

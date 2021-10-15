@@ -35,7 +35,7 @@ import views.html.racdac.racDACName
 import scala.concurrent.Future
 
 class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val psaName = "Mr Maxwell"
   val formProvider = new RACDACNameFormProvider()
   val form: Form[String] = formProvider()

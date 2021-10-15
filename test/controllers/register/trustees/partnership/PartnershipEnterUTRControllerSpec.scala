@@ -79,7 +79,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   val srn = None
   val utrValue = "9999999999"
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),

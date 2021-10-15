@@ -114,7 +114,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val form = new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name))
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val view = injector.instanceOf[addressYears]

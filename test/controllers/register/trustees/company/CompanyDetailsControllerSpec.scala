@@ -34,7 +34,7 @@ import views.html.register.trustees.company.companyDetails
 class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
   appRunning()
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new CompanyDetailsFormProvider()
   val form = formProvider()

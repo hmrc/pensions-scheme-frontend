@@ -135,7 +135,7 @@ class DeclarationControllerSpec
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val schemeName = "scheme"
   private val minimalPsa = MinimalPSA(email = "a@a.c", isPsaSuspended = false, organisationName = Some("org"), individualDetails = None)
   private val emailParams = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName)

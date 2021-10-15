@@ -80,7 +80,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   val form = new EnterVATFormProvider()("test partnership")
   val firstIndex: Index = Index(0)
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: EnterVATViewModel = EnterVATViewModel(
     routes.PartnershipEnterVATController.onSubmit(NormalMode, firstIndex, None),

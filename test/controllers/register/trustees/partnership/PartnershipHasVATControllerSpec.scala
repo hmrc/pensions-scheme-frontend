@@ -121,7 +121,7 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
   private val srn = None
   private val index = Index(0)
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val viewModel = CommonFormWithHintViewModel(
     postCall = PartnershipHasVATController.onSubmit(NormalMode, index, srn),

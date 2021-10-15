@@ -240,7 +240,7 @@ class DeclarationControllerSpec
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()

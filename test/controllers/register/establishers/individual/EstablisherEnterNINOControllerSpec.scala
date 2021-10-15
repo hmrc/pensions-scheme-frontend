@@ -89,7 +89,7 @@ class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 }
 
 object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val establisherName = "test first name test last name"
 

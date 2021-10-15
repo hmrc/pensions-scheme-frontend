@@ -96,7 +96,7 @@ object FakeAuditConnector extends AuditConnector {
 
   def auditChannel: AuditChannel = ???
 
-  def auditCounter: AuditCounter = ???
+  def datastreamMetrics: DatastreamMetrics = ???
 }
 
 case class TestAuditEvent(payload: String) extends AuditEvent {

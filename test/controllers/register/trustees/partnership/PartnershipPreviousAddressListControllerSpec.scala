@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val view = injector.instanceOf[addressList]
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()

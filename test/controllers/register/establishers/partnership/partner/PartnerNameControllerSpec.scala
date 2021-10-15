@@ -209,7 +209,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 }
 
 object PartnerNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__partner")

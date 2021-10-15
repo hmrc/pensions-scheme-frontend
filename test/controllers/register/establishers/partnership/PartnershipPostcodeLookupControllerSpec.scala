@@ -80,7 +80,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
 
 object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val firstIndex = Index(0)
   val formProvider = new PostCodeLookupFormProvider()

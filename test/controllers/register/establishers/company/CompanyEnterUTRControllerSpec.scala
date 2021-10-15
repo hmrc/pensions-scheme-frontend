@@ -69,7 +69,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   private val view = injector.instanceOf[utr]
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),

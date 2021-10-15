@@ -44,7 +44,7 @@ class NavigatorSpec extends WordSpec with Matchers {
       "go to Index from an identifier that doesn't exist in the route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, NormalMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -58,7 +58,7 @@ class NavigatorSpec extends WordSpec with Matchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, CheckMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -72,7 +72,7 @@ class NavigatorSpec extends WordSpec with Matchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, UpdateMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -86,7 +86,7 @@ class NavigatorSpec extends WordSpec with Matchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, CheckUpdateMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 

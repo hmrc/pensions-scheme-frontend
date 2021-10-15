@@ -136,7 +136,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val srn = Some("srn")
   private val personName = PersonName("first name", "last name")
   private val address = Address("Address 1", "Address 2", None, None, None, "GB")
-  private val desiredRoute = controllers.routes.IndexController.onPageLoad()
+  private val desiredRoute = controllers.routes.IndexController.onPageLoad
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)

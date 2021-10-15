@@ -68,7 +68,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = EnterVATViewModel(
     routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),

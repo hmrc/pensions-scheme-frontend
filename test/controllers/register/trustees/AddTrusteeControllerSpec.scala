@@ -75,7 +75,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     )
   }
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
     view(form, NormalMode, trustees, None, None)(fakeRequest, messages).toString

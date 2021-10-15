@@ -77,7 +77,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val schemeName = None
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", "test company name")

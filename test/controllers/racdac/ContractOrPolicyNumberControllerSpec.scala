@@ -35,7 +35,7 @@ import views.html.racdac.contractOrPolicyNumber
 import scala.concurrent.Future
 
 class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val psaName = "Mr Maxwell"
   val formProvider = new ContractOrPolicyNumberFormProvider()
 

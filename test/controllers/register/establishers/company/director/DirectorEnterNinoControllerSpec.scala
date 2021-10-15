@@ -38,7 +38,7 @@ import views.html.nino
 
 class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val companyName = "test company name"
   val formProvider = new NINOFormProvider()

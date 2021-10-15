@@ -33,7 +33,7 @@ import views.html.register.establishers.company.companyDetails
 
 class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new CompanyDetailsFormProvider()
   val form = formProvider()

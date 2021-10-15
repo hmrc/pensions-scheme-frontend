@@ -115,7 +115,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
     SchemeNameId.toString -> schemeName
   )
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val view = injector.instanceOf[nino]
 

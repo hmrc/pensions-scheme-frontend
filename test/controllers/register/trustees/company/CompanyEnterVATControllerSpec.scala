@@ -78,7 +78,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
   val form = new EnterVATFormProvider()("test company")
   val firstIndex: Index = Index(0)
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: EnterVATViewModel = EnterVATViewModel(
     routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None),

@@ -236,7 +236,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     )
   )
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val view = injector.instanceOf[confirmDeleteEstablisher]
 

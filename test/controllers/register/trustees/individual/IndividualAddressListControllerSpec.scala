@@ -38,7 +38,7 @@ import views.html.address.addressList
 
 class IndividualAddressListControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val view = injector.instanceOf[addressList]
   val trusteeDetails = person.PersonName("Test", "Name")
   val trusteeName = PersonName("Test", "Name")

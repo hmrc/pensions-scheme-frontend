@@ -136,7 +136,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
 }
 
 object PartnerEnterNINOControllerSpec {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   val partnershipName = "test partnership name"
   val formProvider = new NINOFormProvider()
 

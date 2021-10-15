@@ -35,7 +35,7 @@ import views.html.emailAddress
 
 class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new EmailFormProvider()
   private val form: Form[String] = formProvider()

@@ -39,7 +39,7 @@ import views.html.address.manualAddress
 
 class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddressFormProvider(FakeCountryOptions())
   private val form: Form[Address] = formProvider()
