@@ -42,7 +42,7 @@ class LanguageSwitchController @Inject()(
       Redirect(redirectURL).withLang(Lang.apply(lang.code))
   }
 
-  private def fallbackURL: String = routes.IndexController.onPageLoad().url
+  private def fallbackURL: String = routes.IndexController.onPageLoad.url
 
   private def languageMap: Map[String, Lang] = appConfig.languageMap
 

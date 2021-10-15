@@ -40,7 +40,7 @@ import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
+class UTRControllerSpec extends SpecBase with ArgumentMatchers with OptionValues with ScalaFutures {
 
   import UTRControllerSpec._
 

@@ -18,7 +18,7 @@ package models
 
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 
-class IndexSpec extends WordSpecLike with MustMatchers with OptionValues {
+class IndexSpec extends WordSpecLike with ArgumentMatchers with OptionValues {
 
   "indexPathBindable" must {
     val binder = Index.indexPathBindable

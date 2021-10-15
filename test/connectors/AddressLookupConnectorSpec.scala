@@ -18,13 +18,15 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.address.TolerantAddress
-import org.scalatest.{AsyncWordSpec, MustMatchers, RecoverMethods}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.RecoverMethods
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import uk.gov.hmrc.http.{HttpException, HeaderCarrier}
 import utils.WireMockHelper
 
 class AddressLookupConnectorSpec extends AsyncWordSpec
-  with MustMatchers
+  with ArgumentMatchers
   with WireMockHelper
   with RecoverMethods {
 

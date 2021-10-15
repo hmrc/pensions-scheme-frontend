@@ -18,12 +18,12 @@ package connectors.TestOnlyDoNotUseInAppConf.TestOnlyCacheConnector
 
 import com.github.tomakehurst.wiremock.client.WireMock.{delete, ok, urlEqualTo}
 import connectors.TestOnlyCacheConnector
-import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
+import org.scalatest.wordspec.{AsyncWordSpec, MustMatchers, OptionValues}
 import play.api.mvc.Results._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class TestOnlyCacheConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+class TestOnlyCacheConnectorSpec extends AsyncWordSpec with ArgumentMatchers with WireMockHelper with OptionValues {
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 

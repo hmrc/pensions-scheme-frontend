@@ -20,7 +20,7 @@ import models.ReferenceValue
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
-class ReferenceValueReadsSpec extends WordSpec with MustMatchers with OptionValues {
+class ReferenceValueReadsSpec extends WordSpec with ArgumentMatchers with OptionValues {
   "ReferenceValue json" should {
 
     "map correctly to Reference" when {

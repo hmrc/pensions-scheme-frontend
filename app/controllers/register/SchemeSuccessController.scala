@@ -73,7 +73,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                     request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
                     email
                   )))
-              case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+              case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
           }
         }

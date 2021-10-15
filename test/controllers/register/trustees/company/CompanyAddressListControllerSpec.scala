@@ -115,7 +115,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
 
     }
@@ -159,7 +159,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         val result = controller.onSubmit(NormalMode, Index(0), None)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
 
     }

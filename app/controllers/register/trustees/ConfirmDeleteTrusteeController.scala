@@ -77,7 +77,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                 )
               )
             }
-        } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
     }
 
   private def getDeletableTrustee(index: Index, trusteeKind: TrusteeKind, userAnswers: UserAnswers)

@@ -36,7 +36,7 @@ trait Retrievals {
   def withRACDACName(func: String => Future[Result])
                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.get(RACDACNameId) match {
-      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       case Some(racdacName) => func(racdacName)
     }
   }
@@ -53,7 +53,7 @@ trait Retrievals {
                                       (f: A => Future[Result])
                                       (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
     request.userAnswers.get(id).map(f).getOrElse {
-      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
     }
 
   }
@@ -110,7 +110,7 @@ trait Retrievals {
       implicit request =>
         request.userAnswers.get(id) match {
           case Some(value) => Right(value)
-          case None => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+          case None => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
         }
     }
 

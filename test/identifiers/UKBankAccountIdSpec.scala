@@ -22,7 +22,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class UKBankAccountIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class UKBankAccountIdSpec extends WordSpec with ArgumentMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 

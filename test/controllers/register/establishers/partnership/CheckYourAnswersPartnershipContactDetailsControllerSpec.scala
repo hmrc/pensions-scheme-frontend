@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership.{PartnershipEmailId, Partne
 import models.Mode.checkMode
 import models._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._

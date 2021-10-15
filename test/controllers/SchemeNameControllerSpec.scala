@@ -22,9 +22,9 @@ import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import models.NormalMode
-import org.mockito.Matchers.any
+import org.mockito.ArgumentArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._

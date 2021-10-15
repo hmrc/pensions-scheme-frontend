@@ -18,9 +18,9 @@ package controllers
 
 import connectors.SessionDataCacheConnector
 import controllers.actions.FakeAuthAction
-import org.mockito.Matchers.any
+import org.mockito.ArgumentArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.MockitoSugar.mock
 import play.api.mvc.Results
 import play.api.test.Helpers._
 

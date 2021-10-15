@@ -27,7 +27,7 @@ import models.{CheckUpdateMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, OptionValues}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -41,7 +41,7 @@ import views.html.paye
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PayeControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class PayeControllerSpec extends SpecBase with ArgumentMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import PayeControllerSpec._
 

@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
-class PartnershipEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterVATControllerSpec extends ControllerSpecBase with ArgumentMatchers {
 
   import PartnershipEnterVATControllerSpec._
 

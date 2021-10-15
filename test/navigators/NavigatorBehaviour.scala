@@ -36,7 +36,7 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
-  this: WordSpec with MustMatchers =>
+  this: WordSpec with ArgumentMatchers =>
 
   protected implicit val request: IdentifiedRequest = new IdentifiedRequest {
     override def externalId: String = "test-external-id"

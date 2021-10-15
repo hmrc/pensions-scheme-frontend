@@ -21,7 +21,7 @@ import connectors.PensionsSchemeConnector
 import identifiers.IsPsaSuspendedId
 import models.UpdateMode
 import models.requests.OptionalDataRequest
-import org.mockito.Matchers.any
+import org.mockito.ArgumentArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar

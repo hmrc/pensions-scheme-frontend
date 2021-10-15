@@ -78,7 +78,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                 )
               )
             }
-        } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
     }
 
   private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers)

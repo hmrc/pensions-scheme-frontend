@@ -25,7 +25,7 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{AddressYears, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -66,7 +66,7 @@ object AddressYearsControllerSpec {
 
 }
 
-class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class AddressYearsControllerSpec extends WordSpec with ArgumentMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import AddressYearsControllerSpec._
 

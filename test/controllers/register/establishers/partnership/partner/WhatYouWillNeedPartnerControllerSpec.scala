@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes.PartnerNameController
 import models.{Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 

@@ -19,7 +19,7 @@ package models.register
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.{JsError, Json}
 
-class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
+class SchemeTypeSpec extends WordSpecLike with ArgumentMatchers with OptionValues {
 
   "Reads" must {
     "successfully read Other" in {

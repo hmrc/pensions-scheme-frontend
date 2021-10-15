@@ -208,7 +208,7 @@ object PartnerNavigator {
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => emailPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
-      case _ => SessionExpiredController.onPageLoad()
+      case _ => SessionExpiredController.onPageLoad
     }
 
   private def paPostcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
@@ -222,7 +222,7 @@ object PartnerNavigator {
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => cyaPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
-      case _ => SessionExpiredController.onPageLoad()
+      case _ => SessionExpiredController.onPageLoad
     }
 
   private def cyaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =

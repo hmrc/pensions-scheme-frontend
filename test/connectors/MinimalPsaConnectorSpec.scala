@@ -25,7 +25,7 @@ import play.api.libs.json.{JsResultException, Json}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, NotFoundException}
 import utils.WireMockHelper
 
-class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
+class MinimalPsaConnectorSpec extends AsyncFlatSpec with ArgumentMatchers with WireMockHelper {
 
   import MinimalPsaConnectorSpec._
 

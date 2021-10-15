@@ -46,7 +46,7 @@ class DeleteSchemeController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
   private val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
-  private val sessionExpired: Future[Result] = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+  private val sessionExpired: Future[Result] = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
 
   def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {

@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import models.NormalMode
 import models.address.TolerantAddress
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -169,7 +169,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
           val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
 
         "POST" in {
@@ -177,14 +177,14 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
           val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
       }
       "scheme name is not present" in {
         val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
   }

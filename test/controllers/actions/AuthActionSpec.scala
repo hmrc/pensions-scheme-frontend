@@ -22,10 +22,10 @@ import controllers.routes
 import identifiers.AdministratorOrPractitionerId
 import models.AuthEntity.{PSA, PSP}
 import models.{AdministratorOrPractitioner, AuthEntity}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.MockitoSugar.mock
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.Helpers._

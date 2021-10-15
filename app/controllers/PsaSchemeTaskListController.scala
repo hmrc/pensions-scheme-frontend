@@ -55,7 +55,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           Ok(view(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
 
         case (Some(_), _, _) =>
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
         case _ =>
           Redirect(appConfig.managePensionsSchemeOverviewUrl)

@@ -31,7 +31,7 @@ import models.register.trustees.TrusteeKind
 import models.{NormalMode, UpdateMode}
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 
-class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
+class EntitySpec extends WordSpecLike with ArgumentMatchers with OptionValues {
 
   "DirectorEntity" must {
     val directorEntity = DirectorEntity(

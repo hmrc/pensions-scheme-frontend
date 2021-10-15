@@ -20,9 +20,9 @@ import connectors.UpdateSchemeCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Results._
 import play.api.test.Helpers._

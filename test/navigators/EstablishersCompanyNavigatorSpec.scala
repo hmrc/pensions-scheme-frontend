@@ -34,7 +34,7 @@ import utils.{Enumerable, UserAnswers}
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
 
-class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class EstablishersCompanyNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour {
 
   import EstablishersCompanyNavigatorSpec._
 
@@ -256,7 +256,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
-  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
 
   private def whatIsPAYE(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)

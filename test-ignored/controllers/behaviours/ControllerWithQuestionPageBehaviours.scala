@@ -108,7 +108,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
         val result = onPageLoadAction(validData, FakeAuthAction)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 
@@ -124,7 +124,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
         val result = onSubmitAction(validDate, FakeAuthAction)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 

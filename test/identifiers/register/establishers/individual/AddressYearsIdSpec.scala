@@ -32,7 +32,7 @@ import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class AddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
+class AddressYearsIdSpec extends SpecBase with ArgumentMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 

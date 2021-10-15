@@ -29,7 +29,7 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.mockito.Matchers.any
+import org.mockito.ArgumentArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -78,7 +78,7 @@ object ManualAddressControllerSpec {
     fakeAddressListId.toString -> tolerantAddress)
   val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
   private val srn = Some("123")
-  private lazy val manualCall = controllers.routes.SessionExpiredController.onPageLoad()
+  private lazy val manualCall = controllers.routes.SessionExpiredController.onPageLoad
 
   private val psaId = PsaId("A0000000")
 
@@ -103,7 +103,7 @@ object ManualAddressControllerSpec {
 
 }
 
-class ManualAddressControllerSpec extends WordSpec with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
+class ManualAddressControllerSpec extends WordSpec with ArgumentMatchers with MockitoSugar with ScalaFutures with OptionValues {
 
   import ManualAddressControllerSpec._
 

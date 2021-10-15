@@ -21,7 +21,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
 
-class CompanyDetailsReadsSpec extends WordSpec with MustMatchers with OptionValues {
+class CompanyDetailsReadsSpec extends WordSpec with ArgumentMatchers with OptionValues {
   "Company Details json" should {
 
     "map correctly to company details" when {

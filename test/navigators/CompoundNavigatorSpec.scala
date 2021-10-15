@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.JavaConverters._
 
-class CompoundNavigatorSpec extends FreeSpec with MustMatchers {
+class CompoundNavigatorSpec extends FreeSpec with ArgumentMatchers {
 
   def navigator(call: Option[Call]): Navigator =
     new Navigator {

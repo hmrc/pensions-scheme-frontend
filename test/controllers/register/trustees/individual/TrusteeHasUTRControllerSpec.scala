@@ -111,7 +111,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       val result = controller(getEmptyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad.url
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

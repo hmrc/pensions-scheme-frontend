@@ -18,7 +18,7 @@ package utils
 
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 
-class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues {
+class NameMatchingSpec extends WordSpecLike with ArgumentMatchers with OptionValues {
 
   val expectedWithoutSpaces = NameMatching("CHRISWILLIAMS", "CHRISWILLIAMSSONS")
   val expectedWithSpaces = NameMatching("CHRIS WILLIAMS", "CHRIS WILLIAMS SONS")

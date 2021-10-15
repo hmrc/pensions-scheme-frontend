@@ -109,7 +109,7 @@ class DeclarationController @Inject()(
           case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
             Future.successful(Redirect(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad()))
           case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
         }
       }
   }

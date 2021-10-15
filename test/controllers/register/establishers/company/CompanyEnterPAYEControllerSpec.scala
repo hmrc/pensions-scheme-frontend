@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with ArgumentMatchers {
 
   import CompanyEnterPAYEControllerSpec._
 

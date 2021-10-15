@@ -20,7 +20,7 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 

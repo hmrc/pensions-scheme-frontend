@@ -32,10 +32,10 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 
-class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
-  
+class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
+
   import EstablisherPartnershipContactDetailsNavigatorSpec._
-  
+
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
@@ -87,7 +87,7 @@ class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Mu
 
 }
 
-object EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val srn                   = Some("srn")

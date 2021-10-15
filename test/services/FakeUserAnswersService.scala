@@ -32,7 +32,7 @@ import utils.UserAnswers
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FakeUserAnswersService extends UserAnswersService with Matchers with OptionValues {
+trait FakeUserAnswersService extends UserAnswersService with ArgumentMatchers with OptionValues {
 
   override protected def subscriptionCacheConnector: SubscriptionCacheConnector = FakeSubscriptionCacheConnector.getConnector
   override protected def updateSchemeCacheConnector: UpdateSchemeCacheConnector = FakeUpdateCacheConnector.getConnector

@@ -30,7 +30,7 @@ import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class BenefitsSecuredByInsuranceIdSpec extends SpecBase with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
+class BenefitsSecuredByInsuranceIdSpec extends SpecBase with ArgumentMatchers with ScalaCheckPropertyChecks with OptionValues with Enumerable.Implicits {
 
   "Cleanup" when {
 

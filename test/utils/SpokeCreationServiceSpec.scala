@@ -38,7 +38,7 @@ import viewmodels.Message
 
 class SpokeCreationServiceSpec
   extends WordSpec
-    with MustMatchers
+    with ArgumentMatchers
     with OptionValues
     with DataCompletionHelper {
 

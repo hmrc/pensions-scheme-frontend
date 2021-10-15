@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-class EstablishersNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class EstablishersNavigatorSpec extends SpecBase with ArgumentMatchers with NavigatorBehaviour {
 
   import EstablishersNavigatorSpec._
 

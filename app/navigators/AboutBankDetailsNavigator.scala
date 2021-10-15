@@ -43,7 +43,7 @@ class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCac
     answers.get(UKBankAccountId) match {
       case Some(true) => NavigateTo.dontSave(BankAccountDetailsController.onPageLoad(NormalMode))
       case Some(false) => checkYourAnswers
-      case None => NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+      case None => NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 

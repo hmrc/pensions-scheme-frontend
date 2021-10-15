@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
+
 import javax.inject.Inject
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,7 +56,7 @@ class DeleteSchemeChangesController @Inject()(
           getSchemeName(srn, psaId.id) { (psaName, schemeName) =>
             Future.successful(Ok(view(form, schemeName, postCall(srn), psaName)))
           }
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
       }
   }
@@ -70,7 +71,7 @@ class DeleteSchemeChangesController @Inject()(
                 (data \ "schemeName").validate[String] match {
                   case JsSuccess(name, _) =>
                     block(psaName, name)
-                  case JsError(_) => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+                  case JsError(_) => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
                 }
               case _ => Future.successful(overviewPage)
             }
@@ -93,6 +94,6 @@ class DeleteSchemeChangesController @Inject()(
                 }
               )
             }
-          }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+          }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
       }
   }
