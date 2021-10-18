@@ -21,7 +21,7 @@ import models.{PsaLock, SchemeVariance, VarianceLock}
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.{Enumerable, WireMockHelper}
 
@@ -41,7 +41,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.parse(VarianceLock.toString).toString())
+            .withBody(JsString("SuccessfulVarianceLock").toString())
         )
     )
 
@@ -183,7 +183,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.parse(VarianceLock.toString).toString())
+            .withBody(JsString("SuccessfulVarianceLock").toString())
         )
     )
 
@@ -205,7 +205,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.parse(VarianceLock.toString).toString())
+            .withBody(JsString("PsaHasLockedAnotherScheme").toString())
         )
     )
 

@@ -40,7 +40,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     "display appropriate heading" in {
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
-
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
       helper.taskList(userAnswers, None, None).h1 mustBe name
     }
   }

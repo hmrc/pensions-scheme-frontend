@@ -22,7 +22,6 @@ object AppDependencies {
   val scope: String = "test"
   val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-28" % "5.14.0"            % Test,
-    "org.scalatest"           %%  "scalatest"             % "3.0.8"             % scope,
     "org.scalatestplus"       %% "scalatestplus-scalacheck" % "3.1.0.0-RC2"     % "test",
     "org.scalatestplus.play"  %%  "scalatestplus-play"    % "5.1.0"             % scope,
     "org.scalacheck"          %%  "scalacheck"            % "1.14.0"            % scope,
@@ -31,9 +30,10 @@ object AppDependencies {
     "com.typesafe.play"       %%  "play-test"             % PlayVersion.current % scope,
     "org.mockito"             %% "mockito-scala"              % "1.16.42"     % "test",
     "org.mockito"             %% "mockito-scala-scalatest"    % "1.16.42"     % "test",
-    "com.github.tomakehurst"  %   "wiremock-jre8"         % "2.31.0"            % scope,
+    "com.github.tomakehurst"  %   "wiremock-jre8"         % "2.26.3"            % scope,
     "wolfendale"              %%  "scalacheck-gen-regexp" % "0.1.1"             % scope,
-    "com.vladsch.flexmark"    % "flexmark-all"            % "0.36.8"           % Test
+    "com.vladsch.flexmark"    % "flexmark-all"            % "0.36.8"           % Test,
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.5"        % "test"
   )
 
   def apply(): Seq[ModuleID] = compile ++ test

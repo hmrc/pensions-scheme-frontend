@@ -36,6 +36,7 @@ case class EstablisherHasNINOId(index: Int) extends TypedIdentifier[Boolean] {
   }
 }
 
+
 object EstablisherHasNINOId {
   override def toString: String = "hasNino"
 

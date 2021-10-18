@@ -30,3 +30,4 @@ class MoneyPurchaseBenefitsFormProvider @Inject()
       "value" -> enumerable[MoneyPurchaseBenefits]("messages__moneyPurchaseBenefits__error")
     )
 }
+

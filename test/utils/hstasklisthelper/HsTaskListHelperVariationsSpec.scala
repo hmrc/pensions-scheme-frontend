@@ -22,9 +22,9 @@ import identifiers.{SchemeNameId, _}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.OptionValues
 import utils.UserAnswers
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 
@@ -38,7 +38,7 @@ class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with Mock
   "h1" must {
     "have the name of the scheme" in {
       val userAnswers = userAnswersWithSchemeName
-
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
       helper.taskList(userAnswers, None, srn).h1 mustBe schemeName
     }
   }
