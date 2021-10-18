@@ -22,23 +22,21 @@ import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
-import identifiers.racdac.{RACDACNameId, DeclarationId}
+import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
-import models.{PSAMinimalFlags, MinimalPSA}
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Matchers}
+import models.{MinimalPSA, PSAMinimalFlags}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentCaptor, ArgumentMatchers, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
 import uk.gov.hmrc.http.UpstreamErrorResponse
-import utils.{UserAnswers, FakeNavigator}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
 
 import scala.concurrent.Future
@@ -91,7 +89,7 @@ class DeclarationControllerSpec
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
-      doNothing().when(mockAuditService).sendEvent(any())(any(), any())
+      doNothing.when(mockAuditService).sendEvent(any())(any(), any())
 
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
@@ -102,10 +100,10 @@ class DeclarationControllerSpec
       FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
       verify(mockEmailConnector, times(1))
-        .sendEmail(Matchers.eq(minimalPsa.email), Matchers.eq("pods_racdac_scheme_register"),
-          Matchers.eq(emailParams), any(), any())(any(), any())
+        .sendEmail(ArgumentMatchers.eq(minimalPsa.email), ArgumentMatchers.eq("pods_racdac_scheme_register"),
+          ArgumentMatchers.eq(emailParams), any(), any())(any(), any())
       val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
-      verify(mockAuditService,times(1)).sendEvent(Matchers.eq(expectedAuditEvent))(any(),any())
+      verify(mockAuditService,times(1)).sendEvent(ArgumentMatchers.eq(expectedAuditEvent))(any(),any())
 
     }
 
@@ -129,13 +127,13 @@ class DeclarationControllerSpec
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val schemeName = "scheme"
   private val minimalPsa = MinimalPSA(email = "a@a.c", isPsaSuspended = false, organisationName = Some("org"), individualDetails = None)
   private val emailParams = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName)

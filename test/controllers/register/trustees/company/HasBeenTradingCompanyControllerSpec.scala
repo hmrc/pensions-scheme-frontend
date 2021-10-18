@@ -28,14 +28,13 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new HasBeenTradingFormProvider()
   val form: Form[Boolean] = formProvider("messages__tradingAtLeastOneYear__error","test company name")
   val index: Index = Index(0)

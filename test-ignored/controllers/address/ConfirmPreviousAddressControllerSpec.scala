@@ -25,11 +25,12 @@ import models._
 import models.address.Address
 import models.requests.DataRequest
 import navigators.Navigator
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -46,7 +47,7 @@ import views.html.address.confirmPreviousAddress
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class ConfirmPreviousAddressControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class ConfirmPreviousAddressControllerSpec extends AnyWordSpec with ArgumentMatchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import ConfirmPreviousAddressControllerSpec._
 

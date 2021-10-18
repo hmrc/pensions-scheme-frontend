@@ -265,13 +265,13 @@ object AddressListControllerSpec {
   object FakeAddressIdentifier extends TypedIdentifier[Address]
   object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
 
-  val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  val onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val fakeSeqTolerantAddressId: TypedIdentifier[Seq[TolerantAddress]] = new TypedIdentifier[Seq[TolerantAddress]] {
     override def toString = "abc"
   }
-  private lazy val postCall = controllers.routes.IndexController.onPageLoad()
-  private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad()
+  private lazy val postCall = controllers.routes.IndexController.onPageLoad
+  private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad
 
   private val addresses = Seq(
     TolerantAddress(

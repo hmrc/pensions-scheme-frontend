@@ -24,14 +24,13 @@ import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -39,7 +38,7 @@ import views.html.address.addressList
 
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0))
@@ -161,7 +160,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -169,7 +168,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }

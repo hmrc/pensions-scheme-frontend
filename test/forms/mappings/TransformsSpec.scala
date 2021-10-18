@@ -16,10 +16,11 @@
 
 package forms.mappings
 
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{MustMatchers, WordSpec}
 
-class TransformsSpec extends WordSpec with MustMatchers with TableDrivenPropertyChecks with Transforms {
+class TransformsSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks with Transforms {
 
   "noTransform" must {
     "leave its input unchanged" in {

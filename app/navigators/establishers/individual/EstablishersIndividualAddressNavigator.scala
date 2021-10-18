@@ -96,7 +96,7 @@ object EstablishersIndividualAddressNavigator {
     ua.get(AddressYearsId(index)) match {
       case Some(AddressYears.OverAYear) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
       case Some(AddressYears.UnderAYear) => previousAddressLookup(mode, index, srn)
-      case _ => SessionExpiredController.onPageLoad()
+      case _ => SessionExpiredController.onPageLoad
     }
 
   private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =

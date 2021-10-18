@@ -27,7 +27,6 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.otherPartners
 
@@ -35,7 +34,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
 
   //scalastyle:off magic.number
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val schemeName = "Test Scheme Name"
 
@@ -103,7 +102,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
@@ -128,7 +127,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -136,7 +135,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }

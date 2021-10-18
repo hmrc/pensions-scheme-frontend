@@ -21,10 +21,9 @@ import connectors.MinimalPsaConnector
 import controllers.actions._
 import identifiers.SchemeNameId
 import models._
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
@@ -89,7 +88,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
   }
@@ -123,7 +122,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
     controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
-  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
   private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))

@@ -28,13 +28,12 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("messages__hasUtr__error__required", "test name")
@@ -111,7 +110,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       val result = controller(getEmptyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad().url
+      redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad.url
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

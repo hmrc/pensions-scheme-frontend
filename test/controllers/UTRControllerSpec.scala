@@ -26,7 +26,8 @@ import models.requests.DataRequest
 import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -40,7 +41,7 @@ import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
+class UTRControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
 
   import UTRControllerSpec._
 

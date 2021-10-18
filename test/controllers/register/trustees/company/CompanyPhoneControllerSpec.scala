@@ -20,20 +20,19 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PhoneFormProvider
 import models.{Index, NormalMode}
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PhoneFormProvider()
   val form: Form[String] = formProvider()

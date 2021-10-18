@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterPAYEControllerSpec._
 
@@ -87,7 +87,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
   val firstIndex: Index = Index(0)
   val srn: Option[String] = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: PayeViewModel = PayeViewModel(
     routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),

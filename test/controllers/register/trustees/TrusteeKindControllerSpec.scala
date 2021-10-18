@@ -27,13 +27,12 @@ import play.api.libs.json.{JsString, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.trustees.trusteeKind
 
 class TrusteeKindControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new TrusteeKindFormProvider()
   val form: Form[TrusteeKind] = formProvider()
@@ -106,7 +105,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }

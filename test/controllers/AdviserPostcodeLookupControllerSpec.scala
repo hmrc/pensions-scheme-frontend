@@ -17,24 +17,22 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
+import connectors.{UserAnswersCacheConnector, AddressLookupConnector}
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.NormalMode
 import models.address.TolerantAddress
 import navigators.Navigator
-import org.mockito.Matchers
-import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
+import play.api.test.Helpers.{running, redirectLocation, OK, status, contentAsString, route, SEE_OTHER, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
@@ -113,7 +111,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       val validPostcode = "ZZ1 1ZZ"
 
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
+      when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(validPostcode))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(
           Seq(fakeAddress(testAnswer)))
         )

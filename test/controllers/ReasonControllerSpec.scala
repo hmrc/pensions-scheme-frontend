@@ -25,7 +25,8 @@ import models.NormalMode
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -39,7 +40,7 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures {
+class ReasonControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
 
   import ReasonControllerSpec._
 

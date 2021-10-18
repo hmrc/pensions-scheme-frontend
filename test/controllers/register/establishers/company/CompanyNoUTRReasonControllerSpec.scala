@@ -51,7 +51,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
     srn = srn
   )
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
 
   "CompanyNoUTRReasonController" when {
     "on a GET" must {

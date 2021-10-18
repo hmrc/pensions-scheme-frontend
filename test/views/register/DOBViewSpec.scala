@@ -18,12 +18,13 @@ package views.register
 
 import forms.DOBFormProvider
 import models.{Index, Mode, NormalMode, UpdateMode}
-import java.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.DOB
+
+import java.time.LocalDate
 
 class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
@@ -31,7 +32,7 @@ class DOBViewSpec extends QuestionViewBehaviours[LocalDate] {
 
   val index: Index = Index(1)
   val personName: String = "John Doe"
-  private val postCall = controllers.routes.IndexController.onPageLoad()
+  private val postCall = controllers.routes.IndexController.onPageLoad
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(

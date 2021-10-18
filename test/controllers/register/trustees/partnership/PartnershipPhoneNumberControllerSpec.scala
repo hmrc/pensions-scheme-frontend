@@ -20,8 +20,8 @@ import controllers.ControllerSpecBase
 import forms.PhoneFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -34,7 +34,7 @@ import views.html.phoneNumber
 
 class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new PhoneFormProvider()
   private val form: Form[String] = formProvider()

@@ -19,8 +19,8 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.register.establishers.company.routes.CompanyEmailController
 import models._
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers

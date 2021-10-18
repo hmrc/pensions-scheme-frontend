@@ -44,7 +44,7 @@ import views.html.address.manualAddress
 
 class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val view = injector.instanceOf[manualAddress]
 
   def countryOptions: CountryOptions = new CountryOptions(options)

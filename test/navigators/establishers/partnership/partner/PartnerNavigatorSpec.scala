@@ -27,14 +27,15 @@ import models.Mode.journeyMode
 import models._
 import models.person.PersonName
 import navigators.{Navigator, NavigatorBehaviour}
-import java.time.LocalDate
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+import java.time.LocalDate
+
+class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 
   import PartnerNavigatorSpec._
 
@@ -166,7 +167,7 @@ class PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeha
 }
 
 
-object PartnerNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val srn = Some("srn")
   private val johnDoe = PersonName("first", "last")

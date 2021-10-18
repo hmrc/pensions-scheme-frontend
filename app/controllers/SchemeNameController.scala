@@ -83,7 +83,7 @@ class SchemeNameController @Inject()(
             } recoverWith {
               case e: NotFoundException =>
                 logger.error(e.message)
-                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
           }
       )

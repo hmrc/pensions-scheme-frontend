@@ -23,9 +23,8 @@ import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.partnership.PartnershipHasVATId
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -121,7 +120,7 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
   private val srn = None
   private val index = Index(0)
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val viewModel = CommonFormWithHintViewModel(
     postCall = PartnershipHasVATController.onSubmit(NormalMode, index, srn),

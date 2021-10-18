@@ -54,7 +54,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
             case JsSuccess(value, _) =>
               cacheConnector.upsert(request.externalId, value.json)
                 .map(_ => Ok(view(email, racdacName)))
-            case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
           }
         }
       }

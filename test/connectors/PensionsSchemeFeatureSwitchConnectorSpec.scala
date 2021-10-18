@@ -17,12 +17,14 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.http.Status._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class PensionsSchemeFeatureSwitchConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+class PensionsSchemeFeatureSwitchConnectorSpec extends AsyncWordSpec with Matchers with WireMockHelper with OptionValues {
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 

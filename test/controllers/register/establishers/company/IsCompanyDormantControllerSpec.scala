@@ -28,13 +28,12 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.establishers.isDormant
 
 class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new IsDormantFormProvider()
   val form = formProvider()
@@ -111,14 +110,14 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
           val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
           val result = controller(dontGetAnyData).onSubmit(NormalMode, None, index)(postRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
       }
       "scheme details cannot be retrieved" when {
@@ -126,7 +125,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
           val result = controller(getEmptyData).onPageLoad(NormalMode, None, index)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
@@ -134,7 +133,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
           val result = controller(getEmptyData).onSubmit(NormalMode, None, index)(postRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
       }
     }

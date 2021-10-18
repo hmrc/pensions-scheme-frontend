@@ -18,7 +18,9 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import identifiers.TypedIdentifier
-import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
@@ -26,7 +28,7 @@ import play.api.mvc.Results._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
-trait CacheConnectorBehaviours extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
+trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMockHelper with OptionValues {
 
   protected object FakeIdentifier extends TypedIdentifier[String] {
     override def toString: String = "fake-identifier"

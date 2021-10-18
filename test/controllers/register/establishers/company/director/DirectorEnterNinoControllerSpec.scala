@@ -29,7 +29,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -38,7 +37,7 @@ import views.html.nino
 
 class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val companyName = "test company name"
   val formProvider = new NINOFormProvider()
@@ -110,14 +109,14 @@ class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
     "redirect to session expired from a GET when the director index is invalid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPreviousAnswer))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
@@ -147,27 +146,27 @@ class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a GET if no existing director details data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing director details data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("nino", "CS700100A"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }

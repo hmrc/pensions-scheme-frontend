@@ -28,9 +28,10 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
+import org.mockito.MockitoSugar
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
@@ -100,7 +101,7 @@ object ManualAddressControllerSpec {
 
 }
 
-class ManualAddressControllerSpec extends SpecBase with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
+class ManualAddressControllerSpec extends SpecBase with Matchers with MockitoSugar with ScalaFutures with OptionValues {
 
   import ManualAddressControllerSpec._
 

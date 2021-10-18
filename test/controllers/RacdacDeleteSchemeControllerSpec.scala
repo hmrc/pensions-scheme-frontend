@@ -20,10 +20,9 @@ import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import identifiers.racdac.RACDACNameId
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
@@ -112,7 +111,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
       val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -121,7 +120,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
       val result = controller(dontGetAnyData).onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }

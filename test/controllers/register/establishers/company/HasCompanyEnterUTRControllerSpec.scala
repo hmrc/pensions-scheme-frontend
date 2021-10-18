@@ -24,14 +24,13 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new HasUTRFormProvider()
   val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   val index = Index(0)

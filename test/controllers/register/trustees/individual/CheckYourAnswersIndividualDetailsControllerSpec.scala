@@ -16,8 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -29,10 +27,11 @@ import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import java.time.LocalDate
 
 class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
   import CheckYourAnswersIndividualDetailsControllerSpec._

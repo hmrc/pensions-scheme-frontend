@@ -22,18 +22,17 @@ import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
 import models.{Index, NormalMode, PartnershipDetails, ReferenceValue}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnershipEnterUTRControllerSpec._
 
@@ -79,7 +78,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   val srn = None
   val utrValue = "9999999999"
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),

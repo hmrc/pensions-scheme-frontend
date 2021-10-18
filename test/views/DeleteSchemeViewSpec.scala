@@ -45,7 +45,7 @@ class DeleteSchemeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like yesNoPageNoLegend(createViewUsingForm, messageKeyPrefix, controllers.routes.DeleteSchemeController.onSubmit().url)
+    behave like yesNoPageNoLegend(createViewUsingForm, messageKeyPrefix, controllers.routes.DeleteSchemeController.onSubmit.url)
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }

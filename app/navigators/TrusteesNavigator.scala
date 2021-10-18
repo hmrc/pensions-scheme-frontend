@@ -69,7 +69,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(false) =>
         NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(NormalMode, None))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -103,7 +103,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.dontSave(controllers.register.trustees.partnership.routes
           .PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 

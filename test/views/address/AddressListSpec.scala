@@ -33,7 +33,7 @@ class AddressListSpec extends ViewBehaviours {
 
   private val addresses = Seq(address("postcode 1"), address("postcode 2"))
   private val addressIndexes = Seq.range(0, 2)
-  private val call = controllers.routes.IndexController.onPageLoad()
+  private val call = controllers.routes.IndexController.onPageLoad
 
   private val viewModel = AddressListViewModel(
     postCall = call,

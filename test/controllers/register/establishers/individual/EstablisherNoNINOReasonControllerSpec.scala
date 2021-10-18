@@ -23,9 +23,8 @@ import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -44,7 +43,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
   private val formProvider = new ReasonFormProvider()
   private val form = formProvider("messages__reason__error_ninoRequired", name)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val postCall = controllers.register.establishers.individual.routes.EstablisherNoNINOReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,

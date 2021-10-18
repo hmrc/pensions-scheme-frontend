@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.UTRFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -30,7 +30,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class PartnerEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnerEnterUTRControllerSpec._
 
@@ -68,7 +68,7 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
   val firstIndex = Index(0)
   val srn = None
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn),

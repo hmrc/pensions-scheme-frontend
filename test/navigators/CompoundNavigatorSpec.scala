@@ -17,20 +17,21 @@
 package navigators
 
 import identifiers.Identifier
-import models.{Mode, NormalMode}
 import models.requests.{AuthenticatedRequest, IdentifiedRequest}
-import org.scalatest.{FreeSpec, MustMatchers}
+import models.{Mode, NormalMode}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.collection.JavaConverters._
 
-class CompoundNavigatorSpec extends FreeSpec with MustMatchers {
+class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 
   def navigator(call: Option[Call]): Navigator =
     new Navigator {

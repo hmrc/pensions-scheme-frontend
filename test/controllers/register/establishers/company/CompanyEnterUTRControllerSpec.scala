@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.UTRFormProvider
 import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
-class CompanyEnterUTRControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterUTRControllerSpec._
 
@@ -69,7 +69,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   private val view = injector.instanceOf[utr]
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
     routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),

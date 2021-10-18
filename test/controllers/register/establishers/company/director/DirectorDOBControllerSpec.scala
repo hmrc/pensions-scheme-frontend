@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.company.director
 
-import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.DateOfBirthControllerBehaviours
@@ -27,15 +25,16 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import models.person.PersonName
 import models.{CompanyDetails, Index, Mode, NormalMode}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
+
+import java.time.LocalDate
 
 //scalastyle:off magic.number
 
@@ -83,7 +82,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
 }
 
 object DirectorDOBControllerSpec extends MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider: DOBFormProvider = new DOBFormProvider()
   val form: Form[LocalDate] = formProvider()

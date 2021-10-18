@@ -21,13 +21,15 @@ import identifiers.register.establishers.{company => _, partnership => _}
 import identifiers.register.trustees.{company => _}
 import models._
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 
-class AllowChangeHelperSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class AllowChangeHelperSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   private val id = new TypedIdentifier[Boolean] {
     override def toString: String = "testId"

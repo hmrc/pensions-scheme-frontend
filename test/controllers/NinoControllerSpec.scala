@@ -53,7 +53,7 @@ class NinoControllerSpec extends ControllerSpecBase {
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new NINOFormProvider()
   val form = formProvider("Mark")

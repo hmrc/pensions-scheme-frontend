@@ -35,10 +35,12 @@ import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 
-class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits with DataCompletionHelper with JsonFileReader {
+class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits with DataCompletionHelper with JsonFileReader {
 
   import UserAnswersSpec._
 

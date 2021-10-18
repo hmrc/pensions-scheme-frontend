@@ -16,11 +16,12 @@
 
 package views.register
 
-import java.time.LocalDate
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.schemeSuccess
+
+import java.time.LocalDate
 
 class SchemeSuccessViewSpec extends ViewBehaviours {
 

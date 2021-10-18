@@ -25,7 +25,6 @@ import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
@@ -75,7 +74,7 @@ object CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
   val index = Index(0)
   val errorKey = "messages__reason__error_utrRequired"
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   val formProvider = new ReasonFormProvider()
   val form = formProvider("messages__reason__error_utrRequired", companyName)
 

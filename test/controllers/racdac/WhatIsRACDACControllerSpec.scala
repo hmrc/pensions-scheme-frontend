@@ -19,10 +19,9 @@ package controllers.racdac
 import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import views.html.racdac.whatIsRACDAC
@@ -31,7 +30,7 @@ import scala.concurrent.Future
 
 class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
   private val psaName = "Psa Name"
   private val view = injector.instanceOf[whatIsRACDAC]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatIsRACDACController =

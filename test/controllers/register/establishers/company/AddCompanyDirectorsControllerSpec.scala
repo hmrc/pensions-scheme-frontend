@@ -29,13 +29,12 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form         = formProvider()
@@ -138,7 +137,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, 0)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to the next page when no directors exist and the user submits" in {
@@ -184,7 +183,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val result      = controller(dontGetAnyData).onSubmit(NormalMode, None, 0)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 

@@ -26,10 +26,11 @@ import identifiers.register.trustees.individual.TrusteeAddressId
 import models._
 import models.address.Address
 import models.requests.DataRequest
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{AsyncWordSpec, BeforeAndAfter, MustMatchers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfter
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
@@ -38,7 +39,7 @@ import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
-class UserAnswersServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfter {
+class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfter {
 
   import UserAnswersServiceSpec._
 

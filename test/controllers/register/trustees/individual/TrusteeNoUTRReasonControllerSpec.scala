@@ -23,9 +23,8 @@ import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -43,7 +42,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
   private val formProvider = new ReasonFormProvider()
   private val form = formProvider("messages__reason__error_utrRequired", "Test Name")
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
   private val viewModel = ReasonViewModel(
     postCall = postCall,

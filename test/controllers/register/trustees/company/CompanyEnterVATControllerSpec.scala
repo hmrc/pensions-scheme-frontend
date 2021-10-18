@@ -21,7 +21,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -32,7 +32,7 @@ import utils.FakeNavigator
 import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
-class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterVATControllerSpec._
 
@@ -78,7 +78,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
   val form = new EnterVATFormProvider()("test company")
   val firstIndex: Index = Index(0)
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: EnterVATViewModel = EnterVATViewModel(
     routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None),

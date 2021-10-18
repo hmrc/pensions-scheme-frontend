@@ -53,7 +53,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     view(
       CYAViewModel(
         answerSections = emptyAnswerSections,
-        href = routes.IndexController.onPageLoad(),
+        href = routes.IndexController.onPageLoad,
         schemeName = None,
         returnOverview = returnOverview,
         hideEditLinks = hideEditLinks,
@@ -68,7 +68,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     view(
       CYAViewModel(
         answerSections = sections,
-        href = routes.IndexController.onPageLoad(),
+        href = routes.IndexController.onPageLoad,
         schemeName = None,
         returnOverview = false,
         hideEditLinks = viewOnly,
@@ -88,7 +88,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
     behave like pageWithoutReturnChangeLink(createView(hideEditLinks = true, hideSaveAndContinueButton = true))
 
-    behave like pageWithReturnLink(createView(hideSaveAndContinueButton = false), controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
+    behave like pageWithReturnLink(createView(hideSaveAndContinueButton = false),
+      controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url)
 
     behave like pageWithReturnLink(createView(returnOverview = true, hideSaveAndContinueButton = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 

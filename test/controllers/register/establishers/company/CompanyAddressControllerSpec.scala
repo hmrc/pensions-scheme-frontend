@@ -31,7 +31,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -39,7 +38,7 @@ import views.html.address.manualAddress
 
 class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
@@ -143,14 +142,14 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
           val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody()
           val result = controller(dontGetAnyData).onSubmit(NormalMode, None, firstIndex)(postRequest)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
       }
     }

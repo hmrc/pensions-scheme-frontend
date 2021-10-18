@@ -61,7 +61,7 @@ class VariationDeclarationController @Inject()(
   def onPageLoad(srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))) {
+        srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) {
           actualSrn =>
             updateSchemeCacheConnector.fetch(actualSrn).map {
               case Some(_) =>
@@ -100,10 +100,10 @@ class VariationDeclarationController @Inject()(
             } recoverWith {
               case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
                 Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(UpdateMode, srn)))
-              case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+              case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
           case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
         }
     }
 

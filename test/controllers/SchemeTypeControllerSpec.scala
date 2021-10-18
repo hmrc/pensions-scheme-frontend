@@ -32,7 +32,7 @@ import views.html.schemeType
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTypeControllerSpec extends ControllerSpecBase {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val view = injector.instanceOf[schemeType]
 
   val formProvider = new SchemeTypeFormProvider()

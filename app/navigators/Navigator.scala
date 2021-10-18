@@ -42,7 +42,7 @@ trait Navigator {
 
   private def defaultPage(id: Identifier, mode: Mode): Call = {
     logger.warn(s"No navigation defined for id $id in mode $mode")
-    controllers.routes.IndexController.onPageLoad()
+    controllers.routes.IndexController.onPageLoad
   }
 
   def nextPageOptional(id: Identifier,
@@ -101,7 +101,7 @@ abstract class AbstractNavigator
                                            (implicit reads: Reads[A]): Option[NavigateTo] =
     NavigateTo
       .dontSave(
-        answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad())(destination(_))
+        answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad)(destination(_))
       )
 
   protected def dataCacheConnector: UserAnswersCacheConnector
@@ -123,7 +123,7 @@ abstract class AbstractNavigator
     answers.get(id) match {
       case Some(true) => truePath
       case Some(false) => falsePath
-      case _ => controllers.routes.SessionExpiredController.onPageLoad()
+      case _ => controllers.routes.SessionExpiredController.onPageLoad
     }
   }
 

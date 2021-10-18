@@ -23,9 +23,8 @@ import controllers.actions._
 import forms.racdac.RACDACNameFormProvider
 import identifiers.racdac.RACDACNameId
 import models.NormalMode
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -35,7 +34,7 @@ import views.html.racdac.racDACName
 import scala.concurrent.Future
 
 class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val psaName = "Mr Maxwell"
   val formProvider = new RACDACNameFormProvider()
   val form: Form[String] = formProvider()

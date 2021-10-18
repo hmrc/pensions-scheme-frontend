@@ -23,11 +23,9 @@ import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
 import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, times, verify}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentCaptor, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -112,7 +110,7 @@ class AdviserAddressListControllerSpec
           val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onPageLoad(NormalMode)(request)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 
@@ -166,7 +164,7 @@ class AdviserAddressListControllerSpec
           val controller = app.injector.instanceOf[AdviserAddressListController]
           val result = controller.onSubmit(NormalMode)(fakeRequest)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 

@@ -17,9 +17,10 @@
 package models
 
 import models.address.Address
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 
-class AddressSpec extends WordSpec with MustMatchers {
+class AddressSpec extends AnyWordSpec with Matchers {
 
   ".print" must {
 

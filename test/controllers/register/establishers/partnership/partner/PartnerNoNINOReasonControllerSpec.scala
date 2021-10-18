@@ -25,14 +25,13 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val schemeName = None
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val formProvider = new ReasonFormProvider()
   private val name = "first last"
   private val form = formProvider("messages__reason__error_ninoRequired", name)

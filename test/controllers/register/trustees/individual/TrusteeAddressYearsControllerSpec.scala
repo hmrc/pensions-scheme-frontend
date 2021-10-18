@@ -26,7 +26,6 @@ import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -60,7 +59,7 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(mode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -97,7 +96,7 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(mode, index, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
   }
@@ -116,7 +115,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trustee.fullName))
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val view = injector.instanceOf[addressYears]

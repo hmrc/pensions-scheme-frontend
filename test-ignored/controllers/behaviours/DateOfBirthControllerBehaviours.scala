@@ -22,8 +22,7 @@ import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
 import java.time.LocalDate
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -43,7 +42,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   with CSRFRequest {
 
   val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   val formProvider: DOBFormProvider = new DOBFormProvider
   val form: Form[LocalDate] = formProvider()
   val day: Int = LocalDate.now().getDayOfMonth
@@ -106,7 +105,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
 
       "redirect to Session Expired for a POST if no existing data is found" in {
@@ -114,7 +113,7 @@ trait DateOfBirthControllerBehaviours extends ControllerSpecBase
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
   }

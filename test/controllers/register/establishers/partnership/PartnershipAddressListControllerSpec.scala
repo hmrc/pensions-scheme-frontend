@@ -101,7 +101,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 
@@ -129,7 +129,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 

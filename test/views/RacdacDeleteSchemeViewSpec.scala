@@ -45,7 +45,7 @@ class RacdacDeleteSchemeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like yesNoPageNoLegend(createViewUsingForm, messageKeyPrefix, controllers.routes.RacdacDeleteSchemeController.onSubmit().url)
+    behave like yesNoPageNoLegend(createViewUsingForm, messageKeyPrefix, controllers.routes.RacdacDeleteSchemeController.onSubmit.url)
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }

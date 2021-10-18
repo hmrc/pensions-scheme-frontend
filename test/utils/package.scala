@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import java.time.LocalDate
-
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers._
 import identifiers.register._
@@ -32,6 +30,8 @@ import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
+
+import java.time.LocalDate
 
 //scalastyle:off number.of.methods
 package object utils {

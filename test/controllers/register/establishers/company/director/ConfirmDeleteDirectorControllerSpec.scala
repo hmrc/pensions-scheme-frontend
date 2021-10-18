@@ -30,7 +30,6 @@ import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
@@ -104,14 +103,14 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val result = controller(dontGetAnyData).onSubmit(establisherIndex, directorIndex, NormalMode, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 
@@ -146,7 +145,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   val directorDeleted: PersonName = directorDetails.copy(isDeleted = true)
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new ConfirmDeleteDirectorFormProvider()
   private val form         = formProvider.apply(directorName)

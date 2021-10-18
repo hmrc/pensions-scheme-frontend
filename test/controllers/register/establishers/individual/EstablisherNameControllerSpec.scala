@@ -23,9 +23,8 @@ import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -39,7 +38,7 @@ import views.html.personName
 import scala.concurrent.Future
 
 class EstablisherNameControllerSpec extends ControllerSpecBase {
-  
+
   import EstablisherNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
@@ -148,7 +147,7 @@ object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSuga
 
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 }
 
 

@@ -22,20 +22,19 @@ import forms.EmailFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
+import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers, _}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new EmailFormProvider()
   private val form: Form[String] = formProvider()

@@ -21,12 +21,13 @@ import connectors._
 import identifiers.racdac.RACDACNameId
 import models._
 import models.requests.OptionalDataRequest
-import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterEach, AsyncWordSpec, MustMatchers}
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsObject, JsNumber, Json}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
+import play.api.libs.json.{JsNumber, JsObject, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
@@ -40,7 +41,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class UrlsPartialServiceSpec extends AsyncWordSpec with MustMatchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
+class UrlsPartialServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
   import UrlsPartialServiceSpec._
 

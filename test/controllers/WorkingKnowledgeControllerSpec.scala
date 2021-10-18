@@ -30,7 +30,7 @@ import views.html.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
   private val scheme = "A scheme"
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new WorkingKnowledgeFormProvider()
   val form: Form[Boolean] = formProvider()

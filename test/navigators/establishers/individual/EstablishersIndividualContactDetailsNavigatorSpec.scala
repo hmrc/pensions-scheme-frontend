@@ -25,13 +25,13 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherPhoneId}
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 
   import EstablishersIndividualContactDetailsNavigatorSpec._
 
@@ -86,7 +86,7 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Mu
 
 }
 
-object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val srn = Some("srn")

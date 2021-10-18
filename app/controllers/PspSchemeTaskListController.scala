@@ -39,7 +39,7 @@ class PspSchemeTaskListController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+  private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
   def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)) {
     implicit request =>

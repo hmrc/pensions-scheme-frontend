@@ -47,7 +47,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(_) =>
         NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(NormalMode))
       case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 
@@ -71,7 +71,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(_) =>
         NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode))
       case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 

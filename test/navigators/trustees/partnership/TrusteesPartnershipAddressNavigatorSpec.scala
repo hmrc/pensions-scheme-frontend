@@ -25,12 +25,12 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
 
   import TrusteesPartnershipAddressNavigatorSpec._
 
@@ -115,7 +115,7 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers
 
 }
 
-object TrusteesPartnershipAddressNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object TrusteesPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val srn = Some("srn")
   private val newTrusteeUserAnswers: UserAnswers = UserAnswers().set(IsTrusteeNewId(index))(value = true).asOpt.value

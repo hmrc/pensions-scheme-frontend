@@ -39,7 +39,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
 
   private val trusteeDetails = PersonName("Test", "Name")
   private val view = injector.instanceOf[addressList]
-  private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad
   private lazy val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private val addresses = Seq(
@@ -121,7 +121,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
 
     }
@@ -156,7 +156,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         val result = controller.onSubmit(NormalMode, Index(0), None)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
 
     }

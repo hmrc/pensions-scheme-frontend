@@ -22,7 +22,7 @@ import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
 import models.{CheckMode, Link, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
@@ -51,7 +51,7 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
       val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 }
@@ -127,7 +127,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   private val view = injector.instanceOf[checkYourAnswers]
   val viewAsString: String = view(vm)(fakeRequest, messages).toString
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  psaName: JsValue = psaName

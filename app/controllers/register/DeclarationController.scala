@@ -103,7 +103,7 @@ class DeclarationController @Inject()(
                       (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
-    val href = DeclarationController.onClickAgree()
+    val href = DeclarationController.onClickAgree
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head
     else DeclarationDormant.values(1)
@@ -127,7 +127,7 @@ class DeclarationController @Inject()(
             )
           )
         )
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }
     }
   }
@@ -169,7 +169,7 @@ class DeclarationController @Inject()(
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
           Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
         case _ =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }
   }
 

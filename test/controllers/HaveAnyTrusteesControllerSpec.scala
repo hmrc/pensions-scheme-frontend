@@ -47,7 +47,7 @@ import views.html.haveAnyTrustees
 
 class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val scheme = "Test Scheme Name"
   private val formProvider = new HaveAnyTrusteesFormProvider()

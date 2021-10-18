@@ -104,7 +104,7 @@ object TrusteesPartnershipAddressNavigator {
       case Some(AddressYears.OverAYear) =>
         CheckYourAnswersPartnershipAddressController.onPageLoad(journeyMode(mode), index, srn)
       case Some(AddressYears.UnderAYear) => hasBeenTrading(mode, index, srn)
-      case _ => SessionExpiredController.onPageLoad()
+      case _ => SessionExpiredController.onPageLoad
     }
 
   private def hasBeenTrading(mode: Mode, index: Index, srn: Option[String]): Call =

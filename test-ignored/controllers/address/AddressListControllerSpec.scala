@@ -27,7 +27,8 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.scalatest.{Matchers, OptionValues, WordSpec}
+import org.scalatest.{Matchers, OptionValues}
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -44,7 +45,7 @@ import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressListControllerSpec extends WordSpec with Matchers with OptionValues {
+class AddressListControllerSpec extends AnyWordSpec with ArgumentMatchers with OptionValues {
 
   import AddressListControllerSpec._
 
@@ -218,13 +219,13 @@ object AddressListControllerSpec {
   object FakeAddressIdentifier extends TypedIdentifier[Address]
   object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
 
-  val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  val onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val fakeSeqTolerantAddressId: TypedIdentifier[Seq[TolerantAddress]] = new TypedIdentifier[Seq[TolerantAddress]] {
     override def toString = "abc"
   }
-  private lazy val postCall = controllers.routes.IndexController.onPageLoad()
-  private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad()
+  private lazy val postCall = controllers.routes.IndexController.onPageLoad
+  private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad
 
   private val addresses = Seq(
     TolerantAddress(

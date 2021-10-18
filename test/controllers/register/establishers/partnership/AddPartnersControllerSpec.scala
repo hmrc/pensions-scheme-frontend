@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
@@ -38,7 +37,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   appRunning()
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddPartnersFormProvider()
   private val form = formProvider()
@@ -178,7 +177,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -186,7 +185,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
   }
 

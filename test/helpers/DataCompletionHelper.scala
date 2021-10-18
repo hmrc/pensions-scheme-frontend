@@ -16,8 +16,6 @@
 
 package helpers
 
-import java.time.LocalDate
-
 import identifiers.register.trustees.individual._
 import models._
 import models.address.Address
@@ -28,6 +26,8 @@ import models.register.trustees.TrusteeKind
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
 import utils.UserAnswers
+
+import java.time.LocalDate
 
 trait DataCompletionHelper extends OptionValues {
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")

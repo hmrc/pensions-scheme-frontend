@@ -32,7 +32,7 @@ import views.html.emailAddress
 
 class PartnershipEmailControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new EmailFormProvider()
   val form: Form[String] = formProvider()

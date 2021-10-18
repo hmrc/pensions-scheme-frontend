@@ -25,8 +25,9 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
-import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
@@ -34,7 +35,7 @@ import utils.{Enumerable, UserAnswers}
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
 
-class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
 
   import EstablishersCompanyNavigatorSpec._
 
@@ -256,7 +257,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
 
-  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
 
   private def whatIsPAYE(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)

@@ -494,16 +494,16 @@ object PsaTaskListViewSpec extends ViewSpecBase {
   private def aboutSection: SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None, Seq(
       EntitySpoke(TaskListLink(aboutMembersLinkText,
-        controllers.routes.WhatYouWillNeedMembersController.onPageLoad().url), Some(false)),
+        controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
       EntitySpoke(TaskListLink(aboutBenefitsAndInsuranceLinkText,
-        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad().url), Some(true)),
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(true)),
       EntitySpoke(TaskListLink(aboutBankDetailsLinkText,
-        controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad().url), Some(true))), Some("about header"))
+        controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), Some(true))), Some("about header"))
   }
 
   private def wkSection(isCompleted: Option[Boolean] = Some(false)): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None, Seq(EntitySpoke(TaskListLink(workingKnowledgeLinkText,
-      controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad().url), isCompleted)), None)
+      controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), isCompleted)), None)
   }
 
   private def addEstablisherHeader(): SchemeDetailsTaskListEntitySection = {

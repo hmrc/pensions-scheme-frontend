@@ -19,15 +19,16 @@ package utils
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import identifiers.{LastPageId, TypedIdentifier}
 import models.requests.IdentifiedRequest
-import models.{CheckMode, CheckUpdateMode, LastPage, NormalMode, UpdateMode}
+import models._
 import navigators.AbstractNavigator
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class NavigatorSpec extends WordSpec with MustMatchers {
+class NavigatorSpec extends AnyWordSpec with Matchers {
 
   import NavigatorSpec._
 
@@ -43,7 +44,7 @@ class NavigatorSpec extends WordSpec with MustMatchers {
       "go to Index from an identifier that doesn't exist in the route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, NormalMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -57,7 +58,7 @@ class NavigatorSpec extends WordSpec with MustMatchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, CheckMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -71,7 +72,7 @@ class NavigatorSpec extends WordSpec with MustMatchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, UpdateMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 
@@ -85,7 +86,7 @@ class NavigatorSpec extends WordSpec with MustMatchers {
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
         val result = fixture.navigator.nextPage(testNotExistId, CheckUpdateMode, UserAnswers())
-        result mustBe controllers.routes.IndexController.onPageLoad()
+        result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
 

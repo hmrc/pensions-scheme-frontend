@@ -18,11 +18,13 @@ package identifiers
 
 import models.BankAccountDetails
 import models.register.SortCode
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class UKBankAccountIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class UKBankAccountIdSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 

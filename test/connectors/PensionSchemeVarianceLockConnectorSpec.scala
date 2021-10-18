@@ -18,13 +18,14 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{PsaLock, SchemeVariance, VarianceLock}
-import org.scalatest.{AsyncFlatSpec, Matchers}
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
-import utils.WireMockHelper
+import utils.{Enumerable, WireMockHelper}
 
-class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
+class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers with Enumerable.Implicits with WireMockHelper {
 
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 
@@ -40,7 +41,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.toJson(VarianceLock).toString())
+            .withBody(JsString("SuccessfulVarianceLock").toString())
         )
     )
 
@@ -182,7 +183,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.toJson(VarianceLock).toString())
+            .withBody(JsString("SuccessfulVarianceLock").toString())
         )
     )
 
@@ -204,7 +205,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
           aResponse()
             .withStatus(Status.OK)
             .withHeader("Content-Type", "application/json")
-            .withBody(Json.toJson(PsaLock).toString())
+            .withBody(JsString("PsaHasLockedAnotherScheme").toString())
         )
     )
 

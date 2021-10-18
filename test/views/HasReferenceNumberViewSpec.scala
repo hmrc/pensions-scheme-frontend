@@ -17,7 +17,6 @@
 package views
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -26,6 +25,8 @@ import play.twirl.api.HtmlFormat
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.YesNoViewBehaviours
 import views.html.hasReferenceNumber
+
+import javax.inject.Inject
 
 class HasReferenceNumberViewSpec extends YesNoViewBehaviours {
   val schemeName = Some("Scheme x")

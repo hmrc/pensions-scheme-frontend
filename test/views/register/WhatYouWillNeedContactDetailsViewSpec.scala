@@ -27,7 +27,7 @@ class WhatYouWillNeedContactDetailsViewSpec extends ViewBehaviours {
   private val entityName = "Test Entity"
   private val heading = Message("messages__contactDetailsFor", entityName)
   private val title = Message("messages__contactDetailsFor", Message("messages__theIndividual").resolve.capitalize)
-  private val href = controllers.routes.IndexController.onPageLoad()
+  private val href = controllers.routes.IndexController.onPageLoad
   val view: whatYouWillNeedContactDetails = app.injector.instanceOf[whatYouWillNeedContactDetails]
   private def createView(): HtmlFormat.Appendable =
     view(Some("testScheme"), href, None, entityName, Message("messages__theIndividual"))(fakeRequest, messages)

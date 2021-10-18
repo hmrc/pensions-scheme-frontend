@@ -28,9 +28,9 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousA
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
+import org.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -109,7 +109,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves address" in {
 
-        val onwardCall = controllers.routes.IndexController.onPageLoad()
+        val onwardCall = controllers.routes.IndexController.onPageLoad
 
         val address = Address(
           addressLine1 = "value 1",

@@ -26,7 +26,6 @@ import models._
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers

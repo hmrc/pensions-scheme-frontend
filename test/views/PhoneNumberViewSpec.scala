@@ -20,7 +20,7 @@ import forms.PhoneFormProvider
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
-import viewmodels.{Message, CommonFormWithHintViewModel}
+import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.behaviours.QuestionViewBehaviours
 import views.html.phoneNumber
 

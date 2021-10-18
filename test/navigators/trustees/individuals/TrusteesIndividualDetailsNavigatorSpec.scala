@@ -24,13 +24,14 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import java.time.LocalDate
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+import java.time.LocalDate
+
+class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   import TrusteesIndividualDetailsNavigatorSpec._
 
   val navigator: Navigator = injector.instanceOf[TrusteesIndividualDetailsNavigator]
@@ -115,7 +116,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers 
 
 }
 
-object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour with Generators {
+object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val someDate =  LocalDate.now()
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value

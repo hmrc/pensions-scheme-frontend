@@ -45,7 +45,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
 
   import InsurerEnterPostCodeControllerSpec._
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
   private val view = injector.instanceOf[postcodeLookup]
 
   "InsurerEnterPostCodeController Controller" must {
@@ -103,7 +103,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
 
 object InsurerEnterPostCodeControllerSpec extends OptionValues {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()

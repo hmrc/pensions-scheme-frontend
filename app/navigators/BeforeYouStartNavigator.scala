@@ -44,7 +44,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
       case Some(_) =>
         NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -64,7 +64,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
       case Some(_) =>
         NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(CheckMode))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 

@@ -22,10 +22,9 @@ import controllers.routes
 import identifiers.AdministratorOrPractitionerId
 import models.AuthEntity.{PSA, PSP}
 import models.{AdministratorOrPractitioner, AuthEntity}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.Helpers._
@@ -72,7 +71,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
@@ -105,7 +104,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
@@ -116,7 +115,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
@@ -127,7 +126,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
@@ -138,7 +137,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
@@ -149,7 +148,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         val controller = new Harness(authAction, authEntity = None)
         val result = controller.onPageLoad()(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 

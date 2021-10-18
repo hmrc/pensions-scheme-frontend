@@ -24,15 +24,13 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import models.person.PersonName
 import models.{Index, NormalMode, PartnershipDetails}
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.{eq => eqTo, _}
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.UserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -179,14 +177,14 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "save the isNewPartner flag when the new partner is being added" in {
@@ -209,7 +207,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 }
 
 object PartnerNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__partner")

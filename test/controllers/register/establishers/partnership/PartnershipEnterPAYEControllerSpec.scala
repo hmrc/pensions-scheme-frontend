@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.PayeFormProvider
 import models.{CheckUpdateMode, Index}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -30,7 +30,7 @@ import utils.FakeNavigator
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
-class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with MustMatchers {
+class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
 
   import PartnershipEnterPAYEControllerSpec._
 
@@ -70,7 +70,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
     routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),

@@ -16,11 +16,12 @@
 
 package views.behaviours
 
-import java.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
+
+import java.time.LocalDate
 
 trait ViewBehaviours extends ViewSpecBase {
 

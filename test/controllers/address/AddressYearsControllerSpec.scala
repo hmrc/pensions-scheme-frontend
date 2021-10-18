@@ -25,11 +25,11 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{AddressYears, NormalMode}
 import navigators.Navigator
-import org.mockito.Matchers.{eq => eqTo, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq => eqTo, _}
+import org.mockito.MockitoSugar
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{MustMatchers, OptionValues}
-import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -70,7 +70,7 @@ object AddressYearsControllerSpec {
 
 }
 
-class AddressYearsControllerSpec extends SpecBase with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {
+class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import AddressYearsControllerSpec._
 

@@ -133,7 +133,7 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
         implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
 
         whenReady(testIdentifier.retrieve.left.value) {
-          _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+          _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad)
         }
       }
 
@@ -143,7 +143,7 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
         val result = controller.retrieve(testIdentifier)(success)
 
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
     }
 

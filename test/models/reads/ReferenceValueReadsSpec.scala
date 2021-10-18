@@ -17,10 +17,12 @@
 package models.reads
 
 import models.ReferenceValue
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 
-class ReferenceValueReadsSpec extends WordSpec with MustMatchers with OptionValues {
+class ReferenceValueReadsSpec extends AnyWordSpec with Matchers with OptionValues {
   "ReferenceValue json" should {
 
     "map correctly to Reference" when {

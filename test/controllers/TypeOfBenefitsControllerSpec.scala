@@ -22,7 +22,7 @@ import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
 import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}

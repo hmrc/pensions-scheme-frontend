@@ -33,7 +33,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case ContinueRegistrationId =>
         continueRegistration(from.userAnswers)
       case DeclarationDormantId =>
-        NavigateTo.dontSave(controllers.register.routes.DeclarationController.onPageLoad())
+        NavigateTo.dontSave(controllers.register.routes.DeclarationController.onPageLoad)
       case DeclarationId =>
         NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
       case _ => None

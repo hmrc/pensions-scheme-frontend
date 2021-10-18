@@ -189,7 +189,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(AddressYears.OverAYear) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index))
       case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -218,7 +218,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case (Some(AddressYears.OverAYear), _) =>
         exitMiniJourney(index, mode, srn, answers, cyaAddressDetails)
       case _ =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -239,7 +239,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                 AnyMoreChangesController.onPageLoad(srn)
               }
             }
-          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad())
+          }.getOrElse(controllers.routes.SessionExpiredController.onPageLoad)
         } else {
           establisherCompanyRoutes.OtherDirectorsController.onPageLoad(mode, srn, index)
         }
@@ -266,7 +266,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(true) =>
         anyMoreChanges(srn)
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -277,7 +277,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(false) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoCRNReasonController.onPageLoad(mode, srn, index))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -288,7 +288,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(false) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyNoUTRReasonController.onPageLoad(mode, srn, index))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -301,7 +301,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(false) =>
         cyaCompanyDetails(index, journeyMode(mode), srn)
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
@@ -316,7 +316,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case (Some(false), CheckMode | CheckUpdateMode) =>
         exitMiniJourney(index, mode, srn, answers, cyaCompanyDetails)
       case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 
@@ -327,7 +327,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case Some(false) =>
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), srn, index))
       case None =>
-        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 

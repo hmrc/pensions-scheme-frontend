@@ -35,7 +35,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   appRunning()
   private val schemeName = None
   private val dummyUtr = "1111111111"
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
   private val formProvider = new UTRFormProvider()

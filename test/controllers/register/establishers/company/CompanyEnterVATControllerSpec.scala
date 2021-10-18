@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
 import models.{CheckUpdateMode, Index, NormalMode}
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
-class CompanyEnterVATControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterVATControllerSpec._
 
@@ -67,7 +67,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
   val firstIndex = Index(0)
   val srn = Some("S123")
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val view = injector.instanceOf[enterVATView]
 

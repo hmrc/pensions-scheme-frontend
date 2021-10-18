@@ -29,11 +29,12 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
@@ -78,7 +79,7 @@ object ManualAddressControllerSpec {
     fakeAddressListId.toString -> tolerantAddress)
   val preSavedAddress = new FakeDataRetrievalAction(Some(answers))
   private val srn = Some("123")
-  private lazy val manualCall = controllers.routes.SessionExpiredController.onPageLoad()
+  private lazy val manualCall = controllers.routes.SessionExpiredController.onPageLoad
 
   private val psaId = PsaId("A0000000")
 
@@ -103,7 +104,7 @@ object ManualAddressControllerSpec {
 
 }
 
-class ManualAddressControllerSpec extends WordSpec with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
+class ManualAddressControllerSpec extends AnyWordSpec with ArgumentMatchers with MockitoSugar with ScalaFutures with OptionValues {
 
   import ManualAddressControllerSpec._
 

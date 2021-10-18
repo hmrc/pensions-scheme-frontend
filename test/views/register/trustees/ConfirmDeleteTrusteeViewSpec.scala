@@ -17,8 +17,8 @@
 package views.register.trustees
 
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
-import models.{NormalMode, UpdateMode}
 import models.register.trustees.TrusteeKind.Company
+import models.{NormalMode, UpdateMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase

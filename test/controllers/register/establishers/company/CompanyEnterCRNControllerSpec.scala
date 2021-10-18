@@ -21,18 +21,18 @@ import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyEnterCRNId
 import models._
 import navigators.Navigator
-import org.scalatest.MustMatchers
+import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, _}
 import utils.annotations.EstablishersCompany
+import utils.{FakeNavigator, _}
 import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
 
-class CompanyEnterCRNControllerSpec extends ControllerSpecBase with MustMatchers {
+class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
 
   import CompanyEnterCRNControllerSpec._
 
@@ -110,5 +110,5 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
 
   private val postCall = routes.CompanyEnterCRNController.onSubmit _
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 }

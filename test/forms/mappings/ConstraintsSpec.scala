@@ -18,11 +18,11 @@ package forms.mappings
 
 
 
-import java.time.LocalDate
-
 import org.scalatestplus.play.PlaySpec
 import play.api.data.validation.{Invalid, Valid}
 import utils.{CountryOptions, InputOption}
+
+import java.time.LocalDate
 
 // scalastyle:off magic.number
 

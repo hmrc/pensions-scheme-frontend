@@ -39,7 +39,7 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
             NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))
           else
             NavigateTo.dontSave(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn))
-        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
       }
       case _ => None
     }

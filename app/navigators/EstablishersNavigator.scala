@@ -80,7 +80,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
         NavigateTo.dontSave(controllers.register.establishers.partnership.routes
           .PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 

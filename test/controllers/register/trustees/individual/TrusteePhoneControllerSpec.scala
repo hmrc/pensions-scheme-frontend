@@ -26,14 +26,13 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new PhoneFormProvider()
   val form: Form[String] = formProvider()

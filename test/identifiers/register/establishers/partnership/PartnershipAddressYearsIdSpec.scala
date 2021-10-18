@@ -22,7 +22,8 @@ import models.AddressYears.UnderAYear
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.{ OptionValues}
+import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -31,7 +32,7 @@ import utils.checkyouranswers.Ops._
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
-class PartnershipAddressYearsIdSpec extends SpecBase with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnershipAddressYearsIdSpec extends SpecBase with Matchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 

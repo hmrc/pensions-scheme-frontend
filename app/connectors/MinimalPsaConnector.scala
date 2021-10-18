@@ -101,5 +101,6 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
 
 }
 
+
 class DelimitedAdminException extends
   Exception("The administrator has already de-registered. The minimal details API has returned a DELIMITED PSA response")

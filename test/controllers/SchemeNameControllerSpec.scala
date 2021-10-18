@@ -22,21 +22,19 @@ import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import models.NormalMode
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
   private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
   val formProvider = new SchemeNameFormProvider()

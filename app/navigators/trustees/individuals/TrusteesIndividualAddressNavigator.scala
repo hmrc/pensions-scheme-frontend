@@ -122,7 +122,7 @@ object TrusteesIndividualAddressNavigator {
       case Some(AddressYears.UnderAYear) =>
         previousAddressLookup(mode, index, srn)
       case _ =>
-        SessionExpiredController.onPageLoad()
+        SessionExpiredController.onPageLoad
     }
 
   private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =

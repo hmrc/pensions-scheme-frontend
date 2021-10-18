@@ -30,7 +30,7 @@ object FakeUnAuthorisedAction extends AuthAction {
   def apply(authEntity: Option[AuthEntity] = Some(PSA)): Auth = {
     new Auth {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
-        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
 
       val parser: BodyParser[AnyContent] = controllerComponents.parsers.defaultBodyParser
 

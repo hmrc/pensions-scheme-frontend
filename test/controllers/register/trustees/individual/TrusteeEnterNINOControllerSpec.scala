@@ -28,7 +28,6 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -76,21 +75,21 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   "redirect to Session Expired for a GET if no existing data is found" in {
     val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 
   "redirect to Session Expired for a POST if no existing data is found" in {
     val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "CS700100A"))
     val result      = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 
   "redirect to Session Expired page when the index is not valid" in {
     val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
     val result          = controller(getRelevantData).onPageLoad(NormalMode, Index(2), None)(fakeRequest)
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 }
 
@@ -115,7 +114,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
     SchemeNameId.toString -> schemeName
   )
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val view = injector.instanceOf[nino]
 
