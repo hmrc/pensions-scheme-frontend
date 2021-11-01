@@ -123,7 +123,7 @@ class VariationDeclarationControllerSpec
         .thenReturn(Future.successful(Ok))
       when(lockConnector.releaseLock(any(), any())(any(), any()))
         .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
+      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(UserAnswers(Json.obj())))
 
       val app = applicationBuilder(
@@ -156,7 +156,7 @@ class VariationDeclarationControllerSpec
         .thenReturn(Future.successful(Ok))
       when(lockConnector.releaseLock(any(), any())(any(), any()))
         .thenReturn(Future.successful((): Unit))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any())(any(), any()))
+      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(UserAnswers(Json.obj("benefits" -> "opt2"))))
 
       val app = applicationBuilder(
