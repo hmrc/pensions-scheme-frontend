@@ -30,10 +30,10 @@ import scala.util.Failure
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
-  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)
+  def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean] = None)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 
-  def getPspSchemeDetails(pspId: String, srn: String)
+  def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean] = None)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
@@ -44,11 +44,14 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 
   private val logger  = Logger(classOf[SchemeDetailsConnectorImpl])
 
-  override def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String)
+  override def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean])
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
     val url = config.schemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType, "idNumber" -> idNumber, "PSAId" -> psaId)
+    val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType,
+      "idNumber" -> idNumber,
+      "PSAId" -> psaId,
+      "refreshData" -> refreshData.map(_.toString).getOrElse("false"))
 
     http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
       response.status match {
@@ -62,11 +65,13 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     }
   }
 
-  override def getPspSchemeDetails(pspId: String, srn: String)
+  override def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean])
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
     val url = config.pspSchemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("srn" -> srn, "pspId" -> pspId)
+    val schemeHc = hc.withExtraHeaders("srn" -> srn,
+    "pspId" -> pspId,
+    "refreshData" -> refreshData.map(_.toString).getOrElse("false"))
 
     http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
       response.status match {

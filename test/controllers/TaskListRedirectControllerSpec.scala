@@ -42,7 +42,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PSASchemeTaskList Controller" must {
     "work" in {
       val userAnswers = UserAnswers().setOrException(IsRacDacId)(true)
-      when(mockSchemeDetailsConnector.getSchemeDetails(any(),any(), any())(any(),any()))
+      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(),any()))
         .thenReturn(Future.successful(userAnswers))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
