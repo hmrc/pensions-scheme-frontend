@@ -40,6 +40,8 @@ import utils.annotations.Racdac
 import utils.{UserAnswers, Enumerable}
 import views.html.racdac.declaration
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -128,7 +130,7 @@ class DeclarationController @Inject()(
   }
 
   private def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+    val encryptedPsa = URLEncoder.encode(crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
     s"${config.pensionsSchemeUrl}/pensions-scheme/email-response-racdac/$encryptedPsa"
   }
 

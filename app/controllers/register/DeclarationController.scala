@@ -49,6 +49,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.HttpErrorFunctions._
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -174,7 +177,7 @@ class DeclarationController @Inject()(
   }
 
   private def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+    val encryptedPsa = URLEncoder.encode(crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
     s"${appConfig.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
   }
 
