@@ -41,7 +41,7 @@
             field = form("phone"),
             label = messages("messages__adviser__phone__heading", adviserName),
             labelClass=Some("visually-hidden"),
-            paragraphText = Some(messages("messages__adviser__phone__p1", adviserName)),
+            paragraphText = Some(messages("messages__adviser__phone__hint", adviserName, schemeName)),
             headingIsLegend = true,
             typeValue = "tel"
         )
