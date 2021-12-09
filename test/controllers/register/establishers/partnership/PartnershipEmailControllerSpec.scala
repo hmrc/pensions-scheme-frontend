@@ -39,8 +39,9 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
   private val firstIndex = Index(0)
   private val establisherPartnershipDetails = PartnershipDetails("test partnership")
   private val email = "test@test.com"
+  private val schemeName = "Scheme Name"
 
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(firstIndex, establisherPartnershipDetails)
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(firstIndex, establisherPartnershipDetails).schemeName(schemeName)
 
   private val view = injector.instanceOf[emailAddress]
 
@@ -51,10 +52,10 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
         routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterEmail", Message("messages__thePartnership").resolve),
         Message("messages__enterEmail", establisherPartnershipDetails.name),
-        Some(Message("messages__contact_details__hint", establisherPartnershipDetails.name)),
+        Some(Message("messages__contact_email__hint", establisherPartnershipDetails.name, schemeName)),
         None
       ),
-      None
+      Some(schemeName)
     )(fakeRequest, messages).toString
 
   "PartnershipEmailController" when {

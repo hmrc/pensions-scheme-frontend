@@ -19,10 +19,14 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.EmailFormProvider
-import models.{Index, NormalMode}
+import identifiers.SchemeNameId
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.CompanyDetailsId
+import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -37,10 +41,23 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val formProvider = new EmailFormProvider()
   val form: Form[String] = formProvider()
   val firstIndex = Index(0)
+  private val schemeName = "Scheme Name"
+
+  private def getMandatoryTrusteeCompanyDetails: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name")
+        )
+      ),
+      SchemeNameId.toString -> schemeName
+    ))
+  )
 
   private val view = injector.instanceOf[emailAddress]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyEmailController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompanyDetails): CompanyEmailController =
     new CompanyEmailController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -61,10 +78,10 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.CompanyEmailController.onSubmit(NormalMode,firstIndex, None),
         Message("messages__trustee_email__title"),
         Message("messages__enterEmail", "test company name"),
-        Some(Message("messages__contact_details__hint", "test company name")),
+        Some(Message("messages__contact_email__hint", "test company name", schemeName)),
         None
       ),
-      None
+     Some(schemeName)
     )(fakeRequest, messages).toString
 
   "CompanyEmailController" when {
