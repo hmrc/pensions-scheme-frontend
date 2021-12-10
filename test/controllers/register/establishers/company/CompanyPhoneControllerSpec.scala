@@ -79,7 +79,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
         Message("messages__enterPhoneNumber", Message("messages__theCompany").resolve),
         Message("messages__enterPhoneNumber", "test company name"),
-        Some(Message("messages__contact_details__hint", "test company name", schemeName)),
+        Some(Message("messages__contact_phone__hint", "test company name", schemeName)),
         None
       ),
       Some(schemeName)
