@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.adviser.AdviserPhoneFormProvider
-import identifiers.{AdviserNameId, AdviserPhoneId}
+import identifiers.{AdviserNameId, AdviserPhoneId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
@@ -53,12 +53,15 @@ class AdviserPhoneController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val form = formProvider()
-      AdviserNameId.retrieve.right.map { adviserName =>
+      for {
+        schemeName <- SchemeNameId.retrieve.right
+        adviserName <- AdviserNameId.retrieve.right
+      } yield {
         val preparedForm = request.userAnswers.get(AdviserPhoneId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName)))
       }
   }
 
@@ -66,8 +69,11 @@ class AdviserPhoneController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, existingSchemeName)))
+          for {
+            schemeName <- SchemeNameId.retrieve.right
+            adviserName <- AdviserNameId.retrieve.right
+          } yield {
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
           }
         },
         value =>

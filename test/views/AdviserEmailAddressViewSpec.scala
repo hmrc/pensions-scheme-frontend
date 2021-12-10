@@ -29,16 +29,17 @@ class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
   val messageKeyPrefix = "adviser__email__address"
   val form: Form[String] = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
+  private val schemeName = "Scheme Name"
 
   val view: adviserEmailAddress = app.injector.instanceOf[adviserEmailAddress]
 
-  private val createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, adviserName, None)(fakeRequest, messages)
+  private val createView: () => HtmlFormat.Appendable = () => view(form, NormalMode, adviserName, schemeName)(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => view(form, NormalMode, adviserName, None)(fakeRequest, messages)
+    (form: Form[String]) => view(form, NormalMode, adviserName, schemeName)(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
-    messages("messages__adviser__email__address__heading", adviserName))
+    messages("messages__adviser__email__address__heading", adviserName, schemeName))
 
   behave like pageWithErrorOutsideLabel(
     createViewWithForm,
@@ -48,7 +49,7 @@ class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
   )
 
   "display the paragraph" in {
-    Jsoup.parse(createViewWithForm(form).toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1", adviserName)
+    Jsoup.parse(createViewWithForm(form).toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__hint", adviserName, schemeName)
   }
 
   behave like pageWithSubmitButton(createView)

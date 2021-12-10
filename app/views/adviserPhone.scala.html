@@ -25,7 +25,7 @@
     formHelper: FormWithCSRF
 )
 
-@(form: Form[_], mode: Mode, adviserName: String, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
@@ -48,7 +48,7 @@
         </div>
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
 
 }

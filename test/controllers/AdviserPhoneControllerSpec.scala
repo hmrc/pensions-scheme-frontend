@@ -36,11 +36,12 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
   private val view = injector.instanceOf[adviserPhone]
   val formProvider: AdviserPhoneFormProvider = new AdviserPhoneFormProvider()
   val form: Form[String] = formProvider.apply()
+  private val schemeName = "Scheme Name"
 
   private val phone = "0000"
   private val adviserName = "test scheme"
-  private val minData = UserAnswers().adviserName(adviserName).dataRetrievalAction
-  private val validData: UserAnswers = UserAnswers().adviserName(adviserName).adviserPhone(phone)
+  private val minData = UserAnswers().adviserName(adviserName).schemeName(schemeName).dataRetrievalAction
+  private val validData: UserAnswers = UserAnswers().adviserName(adviserName).adviserPhone(phone).schemeName(schemeName)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("phone", phone))
 
@@ -50,7 +51,7 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
         form,
         NormalMode,
         adviserName,
-        None
+        schemeName
       )(fakeRequest, messages).toString()
 
   private def controller(

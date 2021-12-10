@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.adviser.AdviserEmailFormProvider
-import identifiers.{AdviserEmailId, AdviserNameId}
+import identifiers.{AdviserEmailId, AdviserNameId, SchemeNameId}
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
@@ -54,12 +54,15 @@ class AdviserEmailAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val form = formProvider()
-      AdviserNameId.retrieve.right.map { adviserName =>
+      for {
+        schemeName <- SchemeNameId.retrieve.right
+        adviserName <- AdviserNameId.retrieve.right
+      } yield {
         val preparedForm = request.userAnswers.get(AdviserEmailId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName)))
       }
   }
 
@@ -67,8 +70,11 @@ class AdviserEmailAddressController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
-          AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, existingSchemeName)))
+          for {
+            schemeName <- SchemeNameId.retrieve.right
+            adviserName <- AdviserNameId.retrieve.right
+          } yield {
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
           }
         },
         value =>

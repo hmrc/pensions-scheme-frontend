@@ -29,7 +29,7 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   val messageKeyPrefix = "adviser__phone"
   val form: Form[String] = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
-  private val schemeName = Some("Scheme Name")
+  private val schemeName = "Scheme Name"
 
   val view: adviserPhone = app.injector.instanceOf[adviserPhone]
 
