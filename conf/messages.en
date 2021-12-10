@@ -1353,6 +1353,7 @@ messages__scheme_type__error__required = Select a type of pension scheme
 messages__adviser__email__address__title = What is the person’s email address?
 messages__adviser__email__address__heading = What is {0}’s email address?
 messages__adviser__email__address__p1 = This will be used if HMRC need to contact {0}.
+messages__adviser__email__address__hint = We will use this email address to contact {0} if we have any questions about registering {1}.
 
 messages__pageNotFound404__title = Page not found
 messages__pageNotFound404__heading = Page not found
@@ -1371,6 +1372,7 @@ messages__adviserName__blank = Enter the name of who has working knowledge of pe
 messages__adviser__phone__title = What is the person’s phone number?
 messages__adviser__phone__heading = What is {0}’s phone number?
 messages__adviser__phone__p1 = This will be used if HMRC need to contact {0}.
+messages__adviser__phone__hint = We will use this phone number to contact {0} if we have any questions about registering {1}.
 
 messages__phone__blank = Enter a phone number
 messages__phone__length = The phone number cannot be more than 24 characters
@@ -1713,6 +1715,8 @@ messages__director_phone__title =  What is the director’s phone number?
 
 messages__trustee_email__title =  What is the company’s email address?
 messages__contact_details__hint = We will only use this to contact {0} about pension scheme administration.
+messages__contact_phone__hint = We will use this phone number to contact {0} if we have any questions about registering {1}.
+messages__contact_email__hint = We will use this email address to contact {0} if we have any questions about registering {1}.
 
 messages__directorNoNinoReason__cya_fallback = Why does the director not have a National Insurance number?
 messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a National Insurance number?

@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.PhoneNumberController
 import controllers.actions._
 import forms.PhoneFormProvider
+import identifiers.SchemeNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPhoneNumberId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -61,13 +62,15 @@ class PartnershipPhoneNumberController @Inject()(val appConfig: FrontendAppConfi
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
+        for {
+          schemeName <- SchemeNameId.retrieve.right
+          details <- PartnershipDetailsId(index).retrieve.right
+        } yield {
             CommonFormWithHintViewModel(
               routes.PartnershipPhoneNumberController.onSubmit(mode, index, srn),
               Message("messages__enterPhoneNumber", Message("messages__thePartnership")),
               Message("messages__enterPhoneNumber", details.name),
-              Some(Message("messages__contact_details__hint", details.name)),
+              Some(Message("messages__contact_phone__hint", details.name, schemeName)),
               srn = srn
             )
         }

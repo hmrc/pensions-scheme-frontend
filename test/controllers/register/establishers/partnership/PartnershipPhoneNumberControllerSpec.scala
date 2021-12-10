@@ -42,7 +42,9 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
   private val phone = "1234"
   private val establisherPartnershipDetails = PartnershipDetails("test partnership")
 
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(firstIndex, establisherPartnershipDetails)
+  private val schemeName = "Scheme Name"
+
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(firstIndex, establisherPartnershipDetails).schemeName(schemeName)
 
   private val view = injector.instanceOf[phoneNumber]
 
@@ -53,10 +55,10 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
         routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
         Message("messages__enterPhoneNumber", establisherPartnershipDetails.name),
-        Some(Message("messages__contact_details__hint", establisherPartnershipDetails.name)),
+        Some(Message("messages__contact_phone__hint", establisherPartnershipDetails.name, schemeName)),
         None
       ),
-      None
+      Some(schemeName)
     )(fakeRequest, messages).toString
 
   "PartnershipPhoneNumberController" when {

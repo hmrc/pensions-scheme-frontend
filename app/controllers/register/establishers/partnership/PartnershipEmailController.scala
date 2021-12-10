@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.EmailAddressController
 import controllers.actions._
 import forms.EmailFormProvider
+import identifiers.SchemeNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -61,14 +62,16 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
-          details =>
+        for {
+          schemeName <- SchemeNameId.retrieve.right
+          details <- PartnershipDetailsId(index).retrieve.right
+        } yield {
             CommonFormWithHintViewModel(
               controllers.register.establishers.partnership.routes.PartnershipEmailController.onSubmit(mode, index,
                 srn),
               Message("messages__enterEmail", Message("messages__thePartnership")),
               Message("messages__enterEmail", details.name),
-              Some(Message("messages__contact_details__hint", details.name)),
+              Some(Message("messages__contact_email__hint", details.name, schemeName)),
               srn = srn
             )
         }

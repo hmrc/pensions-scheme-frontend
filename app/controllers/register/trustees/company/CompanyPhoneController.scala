@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.PhoneNumberController
 import controllers.actions._
 import forms.PhoneFormProvider
+import identifiers.SchemeNameId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPhoneId}
 import javax.inject.Inject
 import models.{Index, Mode}
@@ -70,13 +71,15 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
-          details =>
+        for {
+          schemeName <- SchemeNameId.retrieve.right
+          details <- CompanyDetailsId(index).retrieve.right
+        } yield {
             CommonFormWithHintViewModel(
               routes.CompanyPhoneController.onSubmit(mode, index, srn),
               Message("messages__trustee_phone__title"),
               Message("messages__enterPhoneNumber", details.companyName),
-              Some(Message("messages__contact_details__hint", details.companyName)),
+              Some(Message("messages__contact_phone__hint", details.companyName, schemeName)),
               srn = srn
             )
         }

@@ -38,8 +38,9 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
 
   private val emailAddress = "test@test.com"
   private val adviserName = "test scheme"
-  private val minData = UserAnswers().adviserName(adviserName).dataRetrievalAction
-  private val validData: UserAnswers = UserAnswers().adviserName(adviserName).adviserEmailAddress(emailAddress)
+  private val schemeName = "Scheme Name"
+  private val minData = UserAnswers().adviserName(adviserName).schemeName(schemeName).dataRetrievalAction
+  private val validData: UserAnswers = UserAnswers().adviserName(adviserName).adviserEmailAddress(emailAddress).schemeName(schemeName)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("email", emailAddress))
 
@@ -49,7 +50,7 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
       view(form,
         NormalMode,
         adviserName,
-        None
+        schemeName
       )(fakeRequest, messages).toString()
 
   private def controller(

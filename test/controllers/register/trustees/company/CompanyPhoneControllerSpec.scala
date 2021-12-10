@@ -19,10 +19,14 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PhoneFormProvider
-import models.{Index, NormalMode}
+import identifiers.SchemeNameId
+import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.TrusteesId
+import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -38,9 +42,23 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
   val form: Form[String] = formProvider()
   val firstIndex: Index = Index(0)
 
+  private val schemeName = "Scheme Name"
+
   private val view = injector.instanceOf[phoneNumber]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyPhoneController =
+  private def getMandatoryTrusteeCompanyDetails: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name")
+        )
+      ),
+      SchemeNameId.toString -> schemeName
+    ))
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompanyDetails): CompanyPhoneController =
     new CompanyPhoneController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -61,10 +79,10 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
         routes.CompanyPhoneController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__trustee_phone__title"),
         Message("messages__enterPhoneNumber", "test company name"),
-        Some(Message("messages__contact_details__hint", "test company name")),
+        Some(Message("messages__contact_phone__hint", "test company name", schemeName)),
         None
       ),
-      None
+      Some(schemeName)
     )(fakeRequest, messages).toString
 
   "CompanyPhoneController" when {
