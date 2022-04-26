@@ -14,6 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
 @(
         messageKey: String,
         schemename: Option[String] = None,
@@ -31,12 +36,8 @@
     srn.fold[Mode](NormalMode)(_ => UpdateMode)
 }
 
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <p class="govuk-margin-top-5">
-            <a id="return-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">@returnMessage</a>
-        </p>
-    </div>
-</div>
-
+<p class="govuk-margin-top-8">
+    <a id="return-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">
+        @returnMessage
+    </a>
+</p>
