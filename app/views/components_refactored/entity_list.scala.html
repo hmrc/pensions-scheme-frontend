@@ -18,47 +18,68 @@
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
 @import models.register.{Entity, Establisher}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this(
+    govukTable : GovukTable
+)
 
 @(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
-<div class="govuk-form-group">
-    <table id="items" class="hmrc-responsive-table" role="grid">
-        <tbody class="entity-items__body">
-        @for(entity <- entities) {
-            <tr class="member-details" role="row">
-                <td class="govuk-table__cell" role="gridcell">
-                    <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
-                </td>
-                @if(!viewOnly){
-                @entity.editLink(mode, srn).map{ editLink=>
-                <td class="govuk-table__cell" role="gridcell">
-                    <a id="person-@{entity.index}-edit" href="@editLink">
-                        <span>@messages("site.change")</span>
-                        <span class="visually-hidden">@{entity.name}</span>
-                    </a>
-                </td>
-                }
-                @entity.deleteLink(mode, srn).map{ deleteLink=>
-                <td class="govuk-table__cell" role="gridcell">
-                    <a id="person-@{entity.index}-delete" href="@deleteLink">
-                        <span aria-hidden="true">@messages("site.remove")</span>
-                        <span class="visually-hidden">@{messages("site.remove")} @{entity.name}</span>
-                    </a>
-                </td>
-                }
+@edit(entity: Entity[_], editLink: String) = {
+    <a id="person-@{entity.index}-edit" href="@editLink">
+        <span>@messages("site.change")</span>
+        <span class="govuk-visually-hidden">@entity.name</span>
+    </a>
+}
 
-                } else {
-                @entity.editLink(mode, srn).map{ editLink=>
-                <td class="govuk-table__cell" role="gridcell">
-                    <a id="person-@{entity.index}-view" href="@editLink">
-                        <span>@messages("site.view")</span>
-                        <span class="visually-hidden">@{entity.name}</span>
-                    </a>
-                </td>
-                }
-                }
-            </tr>
-         }
-        </tbody>
-    </table>
+<div class="govuk-form-group">
+    @govukTable(
+        Table(
+            rows =
+                entities.zipWithIndex.map { case (entity, index) =>
+                    Seq(
+                        TableRow(
+                            attributes = Map("id" -> s"person-${entity.index}", "role"-> "cell"),
+                            content = Text(entity.name),
+                            classes="govuk-table__cell govuk-!-font-weight-bold"
+                        )
+                    ) ++ (if(!viewOnly){
+                            (entity.editLink(mode, srn) match {
+                                case None => Nil
+                                case Some(editLink) =>
+                                    Seq(TableRow(
+                                        attributes = Map("id" -> s"person-${entity.index}-edit", "role"-> "cell"),
+                                        content = HtmlContent(edit(entity, editLink)),
+                                        classes="govuk-table__cell"
+                                    ))
+                            }) ++ (entity.deleteLink(mode, srn) match {
+                                case None => Nil
+                                case Some(deleteLink) =>
+                                    Seq(TableRow(
+                                        attributes = Map("id" -> s"person-${entity.index}-delete", "role"-> "cell"),
+                                        content = Text(messages("site.delete")),
+                                        classes="govuk-table__cell"
+                                    ))
+                            })
+                        } else {
+                            (entity.editLink(mode, srn) match {
+                                case None => Nil
+                                case Some(editLink) =>
+                                    Seq(TableRow(
+                                        attributes = Map("id" -> s"person-${entity.index}-view", "role"-> "cell"),
+                                        content = Text(messages("site.view")),
+                                        classes="govuk-table__cell"
+                                    ))
+                            })
+                        })
+                },
+                head = Some(Seq(HeadCell(), HeadCell())),
+                caption = Some(messages("messages__listSchemes__title")),
+                captionClasses = "govuk-visually-hidden",
+                attributes = Map("id" -> "practitioner-authorisation-table", "role"-> "table"),
+            )
+        )
 </div>

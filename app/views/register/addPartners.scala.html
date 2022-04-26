@@ -30,7 +30,8 @@
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no
+    input_yes_no: components_refactored.input_yes_no,
+    entity_list: components_refactored.entity_list
 )
 
 @(
@@ -62,7 +63,7 @@
             @components_refactored.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components_refactored.entity_list(partners, viewOnly, mode, srn)
+            @entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
 

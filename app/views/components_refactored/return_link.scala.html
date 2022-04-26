@@ -36,8 +36,8 @@
     srn.fold[Mode](NormalMode)(_ => UpdateMode)
 }
 
-<p class="govuk-margin-top-8">
-    <a id="return-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">
+<p class="govuk-margin-top-8 govuk-body">
+    <a id="return-link" class="govuk-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">
         @returnMessage
     </a>
 </p>
