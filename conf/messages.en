@@ -1907,3 +1907,6 @@ messages__yourActionWasNotProcessed__heading = Sorry, your action was not proces
 messages__yourActionWasNotProcessed__p1 = Try again later.
 messages__yourActionWasNotProcessed__p2 = Any information entered will have been saved from the last ‘save and continue’.
 messages__yourActionWasNotProcessed__p3 = If the problem persists you can tell us about it using the link below.
+
+site.true = true
+site.false = false
