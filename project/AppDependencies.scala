@@ -17,7 +17,6 @@ object AppDependencies {
     "uk.gov.hmrc"                   %%  "domain"                        % "6.2.0-play-28",
     "com.typesafe.play"             %%  "play-json-joda"                % "2.6.10",
     "com.google.inject.extensions"  %   "guice-multibindings"           % "4.2.2",
-//    "uk.gov.hmrc"                   %%  "play-frontend-hmrc"            % "1.25.0-play-28"
     "uk.gov.hmrc"                   %%  "play-frontend-hmrc"            % "3.14.0-play-28"
   )
 
