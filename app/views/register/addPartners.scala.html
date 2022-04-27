@@ -25,16 +25,14 @@
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    govukInsetText : GovukInsetText,
     input_yes_no: components_refactored.input_yes_no,
-    entity_list: components_refactored.entity_list,
-    govukInsetText : GovukInsetText
+    entity_list: components_refactored.entity_list
 )
 
 @(
@@ -69,8 +67,6 @@
             @entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
-
-
                 @govukInsetText(InsetText(
                     content = Text(messages("messages__atLeast_two_partners"))
                 ))
@@ -94,5 +90,4 @@
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
-
 }
