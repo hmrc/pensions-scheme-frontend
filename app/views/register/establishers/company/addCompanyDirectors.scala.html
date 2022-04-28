@@ -16,17 +16,23 @@
 
 @import config.FrontendAppConfig
 @import controllers.register.establishers.company.routes
-@import uk.gov.hmrc.play.views.html._
 @import models.Mode
 @import models.register.DirectorEntity
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+    formHelper: PlayFrontendFormWithCSRF,
+    entity_list: components_refactored.entity_list,
+    input_yes_no: components_refactored.input_yes_no,
+    govukErrorSummary: GovukErrorSummary
 )
 
 @(
@@ -39,44 +45,45 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))
+){
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.heading(
+        @components_refactored.heading(
             headingKey=messages("messages__addCompanyDirectors__heading")
         )
 
         @if(directors.isEmpty) {
-            @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
-            @components.submit_button("messages__addCompanyDirectors_add_director")
+            @components_refactored.paragraph_text(messages("messages__addCompanyDirectors_lede"))
+            @components_refactored.submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @components.entity_list(directors, viewOnly, mode, srn)
+            @entity_list(directors, viewOnly, mode, srn)
 
             @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {
-                    @components.input_yes_no(
+                    @input_yes_no(
                         field = form("value"),
                         label = messages("messages__addCompanyDirectors_add_more"),
                         legendClass = Some("heading-medium"),
                         hint = Some(messages("messages__addCompanyDirectors_lede"))
                     )
                 } else {
-                    @components.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
-                    @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+                    @components_refactored.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
+                    @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components.submit_button("site.save_and_continue")
+                @components_refactored.submit_button("site.save_and_continue")
             }
         }
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 
