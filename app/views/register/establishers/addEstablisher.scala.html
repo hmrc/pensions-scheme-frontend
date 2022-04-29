@@ -28,7 +28,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no
+    input_yes_no: components_refactored.input_yes_no,
+    add_entity_list: components_refactored.add_entity_list
 )
 @(
     form: Form[_],
@@ -53,7 +54,7 @@
             @components_refactored.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
-            @components.add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
+            @add_entity_list(establishers, mode, srn, "messages__establishers__add_header")
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),
