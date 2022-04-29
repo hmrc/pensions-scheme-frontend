@@ -13,7 +13,6 @@ object AppDependencies {
     "uk.gov.hmrc"                   %%  "http-caching-client"           % "9.5.0-play-28",
     "uk.gov.hmrc"                   %%  "play-conditional-form-mapping" % "1.9.0-play-28",
     "uk.gov.hmrc"                   %%  "bootstrap-frontend-play-28"    % "5.16.0",
-    "uk.gov.hmrc"                   %%  "play-language"                 % "5.1.0-play-28",
     "uk.gov.hmrc"                   %%  "domain"                        % "6.2.0-play-28",
     "com.typesafe.play"             %%  "play-json-joda"                % "2.6.10",
     "com.google.inject.extensions"  %   "guice-multibindings"           % "4.2.2",
