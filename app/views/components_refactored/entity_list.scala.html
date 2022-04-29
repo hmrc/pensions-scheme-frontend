@@ -29,9 +29,16 @@
 @(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
 
 @edit(entity: Entity[_], editLink: String) = {
-    <a id="person-@{entity.index}-edit" href="@editLink">
+    <a id="person-@{entity.index}-edit" class="govuk-link" href="@editLink">
         <span>@messages("site.change")</span>
         <span class="govuk-visually-hidden">@entity.name</span>
+    </a>
+}
+
+@delete(entity: Entity[_], deleteLink: String) = {
+    <a id="person-@{entity.index}-delete" class="govuk-link" href="@deleteLink">
+        <span>@messages("site.remove")</span>
+        <span class="govuk-visually-hidden">@{entity.name}</span>
     </a>
 }
 
@@ -60,7 +67,7 @@
                                 case Some(deleteLink) =>
                                     Seq(TableRow(
                                         attributes = Map("id" -> s"person-${entity.index}-delete", "role"-> "cell"),
-                                        content = Text(messages("site.delete")),
+                                        content = HtmlContent(delete(entity, deleteLink)),
                                         classes="govuk-table__cell"
                                     ))
                             })
@@ -76,7 +83,7 @@
                             })
                         })
                 },
-                head = Some(Seq(HeadCell(), HeadCell())),
+                head = Some(Seq(HeadCell(), HeadCell(), HeadCell())),
                 caption = Some(messages("messages__listSchemes__title")),
                 captionClasses = "govuk-visually-hidden",
                 attributes = Map("id" -> "practitioner-authorisation-table", "role"-> "table"),
