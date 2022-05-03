@@ -26,7 +26,7 @@
     govukTable : GovukTable
 )
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String])(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String], tableCaption: String)(implicit messages: Messages)
 
 @edit(entity: Entity[_], editLink: String) = {
     <a id="person-@{entity.index}-edit" class="govuk-link" href="@editLink">
@@ -49,26 +49,22 @@
                 entities.zipWithIndex.map { case (entity, index) =>
                     Seq(
                         TableRow(
-                            attributes = Map("id" -> s"person-${entity.index}", "role"-> "cell"),
+                            attributes = Map("id" -> s"person-${entity.index}"),
                             content = Text(entity.name),
-                            classes="govuk-table__cell govuk-!-font-weight-bold"
+                            classes="govuk-!-font-weight-bold"
                         )
                     ) ++ (if(!viewOnly){
                             (entity.editLink(mode, srn) match {
                                 case None => Nil
                                 case Some(editLink) =>
                                     Seq(TableRow(
-                                        attributes = Map("id" -> s"person-${entity.index}-edit", "role"-> "cell"),
-                                        content = HtmlContent(edit(entity, editLink)),
-                                        classes="govuk-table__cell"
+                                        content = HtmlContent(edit(entity, editLink))
                                     ))
                             }) ++ (entity.deleteLink(mode, srn) match {
                                 case None => Nil
                                 case Some(deleteLink) =>
                                     Seq(TableRow(
-                                        attributes = Map("id" -> s"person-${entity.index}-delete", "role"-> "cell"),
-                                        content = HtmlContent(delete(entity, deleteLink)),
-                                        classes="govuk-table__cell"
+                                        content = HtmlContent(delete(entity, deleteLink))
                                     ))
                             })
                         } else {
@@ -76,17 +72,15 @@
                                 case None => Nil
                                 case Some(editLink) =>
                                     Seq(TableRow(
-                                        attributes = Map("id" -> s"person-${entity.index}-view", "role"-> "cell"),
-                                        content = Text(messages("site.view")),
-                                        classes="govuk-table__cell"
+                                        attributes = Map("id" -> s"person-${entity.index}-view"),
+                                        content = Text(messages("site.view"))
                                     ))
                             })
                         })
                 },
-                head = Some(Seq(HeadCell(), HeadCell(), HeadCell())),
-                caption = Some(messages("messages__listSchemes__title")),
+                caption = Some(tableCaption),
                 captionClasses = "govuk-visually-hidden",
-                attributes = Map("id" -> "practitioner-authorisation-table", "role"-> "table"),
+                attributes = Map("id" -> s"${tableCaption}-table", "role"-> "table"),
             )
         )
 </div>
