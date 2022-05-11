@@ -2,7 +2,7 @@
 
 ## Info
 
-This service allows a pensions administrator, either an individual or an organisation, to register a new - and update an existing (variations) - pension scheme.
+This service allows a pensions administrator, either an individual or an organisation, to register a new pension scheme and update an existing pension scheme (variation).
 
 This service has a corresponding back-end service, namely pensions-scheme.
 
