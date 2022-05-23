@@ -25,6 +25,7 @@ import models.AdministratorOrPractitioner.{Administrator, Practitioner}
 import models.AuthEntity
 import models.AuthEntity.{PSA, PSP}
 import models.requests.AuthenticatedRequest
+import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -73,8 +74,15 @@ class AuthImpl(override val authConnector: AuthConnector,
     }
   }
 
+  private val logger = Logger(classOf[AuthAction])
+
   private def createAuthRequest[A](id: String, enrolments: Enrolments, request: Request[A],
                                    block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+
+    logger.warn(" \n\n\n Enrolment: " + enrolments.toString())
+    logger.warn(" \n\n\n before get enrolment" + enrolments.getEnrolment("HMRC-PODS-ORG").toString())
+    logger.warn(" \n\n\n Identifiers: " + enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).toString())
+    
     (enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(p=>PsaId(p.value)),
       enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(p=>PspId(p.value))) match {
       case (psaId@Some(_), pspId@Some(_)) => handleWhereBothEnrolments(id, request, psaId, pspId, block)
