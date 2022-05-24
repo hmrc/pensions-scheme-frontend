@@ -50,27 +50,37 @@ class AuthImpl(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
+    val futureLog = authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
-        createAuthRequest(id, enrolments, request, block)
-      case _ =>
-        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-    } recover {
-      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
-        .managePensionsSchemeOverviewUrl.url)))
+        Future.successful(logger.warn(s"Enrolment info: id=$id and enrolments=$enrolments"))
+      case _ ~ enrolments =>
+        Future.successful(logger.warn(s"Enrolment info: no ID and enrolments=$enrolments"))
+      case _ => Future.successful(logger.warn("No enrolments or ID"))
+    }
 
-      case _: InsufficientEnrolments =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
-      case _: InsufficientConfidenceLevel =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
-      case _: UnsupportedAuthProvider =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
-      case _: UnsupportedAffinityGroup =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
-      case _: UnsupportedCredentialRole =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
-      case _: IdNotFound =>
-        Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad())
+    futureLog.flatMap{ _ =>
+      authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
+        case Some(id) ~ enrolments =>
+          createAuthRequest(id, enrolments, request, block)
+        case _ =>
+          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+      } recover {
+        case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
+          .managePensionsSchemeOverviewUrl.url)))
+
+        case _: InsufficientEnrolments =>
+          Redirect(routes.UnauthorisedController.onPageLoad)
+        case _: InsufficientConfidenceLevel =>
+          Redirect(routes.UnauthorisedController.onPageLoad)
+        case _: UnsupportedAuthProvider =>
+          Redirect(routes.UnauthorisedController.onPageLoad)
+        case _: UnsupportedAffinityGroup =>
+          Redirect(routes.UnauthorisedController.onPageLoad)
+        case _: UnsupportedCredentialRole =>
+          Redirect(routes.UnauthorisedController.onPageLoad)
+        case _: IdNotFound =>
+          Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad())
+      }
     }
   }
 
