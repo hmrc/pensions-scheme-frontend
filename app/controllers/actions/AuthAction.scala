@@ -52,9 +52,10 @@ class AuthImpl(override val authConnector: AuthConnector,
 
       authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
         case Some(id) ~ enrolments =>
+          logger.warn(s"Auth detail (1): id=$id and enrolments=$enrolments")
           createAuthRequest(id, enrolments, request, block)
         case x ~ y =>
-          logger.warn(s"Auth detail: id=$x and enrolments=$y")
+          logger.warn(s"Auth detail (2): id=$x and enrolments=$y")
           Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
       } recover {
         case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
