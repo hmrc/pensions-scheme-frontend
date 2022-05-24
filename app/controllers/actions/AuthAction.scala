@@ -50,19 +50,11 @@ class AuthImpl(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    val futureLog = authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
-      case Some(id) ~ enrolments =>
-        Future.successful(logger.warn(s"Enrolment info: id=$id and enrolments=$enrolments"))
-      case _ ~ enrolments =>
-        Future.successful(logger.warn(s"Enrolment info: no ID and enrolments=$enrolments"))
-      case _ => Future.successful(logger.warn("No enrolments or ID"))
-    }
-
-    futureLog.flatMap{ _ =>
       authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
         case Some(id) ~ enrolments =>
           createAuthRequest(id, enrolments, request, block)
-        case _ =>
+        case x ~ y =>
+          logger.warn(s"Auth detail: id=$x and enrolments=$y")
           Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
       } recover {
         case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
@@ -81,7 +73,7 @@ class AuthImpl(override val authConnector: AuthConnector,
         case _: IdNotFound =>
           Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad())
       }
-    }
+
   }
 
   private val logger = Logger(classOf[AuthAction])
