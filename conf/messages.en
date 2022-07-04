@@ -535,7 +535,7 @@ messages__addCompanyDirectors__heading = Directors
 messages__addCompanyDirectors__checkYourAnswersLabel = Directors
 messages__addCompanyDirectors__error__required = Select yes if you want to add another director
 messages__addCompanyDirectors_add_more = Do you want to add another director?
-messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
+messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using this service.
 messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
@@ -957,7 +957,7 @@ messages__partnershipPaye__heading = Does the partnership have a PAYE employer r
 messages__addPartners__heading = Partners
 messages__addPartners__error__required = Select yes if you want to add another partner
 messages__addPartners_add_more = Do you want to add another partner?
-messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using the digital service.
+messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using this service.
 messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
 
