@@ -51,32 +51,37 @@
     }
 }
 
-@removeLink(deleteLink: Option[String] = None) = {
-    <a class="govuk-link" href=@deleteLink
-        target="_self" data-sso="false">@messages("site.remove")
-    </a>
+@removeLink(deleteLink: Option[String] = None,entity: Entity[_]) = {
+
+    @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
+        <a id="person-@{entity.index}-delete" class="govuk-link" href=@deleteLink
+            target="_self">
+            <span>@messages("site.remove")</span>
+            <span class="govuk-visually-hidden">@{entity.name}</span>
+        </a>
+    }
 }
 
     @govukTable(Table(
     rows = for(entity <- entities) yield {
       Seq(
         TableRow(
+            attributes = Map("id" -> s"person-${entity.index}"),
             content = Text(entity.name),
-            classes="govuk-table__cell"
+            classes="govuk-!-font-weight-regular"
         ),
         TableRow(
-            content = Text(getKind(entity)),
-            classes="govuk-table__cell"
+            attributes = Map("id" -> s"kind-${entity.index}"),
+            content = Text(getKind(entity))
         ),
         TableRow(
-            content = HtmlContent(removeLink(entity.deleteLink(mode, srn))),
-            classes="govuk-table__cell"
+            content = HtmlContent(removeLink(entity.deleteLink(mode, srn),entity))
         )
       )
     },
     head = Some(Seq(
       HeadCell(
-        content = Text(messages(entityNameHeader))
+        content = Text(entityNameHeader+" "+messages("site.name"))
       ),
       HeadCell(
         content = Text(messages("site.type"))

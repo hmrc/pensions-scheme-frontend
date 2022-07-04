@@ -177,6 +177,7 @@ site.saveOrPrint = Save or print
 site.return_to = Return to {0}
 site.type = Type
 site.error = Error:
+site.name = name
 
 messages__unauthorised__title = You can’t access this service with this account
 
