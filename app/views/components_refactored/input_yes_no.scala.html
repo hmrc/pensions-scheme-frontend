@@ -64,11 +64,13 @@
     items = Seq(
         RadioItem(
             content = Text(messages("site.yes")),
-            value = Some(messages("site.true"))
+            value = Some(messages("site.true")),
+            id = Some(field.id+"-yes")
         ),
         RadioItem(
             content = Text(messages("site.no")),
-            value = Some(messages("site.false"))
+            value = Some(messages("site.false")),
+            id = Some(field.id+"-no")
         )
     )
     ).withFormField(field)

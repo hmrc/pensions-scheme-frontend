@@ -54,9 +54,9 @@
 
         <div class="govuk-!-width-one-half">
         @govukSelect(Select(
-            id = "country",
+            id = "value",
             name = "value",
-            classes = "govuk-!-width-one-third",
+            classes = "govuk-!-width-one-third country",
             items = Seq(SelectItem(value = Some(""))) ++
             options.map(valueOption =>
                 SelectItem(
