@@ -50,7 +50,7 @@
     fieldset = Some(Fieldset(
         legend = Some(Legend(
             content = Text(label),
-            classes = "govuk-fieldset__legend--m",
+            classes = labelClass.fold("govuk-fieldset__legend--m")(classes => "govuk-fieldset__legend--m " + classes),
             isPageHeading = headingIsLegend
         )),
         describedBy = ariaDescribedBy
