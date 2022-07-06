@@ -15,29 +15,34 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import models.register._
 @import models.register.SchemeType.MasterTrust
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig
 )
 
 @(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__scheme_name__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))
+){
 
     @formHelper(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @components.input_text(
             field = form("schemeName"),
@@ -46,8 +51,8 @@
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }
