@@ -26,13 +26,14 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    layout: templates.Layout,
-    formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    appConfig: FrontendAppConfig,
-    )
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        appConfig: FrontendAppConfig,
+        input_text: components_refactored.input_text
+)
 
-@(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))) {
@@ -40,14 +41,16 @@
     @formHelper(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.input_text(
+        @input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = true
+            labelClass = Some("mytestclass"),
+            headingIsLegend = true,
+            hint = Some("test"),
+            inputClass = Some("mytestclass2")
         )
 
         @components_refactored.submit_button()
