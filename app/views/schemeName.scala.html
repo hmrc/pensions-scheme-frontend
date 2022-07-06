@@ -15,7 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.Mode
 @import models.register._
@@ -23,23 +26,24 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
-)
+    )
 
 @(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__scheme_name__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))) {
 
     @formHelper(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_text(
+        @components_refactored.input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
             labelClass = Some("visually-hidden"),
