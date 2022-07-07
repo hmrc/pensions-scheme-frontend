@@ -25,17 +25,18 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    layout: templates.Layout,
-    govukErrorSummary: GovukErrorSummary,
-    appConfig: FrontendAppConfig,
-    formHelper: PlayFrontendFormWithCSRF
+        layout: templates.Layout,
+        govukErrorSummary: GovukErrorSummary,
+        appConfig: FrontendAppConfig,
+        formHelper: PlayFrontendFormWithCSRF,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__scheme_type__title"))
-){
+) {
 
     @formHelper(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -49,13 +50,14 @@
             legendClass = Some("visually-hidden"),
             inputs = SchemeType.options(appConfig),
             labelClass = Some("form-label-bold"),
-            headingIsLegend=true
+            headingIsLegend = true
         )
 
-        @components.input_text(
+        @input_text(
             field = form("schemeType.schemeTypeDetails"),
             label = messages("messages__scheme_details__type_other_more"),
-            groupClass = Some("js-hidden panel panel-border-narrow")
+            groupClass = Some("js-hidden govuk-inset-text"),
+            inputClass = Some("govuk-!-width-one-half")
         )
 
         @components_refactored.submit_button()

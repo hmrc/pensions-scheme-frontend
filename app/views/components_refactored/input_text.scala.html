@@ -26,20 +26,29 @@
         field: Field,
         label: String,
         inputClass: Option[String] = None,
+        groupClass: Option[String] = None,
         labelClass: Option[String] = None,
         hint: Option[String] = None,
-        headingIsLegend: Boolean = false
+        headingIsLegend: Boolean = false,
+
 )(implicit messages: Messages)
 
+@if(groupClass.nonEmpty){
+<div class="@groupClass">
+}
 @govukInput(Input(
     id = field.id,
     name = field.id,
     label = Label(
         isPageHeading = headingIsLegend,
-        classes = labelClass.fold("govuk-label--xl")(classes => "govuk-label--xl " + classes),
+        classes = labelClass.fold("")(classes => classes),
         content = Text(label)
     ),
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),
-    classes = inputClass.fold("")(classes => classes)
-))
-
+    classes = inputClass.fold("")(classes => classes),
+    errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(messages(errorValue.message))))
+).withFormField(field)
+)
+@if(groupClass.nonEmpty){
+    </div>
+    }
