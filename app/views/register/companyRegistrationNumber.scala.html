@@ -1,18 +1,19 @@
 @*
-* Copyright 2022 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
 @import config.FrontendAppConfig
 @import controllers.register.trustees.company.routes._
 @import models.Mode
@@ -39,12 +40,19 @@
 
     @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
+
+        @components_refactored.heading(messages(viewmodel.heading))
+        @components_refactored.paragraph_text(messages(viewmodel.hint))
+
         @input_text(
             field = form("companyRegistrationNumber"),
-            label = messages(viewmodel.heading).toString,
+            label = messages(viewmodel.heading),
             labelClass = Some("visually-hidden"),
-//            paragraphText = Some(messages(viewmodel.hint)),
-            headingIsLegend = true
+            headingIsLegend = false,
+            inputClass = Some("govuk-!-width-one-half")
         )
         @components.submit_button()
 
