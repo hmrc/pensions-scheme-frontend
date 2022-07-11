@@ -51,7 +51,6 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-       <div class="form-group @if(form.hasErrors){form-group--error}">
        @components.heading(
            headingKey=messages(viewmodel.heading)
         )
