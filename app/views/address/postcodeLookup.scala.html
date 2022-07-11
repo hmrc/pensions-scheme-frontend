@@ -38,9 +38,7 @@
     <a id="manual-address-link" href="@viewmodel.manualInputCall">
 }
 
-@closeLink = {
-    </a>
-}
+@closeLink = {</a>}
 
 @layout(
     pageTitle = titleWithErrors(form, viewmodel.title)) {
@@ -61,10 +59,10 @@
             inputClass = Some("govuk-!-width-one-half")
         )
 
-        <p class="govuk-body">@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
+        @components_refactored.paragraph_text_to_html(viewmodel.enterPostcode.withArgs(openLink, closeLink))
 
-        @components.submit_button("site.find_address")
+        @components_refactored.submit_button("site.find_address")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }
