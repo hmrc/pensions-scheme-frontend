@@ -15,43 +15,46 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import viewmodels.EnterVATViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], viewmodel: EnterVATViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, viewmodel.title)) {
+@layout(
+    pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            messages(viewmodel.heading).toString
-        )
+        @components_refactored.heading(messages(viewmodel.heading))
+        @components_refactored.paragraph_text(messages(viewmodel.hint))
 
-        <p>@messages(viewmodel.hint)</p>
-
-        @components.input_text(
+        @input_text(
             field = form("vat"),
             label = messages(viewmodel.title),
             labelClass = Some("visually-hidden"),
+            inputClass = Some("govuk-!-width-one-half"),
             numericField = true
         )
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.submit_button()
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }
