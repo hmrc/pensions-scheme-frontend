@@ -37,6 +37,10 @@
 
     @formHelper(action = BankAccountDetailsController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
+
         @components_refactored.heading(messages("messages__bank_account_details__h1", schemeName))
 
         @input_text(
