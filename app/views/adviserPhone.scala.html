@@ -16,39 +16,46 @@
 
 @import config.FrontendAppConfig
 @import models.Mode
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
 
     @formHelper(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components_refactored.heading(messages("messages__adviser__phone__heading", adviserName))
+        @components_refactored.paragraph_text(messages("messages__adviser__phone__hint", adviserName, schemeName))
 
-        @components.input_text(
+        @input_text(
             field = form("phone"),
             label = messages("messages__adviser__phone__heading", adviserName),
             labelClass=Some("visually-hidden"),
-            paragraphText = Some(messages("messages__adviser__phone__hint", adviserName, schemeName)),
+            inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true,
             typeValue = "tel"
         )
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components_refactored.submit_button()
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
 
 }
