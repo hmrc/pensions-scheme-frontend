@@ -35,14 +35,14 @@
         @components.back_link()
 
         @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
+        <div class="form-group @if(form.hasErrors) {form-group--error}">
 
         @components.input_text(
             field = form("adviserName"),
             label = messages("messages__adviserName__heading"),
             hint = Some(messages("messages__adviserName__hint")),
             labelClass = Some("visually-hidden"),
-            headingIsLegend=true
+            headingIsLegend = true
         )
         </div>
         @components.submit_button()

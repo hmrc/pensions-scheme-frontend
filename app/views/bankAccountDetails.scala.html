@@ -15,48 +15,48 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
 
     @formHelper(action = BankAccountDetailsController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-        @components.back_link()
+        @components_refactored.heading(messages("messages__bank_account_details__h1", schemeName))
 
-        @components.error_summary(form.errors)
-
-        @components.heading(
-            headingKey=messages("messages__bank_account_details__h1", schemeName)
-        )
-
-        @components.input_text(
+        @input_text(
             field = form("sortCode"),
             label = messages("messages__bank_account_details__sort_code"),
-            inputClass = Some("form-control-1-4"),
+            inputClass = Some("govuk-!-width-one-quarter"),
+            hint = Some(messages("messages__bank_account_details__sort_code_hint")),
             numericField = true,
-            hint = Some(messages("messages__bank_account_details__sort_code_hint"))
         )
 
-        @components.input_text(
+        @input_text(
             field = form("accountNumber"),
             label = messages("messages__bank_account_details__account_number"),
+            inputClass = Some("govuk-!-width-one-half"),
             numericField = true,
-            hint = Some(messages("messages__bank_account_details__account_number_hint"))
+            hint = Some(messages("messages__bank_account_details__account_number_hint")),
         )
 
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
 }
