@@ -31,12 +31,18 @@
         hint: Option[String] = None,
         paragraphText: Option[String] = None,
         headingIsLegend: Boolean = false,
+        typeValue: String = "",
+        numericField: Boolean = false
 )(implicit messages: Messages)
 
 
 @govukInput(Input(
     id = field.id,
     name = field.id,
+    inputType = typeValue,
+    inputmode = if (numericField) { Some("numeric")} else {
+        None
+    },
     label = Label(
         isPageHeading = headingIsLegend,
         classes = labelClass.fold("")(classes => classes),
@@ -45,6 +51,9 @@
     formGroupClasses = groupClass.getOrElse(""),
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),
     classes = inputClass.fold("")(classes => classes),
+    pattern = if (numericField) { Some("[0-9]*")} else {
+        None
+    },
     errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(messages(errorValue.message))))
 ).withFormField(field)
 )
