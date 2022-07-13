@@ -15,7 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.Mode
 @import play.api.mvc.Call
@@ -24,8 +27,10 @@
 @import models.MoneyPurchaseBenefits
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    radio: components_refactored.input_radio
 )
 
 @(
@@ -39,30 +44,30 @@
         messages: Messages
 )
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))
 ) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
 
         <div class="form-group @if(form.hasErrors){form-group--error}">
             @schemeName.map { sn =>
 
-                @components.input_radio(
+                @radio(
                     field = form("value"),
                     legend = messages("messages__moneyPurchaseBenefits__h1", sn),
                     inputs = MoneyPurchaseBenefits.options,
-                    headingIsLegend = true
+                    legendAsHeading = true
                 )
             }
         </div>
 
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }
