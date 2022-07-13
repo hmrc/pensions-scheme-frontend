@@ -25,11 +25,12 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        formHelper: PlayFrontendFormWithCSRF,
-        input_text: components_refactored.input_text
+    layout: templates.Layout,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    formHelper: PlayFrontendFormWithCSRF,
+    input_text: components_refactored.input_text,
+    input_radio: components_refactored.input_radio
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -44,20 +45,15 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.input_radio(
+        @input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_type__heading", schemeName),
-            legendClass = Some("visually-hidden"),
+            legendClass = Some("govuk-label--xl"),
+            legendAsHeading = true,
             inputs = SchemeType.options(appConfig),
-            labelClass = Some("form-label-bold"),
-            headingIsLegend = true
-        )
-
-        @input_text(
-            field = form("schemeType.schemeTypeDetails"),
-            label = messages("messages__scheme_details__type_other_more"),
-            groupClass = Some("js-hidden govuk-inset-text"),
-            inputClass = Some("govuk-!-width-one-half")
+            chtml_label = messages("messages__scheme_details__type_other_more"),
+            chtml_name = Some("other"),
+            chtml_field = form("schemeType.schemeTypeDetails"),
         )
 
         @components_refactored.submit_button()
