@@ -43,12 +43,13 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-            @components.heading(
+            @components_refactored.heading(
                 headingKey = messages(viewModel.heading)
             )
 
             @viewModel.hint.map{ hintText =>
                 <p>@messages(hintText)</p>
+                @components_refactored.paragraph_text(messages(hintText))
             }
 
             <div class="tabular-data__data tabular-data__data--3-12">
