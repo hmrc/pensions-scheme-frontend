@@ -47,8 +47,7 @@
             legend = messages("messages__trusteeKind__heading"),
             legendClass = Some("govuk-label--xl"),
             legendAsHeading = true,
-            inputs = TrusteeKind.options,
-            chtml_field = form("schemeType.schemeTypeDetails")
+            inputs = TrusteeKind.options
         )
 
         @components_refactored.submit_button("site.save_and_continue", true)
