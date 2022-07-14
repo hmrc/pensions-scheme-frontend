@@ -54,7 +54,6 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
     }
 
-        <div class="form-group @if(form.hasErrors){form-group--error}">
             @schemeName.map { sn =>
 
                 @radio(
@@ -64,7 +63,6 @@
                     legendAsHeading = true
                 )
             }
-        </div>
 
         @components_refactored.submit_button()
 
