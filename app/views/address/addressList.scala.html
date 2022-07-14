@@ -15,34 +15,60 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import models.address.Address
 @import viewmodels.address.AddressListViewModel
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios : GovukRadios,
+    input_radio: components_refactored.input_radio
 )
 
 @(form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, viewModel.title)) {
+@layout( pageTitle = titleWithErrors(form, viewModel.title)) {
 
     @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
+        @components_refactored.heading(
             headingKey=messages(viewModel.heading)
         )
 
-        <p>
+        @components_refactored.paragraph_text_to_html(viewModel.selectAddress.resolve)
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(viewModel.heading),
+                    classes = "visually-hidden",
+                    isPageHeading = false,
+                ))
+            )),
+            idPrefix = Some(viewModel.title),
+            name = viewModel.title,
+            items = viewModel.addresses.zipWithIndex.map(addresses =>
+                RadioItem(
+                    value = Some(addresses.toString),
+                    content = Text(addresses.toString),
+                )
+            )
+        ).withFormField(form("value"))
+        )
+
+        <p class="govuk-body">
             @viewModel.selectAddress.resolve
-            <a id="manual-address-link" href="@viewModel.manualInputCall">
+            <a id="manual-address-link govuk-link" href="@viewModel.manualInputCall">
                 @viewModel.selectAddressLink.resolve
             </a>
         </p>
@@ -53,7 +79,6 @@
             hiddenLegend = true
         ) {
             @for((address, i) <- viewModel.addresses.zipWithIndex) {
-
                 @components.radio(
                     field = form("value"),
                     label = address.print,
@@ -61,9 +86,10 @@
                 )
             }
         }
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components_refactored.submit_button("site.save_and_continue", true)
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+
     }
 }
