@@ -52,23 +52,23 @@
         </p>
 
         @govukRadios(Radios(
-                    fieldset = Some(Fieldset(
-                        legend = Some(Legend(
-                            content = Text(viewModel.heading),
-                            classes = "visually-hidden",
-                            isPageHeading = false,
-                        ))
-                    )),
-                    items = for((address, i) <-  viewModel.addresses.zipWithIndex)
-                            yield {
-                            RadioItem(
-                                content = Text(address.print),
-                                value = Some(i.toString),
-                                id = Some(form("value").id+"-"+i.toString),
-                            )
-                            }
-                ).withFormField(form("value"))
-            )
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(viewModel.heading),
+                    classes = "visually-hidden",
+                    isPageHeading = false,
+                ))
+            )),
+            items = for((address, i) <-  viewModel.addresses.zipWithIndex)
+                yield {
+                    RadioItem(
+                        content = Text(address.print),
+                        value = Some(i.toString),
+                        id = Some(form("value").id+"-"+i.toString),
+                    )
+                }
+            ).withFormField(form("value"))
+        )
 
         @components_refactored.submit_button("site.save_and_continue", true)
 
