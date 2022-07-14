@@ -44,48 +44,30 @@
         @components_refactored.heading(
             headingKey=messages(viewModel.heading)
         )
-
-        @components_refactored.paragraph_text_to_html(viewModel.selectAddress.resolve)
-
-        @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(viewModel.heading),
-                    classes = "visually-hidden",
-                    isPageHeading = false,
-                ))
-            )),
-            idPrefix = Some(viewModel.title),
-            name = viewModel.title,
-            items = viewModel.addresses.zipWithIndex.map(addresses =>
-                RadioItem(
-                    value = Some(addresses.toString),
-                    content = Text(addresses.toString),
-                )
-            )
-        ).withFormField(form("value"))
-        )
-
         <p class="govuk-body">
             @viewModel.selectAddress.resolve
-            <a id="manual-address-link govuk-link" href="@viewModel.manualInputCall">
+            <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
                 @viewModel.selectAddressLink.resolve
             </a>
         </p>
 
-        @components.fieldSet(
-            field = form("value"),
-            legend = viewModel.title,
-            hiddenLegend = true
-        ) {
-            @for((address, i) <- viewModel.addresses.zipWithIndex) {
-                @components.radio(
-                    field = form("value"),
-                    label = address.print,
-                    value = i.toString
-                )
-            }
-        }
+        @govukRadios(Radios(
+                    fieldset = Some(Fieldset(
+                        legend = Some(Legend(
+                            content = Text(viewModel.heading),
+                            classes = "visually-hidden",
+                            isPageHeading = false,
+                        ))
+                    )),
+                    items = for((address, i) <-  viewModel.addresses.zipWithIndex)
+                            yield {
+                            RadioItem(
+                                content = Text(address.print),
+                                value = Some(i.toString)
+                            )
+                            }
+                ).withFormField(form("value"))
+            )
 
         @components_refactored.submit_button("site.save_and_continue", true)
 
