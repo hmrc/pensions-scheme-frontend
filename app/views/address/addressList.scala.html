@@ -63,7 +63,8 @@
                             yield {
                             RadioItem(
                                 content = Text(address.print),
-                                value = Some(i.toString)
+                                value = Some(i.toString),
+                                id = Some(form("value").id+"-"+i.toString),
                             )
                             }
                 ).withFormField(form("value"))
