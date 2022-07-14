@@ -58,9 +58,6 @@
     classes = "govuk-radios--inline",
     hint = hint.map( hintText => Hint(content = Text(hintText))),
     errorMessage = field.errors.headOption.map ( error => ErrorMessage(content = Text(messages(error.message, error.args: _*))) ),
-
-
-
     items = Seq(
         RadioItem(
             content = Text(messages("site.yes")),
