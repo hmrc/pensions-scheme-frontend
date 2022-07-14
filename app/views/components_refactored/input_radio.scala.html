@@ -32,23 +32,28 @@
     legendAsHeading: Boolean = false,
     inline: Boolean = false,
     inputs: Seq[InputOption],
-    chtml_field: Field,
-    chtml_label: String,
+    chtml_field: Option[Field] = None,
+    chtml_label: Option[String] = None,
     chtml_name: Option[String] = None
 )(implicit messages: Messages)
 
 @conditionalHtml(chtml_name: Option[String], inputValue: String) = @{
     if(chtml_name.nonEmpty &&  (inputValue  == chtml_name.get)){
-        Some(
-        govukInput(Input(
-            id = chtml_field.id,
-            name = chtml_field.name,
-            label = Label(
-                content = Text(chtml_label),
-            ),
-            classes = "govuk-!-width-one-half"
-        ).withFormField(chtml_field))
-        )
+    chtml_field match {
+        case Some(html_field) => {
+                Some(
+                govukInput(Input(
+                    id = html_field.id,
+                    name = html_field.name,
+                    label = Label(
+                        content = Text(chtml_label.getOrElse("")),
+                    ),
+                    classes = "govuk-!-width-one-half"
+                ).withFormField(html_field))
+                )
+            }
+         case _ => None
+        }
     } else{
         None
     }
