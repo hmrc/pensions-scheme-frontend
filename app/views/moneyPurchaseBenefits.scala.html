@@ -50,19 +50,19 @@
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-    @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-    }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-            @schemeName.map { sn =>
-
-                @radio(
-                    field = form("value"),
-                    legend = messages("messages__moneyPurchaseBenefits__h1", sn),
-                    inputs = MoneyPurchaseBenefits.options,
-                    legendAsHeading = true
-                )
-            }
+        @schemeName.map { sn =>
+            @radio(
+                field = form("value"),
+                legend = messages("messages__moneyPurchaseBenefits__h1", sn),
+                inputs = MoneyPurchaseBenefits.options,
+                legendClass = Some("govuk-label--xl"),
+                legendAsHeading = true
+            )
+        }
 
         @components_refactored.submit_button()
 

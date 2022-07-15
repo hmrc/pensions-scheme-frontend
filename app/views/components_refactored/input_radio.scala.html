@@ -84,6 +84,7 @@
             isPageHeading = legendAsHeading,
             classes = legendClass.getOrElse("govuk-fieldset__legend--l")
         )),
+        attributes = Map("id" -> field.id),
         describedBy = ariaDescribedBy
     )),
     items = inputs.map(input =>

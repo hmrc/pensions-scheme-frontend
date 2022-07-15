@@ -38,9 +38,9 @@
 
     @formHelper(action = CurrentMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
-    @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-    }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @radio(
             field = form("value"),
