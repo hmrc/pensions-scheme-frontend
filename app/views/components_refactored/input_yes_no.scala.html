@@ -53,6 +53,7 @@
             classes = labelClass.fold("govuk-fieldset__legend--m")(classes => "govuk-fieldset__legend--m " + classes),
             isPageHeading = headingIsLegend
         )),
+        attributes = Map("id" -> field.id),
         describedBy = ariaDescribedBy
     )),
     classes = "govuk-radios--inline",
