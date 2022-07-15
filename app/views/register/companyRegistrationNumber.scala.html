@@ -15,41 +15,47 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.company.routes._
 @import models.Mode
 @import play.api.mvc.Call
 @import forms.CompanyRegistrationNumberFormProvider
 @import viewmodels.CompanyRegistrationNumberViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text,
 )
 
-@(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])( implicit request: Request[_], messages: Messages)
 
-    @main_template(
-        title = titleWithErrors(form, viewmodel.title)) {
+@layout(
+    pageTitle = titleWithErrors(form, viewmodel.title)) {
 
-        @formHelper(action = submitUrl, 'autoComplete -> "off") {
+    @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components_refactored.heading(messages(viewmodel.heading))
+        @components_refactored.paragraph_text(messages(viewmodel.hint))
 
-        @components.input_text(
+        @input_text(
             field = form("companyRegistrationNumber"),
-            label = messages(viewmodel.heading).toString,
+            label = messages(viewmodel.heading),
             labelClass = Some("visually-hidden"),
-            paragraphText = Some(messages(viewmodel.hint)),
-            headingIsLegend = true
-            )
-        </div>
-        @components.submit_button()
+            headingIsLegend = false,
+            inputClass = Some("govuk-!-width-one-half")
+        )
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }

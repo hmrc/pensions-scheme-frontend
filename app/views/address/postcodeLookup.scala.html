@@ -15,15 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
 @import models.{Mode, Index}
 @import viewmodels.address.PostcodeLookupViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -32,32 +38,31 @@
     <a id="manual-address-link" href="@viewmodel.manualInputCall">
 }
 
-@closeLink = {
-    </a>
-}
+@closeLink = {</a>}
 
-@main_template(
-    title = titleWithErrors(form, viewmodel.title)) {
+@layout(
+    pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            headingKey=messages(viewmodel.heading)
+       @components.heading(
+           headingKey=messages(viewmodel.heading)
         )
 
-        @components.input_text(
+        @input_text(
             field = form("postcode"),
-            label = messages(viewmodel.formLabel)
+            label = messages(viewmodel.formLabel),
+            inputClass = Some("govuk-!-width-one-half")
         )
 
-        <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
-        </div>
-        @components.submit_button("site.find_address")
+        @components_refactored.paragraph_text_to_html(viewmodel.enterPostcode.withArgs(openLink, closeLink))
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.submit_button("site.find_address")
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }
