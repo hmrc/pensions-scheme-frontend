@@ -15,38 +15,44 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.trustees.routes._
 @import models.Mode
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(form: Form[_], mode: Mode, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__moreThanTenTrustees__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__moreThanTenTrustees__title"))) {
 
     @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_yes_no(
+        @input_yes_no(
             field = form("value"),
-            label = messages("messages__moreThanTenTrustees__heading"),
-            labelClass = Some("visually-hidden"),
+            label = messages("messages__moreThanTenTrustees__heading", schemeName),
+            labelClass = Some("govuk-label--xl"),
             hint = Some(messages("messages__moreThanTenTrustees__hint")),
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @components_refactored.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }
