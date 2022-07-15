@@ -14,14 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import utils.CountryOptions
 @import viewmodels.address.ConfirmAddressViewModel
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(
@@ -30,21 +35,21 @@
     countryOptions: CountryOptions,
     schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = titleWithErrors(form, messages(viewModel.title))) {
+@layout(pageTitle = titleWithErrors(form, messages(viewModel.title))) {
 
     @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-            @components.heading(
+            @components_refactored.heading(
                 headingKey = messages(viewModel.heading)
             )
 
             @viewModel.hint.map{ hintText =>
                 <p>@messages(hintText)</p>
+                @components_refactored.paragraph_text(messages(hintText))
             }
 
             <div class="tabular-data__data tabular-data__data--3-12">
@@ -60,7 +65,14 @@
                 label = messages(viewModel.heading),
                 labelClass = Some("visually-hidden")
             )
-        </div>
+
+            @input_yes_no(
+                field = form("value"),
+                label = messages(viewModel.heading),
+                labelClass = Some("govuk-label--xl"),
+                headingIsLegend = true
+            )
+
         @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
