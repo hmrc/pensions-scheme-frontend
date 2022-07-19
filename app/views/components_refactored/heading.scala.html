@@ -18,9 +18,14 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(headingKey: String, headingSize: String = "govuk-heading-xl")(implicit messages: Messages)
+@(
+ headingKey: String,
+ headingClass: Boolean = false,
+ headingSize: String = "govuk-heading-xl",
+ headingSizeAlt: String = "govuk-label--xl govuk-!-margin-top-0"
+)(implicit messages: Messages)
 
-    <h1 class="@headingSize">@Html(headingKey)</h1>
+<h1 class="@if(headingClass == true) {@headingSizeAlt} else {@headingSize}">@Html(headingKey)</h1>
 
 
 
