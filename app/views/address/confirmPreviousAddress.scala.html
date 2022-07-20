@@ -43,38 +43,29 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-            @components_refactored.heading(
-                headingKey = messages(viewModel.heading)
-            )
+        @components_refactored.heading(messages(viewModel.heading))
 
-            @viewModel.hint.map{ hintText =>
-                <p>@messages(hintText)</p>
-                @components_refactored.paragraph_text(messages(hintText))
-            }
+        @viewModel.hint.map{ hintText =>
+            @components_refactored.paragraph_text(messages(hintText))
+        }
 
-            <div class="tabular-data__data tabular-data__data--3-12">
-                <p>
-                    @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
-                        <span id="address-value-@i" class="address-multi-line">@line</span>
-                    }
-                </p>
-            </div>
+        <div class="tabular-data__data tabular-data__data--3-12">
+            <p class="govuk-body">
+                @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
+                    <span id="address-value-@i" class="address-multi-line">@line</span>
+                }
+            </p>
+        </div>
 
-            @components.input_yes_no(
-                field = form("value"),
-                label = messages(viewModel.heading),
-                labelClass = Some("visually-hidden")
-            )
+        @input_yes_no(
+            field = form("value"),
+            label = messages(viewModel.heading),
+            labelClass = Some("govuk-visually-hidden"),
+            headingIsLegend = false
+        )
 
-            @input_yes_no(
-                field = form("value"),
-                label = messages(viewModel.heading),
-                labelClass = Some("govuk-label--xl"),
-                headingIsLegend = true
-            )
+        @components_refactored.submit_button("site.save_and_continue")
 
-        @components.submit_button("site.save_and_continue")
-
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }
