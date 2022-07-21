@@ -15,48 +15,41 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import models.Mode
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
-
 @import viewmodels.dateOfBirth.DateOfBirthViewModel
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_date: components_refactored.input_date
 )
 
-@(
-        form: Form[_],
-        mode: Mode,
-        schemeName: Option[String],
-        fullName: String,
-        viewModel: DateOfBirthViewModel
-)(implicit
-        request: Request[_],
-        messages: Messages
-)
+@(form: Form[_], mode: Mode, schemeName: Option[String], fullName: String, viewModel: DateOfBirthViewModel)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__DOB__title", viewModel.token))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__DOB__title", viewModel.token))) {
 
     @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-
-        @components.input_date(
+        @input_date(
             field = form("date"),
-            label = messages("messages__DOB__heading", fullName),
+            legend = messages("messages__DOB__heading", fullName),
             headingIsLegend = true,
             hint = Some(messages("messages__common__dob__hint"))
         )
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components_refactored.submit_button()
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }
