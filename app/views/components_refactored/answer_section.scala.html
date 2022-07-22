@@ -15,17 +15,18 @@
  *@
 
 @import viewmodels.AnswerSection
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(answerSection: AnswerSection, idPath: String, viewOnly:Boolean = false)(implicit messages: Messages)
+@(
+    answerSection: AnswerSection,
+    idPath: String,
+    viewOnly:Boolean = false
+)(implicit messages: Messages)
 
 @if(answerSection.headingKey.isDefined){
     <h2 id="cya-@idPath-heading" class="govuk-heading-l">@messages(answerSection.headingKey.get)</h2>
 }
 
-<dl class="govuk-summary-list govuk-check-your-answers form-group cya-questions-long">
+<dl class="govuk-summary-list govuk-check-your-answers">
     @for((row, i) <- answerSection.rows.zipWithIndex){
         @components_refactored.answer_row(row, idPath + "-" + i.toString, viewOnly)
     }
