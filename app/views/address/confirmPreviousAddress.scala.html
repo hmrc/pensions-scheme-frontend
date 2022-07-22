@@ -49,13 +49,11 @@
             @components_refactored.paragraph_text(messages(hintText))
         }
 
-        <div class="tabular-data__data tabular-data__data--3-12">
-            <p class="govuk-body">
-                @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
-                    <span id="address-value-@i" class="address-multi-line">@line</span>
-                }
-            </p>
-        </div>
+        <p class="govuk-body">
+            @for((line, i) <- viewModel.address.lines(countryOptions).zipWithIndex) {
+                <span id="address-value-@i" class="govuk-!-display-block">@line</span>
+            }
+        </p>
 
         @input_yes_no(
             field = form("value"),
