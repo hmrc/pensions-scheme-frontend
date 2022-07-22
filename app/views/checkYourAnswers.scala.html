@@ -27,7 +27,8 @@
 
 @this(
     layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    answer_section: components_refactored.answer_section
 )
 
 @(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
@@ -39,8 +40,7 @@
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
-                case a: AnswerSection => components_refactored.answer_section(a, i.toString, vm.hideEditLinks)
-                case r: RepeaterAnswerSection => components_refactored.repeater_answer_section(r, i.toString, vm.hideEditLinks)
+                case a: AnswerSection => answer_section(a, i.toString, vm.hideEditLinks, Some("govuk-check-your-answers"))
             }
         }
     }
