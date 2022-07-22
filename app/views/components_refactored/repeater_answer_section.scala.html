@@ -16,32 +16,33 @@
 
 @import viewmodels.RepeaterAnswerSection
 @import views.html._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(answerSection: RepeaterAnswerSection, idPath: String, viewOnly:Boolean = false)(implicit messages: Messages)
+@(
+    answerSection: RepeaterAnswerSection,
+    idPath: String,
+    viewOnly:Boolean = false
+)(implicit messages: Messages)
 
 <h2 id="cya-@idPath-heading" class="govuk-heading-l">@messages(answerSection.headingKey)</h2>
 
 <dl class="govuk-summary-list govuk-check-your-answers">
     @components_refactored.answer_row(answerSection.relevanceRow, s"$idPath-relevance", viewOnly)
     @for((row, i) <- answerSection.rows.zipWithIndex){
-    <div class="govuk-summary-list__row">
-        <dt id="cya-@idPath-@i-answer" class="govuk-summary-list__key">@row.answer</dt>
-        <dd class="govuk-summary-list__actions">
-            <a id="cya-@idPath-@i-delete" href="@row.deleteUrl" class="govuk-link">
-                <span aria-hidden="true">@messages("site.remove")</span>
-                <span class="govuk-visually-hidden">@messages("site.hidden-delete", row.answer)</span>
-            </a>
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            <a id="cya-@idPath-@i-change" href="@row.changeUrl" class="govuk-link">
-                <span aria-hidden="true">@messages("site.edit")</span>
-                <span class="govuk-visually-hidden">@messages("site.hidden-edit", row.answer)</span>
-            </a>
-        </dd>
-    </div>
+        <div class="govuk-summary-list__row">
+            <dt id="cya-@idPath-@i-answer" class="govuk-summary-list__key">@row.answer</dt>
+            <dd class="govuk-summary-list__actions">
+                <a id="cya-@idPath-@i-delete" href="@row.deleteUrl" class="govuk-link">
+                    <span aria-hidden="true">@messages("site.remove")</span>
+                    <span class="govuk-visually-hidden">@messages("site.hidden-delete", row.answer)</span>
+                </a>
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a id="cya-@idPath-@i-change" href="@row.changeUrl" class="govuk-link">
+                    <span aria-hidden="true">@messages("site.edit")</span>
+                    <span class="govuk-visually-hidden">@messages("site.hidden-edit", row.answer)</span>
+                </a>
+            </dd>
+        </div>
     }
 </dl>
 
