@@ -15,43 +15,45 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import viewmodels.PayeViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
 )
 
 @(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, viewmodel.title)) {
+@layout(
+    pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(
-            messages(viewmodel.heading).toString
-        )
-
-        @viewmodel.entityName.map{name =>
-            <p>@messages("messages__enterPAYE__p1", name)</p>
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.input_text(
+        @components_refactored.heading(messages(viewmodel.heading))
+
+        @components_refactored.paragraph_text(viewmodel.entityName.map(p => messages("messages__enterPAYE__p1", p)).getOrElse(""))
+
+        @input_text(
             field = form("paye"),
             label = messages(viewmodel.title),
             labelClass = Some("visually-hidden"),
+            inputClass = Some("govuk-!-width-one-half"),
             hint = viewmodel.hint.map(hint => messages(hint))
         )
-        </div>
-        @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.submit_button("site.save_and_continue")
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }
