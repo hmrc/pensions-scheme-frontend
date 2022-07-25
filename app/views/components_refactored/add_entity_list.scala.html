@@ -75,7 +75,8 @@
             content = Text(getKind(entity))
         ),
         TableRow(
-            content = HtmlContent(removeLink(entity.deleteLink(mode, srn),entity))
+            content = HtmlContent(removeLink(entity.deleteLink(mode, srn),entity)),
+            format = Some("numeric")
         )
       )
     },
