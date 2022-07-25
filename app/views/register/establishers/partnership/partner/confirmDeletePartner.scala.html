@@ -15,36 +15,41 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import play.api.mvc.Call
 @import viewmodels.Message
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(form: Form[_], partnerName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__confirmDeletePartner__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__confirmDeletePartner__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_yes_no(
+        @input_yes_no(
             field = form("value"),
             label = messages("messages__confirmDeletePartner__heading", partnerName),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = true
+            headingIsLegend = true,
+            labelClass = Some("govuk-label--xl")
         )
 
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
     }
 }

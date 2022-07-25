@@ -29,7 +29,6 @@
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
-    input_text: components_refactored.input_text,
     input_radio: components_refactored.input_radio
 )
 
@@ -51,9 +50,9 @@
             legendClass = Some("govuk-label--xl"),
             legendAsHeading = true,
             inputs = SchemeType.options(appConfig),
-            chtml_label = messages("messages__scheme_details__type_other_more"),
+            chtml_label = Some(messages("messages__scheme_details__type_other_more")),
             chtml_name = Some("other"),
-            chtml_field = form("schemeType.schemeTypeDetails"),
+            chtml_field = Some(form("schemeType.schemeTypeDetails")),
         )
 
         @components_refactored.submit_button()

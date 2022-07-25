@@ -44,14 +44,12 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__scheme_name__heading"))
-
         @input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
             inputClass = Some("govuk-!-width-one-half"),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = true,
+            labelClass = Some("govuk-label--xl"),
+            headingIsLegend = true
         )
 
         @components_refactored.submit_button()

@@ -15,7 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
 @import controllers.routes._
 @import models.Mode
@@ -25,37 +28,38 @@
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(form: Form[_], schemeName: String, postCall: Call, psaName : String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-title = titleWithErrors(form, messages("messages__deleteSchemeChanges__title"))
-) {
+@layout( pageTitle = titleWithErrors(form, messages("messages__deleteSchemeChanges__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
+        @components_refactored.heading(Message("messages__deleteSchemeChanges__heading", schemeName))
 
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(Message("messages__deleteSchemeChanges__heading", schemeName))
+        @components_refactored.paragraph_text(messages("messages__deleteSchemeChanges__p1"))
 
-        <p>@messages("messages__deleteSchemeChanges__p1")</p>
+        @components_refactored.paragraph_text(messages("messages__deleteSchemeChanges__p2"))
 
-        <p>@messages("messages__deleteSchemeChanges__p2")</p>
-
-        @components.input_yes_no(
+        @input_yes_no(
             field = form("value"),
             label = messages("messages__deleteSchemeChanges__title"),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("govuk-visually-hidden"),
+            headingIsLegend = false
         )
-        </div>
-        @components.submit_button("site.save_and_continue")
-        @components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+
+        @components_refactored.submit_button("site.save_and_continue")
+
+        @components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }
