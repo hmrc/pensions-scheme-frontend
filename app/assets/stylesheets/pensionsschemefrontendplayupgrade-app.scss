@@ -4,3 +4,39 @@
   font-family: "nta",Arial,sans-serif;
 }
 
+.app-ps-task-list {
+    padding-left: 0;
+    width: 100%;
+
+    .app-task-list__items {
+        padding-left: 0;
+
+        .app-task-list__item {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+            @media (min-width: 451px) {
+                flex-direction: row;
+            }
+
+            .app-task-list__task-name {
+                float: none;
+                @media (min-width: 451px) {
+                    margin-right: 2em;
+                }
+            }
+
+            .app-task-list__tag {
+                float: none;
+                flex: 0 0 auto;
+                margin: 0;
+                margin: 1em 0 0 0;
+                @media (min-width: 451px) {
+                    margin: 0 0 0 auto;
+                }
+            }
+        }
+    }
+}
