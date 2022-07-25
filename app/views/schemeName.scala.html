@@ -43,13 +43,13 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
-
+      
         @input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
-            headingIsLegend = true,
             inputClass = Some("govuk-!-width-one-half"),
             labelClass = Some("govuk-label--xl")
+            headingIsLegend = true
         )
 
         @components_refactored.submit_button()

@@ -15,40 +15,46 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import viewmodels.NinoViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text
+
 )
 
 @(form: Form[_], viewmodel: NinoViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages(viewmodel.title))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages(viewmodel.title))) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-        @components.heading(viewmodel.heading)
+        @components_refactored.heading(viewmodel.heading)
 
-        @components.input_text(
+        @input_text(
             field = form("nino"),
             label = messages("messages__common__nino"),
             labelClass = Some("visually-hidden"),
             groupClass = Some("panel-border-narrow"),
+            inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages("messages__common__nino_hint"))
         )
-        </div>
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }
