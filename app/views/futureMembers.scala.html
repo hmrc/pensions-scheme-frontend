@@ -38,20 +38,21 @@
 
     @formHelper(action = FutureMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
-    @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-    }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @radio(
             field = form("value"),
             legend = messages("messages__future_members__h1", schemeName),
             legendClass = Some("govuk-label--xl"),
             inputs = Members.options,
-            legendAsHeading=true
+            legendAsHeading = true
         )
 
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        
     }
 }

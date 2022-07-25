@@ -45,13 +45,13 @@
             legend = viewmodel.heading,
             legendClass = Some("govuk-label--xl"),
             inputs = viewmodel.inputs,
-            inline =true,
-            legendAsHeading=true
+            inline = true,
+            legendAsHeading = true
         )
-
 
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        
     }
 }

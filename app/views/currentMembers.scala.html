@@ -38,16 +38,16 @@
 
     @formHelper(action = CurrentMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
-    @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-    }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @radio(
             field = form("value"),
             legend = messages("messages__current_members__h1", schemeName),
             legendClass = Some("govuk-label--xl"),
             inputs = Members.options,
-            legendAsHeading=true
+            legendAsHeading = true
         )
 
         @components_refactored.submit_button()
