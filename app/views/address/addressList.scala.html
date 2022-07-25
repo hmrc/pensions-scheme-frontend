@@ -27,8 +27,7 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios : GovukRadios,
-    input_radio: components_refactored.input_radio
+    govukRadios : GovukRadios
 )
 
 @(form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -41,9 +40,8 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
-            headingKey=messages(viewModel.heading)
-        )
+        @components_refactored.heading(messages(viewModel.heading))
+
         <p class="govuk-body">
             @viewModel.selectAddress.resolve
             <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
