@@ -40,7 +40,7 @@
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
-                case a: AnswerSection => answer_section(a, i.toString, vm.hideEditLinks, Some("govuk-check-your-answers"))
+                case a: AnswerSection => answer_section(a, i.toString, vm.hideEditLinks, Some("govuk-check-your-answers"), true)
             }
         }
     }
