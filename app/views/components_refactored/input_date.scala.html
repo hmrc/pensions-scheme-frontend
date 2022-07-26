@@ -21,37 +21,16 @@
 @this( govukDateInput : GovukDateInput )
 
 @(
-field: Field,
-legend: String,
-headingIsLegend: Boolean,
-legendClass: Option[String] = None,
-hint: Option[String] = None
+    field: Field,
+    legend: String,
+    headingIsLegend: Boolean,
+    legendClass: Option[String] = None,
+    hint: Option[String] = None
 )(implicit messages: Messages)
 
 @govukDateInput(DateInput(
     id = field.id,
     namePrefix = None,
-    items = Seq(
-        InputItem(
-            name = "date.day",
-            autocomplete = Some("bday-day"),
-            classes = "govuk-input--width-2",
-            id = "date_day"
-        ),
-        InputItem(
-            name = "date.month",
-            autocomplete = Some("bday-month"),
-            classes = "govuk-input--width-2",
-            id = "date_month"
-        ),
-        InputItem(
-            name = "date.year",
-            autocomplete = Some("bday-year"),
-            classes = "govuk-input--width-4",
-            id = "date_year"
-        )
-    ),
-    hint = hint.map(hintValue => Hint(content = Text(hintValue))),
     fieldset = Some(Fieldset(
         legend = Some(Legend(
             content = Text(legend),
@@ -59,6 +38,7 @@ hint: Option[String] = None
             isPageHeading = headingIsLegend
         ))
     )),
+    hint = hint.map(hintValue => Hint(content = Text(hintValue))),
     errorMessage = field.error match {
         case Some(e) => Some(ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args:_*))))
         case None => None
