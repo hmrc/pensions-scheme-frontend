@@ -27,7 +27,8 @@
     answerSection: AnswerSection,
     idPath: String,
     viewOnly: Boolean = false,
-    className: Option[String] = None
+    className: Option[String] = None,
+    wideKey: Boolean = false
 )(implicit messages: Messages)
 
 @if(answerSection.headingKey.isDefined){
@@ -39,7 +40,10 @@
     rows = for((rowVal, indexVal) <- answerSection.rows.zipWithIndex)
         yield {
             SummaryListRow(
-                key = Key(content = Text(messages(rowVal.label))),
+                key = Key(
+                    content = Text(messages(rowVal.label)),
+                    classes = if(wideKey) "govuk-!-width-one-half" else ""
+                ),
                 value = Value(content =
                     if(rowVal.answerIsMessageKey){
                         Text(messages(rowVal.answer.head))
@@ -69,7 +73,8 @@
                         )
                         case _ => None
                     })
-                } else { None }
+                } else { None },
+                classes = if(viewOnly) "govuk-summary-list__row--no-actions" else ""
             )
         }
     )
