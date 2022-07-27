@@ -16,14 +16,14 @@
 
 package controllers.actions
 
-import com.google.inject.{Inject, ImplementedBy}
+import com.google.inject.{ImplementedBy, Inject}
 import connectors._
 import identifiers.PsaMinimalFlagsId._
 import identifiers.racdac.IsRacDacId
-import identifiers.{SchemeStatusId, PsaMinimalFlagsId, SchemeSrnId}
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -281,7 +281,14 @@ class RacdacDataRetrievalImpl(
          .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
          .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
 
-       case Some(value) => Future.successful(Some(value))
+       case Some(jsonValue) => (jsonValue \ "srn").validate[String] match {
+         case JsSuccess(value, _) => if (value eq srn){ Future.successful(Some(jsonValue)) } else {
+           schemeDetailsConnector
+             .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
+             .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
+         }
+         case JsError(errors) => throw JsResultException(errors)
+       }
     }
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
