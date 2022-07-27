@@ -18,45 +18,37 @@
 @import controllers.register.establishers.individual.routes._
 @import models.Index
 @import play.api.mvc.Call
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 @import models.{NormalMode, Mode}
 @import viewmodels.CYAViewModel
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    answer_section: components_refactored.answer_section
 )
 
 @(vm:CYAViewModel, returnToName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = vm.title.resolve.capitalize
-) {
-    @components.back_link()
+@layout( pageTitle = vm.title.resolve.capitalize) {
 
-    @components.heading(
-            headingKey =  vm.h1.resolve
-    )
+    @components_refactored.heading(vm.h1.resolve)
 
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
-                case a: AnswerSection => components.answer_section(a, i.toString, vm.hideEditLinks)
-                case r: RepeaterAnswerSection => components.repeater_answer_section(r, i.toString, vm.hideEditLinks)
+                case a: AnswerSection => answer_section(a, i.toString, vm.hideEditLinks, Some("govuk-check-your-answers"), true)
             }
         }
     }
 
     @if(!vm.hideSaveAndContinueButton) {
-        @components.button_link("site.save_and_continue", vm.href.url, "submit")
+        @components_refactored.button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <p class="govuk-margin-top-5">
-                    <a id="return-psa-link" href="@returnUrl">@messages("messages__psaSchemeDetails__return_link", returnToName)</a>
-            </p>
-        </div>
-    </div>
+    @components_refactored.return_link("messages__psaSchemeDetails__return_link", Some(returnToName))
+
 }
