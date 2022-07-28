@@ -121,15 +121,15 @@ class DataRetrievalImpl(
     }
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
-                                                      jsValue: JsValue,
-                                                      psaId: String,
-                                                      upsertUserAnswers: JsValue => Future[JsValue])
-                                                     (implicit hc: HeaderCarrier): Future[JsValue] = {
+                                                    jsValue: JsValue,
+                                                    psaId: String,
+                                                    upsertUserAnswers: JsValue => Future[JsValue])
+                                                   (implicit hc: HeaderCarrier): Future[JsValue] = {
     minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
       val ua = UserAnswers(jsValue)
         .set(PsaMinimalFlagsId)(minimalFlags)
         .flatMap(
-        _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
+          _.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
       upsertUserAnswers(ua.json)
     }
   }
@@ -180,7 +180,7 @@ class DataRetrievalImpl(
         val ua: UserAnswers = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
           case (Some(foundSrn), Some(status)) if foundSrn == srn =>
-            val viewOnlyStatus = if(ua.get(IsRacDacId).contains(true)) true else status != "Open"
+            val viewOnlyStatus = if (ua.get(IsRacDacId).contains(true)) true else status != "Open"
             OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = viewOnlyStatus,
               request.administratorOrPractitioner)
           case (Some(_), _) =>
@@ -223,11 +223,11 @@ class RacdacDataRetrievalImpl(
                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
-                         srnOpt: Option[String])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                               srnOpt: Option[String])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    mode  match {
+    mode match {
 
       case NormalMode | CheckMode if request.psaId.isEmpty => throw MissingPsaIdException
       case NormalMode | CheckMode => getOrCreateOptionalRequest(dataConnector.fetch, viewOnly = false)(request)
@@ -272,24 +272,27 @@ class RacdacDataRetrievalImpl(
     }
 
   private def dataInUpdateMode[A](srn: String, psaId: String)
-                                    (implicit request: AuthenticatedRequest[A],
-                                     hc: HeaderCarrier): String => Future[Option[JsValue]] =
-    id =>
-     viewConnector.fetch(id) flatMap {
-       case None =>
-        schemeDetailsConnector
-         .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
-         .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
+                                 (implicit request: AuthenticatedRequest[A],
+                                  hc: HeaderCarrier): String => Future[Option[JsValue]] = {
 
-       case Some(jsonValue) => (jsonValue \ "srn").validate[String] match {
-         case JsSuccess(value, _) => if (value eq srn){ Future.successful(Some(jsonValue)) } else {
-           schemeDetailsConnector
-             .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
-             .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
-         }
-         case JsError(errors) => throw JsResultException(errors)
-       }
-    }
+    def refreshSchemeDetails: Future[Some[JsValue]] = schemeDetailsConnector
+      .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
+      .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
+
+    id =>
+      viewConnector.fetch(id) flatMap {
+        case None => refreshSchemeDetails
+        case Some(jsonValue) => (jsonValue \ "srn").validate[String] match {
+          case JsSuccess(value, _) =>
+            if (value eq srn) {
+              Future.successful(Some(jsonValue))
+            } else {
+              refreshSchemeDetails
+            }
+          case JsError(errors) => throw JsResultException(errors)
+        }
+      }
+  }
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                     jsValue: JsValue,
@@ -307,6 +310,7 @@ class RacdacDataRetrievalImpl(
 
 
 case object MissingSchemeNameException extends Exception
+
 case object MissingPsaIdException extends Exception
 
 @ImplementedBy(classOf[DataRetrievalImpl])
