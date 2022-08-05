@@ -15,12 +15,16 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.routes._
 @import models.Mode
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig
 )
 
 @(
@@ -29,70 +33,44 @@
     showMasterTrustDeclaration: Boolean,
     hasWorkingKnowledge: Boolean,
     schemeName: Option[String],
-    href: Call)(implicit request: Request[_], messages: Messages)
+    href: Call
+)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__declaration__title")) {
+@layout(pageTitle = messages("messages__declaration__title")) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__declaration__heading"))
 
-    @components.heading(
-        headingKey= messages("messages__declaration__heading")
-    )
+    @components_refactored.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
 
-    @components.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
-
-        <ol class="list list-bullet">
-            @if(isCompany){
-                @if(isDormant){
-                    <li>
-                        @messages("messages__declaration__statement1_dormant")
-                    </li>
-                } else {
-                    <li>
-                        @messages("messages__declaration__statement1_not_dormant")
-                    </li>
-                }
+    <ol class="govuk-list govuk-list--number">
+        @if(isCompany){
+            @if(isDormant){
+                <li>@messages("messages__declaration__statement1_dormant")</li>
+            } else {
+                <li>@messages("messages__declaration__statement1_not_dormant")</li>
             }
-            <li>
-                @messages("messages__declaration__statement2")
-            </li>
-            <li>
-                @messages("messages__declaration__statement3")
-            </li>
-
-            <li>
-                @messages("messages__declaration__statement4")
-            </li>
-
-            <li>
-                @messages("messages__declaration__statement5")
-            </li>
-            <li>
-                @messages("messages__declaration__statement6")
-            </li>
-            <li>
-                @messages("messages__declaration__statement7")
-            </li>
-            <li>
-                @if(hasWorkingKnowledge){
-                        @messages("messages__declaration__statement8_working_knowledge")
-                } else {
-                        @messages("messages__declaration__statement8_no_working_knowledge")
-                }
-            </li>
-            <li>
-                @messages("messages__declaration__statement9")
-            </li>
-            @if(showMasterTrustDeclaration){
-                <li>
-                    @messages("messages__declaration__statement10")
-                </li>
+        }
+        <li>@messages("messages__declaration__statement2")</li>
+        <li>@messages("messages__declaration__statement3")</li>
+        <li>@messages("messages__declaration__statement4")</li>
+        <li>@messages("messages__declaration__statement5")</li>
+        <li>@messages("messages__declaration__statement6")</li>
+        <li>@messages("messages__declaration__statement7")</li>
+        <li>
+            @if(hasWorkingKnowledge){
+                    @messages("messages__declaration__statement8_working_knowledge")
+            } else {
+                    @messages("messages__declaration__statement8_no_working_knowledge")
             }
-        </ol>
+        </li>
+        <li>@messages("messages__declaration__statement9")</li>
+        @if(showMasterTrustDeclaration){
+            <li>@messages("messages__declaration__statement10")</li>
+        }
+    </ol>
 
-    @components.button_link("site.agree_and_continue", href.url, "submit")
+    @components_refactored.button_link("site.agree_and_continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
 
 }
