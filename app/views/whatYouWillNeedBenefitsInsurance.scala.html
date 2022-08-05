@@ -39,11 +39,14 @@
 
         @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits__p1"))
 
-        @components_refactored.unordered_list(messages("messages__what_you_will_need_benefits__item"), 4)
+        <ul class="govuk-list govuk-list--bullet"">
+            <li>@messages("messages__what_you_will_need_benefits__item_1")</li>
+            <li>@messages("messages__what_you_will_need_benefits__item_2")</li>
+            <li>@messages("messages__what_you_will_need_benefits__item_3")</li>
+            <li>@messages("messages__what_you_will_need_benefits__item_4")</li>
+        </ul>
 
         @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits_contract__p1"))
-
-        @components_refactored.unordered_list()
 
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_benefits_contract__item_1")</li>
