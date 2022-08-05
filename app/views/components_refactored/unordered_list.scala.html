@@ -18,11 +18,11 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(firstBulletPoint: String, numberOfBulletPoints: Int)(implicit messages: Messages)
+@(messageKey: String, numberOfBulletPoints: Int)(implicit messages: Messages)
 
 <ul class="govuk-list govuk-list--bullet">
- @for(bullet <- firstBulletPoint.takeRight(1).toInt to numberOfBulletPoints){
-  <li>@messages(firstBulletPoint.take(firstBulletPoint.length -1) + bullet.toString)</li>
+ @for(num <- 1 to numberOfBulletPoints){
+  <li>@messages(messageKey + "_" + num)</li>
  }
 </ul>
 
