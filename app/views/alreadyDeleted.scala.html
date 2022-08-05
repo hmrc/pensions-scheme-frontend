@@ -14,28 +14,28 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import viewmodels.AlreadyDeletedViewModel
 
 @this(
-    main_template: main_template
+    layout: templates.Layout
 )
 
 @(viewModel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = viewModel.title) {
+@layout(pageTitle = viewModel.title) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__alreadyDeleted__heading", viewModel.deletedEntity))
 
-    @components.heading(
-        headingKey = messages("messages__alreadyDeleted__heading", viewModel.deletedEntity)
-    )
+    @components_refactored.paragraph_text(messages("messages__alreadyDeleted__lede", viewModel.deletedEntity))
 
-    <p>@messages("messages__alreadyDeleted__lede", viewModel.deletedEntity)</p>
+    @components_refactored.paragraph_text(messages("messages__alreadyDeleted__text"))
 
-    <p>@messages("messages__alreadyDeleted__text")</p>
+    @components_refactored.button_link("site.continue", viewModel.returnCall.url, "return-to-list")
 
-    @components.button_link("site.continue", viewModel.returnCall.url, "return-to-list")
-
-    @components.return_link("messages__schemeTaskList__returnlink", viewModel.schemeName, None, viewModel.srn)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", viewModel.schemeName, None, viewModel.srn)
 
 }
