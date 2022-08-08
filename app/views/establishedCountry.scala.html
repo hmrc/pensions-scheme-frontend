@@ -48,9 +48,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
-            messages("messages__established_country__h1", schemeName)
-        )
+        @components_refactored.heading(messages("messages__established_country__h1", schemeName), true)
 
         <div class="govuk-!-width-one-half">
         @govukSelect(Select(
@@ -67,7 +65,7 @@
             label = Label(
                 content = Text(messages("messages__established_country__h1", schemeName)),
                 isPageHeading = false,
-                classes = "visually-hidden",
+                classes = "govuk-visually-hidden",
                 attributes = Map("aria-hidden" -> "true")
             )
             ).withFormField(form("value"))

@@ -18,26 +18,20 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this( govukDateInput : GovukDateInput )
-
 @(
-    field: Field,
-    legend: String,
-    headingIsLegend: Boolean,
-    legendClass: Option[String] = None,
-    hint: Option[String] = None
+    messageKey: String = "",
+    href: String,
+    id: String,
+    extraHiddenText: Option[String] = None
 )(implicit messages: Messages)
 
-@govukDateInput(DateInput(
-    id = field.id,
-    namePrefix = None,
-    fieldset = Some(Fieldset(
-        legend = Some(Legend(
-            content = Text(legend),
-            classes = "govuk-fieldset__legend--xl",
-            isPageHeading = headingIsLegend
-        ))
-    )),
-    hint = hint.map(hintValue => Hint(content = Text(hintValue))),
-    errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(errorValue.message)))
-).withFormField(field))
+<div>
+    <a id="@id" href="@href" role="button" class="govuk-button">
+        <span aria-hidden="true">
+            @messages(messageKey)
+        </span>
+        <span class="govuk-visually-hidden">
+            @messages(messageKey) @if(extraHiddenText.nonEmpty) @{extraHiddenText.get}
+        </span>
+    </a>
+</div>

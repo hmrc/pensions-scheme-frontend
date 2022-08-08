@@ -64,7 +64,8 @@
                                 case None => Nil
                                 case Some(deleteLink) =>
                                     Seq(TableRow(
-                                        content = HtmlContent(delete(entity, deleteLink))
+                                        content = HtmlContent(delete(entity, deleteLink)),
+                                        format = Some("numeric")
                                     ))
                             })
                         } else {
@@ -73,7 +74,8 @@
                                 case Some(editLink) =>
                                     Seq(TableRow(
                                         attributes = Map("id" -> s"person-${entity.index}-view"),
-                                        content = Text(messages("site.view"))
+                                        content = Text(messages("site.view")),
+                                        format = Some("numeric")
                                     ))
                             })
                         })

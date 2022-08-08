@@ -1,4 +1,5 @@
 @import 'partials/_variables';
+@import 'location-autocomplete.min';
 
 .autocomplete__wrapper ul, .autocomplete__wrapper li {
   font-family: "nta",Arial,sans-serif;
@@ -37,6 +38,15 @@
                     margin: 0 0 0 auto;
                 }
             }
+        }
+    }
+}
+
+.govuk-summary-list {
+    &.govuk-check-your-answers{
+        margin-bottom: 0;
+        &:last-of-type {
+            margin-bottom: 1.75em;
         }
     }
 }
