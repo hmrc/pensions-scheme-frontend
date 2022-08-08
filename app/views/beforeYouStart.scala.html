@@ -47,6 +47,6 @@
 
     @components_refactored.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
 
-    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 
 }
