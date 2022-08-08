@@ -15,32 +15,24 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    govukInsetText : GovukInsetText
 )
 
-@(
-        schemeName: Option[String],
-        srn: Option[String],
-        partnershipName: String,
-        href: Call
-)(
-        implicit request: Request[_],
-        messages: Messages
-)
+@(schemeName: Option[String], srn: Option[String], partnershipName: String, href: Call)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__partnersFor", messages("messages__thePartnership")).capitalize
-) {
-    @components.back_link()
-    @components.heading(messages("messages__partnersFor", partnershipName))
+@layout(pageTitle = messages("messages__partnersFor", messages("messages__thePartnership")).capitalize) {
 
-    @components.paragraph_text(messages("messages__whatYouWillNeedPartners__p1"))
+    @components_refactored.heading(messages("messages__partnersFor", partnershipName))
 
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedPartners__p1"))
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeed__item1")</li>
         <li>@messages("messages__whatYouWillNeed__item2")</li>
         <li>@messages("messages__whatYouWillNeed__item3")</li>
@@ -51,9 +43,12 @@
         <li>@messages("messages__whatYouWillNeed__item8")</li>
     </ul>
 
-    <p class="panel panel-border-wide">@messages("messages__atLeast_two_partners")</p>
+    @govukInsetText(InsetText(
+        content = Text(messages("messages__atLeast_two_partners"))
+    ))
 
-    @components.button_link("site.continue", href.url, "submit")
+    @components_refactored.button_link("site.continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
 }
