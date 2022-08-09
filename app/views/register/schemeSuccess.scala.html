@@ -75,14 +75,14 @@
         )
     )
 
-    @components_refactored.heading(messages("messages__complete__what_happens_next"), headingSize = "govuk-heading-m")
+    <h2 class="govuk-heading-m">@messages("messages__complete__what_happens_next")</h2>
 
     @components_refactored.paragraph_text(messages("messages__complete__copy_3"))
     @components_refactored.paragraph_text(messages("messages__complete__copy_4"))
     @components_refactored.paragraph_text(messages("messages__complete__copy_5"))
 
     @if(showMasterTrustContent) {
-        @components_refactored.heading(messages("messages__complete__master_trust_heading"), headingSize = "govuk-heading-m")
+        <h2 class="govuk-heading-m">@messages("messages__complete__master_trust_heading")</h2>
         @components_refactored.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
     }
 
