@@ -35,8 +35,7 @@
 
 @(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])( implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
@@ -44,18 +43,17 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewmodel.heading))
-        @components_refactored.paragraph_text(messages(viewmodel.hint))
-
         @input_text(
             field = form("companyRegistrationNumber"),
             label = messages(viewmodel.heading),
-            labelClass = Some("visually-hidden"),
-            headingIsLegend = false,
-            inputClass = Some("govuk-!-width-one-half")
+            labelClass = Some("govuk-label--xl"),
+            headingIsLegend = true,
+            inputClass = Some("govuk-!-width-one-half"),
+            hint = Some(messages(viewmodel.hint))
         )
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

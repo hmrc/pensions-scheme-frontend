@@ -24,10 +24,10 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components_refactored.input_text
 )
 
 @(form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -41,14 +41,12 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__adviserName__heading"))
-
         @input_text(
             field = form("adviserName"),
             label = messages("messages__adviserName__heading"),
             inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages("messages__adviserName__hint")),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
         
