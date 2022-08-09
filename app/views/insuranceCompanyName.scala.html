@@ -42,17 +42,17 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__insurance_company_name__h1"))
-
         @input_text(
             field = form("companyName"),
             label = messages("messages__insurance_company_name__h1"),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true
         )
+
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

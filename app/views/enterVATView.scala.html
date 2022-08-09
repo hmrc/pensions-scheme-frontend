@@ -42,19 +42,19 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewmodel.heading))
-        @components_refactored.paragraph_text(messages(viewmodel.hint))
-
         @input_text(
             field = form("vat"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden"),
+            label = messages(viewmodel.heading),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
-            numericField = true
+            numericField = true,
+            headingIsLegend = true,
+            hint = Some(messages(viewmodel.hint))
         )
 
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

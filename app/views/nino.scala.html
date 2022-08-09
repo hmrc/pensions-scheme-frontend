@@ -43,18 +43,17 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(viewmodel.heading)
-
         @input_text(
             field = form("nino"),
-            label = messages("messages__common__nino"),
-            labelClass = Some("visually-hidden"),
-            groupClass = Some("panel-border-narrow"),
+            label = messages(viewmodel.heading),
+            labelClass = Some("govuk-label--xl"),
+            headingIsLegend = true,
             inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages("messages__common__nino_hint"))
         )
         @components_refactored.submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

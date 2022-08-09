@@ -23,10 +23,10 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components_refactored.input_text
 )
 
 @(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -46,8 +46,8 @@
 
         @input_text(
             field = form("paye"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden"),
+            label = messages(viewmodel.heading),
+            labelClass = Some("govuk-visually-hidden"),
             inputClass = Some("govuk-!-width-one-half"),
             hint = viewmodel.hint.map(hint => messages(hint))
         )
@@ -55,5 +55,6 @@
         @components_refactored.submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

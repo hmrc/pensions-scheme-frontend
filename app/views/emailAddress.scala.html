@@ -40,21 +40,19 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(viewModel.heading)
-        @components_refactored.paragraph_text(viewModel.hint.map(p => messages(p)).getOrElse(""))
-
         @input_text(
             field = form("email"),
             label = messages(viewModel.heading),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true,
-            typeValue = "email"
+            typeValue = "email",
+            hint = Some(viewModel.hint.map(p => messages(p)).getOrElse(""))
         )
 
         @components_refactored.submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
-    }
 
+    }
 }

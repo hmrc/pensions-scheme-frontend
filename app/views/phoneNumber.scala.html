@@ -40,20 +40,18 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewModel.heading))
-        @components_refactored.paragraph_text(viewModel.hint.map(p => messages(p)).getOrElse(""))
-
         @input_text(
             field = form("phone"),
-            label = messages(viewModel.title),
-            labelClass = Some("visually-hidden"),
+            label = messages(viewModel.heading),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
-            typeValue = "tel"
+            typeValue = "tel",
+            hint = Some(viewModel.hint.map(p => messages(p)).getOrElse(""))
         )
 
         @components_refactored.submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
-    }
 
+    }
 }
