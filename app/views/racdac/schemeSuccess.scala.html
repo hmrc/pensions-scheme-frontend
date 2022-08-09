@@ -50,11 +50,11 @@
         <strong>@email</strong>
     </p>
 
-    @components_refactored.heading(messages("messages__complete_racdac__what_happens_next"), headingSize = "govuk-heading-l")
+    <h2 class="govuk-heading-l">@messages("messages__complete_racdac__what_happens_next")</h2>
 
     @components_refactored.paragraph_text_to_html(Message("messages__complete_racdac__statement1", yourSchemesLink))
 
-    @components_refactored.heading(messages("messages__complete_racdac__save_or_print"), headingSize = "govuk-heading-l")
+    <h2 class="govuk-heading-l">@messages("messages__complete_racdac__save_or_print")</h2>
 
     <p class="govuk-body">
         <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
