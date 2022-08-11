@@ -24,7 +24,8 @@
 
 @this(
     layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
@@ -41,7 +42,7 @@
         <li>@messages("messages__variationDeclaration__statement3")</li>
     </ol>
 
-    @components_refactored.button_link("site.agree_and_continue", href.url, "submit")
+    @button_link("site.agree_and_continue", href.url, "submit")
 
     @components_refactored.return_link("site.return_to", schemeName, None, srn)
 

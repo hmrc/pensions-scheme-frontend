@@ -18,20 +18,15 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(
-    messageKey: String = "",
-    href: String,
-    id: String,
-    extraHiddenText: Option[String] = None
-)(implicit messages: Messages)
+@this(govukButton : GovukButton)
 
-<div>
-    <a id="@id" href="@href" role="button" class="govuk-button">
-        <span aria-hidden="true">
-            @messages(messageKey)
-        </span>
-        <span class="govuk-visually-hidden">
-            @messages(messageKey) @if(extraHiddenText.nonEmpty) @{extraHiddenText.get}
-        </span>
-    </a>
-</div>
+@(messageKey: String = "", href: String, id: String, classes: Option[String] = None )(implicit messages: Messages)
+
+<p class="govuk-body">
+    @govukButton(Button(
+        content = Text(messages(messageKey)),
+        href = Some(href),
+        attributes = Map("id" -> id),
+        classes = classes.fold("")(classes => classes),
+    ))
+</p>

@@ -22,7 +22,8 @@
 @import viewmodels.Message
 
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], title: Message)(implicit request: Request[_], messages: Messages)
@@ -38,7 +39,7 @@
         <li>@messages("messages__whatYouWillNeedTrusteeCompanyAddress__item2")</li>
     </ul>
 
-    @components_refactored.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
