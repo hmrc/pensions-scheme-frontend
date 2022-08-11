@@ -21,7 +21,8 @@
 @import controllers.register.establishers.company.director.routes._
 
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
@@ -43,7 +44,7 @@
         <li>@messages("messages__whatYouWillNeed__item8")</li>
     </ul>
 
-    @components_refactored.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 

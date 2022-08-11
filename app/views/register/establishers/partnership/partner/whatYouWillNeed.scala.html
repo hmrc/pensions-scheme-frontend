@@ -21,7 +21,8 @@
 
 @this(
     layout: templates.Layout,
-    govukInsetText : GovukInsetText
+    govukInsetText : GovukInsetText,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], srn: Option[String], partnershipName: String, href: Call)(implicit request: Request[_], messages: Messages)
@@ -47,7 +48,7 @@
         content = Text(messages("messages__atLeast_two_partners"))
     ))
 
-    @components_refactored.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 

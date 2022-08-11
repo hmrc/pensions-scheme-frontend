@@ -28,7 +28,8 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    answer_section: components_refactored.answer_section
+    answer_section: components_refactored.answer_section,
+    button_link: components_refactored.button_link
 )
 
 @(vm:CYAViewModel, returnToName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
@@ -46,7 +47,7 @@
     }
 
     @if(!vm.hideSaveAndContinueButton) {
-        @components_refactored.button_link("site.save_and_continue", vm.href.url, "submit")
+        @button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
     @components_refactored.return_link("messages__psaSchemeDetails__return_link", Some(returnToName))
