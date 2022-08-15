@@ -26,6 +26,7 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
+        submit_button: components_refactored.submit_button
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -46,7 +47,7 @@
             <li>@messages("messages__what_you_will_need_wk__item_4")</li>
         </ul>
 
-        @components_refactored.submit_button("site.continue")
+        @submit_button("site.continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
     }

@@ -26,6 +26,7 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
+        submit_button: components_refactored.submit_button
 )
 
 @(mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -40,7 +41,7 @@
         @components_refactored.paragraph_text(messages("messages__membership_pension_regulator__p1"))
         @components_refactored.paragraph_text(messages("messages__membership_pension_regulator__p2"))
 
-        @components_refactored.submit_button("site.continue")
+        @submit_button("site.continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
     }

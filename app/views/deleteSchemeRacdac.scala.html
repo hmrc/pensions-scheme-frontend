@@ -30,7 +30,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    input_yes_no: components_refactored.input_yes_no
+    input_yes_no: components_refactored.input_yes_no,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)
@@ -51,7 +52,7 @@
             hint = Some(Messages(hintTextMessageKey))
         )
 
-        @components_refactored.submit_button("site.continue")
+        @submit_button("site.continue")
 
         @components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 

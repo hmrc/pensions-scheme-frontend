@@ -30,7 +30,8 @@
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
         govukPanel: GovukPanel,
-        govukInsetText: GovukInsetText
+        govukInsetText: GovukInsetText,
+        submit_button: components_refactored.submit_button
 )
 
 @(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
@@ -93,7 +94,7 @@
 
 
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
-        @components_refactored.submit_button("messages__finish")
+        @submit_button("messages__finish")
     }
 
 }

@@ -28,7 +28,8 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewmodel: EnterVATViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -53,7 +54,7 @@
             numericField = true
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }

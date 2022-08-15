@@ -27,7 +27,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no
+    input_yes_no: components_refactored.input_yes_no,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -48,7 +49,7 @@
             headingIsLegend = true
         )
 
-        @components_refactored.submit_button("site.save_and_continue")
+        @submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }

@@ -27,7 +27,8 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -59,7 +60,7 @@
             hint = Some(messages("messages__bank_account_details__account_number_hint")),
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
