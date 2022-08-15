@@ -30,7 +30,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    radio: components_refactored.input_radio
+    radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(
@@ -64,7 +65,7 @@
             )
         }
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }

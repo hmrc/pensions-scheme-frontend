@@ -18,8 +18,13 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
+@this(govukButton: GovukButton)
+
 @(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true)(implicit messages: Messages)
 
-<div class="subsection">
-    <button id="submit" class="govuk-button" data-module="govuk-button" @if(!enableSubmission) {disabled}>@messages(messageKey)</button>
-</div>
+ <div class="govuk-form-row">
+  @govukButton(Button(
+   content = Text(messages(messageKey)),
+   disabled = !enableSubmission
+  ))
+ </div>

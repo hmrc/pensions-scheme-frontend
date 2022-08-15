@@ -32,7 +32,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInsetText : GovukInsetText,
     input_yes_no: components_refactored.input_yes_no,
-    entity_list: components_refactored.entity_list
+    entity_list: components_refactored.entity_list,
+    submit_button: components_refactored.submit_button
 )
 
 @(
@@ -61,7 +62,7 @@
 
         @if(partners.isEmpty) {
             @components_refactored.paragraph_text(messages("messages__addPartners_lede"))
-            @components_refactored.submit_button("messages__addPartners_add_partner")
+            @submit_button("messages__addPartners_add_partner")
         } else {
 
             @entity_list(partners, viewOnly, mode, srn, messages("messages__addPartners__heading"))
@@ -83,7 +84,7 @@
                     @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components_refactored.submit_button("site.save_and_continue")
+                @submit_button("site.save_and_continue")
             }
         }
 

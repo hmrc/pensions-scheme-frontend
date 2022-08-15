@@ -30,7 +30,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukSelect : GovukSelect
+    govukSelect : GovukSelect,
+    submit_button: components_refactored.submit_button
 )
 
 @(
@@ -72,7 +73,7 @@
         )
         </div>
 
-        @components_refactored.submit_button("site.save_and_continue", true)
+        @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
