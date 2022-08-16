@@ -29,7 +29,8 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -61,7 +62,7 @@
 
         @components_refactored.paragraph_text_to_html(viewmodel.enterPostcode.withArgs(openLink, closeLink))
 
-        @components_refactored.submit_button("site.find_address")
+        @submit_button("site.find_address")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }

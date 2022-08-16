@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
+@import viewmodels.Message
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(govukButton: GovukButton)
+@this(govukErrorSummary : GovukErrorSummary)
 
-@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true, idForButton: String = "submit")(implicit messages: Messages)
+@(
+ alert: String,
+)(implicit messages: Messages)
 
- <div class="govuk-form-row">
-  @govukButton(Button(
-   attributes = Map("id" -> idForButton),
-   content = Text(messages(messageKey)),
-   disabled = !enableSubmission
-  ))
- </div>
+<div class="govuk-error-summary alert-incomplete" aria-labelledby="error-summary-title" role="alert" data-disable-auto-focus="true" data-module="govuk-error-summary">
+    <p class="govuk-error-message govuk-!-margin-bottom-0" id="error-summary-title">@alert</p>
+</div>

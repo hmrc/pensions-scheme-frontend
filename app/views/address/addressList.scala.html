@@ -27,7 +27,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukRadios : GovukRadios
+    govukRadios : GovukRadios,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -68,7 +69,7 @@
             ).withFormField(form("value"))
         )
 
-        @components_refactored.submit_button("site.save_and_continue", true)
+        @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
 

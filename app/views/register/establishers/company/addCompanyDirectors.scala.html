@@ -32,7 +32,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     entity_list: components_refactored.entity_list,
     input_yes_no: components_refactored.input_yes_no,
-    govukErrorSummary: GovukErrorSummary
+    govukErrorSummary: GovukErrorSummary,
+    submit_button: components_refactored.submit_button
 )
 
 @(
@@ -61,7 +62,7 @@
 
         @if(directors.isEmpty) {
             @components_refactored.paragraph_text(messages("messages__addCompanyDirectors_lede"))
-            @components_refactored.submit_button("messages__addCompanyDirectors_add_director")
+            @submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
             @entity_list(directors, viewOnly, mode, srn, messages("messages__addCompanyDirectors__heading"))
@@ -79,7 +80,7 @@
                     @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components_refactored.submit_button("site.save_and_continue")
+                @submit_button("site.save_and_continue")
             }
         }
 

@@ -31,6 +31,7 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])( implicit request: Request[_], messages: Messages)
@@ -51,7 +52,7 @@
             inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages(viewmodel.hint))
         )
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 

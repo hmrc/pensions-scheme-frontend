@@ -15,63 +15,86 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes
 @import java.time.LocalDate
 @import utils.DateHelper
 @import viewmodels.Message
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        appConfig: FrontendAppConfig,
+        govukPanel: GovukPanel,
+        govukInsetText: GovukInsetText,
+        submit_button: components_refactored.submit_button
 )
 
-@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email:String)(implicit request: Request[_], messages: Messages)
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
 
-@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>}
-@pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
+@yourSchemesLink = {
+    <a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>
+}
 
-@main_template(
-    title = messages("messages__complete__title")) {
+@pensionsRegulatorLink = {
+    <a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>
+}
 
-    <div class="govuk-box-highlight">
-        @components.heading(messages("messages__complete__heading"), "heading-xlarge")
-
-        <p class="font-large">@Html(Message("messages__complete__application_number_is"))
-            <span class="bold">@applicationNumber</span>
-        </p>
-
+@panelContent = {
+    <div class="govuk-panel__body">
+        @Html(Message("messages__complete__application_number_is")) <br>
+        <strong>@applicationNumber</strong>
     </div>
+}
 
-    <p>@messages("messages__complete__email")
-        <span class="bold">@email</span>.
+@insetContent = {
+        <p class="govuk-body"><strong>@messages("messages__complete__copy_1")</strong></p>
+        @components_refactored.paragraph_text_to_html(Message("messages__complete__copy_2", yourSchemesLink))
+}
+
+@layout(
+    pageTitle = messages("messages__complete__title"), showBackLink = false) {
+
+    @govukPanel(
+        Panel(
+            title = Text(messages("messages__complete__heading")),
+            content = HtmlContent(panelContent)
+        )
+    )
+
+    <p class="govuk-body">@messages("messages__complete__email")
+        <strong>@email</strong>
     </p>
 
-    <div id="hintText" class="panel panel-border-wide">
-        <p class="bold">@messages("messages__complete__copy_1")</p>
-        <p>@Html(Message("messages__complete__copy_2", yourSchemesLink))</p>
-    </div>
+    @govukInsetText(
+        InsetText(
+            content = HtmlContent(insetContent)
+        )
+    )
 
-    <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
+    <h2 class="govuk-heading-m">@messages("messages__complete__what_happens_next")</h2>
 
-
-    <p>@messages("messages__complete__copy_3")</p>
-    <p>@messages("messages__complete__copy_4")</p>
-    <p>@messages("messages__complete__copy_5")</p>
+    @components_refactored.paragraph_text(messages("messages__complete__copy_3"))
+    @components_refactored.paragraph_text(messages("messages__complete__copy_4"))
+    @components_refactored.paragraph_text(messages("messages__complete__copy_5"))
 
     @if(showMasterTrustContent) {
-        <h2 class="heading-large">@messages("messages__complete__master_trust_heading")</h2>
-        <p>@Html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))</p>
+        <h2 class="govuk-heading-m">@messages("messages__complete__master_trust_heading")</h2>
+        @components_refactored.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
     }
 
-    <p>
-        <a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
+    <p class="govuk-body">
+        <a id="print-this-page-link" onclick="window.print();
+        return false;" href="#">@messages("site.printThisPage")</a>
     </p>
 
 
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
-        @components.submit_button("messages__finish")
+        @submit_button("messages__finish")
     }
 
 }

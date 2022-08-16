@@ -27,7 +27,8 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -48,12 +49,12 @@
             field = form("email"),
             label = messages("messages__adviser__email__address__heading", adviserName),
             inputClass = Some("govuk-!-width-one-half"),
-            labelClass=Some("govuk-visually-hidden"),
+            labelClass = Some("govuk-visually-hidden"),
             headingIsLegend = true,
             typeValue = "email"
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
