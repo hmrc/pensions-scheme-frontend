@@ -20,10 +20,11 @@
 
 @this(govukButton: GovukButton)
 
-@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true)(implicit messages: Messages)
+@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true, idForButton: String = "submit")(implicit messages: Messages)
 
  <div class="govuk-form-row">
   @govukButton(Button(
+   attributes = Map("id" -> idForButton),
    content = Text(messages(messageKey)),
    disabled = !enableSubmission
   ))
