@@ -34,8 +34,7 @@
 
 @(form: Form[_], viewmodel: UTRViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
@@ -52,7 +51,7 @@
         @input_text(
             field = form("utr"),
             label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-visually-hidden"),
             inputClass = Some("govuk-!-width-one-half"),
             numericField = true
         )
@@ -60,5 +59,6 @@
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

@@ -35,8 +35,7 @@
 
 @(form: Form[_], mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__companyName__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__companyName__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
@@ -44,12 +43,10 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__companyName__heading"))
-
         @input_text(
             field = form("companyName"),
             label = messages("messages__companyName__heading"),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true
         )

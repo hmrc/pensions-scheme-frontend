@@ -47,8 +47,8 @@
 
         @input_text(
             field = form("paye"),
-            label = messages(viewmodel.title),
-            labelClass = Some("visually-hidden"),
+            label = messages(viewmodel.heading),
+            labelClass = Some("govuk-visually-hidden"),
             inputClass = Some("govuk-!-width-one-half"),
             hint = viewmodel.hint.map(hint => messages(hint))
         )
@@ -56,5 +56,6 @@
         @submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

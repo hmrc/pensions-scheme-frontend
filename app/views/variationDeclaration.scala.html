@@ -15,44 +15,35 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import play.api.mvc.Call
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    button_link: components_refactored.button_link
 )
 
-@(
-  schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__variationDeclaration__title")) {
+@layout(pageTitle = messages("messages__variationDeclaration__title")) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__variationDeclaration__heading"))
 
-    @components.heading(
-        headingKey= messages("messages__variationDeclaration__heading")
-    )
+    @components_refactored.paragraph_text(messages("messages__variationDeclaration__declare"))
 
-    @components.paragraph_text(messages("messages__variationDeclaration__declare"))
-
-        <ol class="list list-bullet">
-            <li>
-                @messages("messages__variationDeclaration__statement1")
-            </li>
-
-            <li>
-                @messages("messages__variationDeclaration__statement2")
-            </li>
-
-            <li>
-                @messages("messages__variationDeclaration__statement3")
-            </li>
-
+    <ol class="govuk-list govuk-list--number">
+        <li>@messages("messages__variationDeclaration__statement1")</li>
+        <li>@messages("messages__variationDeclaration__statement2")</li>
+        <li>@messages("messages__variationDeclaration__statement3")</li>
     </ol>
 
-    @components.button_link("site.agree_and_continue", href.url, "submit")
+    @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components.return_link("site.return_to", schemeName, None, srn)
+    @components_refactored.return_link("site.return_to", schemeName, None, srn)
+
 }

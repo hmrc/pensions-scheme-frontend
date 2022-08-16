@@ -34,8 +34,7 @@
 
 @(form: Form[_], mode: Mode, companyName: Option[String], schemeName: Option[String], postCall: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__insurance_policy_number__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__insurance_policy_number__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
@@ -43,12 +42,10 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(companyName.fold(messages("messages__insurance_policy_number__title"))(name=>messages("messages__insurance_policy_number__h1", name)))
-
         @input_text(
             field = form("policyNumber"),
             label = companyName.fold(messages("messages__insurance_policy_number__title"))(name=>messages("messages__insurance_policy_number__h1", name)),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true
         )
@@ -56,5 +53,6 @@
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

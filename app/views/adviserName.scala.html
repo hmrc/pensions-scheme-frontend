@@ -42,14 +42,12 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__adviserName__heading"))
-
         @input_text(
             field = form("adviserName"),
             label = messages("messages__adviserName__heading"),
             inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages("messages__adviserName__hint")),
-            labelClass = Some("govuk-visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
         

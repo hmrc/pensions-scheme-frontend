@@ -15,30 +15,30 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
-@import viewmodels.Message
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], entityName: String, token: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__contactDetailsFor", token).capitalize
-) {
-    @components.back_link()
+@layout(pageTitle = messages("messages__contactDetailsFor", token).capitalize) {
 
-    @components.heading(headingKey = messages("messages__contactDetailsFor", entityName))
+    @components_refactored.heading(headingKey = messages("messages__contactDetailsFor", entityName))
 
-    <p>@messages("messages__whatYouWillNeedContact__p1", entityName)</p>
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedContact__p1", entityName))
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedContact__item1")</li>
         <li>@messages("messages__whatYouWillNeedContact__item2")</li>
     </ul>
 
-    @components.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
 }
