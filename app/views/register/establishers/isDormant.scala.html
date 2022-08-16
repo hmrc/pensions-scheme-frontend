@@ -28,7 +28,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_radio: components_refactored.input_radio
+    input_radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], establisherName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -50,7 +51,7 @@
             inline = true
         )
 
-        @components_refactored.submit_button("site.save_and_continue", true)
+        @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
 

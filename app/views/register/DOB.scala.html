@@ -28,7 +28,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_date: components_refactored.input_date
+    input_date: components_refactored.input_date,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: Option[String], fullName: String, viewModel: DateOfBirthViewModel)(implicit request: Request[_], messages: Messages)
@@ -48,7 +49,7 @@
             hint = Some(messages("messages__common__dob__hint"))
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
 
