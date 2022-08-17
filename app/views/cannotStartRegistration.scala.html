@@ -15,27 +15,29 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import views.html._
 @import controllers.routes._
 @import models.Mode
 @import viewmodels.Message
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    button_link: components_refactored.button_link
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__cannotStartRegistration__title")) {
-    @components.back_link()
-    @components.heading(messages("messages__cannotStartRegistration__heading"))
+@layout(pageTitle = messages("messages__cannotStartRegistration__title")) {
 
-    <p>@messages("messages__cannotStartRegistration__p1")</p>
-    <p>@messages("messages__cannotStartRegistration__p2")</p>
+    @components_refactored.heading(messages("messages__cannotStartRegistration__heading"))
 
-    <p><a id="return-to-overview" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__cannotStartRegistration__returnToOverview__link")</a></p>
+    @components_refactored.paragraph_text(messages("messages__cannotStartRegistration__p1"))
+    @components_refactored.paragraph_text(messages("messages__cannotStartRegistration__p2"))
+
+    <p class="govuk-body"><a id="return-to-overview" class="govuk-link" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__cannotStartRegistration__returnToOverview__link")</a></p>
 
 }
