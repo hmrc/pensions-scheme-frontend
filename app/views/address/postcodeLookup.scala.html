@@ -36,7 +36,7 @@
 @(form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @openLink = {
-    <a id="manual-address-link" href="@viewmodel.manualInputCall">
+    <a id="manual-address-link" class="govuk-link" href="@viewmodel.manualInputCall">
 }
 
 @closeLink = {</a>}
@@ -50,9 +50,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-       @components.heading(
-           headingKey=messages(viewmodel.heading)
-        )
+       @components_refactored.heading(messages(viewmodel.heading))
 
         @input_text(
             field = form("postcode"),
