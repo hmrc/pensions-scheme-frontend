@@ -42,7 +42,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewmodel.heading))
+        @components_refactored.heading(messages(viewmodel.heading), true)
 
         @components_refactored.paragraph_text(messages("messages__companyUtr__guidance1"))
 
