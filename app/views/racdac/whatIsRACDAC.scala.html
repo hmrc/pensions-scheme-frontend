@@ -36,15 +36,16 @@
 
     @formHelper(action = WhatIsRACDACController.onSubmit, 'autoComplete -> "off") {
 
-        @components_refactored.heading(headingKey = messages("messages__what_is_rac_dac__h1"))
+        @components_refactored.heading(messages("messages__what_is_rac_dac__h1"))
+
         @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__p1"))
 
-        <h2 class="govuk-heading-m">@messages("messages__what_is_rac_dac__h2")</h2>
-        <h3 class="govuk-heading-s">@messages("messages__what_is_rac_dac__rac_h3")</h3>
+        <h2 class="govuk-heading-l">@messages("messages__what_is_rac_dac__h2")</h2>
+        <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__rac_h3")</h3>
 
         @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__rac_p"))
 
-        <h3 class="govuk-heading-s">@messages("messages__what_is_rac_dac__dac_h3")</h3>
+        <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__dac_h3")</h3>
 
         @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__dac_p"))
 

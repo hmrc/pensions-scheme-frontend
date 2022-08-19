@@ -51,13 +51,11 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__racdac_name__heading"))
-
         @input_text(
             field = form("value"),
             label = messages("messages__racdac_name__heading"),
             inputClass = Some("govuk-!-width-one-half"),
-            labelClass = Some("govuk-visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
