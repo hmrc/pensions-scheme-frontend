@@ -7,10 +7,16 @@ $(document).ready(function() {
     }
 
     if(document.querySelectorAll('select').length > 0){
+
+        accessibleAutocomplete({
+            element: document.querySelector('.country'),
+            id: 'country',
+            source: '/pensions-scheme-frontend/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+        })
+
         accessibleAutocomplete.enhanceSelectElement({
             defaultValue: '',
-            id: 'country',
-            selectElement: document.querySelector('.country')
+            selectElement: document.querySelector('select')
         })
     }
 
