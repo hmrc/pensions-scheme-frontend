@@ -15,43 +15,25 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.play.views.html.layouts
 
 @this(
-    appConfig: FrontendAppConfig,
-    govuk_wrapper: govuk_wrapper,
-    sidebar: Sidebar
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig
 )
 
 @(title: String,
-  sidebarLinks: Option[Html] = None,
-  contentHeader: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+    sidebarLinks: Option[Html] = None,
+    contentHeader: Option[Html] = None,
+    bodyClasses: Option[String] = None,
+    mainClass: Option[String] = None,
+    scriptElem: Option[Html] = None
+)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
-@import uk.gov.hmrc.play.views.html.layouts
 
-@serviceInfoContent = {}
-
-@sidebarF = {
-    @if(sidebarLinks.isDefined) {
-        @sidebar(sidebarLinks.get, Some("sidebar"))
-    }
+@layout(pageTitle = messages("messages__pension_scheme_registration__title")) {
+    @mainContent
 }
-
-@mainContentBody = {
-    <div class="content__body">
-        @mainContent
-    </div>
-}
-
-@govuk_wrapper(appConfig = appConfig,
-               title = title + " - " + Messages("messages__pension_scheme_registration__title"),
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebarF,
-               contentHeader = contentHeader,
-               mainContent = mainContentBody,
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
-)

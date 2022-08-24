@@ -1,71 +1,22 @@
+
 $(document).ready(function() {
 
-    $('body').on('keypress', '[role="button"]', function(e) {
-        if ((e.which === 13) || (e.which === 32)) {
-            e.preventDefault();
-            this.click();
-        }
-    });
-
-    window.GOVUK.timeoutDialog({
-        timeout: 900,
-        countdown: 120,
-        keepAliveUrl: location.href,
-        signOutUrl: "/register-pension-scheme/logout"
-    });
-
-    // =====================================================
-    // Initialise show-hide-content
-    // Toggles additional content based on radio/checkbox input state
-    // =====================================================
-    var showHideContent = new GOVUK.ShowHideContent()
-    showHideContent.init()
-
-    // =====================================================
-    // Handle number inputs
-    // =====================================================
-    numberInputs();
-
-    // =====================================================
-    // Back link mimics browser back functionality
-    // =====================================================
-    $('#back-link').on('click', function(e) {
-        e.preventDefault();
-        window.history.back();
-    });
-
-  // If there is an error summary, set focus to the summary
+    // If there is an error summary, set focus to the summary
     if ($('.error-summary--show').length) {
       $('.error-summary--show').focus()
     }
 
-    $("#declarationId").submit(function() {
-        $(this).find(':submit').attr('disabled', 'disabled');
-    });
-
     if(document.querySelectorAll('select').length > 0){
+
         accessibleAutocomplete({
-            element: document.querySelector('select'),
+            element: document.querySelector('.country'),
             id: 'country',
-            source: '/register-pension-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+            source: '/pensions-scheme-frontend/assets/javascripts/autocomplete/location-autocomplete-graph.json'
         })
 
         accessibleAutocomplete.enhanceSelectElement({
             defaultValue: '',
             selectElement: document.querySelector('select')
-        })
-
-        // temporary fix for IE not registering clicks on the text of the results list for the country autocomplete
-        $('body').on('mouseup', ".autocomplete__option > strong", function(e){
-            e.preventDefault(); $(this).parent().trigger('click')
-        })
-
-        // temporary fix for the autocomplete holding onto the last matching country when a user then enters an invalid or blank country
-        $('input[role="combobox"]').on('keydown', function(e){
-            if (e.which != 13 && e.which != 9) {
-                var sel = document.querySelector('.autocomplete-wrapper select')
-                sel.value = "";
-            }
         })
     }
 

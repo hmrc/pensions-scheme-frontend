@@ -14,8 +14,15 @@
  * limitations under the License.
  *@
 
-@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true)(implicit messages: Messages)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-<div class="subsection">
-    <button id="submit" class="button" @if(!enableSubmission) {disabled}>@messages(messageKey)</button>
-</div>
+@this(govukPhaseBanner : GovukPhaseBanner)
+
+@(appConfig: config.FrontendAppConfig)
+
+@govukPhaseBanner(PhaseBanner(
+    tag = Some(Tag(
+        content = Text("BETA")
+    )),
+    content = HtmlContent("""This is a new service – your <a class="govuk-link" href="@{appConfig.betaFeedbackUnauthenticatedUrl}">feedback</a> will help us to improve it.""")
+))

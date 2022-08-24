@@ -38,20 +38,18 @@
 
     @formHelper(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-            @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-            }
-
-        @components_refactored.heading(messages("messages__adviser__email__address__heading", adviserName))
-        @components_refactored.paragraph_text(messages("messages__adviser__email__address__hint", adviserName, schemeName))
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @input_text(
             field = form("email"),
             label = messages("messages__adviser__email__address__heading", adviserName),
             inputClass = Some("govuk-!-width-one-half"),
-            labelClass = Some("govuk-visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true,
-            typeValue = "email"
+            typeValue = "email",
+            hint = Some(messages("messages__adviser__email__address__hint", adviserName, schemeName))
         )
 
         @submit_button()

@@ -15,36 +15,30 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import models.Mode
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig
 )
 
 @(schemeName: Option[String], returnUrl: Call)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__yourActionWasNotProcessed__title")
-    ) {
+@layout(pageTitle = messages("messages__yourActionWasNotProcessed__title")) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__yourActionWasNotProcessed__heading"))
 
-    <h1 class="heading-xlarge">@messages("messages__yourActionWasNotProcessed__heading")</h1>
+    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p1"))
 
-    <p>@messages("messages__yourActionWasNotProcessed__p1")</p>
+    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p2"))
 
-    <p>@messages("messages__yourActionWasNotProcessed__p2")</p>
-
-    <p>@messages("messages__yourActionWasNotProcessed__p3")</p>
+    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p3"))
 
     @schemeName.map{ name =>
-            @components.return_link(
-                    messages("site.return_to", name),
-                    None,
-                    Some(returnUrl)
-                )
+        @components_refactored.return_link(messages("site.return_to", name), None, Some(returnUrl))
     }
 
 }
