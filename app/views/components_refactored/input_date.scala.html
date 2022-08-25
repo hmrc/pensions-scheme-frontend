@@ -39,8 +39,5 @@
         ))
     )),
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),
-    errorMessage = field.error match {
-        case Some(e) => Some(ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args:_*))))
-        case None => None
-    }
+    errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(errorValue.message)))
 ).withFormField(field))
