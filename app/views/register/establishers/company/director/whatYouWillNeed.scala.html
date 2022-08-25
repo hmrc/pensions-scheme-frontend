@@ -15,32 +15,24 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.establishers.company.director.routes._
 
 @this(
-    main_template: main_template
+    layout: templates.Layout
 )
 
-@(
-        schemeName: Option[String],
-        srn: Option[String],
-        href: Call
-)(
-        implicit request: Request[_],
-        messages: Messages
-)
+@(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__directors__heading")
-) {
-    @components.back_link()
-    @components.heading(messages("messages__directors__heading"))
+@layout(pageTitle = messages("messages__directors__heading")) {
 
-    @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
+    @components_refactored.heading(messages("messages__directors__heading"))
 
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeed__item1")</li>
         <li>@messages("messages__whatYouWillNeed__item2")</li>
         <li>@messages("messages__whatYouWillNeed__item3")</li>
@@ -51,7 +43,8 @@
         <li>@messages("messages__whatYouWillNeed__item8")</li>
     </ul>
 
-    @components.button_link("site.continue", href.url, "submit")
+    @components_refactored.button_link("site.continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
 }
