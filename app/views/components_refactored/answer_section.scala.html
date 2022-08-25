@@ -25,7 +25,7 @@
     <h2 id="cya-@idPath-heading" class="govuk-heading-l">@messages(answerSection.headingKey.get)</h2>
 }
 
-<dl class="govuk-summary-list govuk-check-your-answers form-group cya-questions-long govuk-!-margin-bottom-0">
+<dl class="govuk-summary-list govuk-check-your-answers form-group cya-questions-long">
     @for((row, i) <- answerSection.rows.zipWithIndex){
         @components_refactored.answer_row(row, idPath + "-" + i.toString, viewOnly)
     }

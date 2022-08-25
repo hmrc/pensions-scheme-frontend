@@ -4,3 +4,11 @@
   font-family: "nta",Arial,sans-serif;
 }
 
+.govuk-summary-list {
+    &.govuk-check-your-answers{
+        margin-bottom: 0;
+        &:last-of-type {
+            margin-bottom: 1.75em;
+        }
+    }
+}

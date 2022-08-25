@@ -24,7 +24,7 @@
 
 <h2 id="cya-@idPath-heading" class="govuk-heading-l">@messages(answerSection.headingKey)</h2>
 
-<dl class="govuk-summary-list">
+<dl class="govuk-summary-list govuk-check-your-answers">
     @components_refactored.answer_row(answerSection.relevanceRow, s"$idPath-relevance", viewOnly)
     @for((row, i) <- answerSection.rows.zipWithIndex){
     <div class="govuk-summary-list__row">

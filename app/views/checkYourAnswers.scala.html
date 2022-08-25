@@ -36,7 +36,6 @@
 
     @components_refactored.heading(vm.h1.resolve, true)
 
-    <div id="checkYourAnswers" class="govuk-!-margin-bottom-7">
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
             section match {
@@ -45,7 +44,6 @@
             }
         }
     }
-    </div>
 
     @if(!vm.hideSaveAndContinueButton) {
         @components_refactored.button_link("site.save_and_continue", vm.href.url, "submit")
