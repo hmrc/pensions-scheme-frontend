@@ -43,7 +43,6 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        <div id="value">
         @schemeName.map { sn=>
             @input_yes_no(
                 field = form("value"),
@@ -53,7 +52,6 @@
                 hint = Some(messages("messages__benefits_secured_by_insurance__lede", sn))
             )
         }
-        </div>
 
         @components_refactored.submit_button()
 
