@@ -21,7 +21,8 @@
 @import controllers.register.trustees.company.routes._
 
 @this(
-    layout: templates.Layout
+    layout: templates.Layout,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
@@ -39,7 +40,7 @@
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item4")</li>
     </ul>
 
-    @components_refactored.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 

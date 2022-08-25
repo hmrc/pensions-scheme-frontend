@@ -24,7 +24,8 @@
 
 @this(
     layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    appConfig: FrontendAppConfig,
+    button_link: components_refactored.button_link
 )
 
 @(
@@ -69,7 +70,7 @@
         }
     </ol>
 
-    @components_refactored.button_link("site.agree_and_continue", href.url, "submit")
+    @button_link("site.agree_and_continue", href.url, "submit")
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
 
