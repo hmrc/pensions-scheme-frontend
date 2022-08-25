@@ -15,36 +15,38 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
     appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__what_you_will_need_bank_details__title")) {
+@layout(
+    pageTitle = messages("messages__what_you_will_need_bank_details__title")) {
 
     @formHelper(action = WhatYouWillNeedBankDetailsController.onSubmit, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @components_refactored.heading(headingKey = messages("messages__what_you_will_need_bank_details__h1"))
 
-        @components.heading(headingKey = messages("messages__what_you_will_need_bank_details__h1"))
+        @components_refactored.paragraph_text(messages("messages__what_you_will_need_bank_details__p1"))
+        @components_refactored.paragraph_text(messages("messages__what_you_will_need_bank_details__p2"))
 
-        <p>@messages("messages__what_you_will_need_bank_details__p1")</p>
-        <p>@messages("messages__what_you_will_need_bank_details__p2")</p>
-
-        <ul class="list list-bullet">
+        <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_bank_details__item_1")</li>
             <li>@messages("messages__what_you_will_need_bank_details__item_2")</li>
         </ul>
 
-        @components.submit_button("site.continue")
+        @components_refactored.submit_button("site.continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
     }
 }
