@@ -15,15 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html._
 @import models.Mode
 @import models.register.Partner
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary
 )
 
 @(
@@ -35,15 +41,15 @@
     mode: Mode,
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
-
-@main_template(
-    title = titleWithErrors(form, messages("messages__addPartners__heading"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))
+){
 
     @formHelper(action = postUrl, 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @components.heading(
             messages("messages__addPartners__heading")
@@ -54,7 +60,7 @@
             @components.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @components.entity_list(partners, viewOnly, mode, srn)
+            @component.entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
 
@@ -76,7 +82,7 @@
             }
         }
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @component.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 
