@@ -15,24 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(
-    main_template: main_template
-)
+@this(layout: templates.Layout)
 
 @(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__stillNeedDetails__title")) {
+@layout(pageTitle = messages("messages__stillNeedDetails__title")) {
 
-        @components.back_link()
+    @components_refactored.heading(messages("messages__stillNeedDetails__heading"))
 
-        @components.heading(
-            headingKey=messages("messages__stillNeedDetails__heading")
-        )
-            <p>@messages("messages__stillNeedDetails__p1")</p>
-            <p>@messages("messages__stillNeedDetails__p2")</p>
+    @components_refactored.paragraph_text(messages("messages__stillNeedDetails__p1"))
 
-        @components.return_link(messageKey="messages__schemeTaskList__returnlink",srn=srn ,schemename=schemeName)
+    @components_refactored.paragraph_text(messages("messages__stillNeedDetails__p2"))
+
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 }

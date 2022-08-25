@@ -15,31 +15,34 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes
 @import java.time.LocalDate
 @import utils.DateHelper
 @import viewmodels.Message
 @import models.UpdateMode
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    govukPanel: GovukPanel
 )
 
 @(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
+@printThisPageLink = {<a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
-@main_template(
-    title = messages("messages__variations_complete__title")) {
+@layout(pageTitle = messages("messages__variations_complete__title")) {
 
-    <div class="govuk-box-highlight">
-        @components.heading(messages("messages__variations_complete__heading"), "heading-xlarge")
-    </div>
+    @govukPanel(
+        Panel(
+            title = Text(messages("messages__variations_complete__heading"))
+        )
+    )
+
     <div class="print-page">
-        <p>@printThisPageLink</p>
-        <p>@{
-                components.return_link(messageKey = "messages__schemeTaskList__returnlink", schemename = schemeName, srn = srn)
-            }</p>
+        <p class="govuk-body">@printThisPageLink</p>
+        <p class="govuk-body">@{ components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn) }</p>
     </div>
 }

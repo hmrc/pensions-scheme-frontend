@@ -36,11 +36,11 @@
 @(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
 
 @yourSchemesLink = {
-    <a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>
+    <a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>
 }
 
 @pensionsRegulatorLink = {
-    <a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>
+    <a id="regulator-contact" class="govuk-link" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>
 }
 
 @panelContent = {
@@ -87,7 +87,7 @@
     }
 
     <p class="govuk-body">
-        <a id="print-this-page-link" onclick="window.print();
+        <a id="print-this-page-link" class="govuk-link" onclick="window.print();
         return false;" href="#">@messages("site.printThisPage")</a>
     </p>
 

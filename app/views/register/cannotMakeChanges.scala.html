@@ -15,27 +15,23 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(
-    main_template: main_template
-)
+@this(layout: templates.Layout)
 
 @(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-title = messages("messages__cannot_Make_Changes__title")) {
+@layout(pageTitle = messages("messages__cannot_Make_Changes__title")) {
 
-@components.back_link()
+ @components_refactored.heading(messages("messages__cannot_Make_Changes__heading"))
 
-@components.heading(
-headingKey=messages("messages__cannot_Make_Changes__heading")
-)
+ @schemeName.map{sn =>
+  @components_refactored.paragraph_text(messages("messages__cannot_Make_Changes__p1", sn))
+ }
 
-@schemeName.map{sn =>
- <p>@messages("messages__cannot_Make_Changes__p1", sn)</p>
-}
-<p>@messages("messages__cannot_Make_Changes__p2")</p>
+ @components_refactored.paragraph_text(messages("messages__cannot_Make_Changes__p2"))
 
-@components.return_link(messageKey="messages__schemeTaskList__returnlink",srn=srn ,schemename=schemeName)
+ @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName , None, srn)
 }
