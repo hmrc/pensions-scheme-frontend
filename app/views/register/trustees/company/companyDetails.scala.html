@@ -39,6 +39,10 @@
 
    @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
+       @if(form.errors.nonEmpty) {
+           @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+       }
+
        @components_refactored.heading(messages("messages__companyName__heading"))
 
        @input_text(
