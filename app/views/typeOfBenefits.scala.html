@@ -50,11 +50,11 @@
                 legendClass = Some("govuk-label--xl"),
                 legendAsHeading = true,
                 inputs = TypeOfBenefits.options,
-                chtml_field = form("schemeType.schemeTypeDetails")
+                chtml_field = Some(form("schemeType.schemeTypeDetails"))
             )
         }
 
-        @components_refactored.submit_button("site.save_and_continue", true)
+        @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
 

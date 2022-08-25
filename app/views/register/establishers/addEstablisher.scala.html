@@ -29,7 +29,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components_refactored.input_yes_no,
-    add_entity_list: components_refactored.add_entity_list
+    add_entity_list: components_refactored.add_entity_list,
     submit_button: components_refactored.submit_button
 )
 @(
@@ -47,7 +47,7 @@
                 headingKey=messages("messages__establishers__add__title")
             )
             @components_refactored.paragraph_text(messages("messages__establishers__add_hint"))
-            @components_refactored.submit_button("site.continue", true)
+            @submit_button("site.continue", true)
         } else {
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -62,7 +62,7 @@
                 legendClass = Some("heading-medium"),
                 hint = None
             )
-            @components_refactored.submit_button("site.save_and_continue", true)
+            @submit_button("site.save_and_continue", true)
         }
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }

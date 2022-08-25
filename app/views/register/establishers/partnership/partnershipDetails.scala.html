@@ -29,7 +29,7 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
         submit_button: components_refactored.submit_button
 )
 
@@ -54,7 +54,7 @@
             headingIsLegend = true
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }

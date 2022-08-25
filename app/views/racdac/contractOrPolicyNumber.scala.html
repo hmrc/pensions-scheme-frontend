@@ -30,7 +30,7 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
-        input_text: components_refactored.input_text
+        input_text: components_refactored.input_text,
         submit_button: components_refactored.submit_button
 )
 
@@ -55,7 +55,7 @@
             headingIsLegend = true
         )
 
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
