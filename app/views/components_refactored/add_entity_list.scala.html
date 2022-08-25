@@ -52,9 +52,12 @@
 }
 
 @removeLink(deleteLink: Option[String] = None) = {
-    <a class="govuk-link" href=@deleteLink
-        target="_self" data-sso="false">@messages("site.remove")
-    </a>
+
+    @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
+        <a class="govuk-link" href=@deleteLink
+            target="_self" data-sso="false">@messages("site.remove")
+        </a>
+    }
 }
 
     @govukTable(Table(
@@ -62,7 +65,7 @@
       Seq(
         TableRow(
             content = Text(entity.name),
-            classes="govuk-table__cell"
+            classes="govuk-table__cell govuk-!-font-weight-regular"
         ),
         TableRow(
             content = Text(getKind(entity)),
