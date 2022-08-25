@@ -29,7 +29,8 @@
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(
@@ -41,6 +42,7 @@
     mode: Mode,
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
+
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))
 ){
@@ -51,22 +53,29 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(
+        @components_refactored.heading(
             messages("messages__addPartners__heading")
         )
 
         @if(partners.isEmpty) {
-            @components.paragraph_text(messages("messages__addPartners_lede"))
-            @components.submit_button("messages__addPartners_add_partner")
+            @components_refactored.paragraph_text(messages("messages__addPartners_lede"))
+            @components_refactored.submit_button("messages__addPartners_add_partner")
         } else {
 
-            @component.entity_list(partners, viewOnly, mode, srn)
+            @components_refactored.entity_list(partners, viewOnly, mode, srn)
 
             @if(!viewOnly){
 
-                <p class="panel panel-border-wide">@messages("messages__atLeast_two_partners")</p>
+                @components_refactored.paragraph_text(messages("messages__atLeast_two_partners"))
 
                 @if(partners.size < appConfig.maxPartners) {
+                    @input_yes_no(
+                        field = form("value"),
+                        label = messages("messages__addPartners_add_more"),
+                        legendClass = Some("heading-medium"),
+                        hint = Some(messages("messages__addPartners_lede"))
+                    )
+
                     @components.input_yes_no(
                         field = form("value"),
                         label = messages("messages__addPartners_add_more"),
@@ -74,15 +83,15 @@
                         hint = Some(messages("messages__addPartners_lede"))
                     )
                 } else {
-                    @components.paragraph_text(messages("messages__addPartners_at_maximum"))
-                    @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+                    @components_refactored.paragraph_text(messages("messages__addPartners_at_maximum"))
+                    @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
-                @components.submit_button("site.save_and_continue")
+                @components_refactored.submit_button("site.save_and_continue")
             }
         }
 
-        @component.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 

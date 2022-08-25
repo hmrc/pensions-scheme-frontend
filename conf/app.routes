@@ -2,6 +2,7 @@
 ->          /establisher                                             establishers.Routes
 ->          /trustee                                                 trustees.Routes
 ->          /rac-dac                                                 racdac.Routes
+->          /hmrc-frontend                                           hmrcfrontend.Routes
 
 GET         /                                                        controllers.BeforeYouStartController.onPageLoad()
 
