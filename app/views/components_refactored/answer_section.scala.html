@@ -15,19 +15,62 @@
  *@
 
 @import viewmodels.AnswerSection
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this(
+    govukSummaryList : GovukSummaryList
+)
 
 @(
     answerSection: AnswerSection,
     idPath: String,
-    viewOnly:Boolean = false
+    viewOnly: Boolean = false,
+    className: Option[String] = None
 )(implicit messages: Messages)
 
 @if(answerSection.headingKey.isDefined){
     <h2 id="cya-@idPath-heading" class="govuk-heading-l">@messages(answerSection.headingKey.get)</h2>
 }
 
-<dl class="govuk-summary-list govuk-check-your-answers">
-    @for((row, i) <- answerSection.rows.zipWithIndex){
-        @components_refactored.answer_row(row, idPath + "-" + i.toString, viewOnly)
-    }
-</dl>
+@govukSummaryList(SummaryList(
+    classes = className.fold("")(classes => classes),
+    rows = for((rowVal, indexVal) <- answerSection.rows.zipWithIndex)
+        yield {
+            SummaryListRow(
+                key = Key(content = Text(messages(rowVal.label))),
+                value = Value(content =
+                    if(rowVal.answerIsMessageKey){
+                        Text(messages(rowVal.answer.head))
+                    } else {
+                        HtmlContent((for((r, index2) <- rowVal.answer.zipWithIndex)
+                        yield{
+                            s"""<div id="cya-$idPath-$indexVal-$index2-answer" class="govuk-!-display-block">$r</div>"""
+                        }).mkString)
+                    }
+                ),
+                actions =  if(!viewOnly){
+                    (rowVal.changeUrl match {
+                        case Some(changeUrlLink) =>
+                            Some(Actions(
+                                items = Seq(
+                                    ActionItem(
+                                        href = changeUrlLink.target,
+                                        content = Text(messages(changeUrlLink.text)),
+                                        visuallyHiddenText = changeUrlLink.visuallyHiddenText match {
+                                            case Some(hiddenLabel) =>  Some(messages(hiddenLabel))
+                                            case _ =>  Some(messages("site.hidden-edit", messages(rowVal.label)))
+                                        },
+                                        attributes = Map("id" -> s"cya-$idPath-$indexVal-change")
+                                    )
+                                )
+                            )
+                        )
+                        case _ => None
+                    })
+                } else { None }
+            )
+        }
+    )
+)
