@@ -20,5 +20,3 @@
 
 @(text: String, para_id: Option[String] = None)
 <p @if(para_id.nonEmpty) {id="@para_id"} class="govuk-body">@Html(text)</p>
-
-

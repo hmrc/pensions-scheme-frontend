@@ -25,7 +25,8 @@
     appConfig: FrontendAppConfig,
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary
+    govukErrorSummary: GovukErrorSummary,
+    submit_button: components_refactored.submit_button
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)

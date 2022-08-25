@@ -29,6 +29,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components_refactored.input_yes_no
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], trusteeName: String, postCall: Call, schemeName: Option[String], mode: Mode, srn: Option[String])(implicit request: Request[_], messages: Messages)

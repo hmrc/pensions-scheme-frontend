@@ -15,37 +15,44 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    input_yes_no: components_refactored.input_yes_no,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__haveAnyTrustees__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__haveAnyTrustees__title"))
+){
 
     @formHelper(action = HaveAnyTrusteesController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_yes_no(
+        @input_yes_no(
             field = form("value"),
             label = messages("messages__haveAnyTrustees__heading", schemeName),
             labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }

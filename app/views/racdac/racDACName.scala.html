@@ -15,39 +15,52 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.racdac.routes._
 @import models.Mode
 @import models.register._
 @import models.register.SchemeType.MasterTrust
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        appConfig: FrontendAppConfig,
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__racdac_name__title"))) {
+@headingContent= {
+    <span class="govuk-heading-xl">
+        @messages("messages__racdac_name__heading")
+    </span>
+}
+
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__racdac_name__title"))) {
 
     @formHelper(action = RACDACNameController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_text(
+        @input_text(
             field = form("value"),
             label = messages("messages__racdac_name__heading"),
-            labelClass = Some("visually-hidden"),
+            inputClass = Some("govuk-!-width-one-half"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @submit_button()
 
-        @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

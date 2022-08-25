@@ -26,20 +26,33 @@
         field: Field,
         label: String,
         inputClass: Option[String] = None,
+        groupClass: Option[String] = None,
         labelClass: Option[String] = None,
         hint: Option[String] = None,
-        headingIsLegend: Boolean = false
+        headingIsLegend: Boolean = false,
+        typeValue: String = "text",
+        numericField: Boolean = false
 )(implicit messages: Messages)
+
 
 @govukInput(Input(
     id = field.id,
     name = field.id,
+    inputType = typeValue,
+    inputmode = if (numericField) { Some("numeric")} else {
+        None
+    },
     label = Label(
         isPageHeading = headingIsLegend,
-        classes = labelClass.fold("govuk-label--xl")(classes => "govuk-label--xl " + classes),
+        classes = labelClass.fold("")(classes => classes),
         content = Text(label)
     ),
+    formGroupClasses = groupClass.getOrElse(""),
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),
-    classes = inputClass.fold("")(classes => classes)
-))
-
+    classes = inputClass.fold("")(classes => classes),
+    pattern = if (numericField) { Some("[0-9]*")} else {
+        None
+    },
+    errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(messages(errorValue.message))))
+).withFormField(field)
+)

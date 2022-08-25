@@ -39,7 +39,7 @@
     value = field.value,
     label = Label(
       isPageHeading = true,
-      classes = labelClass.fold("govuk-label--l")(classes => "govuk-label--l " + classes),
+      classes = labelClass.fold("govuk-label--xl")(classes => "govuk-label--xl " + classes),
       content = Text(label)
     ),
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),

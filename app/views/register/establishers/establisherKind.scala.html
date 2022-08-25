@@ -30,6 +30,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_radio: components_refactored.input_radio
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], srn: Option[String], index:Index, schemeName: Option[String], postCall: Call)(implicit request: Request[_], messages: Messages)

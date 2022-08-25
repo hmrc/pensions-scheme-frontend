@@ -30,7 +30,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    input_yes_no: components_refactored.input_yes_no
+    input_yes_no: components_refactored.input_yes_no,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)

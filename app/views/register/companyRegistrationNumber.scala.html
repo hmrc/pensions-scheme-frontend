@@ -30,24 +30,30 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])( implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = submitUrl, 'autoComplete -> "off") {
 
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
+
         @input_text(
             field = form("companyRegistrationNumber"),
-            label = messages(viewmodel.heading).toString,
-            labelClass = Some("visually-hidden"),
-//            paragraphText = Some(messages(viewmodel.hint)),
-            headingIsLegend = true
+            label = messages(viewmodel.heading),
+            labelClass = Some("govuk-label--xl"),
+            headingIsLegend = true,
+            inputClass = Some("govuk-!-width-one-half"),
+            hint = Some(messages(viewmodel.hint))
         )
-        @components_refactored.submit_button()
+        @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

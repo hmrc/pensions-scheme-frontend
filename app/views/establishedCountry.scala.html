@@ -30,7 +30,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukSelect : GovukSelect
+    govukSelect : GovukSelect,
+    submit_button: components_refactored.submit_button
 )
 
 @(
@@ -50,7 +51,7 @@
 
         @components_refactored.heading(messages("messages__established_country__h1", schemeName), true)
 
-        <div class="govuk-!-width-one-half">
+        <div class="govuk-!-width-two-thirds">
         @govukSelect(Select(
             id = "value",
             name = "value",
@@ -65,14 +66,14 @@
             label = Label(
                 content = Text(messages("messages__established_country__h1", schemeName)),
                 isPageHeading = false,
-                classes = "visually-hidden",
+                classes = "govuk-visually-hidden",
                 attributes = Map("aria-hidden" -> "true")
             )
             ).withFormField(form("value"))
         )
         </div>
 
-        @components_refactored.submit_button("site.save_and_continue", true)
+        @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }

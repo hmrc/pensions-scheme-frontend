@@ -21,53 +21,48 @@
 @import utils.InputOption
 
 @this(
-    govukInput: GovukInput,
-    govukSelect : GovukSelect
+        govukSelect: GovukSelect,
+        input_text: components_refactored.input_text,
 )
 
 @(form: Form[_], options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
 
-@govukInput(
-    Input(
-        label = Label(content = Text(messages("messages__common__address1")),
-        isPageHeading = false),
-        classes = "govuk-!-width-two-thirds"
-    ).withFormField(form("addressLine1"))
+@input_text(
+    field = form("addressLine1"),
+    label = messages("messages__common__address1"),
+    inputClass = Some("govuk-!-width-two-thirds"),
+    headingIsLegend = false,
 )
 
-@govukInput(
-    Input(
-        label = Label(content = Text(messages("messages__common__address2")),
-        isPageHeading = false),
-        classes = "govuk-!-width-two-thirds"
-    ).withFormField(form("addressLine2"))
+@input_text(
+    field = form("addressLine2"),
+    label = messages("messages__common__address2"),
+    inputClass = Some("govuk-!-width-two-thirds"),
+    headingIsLegend = false,
 )
 
-@govukInput(
-    Input(
-        label = Label(content = Text(messages("messages__common__address3")),
-        isPageHeading = false),
-        classes = "govuk-!-width-one-half"
-    ).withFormField(form("addressLine3"))
+@input_text(
+    field = form("addressLine3"),
+    label = messages("messages__common__address3"),
+    inputClass = Some("govuk-!-width-one-half"),
+    headingIsLegend = false,
 )
 
-@govukInput(
-    Input(
-        label = Label(content = Text(messages("messages__common__address4")),
-        isPageHeading = false),
-        classes = "govuk-!-width-one-half"
-    ).withFormField(form("addressLine4"))
+@input_text(
+    field = form("addressLine4"),
+    label = messages("messages__common__address4"),
+    inputClass = Some("govuk-!-width-one-half"),
+    headingIsLegend = false,
 )
 
-@govukInput(
-    Input(
-        label = Label(content = Text(messages("messages__common__address_postcode")),
-        isPageHeading = false),
-        classes = "govuk-!-width-one-quarter"
-    ).withFormField(form("postCode"))
+@input_text(
+    field = form("postCode"),
+    label = messages("messages__common__address_postcode"),
+    inputClass = Some("govuk-!-width-one-quarter"),
+    headingIsLegend = false,
 )
 
-<div class="govuk-!-width-one-half">
+<div class="govuk-!-width-two-thirds">
     @govukSelect(Select(
         id = "country",
         name = "country",

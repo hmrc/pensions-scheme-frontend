@@ -29,7 +29,9 @@
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig
+        appConfig: FrontendAppConfig,
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -46,12 +48,13 @@
         @components.input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
-            labelClass = Some("visually-hidden"),
+            inputClass = Some("govuk-!-width-one-half"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }

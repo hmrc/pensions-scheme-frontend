@@ -29,13 +29,14 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
-        govukPanel: GovukPanel
+        govukPanel: GovukPanel,
+        submit_button: components_refactored.submit_button
 )
 
 @(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@yourSchemesLink = {<a id="check-status-submission" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
-@pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
+@yourSchemesLink = {<a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
+@pensionsRegulatorLink = {<a id="regulator-contact" class="govuk-link" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
 @layout(
     pageTitle = messages("messages__complete_racdac__title",schemeName), showBackLink = false) {
