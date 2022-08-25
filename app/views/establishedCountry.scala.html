@@ -48,9 +48,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
-            messages("messages__established_country__h1", schemeName)
-        )
+        @components_refactored.heading(messages("messages__established_country__h1", schemeName), true)
 
         <div class="govuk-!-width-one-half">
         @govukSelect(Select(

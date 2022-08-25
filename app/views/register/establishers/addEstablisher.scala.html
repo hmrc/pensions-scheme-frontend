@@ -42,12 +42,10 @@
     pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
     @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
         @if(establishers.isEmpty) {
-        @components.heading(
-            headingKey=messages("messages__establishers__add__title")
-        )
-            <p class="govuk-body">
-                @messages("messages__establishers__add_hint")
-            </p>
+            @components_refactored.heading(
+                headingKey=messages("messages__establishers__add__title")
+            )
+            @components_refactored.paragraph_text(messages("messages__establishers__add_hint"))
             @components_refactored.submit_button("site.continue", true)
         } else {
             @if(form.errors.nonEmpty) {
