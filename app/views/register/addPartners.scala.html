@@ -75,13 +75,6 @@
                         legendClass = Some("heading-medium"),
                         hint = Some(messages("messages__addPartners_lede"))
                     )
-
-                    @components.input_yes_no(
-                        field = form("value"),
-                        label = messages("messages__addPartners_add_more"),
-                        legendClass = Some("heading-medium"),
-                        hint = Some(messages("messages__addPartners_lede"))
-                    )
                 } else {
                     @components_refactored.paragraph_text(messages("messages__addPartners_at_maximum"))
                     @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
