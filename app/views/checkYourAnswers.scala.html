@@ -34,7 +34,7 @@
 
 @layout( pageTitle = vm.title.resolve.capitalize ) {
 
-    @components_refactored.heading(vm.h1.resolve, true)
+    @components_refactored.heading(vm.h1.resolve)
 
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
