@@ -15,47 +15,37 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.routes._
 @import models.Mode
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig
 )
 
 @(
     psaName: String,
-    href: Call)(implicit request: Request[_], messages: Messages)
+    href: Call
+)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__declaration_racdac__title")) {
+@layout(pageTitle = messages("messages__declaration_racdac__title")) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__declaration_racdac__heading"))
 
-    @components.heading(
-        headingKey= messages("messages__declaration_racdac__heading")
-    )
+    @components_refactored.paragraph_text(messages("messages__declaration_racdac__declare"))
 
-    @components.paragraph_text(messages("messages__declaration_racdac__declare"))
+    <ol class="govuk-list govuk-list--number">
+        <li>@messages("messages__declaration_racdac__statement1")</li>
+        <li>@messages("messages__declaration_racdac__statement2")</li>
+        <li>@messages("messages__declaration_racdac__statement3")</li>
+    </ol>
 
-        <ol class="list list-bullet">
+    @components_refactored.button_link("site.agree_and_continue", href.url, "submit")
 
-            <li>
-                @messages("messages__declaration_racdac__statement1")
-            </li>
-            <li>
-                @messages("messages__declaration_racdac__statement2")
-            </li>
+    @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 
-            <li>
-                @messages("messages__declaration_racdac__statement3")
-            </li>
-
-        </ol>
-
-
-    @components.button_link("site.agree_and_continue", href.url, "submit")
-
-    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 }

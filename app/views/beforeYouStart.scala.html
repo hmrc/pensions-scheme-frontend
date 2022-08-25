@@ -14,36 +14,39 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
     appConfig: FrontendAppConfig
 )
 
 @(psaName: String)( implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__before_you_start__title")
-) {
-    @components.back_link()
+@layout(pageTitle = messages("messages__before_you_start__title")) {
 
-    @components.heading(headingKey = messages("messages__before_you_start__title"))
+    @components_refactored.heading(messages("messages__before_you_start__title"))
 
-    <p>@messages("messages__before_you_start__p1")</p>
-    <p>@messages("messages__before_you_start__p2")</p>
+    @components_refactored.paragraph_text(messages("messages__before_you_start__p1"))
 
-    <ul class="list list-bullet">
+    @components_refactored.paragraph_text(messages("messages__before_you_start__p2"))
+
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__before_you_start__item_1")</li>
         <li>@messages("messages__before_you_start__item_2")</li>
         <li>@messages("messages__before_you_start__item_3")</li>
         <li>@messages("messages__before_you_start__item_4")</li>
     </ul>
 
-    @components.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
+    @components_refactored.button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
 
     @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+
 }
