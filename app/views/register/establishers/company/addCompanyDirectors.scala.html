@@ -64,7 +64,7 @@
             @components_refactored.submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @entity_list(directors, viewOnly, mode, srn)
+            @entity_list(directors, viewOnly, mode, srn, messages("messages__addCompanyDirectors__heading"))
 
             @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {

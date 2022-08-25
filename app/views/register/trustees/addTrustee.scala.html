@@ -46,7 +46,7 @@
             @components_refactored.paragraph_text(messages("messages__addTrustee__lede"))
             @components_refactored.submit_button("site.continue", true)
         } else {
-            @add_entity_list(trustees, mode, srn, "messages__addTrustee__header")
+            @add_entity_list(trustees, mode, srn, messages("messages__addTrustee__heading"))
             @if(trustees.size < appConfig.maxTrustees) {
                 @input_yes_no(
                     field = form("value"),
