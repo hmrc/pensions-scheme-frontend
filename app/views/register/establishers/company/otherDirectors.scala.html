@@ -27,7 +27,8 @@
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no
 )
 
 @(form: Form[_],mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
@@ -49,8 +50,8 @@
             headingIsLegend = true
         )
 
-        @components.submit_button()
+        @components_refactored.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }
