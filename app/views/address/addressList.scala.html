@@ -41,9 +41,8 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
-            headingKey=messages(viewModel.heading)
-        )
+        @components_refactored.heading(messages(viewModel.heading))
+
         <p class="govuk-body">
             @viewModel.selectAddress.resolve
             <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
