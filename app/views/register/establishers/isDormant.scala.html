@@ -15,39 +15,45 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.establishers.routes._
 @import models.{Mode}
 @import models.register.DeclarationDormant
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], establisherName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__is_dormant__title"))) {
+@layout( pageTitle = titleWithErrors(form, messages("messages__is_dormant__title"))) {
 
-        @formHelper(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
-
-            @components.error_summary(form.errors)
-
-            @components.input_radio(
-                field = form("value"),
-                legend = messages("messages__is_dormant__heading", establisherName),
-                legendClass = Some("visually-hidden"),
-                inputs = DeclarationDormant.options,
-                fieldsetClass = Some("inline"),
-                headingIsLegend = true
-            )
-
-            @components.submit_button("site.save_and_continue")
-
-            @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
+
+        @input_radio(
+            field = form("value"),
+            legend = messages("messages__is_dormant__heading", establisherName),
+            legendClass = Some("govuk-label--xl"),
+            legendAsHeading = true,
+            inputs = DeclarationDormant.options,
+            inline = true
+        )
+
+        @submit_button("site.save_and_continue", true)
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+
+    }
 }

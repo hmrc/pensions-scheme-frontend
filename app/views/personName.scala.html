@@ -15,44 +15,49 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import models.Mode
 @import play.api.mvc.Call
 @import viewmodels.CommonFormWithHintViewModel
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages(viewModel.title))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages(viewModel.title))) {
 
     @formHelper(action = viewModel.postCall, 'autoComplete -> "off") {
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.back_link()
+        @components_refactored.heading(messages(viewModel.heading), true)
 
-        @components.error_summary(form.errors)
-
-        @components.heading(
-            headingKey=messages(viewModel.heading)
-        )
-
-        @components.input_text(
+        @input_text(
            field = form("firstName"),
-           label = messages("messages__common__firstname")
+           label = messages("messages__common__firstname"),
+            inputClass = Some("govuk-!-width-one-half"),
         )
 
-        @components.input_text(
+        @input_text(
             field = form("lastName"),
-            label = messages("messages__common__lastname")
+            label = messages("messages__common__lastname"),
+            inputClass = Some("govuk-!-width-one-half"),
         )
 
-        @components.submit_button()
+        @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
     }
 }

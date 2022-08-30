@@ -15,39 +15,40 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.establishers.company.routes._
 
 @this(
-    main_template: main_template
+    layout: templates.Layout,
+    button_link: components_refactored.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__company_detailsFor", messages("messages__theCompany"))
-) {
-    @components.back_link()
+@layout(pageTitle = messages("messages__company_detailsFor", messages("messages__theCompany"))) {
 
-    @components.heading(headingKey = messages("messages__company_detailsFor", companyName))
+    @components_refactored.heading(messages("messages__company_detailsFor", companyName))
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompany__lede", companyName)</p>
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedEstablisherCompany__lede", companyName))
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item1")</li>
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item2")</li>
     </ul>
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompany__p1", companyName)</p>
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedEstablisherCompany__p1", companyName))
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item3")</li>
         <li>@messages("messages__whatYouWillNeedEstablisherCompany__item4", companyName)</li>
     </ul>
 
-    <p>@messages("messages__whatYouWillNeedEstablisherCompany__p2", companyName)</p>
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedEstablisherCompany__p2", companyName))
 
-    @components.button_link("site.continue", href.url, "submit")
+    @button_link("site.continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
 }

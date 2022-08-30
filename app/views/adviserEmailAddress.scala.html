@@ -16,39 +16,45 @@
 
 @import config.FrontendAppConfig
 @import models.Mode
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__adviser__email__address__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__adviser__email__address__title"))) {
 
     @formHelper(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-
-        @components.input_text(
+        @input_text(
             field = form("email"),
             label = messages("messages__adviser__email__address__heading", adviserName),
-            labelClass=Some("visually-hidden"),
-            paragraphText = Some(messages("messages__adviser__email__address__hint", adviserName, schemeName)),
+            inputClass = Some("govuk-!-width-one-half"),
+            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true,
-            typeValue = "email"
+            typeValue = "email",
+            hint = Some(messages("messages__adviser__email__address__hint", adviserName, schemeName))
         )
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @submit_button()
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
 
 }

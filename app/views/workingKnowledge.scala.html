@@ -15,44 +15,49 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_yes_no: components_refactored.input_yes_no,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__workingKnowledge__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__workingKnowledge__title"))
+){
 
     @formHelper(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
+        @components_refactored.heading(messages("messages__workingKnowledge__heading"))
 
-        <div class="form-group @if(form.hasErrors){form-group--error}">
+        @components_refactored.paragraph_text(messages("messages__workingKnowledge__p1"), Some("p1"))
+        @components_refactored.paragraph_text(messages("messages__workingKnowledge__p2"), Some("p2"))
+        @components_refactored.paragraph_text(messages("messages__workingKnowledge__p3"), Some("p3"))
 
-        @components.heading(messages("messages__workingKnowledge__heading"))
-
-        <p id="p1">@Html(messages("messages__workingKnowledge__p1"))</p>
-        <p id="p2">@Html(messages("messages__workingKnowledge__p2"))</p>
-        <p id="p3">@Html(messages("messages__workingKnowledge__p3"))</p>
-
-        @components.input_yes_no(
+        @input_yes_no(
             field = form("value"),
             label = messages("messages__workingKnowledge__heading"),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("govuk-visually-hidden")
         )
-        </div>
-        @components.submit_button("site.save_and_continue")
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @submit_button("site.save_and_continue")
+
+        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }

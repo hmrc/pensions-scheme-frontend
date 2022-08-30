@@ -15,39 +15,44 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
 @import models.{Mode, Index}
 @import models.CompanyDetails
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_text: components_refactored.input_text,
+        submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__companyName__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__companyName__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-        <div class="form-group @if(form.hasErrors){form-group--error}">
-
-        @components.input_text(
+        @input_text(
             field = form("companyName"),
             label = messages("messages__companyName__heading"),
-            labelClass = Some("visually-hidden"),
+            labelClass = Some("govuk-label--xl"),
+            inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true
         )
-        </div>
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @submit_button()
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
     }
 }

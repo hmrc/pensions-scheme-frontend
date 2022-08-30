@@ -14,39 +14,44 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import viewmodels.address.AddressYearsViewModel
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewmodel: AddressYearsViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, viewmodel.title)
+@layout(
+    pageTitle = titleWithErrors(form, viewmodel.title)
 ) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_radio(
+        @radio(
             field = form("value"),
             legend = viewmodel.heading,
-            legendClass = Some("visually-hidden"),
+            legendClass = Some("govuk-label--xl"),
             inputs = viewmodel.inputs,
-            fieldsetClass = Some("inline"),
-            headingIsLegend=true
+            inline = true,
+            legendAsHeading = true
         )
 
+        @submit_button()
 
-        @components.submit_button()
-
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }

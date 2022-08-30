@@ -61,7 +61,7 @@ messages__common__entityKind_partnership = Partnership
 messages__common__trustee = trustee
 messages__common__establisher = establisher
 
-messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually {1}.
+messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually{1}.
 
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
@@ -177,6 +177,7 @@ site.saveOrPrint = Save or print
 site.return_to = Return to {0}
 site.type = Type
 site.error = Error:
+site.name = name
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -1907,3 +1908,7 @@ messages__yourActionWasNotProcessed__heading = Sorry, your action was not proces
 messages__yourActionWasNotProcessed__p1 = Try again later.
 messages__yourActionWasNotProcessed__p2 = Any information entered will have been saved from the last ‘save and continue’.
 messages__yourActionWasNotProcessed__p3 = If the problem persists you can tell us about it using the link below.
+
+site.true = true
+site.false = false
+site.change = Change

@@ -15,38 +15,67 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.Mode
 @import utils.InputOption
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukSelect : GovukSelect,
+    submit_button: components_refactored.submit_button
 )
 
-@(form: Form[_], mode: Mode, options: Seq[InputOption], schemeName: String)(implicit request: Request[_], messages: Messages)
+@(
+    form: Form[_],
+    mode: Mode,
+    options: Seq[InputOption],
+    schemeName: String
+)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__established_country__title"))) {
-    @formHelper(action = EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
+    @formHelper(action = routes.EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
+        @components_refactored.heading(messages("messages__established_country__h1", schemeName), true)
 
-        @components.select(field = form("value"),
-            label = messages("messages__established_country__h1", schemeName),
-            options = options,
-            placeholder = Some("messages__common__pick_country"),
-            formGroupClasses = Set("autocomplete-wrapper"),
-            labelClasses = Set("visually-hidden"),
-            headingIsLegend = true
+        <div class="govuk-!-width-two-thirds">
+        @govukSelect(Select(
+            id = "value",
+            name = "value",
+            classes = "govuk-!-width-one-third country",
+            items = Seq(SelectItem(value = Some(""))) ++
+            options.map(valueOption =>
+                SelectItem(
+                    value = Some(valueOption.value),
+                    text = valueOption.label
+                )
+            ),
+            label = Label(
+                content = Text(messages("messages__established_country__h1", schemeName)),
+                isPageHeading = false,
+                classes = "govuk-visually-hidden",
+                attributes = Map("aria-hidden" -> "true")
+            )
+            ).withFormField(form("value"))
         )
-        @components.submit_button()
+        </div>
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @submit_button("site.save_and_continue", true)
+
+        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
     }
 }
+

@@ -15,38 +15,42 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.racdac.routes._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
-    appConfig: FrontendAppConfig,
-    formHelper: FormWithCSRF
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        appConfig: FrontendAppConfig,
+        submit_button: components_refactored.submit_button
 )
 
 @(psaName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("messages__what_is_rac_dac__title")) {
+@layout(
+    pageTitle = messages("messages__what_is_rac_dac__title")) {
 
     @formHelper(action = WhatIsRACDACController.onSubmit, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @components_refactored.heading(messages("messages__what_is_rac_dac__h1"))
 
-        @components.heading(headingKey = messages("messages__what_is_rac_dac__h1"))
+        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__p1"))
 
-        <p>@messages("messages__what_is_rac_dac__p1")</p>
+        <h2 class="govuk-heading-l">@messages("messages__what_is_rac_dac__h2")</h2>
+        <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__rac_h3")</h3>
 
-        <h2 class="heading-medium">@messages("messages__what_is_rac_dac__h2")</h2>
+        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__rac_p"))
 
-        <h3 class="heading-small">@messages("messages__what_is_rac_dac__rac_h3")</h3>
-        <p>@messages("messages__what_is_rac_dac__rac_p")</p>
+        <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__dac_h3")</h3>
 
-        <h3 class="heading-small">@messages("messages__what_is_rac_dac__dac_h3")</h3>
-        <p>@messages("messages__what_is_rac_dac__dac_p")</p>
+        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__dac_p"))
 
-        @components.submit_button("site.continue")
+        @submit_button("site.continue")
 
-        @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

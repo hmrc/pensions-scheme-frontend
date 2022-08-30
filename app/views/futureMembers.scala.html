@@ -15,38 +15,44 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.{Mode}
 @import models.Members
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__future_members__title"))) {
+@layout(
+    pageTitle = titleWithErrors(form, messages("messages__future_members__title"))) {
 
     @formHelper(action = FutureMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.input_radio(
+        @radio(
             field = form("value"),
             legend = messages("messages__future_members__h1", schemeName),
-            legendClass = Some("visually-hidden"),
+            legendClass = Some("govuk-label--xl"),
             inputs = Members.options,
-            headingIsLegend=true
+            legendAsHeading = true
         )
 
-        @components.submit_button()
+        @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
     }
 }

@@ -15,7 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.{Mode}
 @import models.TypeOfBenefits
@@ -23,33 +26,36 @@
 @import play.api.mvc.Call
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages("messages__type_of_benefits__title"))) {
+@layout( pageTitle = titleWithErrors(form, messages("messages__type_of_benefits__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
         @schemeName.map{sn=>
-
-        @components.input_radio(
-            field = form("value"),
-            legend = messages("messages__type_of_benefits__h1",sn),
-            legendClass = Some("visually-hidden"),
-            inputs = TypeOfBenefits.options,
-            headingIsLegend = true
-        )
+            @input_radio(
+                field = form("value"),
+                legend = messages("messages__type_of_benefits__h1", sn),
+                legendClass = Some("govuk-label--xl"),
+                legendAsHeading = true,
+                inputs = TypeOfBenefits.options
+            )
         }
-        @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @submit_button("site.save_and_continue", true)
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+
     }
 }

@@ -15,36 +15,43 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import models.{Mode, Index}
 @import viewmodels.address.ManualAddressViewModel
 @import utils.InputOption
 @import utils.ViewHelper.titleWithErrors
 
 @this(
-    main_template: main_template,
-    formHelper: FormWithCSRF
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukInput: GovukInput,
+    govukSelect : GovukSelect,
+    address: components_refactored.address,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = titleWithErrors(form, messages(viewmodel.title))
-) {
+@layout(
+    pageTitle = titleWithErrors(form, messages(viewmodel.title))) {
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
 
-        @components.error_summary(form.errors)
-
-        @components.heading(
-            headingKey=messages(viewmodel.heading)
+        @components_refactored.heading(
+            messages(viewmodel.heading)
         )
 
-        @components.address(form, viewmodel.countryOptions)
+        @address(form, viewmodel.countryOptions)
 
-        @components.submit_button()
+        @submit_button("site.save_and_continue", true)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
     }
 }

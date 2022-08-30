@@ -15,36 +15,38 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
 @import viewmodels.Message
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-    main_template: main_template,
+    layout: templates.Layout,
     appConfig: FrontendAppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@psaGovUkLink = {<a id="psa-gov-uk-link" href="@appConfig.pensionAdministratorGovUkLink">@messages("messages__youNeedToRegister__p1__link")</a>}
-@pspGovUkLink = {<a id="psp-gov-uk-link" href="@appConfig.pensionPractitionerGovUkLink">@messages("messages__youNeedToRegister__p2__link")</a>}
+@psaGovUkLink = {<a id="psa-gov-uk-link" class="govuk-link" href="@appConfig.pensionAdministratorGovUkLink">@messages("messages__youNeedToRegister__p1__link")</a>}
+@pspGovUkLink = {<a id="psp-gov-uk-link" class="govuk-link" href="@appConfig.pensionPractitionerGovUkLink">@messages("messages__youNeedToRegister__p2__link")</a>}
 
-@main_template(
-    title = messages("messages__youNeedToRegister__title")) {
+@layout(pageTitle = messages("messages__youNeedToRegister__title")) {
 
-    @components.back_link()
+    @components_refactored.heading(messages("messages__youNeedToRegister__heading"))
 
-    @components.heading(messages("messages__youNeedToRegister__heading").toString)
+    <p class="govuk-body-l">@messages("messages__youNeedToRegister__lede")</p>
 
-    <p class="lede">@messages("messages__youNeedToRegister__lede")</p>
+    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p1", psaGovUkLink))
 
-    <p>@Html(Message("messages__youNeedToRegister__p1").withArgs(psaGovUkLink))</p>
-    <p>@Html(Message("messages__youNeedToRegister__p2").withArgs(pspGovUkLink))</p>
+    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p2", pspGovUkLink))
 
-    <div class="section">
-        <a id="redirect-to-psa" href="@appConfig.registerSchemeAdministratorUrl" role="button" class="button">@messages("messages__youNeedToRegister__button")</a>
-    </div>
+    <p class="govuk-body">
+        <a id="redirect-to-psa" class="govuk-button" href="@appConfig.registerSchemeAdministratorUrl" role="button">@messages("messages__youNeedToRegister__button")</a>
+    </p>
 
-    <a id="gov-uk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
+    <p class="govuk-body">
+        <a id="gov-uk-link" class="govuk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
+    </p>
 }
