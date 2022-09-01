@@ -23,10 +23,11 @@ import models.AuthEntity.PSA
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import views.html.psaTaskList
+import views.html.{oldPsaTaskList, psaTaskList}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -37,6 +38,8 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             getData: DataRetrievalAction,
                                             @TaskList allowAccess: AllowAccessActionProvider,
                                             val controllerComponents: MessagesControllerComponents,
+                                            featureToggleService: FeatureToggleService,
+                                            val oldView: oldPsaTaskList,
                                             val view: psaTaskList,
                                             hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                             hsTaskListHelperVariations: HsTaskListHelperVariations
@@ -46,6 +49,8 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).apply {
     implicit request =>
+      val x:   =
+      view.apply()
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>

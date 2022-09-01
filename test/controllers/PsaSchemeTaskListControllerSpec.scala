@@ -22,13 +22,13 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.psaTaskList
+import views.html.oldPsaTaskList
 
 import scala.concurrent.Future
 
@@ -95,7 +95,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 }
 
 object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
-  private val view = injector.instanceOf[psaTaskList]
+  private val view = injector.instanceOf[oldPsaTaskList]
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
