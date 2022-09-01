@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.SchemeNameId
 import models.AuthEntity.PSA
-import models.Mode
+import models.{FeatureToggleName, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.FeatureToggleService
@@ -31,7 +31,7 @@ import viewmodels.SchemeDetailsTaskList
 import views.html.{oldPsaTaskList, psaTaskList}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
@@ -44,35 +44,38 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             val view: psaTaskList,
                                             hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                             hsTaskListHelperVariations: HsTaskListHelperVariations
-                                        )(implicit val executionContext: ExecutionContext) extends
+                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
-    andThen allowAccess(srn)).apply {
+    andThen allowAccess(srn)).async {
     implicit request =>
       import play.twirl.api.HtmlFormat.Appendable
 
-      def renderView(taskSections: SchemeDetailsTaskList, schemeName: String): Appendable = {
-        if (true) {
-          view.apply(taskSections, schemeName)
-        } else {
-          oldView.apply(taskSections, schemeName)
+      def renderView(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
+        featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
+          case true => view.apply(taskSections, schemeName)
+          case _ => oldView.apply(taskSections, schemeName)
         }
       }
 
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          Ok(renderView(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName))
+          renderView(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName).map {
+            Ok(_)
+          }
 
         case (Some(_), Some(userAnswers), Some(schemeName)) =>
-          Ok(renderView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
+          renderView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName).map {
+            Ok(_)
+          }
 
         case (Some(_), _, _) =>
-          Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
         case _ =>
-          Redirect(appConfig.managePensionsSchemeOverviewUrl)
+          Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }
   }
 }

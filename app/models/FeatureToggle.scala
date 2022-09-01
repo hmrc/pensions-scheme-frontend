@@ -39,10 +39,15 @@ object FeatureToggleName {
     val asString = "collective-money-purchase"
   }
 
-  val toggles = Seq(TCMP)
+  case object SchemeRegistration extends FeatureToggleName{
+    val asString = "scheme-registration"
+  }
+
+  val toggles = Seq(TCMP, SchemeRegistration)
 
   implicit val reads: Reads[FeatureToggleName] = Reads {
     case JsString(TCMP.asString) => JsSuccess(TCMP)
+    case JsString(SchemeRegistration.asString) => JsSuccess(SchemeRegistration)
     case _ => JsError("Unrecognised feature toggle name")
   }
 
