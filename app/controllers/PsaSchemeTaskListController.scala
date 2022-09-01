@@ -27,6 +27,7 @@ import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import viewmodels.SchemeDetailsTaskList
 import views.html.{oldPsaTaskList, psaTaskList}
 
 import javax.inject.Inject
@@ -49,15 +50,23 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).apply {
     implicit request =>
-      val x:   =
-      view.apply()
+      import play.twirl.api.HtmlFormat.Appendable
+
+      def renderView(taskSections: SchemeDetailsTaskList, schemeName: String): Appendable = {
+        if (true) {
+          view.apply(taskSections, schemeName)
+        } else {
+          oldView.apply(taskSections, schemeName)
+        }
+      }
+
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          Ok(view(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName))
+          Ok(renderView(hsTaskListHelperRegistration.taskList(userAnswers, None, srn), schemeName))
 
         case (Some(_), Some(userAnswers), Some(schemeName)) =>
-          Ok(view(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
+          Ok(renderView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName))
 
         case (Some(_), _, _) =>
           Redirect(controllers.routes.SessionExpiredController.onPageLoad)
