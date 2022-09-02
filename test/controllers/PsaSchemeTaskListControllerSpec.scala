@@ -135,7 +135,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
+        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe false
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
       }
@@ -208,7 +208,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
     trustees = Nil,
     declaration = None,
     isAllSectionsComplete = None,
-    sectionsCompleted = 0
+    statsSection = None
   )
 }
 

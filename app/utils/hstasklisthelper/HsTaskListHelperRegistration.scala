@@ -41,8 +41,13 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
-      completedSectionCount(answers)
+      Some(StatsSection(completedSectionCount(answers),6 ,"23 September 2020"))
     )
+
+//  private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
+
+//  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
+//    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,

@@ -26,7 +26,7 @@ import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.UserAnswers
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
 
 class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
@@ -224,7 +224,7 @@ class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with Mock
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
           "messages__schemeTaskList__sectionDeclaration_incomplete_v2")),
         Some(false),
-        0
+        None
       )
     }
   }

@@ -27,7 +27,7 @@ import org.mockito.MockitoSugar
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
 
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper {
 
@@ -209,7 +209,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None,
-        1
+        Some(StatsSection(1,6,"23 September 2020"))
       )
     }
 
@@ -223,7 +223,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       val result = helper.taskList(answersDataAllComplete(), None, None)
 
-      result.sectionsCompleted mustBe 6
+      result.statsSection mustBe Some(StatsSection(6, 6, "23 September 2020"))
     }
 
     "return the task list with correct count when one section is complete" in {
@@ -236,7 +236,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None)
 
-      result.sectionsCompleted mustBe 4
+      result.statsSection mustBe Some(StatsSection(4, 6, "23 September 2020"))
+
     }
 
     "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {

@@ -1915,4 +1915,5 @@ site.change = Change
 
 taskList.complete = Scheme details are complete
 taskList.incomplete = Scheme details are incomplete
+taskList.status = You have completed {0} of {1} sections
 taskList.saveAnswers = We will save your answers until

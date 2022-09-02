@@ -70,18 +70,18 @@
 
     @components_refactored.heading(taskSections.h1)
 
-    @if(taskSections.allComplete) {
-        <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.complete")</strong>
-    } else {
-        <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.incomplete")</strong>
+    @taskSections.statsSection.map{ section =>
+        @if(taskSections.allComplete) {
+            <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.complete")</strong>
+        } else {
+            <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.incomplete")</strong>
+        }
+
+        <p class="govuk-body">@messages("taskList.status", section.sectionsCompleted, section.totalSections)</p>
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">@messages("taskList.saveAnswers")</p>
+        <p class="govuk-body">@section.dateExpiry</p>
     }
 
-    <p></p>
-    <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.saveAnswers")</strong>
-
-
-
-    @taskSections.sectionsCompleted
 
 
     <ol class="app-task-list">

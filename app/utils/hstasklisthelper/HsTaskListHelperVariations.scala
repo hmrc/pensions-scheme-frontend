@@ -43,7 +43,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
       trustees = trusteesSection(answers, UpdateMode, srn),
       declaration = declarationSection(answers, srn, viewOnly),
       isAllSectionsComplete = Some(answers.areVariationChangesCompleted),
-      0
+      statsSection = None
     )
   }
 

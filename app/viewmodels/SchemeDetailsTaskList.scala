@@ -18,6 +18,8 @@ package viewmodels
 
 import models.EntitySpoke
 
+case class StatsSection(sectionsCompleted: Int, totalSections: Int, dateExpiry: String)
+
 case class SchemeDetailsTaskList(
                                   h1: String,
                                   srn: Option[String],
@@ -30,7 +32,7 @@ case class SchemeDetailsTaskList(
                                   trustees: Seq[SchemeDetailsTaskListEntitySection],
                                   declaration: Option[SchemeDetailsTaskListEntitySection],
                                   isAllSectionsComplete: Option[Boolean],
-                                  sectionsCompleted: Int
+                                  statsSection: Option[StatsSection]
                                 ) {
   def allComplete: Boolean = {
     declaration match {
