@@ -96,7 +96,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       ))
   }
 
-  private def sections(userAnswers: UserAnswers) = {
+  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
@@ -106,15 +106,18 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    )
-  }
-
-  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
-   sections(userAnswers).forall(_.contains(true))
+    ).forall(_.contains(true))
   }
 
   def completedSectionCount(userAnswers: UserAnswers): Int = {
-    sections(userAnswers).count(_.contains(true))
+    Seq(
+      userAnswers.isBeforeYouStartCompleted(NormalMode) && userAnswers.isWorkingKnowledgeCompleted.getOrElse(false),
+      userAnswers.isMembersCompleted.contains(true),
+      userAnswers.isBankDetailsCompleted.contains(true),
+      userAnswers.isBenefitsAndInsuranceCompleted.contains(true),
+      isAllEstablishersCompleted(userAnswers, NormalMode),
+      userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)
+    ).count(identity)
   }
 }
 
