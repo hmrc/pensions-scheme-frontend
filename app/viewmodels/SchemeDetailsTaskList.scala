@@ -29,8 +29,16 @@ case class SchemeDetailsTaskList(
                                   addTrusteeHeader: Option[SchemeDetailsTaskListEntitySection],
                                   trustees: Seq[SchemeDetailsTaskListEntitySection],
                                   declaration: Option[SchemeDetailsTaskListEntitySection],
-                                  isAllSectionsComplete: Option[Boolean]
-                                )
+                                  isAllSectionsComplete: Option[Boolean],
+                                  sectionCompleted: Int
+                                ) {
+  def allComplete: Boolean = {
+    declaration match {
+      case None => false
+      case Some(d) => d.entities.nonEmpty
+    }
+  }
+}
 
 case class SchemeDetailsTaskListEntitySection(
                                                isCompleted: Option[Boolean],

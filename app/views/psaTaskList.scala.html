@@ -70,12 +70,22 @@
 
     @components_refactored.heading(taskSections.h1)
 
+    @if(taskSections.allComplete) {
+        <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.complete")</strong>
+    } else {
+        <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.incomplete")</strong>
+    }
+
+    <p></p>
+    <strong class="govuk-body govuk-!-font-weight-bold">@messages("taskList.saveAnswers")</strong>
+
+
+
+    @taskSections.sectionCompleted
+
+
     <ol class="app-task-list">
-fjdhsjgkhdfs
         <li aria-labelledby="section-before-you-start-header">
-            <h2 id="section-before-you-start-header" class="govuk-heading-l">
-                @messages("messages__scheme_details__title")
-            </h2>
 
             @taskSections.beforeYouStart.header.map{ item=>
                 <h3 id="section-information-h3" class="app-task-list__section">

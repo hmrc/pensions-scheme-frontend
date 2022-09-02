@@ -40,7 +40,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
-      None
+      None,
+      completedSectionCount(answers)
     )
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
@@ -95,7 +96,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       ))
   }
 
-  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+  private def sections(userAnswers: UserAnswers) = {
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
@@ -105,7 +106,15 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
       Some(userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)),
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
-    ).forall(_.contains(true))
+    )
+  }
+
+  def declarationEnabled(userAnswers: UserAnswers): Boolean = {
+   sections(userAnswers).forall(_.contains(true))
+  }
+
+  def completedSectionCount(userAnswers: UserAnswers): Int = {
+    sections(userAnswers).count(_.contains(true))
   }
 }
 
