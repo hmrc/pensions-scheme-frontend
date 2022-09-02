@@ -223,7 +223,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       val result = helper.taskList(answersDataAllComplete(), None, None)
 
-      result.sectionCompleted mustBe 6
+      result.sectionsCompleted mustBe 6
     }
 
     "return the task list with correct count when one section is complete" in {
@@ -236,7 +236,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None)
 
-      result.sectionCompleted mustBe 4
+      result.sectionsCompleted mustBe 4
     }
 
     "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {

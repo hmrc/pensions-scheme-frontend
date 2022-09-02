@@ -208,7 +208,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
     trustees = Nil,
     declaration = None,
     isAllSectionsComplete = None,
-    sectionCompleted = 0
+    sectionsCompleted = 0
   )
 }
 

@@ -30,7 +30,7 @@ case class SchemeDetailsTaskList(
                                   trustees: Seq[SchemeDetailsTaskListEntitySection],
                                   declaration: Option[SchemeDetailsTaskListEntitySection],
                                   isAllSectionsComplete: Option[Boolean],
-                                  sectionCompleted: Int
+                                  sectionsCompleted: Int
                                 ) {
   def allComplete: Boolean = {
     declaration match {
