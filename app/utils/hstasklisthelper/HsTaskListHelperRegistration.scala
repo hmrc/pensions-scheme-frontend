@@ -54,7 +54,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
-      Some(StatsSection(completedSectionCount(answers), 6, expiryDate))
+      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
   }
 
@@ -143,6 +143,13 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       isAllEstablishersCompleted(userAnswers, NormalMode),
       userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)
     ).count(identity)
+  }
+
+  def totalSections(userAnswers: UserAnswers): Int = {
+    userAnswers.get(HaveAnyTrusteesId) match {
+      case Some(true) => 6
+      case _ => 5
+    }
   }
 }
 
