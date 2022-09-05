@@ -63,7 +63,17 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     SchemeDetailsTaskListEntitySection(None,
       spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId)
         .getOrElse(""), None),
-      Some(Message("messages__schemeTaskList__before_you_start_header"))
+      None
+    )
+  }
+
+  override protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : SchemeDetailsTaskListEntitySection = {
+    val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
+    SchemeDetailsTaskListEntitySection(
+      None,
+      spokeCreationService.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
+      None
     )
   }
 

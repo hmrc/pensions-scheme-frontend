@@ -18,7 +18,7 @@ package utils.hstasklisthelper
 
 import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
-import identifiers.{SchemeNameId, _}
+import identifiers._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -26,7 +26,7 @@ import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.UserAnswers
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 
 class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
