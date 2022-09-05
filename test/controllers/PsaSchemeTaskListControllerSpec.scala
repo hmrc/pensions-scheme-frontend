@@ -30,7 +30,7 @@ import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.{oldPsaTaskList, psaTaskList}
+import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
 
 import scala.concurrent.Future
 
@@ -110,7 +110,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           .onPageLoad(NormalMode, None)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe view(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe psaTaskListRegistrationView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
       }
     }
 
@@ -164,7 +164,8 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val fakeHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
-  private val view = injector.instanceOf[psaTaskList]
+  private val psaTaskListRegistrationView = injector.instanceOf[psaTaskListRegistration]
+  private val psaTaskListVariationsView = injector.instanceOf[psaTaskListVariations]
   private val mockFeatureToggleService = mock[FeatureToggleService]
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
@@ -182,7 +183,8 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       controllerComponents,
       mockFeatureToggleService,
       oldView,
-      view,
+      psaTaskListRegistrationView,
+      psaTaskListVariationsView,
       fakeHsTaskListHelperRegistration,
       fakeHsTaskListHelperVariation,
       mockUserAnswersCacheConnector

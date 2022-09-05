@@ -55,7 +55,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   }
 
   "beforeYouStartSection " must {
-    "return correct the correct entity section " in {
+    "return the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
       when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
@@ -284,8 +284,8 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
-  private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
-  private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
+  private val beforeYouStartHeader = None
+  private val aboutHeader = None
   private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val wkAddLinkText = Message("messages__schemeTaskList__add_details_wk")
