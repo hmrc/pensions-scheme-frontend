@@ -30,7 +30,7 @@ import viewmodels._
 
 abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationService) extends Enumerable.Implicits {
 
-  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList
+  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList
 
   protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
   : SchemeDetailsTaskListEntitySection = {

@@ -28,7 +28,8 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
   override def taskList(
                          answers: UserAnswers,
                          viewOnlyOpt: Option[Boolean],
-                         srn: Option[String]
+                         srn: Option[String],
+                         lastUpdatedDate: Option[LastUpdated] = None
                        ): SchemeDetailsTaskList = {
     val viewOnly = viewOnlyOpt.getOrElse(false)
     SchemeDetailsTaskList(

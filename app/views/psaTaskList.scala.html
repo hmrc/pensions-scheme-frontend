@@ -79,7 +79,9 @@
 
         <p class="govuk-body">@messages("taskList.status", section.sectionsCompleted, section.totalSections)</p>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">@messages("taskList.saveAnswers")</p>
-        <p class="govuk-body">@section.dateExpiry</p>
+        @section.dateExpiry.map{ date =>
+            <p class="govuk-body">@date</p>
+        }
     }
 
 

@@ -17,7 +17,7 @@
 package controllers
 
 import base.JsonFileReader
-import connectors.MinimalPsaConnector
+import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import identifiers.SchemeNameId
 import models.FeatureToggleName.SchemeRegistration
@@ -39,18 +39,19 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
   import PsaSchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(fakeHsTaskListHelperRegistration)
+    reset(fakeHsTaskListHelperRegistration, mockUserAnswersCacheConnector)
     when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+    when(mockUserAnswersCacheConnector.lastUpdated(any())(any(), any())).thenReturn(Future.successful(None))
   }
 
   "SchemeTaskList Controller when toggle is off" when {
 
     "srn is None and there is user answers with toggle off" must {
       "return OK and the old view" in {
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -70,7 +71,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is some value and there is user answers" must {
       "return OK and the correct view" in {
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
@@ -85,7 +86,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is some value and there is no user answers" must {
       "return REDIRECT to session expired page" in {
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
@@ -104,7 +105,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -128,7 +129,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
@@ -145,7 +146,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return REDIRECT to session expired page" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
@@ -165,6 +166,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val view = injector.instanceOf[psaTaskList]
   private val mockFeatureToggleService = mock[FeatureToggleService]
+  private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val srnValue = "S1000000456"
   private val srn = Some(srnValue)
@@ -182,7 +184,8 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       oldView,
       view,
       fakeHsTaskListHelperRegistration,
-      fakeHsTaskListHelperVariation
+      fakeHsTaskListHelperVariation,
+      mockUserAnswersCacheConnector
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")

@@ -17,18 +17,31 @@
 package utils.hstasklisthelper
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.{Mode, NormalMode}
+import models.{LastUpdated, Mode, NormalMode}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
+
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
   spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 
-  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList =
+  //DATE FORMATIING HELPER METHODS
+
+  private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
+
+  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
+    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
+
+  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+                        lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+    val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       None,
@@ -41,13 +54,10 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
-      Some(StatsSection(completedSectionCount(answers),6 ,"23 September 2020"))
+      Some(StatsSection(completedSectionCount(answers), 6, expiryDate))
     )
+  }
 
-//  private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
-
-//  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
-//    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,

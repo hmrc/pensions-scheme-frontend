@@ -16,6 +16,7 @@
 
 package utils.hstasklisthelper
 
+import config.FrontendAppConfig
 import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -24,24 +25,32 @@ import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.{Enumerable, UserAnswers}
 import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
 
-class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper {
+class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
   import HsTaskListHelperRegistrationSpec._
 
+  private val mockAppConfig = mock[FrontendAppConfig]
+
   private val mockSpokeCreationService = mock[SpokeCreationService]
-  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService)
+  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
+
+  override protected def beforeEach(): Unit = {
+    reset(mockAppConfig)
+    when(mockAppConfig.daysDataSaved).thenReturn(10)
+  }
 
   "h1" must {
     "display appropriate heading" in {
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
-      helper.taskList(userAnswers, None, None).h1 mustBe name
+      helper.taskList(userAnswers, None, None, None).h1 mustBe name
     }
   }
 
@@ -189,7 +198,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None)
+      val result = helper.taskList(userAnswers, None, None, None)
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
@@ -209,7 +218,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None,
-        Some(StatsSection(1,6,"23 September 2020"))
+        Some(StatsSection(1,6,None))
       )
     }
 
@@ -221,9 +230,9 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(answersDataAllComplete(), None, None)
+      val result = helper.taskList(answersDataAllComplete(), None, None, None)
 
-      result.statsSection mustBe Some(StatsSection(6, 6, "23 September 2020"))
+      result.statsSection mustBe Some(StatsSection(6, 6, None))
     }
 
     "return the task list with correct count when one section is complete" in {
@@ -234,9 +243,9 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None)
+      val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None, None)
 
-      result.statsSection mustBe Some(StatsSection(4, 6, "23 September 2020"))
+      result.statsSection mustBe Some(StatsSection(4, 6, None))
 
     }
 
@@ -258,7 +267,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None)
+      val result = helper.taskList(userAnswers, None, None, None)
 
 
       result.establishers mustBe Seq(

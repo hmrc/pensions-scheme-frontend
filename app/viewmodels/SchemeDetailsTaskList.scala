@@ -18,7 +18,7 @@ package viewmodels
 
 import models.EntitySpoke
 
-case class StatsSection(sectionsCompleted: Int, totalSections: Int, dateExpiry: String)
+case class StatsSection(sectionsCompleted: Int, totalSections: Int, dateExpiry: Option[String])
 
 case class SchemeDetailsTaskList(
                                   h1: String,
