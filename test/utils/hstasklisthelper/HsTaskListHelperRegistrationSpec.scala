@@ -198,7 +198,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None, None)
+      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
@@ -218,7 +218,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None,
-        Some(StatsSection(1,6,None))
+        Some(StatsSection(1,6,Some("15 September 2022")))
       )
     }
 
