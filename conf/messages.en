@@ -1622,7 +1622,8 @@ messages__hasBeenTradingCompany__title = Has the establisher been trading for at
 messages__hasBeenTrading__h1 =  Has {0} been trading for at least 1 year?
 messages__hasBeenTradingCompany__error__required = Select yes if {0} has been trading for at least 1 year
 
-messages__schemeTaskList__before_you_start_link_text = Set up the scheme application for {0}
+messages__schemeTaskList__before_you_start_link_text = Change {0}’s basic details
+messages__schemeTaskList__before_you_start_link_text_old = Set up the scheme application for {0}
 messages__schemeTaskList__scheme_info_link_text = Information about your scheme
 messages__schemeTaskList__scheme_information_link_text = Scheme information
 messages__schemeTaskList__about_members_link_text = Change membership details for {0}

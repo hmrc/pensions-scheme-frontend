@@ -91,11 +91,6 @@
 
     <ol class="app-task-list govuk-list govuk-!-margin-top-8">
         <li aria-labelledby="section-before-you-start-header">
-            @taskSections.beforeYouStart.header.map{ item=>
-                <h2 id="section-before-you-start-header" class="govuk-heading-l">
-                    @messages(item)
-                </h2>
-            }
             <ul class="app-task-list__items">
                 @taskSections.beforeYouStart.entities.map{ spoke =>
                     <li class="app-task-list__item">
