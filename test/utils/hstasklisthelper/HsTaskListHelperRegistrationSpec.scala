@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{Message, SchemeDetailsTaskListEntitySection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
 
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
@@ -41,7 +41,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
 
   override protected def beforeEach(): Unit = {
-    reset(mockAppConfig)
+    reset(mockAppConfig, mockSpokeCreationService)
     when(mockAppConfig.daysDataSaved).thenReturn(10)
   }
 
@@ -187,101 +187,145 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   }
 
   "task list" must {
-//    "return the task list with all the sections without trustees" in {
-//      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-//        .set(HaveAnyTrusteesId)(false).asOpt.value
-//        .set(DeclarationDutiesId)(value = true).asOpt.value
+    //    "return the task list with all the sections without trustees" in {
+    //      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+    //        .set(HaveAnyTrusteesId)(false).asOpt.value
+    //        .set(DeclarationDutiesId)(value = true).asOpt.value
+    //
+    //      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+    //      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+    //      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+    //      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+    //      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+    //
+    //      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+    //
+    //      result mustBe SchemeDetailsTaskList(
+    //        schemeName, None,
+    //        beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+    //        about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+    //        workingKnowledge = None,
+    //        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
+    //        ),
+    //        establishers = Seq(
+    //          SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
+    //        ),
+    //        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+    //        ),
+    //        trustees = Nil,
+    //        declaration = Some(
+    //          SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+    //            "messages__schemeTaskList__sectionDeclaration_incomplete")
+    //        ),
+    //        None,
+    //        Some(StatsSection(1,6,Some("15 September 2022")))
+    //      )
+    //    }
+//        "return the task list with all the sections with trustees" in {
+//          val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+//            .set(HaveAnyTrusteesId)(true).asOpt.value
+//            .set(DeclarationDutiesId)(value = true).asOpt.value
 //
-//      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-//      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-//      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-//      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-//      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+//          when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+//          when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+//          when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+//          when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+//          when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 //
-//      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+//          val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 //
-//      result mustBe SchemeDetailsTaskList(
-//        schemeName, None,
-//        beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
-//        about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
-//        workingKnowledge = None,
-//        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
-//        ),
-//        establishers = Seq(
-//          SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
-//        ),
-//        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
-//        ),
-//        trustees = Nil,
-//        declaration = Some(
-//          SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
-//            "messages__schemeTaskList__sectionDeclaration_incomplete")
-//        ),
-//        None,
-//        Some(StatsSection(1,6,Some("15 September 2022")))
-//      )
-//    }
-//    "return the task list with all the sections with trustees" in {
-//      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-//        .set(HaveAnyTrusteesId)(true).asOpt.value
-//        .set(DeclarationDutiesId)(value = true).asOpt.value
-//
-//      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-//      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-//      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-//      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-//      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-//
-//      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
-//
-//      result mustBe SchemeDetailsTaskList(
-//        schemeName, None,
-//        beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
-//        about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
-//        workingKnowledge = None,
-//        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
-//        ),
-//        establishers = Seq(
-//          SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
-//        ),
-//        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
-//        ),
-//        trustees = Nil,
-//        declaration = Some(
-//          SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
-//            "messages__schemeTaskList__sectionDeclaration_incomplete")
-//        ),
-//        None,
-//        Some(StatsSection(6,6,Some("15 September 2022")))
-//      )
-//    }
+//          result mustBe SchemeDetailsTaskList(
+//            schemeName, None,
+//            beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+//            about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+//            workingKnowledge = None,
+//            addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
+//            ),
+//            establishers = Seq(
+//              SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
+//            ),
+//            addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+//            ),
+//            trustees = Nil,
+//            declaration = Some(
+//              SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+//                "messages__schemeTaskList__sectionDeclaration_incomplete")
+//            ),
+//            None,
+//            Some(StatsSection(6,6,Some("15 September 2022")))
+//          )
+//        }
 
-//    "return the task list with correct count when all the sections are complete" in {
-//
-//      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-//      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-//      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-//      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-//      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-//
-//      val result = helper.taskList(answersDataAllComplete(), None, None, None)
-//
-//      result.statsSection mustBe Some(StatsSection(6, 6, None))
-//    }
-//
-//    "return the task list with correct count when one section is complete" in {
-//
-//      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-//      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-//      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-//      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-//      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-//
-//      val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None, None)
-//
-//      result.statsSection mustBe Some(StatsSection(4, 6, None))
+        "return the task list with correct count when all the sections are complete" in {
 
-//    }
+          when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+          when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+          when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+          when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+          when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+          /*
+          protected def setCompleteEstIndividual(index: Int, ua: UserAnswers): UserAnswers = {
+    ua.establisherKind(index, EstablisherKind.Indivdual)
+      .establishersIndividualName(index, PersonName("first", "last")).establishersIndividualDOB(index, LocalDate.now().minusYears(20))
+      .establishersIndividualNino(index, ReferenceValue("AB100100A")).establishersIndividualUtr(index, ReferenceValue("1111111111")).
+      establishersIndividualAddress(index, address).establishersIndividualAddressYears(index, AddressYears.OverAYear)
+      .establishersIndividualEmail(index, "s@s.com").establishersIndividualPhone(index, "123")
+  }
+           */
+
+          /*
+          def establisherCompanyEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
+      answers.establisherCompanyDetails(index, CompanyDetails(s"test company $index", isDeleted)).
+        isEstablisherNew(index, flag = true).
+        establisherKind(index, EstablisherKind.Company)
+    }
+           */
+
+//          val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+          //            .set(HaveAnyTrusteesId)(true).asOpt.value
+          //            .set(DeclarationDutiesId)(value = true).asOpt.value
+          val userAnswers = answersDataAllComplete().setOrException(HaveAnyTrusteesId)(true)
+
+          val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+
+          result mustBe SchemeDetailsTaskList(
+            schemeName, None,
+            beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+            about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+            workingKnowledge = None,
+            addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
+            ),
+            establishers = Seq(
+              SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
+            ),
+            addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+            ),
+            trustees = Nil,
+            declaration = Some(
+              SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+                "messages__schemeTaskList__sectionDeclaration_incomplete")
+            ),
+            None,
+            Some(StatsSection(6,6,Some("15 September 2022")))
+          )
+        }
+
+    "return the task list with correct count when all sections are complete (without trustees)" in {
+
+      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+      val userAnswers = answersDataAllComplete(isCompleteTrustees = false).setOrException(HaveAnyTrusteesId)(false)
+
+      val result = helper.taskList(userAnswers, None, None, None)
+
+      result.statsSection mustBe Some(StatsSection(5, 5, None))
+
+    }
 
     "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
@@ -348,17 +392,20 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
                                      isCompleteAboutBank: Boolean = true,
                                      isCompleteAboutBenefits: Boolean = true,
                                      isCompleteWk: Boolean = true,
-                                     isCompleteEstablishers: Boolean = true,
                                      isCompleteTrustees: Boolean = true,
-                                     isChangedInsuranceDetails: Boolean = true,
-                                     isChangedEstablishersTrustees: Boolean = true
                                     ): UserAnswers = {
-    setCompleteBeforeYouStart(isCompleteBeforeStart,
-      setCompleteMembers(isCompleteAboutMembers,
-        setCompleteBank(isCompleteAboutBank,
-          setCompleteBenefits(isCompleteAboutBenefits,
-            setCompleteEstIndividual(0,
-              setCompleteTrusteeIndividual(0,
-                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName)))))))
-  }
-}
+    val test =
+      setCompleteBeforeYouStart(isCompleteBeforeStart,
+        setCompleteMembers(isCompleteAboutMembers,
+          setCompleteBank(isCompleteAboutBank,
+            setCompleteBenefits(isCompleteAboutBenefits,
+              setCompleteEstIndividual(0,
+                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName))))))
+
+
+      if (isCompleteTrustees) {
+        setCompleteTrusteeIndividual(0, test)
+      } else {
+        test
+      }
+  }}

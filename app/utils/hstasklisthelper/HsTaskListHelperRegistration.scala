@@ -141,14 +141,22 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       userAnswers.isBankDetailsCompleted.contains(true),
       userAnswers.isBenefitsAndInsuranceCompleted.contains(true),
       isAllEstablishersCompleted(userAnswers, NormalMode),
-      userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)
+      userAnswers.get(HaveAnyTrusteesId).contains(true) && isAllTrusteesCompleted(userAnswers)
     ).count(identity)
   }
 
+  //UserAnswers({"schemeName":"Test Scheme","trustees":[{"trusteeKind":"individual","trusteeDetails":{"firstName":"first","lastName":"last","isDeleted":false},"dateOfBirth":"2002-09-06",
+  // "hasNino":true,"trusteeNino":{"value":"AB100100A","isEditable":false},"hasUtr":true,"utr":{"value":"1111111111","isEditable":false},"trusteeAddressId":{"addressLine1":"address-1-line-1",
+  // "addressLine2":"address-1-line-2","postcode":"post-code-1","country":"country-1"},"trusteeAddressYears":"over_a_year","trusteeContactDetails":{"emailAddress":"s@s.com","phoneNumber":"123"}}],
+  // "establishers":[{"establisherKind":"individual","establisherDetails":{"firstName":"first","lastName":"last","isDeleted":false},"dateOfBirth":"2002-09-06","hasNino":true,"establisherNino":{"value":"AB100100A",
+  // "isEditable":false},"hasUtr":true,"utr":{"value":"1111111111","isEditable":false},"address":{"addressLine1":"address-1-line-1","addressLine2":"address-1-line-2","postcode":"post-code-1","country":"country-1"},
+  // "addressYears":"over_a_year","contactDetails":{"emailAddress":"s@s.com","phoneNumber":"123"}}],"occupationalPensionScheme":true,"investmentRegulated":true,"benefits":"opt1","moneyPurchaseBenefits":"01",
+  // "securedBenefits":false,"uKBankAccount":false,"membership":"opt2","membershipFuture":"opt2","schemeType":{"name":"single"},"schemeEstablishedCountry":"GB","declarationDuties":true})
+
   def totalSections(userAnswers: UserAnswers): Int = {
     userAnswers.get(HaveAnyTrusteesId) match {
-      case Some(true) => 6
-      case _ => 5
+      case Some(false) => 5
+      case _ => 6
     }
   }
 }
