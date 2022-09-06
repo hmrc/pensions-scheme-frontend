@@ -63,17 +63,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     SchemeDetailsTaskListEntitySection(None,
       spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId)
         .getOrElse(""), None),
-      None
-    )
-  }
-
-  override protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
-  : SchemeDetailsTaskListEntitySection = {
-    val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
-    SchemeDetailsTaskListEntitySection(
-      None,
-      spokeCreationService.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
-      None
+      Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
 
@@ -134,7 +124,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     ).forall(_.contains(true))
   }
 
-  def completedSectionCount(userAnswers: UserAnswers): Int = {
+  private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
     Seq(
       userAnswers.isBeforeYouStartCompleted(NormalMode) && userAnswers.isWorkingKnowledgeCompleted.getOrElse(false),
       userAnswers.isMembersCompleted.contains(true),
@@ -145,15 +135,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     ).count(identity)
   }
 
-  //UserAnswers({"schemeName":"Test Scheme","trustees":[{"trusteeKind":"individual","trusteeDetails":{"firstName":"first","lastName":"last","isDeleted":false},"dateOfBirth":"2002-09-06",
-  // "hasNino":true,"trusteeNino":{"value":"AB100100A","isEditable":false},"hasUtr":true,"utr":{"value":"1111111111","isEditable":false},"trusteeAddressId":{"addressLine1":"address-1-line-1",
-  // "addressLine2":"address-1-line-2","postcode":"post-code-1","country":"country-1"},"trusteeAddressYears":"over_a_year","trusteeContactDetails":{"emailAddress":"s@s.com","phoneNumber":"123"}}],
-  // "establishers":[{"establisherKind":"individual","establisherDetails":{"firstName":"first","lastName":"last","isDeleted":false},"dateOfBirth":"2002-09-06","hasNino":true,"establisherNino":{"value":"AB100100A",
-  // "isEditable":false},"hasUtr":true,"utr":{"value":"1111111111","isEditable":false},"address":{"addressLine1":"address-1-line-1","addressLine2":"address-1-line-2","postcode":"post-code-1","country":"country-1"},
-  // "addressYears":"over_a_year","contactDetails":{"emailAddress":"s@s.com","phoneNumber":"123"}}],"occupationalPensionScheme":true,"investmentRegulated":true,"benefits":"opt1","moneyPurchaseBenefits":"01",
-  // "securedBenefits":false,"uKBankAccount":false,"membership":"opt2","membershipFuture":"opt2","schemeType":{"name":"single"},"schemeEstablishedCountry":"GB","declarationDuties":true})
-
-  def totalSections(userAnswers: UserAnswers): Int = {
+  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
     userAnswers.get(HaveAnyTrusteesId) match {
       case Some(false) => 5
       case _ => 6
