@@ -125,14 +125,17 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 
   private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
-    Seq(
-      userAnswers.isBeforeYouStartCompleted(NormalMode) && userAnswers.isWorkingKnowledgeCompleted.getOrElse(false),
+    val xx = Seq(
+      userAnswers.isBeforeYouStartCompleted(NormalMode),
       userAnswers.isMembersCompleted.contains(true),
       userAnswers.isBankDetailsCompleted.contains(true),
       userAnswers.isBenefitsAndInsuranceCompleted.contains(true),
+      userAnswers.isWorkingKnowledgeCompleted.contains(true),
       isAllEstablishersCompleted(userAnswers, NormalMode),
       userAnswers.get(HaveAnyTrusteesId).contains(true) && isAllTrusteesCompleted(userAnswers)
-    ).count(identity)
+    )
+    println("\n>>" + xx)
+    xx.count(identity)
   }
 
   private[utils] def totalSections(userAnswers: UserAnswers): Int = {
