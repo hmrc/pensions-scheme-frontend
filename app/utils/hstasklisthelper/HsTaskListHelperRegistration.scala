@@ -54,7 +54,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
-      Some(StatsSection(completedSectionCount(answers), 6, expiryDate))
+      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
   }
 
@@ -63,17 +63,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     SchemeDetailsTaskListEntitySection(None,
       spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId)
         .getOrElse(""), None),
-      None
-    )
-  }
-
-  override protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
-  : SchemeDetailsTaskListEntitySection = {
-    val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
-    SchemeDetailsTaskListEntitySection(
-      None,
-      spokeCreationService.getAboutSpokes(userAnswers, mode, srn, schemeName, None),
-      None
+      Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
   }
 
@@ -134,15 +124,22 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     ).forall(_.contains(true))
   }
 
-  def completedSectionCount(userAnswers: UserAnswers): Int = {
+  private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
     Seq(
       userAnswers.isBeforeYouStartCompleted(NormalMode) && userAnswers.isWorkingKnowledgeCompleted.getOrElse(false),
       userAnswers.isMembersCompleted.contains(true),
       userAnswers.isBankDetailsCompleted.contains(true),
       userAnswers.isBenefitsAndInsuranceCompleted.contains(true),
       isAllEstablishersCompleted(userAnswers, NormalMode),
-      userAnswers.get(HaveAnyTrusteesId).contains(false) | isAllTrusteesCompleted(userAnswers)
+      userAnswers.get(HaveAnyTrusteesId).contains(true) && isAllTrusteesCompleted(userAnswers)
     ).count(identity)
+  }
+
+  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
+    userAnswers.get(HaveAnyTrusteesId) match {
+      case Some(false) => 5
+      case _ => 6
+    }
   }
 }
 

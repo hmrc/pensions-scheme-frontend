@@ -35,13 +35,12 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
   import HsTaskListHelperRegistrationSpec._
 
-  private val mockAppConfig = mock[FrontendAppConfig]
-
   private val mockSpokeCreationService = mock[SpokeCreationService]
+  private val mockAppConfig = mock[FrontendAppConfig]
   private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
 
   override protected def beforeEach(): Unit = {
-    reset(mockAppConfig)
+    reset(mockAppConfig, mockSpokeCreationService)
     when(mockAppConfig.daysDataSaved).thenReturn(10)
   }
 
@@ -55,7 +54,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   }
 
   "beforeYouStartSection " must {
-    "return the correct entity section " in {
+    "return correct the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
       when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       val expectedBeforeYouStartSection = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader)
@@ -63,6 +62,14 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       helper.beforeYouStartSection(userAnswers) mustBe expectedBeforeYouStartSection
     }
   }
+
+  /*
+   SchemeDetailsTaskListEntitySection(None,List(EntitySpoke(TaskListLink(Resolvable(messages__schemeTaskList__before_you_start_link_text,WrappedArray(scheme)),
+   /scheme-name,None),Some(false))),None,WrappedArray()) was not equal to SchemeDetailsTaskListEntitySection(None,List(EntitySpoke(TaskListLink(
+   Resolvable(messages__schemeTaskList__before_you_start_link_text,WrappedArray(scheme)),/scheme-name,None),Some(false))),Some(Resolvable(
+   messages__schemeTaskList__before_you_start_header,WrappedArray())),WrappedArray()) (HsTaskListHelperRegistrationSpec.scala:62)
+
+   */
 
   "aboutSection " must {
     "return the correct entity section " in {
@@ -218,35 +225,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None,
-        Some(StatsSection(1,6,Some("15 September 2022")))
+        Some(StatsSection(0, 5, Some("15 September 2022")))
       )
-    }
-
-    "return the task list with correct count when all the sections are complete" in {
-
-      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-
-      val result = helper.taskList(answersDataAllComplete(), None, None, None)
-
-      result.statsSection mustBe Some(StatsSection(6, 6, None))
-    }
-
-    "return the task list with correct count when one section is complete" in {
-
-      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-
-      val result = helper.taskList(answersDataAllComplete(isCompleteBeforeStart = false, isCompleteAboutMembers = false), None, None, None)
-
-      result.statsSection mustBe Some(StatsSection(4, 6, None))
-
     }
 
     "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {
@@ -269,13 +249,68 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       val result = helper.taskList(userAnswers, None, None, None)
 
-
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
         SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke2, Some("test partnership 1"))
       )
     }
   }
+
+  "return the task list with correct count when all the sections are complete (with trustees)" in {
+    when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+    when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+    when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+    when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+    when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+    val userAnswers = answersDataAllComplete().setOrException(HaveAnyTrusteesId)(true)
+
+    val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+
+    result.statsSection mustBe Some(StatsSection(6, 6, Some("15 September 2022")))
+  }
+
+  "return the task list with correct count when all sections are complete (without trustees)" in {
+    when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+    when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+    when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+    when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+    when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+    val userAnswers = answersDataAllComplete(isCompleteTrustees = false).setOrException(HaveAnyTrusteesId)(false)
+
+    val result = helper.taskList(userAnswers, None, None, None)
+
+    result.statsSection mustBe Some(StatsSection(5, 5, None))
+  }
+
+  "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {
+    val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+      .set(HaveAnyTrusteesId)(false).asOpt.value
+      .set(DeclarationDutiesId)(value = true).asOpt.value
+      .establisherCompanyEntity(index = 1, isDeleted = true)
+      .establisherPartnershipEntity(index = 1)
+      .establisherKind(1, EstablisherKind.Partnership)
+
+    val testPartnershipEntitySpoke2 = Seq(EntitySpoke(TaskListLink(Message("test partnership link"),
+      controllers.routes.SessionExpiredController.onPageLoad.url), None))
+
+    when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+    when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+    when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+    when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+    when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
+    when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+    val result = helper.taskList(userAnswers, None, None, None)
+
+
+    result.establishers mustBe Seq(
+      SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
+      SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke2, Some("test partnership 1"))
+    )
+  }
+
 }
 
 object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {
@@ -284,8 +319,8 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
-  private val beforeYouStartHeader = None
-  private val aboutHeader = None
+  private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
+  private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
   private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val wkAddLinkText = Message("messages__schemeTaskList__add_details_wk")
