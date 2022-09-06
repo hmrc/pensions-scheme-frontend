@@ -48,7 +48,7 @@
     if (isCompleted) {
         "app-task-list__task-completed"
     } else {
-        "app-task-list__task-completed govuk-tag--blue"
+        "app-task-list__task-inProgress"
     }
 }
 
@@ -72,19 +72,18 @@
 
     <ol class="app-task-list">
 
-        <li aria-labelledby="section-before-you-start-header">
-            <h2 id="section-before-you-start-header" class="govuk-heading-l">
+        <li>
+            <h2 id="section-scheme-details-header" class="govuk-heading-l">
                 @messages("messages__scheme_details__title")
             </h2>
-
             @taskSections.beforeYouStart.header.map{ item=>
-                <h3 id="section-information-h3" class="app-task-list__section">
+                <h3 id="section-before-you-start-header" class="app-task-list__section">
                     @messages(item)
                 </h3>
             }
 
             @taskSections.beforeYouStart.entities.map{ spoke =>
-                <ul class="app-task-list__items">
+                <ul class="app-task-list__items govuk-!-margin-bottom-0">
                     <li class="app-task-list__item">
                         @if(spoke.isCompleted.isEmpty){
                         <span class="app-task-list__task-name">
@@ -99,54 +98,48 @@
                                 @messages(spoke.link.text)
                             </a>
                         </span>
-                        <strong class="govuk-tag app-task-list__tag @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                        <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                         }
                     </li>
                 </ul>
             }
-        </li>
-
-        <li aria-labelledby="section-about-header">
             @taskSections.about.header.map{ item=>
                 <h3 id="section-about-header" class="app-task-list__section">
                     @messages(item)
                 </h3>
             }
-            <ul class="app-task-list__items">
+            <ul class="app-task-list__items govuk-!-margin-bottom-6">
                 @for((item, i) <- taskSections.about.entities.zipWithIndex){
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                             <a id="section-about-link-@i" class="app-task-list__task-name" href="@{item.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>@messages(item.link.text)</a>
                         </span>
                         @item.isCompleted.map{ isCompleted =>
-                            <strong class="govuk-tag app-task-list__tag @statusClass(isCompleted)" id="section-about-status-@i"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                            <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-about-status-@i"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                         }
                     </li>
                 }
             </ul>
-        </li>
 
-        @taskSections.workingKnowledge.map { spoke =>
-             @spoke.entities.map { wk =>
-                <li aria-labelledby="section-working-knowledge-header">
+            @taskSections.workingKnowledge.map { spoke =>
+                 @spoke.entities.map { wk =>
                     <h3 id="section-working-knowledge-header" class="app-task-list__section">
                         @messages("messages__schemeTaskList__working_knowledge_header")
                     </h3>
-                    <ul class="app-task-list__items">
+                    <ul class="app-task-list__items" aria-labelledby="section-working-knowledge-header">
                         <li class="app-task-list__item">
                             <span class="app-task-list__task-name">
                                 <a id="section-working-knowledge-link" class="app-task-list__task-name" href="@wk.link.target" @if(wk.isCompleted.nonEmpty){aria-describedby="section-working-knowledge-status"}>@messages(wk.link.text)</a>
                             </span>
                             @wk.isCompleted.map{ isCompleted =>
-                                <strong class="govuk-tag app-task-list__tag @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                             }
                         </li>
                     </ul>
-                </li>
-             }
-        }
-
-        <li aria-labelledby="section-establishers-header">
+                 }
+            }
+        </li>
+        <li>
             <h2 id="section-establishers-header" class="govuk-heading-l">
                 @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
@@ -176,7 +169,7 @@
                                 <a id="section-establishers-link-@i-@j" href="@{entity.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>@messages(entity.link.text)</a>
                             </span>
                             @entity.isCompleted.map{ isCompleted =>
-                                <strong class="govuk-tag app-task-list__tag @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                             }
                         </li>
                     }
@@ -184,7 +177,7 @@
             }
         </li>
 
-        <li aria-labelledby="section-trustees-header" class="govuk-!-margin-top-7">
+        <li class="govuk-!-margin-top-7">
             @taskSections.addTrusteeHeader.map { spoke =>
                 <h2 id="section-trustees-header" class="govuk-heading-l">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
@@ -211,7 +204,7 @@
                                 <a id="section-trustees-link-@i-@j" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty){aria-describedby="section-trustees-status-@i-@j"}>@messages(entity.link.text)</a>
                             </span>
                             @entity.isCompleted.map{ isCompleted =>
-                                <strong class="govuk-tag app-task-list__tag @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                             }
                         </li>
                     }
@@ -221,7 +214,7 @@
     </ol>
 
     @taskSections.declaration.map{declarationSection =>
-        <section aria-labelledby="section-declaration-header" class="govuk-!-margin-top-8">
+        <section aria-labelledby="section-declaration-header" class="govuk-!-margin-top-7">
             @declarationSection.header.map { hdr =>
                 <h2 id="section-declaration-header" class="govuk-heading-l">
                     @messages(hdr)
