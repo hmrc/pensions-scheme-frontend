@@ -29,7 +29,7 @@ import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import viewmodels.{Message, SchemeDetailsTaskList}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
 import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
 
 import javax.inject.Inject
@@ -84,11 +84,19 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
           case true => viewVariations(taskSections, schemeName)
           case _ =>
-            val y = taskSections.beforeYouStart copy(
-              header = Some(Message("messages__schemeTaskList__before_you_start_header"))
+            val y: SchemeDetailsTaskListEntitySection =
+              SchemeDetailsTaskListEntitySection(
+                isCompleted = taskSections.beforeYouStart.isCompleted,
+                entities = taskSections.beforeYouStart.entities,
+                header = Some(Message("messages__schemeTaskList__before_you_start_header")),
+                p1 = taskSections.beforeYouStart.p1 :_*
               )
-//            val x = taskSections.copy()
-            oldView(taskSections, schemeName)
+
+            val gg = taskSections.copy(
+              beforeYouStart = y
+            )
+
+            oldView(gg, schemeName)
         }
       }
 
