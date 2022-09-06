@@ -76,27 +76,26 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       def renderViewRegistrations(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
         featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
           case true => viewRegistration(taskSections, schemeName)
-          case _ => oldView(taskSections, schemeName)
+          case _ => val y: SchemeDetailsTaskListEntitySection =
+            SchemeDetailsTaskListEntitySection(
+              isCompleted = taskSections.beforeYouStart.isCompleted,
+              entities = taskSections.beforeYouStart.entities,
+              header = Some(Message("messages__schemeTaskList__before_you_start_link_text_old", schemeName).resolve),
+              p1 = taskSections.beforeYouStart.p1 :_*
+            )
+
+            val copiedTaskSections = taskSections.copy(
+              beforeYouStart = y
+            )
+
+            oldView(copiedTaskSections, schemeName)
         }
       }
 
       def renderViewVariations(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
         featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
           case true => viewVariations(taskSections, schemeName)
-          case _ =>
-            val y: SchemeDetailsTaskListEntitySection =
-              SchemeDetailsTaskListEntitySection(
-                isCompleted = taskSections.beforeYouStart.isCompleted,
-                entities = taskSections.beforeYouStart.entities,
-                header = Some(Message("messages__schemeTaskList__before_you_start_header")),
-                p1 = taskSections.beforeYouStart.p1 :_*
-              )
-
-            val gg = taskSections.copy(
-              beforeYouStart = y
-            )
-
-            oldView(gg, schemeName)
+          case _ => oldView(taskSections, schemeName)
         }
       }
 
