@@ -63,14 +63,6 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     }
   }
 
-  /*
-   SchemeDetailsTaskListEntitySection(None,List(EntitySpoke(TaskListLink(Resolvable(messages__schemeTaskList__before_you_start_link_text,WrappedArray(scheme)),
-   /scheme-name,None),Some(false))),None,WrappedArray()) was not equal to SchemeDetailsTaskListEntitySection(None,List(EntitySpoke(TaskListLink(
-   Resolvable(messages__schemeTaskList__before_you_start_link_text,WrappedArray(scheme)),/scheme-name,None),Some(false))),Some(Resolvable(
-   messages__schemeTaskList__before_you_start_header,WrappedArray())),WrappedArray()) (HsTaskListHelperRegistrationSpec.scala:62)
-
-   */
-
   "aboutSection " must {
     "return the correct entity section " in {
       val userAnswers = userAnswersWithSchemeName
