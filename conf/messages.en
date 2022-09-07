@@ -1329,6 +1329,7 @@ messages__schemeTaskList__sectionTrustees_schemeIncomplete = You need to enter s
 
 messages__schemeTaskList__completed = Completed
 messages__schemeTaskList__inProgress = In progress
+messages__schemeTaskList__incomplete = Incomplete
 
 messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
 messages__complete__returnToManagePensionSchemes = Return to managing pension schemes
