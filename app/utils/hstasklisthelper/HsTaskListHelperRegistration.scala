@@ -124,32 +124,50 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     ).forall(_.contains(true))
   }
 
-  private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
-    val xx = Seq(
-      userAnswers.isBeforeYouStartCompleted(NormalMode),
-      userAnswers.isMembersCompleted.contains(true),
-      userAnswers.isBankDetailsCompleted.contains(true),
-      userAnswers.isBenefitsAndInsuranceCompleted.contains(true),
-      userAnswers.isWorkingKnowledgeCompleted.contains(true),
-      isAllEstablishersCompleted(userAnswers, NormalMode),
-      userAnswers.get(HaveAnyTrusteesId).contains(true) && isAllTrusteesCompleted(userAnswers)
-    )
-    println("\n>>" + xx)
-    xx.count(identity)
-  }
 
-  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
-    userAnswers.get(HaveAnyTrusteesId) match {
-      case Some(false) => 5
-      case _ => 6
-    }
-  }
 }
 
 object HsTaskListHelperRegistration {
 
-  private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean =
+  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
+      case (Some(false), Some(false)) => 5
+      case (Some(false), _) => 6
+      case (_, Some(false)) => 6
+      case _ => 7
+    }
+  }
+
+  private def toInt(b: Boolean, c: Boolean = true): Int = if (b) {
+    if (c) 1 else 0
+  } else {
+    0
+  }
+
+  private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
+    val trusteesCount = toInt(userAnswers.get(HaveAnyTrusteesId).contains(true), isAllTrusteesCompleted(userAnswers))
+    val workingKnowledgeCount = toInt(userAnswers.get(DeclarationDutiesId).contains(false), userAnswers.isWorkingKnowledgeCompleted.contains(true))
+    val beforeYouStartCount = toInt(userAnswers.isBeforeYouStartCompleted(NormalMode))
+    val membersCount = toInt(userAnswers.isMembersCompleted.contains(true))
+    val bankCount = toInt(userAnswers.isBankDetailsCompleted.contains(true))
+    val benefitsCount =  toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
+    val estCount = toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
+
+    //println(s"\nCounts:\ntrustees=$trusteesCount\nworkingknowledge=$workingKnowledgeCount\nbefore=$beforeYouStartCount\nmembers=$membersCount\nbank=$bankCount\nbenefits=$benefitsCount\nest=$estCount")
+
+    val totalCount = trusteesCount +
+      workingKnowledgeCount +
+      beforeYouStartCount +
+      membersCount +
+      bankCount  +
+      benefitsCount +
+    estCount
+    totalCount
+  }
+
+  private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+  }
 
   private def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean =
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&
