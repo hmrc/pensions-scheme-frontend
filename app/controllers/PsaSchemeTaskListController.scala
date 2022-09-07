@@ -29,7 +29,7 @@ import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
+import viewmodels.SchemeDetailsTaskList
 import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
 
 import javax.inject.Inject

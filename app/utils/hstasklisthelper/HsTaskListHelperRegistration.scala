@@ -123,8 +123,6 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       Some(userAnswers.allTrusteesAfterDelete.size < 10 || userAnswers.get(MoreThanTenTrusteesId).isDefined)
     ).forall(_.contains(true))
   }
-
-
 }
 
 object HsTaskListHelperRegistration {
@@ -140,8 +138,8 @@ object HsTaskListHelperRegistration {
     }
   }
 
-  private def toInt(b: Boolean, c: Boolean = true): Int = if (b) {
-    if (c) 1 else 0
+  private def toInt(completionQ1: Boolean, completionQ2: Boolean = true): Int = if (completionQ1) {
+    if (completionQ2) 1 else 0
   } else {
     0
   }
@@ -152,7 +150,7 @@ object HsTaskListHelperRegistration {
     val beforeYouStartCount = toInt(userAnswers.isBeforeYouStartCompleted(NormalMode))
     val membersCount = toInt(userAnswers.isMembersCompleted.contains(true))
     val bankCount = toInt(userAnswers.isBankDetailsCompleted.contains(true))
-    val benefitsCount =  toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
+    val benefitsCount = toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
     val estCount = toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
 
     //println(s"\nCounts:\ntrustees=$trusteesCount\nworkingknowledge=$workingKnowledgeCount\nbefore=$beforeYouStartCount\nmembers=$membersCount\nbank=$bankCount\nbenefits=$benefitsCount\nest=$estCount")
@@ -161,9 +159,9 @@ object HsTaskListHelperRegistration {
       workingKnowledgeCount +
       beforeYouStartCount +
       membersCount +
-      bankCount  +
+      bankCount +
       benefitsCount +
-    estCount
+      estCount
     totalCount
   }
 
