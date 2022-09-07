@@ -131,9 +131,11 @@ object HsTaskListHelperRegistration {
 
   private[utils] def totalSections(userAnswers: UserAnswers): Int = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
-      case (Some(false), Some(false)) => 5
+      case (Some(false), Some(false)) => 6
+      case (Some(true), Some(true)) => 6
+      case (Some(true), Some(false)) => 7
+      case (Some(false), Some(true)) => 5
       case (Some(false), _) => 6
-      case (_, Some(false)) => 6
       case _ => 7
     }
   }

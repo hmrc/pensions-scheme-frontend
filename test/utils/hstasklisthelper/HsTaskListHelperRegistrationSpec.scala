@@ -194,40 +194,40 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     }
 
     "task list" must {
-  //    "return the task list with all the sections" in {
-  //      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-  //        .set(HaveAnyTrusteesId)(false).asOpt.value
-  //        .set(DeclarationDutiesId)(value = true).asOpt.value
-  //
-  //      when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
-  //      when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
-  //      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-  //      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
-  //      when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
-  //
-  //      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
-  //
-  //      result mustBe SchemeDetailsTaskList(
-  //        schemeName, None,
-  //        beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
-  //        about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
-  //        workingKnowledge = None,
-  //        addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
-  //        ),
-  //        establishers = Seq(
-  //          SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
-  //        ),
-  //        addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
-  //        ),
-  //        trustees = Nil,
-  //        declaration = Some(
-  //          SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
-  //            "messages__schemeTaskList__sectionDeclaration_incomplete")
-  //        ),
-  //        None,
-  //        Some(StatsSection(0, 5, Some("15 September 2022")))
-  //      )
-  //    }
+      "return the task list with all the sections" in {
+        val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+          .set(HaveAnyTrusteesId)(false).asOpt.value
+          .set(DeclarationDutiesId)(value = true).asOpt.value
+
+        when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
+        when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
+        when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+        when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
+        when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+
+        val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+
+        result mustBe SchemeDetailsTaskList(
+          schemeName, None,
+          beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
+          about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
+          workingKnowledge = None,
+          addEstablisherHeader = Some(SchemeDetailsTaskListEntitySection(None, testEstablishersEntitySpoke, None)
+          ),
+          establishers = Seq(
+            SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0"))
+          ),
+          addTrusteeHeader = Some(SchemeDetailsTaskListEntitySection(None, testTrusteeEntitySpoke, None)
+          ),
+          trustees = Nil,
+          declaration = Some(
+            SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
+              "messages__schemeTaskList__sectionDeclaration_incomplete")
+          ),
+          None,
+          Some(StatsSection(0, 5, Some("15 September 2022")))
+        )
+      }
 
       "return all establishers and all sections not complete where a company entity has been deleted and repurposed as a partnership" in {
         val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
@@ -260,29 +260,29 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       "return 7 when neither trustees nor declaration question answered" in {
         HsTaskListHelperRegistration.totalSections(userAnswersWithSchemeName) mustBe 7
       }
-      "return 7 when both trustees and declaration question answered as yes" in {
+      "return 6 when both trustees and declaration question answered as yes" in {
         val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
           .set(HaveAnyTrusteesId)(true).asOpt.value
           .set(DeclarationDutiesId)(value = true).asOpt.value
+        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+      }
+      "return 7 when trustees question answered as yes and declaration question answered as no" in {
+        val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+          .set(HaveAnyTrusteesId)(true).asOpt.value
+          .set(DeclarationDutiesId)(value = false).asOpt.value
         HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
       }
-      "return 6 when trustees question answered as yes and declaration question answered as no" in {
-        val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-          .set(HaveAnyTrusteesId)(true).asOpt.value
-          .set(DeclarationDutiesId)(value = false).asOpt.value
-        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
-      }
-      "return 6 when trustees question answered as no and declaration question answered as yes" in {
+      "return 5 when trustees question answered as no and declaration question answered as yes" in {
         val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
           .set(HaveAnyTrusteesId)(false).asOpt.value
           .set(DeclarationDutiesId)(value = true).asOpt.value
-        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
       }
-      "return 5 when trustees question answered as no and declaration question answered as no" in {
+      "return 6 when trustees question answered as no and declaration question answered as no" in {
         val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
           .set(HaveAnyTrusteesId)(false).asOpt.value
           .set(DeclarationDutiesId)(value = false).asOpt.value
-        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
+        HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
       }
     }
 
