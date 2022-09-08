@@ -19,19 +19,22 @@ package utils.hstasklisthelper
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers._
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.{LastUpdated, Mode, NormalMode}
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
+import models.register.establishers.EstablisherKind
 import viewmodels._
+
 
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
 
 class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
-  spokeCreationService) {
+  spokeCreationService){
 
   import HsTaskListHelperRegistration._
 
@@ -120,7 +123,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
         None,
         establisherSection(answers, NormalMode, srn, establisherIndex),
         isAllEstablishersCompleted(answers, NormalMode),
-        Some(StatsSection(completedSectionCountEstablishers(answers), 3, None))
+        Some(StatsSection(completedSectionCountEstablishers(answers), totalSectionsEstablisher(answers, establisherIndex), None))
       )
     }
 
@@ -190,11 +193,13 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
-  object HsTaskListHelperRegistration {
+  object HsTaskListHelperRegistration extends Enumerable.Implicits {
 
-    private[utils] def totalSectionsEstablishers(userAnswers: UserAnswers): Int = {
-//      userAnswers.get()
-      3
+    private[utils] def totalSectionsEstablisher(userAnswers: UserAnswers, index: Int): Int = {
+      userAnswers.get(EstablisherKindId(index)) match {
+        case Some(EstablisherKind.Indivdual) => 3
+        case _ => 4
+      }
     }
 
     private[utils] def totalSections(userAnswers: UserAnswers): Int = {
