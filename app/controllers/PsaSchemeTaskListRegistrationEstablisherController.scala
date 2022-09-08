@@ -48,26 +48,15 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  private def parseDateElseException(dateOpt: Option[JsValue]): Option[LastUpdated] =
-    dateOpt.map(ts =>
-      LastUpdated(
-        ts.validate[Long] match {
-          case JsSuccess(value, _) => value
-          case JsError(errors) => throw JsResultException(errors)
-        }
-      )
-    )
-
-
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, None), schemeName)))
+          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn), schemeName)))
 
-        case (Some(_), Some(userAnswers), Some(schemeName)) =>
+        case (Some(_), Some(_), Some(_)) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
         case (Some(_), _, _) =>

@@ -16,10 +16,6 @@
 
 package viewmodels
 
-import models.EntitySpoke
-
-case class StatsSection(sectionsCompleted: Int, totalSections: Int, dateExpiry: Option[String])
-
 case class SchemeDetailsTaskList(
                                   h1: String,
                                   srn: Option[String],
@@ -41,12 +37,5 @@ case class SchemeDetailsTaskList(
     }
   }
 }
-
-case class SchemeDetailsTaskListEntitySection(
-                                               isCompleted: Option[Boolean],
-                                               entities: Seq[EntitySpoke],
-                                               header: Option[Message],
-                                               p1: Message*
-                                             )
 
 

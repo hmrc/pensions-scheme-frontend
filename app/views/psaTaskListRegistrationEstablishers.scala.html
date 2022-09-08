@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
-@import viewmodels.SchemeDetailsTaskList
+@import viewmodels.SchemeDetailsTaskListEstablishers
 @import models.NormalMode
 @import controllers.register.establishers.routes._
 @import controllers.register.trustees.routes._
@@ -34,7 +34,7 @@
     incompleteAlert: components_refactored.incomplete_alert
 )
 
-@(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(taskSections: SchemeDetailsTaskListEstablishers, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {
@@ -62,12 +62,6 @@
 
 @layout( pageTitle = pageTitle ) {
 
-    @taskSections.isAllSectionsComplete.map { isComplete =>
-        @if(!isComplete) {
-            @incompleteAlert(messages("variations.incomplete.alert.text"))
-        }
-    }
-
     @components_refactored.heading(taskSections.h1)
 
     @taskSections.statsSection.map{ section =>
@@ -83,6 +77,9 @@
 
     <ol class="app-task-list govuk-list govuk-!-margin-top-8">
         <li aria-labelledby="section-establishers-header">
+            <h2 id="section-establishers-header" class="govuk-heading-l">
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
+            </h2>
 
             @for((item, i) <- taskSections.establishers.zipWithIndex){
                 @item.header.map{hdr=>
