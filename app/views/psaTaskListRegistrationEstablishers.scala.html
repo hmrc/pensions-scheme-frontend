@@ -1,0 +1,132 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import play.api.mvc.Call
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html._
+@import viewmodels.SchemeDetailsTaskList
+@import models.NormalMode
+@import controllers.register.establishers.routes._
+@import controllers.register.trustees.routes._
+
+@this(
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    incompleteAlert: components_refactored.incomplete_alert
+)
+
+@(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
+
+@status(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "messages__schemeTaskList__completed"
+    } else {
+        "messages__schemeTaskList__incomplete"
+    }
+}
+
+@statusClass(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "app-task-list__task-completed"
+    } else {
+        "app-task-list__task-inProgress"
+    }
+}
+
+@pageTitle = @{
+    if(taskSections.srn.isDefined){
+        messages("messages__scheme_details__title")
+    } else  {
+        messages("messages__schemeTaskList__title")
+    }
+}
+
+@layout( pageTitle = pageTitle ) {
+
+    @taskSections.isAllSectionsComplete.map { isComplete =>
+        @if(!isComplete) {
+            @incompleteAlert(messages("variations.incomplete.alert.text"))
+        }
+    }
+
+    @components_refactored.heading(taskSections.h1)
+
+    @taskSections.statsSection.map{ section =>
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
+            @if(taskSections.allComplete) {
+                @messages("taskList.complete")
+            } else {
+                @messages("taskList.incomplete")
+            }
+        </p>
+        <p class="govuk-body">@messages("taskList.status", section.sectionsCompleted, section.totalSections)</p>
+    }
+
+    <ol class="app-task-list govuk-list govuk-!-margin-top-8">
+        <li aria-labelledby="section-establishers-header">
+            <h2 id="section-establishers-header" class="govuk-heading-l">
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
+            </h2>
+            @taskSections.addEstablisherHeader.map { spoke =>
+                @spoke.entities.map { entity =>
+                    <p class="govuk-body">
+                        <a id="section-establishers-link" class="govuk-link" href="@{entity.link.target}" >
+                            @messages(entity.link.text)
+                        </a>
+                    </p>
+                }
+                @for((p1Text, i) <- spoke.p1.zipWithIndex){
+                    <p class="govuk-body">@messages(p1Text)</p>
+                }
+            }
+
+            @for((item, i) <- taskSections.establishers.zipWithIndex){
+                @item.header.map{hdr=>
+                    <h3 class="app-task-list__section">@messages(hdr)</h3>
+                }
+                <ul class="app-task-list__items">
+                    @for((entity, j) <- item.entities.zipWithIndex){
+                        <li class="app-task-list__item">
+                            <span class="app-task-list__task-name">
+                                <a id="section-establishers-link-@i-@j" href="@{entity.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>@messages(entity.link.text)</a>
+                            </span>
+                            @entity.isCompleted.map{ isCompleted =>
+                                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    </ol>
+
+    <p class="govuk-body govuk-!-margin-top-7">
+        <a id="save-and-return" class="govuk-link"
+           href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
+            @if(taskSections.srn.isDefined){
+                @messages("messages__complete__returnToSchemeOverview", schemeName)
+            }else{
+                @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+            }
+        </a>
+    </p>
+}

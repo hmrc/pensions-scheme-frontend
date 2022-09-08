@@ -140,41 +140,7 @@
                 }
             </ul>
         </li>
-        <li aria-labelledby="section-establishers-header">
-            <h2 id="section-establishers-header" class="govuk-heading-l">
-                @messages("messages__schemeTaskList__sectionEstablishers_header")
-            </h2>
-            @taskSections.addEstablisherHeader.map { spoke =>
-                @spoke.entities.map { entity =>
-                    <p class="govuk-body">
-                        <a id="section-establishers-link" class="govuk-link" href="@{entity.link.target}" >
-                            @messages(entity.link.text)
-                        </a>
-                    </p>
-                }
-                @for((p1Text, i) <- spoke.p1.zipWithIndex){
-                    <p class="govuk-body">@messages(p1Text)</p>
-                }
-            }
 
-            @for((item, i) <- taskSections.establishers.zipWithIndex){
-                @item.header.map{hdr=>
-                    <h3 class="app-task-list__section">@messages(hdr)</h3>
-                }
-                <ul class="app-task-list__items">
-                    @for((entity, j) <- item.entities.zipWithIndex){
-                        <li class="app-task-list__item">
-                            <span class="app-task-list__task-name">
-                                <a id="section-establishers-link-@i-@j" href="@{entity.link.target}" @if(item.isCompleted.nonEmpty){aria-describedby="section-about-status-@i"}>@messages(entity.link.text)</a>
-                            </span>
-                            @entity.isCompleted.map{ isCompleted =>
-                                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-establishers-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
-                            }
-                        </li>
-                    }
-                </ul>
-            }
-        </li>
         <li aria-labelledby="section-trustees-header" class="govuk-!-margin-top-7">
             @taskSections.addTrusteeHeader.map { spoke =>
                 <h2 id="section-trustees-header" class="govuk-heading-l">

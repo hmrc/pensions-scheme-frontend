@@ -58,6 +58,44 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
+  def taskListToggleOn(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+               lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+    val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
+    SchemeDetailsTaskList(
+      answers.get(SchemeNameId).getOrElse(""),
+      None,
+      beforeYouStartSection(answers),
+      aboutSection(answers, NormalMode, srn),
+      workingKnowledgeSection(answers),
+      addEstablisherHeader(answers, NormalMode, srn),
+      Nil,
+      addTrusteeHeader(answers, NormalMode, srn),
+      trusteesSection(answers, NormalMode, srn),
+      declarationSection(answers),
+      None,
+      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
+    )
+  }
+
+//  def taskListEstablishers(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+//               lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+//    val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
+//    SchemeDetailsTaskList(
+//      answers.get(SchemeNameId).getOrElse(""),
+//      None,
+//      beforeYouStartSection(answers),
+//      aboutSection(answers, NormalMode, srn),
+//      workingKnowledgeSection(answers),
+//      addEstablisherHeader(answers, NormalMode, srn),
+//      establishersSection(answers, NormalMode, srn),
+//      addTrusteeHeader(answers, NormalMode, srn),
+//      trusteesSection(answers, NormalMode, srn),
+//      declarationSection(answers),
+//      None,
+//      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
+//    )
+//  }
+
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,

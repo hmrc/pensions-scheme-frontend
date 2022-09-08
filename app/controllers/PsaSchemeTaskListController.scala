@@ -73,13 +73,6 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         case _ => Future.successful(None)
       }
 
-      def renderViewRegistrations(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
-        featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-          case true => viewRegistration(taskSections, schemeName)
-          case _ => oldView(taskSections, schemeName)
-        }
-      }
-
       def renderViewVariations(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
         featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
           case true => viewVariations(taskSections, schemeName)
@@ -92,8 +85,10 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
         (srn, request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
-            renderViewRegistrations(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName).map {
-              Ok(_)
+            featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
+              case true =>
+                Ok(viewRegistration(hsTaskListHelperRegistration.taskListToggleOn(userAnswers, None, srn, date), schemeName))
+              case _ => Ok(oldView(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
             }
 
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
