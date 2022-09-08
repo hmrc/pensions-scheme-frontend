@@ -83,21 +83,6 @@
 
     <ol class="app-task-list govuk-list govuk-!-margin-top-8">
         <li aria-labelledby="section-establishers-header">
-            <h2 id="section-establishers-header" class="govuk-heading-l">
-                @messages("messages__schemeTaskList__sectionEstablishers_header")
-            </h2>
-            @taskSections.addEstablisherHeader.map { spoke =>
-                @spoke.entities.map { entity =>
-                    <p class="govuk-body">
-                        <a id="section-establishers-link" class="govuk-link" href="@{entity.link.target}" >
-                            @messages(entity.link.text)
-                        </a>
-                    </p>
-                }
-                @for((p1Text, i) <- spoke.p1.zipWithIndex){
-                    <p class="govuk-body">@messages(p1Text)</p>
-                }
-            }
 
             @for((item, i) <- taskSections.establishers.zipWithIndex){
                 @item.header.map{hdr=>
