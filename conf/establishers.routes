@@ -31,7 +31,7 @@ POST        /:index/:mode/establisher-type/:srn                      controllers
 GET         /:index/company/already-deleted                          controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
 GET         /:index/company/:mode/already-deleted/:srn               controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
 
-GET         /:index/establisher-tasklist                             controllers.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(mode: Mode = NormalMode, index:Index, srn: Option[String] = None)
+GET         /:index/establisher-tasklist                             controllers.register.establishers.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(mode: Mode = NormalMode, index:Index, srn: Option[String] = None)
 
 ->          /                                                        establishersCompany.Routes
 ->          /                                                        establishersIndividual.Routes

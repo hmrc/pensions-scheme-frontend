@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.register.establishers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeNameId
 import models.AuthEntity.PSA
 import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
 import play.api.mvc._
 import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import views.html.{psaTaskListRegistration, psaTaskListRegistrationEstablishers}
+import views.html.psaTaskListRegistrationEstablishers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,13 +48,14 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false)
     andThen allowAccess(srn)).async {
     implicit request =>
+      println("\n + TEST")
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          println("\n + TEST")
+
           Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn, index), schemeName)))
 
         case (Some(_), Some(_), Some(_)) =>
