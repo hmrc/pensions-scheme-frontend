@@ -15,8 +15,6 @@ GET         /pension-scheme/:srn                                     controllers
 GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
 GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[String])
 
-GET         /scheme-details-xx                                       controllers.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 
 GET         /index                                                   controllers.IndexController.onPageLoad

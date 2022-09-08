@@ -48,13 +48,14 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
+  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn), schemeName)))
+          println("\n + TEST")
+          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn, index), schemeName)))
 
         case (Some(_), Some(_), Some(_)) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

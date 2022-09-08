@@ -278,6 +278,18 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     }
   }
 
+  "totalSectionsEstablishers" must {
+    "return 3 for an individual establisher" in {
+      val userAnswers = userAnswersWithSchemeName.establisherIndividualEntity(0)
+      HsTaskListHelperRegistration.totalSectionsEstablishers(userAnswers) mustBe 3
+    }
+
+    "return 4 for a company establisher" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(0)
+      HsTaskListHelperRegistration.totalSectionsEstablishers(userAnswers) mustBe 4
+    }
+  }
+
   "completedSectionCount" must {
     "return 0 when no sections are complete" in {
       HsTaskListHelperRegistration.completedSectionCount(userAnswersWithSchemeName) mustBe 0
@@ -333,6 +345,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
   }
+
+
+//  "completedSectionCountEstablishers" must {
+//    "return 3 sections"
+//  }
 }
 
 object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {
