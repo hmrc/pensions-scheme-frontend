@@ -84,12 +84,14 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 
   def taskListEstablishers(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
+    val totalCompletedSections = establishersSection(answers, NormalMode, srn)(establisherIndex).entities
+      .count(_.isCompleted.contains(true))
     SchemeDetailsTaskListEstablishers(
       answers.get(SchemeNameId).getOrElse(""),
       None,
       establisherSection(answers, NormalMode, srn, establisherIndex),
       isAllEstablishersCompleted(answers, NormalMode),
-      Some(StatsSection(completedSectionCountEstablishers(answers), totalSectionsEstablisher(answers, establisherIndex), None))
+      Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
     )
   }
 
@@ -241,10 +243,6 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
       benefitsCount +
       estCount
     totalCount
-  }
-
-  private[utils] def completedSectionCountEstablishers(userAnswers: UserAnswers): Int = {
-    toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
   }
 
   private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
