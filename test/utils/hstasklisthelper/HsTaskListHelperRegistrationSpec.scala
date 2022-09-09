@@ -185,7 +185,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     }
   }
 
-  "task list" must {
+  "task list with toggle off" must {
     "return the task list with all the sections" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(HaveAnyTrusteesId)(false).asOpt.value
@@ -197,7 +197,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
@@ -239,7 +239,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None, None)
+      val result = helper.taskListToggleOff(userAnswers, None, None, None)
 
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
