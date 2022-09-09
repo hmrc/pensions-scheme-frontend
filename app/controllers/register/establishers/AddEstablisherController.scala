@@ -23,15 +23,16 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 
 import javax.inject.Inject
-import models.{FeatureToggleName, Mode}
+import models.{FeatureToggleName, Mode, NormalMode}
 import models.register.Establisher
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FeatureToggleService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
@@ -55,27 +56,33 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
 
   private def renderPage(establishers: Seq[Establisher[_]], mode: Mode, srn: Option[String], form:Form[Option[Boolean]], status: Status)(implicit request:  DataRequest[AnyContent]): Future[Result] ={
       featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-        case true => val x = establishers.map{ result =>
-          SummaryListRow(
-            key = Key(
-              content = Text("Event"),
-              classes = "govuk-visually-hidden"
-            ),
-            value = Value(
-              content = Text("Event 18: Scheme chargeable payment"),
-              classes = "govuk-!-font-weight-bold govuk-!-width-full"
-            ),
-            actions = Some(Actions(
-              items = Seq(
-                ActionItem(
-                  href = "/pension-scheme-event-reporting-frontend/new-report/event-18-confirmation?waypoints=event-18-check-answers",
-                  content = Text("Change"),
-                  visuallyHiddenText = Some("Event 18: Scheme chargeable payment")
+        case true =>
+          val func: Establisher[_] => SummaryListRow = result => {
+            SummaryListRow(
+              key = Key(
+                content = Text(result.name),
+                classes = "govuk-visually-hidden"
+              ),
+              value = Value(
+                content = Text(result.name),
+                classes = "govuk-!-font-weight-bold govuk-!-width-full"
+              ),
+              actions = Some(Actions(
+                items = Seq(
+                  ActionItem(
+                    href = result.editLink(NormalMode, None).getOrElse(""),
+                    content = Text(Messages("site.change")),
+                    visuallyHiddenText = Some(result.name)
+                  )
                 )
-              )
-            ))
-          )
-          status(view(form, mode, x, existingSchemeName, srn))
+              ))
+            )
+          }
+
+          val completeEstablishers = establishers.filter(_.isCompleted).map(func)
+          val incompleteEstablishers = establishers.filter(!_.isCompleted).map(func)
+
+          status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
         case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
       }
   }
